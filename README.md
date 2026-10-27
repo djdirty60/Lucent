@@ -38,8 +38,16 @@ A slim icon rail that opens when you press left. Out of the box it has Search, H
 
 The skin picks a fitting view automatically. You can change it with the **View** button at the top right.
 
+### Info page
+Everything on one page. At the top: logo, buttons, director, ratings (IMDb, TMDB, Trakt), plot, genres, release date and details. Scroll down for **cast**, **similar titles** (Seren), the **collection** the film belongs to (for example all Toy Story films, via TMDB) and the **production companies**.
+
+- **Library and lists** – tick where the title should be: your Seren library (Trakt collection), your Trakt watchlist and your own Trakt lists.
+- **Mark as watched** – marks it as watched or not watched on Trakt.
+
+These use your Trakt login from Seren, there is nothing new to set up. For studio logos, use **Skin settings → Install studio logos**.
+
 ### Everything else in the same style
-Info page with cast, the video player and its menu, seek bar, subtitles search, bookmarks, Kodi settings, add-on settings, add-on info, file manager, keyboard, number pad, notifications, dialogs, power menu and screen calibration.
+The video player and its menu, the video player and its menu, seek bar, subtitles search, bookmarks, Kodi settings, add-on settings, add-on info, file manager, keyboard, number pad, notifications, dialogs, power menu and screen calibration.
 
 ---
 
@@ -59,6 +67,7 @@ Info page with cast, the video player and its menu, seek bar, subtitles search, 
 
 **Info page**
 ![Info page](screenshots/info.jpg)
+![Info page, scrolled down](screenshots/info-more.jpg)
 
 **Player**
 ![Player](screenshots/player.jpg)
@@ -76,11 +85,11 @@ Info page with cast, the video player and its menu, seek bar, subtitles search, 
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.1.1.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.2.0.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.1.1.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.2.0.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
 
@@ -129,6 +138,7 @@ fonts/               Inter font + licence
 colors/              colour palette
 language/            English and Dutch strings
 scripts/menu.py      editor for the side menu and the widgets
+scripts/info.py      info page: collection, studios, Trakt lists and watched
 resources/           icon and fanart
 screenshots/         images for this README
 ```

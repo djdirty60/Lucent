@@ -117,6 +117,19 @@
                     <label>$LOCALIZE[31109]</label>
                     <onclick>ActivateWindow(SystemSettings)</onclick>
                 </control>
+                <control type="button" id="242">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20">card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31118]</label>
+                    <onclick>InstallAddon(resource.images.studios.white)</onclick>
+                    <visible>!System.HasAddon(resource.images.studios.white)</visible>
+                </control>
             </control>
             <control type="scrollbar" id="60">
                 <left>1562</left>

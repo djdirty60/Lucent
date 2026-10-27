@@ -2,255 +2,930 @@
 <window>
     <defaultcontrol always="true">9000</defaultcontrol>
     <include>Anim_Window</include>
+    <onload>ClearProperty(nuvio.info.coll.count,home)</onload>
+    <onload>ClearProperty(nuvio.info.studio.1,home)</onload>
+    <onload>ClearProperty(nuvio.info.watched,home)</onload>
+    <onload>RunScript(special://skin/scripts/info.py,load)</onload>
     <controls>
         <include content="Backdrop">
             <param name="fanart">$VAR[ItemFanart]</param>
         </include>
-        <control type="group">
-            <include>Anim_SlideLeft</include>
-            <control type="image">
-                <left>96</left>
-                <top>96</top>
-                <width>680</width>
-                <height>230</height>
-                <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                <texture background="true">$VAR[ItemLogo]</texture>
-            </control>
-            <control type="textbox">
-                <left>96</left>
-                <top>96</top>
-                <width>1200</width>
-                <height>230</height>
-                <font>font60</font>
-                <aligny>bottom</aligny>
-                <label>$VAR[ItemTitle]</label>
-                <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-            </control>
-            <control type="grouplist">
-                <left>96</left>
-                <top>352</top>
-                <width>1400</width>
-                <height>44</height>
-                <orientation>horizontal</orientation>
-                <itemgap>12</itemgap>
-                <include content="InfoPill">
-                    <param name="label">$VAR[ItemSE]</param>
-                    <param name="bg">glass_strong</param>
-                    <param name="color">text</param>
-                    <param name="visible">!String.IsEmpty(ListItem.Season) + [String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)]</param>
-                </include>
-                <include content="InfoPill">
-                    <param name="label">$INFO[ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(ListItem.Year)</param>
-                </include>
-                <include content="InfoPill">
-                    <param name="label">$VAR[ItemRating]</param>
-                    <param name="visible">!String.IsEmpty(ListItem.Rating)</param>
-                </include>
-                <include content="InfoPill">
-                    <param name="label">$VAR[ItemDuration]</param>
-                    <param name="visible">Integer.IsGreater(ListItem.Duration(mins),0)</param>
-                </include>
-                <include content="InfoPill">
-                    <param name="label">$INFO[ListItem.MPAA]</param>
-                    <param name="visible">!String.IsEmpty(ListItem.MPAA)</param>
-                </include>
-                <include content="InfoPill">
-                    <param name="label">$INFO[ListItem.VideoResolution]$INFO[ListItem.VideoCodec,  ·  ,]</param>
-                    <param name="visible">!String.IsEmpty(ListItem.VideoResolution)</param>
-                </include>
-                <control type="label">
-                    <width>auto</width>
-                    <height>44</height>
-                    <font>font12</font>
-                    <textcolor>text3</textcolor>
-                    <label>$INFO[ListItem.Genre]</label>
-                </control>
-            </control>
-            <control type="label">
-                <left>96</left>
-                <top>414</top>
-                <width>1200</width>
-                <height>48</height>
-                <font>font32</font>
-                <label>$INFO[ListItem.Title]</label>
-                <visible>String.IsEqual(ListItem.DBType,episode)</visible>
-            </control>
-            <control type="textbox" id="4">
-                <left>96</left>
-                <top>470</top>
-                <width>1000</width>
-                <height>170</height>
-                <font>font_plot</font>
-                <textcolor>text2</textcolor>
-                <label>$INFO[ListItem.Plot]</label>
-                <autoscroll delay="8000" time="3000" repeat="10000">true</autoscroll>
-            </control>
-            <control type="label">
-                <left>96</left>
-                <top>650</top>
-                <width>1300</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text4</textcolor>
-                <label>$INFO[ListItem.Director,$LOCALIZE[31078] ,]$INFO[ListItem.Studio,   ·   ,]$INFO[ListItem.Premiered,   ·   ,]</label>
-            </control>
-
-            <!-- Actions -->
-            <control type="grouplist" id="9000">
-                <left>96</left>
-                <top>712</top>
-                <width>1728</width>
-                <height>64</height>
-                <orientation>horizontal</orientation>
-                <itemgap>14</itemgap>
-                <ondown>50</ondown>
-                <control type="button" id="8">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>▶  $LOCALIZE[208]</label>
-                    <visible>true</visible>
-                </control>
-                <control type="button" id="9">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>$LOCALIZE[31018]</label>
-                    <visible>ListItem.IsResumable</visible>
-                </control>
-                <control type="button" id="5">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>$LOCALIZE[31021]</label>
-                    <visible>true</visible>
-                </control>
-                <control type="button" id="11">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>$LOCALIZE[20410]</label>
-                    <visible>!String.IsEmpty(ListItem.Trailer)</visible>
-                </control>
-                <control type="button" id="14">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>$LOCALIZE[40000]</label>
-                    <visible>ListItem.HasVideoVersions</visible>
-                </control>
-                <control type="button" id="15">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>Extras</label>
-                    <visible>ListItem.HasVideoExtras</visible>
-                </control>
-                <control type="button" id="7">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>$LOCALIZE[31063]</label>
-                    <visible>!String.IsEmpty(ListItem.DBID)</visible>
-                </control>
-                <control type="button" id="6">
-                    <width>auto</width>
-                    <height>64</height>
-                    <label>$LOCALIZE[184]</label>
-                    <visible>!String.IsEmpty(ListItem.DBID)</visible>
-                </control>
-            </control>
+        <!-- darker backdrop once you scroll down -->
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>white.png</texture>
+            <colordiffuse>B30B1119</colordiffuse>
+            <visible>!ControlGroup(9000).HasFocus</visible>
+            <animation effect="fade" start="0" end="100" time="300">Visible</animation>
+            <animation effect="fade" start="100" end="0" time="300">Hidden</animation>
         </control>
 
-        <!-- Cast row (Kodi swaps it with the plot via button 5) -->
-        <control type="group">
-            <include>Anim_SlideUp</include>
-            <control type="label">
-                <visible>Control.IsVisible(50)</visible>
-                <left>96</left>
-                <top>808</top>
-                <width>800</width>
-                <height>44</height>
-                <font>font_mainmenu_small</font>
-                <label>$LOCALIZE[31021]</label>
-            </control>
-            <control type="fixedlist" id="50">
-                <left>72</left>
-                <top>846</top>
-                <width>1848</width>
-                <height>234</height>
-                <orientation>horizontal</orientation>
-                <focusposition>0</focusposition>
-                <onup>9000</onup>
-                <itemlayout width="196" height="230">
-                    <control type="image">
-                        <left>24</left>
-                        <top>14</top>
-                        <width>148</width>
-                        <height>148</height>
-                        <aspectratio>scale</aspectratio>
-                        <texture diffuse="mask_circle.png" fallback="default_poster.png">$INFO[ListItem.Art(thumb)]</texture>
+        <control type="grouplist" id="9100">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <orientation>vertical</orientation>
+            <itemgap>0</itemgap>
+            <scrolltime tween="cubic" easing="out">380</scrolltime>
+
+            <!-- ================= Header ================= -->
+            <control type="group">
+                <width>1920</width>
+                <height>1010</height>
+                <include>Anim_SlideLeft</include>
+                <control type="image">
+                    <left>96</left>
+                    <top>110</top>
+                    <width>640</width>
+                    <height>230</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemLogo]</texture>
+                </control>
+                <control type="textbox">
+                    <left>96</left>
+                    <top>110</top>
+                    <width>1300</width>
+                    <height>230</height>
+                    <font>font60</font>
+                    <aligny>bottom</aligny>
+                    <label>$VAR[ItemTitle]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+
+                <!-- Buttons -->
+                <control type="grouplist" id="9000">
+                    <left>96</left>
+                    <top>372</top>
+                    <width>1728</width>
+                    <height>72</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>16</itemgap>
+                    <ondown>50</ondown>
+                    <control type="button" id="8">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>▶  $LOCALIZE[208]</label>
+                    </control>
+                    <control type="button" id="9">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[31018]</label>
+                        <visible>ListItem.IsResumable + !String.IsEmpty(ListItem.DBID)</visible>
+                    </control>
+                    <control type="button" id="21">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>+  $LOCALIZE[31114]</label>
+                        <onclick>RunScript(special://skin/scripts/info.py,lists)</onclick>
+                        <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + System.HasAddon(plugin.video.seren)</visible>
+                    </control>
+                    <control type="button" id="22">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$VAR[NuvioInfoWatched]</label>
+                        <onclick>RunScript(special://skin/scripts/info.py,watched)</onclick>
+                        <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + System.HasAddon(plugin.video.seren)</visible>
+                    </control>
+                    <control type="button" id="11">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[20410]</label>
+                        <visible>!String.IsEmpty(ListItem.Trailer)</visible>
+                    </control>
+                    <control type="button" id="14">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[40000]</label>
+                        <visible>ListItem.HasVideoVersions</visible>
+                    </control>
+                    <control type="button" id="7">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[31063]</label>
+                        <visible>!String.IsEmpty(ListItem.DBID)</visible>
+                    </control>
+                    <control type="button" id="6">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[184]</label>
+                        <visible>!String.IsEmpty(ListItem.DBID)</visible>
+                    </control>
+                </control>
+
+                <!-- Director -->
+                <control type="label">
+                    <left>96</left>
+                    <top>476</top>
+                    <width>1600</width>
+                    <height>44</height>
+                    <font>font_label_bold</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[ListItem.Director,$LOCALIZE[31078] ,]</label>
+                    <visible>!String.IsEmpty(ListItem.Director)</visible>
+                </control>
+
+                <!-- Ratings + season/episode -->
+                <control type="grouplist">
+                    <left>96</left>
+                    <top>532</top>
+                    <width>1600</width>
+                    <height>44</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>12</itemgap>
+                    <include content="InfoPill">
+                        <param name="label">$VAR[ItemSE]</param>
+                        <param name="bg">glass_strong</param>
+                        <param name="color">text</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Season) + [String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)]</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">IMDb  $INFO[ListItem.Rating(imdb)]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(imdb))</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">TMDB  $INFO[ListItem.Rating(tmdb)]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(tmdb))</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">Trakt  $INFO[ListItem.Rating(trakt)]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(trakt))</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">★  $INFO[ListItem.Rating]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
+                    </include>
+                </control>
+
+                <!-- Episode title -->
+                <control type="label">
+                    <left>96</left>
+                    <top>596</top>
+                    <width>1600</width>
+                    <height>48</height>
+                    <font>font32</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[ListItem.Title]</label>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                </control>
+
+                <!-- Plot -->
+                <control type="textbox">
+                    <left>96</left>
+                    <top>600</top>
+                    <width>1150</width>
+                    <height>250</height>
+                    <font>font_plot</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[ListItem.Plot]</label>
+                    <autoscroll delay="9000" time="3000" repeat="10000">true</autoscroll>
+                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="String.IsEqual(ListItem.DBType,episode)">Conditional</animation>
+                </control>
+
+                <!-- Genres • date -->
+                <control type="grouplist">
+                    <left>96</left>
+                    <top>872</top>
+                    <width>1700</width>
+                    <height>44</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>14</itemgap>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Genre]</label>
+                        <visible>!String.IsEmpty(ListItem.Genre)</visible>
                     </control>
                     <control type="label">
-                        <left>8</left>
-                        <top>170</top>
-                        <width>180</width>
-                        <height>30</height>
-                        <font>font10</font>
-                        <align>center</align>
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text4</textcolor>
+                        <label>•</label>
+                        <visible>!String.IsEmpty(ListItem.Genre) + !String.IsEmpty(ListItem.Premiered)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Premiered]</label>
+                        <visible>!String.IsEmpty(ListItem.Premiered)</visible>
+                    </control>
+                </control>
+
+                <!-- MPAA • duration • country • quality -->
+                <control type="grouplist">
+                    <left>96</left>
+                    <top>932</top>
+                    <width>1700</width>
+                    <height>44</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>14</itemgap>
+                    <include content="InfoPill">
+                        <param name="label">$INFO[ListItem.MPAA]</param>
+                        <param name="bg">glass_strong</param>
+                        <param name="color">text</param>
+                        <param name="visible">!String.IsEmpty(ListItem.MPAA)</param>
+                    </include>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$VAR[ItemDuration]</label>
+                        <visible>Integer.IsGreater(ListItem.Duration(mins),0)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text4</textcolor>
+                        <label>•</label>
+                        <visible>Integer.IsGreater(ListItem.Duration(mins),0) + !String.IsEmpty(ListItem.Country)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Country]</label>
+                        <visible>!String.IsEmpty(ListItem.Country)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text4</textcolor>
+                        <label>•</label>
+                        <visible>!String.IsEmpty(ListItem.Status)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Status]</label>
+                        <visible>!String.IsEmpty(ListItem.Status)</visible>
+                    </control>
+                    <include content="InfoPill">
+                        <param name="label">$INFO[ListItem.VideoResolution]$INFO[ListItem.VideoCodec,  ·  ,]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!String.IsEmpty(ListItem.VideoResolution)</param>
+                    </include>
+                </control>
+            </control>
+
+            <!-- ================= Cast ================= -->
+            <control type="group">
+                <width>1920</width>
+                <height>350</height>
+                <visible>Integer.IsGreater(Container(50).NumItems,0)</visible>
+                <control type="label">
+                    <left>96</left>
+                    <top>10</top>
+                    <width>1600</width>
+                    <height>48</height>
+                    <font>font_mainmenu_small</font>
+                    <textcolor>text</textcolor>
+                    <label>$LOCALIZE[31111]</label>
+                </control>
+                <control type="fixedlist" id="50">
+                    <left>72</left>
+                    <top>64</top>
+                    <width>1848</width>
+                    <height>270</height>
+                    <orientation>horizontal</orientation>
+                    <focusposition>0</focusposition>
+                    <onup>9000</onup>
+                    <ondown>5100</ondown>
+                    <itemlayout width="236" height="270">
+                        <control type="image">
+                            <left>24</left>
+                            <top>14</top>
+                            <width>180</width>
+                            <height>180</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_circle.png" fallback="DefaultActor.png">$INFO[ListItem.Art(thumb)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>14</left>
+                            <top>204</top>
+                            <width>200</width>
+                            <height>32</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <textcolor>text2</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>14</left>
+                            <top>236</top>
+                            <width>200</width>
+                            <height>28</height>
+                            <font>font10</font>
+                            <align>center</align>
+                            <textcolor>text4</textcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="236" height="270">
+                        <control type="group">
+                            <left>24</left>
+                            <top>14</top>
+                            <animation effect="zoom" start="100" end="106" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                            <control type="image">
+                                <left>-6</left>
+                                <top>-6</top>
+                                <width>192</width>
+                                <height>192</height>
+                                <texture>mask_circle.png</texture>
+                                <colordiffuse>text</colordiffuse>
+                                <visible>Control.HasFocus(50)</visible>
+                            </control>
+                            <control type="image">
+                                <left>0</left>
+                                <top>0</top>
+                                <width>180</width>
+                                <height>180</height>
+                                <aspectratio>scale</aspectratio>
+                                <texture diffuse="mask_circle.png" fallback="DefaultActor.png">$INFO[ListItem.Art(thumb)]</texture>
+                            </control>
+                        </control>
+                        <control type="label">
+                            <left>14</left>
+                            <top>204</top>
+                            <width>200</width>
+                            <height>32</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>14</left>
+                            <top>236</top>
+                            <width>200</width>
+                            <height>28</height>
+                            <font>font10</font>
+                            <align>center</align>
+                            <textcolor>text3</textcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                    </focusedlayout>
+                </control>
+            </control>
+
+            <!-- ================= Similar titles (Seren) ================= -->
+            <control type="group">
+                <width>1920</width>
+                <height>420</height>
+                <visible>!String.IsEmpty(ListItem.Property(trakt_id)) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + [Integer.IsGreater(Container(5100).NumItems,0) | Container(5100).IsUpdating]</visible>
+                <control type="label">
+                    <left>96</left>
+                    <top>10</top>
+                    <width>1600</width>
+                    <height>48</height>
+                    <font>font_mainmenu_small</font>
+                    <textcolor>text</textcolor>
+                    <label>$LOCALIZE[31112]</label>
+                </control>
+                <control type="group">
+                    <left>1640</left>
+                    <top>18</top>
+                    <visible>Container(5100).IsUpdating</visible>
+                    <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <control type="fixedlist" id="5100">
+                    <left>56</left>
+                    <top>64</top>
+                    <width>1864</width>
+                    <height>335</height>
+                    <orientation>horizontal</orientation>
+                    <focusposition>0</focusposition>
+                    <preloaditems>2</preloaditems>
+                    <scrolltime tween="cubic" easing="out">260</scrolltime>
+                    <onup>50</onup>
+                    <ondown>5200</ondown>
+                    <itemlayout width="428" height="335">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
+                        </control>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>255</top>
+                        <width>392</width>
+                        <height>36</height>
+                        <font>font12</font>
                         <textcolor>text2</textcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                     <control type="label">
-                        <left>8</left>
-                        <top>198</top>
-                        <width>180</width>
-                        <height>28</height>
-                        <font>font_tiny</font>
-                        <align>center</align>
+                        <left>44</left>
+                        <top>289</top>
+                        <width>392</width>
+                        <height>30</height>
+                        <font>font10</font>
                         <textcolor>text4</textcolor>
-                        <label>$INFO[ListItem.Label2]</label>
+                        <label>$INFO[ListItem.Year]</label>
                     </control>
-                </itemlayout>
-                <focusedlayout width="196" height="230">
+                    </itemlayout>
+                    <focusedlayout width="428" height="335">
                     <control type="group">
-                        <left>24</left>
-                        <top>14</top>
-                        <animation effect="zoom" start="100" end="106" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                        <left>40</left>
+                        <top>16</top>
+                        <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                        <animation effect="zoom" start="105" end="100" center="auto" time="160" tween="cubic" easing="out">UnFocus</animation>
                         <control type="image">
                             <left>0</left>
                             <top>0</top>
-                            <width>148</width>
-                            <height>148</height>
-                            <aspectratio>scale</aspectratio>
-                            <texture diffuse="mask_circle.png" fallback="default_poster.png">$INFO[ListItem.Art(thumb)]</texture>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
                         </control>
                         <control type="image">
-                            <left>-4</left>
-                            <top>-4</top>
-                            <width>156</width>
-                            <height>156</height>
-                            <texture>mask_circle.png</texture>
-                            <colordiffuse>40FFFFFF</colordiffuse>
-                            <visible>Control.HasFocus(50)</visible>
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
+                        </control>
+                        <control type="image">
+                            <left>-24</left>
+                            <top>-24</top>
+                            <width>448</width>
+                            <height>273</height>
+                            <texture border="38">rr14_glow.png</texture>
+                            <colordiffuse>glow</colordiffuse>
+                            <visible>Control.HasFocus(5100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture border="14">rr14_edge.png</texture>
+                            <colordiffuse>text</colordiffuse>
+                            <visible>Control.HasFocus(5100)</visible>
                         </control>
                     </control>
                     <control type="label">
-                        <left>8</left>
-                        <top>170</top>
-                        <width>180</width>
-                        <height>30</height>
-                        <font>font10_bold</font>
-                        <align>center</align>
+                        <left>44</left>
+                        <top>255</top>
+                        <width>392</width>
+                        <height>36</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                     <control type="label">
-                        <left>8</left>
-                        <top>198</top>
-                        <width>180</width>
-                        <height>28</height>
-                        <font>font_tiny</font>
-                        <align>center</align>
-                        <textcolor>text3</textcolor>
+                        <left>44</left>
+                        <top>289</top>
+                        <width>392</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Year]</label>
+                    </control>
+                    </focusedlayout>
+                    <content target="videos" limit="20" browse="never">$VAR[NuvioInfoRelated]</content>
+                </control>
+            </control>
+
+            <!-- ================= Collection (TMDB) ================= -->
+            <control type="group">
+                <width>1920</width>
+                <height>420</height>
+                <visible>Integer.IsGreater(Window(home).Property(nuvio.info.coll.count),1)</visible>
+                <control type="label">
+                    <left>96</left>
+                    <top>10</top>
+                    <width>1600</width>
+                    <height>48</height>
+                    <font>font_mainmenu_small</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[Window(home).Property(nuvio.info.coll.name)]</label>
+                </control>
+                <control type="fixedlist" id="5200">
+                    <left>56</left>
+                    <top>64</top>
+                    <width>1864</width>
+                    <height>335</height>
+                    <orientation>horizontal</orientation>
+                    <focusposition>0</focusposition>
+                    <preloaditems>2</preloaditems>
+                    <scrolltime tween="cubic" easing="out">260</scrolltime>
+                    <onup>5100</onup>
+                    <ondown>5300</ondown>
+                    <itemlayout width="428" height="335">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Icon]</texture>
+                        </control>
+                        <control type="image">
+                            <left>344</left>
+                            <top>14</top>
+                            <width>40</width>
+                            <height>40</height>
+                            <texture>buttons/check_fo.png</texture>
+                            <visible>!String.IsEmpty(ListItem.Property(current))</visible>
+                        </control>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>255</top>
+                        <width>392</width>
+                        <height>36</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>289</top>
+                        <width>392</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
                         <label>$INFO[ListItem.Label2]</label>
                     </control>
-                </focusedlayout>
+                    </itemlayout>
+                    <focusedlayout width="428" height="335">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                        <animation effect="zoom" start="105" end="100" center="auto" time="160" tween="cubic" easing="out">UnFocus</animation>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Icon]</texture>
+                        </control>
+                        <control type="image">
+                            <left>344</left>
+                            <top>14</top>
+                            <width>40</width>
+                            <height>40</height>
+                            <texture>buttons/check_fo.png</texture>
+                            <visible>!String.IsEmpty(ListItem.Property(current))</visible>
+                        </control>
+                        <control type="image">
+                            <left>-24</left>
+                            <top>-24</top>
+                            <width>448</width>
+                            <height>273</height>
+                            <texture border="38">rr14_glow.png</texture>
+                            <colordiffuse>glow</colordiffuse>
+                            <visible>Control.HasFocus(5200)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture border="14">rr14_edge.png</texture>
+                            <colordiffuse>text</colordiffuse>
+                            <visible>Control.HasFocus(5200)</visible>
+                        </control>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>255</top>
+                        <width>392</width>
+                        <height>36</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>289</top>
+                        <width>392</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    </focusedlayout>
+                    <content>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.1.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.1.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.1.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.1.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.1.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.1.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.2.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.2.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.2.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.2.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.2.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.2.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.3.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.3.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.3.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.3.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.3.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.3.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.4.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.4.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.4.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.4.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.4.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.4.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.5.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.5.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.5.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.5.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.5.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.5.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.6.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.6.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.6.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.6.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.6.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.6.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.7.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.7.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.7.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.7.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.7.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.7.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.8.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.8.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.8.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.8.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.8.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.8.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.9.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.9.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.9.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.9.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.9.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.9.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.10.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.10.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.10.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.10.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.10.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.10.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.11.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.11.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.11.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.11.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.11.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.11.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.coll.12.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.coll.12.year)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.coll.12.art)]</icon>
+                            <property name="current">$INFO[Window(home).Property(nuvio.info.coll.12.current)]</property>
+                            <onclick>Dialog.Close(movieinformation)</onclick>
+                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.12.path)]",return)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.12.title))</visible>
+                        </item>
+                    </content>
+                </control>
+            </control>
+
+            <!-- ================= Production ================= -->
+            <control type="group">
+                <width>1920</width>
+                <height>260</height>
+                <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.1))</visible>
+                <control type="label">
+                    <left>96</left>
+                    <top>10</top>
+                    <width>1600</width>
+                    <height>48</height>
+                    <font>font_mainmenu_small</font>
+                    <textcolor>text</textcolor>
+                    <label>$LOCALIZE[31113]</label>
+                </control>
+                <control type="list" id="5300">
+                    <left>96</left>
+                    <top>70</top>
+                    <width>1700</width>
+                    <height>170</height>
+                    <orientation>horizontal</orientation>
+                    <onup>5200</onup>
+                    <itemlayout width="324" height="170">
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>300</width>
+                            <height>120</height>
+                            <texture border="20" colordiffuse="glass_strong">rr20.png</texture>
+                            <visible>true</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>300</width>
+                            <height>120</height>
+                            <texture border="20" colordiffuse="glass_strong">rr20.png</texture>
+                            <visible>!false</visible>
+                        </control>
+                        <control type="image">
+                            <left>30</left>
+                            <top>20</top>
+                            <width>240</width>
+                            <height>80</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture colordiffuse="text">$INFO[ListItem.Icon]</texture>
+                            <visible>System.HasAddon(resource.images.studios.white)</visible>
+                        </control>
+                        <control type="label">
+                            <left>20</left>
+                            <top>0</top>
+                            <width>260</width>
+                            <height>120</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font_label_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>!System.HasAddon(resource.images.studios.white)</visible>
+                        </control>
+                        <control type="label">
+                            <left>0</left>
+                            <top>130</top>
+                            <width>300</width>
+                            <height>34</height>
+                            <align>center</align>
+                            <font>font10</font>
+                            <textcolor>text3</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>System.HasAddon(resource.images.studios.white)</visible>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="324" height="170">
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>300</width>
+                            <height>120</height>
+                            <texture border="20" colordiffuse="focus">rr20.png</texture>
+                            <visible>Control.HasFocus(5300)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>300</width>
+                            <height>120</height>
+                            <texture border="20" colordiffuse="glass_strong">rr20.png</texture>
+                            <visible>!Control.HasFocus(5300)</visible>
+                        </control>
+                        <control type="image">
+                            <left>30</left>
+                            <top>20</top>
+                            <width>240</width>
+                            <height>80</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                            <visible>System.HasAddon(resource.images.studios.white)</visible>
+                        </control>
+                        <control type="label">
+                            <left>20</left>
+                            <top>0</top>
+                            <width>260</width>
+                            <height>120</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font_label_bold</font>
+                            <textcolor>on_focus</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>!System.HasAddon(resource.images.studios.white)</visible>
+                        </control>
+                        <control type="label">
+                            <left>0</left>
+                            <top>130</top>
+                            <width>300</width>
+                            <height>34</height>
+                            <align>center</align>
+                            <font>font10</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>System.HasAddon(resource.images.studios.white)</visible>
+                        </control>
+                    </focusedlayout>
+                    <content>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.studio.1)]</label>
+                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.1)].png</icon>
+                            <onclick>noop</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.1))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.studio.2)]</label>
+                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.2)].png</icon>
+                            <onclick>noop</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.2))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.studio.3)]</label>
+                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.3)].png</icon>
+                            <onclick>noop</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.3))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.studio.4)]</label>
+                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.4)].png</icon>
+                            <onclick>noop</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.4))</visible>
+                        </item>
+                    </content>
+                </control>
             </control>
         </control>
+
         <include>Clock</include>
     </controls>
 </window>
