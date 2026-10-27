@@ -5,6 +5,8 @@
     <onload>ClearProperty(nuvio.info.coll.count,home)</onload>
     <onload>ClearProperty(nuvio.info.studio.1,home)</onload>
     <onload>ClearProperty(nuvio.info.watched,home)</onload>
+    <onload>ClearProperty(nuvio.info.tab,home)</onload>
+    <onload>ClearProperty(nuvio.info.vid.count,home)</onload>
     <onload>RunScript(special://skin/scripts/info.py,load)</onload>
     <controls>
         <include content="Backdrop">
@@ -64,7 +66,10 @@
                     <height>72</height>
                     <orientation>horizontal</orientation>
                     <itemgap>16</itemgap>
-                    <ondown>50</ondown>
+                    <ondown condition="$EXP[NuvioTab1]">6001</ondown>
+                    <ondown condition="$EXP[NuvioTab2]">6002</ondown>
+                    <ondown condition="$EXP[NuvioTab3]">6003</ondown>
+                    <ondown>5200</ondown>
                     <control type="button" id="8">
                         <width>auto</width>
                         <height>72</height>
@@ -290,20 +295,82 @@
                 </control>
             </control>
 
-            <!-- ================= Cast ================= -->
+            <!-- ================= Tabs: cast | similar titles | trailers ================= -->
             <control type="group">
                 <width>1920</width>
-                <height>350</height>
-                <visible>Integer.IsGreater(Container(50).NumItems,0)</visible>
-                <control type="label">
-                    <left>96</left>
-                    <top>10</top>
-                    <width>1600</width>
-                    <height>48</height>
-                    <font>font_mainmenu_small</font>
-                    <textcolor>text</textcolor>
-                    <label>$LOCALIZE[31111]</label>
+                <height>430</height>
+                <visible>Integer.IsGreater(Container(50).NumItems,0) | $EXP[NuvioHasRelated] | Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube)</visible>
+                <control type="grouplist" id="6000">
+                    <left>84</left>
+                    <top>0</top>
+                    <width>1700</width>
+                    <height>60</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>6</itemgap>
+                    <control type="button" id="6001">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textoffsetx>14</textoffsetx>
+                        <textcolor>text3</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                        <texturenofocus/>
+                        <label>$VAR[NuvioTabLabel1]</label>
+                        <onfocus>SetProperty(nuvio.info.tab,1,home)</onfocus>
+                        <onup>9000</onup>
+                        <ondown>50</ondown>
+                        <visible>Integer.IsGreater(Container(50).NumItems,0)</visible>
+                    </control>
+                    <control type="label" id="6012">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>$EXP[NuvioHasRelated] + Integer.IsGreater(Container(50).NumItems,0)</visible>
+                    </control>
+                    <control type="button" id="6002">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textoffsetx>14</textoffsetx>
+                        <textcolor>text3</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                        <texturenofocus/>
+                        <label>$VAR[NuvioTabLabel2]</label>
+                        <onfocus>SetProperty(nuvio.info.tab,2,home)</onfocus>
+                        <onup>9000</onup>
+                        <ondown>5100</ondown>
+                        <visible>$EXP[NuvioHasRelated]</visible>
+                    </control>
+                    <control type="label" id="6013">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube) + [Integer.IsGreater(Container(50).NumItems,0) | $EXP[NuvioHasRelated]]</visible>
+                    </control>
+                    <control type="button" id="6003">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textoffsetx>14</textoffsetx>
+                        <textcolor>text3</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                        <texturenofocus/>
+                        <label>$VAR[NuvioTabLabel3]</label>
+                        <onfocus>SetProperty(nuvio.info.tab,3,home)</onfocus>
+                        <onup>9000</onup>
+                        <ondown>5150</ondown>
+                        <visible>Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube)</visible>
+                    </control>
                 </control>
+                <control type="group">
+                    <top>6</top>
                 <control type="fixedlist" id="50">
                     <left>72</left>
                     <top>64</top>
@@ -311,8 +378,9 @@
                     <height>270</height>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
-                    <onup>9000</onup>
-                    <ondown>5100</ondown>
+                    <onup>6001</onup>
+                    <ondown>5200</ondown>
+                    <animation effect="fade" start="100" end="0" time="0" condition="!$EXP[NuvioTab1]">Conditional</animation>
                     <itemlayout width="236" height="270">
                         <control type="image">
                             <left>24</left>
@@ -388,28 +456,16 @@
                         </control>
                     </focusedlayout>
                 </control>
-            </control>
-
-            <!-- ================= Similar titles (Seren) ================= -->
-            <control type="group">
-                <width>1920</width>
-                <height>420</height>
-                <visible>!String.IsEmpty(ListItem.Property(trakt_id)) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + [Integer.IsGreater(Container(5100).NumItems,0) | Container(5100).IsUpdating]</visible>
-                <control type="label">
-                    <left>96</left>
-                    <top>10</top>
-                    <width>1600</width>
-                    <height>48</height>
-                    <font>font_mainmenu_small</font>
-                    <textcolor>text</textcolor>
-                    <label>$LOCALIZE[31112]</label>
                 </control>
                 <control type="group">
-                    <left>1640</left>
-                    <top>18</top>
-                    <visible>Container(5100).IsUpdating</visible>
-                    <include content="Spinner"><param name="size">32</param></include>
-                </control>
+                    <top>6</top>
+                    <animation effect="fade" start="100" end="0" time="0" condition="!$EXP[NuvioTab2]">Conditional</animation>
+                    <control type="group">
+                        <left>1640</left>
+                        <top>18</top>
+                        <visible>Container(5100).IsUpdating + $EXP[NuvioTab2]</visible>
+                        <include content="Spinner"><param name="size">32</param></include>
+                    </control>
                 <control type="fixedlist" id="5100">
                     <left>56</left>
                     <top>64</top>
@@ -419,7 +475,7 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <onup>50</onup>
+                    <onup>6002</onup>
                     <ondown>5200</ondown>
                     <itemlayout width="428" height="335">
                     <control type="group">
@@ -521,6 +577,207 @@
                     </focusedlayout>
                     <content target="videos" limit="20" browse="never">$VAR[NuvioInfoRelated]</content>
                 </control>
+                </control>
+                <control type="group">
+                    <top>6</top>
+                    <animation effect="fade" start="100" end="0" time="0" condition="!$EXP[NuvioTab3]">Conditional</animation>
+                <control type="fixedlist" id="5150">
+                    <left>56</left>
+                    <top>64</top>
+                    <width>1864</width>
+                    <height>335</height>
+                    <orientation>horizontal</orientation>
+                    <focusposition>0</focusposition>
+                    <preloaditems>2</preloaditems>
+                    <scrolltime tween="cubic" easing="out">260</scrolltime>
+                    <onup>6003</onup>
+                    <ondown>5200</ondown>
+                    <itemlayout width="428" height="335">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Icon]</texture>
+                        </control>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>255</top>
+                        <width>392</width>
+                        <height>36</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>289</top>
+                        <width>392</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    </itemlayout>
+                    <focusedlayout width="428" height="335">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                        <animation effect="zoom" start="105" end="100" center="auto" time="160" tween="cubic" easing="out">UnFocus</animation>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Icon]</texture>
+                        </control>
+                        <control type="image">
+                            <left>-24</left>
+                            <top>-24</top>
+                            <width>448</width>
+                            <height>273</height>
+                            <texture border="38">rr14_glow.png</texture>
+                            <colordiffuse>glow</colordiffuse>
+                            <visible>Control.HasFocus(5150)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>400</width>
+                            <height>225</height>
+                            <texture border="14">rr14_edge.png</texture>
+                            <colordiffuse>text</colordiffuse>
+                            <visible>Control.HasFocus(5150)</visible>
+                        </control>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>255</top>
+                        <width>392</width>
+                        <height>36</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>44</left>
+                        <top>289</top>
+                        <width>392</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    </focusedlayout>
+                    <content>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.1.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.1.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.1.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.1.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.1.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.2.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.2.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.2.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.2.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.2.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.3.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.3.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.3.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.3.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.3.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.4.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.4.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.4.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.4.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.4.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.5.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.5.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.5.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.5.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.5.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.6.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.6.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.6.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.6.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.6.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.7.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.7.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.7.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.7.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.7.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.8.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.8.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.8.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.8.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.8.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.9.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.9.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.9.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.9.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.9.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.10.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.10.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.10.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.10.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.10.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.11.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.11.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.11.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.11.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.11.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.vid.12.title)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.vid.12.sub)]</label2>
+                            <icon>$INFO[Window(home).Property(nuvio.info.vid.12.thumb)]</icon>
+                            <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.12.path)])</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.12.title))</visible>
+                        </item>
+                    </content>
+                </control>
+                </control>
             </control>
 
             <!-- ================= Collection (TMDB) ================= -->
@@ -546,7 +803,10 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <onup>5100</onup>
+                    <onup condition="$EXP[NuvioTab1]">50</onup>
+                    <onup condition="$EXP[NuvioTab2]">5100</onup>
+                    <onup condition="$EXP[NuvioTab3]">5150</onup>
+                    <onup>9000</onup>
                     <ondown>5300</ondown>
                     <itemlayout width="428" height="335">
                     <control type="group">

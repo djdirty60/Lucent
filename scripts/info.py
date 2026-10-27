@@ -305,6 +305,40 @@ def load_collection(item):
     HOME.setProperty("nuvio.info.coll.count", str(len(parts)))
 
 
+VIDEO_TYPES = ["Trailer", "Teaser", "Clip", "Featurette", "Behind the Scenes"]
+MAX_VIDEOS = 12
+
+
+def load_videos(item):
+    """Fill nuvio.info.vid.* with the YouTube trailers TMDB knows for this title."""
+    for n in range(1, MAX_VIDEOS + 1):
+        for p in ("title", "sub", "thumb", "path"):
+            HOME.clearProperty(f"nuvio.info.vid.{n}.{p}")
+    HOME.setProperty("nuvio.info.vid.count", "0")
+    kind = {"movie": "movie", "tvshow": "tv"}.get(item.dbtype)
+    if not kind or not item.tmdb.isdigit():
+        return
+    try:
+        lang = "nl" if _NL else "en"
+        videos = tmdb(f"{kind}/{item.tmdb}/videos", include_video_language=f"{lang},en,null").get("results") or []
+    except Exception as error:  # noqa: BLE001
+        log(f"videos: {error}")
+        return
+    if HOME.getProperty("nuvio.info.key") != item.key:
+        return
+    videos = [v for v in videos if v.get("site") == "YouTube" and v.get("key")]
+    videos.sort(key=lambda v: (VIDEO_TYPES.index(v.get("type")) if v.get("type") in VIDEO_TYPES else 99,
+                               not v.get("official"), v.get("published_at") or ""))
+    videos = videos[:MAX_VIDEOS]
+    for n, video in enumerate(videos, start=1):
+        key = video["key"]
+        HOME.setProperty(f"nuvio.info.vid.{n}.title", video.get("name", ""))
+        HOME.setProperty(f"nuvio.info.vid.{n}.sub", f"{video.get('type', '')} · {(video.get('iso_639_1') or '').upper()}".strip(" ·"))
+        HOME.setProperty(f"nuvio.info.vid.{n}.thumb", f"https://img.youtube.com/vi/{key}/hqdefault.jpg")
+        HOME.setProperty(f"nuvio.info.vid.{n}.path", f"plugin://plugin.video.youtube/play/?video_id={key}")
+    HOME.setProperty("nuvio.info.vid.count", str(len(videos)))
+
+
 def load_studios():
     studios = [s.strip() for s in info("Studio").split("/") if s.strip()][:MAX_STUDIOS]
     for n in range(1, MAX_STUDIOS + 1):
@@ -316,6 +350,7 @@ def load():
     HOME.setProperty("nuvio.info.key", item.key)
     HOME.clearProperty("nuvio.info.watched")
     load_studios()
+    load_videos(item)
     load_collection(item)
 
 
