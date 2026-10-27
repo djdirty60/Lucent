@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addons>
+<addon id="skin.nuvioarc" version="1.2.3" name="Nuvio Arc" provider-name="Claude">
+    <requires>
+        <import addon="xbmc.gui" version="5.17.0"/>
+    </requires>
+    <extension point="xbmc.gui.skin" debugging="false">
+        <res width="1920" height="1080" aspect="16:9" default="true" folder="xml"/>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Cinematic glass skin inspired by Nuvio Arc V2</summary>
+        <summary lang="nl_NL">Cinematische glas-skin in de stijl van Nuvio Arc V2</summary>
+        <description lang="en_GB">A dark, cinematic Kodi skin with glass panels, large backdrops and rows for Trakt continue watching, trending titles, your library and your liked Trakt lists (via Seren).</description>
+        <description lang="nl_NL">Een donkere, cinematische Kodi-skin met glazen panelen, grote achtergronden en rijen voor Trakt verder kijken, trending titels, je bibliotheek en je Trakt-lijsten (via Seren).</description>
+        <news>1.2.3: updates now come automatically through the Nuvio Arc Repository.</news>
+        <platform>all</platform>
+        <license>GPL-2.0-or-later. Inter font: SIL Open Font License 1.1 (see fonts/Inter-LICENSE.txt)</license>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>
+
+<addon id="repository.nuvioarc" name="Nuvio Arc Repository" version="1.0.0" provider-name="Claude">
+    <requires>
+        <import addon="xbmc.addon" version="12.0.0"/>
+    </requires>
+    <extension point="xbmc.addon.repository" name="Nuvio Arc Repository">
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/djdirty60/Skin-Nuvio-Arc/main/repo/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/djdirty60/Skin-Nuvio-Arc/main/repo/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/djdirty60/Skin-Nuvio-Arc/main/repo/zips/</datadir>
+            <hashes>false</hashes>
+        </dir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Updates for the Nuvio Arc skin</summary>
+        <summary lang="nl_NL">Updates voor de Nuvio Arc-skin</summary>
+        <description lang="en_GB">Install this once. Kodi then keeps the Nuvio Arc skin up to date by itself.</description>
+        <description lang="nl_NL">Installeer dit één keer. Kodi houdt de Nuvio Arc-skin daarna zelf up-to-date.</description>
+        <platform>all</platform>
+        <license>GPL-2.0-or-later</license>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>
+</addons>

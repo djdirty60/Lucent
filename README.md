@@ -85,13 +85,24 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.2.2.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.2.3.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.2.2.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.2.3.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
+
+### Automatic updates (recommended)
+
+Install the **Nuvio Arc Repository** once, then Kodi keeps the skin up to date by itself.
+
+1. Download [`repository.nuvioarc.zip`](https://github.com/djdirty60/Skin-Nuvio-Arc/raw/main/repository.nuvioarc.zip) and copy it to your device.
+2. In Kodi go to **Add-ons → Install from zip file** and choose `repository.nuvioarc.zip`.
+3. Go to **Add-ons → Install from repository → Nuvio Arc Repository → Look and feel → Skin → Nuvio Arc** and choose **Install** (or **Update**).
+   If the skin is already installed, choose **Versions** and pick the newest version from *Nuvio Arc Repository*. This links the skin to the repository.
+
+From then on new versions arrive automatically (Kodi's default: **Settings → System → Add-ons → Updates → Install updates automatically**).
 
 ### Customising the menu and widgets
 
@@ -140,6 +151,8 @@ language/            English and Dutch strings
 scripts/menu.py      editor for the side menu and the widgets
 scripts/info.py      info page: collection, studios, Trakt lists and watched
 resources/           icon and fanart
+repo/                Kodi repository (addons.xml + zips) for automatic updates
+repository.nuvioarc.zip  the repository add-on to install once
 screenshots/         images for this README
 ```
 
