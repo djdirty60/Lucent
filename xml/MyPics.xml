@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">50</defaultcontrol>
+    <backgroundcolor>FF0B1119</backgroundcolor>
+    <views>50,52</views>
+    <controls>
+        <include>PlainBackground</include>
+        <include>MediaTopBar</include>
+        <include>MediaViews</include>
+        <!-- Empty folder message -->
+        <control type="label">
+            <left>96</left>
+            <top>480</top>
+            <width>1728</width>
+            <height>60</height>
+            <align>center</align>
+            <font>font13</font>
+            <textcolor>text4</textcolor>
+            <label>$LOCALIZE[31094]</label>
+            <visible>Integer.IsEqual(Container.NumItems,0) + !Container.IsUpdating</visible>
+        </control>
+        <control type="group">
+            <left>928</left>
+            <top>508</top>
+            <visible>Container.IsUpdating + Integer.IsEqual(Container.NumItems,0)</visible>
+            <include content="Spinner"><param name="size">64</param></include>
+        </control>
+    </controls>
+</window>

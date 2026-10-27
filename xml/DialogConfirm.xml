@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">11</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>460</left>
+            <top>270</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">1000</param>
+            <param name="height">540</param>
+            <param name="body">modal</param>
+        </include>
+        <control type="label" id="1">
+            <left>56</left>
+            <top>40</top>
+            <width>888</width>
+            <height>56</height>
+            <font>font32</font>
+            <label></label>
+        </control>
+        <control type="image">
+            <left>56</left>
+            <top>112</top>
+            <width>888</width>
+            <height>1</height>
+            <texture>white.png</texture>
+            <colordiffuse>separator</colordiffuse>
+        </control>
+            <control type="textbox" id="9">
+                <left>56</left>
+                <top>140</top>
+                <width>888</width>
+                <height>240</height>
+                <font>font_body</font>
+                <textcolor>text2</textcolor>
+                <pagecontrol>60</pagecontrol>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>956</left>
+                <top>140</top>
+                <height>240</height>
+                <onleft>9000</onleft>
+                <onright>9000</onright>
+            </control>
+            <control type="progress" id="20">
+                <left>56</left>
+                <top>394</top>
+                <width>888</width>
+                <height>8</height>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>56</left>
+                <top>436</top>
+                <width>888</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <align>right</align>
+                <itemgap>14</itemgap>
+                <onup>60</onup>
+            <control type="button" id="12">
+                <width>auto</width>
+                <height>64</height>
+                <label></label>
+            </control>
+            <control type="button" id="10">
+                <width>auto</width>
+                <height>64</height>
+                <label></label>
+            </control>
+            <control type="button" id="11">
+                <width>auto</width>
+                <height>64</height>
+                <label></label>
+            </control>
+            </control>
+        </control>
+    </controls>
+</window>

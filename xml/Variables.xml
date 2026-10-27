@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<includes>
+    <!-- Title shown big: the show for episodes, otherwise the title -->
+    <variable name="ItemTitle">
+        <value condition="!String.IsEmpty(ListItem.TVShowTitle) + [String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)]">$INFO[ListItem.TVShowTitle]</value>
+        <value condition="!String.IsEmpty(ListItem.Title)">$INFO[ListItem.Title]</value>
+        <value>$INFO[ListItem.Label]</value>
+    </variable>
+    <variable name="ItemPoster">
+        <value condition="!String.IsEmpty(ListItem.Art(poster))">$INFO[ListItem.Art(poster)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(tvshow.poster))">$INFO[ListItem.Art(tvshow.poster)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
+        <value>$INFO[ListItem.Icon]</value>
+    </variable>
+    <variable name="ItemLandscape">
+        <value condition="String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(tvshow.landscape))">$INFO[ListItem.Art(tvshow.landscape)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(fanart))">$INFO[ListItem.Art(fanart)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(tvshow.fanart))">$INFO[ListItem.Art(tvshow.fanart)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
+        <value>$INFO[ListItem.Icon]</value>
+    </variable>
+    <variable name="ItemFanart">
+        <value condition="!String.IsEmpty(ListItem.Art(fanart))">$INFO[ListItem.Art(fanart)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(tvshow.fanart))">$INFO[ListItem.Art(tvshow.fanart)]</value>
+        <value condition="!String.IsEmpty(ListItem.Property(Fanart_Image))">$INFO[ListItem.Property(Fanart_Image)]</value>
+        <value>$INFO[Container.Art(fanart)]</value>
+    </variable>
+    <variable name="ItemLogo">
+        <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(tvshow.clearlogo))">$INFO[ListItem.Art(tvshow.clearlogo)]</value>
+    </variable>
+    <variable name="ItemSE">
+        <value condition="!String.IsEmpty(ListItem.Season) + !String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)">S$INFO[ListItem.Season] · E$INFO[ListItem.Episode]</value>
+        <value condition="!String.IsEmpty(ListItem.Season) + String.IsEqual(ListItem.DBType,season)">$LOCALIZE[31061] $INFO[ListItem.Season]</value>
+    </variable>
+    <variable name="ItemRating">
+        <value condition="!String.IsEmpty(ListItem.Rating)">★ $INFO[ListItem.Rating]</value>
+    </variable>
+    <variable name="ItemDuration">
+        <value condition="Integer.IsGreater(ListItem.Duration(mins),59)">$INFO[ListItem.Duration(h)]u $INFO[ListItem.Duration(mm)]m</value>
+        <value condition="Integer.IsGreater(ListItem.Duration(mins),0)">$INFO[ListItem.Duration(mins)] min</value>
+    </variable>
+    <variable name="PlayerTitle">
+        <value condition="!String.IsEmpty(VideoPlayer.TVShowTitle)">$INFO[VideoPlayer.TVShowTitle]</value>
+        <value condition="!String.IsEmpty(VideoPlayer.Title)">$INFO[VideoPlayer.Title]</value>
+        <value>$INFO[Player.Title]</value>
+    </variable>
+    <variable name="PlayerSubtitle">
+        <value condition="!String.IsEmpty(VideoPlayer.TVShowTitle) + !String.IsEmpty(VideoPlayer.Season)">S$INFO[VideoPlayer.Season] · E$INFO[VideoPlayer.Episode]   $INFO[VideoPlayer.Title]</value>
+        <value>$INFO[VideoPlayer.Year]$INFO[VideoPlayer.Genre,   ,]</value>
+    </variable>
+    <variable name="PlayerLogo">
+        <value condition="!String.IsEmpty(Player.Art(clearlogo))">$INFO[Player.Art(clearlogo)]</value>
+        <value condition="!String.IsEmpty(Player.Art(tvshow.clearlogo))">$INFO[Player.Art(tvshow.clearlogo)]</value>
+    </variable>
+    <variable name="PlayerFanart">
+        <value condition="!String.IsEmpty(Player.Art(fanart))">$INFO[Player.Art(fanart)]</value>
+        <value condition="!String.IsEmpty(Player.Art(tvshow.fanart))">$INFO[Player.Art(tvshow.fanart)]</value>
+    </variable>
+    <variable name="FileIcon">
+        <value condition="ListItem.IsParentFolder">DefaultFolderBack.png</value>
+        <value condition="!String.IsEmpty(ListItem.Icon)">$INFO[ListItem.Icon]</value>
+        <value condition="ListItem.IsFolder">DefaultFolder.png</value>
+        <value>DefaultFile.png</value>
+    </variable>
+    <variable name="OSDButtonLabel">
+        <value condition="Control.HasFocus(101)">$LOCALIZE[31055]</value>
+        <value condition="Control.HasFocus(102)">$LOCALIZE[31097]</value>
+        <value condition="Control.HasFocus(103)">$LOCALIZE[31076]</value>
+        <value condition="Control.HasFocus(104)">$LOCALIZE[208]</value>
+        <value condition="Control.HasFocus(105)">$LOCALIZE[31098]</value>
+        <value condition="Control.HasFocus(106)">$LOCALIZE[31054]</value>
+        <value condition="Control.HasFocus(111)">$LOCALIZE[31048]</value>
+        <value condition="Control.HasFocus(112)">$LOCALIZE[31049]</value>
+        <value condition="Control.HasFocus(113)">$LOCALIZE[31050]</value>
+        <value condition="Control.HasFocus(114)">$LOCALIZE[31052]</value>
+        <value condition="Control.HasFocus(115)">$LOCALIZE[31056]</value>
+        <value condition="Control.HasFocus(116)">$LOCALIZE[31053]</value>
+    </variable>
+</includes>

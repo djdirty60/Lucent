@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <depth>DepthMax</depth>
+    <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
+    <animation effect="slide" start="120,0" end="0,0" time="350" tween="cubic" easing="out">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="250">WindowClose</animation>
+    <animation effect="slide" start="0,0" end="120,0" time="250" tween="cubic" easing="in">WindowClose</animation>
+    <controls>
+        <control type="group">
+            <left>1200</left>
+            <top>48</top>
+            <include content="GlassPanel">
+                <param name="left">0</param>
+                <param name="top">0</param>
+                <param name="width">672</param>
+                <param name="height">132</param>
+                <param name="body">modal</param>
+            </include>
+            <control type="image" id="400">
+                <left>28</left>
+                <top>30</top>
+                <width>72</width>
+                <height>72</height>
+                <aspectratio>keep</aspectratio>
+            </control>
+            <control type="label" id="401">
+                <left>124</left>
+                <top>22</top>
+                <width>520</width>
+                <height>44</height>
+                <font>font13_bold</font>
+            </control>
+            <control type="fadelabel" id="402">
+                <left>124</left>
+                <top>66</top>
+                <width>520</width>
+                <height>40</height>
+                <font>font12</font>
+                <textcolor>text3</textcolor>
+                <scroll>true</scroll>
+                <scrollout>false</scrollout>
+                <pauseatend>2000</pauseatend>
+            </control>
+        </control>
+    </controls>
+</window>

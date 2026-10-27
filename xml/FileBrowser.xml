@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">450</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>260</left>
+            <top>70</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">1400</param>
+            <param name="height">940</param>
+            <param name="body">modal</param>
+        </include>
+            <control type="label" id="411">
+                <left>56</left>
+                <top>30</top>
+                <width>1288</width>
+                <height>56</height>
+                <font>font32</font>
+            </control>
+            <control type="label" id="412">
+                <left>56</left>
+                <top>86</top>
+                <width>1288</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+            </control>
+            <control type="list" id="450">
+                <left>56</left>
+                <top>140</top>
+                <width>1260</width>
+                <height>640</height>
+                <onleft>noop</onleft>
+                <onright>60</onright>
+                <onup>noop</onup>
+                <ondown>9000</ondown>
+                <pagecontrol>60</pagecontrol>
+                <itemlayout height="70" width="1260">
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="text3">$VAR[FileIcon]</texture>
+                        
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>1000</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        
+                    </control>
+                    <control type="label">
+                        <left>1070</left>
+                        <top>0</top>
+                        <width>170</width>
+                        <height>64</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>1210</left>
+                        <top>16</top>
+                        <width>32</width>
+                        <height>32</height>
+                        <texture>buttons/check_fo.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="70" width="1260">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1260</width>
+                        <height>64</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(450)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1260</width>
+                        <height>64</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(450)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="on_focus">$VAR[FileIcon]</texture>
+                        <visible>Control.HasFocus(450)</visible>
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>1000</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(450)</visible>
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>1000</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>!Control.HasFocus(450)</visible>
+                    </control>
+                    <control type="label">
+                        <left>1070</left>
+                        <top>0</top>
+                        <width>170</width>
+                        <height>64</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>1210</left>
+                        <top>16</top>
+                        <width>32</width>
+                        <height>32</height>
+                        <texture>buttons/check_fo.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="panel" id="451">
+                <visible>false</visible>
+                <left>56</left>
+                <top>140</top>
+                <width>10</width>
+                <height>10</height>
+                <itemlayout width="10" height="10"/>
+                <focusedlayout width="10" height="10"/>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>1336</left>
+                <top>140</top>
+                <height>640</height>
+                <onleft>450</onleft>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>56</left>
+                <top>840</top>
+                <width>1288</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <align>right</align>
+                <itemgap>14</itemgap>
+                <onup>450</onup>
+                <control type="button" id="415">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[119]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="416">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[31100]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="414">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[222]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="413">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[186]</label>
+                    <visible>true</visible>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

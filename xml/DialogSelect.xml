@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">3</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>460</left>
+            <top>90</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">1000</param>
+            <param name="height">900</param>
+            <param name="body">modal</param>
+        </include>
+        <control type="label" id="1">
+            <left>50</left>
+            <top>36</top>
+            <width>760</width>
+            <height>56</height>
+            <font>font32</font>
+            <label></label>
+        </control>
+        <control type="image">
+            <left>50</left>
+            <top>108</top>
+            <width>760</width>
+            <height>1</height>
+            <texture>white.png</texture>
+            <colordiffuse>separator</colordiffuse>
+        </control>
+            <control type="label" id="2">
+                <left>760</left>
+                <top>36</top>
+                <width>190</width>
+                <height>56</height>
+                <align>right</align>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+            </control>
+            <control type="list" id="3">
+                <left>50</left>
+                <top>130</top>
+                <width>900</width>
+                <height>560</height>
+                <pagecontrol>60</pagecontrol>
+                <onright>60</onright>
+                <ondown>9000</ondown>
+                <onup>noop</onup>
+                <itemlayout height="84" width="900">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>900</width>
+                        <height>76</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>0AFFFFFF</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>28</left>
+                        <top>0</top>
+                        <width>782</width>
+                        <height>76</height>
+                        <font>font_label_bold</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="image">
+                        <left>836</left>
+                        <top>18</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture>buttons/check_nf.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="84" width="900">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>900</width>
+                        <height>76</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(3)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>900</width>
+                        <height>76</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(3)</visible>
+                    </control>
+                    <control type="label">
+                        <left>28</left>
+                        <top>0</top>
+                        <width>782</width>
+                        <height>76</height>
+                        <font>font_label_bold</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="image">
+                        <left>836</left>
+                        <top>18</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture>buttons/check_nf.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="list" id="6">
+                <left>50</left>
+                <top>130</top>
+                <width>900</width>
+                <height>560</height>
+                <pagecontrol>60</pagecontrol>
+                <onright>60</onright>
+                <ondown>9000</ondown>
+                <onup>noop</onup>
+                <itemlayout height="112" width="900">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>900</width>
+                        <height>104</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>0AFFFFFF</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>76</width>
+                        <height>76</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture background="true">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>108</left>
+                        <top>8</top>
+                        <width>702</width>
+                        <height>48</height>
+                        <font>font_label_bold</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>108</left>
+                        <top>52</top>
+                        <width>702</width>
+                        <height>40</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>836</left>
+                        <top>32</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture>buttons/check_nf.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="112" width="900">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>900</width>
+                        <height>104</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(6)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>900</width>
+                        <height>104</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(6)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>76</width>
+                        <height>76</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture background="true">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>108</left>
+                        <top>8</top>
+                        <width>702</width>
+                        <height>48</height>
+                        <font>font_label_bold</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>108</left>
+                        <top>52</top>
+                        <width>702</width>
+                        <height>40</height>
+                        <font>font10</font>
+                        <textcolor>FF3C4A56</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>836</left>
+                        <top>32</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture>buttons/check_nf.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>960</left>
+                <top>130</top>
+                <height>560</height>
+                <onleft>3</onleft>
+                <onleft>6</onleft>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>50</left>
+                <top>800</top>
+                <width>900</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <align>right</align>
+                <itemgap>14</itemgap>
+                <onup>3</onup>
+                <onup>6</onup>
+            <control type="button" id="5">
+                <width>auto</width>
+                <height>64</height>
+                <label></label>
+            </control>
+            <control type="button" id="7">
+                <width>auto</width>
+                <height>64</height>
+                <label>$LOCALIZE[222]</label>
+            </control>
+            </control>
+        </control>
+    </controls>
+</window>

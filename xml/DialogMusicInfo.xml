@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">9000</defaultcontrol>
+    <include>Anim_Window</include>
+    <controls>
+        <include content="Backdrop">
+            <param name="fanart">$INFO[ListItem.Art(fanart)]</param>
+        </include>
+        <control type="image">
+            <left>96</left>
+            <top>120</top>
+            <width>400</width>
+            <height>400</height>
+            <aspectratio>scale</aspectratio>
+            <texture diffuse="mask_square.png">$INFO[ListItem.Art(thumb)]</texture>
+        </control>
+        <control type="label">
+            <left>540</left>
+            <top>130</top>
+            <width>1300</width>
+            <height>80</height>
+            <font>font52</font>
+            <label>$INFO[ListItem.Label]</label>
+        </control>
+        <control type="label">
+            <left>540</left>
+            <top>214</top>
+            <width>1300</width>
+            <height>44</height>
+            <font>font13</font>
+            <textcolor>text3</textcolor>
+            <label>$INFO[ListItem.Artist]$INFO[ListItem.Year,   ·   ,]$INFO[ListItem.Genre,   ·   ,]</label>
+        </control>
+        <control type="textbox" id="4">
+            <left>540</left>
+            <top>280</top>
+            <width>1280</width>
+            <height>400</height>
+            <font>font_body</font>
+            <label>$INFO[ListItem.Property(Album_Description)]$INFO[ListItem.Property(Artist_Description)]</label>
+        </control>
+        <control type="grouplist" id="9000">
+            <left>96</left>
+            <top>720</top>
+            <width>1728</width>
+            <height>64</height>
+            <orientation>horizontal</orientation>
+            <itemgap>14</itemgap>
+            <control type="button" id="5"><width>auto</width></control>
+            <control type="button" id="6"><width>auto</width><label>$LOCALIZE[184]</label></control>
+            <control type="button" id="7"><width>auto</width><label>$LOCALIZE[31063]</label></control>
+            <control type="button" id="10"><width>auto</width><label>Thumb</label></control>
+        </control>
+        <control type="list" id="50">
+            <visible>false</visible>
+            <left>0</left>
+            <top>0</top>
+            <width>10</width>
+            <height>10</height>
+            <itemlayout height="10"/>
+            <focusedlayout height="10"/>
+        </control>
+    </controls>
+</window>

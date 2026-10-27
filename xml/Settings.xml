@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">9000</defaultcontrol>
+    <backgroundcolor>FF0B1119</backgroundcolor>
+    <controls>
+        <include>PlainBackground</include>
+        <include content="PageHeading">
+            <param name="label">$LOCALIZE[5]</param>
+            <param name="sub">Kodi $INFO[System.BuildVersionShort]   ·   Nuvio Arc $INFO[System.AddonVersion(skin.nuvioarc)]</param>
+        </include>
+        <include>Clock</include>
+        <control type="panel" id="9000">
+            <left>72</left>
+            <top>200</top>
+            <width>1800</width>
+            <height>820</height>
+            <orientation>vertical</orientation>
+            <include>Anim_SlideUp</include>
+            <itemlayout width="444" height="250">
+                <control type="image">
+                    <left>24</left>
+                    <top>24</top>
+                    <width>400</width>
+                    <height>210</height>
+                    <texture border="20">rr20.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>60</left>
+                    <top>60</top>
+                    <width>64</width>
+                    <height>64</height>
+                    <texture colordiffuse="text2">$INFO[ListItem.Icon]</texture>
+                </control>
+                <control type="label">
+                    <left>60</left>
+                    <top>160</top>
+                    <width>340</width>
+                    <height>48</height>
+                    <font>font13_bold</font>
+                    <textcolor>text2</textcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+            </itemlayout>
+            <focusedlayout width="444" height="250">
+                <control type="group">
+                    <left>24</left>
+                    <top>24</top>
+                    <animation effect="zoom" start="100" end="104" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>448</width>
+                        <height>258</height>
+                        <texture border="44">rr20_glow.png</texture>
+                        <colordiffuse>glow</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>400</width>
+                        <height>210</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>36</left>
+                        <top>36</top>
+                        <width>64</width>
+                        <height>64</height>
+                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>36</left>
+                        <top>136</top>
+                        <width>340</width>
+                        <height>48</height>
+                        <font>font13_bold</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                </control>
+            </focusedlayout>
+            <content>
+                <item>
+                    <label>$LOCALIZE[31068]</label>
+                    <icon>icons/videosettings.png</icon>
+                    <onclick>ActivateWindow(PlayerSettings)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31069]</label>
+                    <icon>icons/library.png</icon>
+                    <onclick>ActivateWindow(MediaSettings)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31070]</label>
+                    <icon>icons/view.png</icon>
+                    <onclick>ActivateWindow(InterfaceSettings)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31071]</label>
+                    <icon>icons/settings.png</icon>
+                    <onclick>ActivateWindow(SystemSettings)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31072]</label>
+                    <icon>icons/globe.png</icon>
+                    <onclick>ActivateWindow(ServiceSettings)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31006]</label>
+                    <icon>icons/addons.png</icon>
+                    <onclick>ActivateWindow(AddonBrowser)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31064]</label>
+                    <icon>icons/files.png</icon>
+                    <onclick>ActivateWindow(FileManager)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31066]</label>
+                    <icon>icons/user.png</icon>
+                    <onclick>ActivateWindow(Profiles)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31065]</label>
+                    <icon>icons/info.png</icon>
+                    <onclick>ActivateWindow(SystemInfo)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31067]</label>
+                    <icon>icons/home.png</icon>
+                    <onclick>ActivateWindow(SkinSettings)</onclick>
+                    <visible>true</visible>
+                </item>
+                <item>
+                    <label>Seren</label>
+                    <icon>icons/movies.png</icon>
+                    <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                    <visible>System.HasAddon(plugin.video.seren)</visible>
+                </item>
+            </content>
+        </control>
+    </controls>
+</window>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">5</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>80</left>
+            <top>70</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">1760</param>
+            <param name="height">940</param>
+            <param name="body">modal</param>
+        </include>
+        <control type="label" id="2">
+            <left>56</left>
+            <top>34</top>
+            <width>1300</width>
+            <height>56</height>
+            <font>font32</font>
+            <label></label>
+        </control>
+        <control type="label">
+            <right>56</right>
+            <top>34</top>
+            <width>360</width>
+            <height>56</height>
+            <align>right</align>
+            <font>font10</font>
+            <textcolor>text4</textcolor>
+            <label>$INFO[Window(addonsettings).Property(Addon.Version),v,]</label>
+        </control>
+        <control type="image">
+            <left>56</left>
+            <top>104</top>
+            <width>1648</width>
+            <height>1</height>
+            <texture>white.png</texture>
+            <colordiffuse>separator</colordiffuse>
+        </control>
+
+        <!-- Categories -->
+        <control type="grouplist" id="3">
+            <left>40</left>
+            <top>128</top>
+            <width>400</width>
+            <height>640</height>
+            <itemgap>6</itemgap>
+            <onright>5</onright>
+            <onup>3</onup>
+            <ondown>20</ondown>
+            <usecontrolcoords>true</usecontrolcoords>
+        </control>
+        <include content="CategoryTemplate"><param name="width">400</param></include>
+        <control type="button" id="20">
+            <left>40</left>
+            <top>792</top>
+            <width>400</width>
+            <height>60</height>
+            <font>font12_bold</font>
+            <textoffsetx>28</textoffsetx>
+            <onup>3</onup>
+            <ondown>3</ondown>
+            <onright>9000</onright>
+        </control>
+
+        <!-- Settings -->
+        <control type="grouplist" id="5">
+            <left>480</left>
+            <top>128</top>
+            <width>1210</width>
+            <height>640</height>
+            <itemgap>8</itemgap>
+            <pagecontrol>60</pagecontrol>
+            <onleft>3</onleft>
+            <onright>60</onright>
+            <onup>5</onup>
+            <ondown>5</ondown>
+        </control>
+        <control type="scrollbar" id="60">
+            <left>1714</left>
+            <top>128</top>
+            <height>640</height>
+            <onleft>5</onleft>
+        </control>
+        <include content="SettingDescription">
+            <param name="left">480</param>
+            <param name="top">788</param>
+            <param name="width">720</param>
+        </include>
+        <control type="grouplist" id="9000">
+            <left>1220</left>
+            <top>848</top>
+            <width>484</width>
+            <height>64</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>12</itemgap>
+            <onup>5</onup>
+            <onleft>20</onleft>
+            <control type="button" id="28"><width>auto</width></control>
+            <control type="button" id="29"><width>auto</width></control>
+            <control type="button" id="30"><width>auto</width></control>
+        </control>
+        <include content="SettingTemplates"><param name="width">1210</param></include>
+        </control>
+    </controls>
+</window>

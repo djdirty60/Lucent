@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <controls>
+        <control type="visualisation" id="2">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+        </control>
+        <control type="image">
+            <left>0</left>
+            <top>620</top>
+            <width>1920</width>
+            <height>460</height>
+            <texture>grad_bottom.png</texture>
+            <colordiffuse>E6000000</colordiffuse>
+        </control>
+        <control type="image">
+            <left>96</left>
+            <top>720</top>
+            <width>240</width>
+            <height>240</height>
+            <aspectratio>scale</aspectratio>
+            <texture diffuse="mask_square.png">$INFO[Player.Art(thumb)]</texture>
+        </control>
+        <control type="label">
+            <left>370</left>
+            <top>760</top>
+            <width>1400</width>
+            <height>64</height>
+            <font>font37</font>
+            <label>$INFO[MusicPlayer.Title]</label>
+        </control>
+        <control type="label">
+            <left>370</left>
+            <top>830</top>
+            <width>1400</width>
+            <height>44</height>
+            <font>font13</font>
+            <textcolor>text3</textcolor>
+            <label>$INFO[MusicPlayer.Artist]$INFO[MusicPlayer.Album,   ·   ,]</label>
+        </control>
+        <control type="progress">
+            <left>370</left>
+            <top>910</top>
+            <width>1454</width>
+            <height>6</height>
+            <info>Player.Progress</info>
+        </control>
+    </controls>
+</window>

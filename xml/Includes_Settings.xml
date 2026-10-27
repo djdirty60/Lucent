@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<includes>
+    <!-- Templates Kodi clones for every setting row (ids 7-15 are fixed by Kodi) -->
+    <include name="SettingTemplates">
+        <param name="width">1180</param>
+        <definition>
+            <control type="button" id="7">
+                <width>$PARAM[width]</width>
+                <height>72</height>
+                <font>font_label</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>32</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                <label2></label2>
+            </control>
+            <control type="radiobutton" id="8">
+                <width>$PARAM[width]</width>
+            </control>
+            <control type="spincontrolex" id="9">
+                <width>$PARAM[width]</width>
+            </control>
+            <control type="image" id="11">
+                <width>$PARAM[width]</width>
+                <height>2</height>
+                <texture>white.png</texture>
+                <colordiffuse>separator</colordiffuse>
+            </control>
+            <control type="edit" id="12">
+                <width>$PARAM[width]</width>
+            </control>
+            <control type="sliderex" id="13">
+                <width>$PARAM[width]</width>
+            </control>
+            <control type="label" id="14">
+                <width>$PARAM[width]</width>
+                <height>56</height>
+                <font>font_caps</font>
+                <textcolor>text4</textcolor>
+                <textoffsetx>8</textoffsetx>
+                <aligny>bottom</aligny>
+                <label></label>
+            </control>
+            <control type="colorbutton" id="15">
+                <width>$PARAM[width]</width>
+            </control>
+        </definition>
+    </include>
+
+    <!-- Category button template (id 10) -->
+    <include name="CategoryTemplate">
+        <param name="width">420</param>
+        <definition>
+            <control type="button" id="10">
+                <width>$PARAM[width]</width>
+                <height>68</height>
+                <font>font_label_bold</font>
+                <textcolor>text3</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <selectedcolor>text</selectedcolor>
+                <textoffsetx>28</textoffsetx>
+                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                <texturenofocus border="32" colordiffuse="transparent">pill64.png</texturenofocus>
+                <alttexturefocus border="32" colordiffuse="focus">pill64.png</alttexturefocus>
+                <alttexturenofocus border="32" colordiffuse="glass">pill64.png</alttexturenofocus>
+            </control>
+        </definition>
+    </include>
+
+    <!-- Description of the focused setting -->
+    <include name="SettingDescription">
+        <param name="left">600</param>
+        <param name="top">950</param>
+        <param name="width">1220</param>
+        <definition>
+            <control type="textbox" id="6">
+                <left>$PARAM[left]</left>
+                <top>$PARAM[top]</top>
+                <width>$PARAM[width]</width>
+                <height>90</height>
+                <font>font12</font>
+                <textcolor>text4</textcolor>
+            </control>
+        </definition>
+    </include>
+</includes>

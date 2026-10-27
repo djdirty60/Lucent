@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    <controls>
+        <control type="group">
+            <left>96</left>
+            <top>96</top>
+            <include content="GlassPanel">
+                <param name="left">0</param>
+                <param name="top">0</param>
+                <param name="width">920</param>
+                <param name="height">590</param>
+                <param name="body">modal</param>
+            </include>
+            <control type="label">
+                <left>40</left>
+                <top>30</top>
+                <width>840</width>
+                <height>52</height>
+                <font>font27_title</font>
+                <label>$LOCALIZE[31056]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>100</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>Video</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>100</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.Process(videodecoder)]$INFO[Player.Process(videohwdecoder),  · HW ,]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>146</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label></label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>146</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.Process(videowidth)]$INFO[Player.Process(videoheight),×,]$INFO[Player.Process(videofps),  ·  , fps]$INFO[Player.Process(videoscantype),  ·  ,]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>192</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>HDR</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>192</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[VideoPlayer.HdrType]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>238</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>Deinterlace</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>238</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.Process(deintmethod)]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>284</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>Pixel</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>284</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.Process(pixformat)]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>330</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>Audio</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>330</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.Process(audiodecoder)]$INFO[Player.Process(audiochannels),  ·  ,]$INFO[Player.Process(audiosamplerate),  ·  , Hz]$INFO[Player.Process(audiobitspersample),  ·  , bit]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>376</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>Player</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>376</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.Process(videodecoder)]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>422</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>CPU</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>422</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[System.CpuUsage]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>468</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>RAM</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>468</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[System.Memory(used.percent)]</label>
+            </control>
+            <control type="label">
+                <left>40</left>
+                <top>514</top>
+                <width>220</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text4</textcolor>
+                <label>Cache</label>
+            </control>
+            <control type="label">
+                <left>260</left>
+                <top>514</top>
+                <width>620</width>
+                <height>44</height>
+                <font>font12</font>
+                <label>$INFO[Player.CacheLevel,,%]</label>
+            </control>
+        </control>
+    </controls>
+</window>

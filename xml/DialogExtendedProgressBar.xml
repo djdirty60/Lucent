@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <depth>DepthMax</depth>
+    <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="250">WindowClose</animation>
+    <controls>
+        <control type="group">
+            <left>1200</left>
+            <top>900</top>
+            <include content="GlassPanel">
+                <param name="left">0</param>
+                <param name="top">0</param>
+                <param name="width">672</param>
+                <param name="height">132</param>
+                <param name="body">modal</param>
+            </include>
+            <control type="label" id="30">
+                <left>32</left>
+                <top>18</top>
+                <width>608</width>
+                <height>40</height>
+                <font>font12_bold</font>
+            </control>
+            <control type="label" id="31">
+                <left>32</left>
+                <top>54</top>
+                <width>608</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+            </control>
+            <control type="progress" id="32">
+                <left>32</left>
+                <top>100</top>
+                <width>608</width>
+                <height>6</height>
+            </control>
+        </control>
+    </controls>
+</window>

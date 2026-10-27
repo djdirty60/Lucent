@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">3</defaultcontrol>
+    <backgroundcolor>FF0B1119</backgroundcolor>
+    <controls>
+        <include>PlainBackground</include>
+        <include content="PageHeading">
+            <param name="label">$LOCALIZE[5]</param>
+            <param name="sub">$INFO[Control.GetLabel(2)]</param>
+        </include>
+        <include>Clock</include>
+        <control type="label" id="2">
+            <visible>false</visible>
+        </control>
+
+        <!-- Categories -->
+        <control type="group">
+            <include>Anim_SlideLeft</include>
+            <control type="grouplist" id="3">
+                <left>96</left>
+                <top>170</top>
+                <width>420</width>
+                <height>740</height>
+                <itemgap>6</itemgap>
+                <onright>5</onright>
+                <onup>3</onup>
+                <ondown>20</ondown>
+                <usecontrolcoords>true</usecontrolcoords>
+            </control>
+            <include content="CategoryTemplate"><param name="width">420</param></include>
+            <!-- Settings level (Basic / Standard / Advanced / Expert), label set by Kodi -->
+            <control type="button" id="20">
+                <left>96</left>
+                <top>950</top>
+                <width>420</width>
+                <height>64</height>
+                <font>font12_bold</font>
+                <textoffsetx>28</textoffsetx>
+                <onup>3</onup>
+                <ondown>3</ondown>
+                <onright>5</onright>
+            </control>
+        </control>
+
+        <!-- Settings -->
+        <control type="group">
+            <include>Anim_SlideRight</include>
+            <include content="GlassPanel">
+                <param name="left">570</param>
+                <param name="top">150</param>
+                <param name="width">1280</param>
+                <param name="height">780</param>
+            </include>
+            <control type="grouplist" id="5">
+                <left>620</left>
+                <top>180</top>
+                <width>1180</width>
+                <height>720</height>
+                <itemgap>8</itemgap>
+                <pagecontrol>60</pagecontrol>
+                <onleft>3</onleft>
+                <onright>60</onright>
+                <onup>5</onup>
+                <ondown>5</ondown>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>1822</left>
+                <top>180</top>
+                <height>720</height>
+                <onleft>5</onleft>
+            </control>
+            <include content="SettingDescription">
+                <param name="left">600</param>
+                <param name="top">950</param>
+                <param name="width">1240</param>
+            </include>
+        </control>
+
+        <include content="SettingTemplates"><param name="width">1180</param></include>
+    </controls>
+</window>

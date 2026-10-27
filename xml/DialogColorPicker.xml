@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">6</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>560</left>
+            <top>110</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">800</param>
+            <param name="height">860</param>
+            <param name="body">modal</param>
+        </include>
+            <control type="label" id="1">
+                <left>48</left>
+                <top>32</top>
+                <width>560</width>
+                <height>56</height>
+                <font>font32</font>
+            </control>
+            <control type="label" id="2">
+                <left>560</left>
+                <top>32</top>
+                <width>192</width>
+                <height>56</height>
+                <align>right</align>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+            </control>
+            <control type="panel" id="6">
+                <left>40</left>
+                <top>120</top>
+                <width>720</width>
+                <height>600</height>
+                <onright>60</onright>
+                <ondown>7</ondown>
+                <pagecontrol>60</pagecontrol>
+                <itemlayout width="120" height="120">
+                    <control type="image">
+                        <left>14</left>
+                        <top>14</top>
+                        <width>92</width>
+                        <height>92</height>
+                        <texture colordiffuse="$INFO[ListItem.Label2]">mask_circle.png</texture>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="120" height="120">
+                    <control type="image">
+                        <left>4</left>
+                        <top>4</top>
+                        <width>112</width>
+                        <height>112</height>
+                        <texture>mask_circle.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                        <visible>Control.HasFocus(6)</visible>
+                    </control>
+                    <control type="image">
+                        <left>14</left>
+                        <top>14</top>
+                        <width>92</width>
+                        <height>92</height>
+                        <texture colordiffuse="$INFO[ListItem.Label2]">mask_circle.png</texture>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>770</left>
+                <top>120</top>
+                <height>600</height>
+                <onleft>6</onleft>
+            </control>
+            <control type="button" id="7">
+                <left>540</left>
+                <top>760</top>
+                <width>212</width>
+                <label>$LOCALIZE[222]</label>
+                <onup>6</onup>
+            </control>
+        </control>
+    </controls>
+</window>

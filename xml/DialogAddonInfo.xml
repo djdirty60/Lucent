@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">9000</defaultcontrol>
+    <include>Anim_Window</include>
+    <controls>
+        <include content="Backdrop">
+            <param name="fanart">$INFO[ListItem.Art(fanart)]</param>
+        </include>
+        <control type="group">
+            <include>Anim_SlideLeft</include>
+            <control type="image">
+                <left>96</left>
+                <top>110</top>
+                <width>220</width>
+                <height>220</height>
+                <aspectratio>keep</aspectratio>
+                <texture diffuse="mask_square.png">$INFO[ListItem.Icon]</texture>
+            </control>
+            <control type="label">
+                <left>356</left>
+                <top>130</top>
+                <width>1400</width>
+                <height>80</height>
+                <font>font52</font>
+                <label>$INFO[ListItem.AddonName]</label>
+            </control>
+            <control type="label">
+                <left>356</left>
+                <top>214</top>
+                <width>1400</width>
+                <height>40</height>
+                <font>font13</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[ListItem.AddonCreator]$INFO[ListItem.AddonVersion,   ·   v,]$INFO[ListItem.AddonInstallDate,   ·   ,]</label>
+            </control>
+            <control type="label">
+                <left>356</left>
+                <top>262</top>
+                <width>1400</width>
+                <height>40</height>
+                <font>font12</font>
+                <textcolor>amber</textcolor>
+                <label>$INFO[ListItem.AddonLifecycleDesc]</label>
+            </control>
+            <control type="textbox">
+                <left>96</left>
+                <top>370</top>
+                <width>1100</width>
+                <height>300</height>
+                <font>font_body</font>
+                <textcolor>text2</textcolor>
+                <autoscroll delay="8000" time="3000" repeat="10000">true</autoscroll>
+                <label>[B]$INFO[ListItem.AddonSummary][/B][CR][CR]$INFO[ListItem.AddonDescription]</label>
+            </control>
+            <control type="textbox">
+                <left>1260</left>
+                <top>370</top>
+                <width>560</width>
+                <height>300</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+                <label>$INFO[ListItem.AddonNews]</label>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>96</left>
+                <top>712</top>
+                <width>1728</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <itemgap>14</itemgap>
+                <ondown>50</ondown>
+                <control type="button" id="12">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[208]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="6">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label></label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="8">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[24068]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="14">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[24069]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="7">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label></label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="9">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[5]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="button" id="10">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[31099]</label>
+                    <visible>true</visible>
+                </control>
+                <control type="radiobutton" id="13">
+                    <width>340</width>
+                    <height>64</height>
+                    <font>font_label_bold</font>
+                    <textcolor>text</textcolor>
+                    <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                    <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                    <label>$LOCALIZE[24063]</label>
+                </control>
+            </control>
+        </control>
+        <control type="fixedlist" id="50">
+            <left>72</left>
+            <top>810</top>
+            <width>1848</width>
+            <height>260</height>
+            <orientation>horizontal</orientation>
+            <focusposition>0</focusposition>
+            <onup>9000</onup>
+            <visible>Integer.IsGreater(Container(50).NumItems,0)</visible>
+            <itemlayout width="408" height="250">
+                <control type="image">
+                    <left>24</left>
+                    <top>20</top>
+                    <width>384</width>
+                    <height>216</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Art(thumb)]</texture>
+                </control>
+            </itemlayout>
+            <focusedlayout width="408" height="250">
+                <control type="group">
+                    <left>24</left>
+                    <top>20</top>
+                    <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>384</width>
+                        <height>216</height>
+                        <aspectratio>scale</aspectratio>
+                        <texture diffuse="mask_landscape.png">$INFO[ListItem.Art(thumb)]</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>384</width>
+                        <height>216</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <visible>Control.HasFocus(50)</visible>
+                    </control>
+                </control>
+            </focusedlayout>
+        </control>
+    </controls>
+</window>

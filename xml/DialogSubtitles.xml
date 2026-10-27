@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">150</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>120</left>
+            <top>80</top>
+            <include content="GlassPanel">
+                <param name="left">0</param>
+                <param name="top">0</param>
+                <param name="width">1680</param>
+                <param name="height">920</param>
+                <param name="body">modal</param>
+            </include>
+            <control type="image" id="110">
+                <left>48</left>
+                <top>32</top>
+                <width>64</width>
+                <height>64</height>
+                <aspectratio>keep</aspectratio>
+            </control>
+            <control type="label" id="100">
+                <left>132</left>
+                <top>36</top>
+                <width>1100</width>
+                <height>56</height>
+                <font>font27_title</font>
+            </control>
+            <control type="label" id="140">
+                <left>132</left>
+                <top>90</top>
+                <width>1100</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+            </control>
+            <control type="group" id="130">
+                <left>1240</left>
+                <top>40</top>
+                <control type="label">
+                    <width>380</width>
+                    <height>44</height>
+                    <align>right</align>
+                    <font>font10</font>
+                    <textcolor>green</textcolor>
+                    <label>$LOCALIZE[31048] ✓</label>
+                </control>
+            </control>
+            <control type="button" id="160">
+                <left>48</left>
+                <top>820</top>
+                <width>440</width>
+                <height>64</height>
+                <label>$LOCALIZE[31095]</label>
+                <onup>150</onup>
+                <onright>120</onright>
+            </control>
+            <control type="list" id="150">
+                <left>48</left>
+                <top>180</top>
+                <width>440</width>
+                <height>620</height>
+                <onleft>noop</onleft>
+                <onright>120</onright>
+                <itemlayout height="80" width="440">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>440</width>
+                        <height>72</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>0AFFFFFF</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>0</top>
+                        <width>392</width>
+                        <height>72</height>
+                        <font>font12_bold</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]$INFO[ListItem.Property(sync),  ·  ,]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="80" width="440">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>440</width>
+                        <height>72</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(150)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>440</width>
+                        <height>72</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(150)</visible>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>0</top>
+                        <width>392</width>
+                        <height>72</height>
+                        <font>font12_bold</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]$INFO[ListItem.Property(sync),  ·  ,]</label>
+                        <visible>Control.HasFocus(150)</visible>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>0</top>
+                        <width>392</width>
+                        <height>72</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]$INFO[ListItem.Property(sync),  ·  ,]</label>
+                        <visible>!Control.HasFocus(150)</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="list" id="120">
+                <left>520</left>
+                <top>180</top>
+                <width>1100</width>
+                <height>700</height>
+                <onleft>150</onleft>
+                <onright>73</onright>
+                <pagecontrol>73</pagecontrol>
+                <itemlayout height="96" width="1100">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1100</width>
+                        <height>88</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>0AFFFFFF</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>6</top>
+                        <width>1052</width>
+                        <height>40</height>
+                        <font>font12_bold</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]$INFO[ListItem.Property(sync),  ·  ,]</label>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>44</top>
+                        <width>1052</width>
+                        <height>32</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="96" width="1100">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1100</width>
+                        <height>88</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(120)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1100</width>
+                        <height>88</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(120)</visible>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>6</top>
+                        <width>1052</width>
+                        <height>40</height>
+                        <font>font12_bold</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]$INFO[ListItem.Property(sync),  ·  ,]</label>
+                        <visible>Control.HasFocus(120)</visible>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>6</top>
+                        <width>1052</width>
+                        <height>40</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]$INFO[ListItem.Property(sync),  ·  ,]</label>
+                        <visible>!Control.HasFocus(120)</visible>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>44</top>
+                        <width>1052</width>
+                        <height>32</height>
+                        <font>font10</font>
+                        <textcolor>FF3C4A56</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="scrollbar" id="73">
+                <left>1636</left>
+                <top>180</top>
+                <height>700</height>
+                <onleft>120</onleft>
+            </control>
+        </control>
+    </controls>
+</window>

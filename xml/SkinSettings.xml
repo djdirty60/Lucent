@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">9000</defaultcontrol>
+    <backgroundcolor>FF0B1119</backgroundcolor>
+    <controls>
+        <include>PlainBackground</include>
+        <include content="PageHeading">
+            <param name="label">$LOCALIZE[31067]</param>
+            <param name="sub">Nuvio Arc $INFO[System.AddonVersion(skin.nuvioarc)]</param>
+        </include>
+        <include>Clock</include>
+        <control type="group">
+            <include>Anim_SlideRight</include>
+        <include content="GlassPanel">
+            <param name="left">330</param>
+            <param name="top">150</param>
+            <param name="width">1260</param>
+            <param name="height">880</param>
+            <param name="body">panel</param>
+        </include>
+            <control type="grouplist" id="9000">
+                <left>370</left>
+                <top>180</top>
+                <width>1180</width>
+                <height>820</height>
+                <itemgap>8</itemgap>
+                <pagecontrol>60</pagecontrol>
+                <onright>60</onright>
+                <control type="label">
+                    <width>1180</width>
+                    <height>56</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31026]</label>
+                </control>
+                <control type="radiobutton" id="201">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31010]</label>
+                    <selected>!Skin.HasSetting(nuvio.hide.8001)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hide.8001)</onclick>
+                </control>
+                <control type="radiobutton" id="202">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31011]</label>
+                    <selected>!Skin.HasSetting(nuvio.hide.8002)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hide.8002)</onclick>
+                </control>
+                <control type="radiobutton" id="203">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31012]</label>
+                    <selected>!Skin.HasSetting(nuvio.hide.8003)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hide.8003)</onclick>
+                </control>
+                <control type="radiobutton" id="204">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31013]</label>
+                    <selected>!Skin.HasSetting(nuvio.hide.8004)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hide.8004)</onclick>
+                </control>
+                <control type="radiobutton" id="205">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31014]</label>
+                    <selected>!Skin.HasSetting(nuvio.hide.8005)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hide.8005)</onclick>
+                </control>
+                <control type="radiobutton" id="206">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31015]</label>
+                    <selected>!Skin.HasSetting(nuvio.hide.8006)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hide.8006)</onclick>
+                </control>
+                <control type="label">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31086]  ·  TRAKT</label>
+                </control>
+                <control type="button" id="210">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label_bold</font>
+                    <textcolor>text</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31027]</label>
+                    <onclick>RunScript(special://skin/scripts/lists.py)</onclick>
+                </control>
+                <control type="button" id="221">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31016] 1</label>
+                    <label2>$INFO[Skin.String(nuvio.list1.label)]</label2>
+                    <onclick>Skin.Reset(nuvio.list1.path)</onclick>
+                    <onclick>Skin.Reset(nuvio.list1.label)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list1.path))</visible>
+                </control>
+                <control type="button" id="222">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31016] 2</label>
+                    <label2>$INFO[Skin.String(nuvio.list2.label)]</label2>
+                    <onclick>Skin.Reset(nuvio.list2.path)</onclick>
+                    <onclick>Skin.Reset(nuvio.list2.label)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list2.path))</visible>
+                </control>
+                <control type="button" id="223">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31016] 3</label>
+                    <label2>$INFO[Skin.String(nuvio.list3.label)]</label2>
+                    <onclick>Skin.Reset(nuvio.list3.path)</onclick>
+                    <onclick>Skin.Reset(nuvio.list3.label)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list3.path))</visible>
+                </control>
+                <control type="button" id="224">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31016] 4</label>
+                    <label2>$INFO[Skin.String(nuvio.list4.label)]</label2>
+                    <onclick>Skin.Reset(nuvio.list4.path)</onclick>
+                    <onclick>Skin.Reset(nuvio.list4.label)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list4.path))</visible>
+                </control>
+                <control type="button" id="225">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31016] 5</label>
+                    <label2>$INFO[Skin.String(nuvio.list5.label)]</label2>
+                    <onclick>Skin.Reset(nuvio.list5.path)</onclick>
+                    <onclick>Skin.Reset(nuvio.list5.label)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list5.path))</visible>
+                </control>
+                <control type="button" id="226">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31016] 6</label>
+                    <label2>$INFO[Skin.String(nuvio.list6.label)]</label2>
+                    <onclick>Skin.Reset(nuvio.list6.path)</onclick>
+                    <onclick>Skin.Reset(nuvio.list6.label)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list6.path))</visible>
+                </control>
+                <control type="button" id="211">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31058]</label>
+                    <onclick>RunScript(special://skin/scripts/lists.py,clear)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.list1.path))</visible>
+                </control>
+                <control type="label">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31029]</label>
+                </control>
+                <control type="radiobutton" id="230">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31060]</label>
+                    <selected>!Skin.HasSetting(nuvio.hideclock)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.hideclock)</onclick>
+                </control>
+                <control type="button" id="231">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[31085]</label>
+                    <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                    <visible>System.HasAddon(plugin.video.seren)</visible>
+                </control>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>1562</left>
+                <top>180</top>
+                <height>820</height>
+                <onleft>9000</onleft>
+            </control>
+        </control>
+    </controls>
+</window>

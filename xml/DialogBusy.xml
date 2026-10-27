@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <depth>DepthMax</depth>
+    <animation effect="fade" start="0" end="100" time="300" delay="300">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    <controls>
+        <control type="group">
+            <left>888</left>
+            <top>468</top>
+            <control type="image">
+                <left>-28</left>
+                <top>-28</top>
+                <width>200</width>
+                <height>200</height>
+                <texture>mask_circle.png</texture>
+                <colordiffuse>CC0B1119</colordiffuse>
+            </control>
+            <control type="group">
+                <left>40</left>
+                <top>40</top>
+                <include content="Spinner"><param name="size">64</param></include>
+            </control>
+            <control type="progress" id="10">
+                <left>24</left>
+                <top>168</top>
+                <width>96</width>
+                <height>6</height>
+                <visible>Integer.IsGreater(System.Progressbar,0)</visible>
+                <info>System.Progressbar</info>
+            </control>
+        </control>
+    </controls>
+</window>

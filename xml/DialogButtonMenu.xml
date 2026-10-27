@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">9000</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>660</left>
+            <top>230</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">600</param>
+            <param name="height">620</param>
+            <param name="body">modal</param>
+        </include>
+            <control type="label" id="3100">
+                <visible>false</visible>
+            </control>
+            <control type="label">
+                <left>48</left>
+                <top>32</top>
+                <width>504</width>
+                <height>56</height>
+                <font>font32</font>
+                <label>$LOCALIZE[31009]</label>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>20</left>
+                <top>110</top>
+                <width>560</width>
+                <height>490</height>
+                <itemgap>4</itemgap>
+                <control type="button" id="9101">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[13012]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>Quit()</onclick>
+                    <visible>System.ShowExitButton</visible>
+                </control>
+                <control type="button" id="9102">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[13016]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>Powerdown()</onclick>
+                    <visible>System.CanPowerDown</visible>
+                </control>
+                <control type="button" id="9103">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[13011]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>Suspend()</onclick>
+                    <visible>System.CanSuspend</visible>
+                </control>
+                <control type="button" id="9104">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[13013]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>Reboot()</onclick>
+                    <visible>System.CanReboot</visible>
+                </control>
+                <control type="button" id="9105">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[20126]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>System.LogOff</onclick>
+                    <visible>System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)</visible>
+                </control>
+                <control type="button" id="9106">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[13017]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>InhibitIdleShutdown(true)</onclick>
+                    <visible>System.HasShutdown + !System.IsInhibit</visible>
+                </control>
+                <control type="button" id="9107">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[13018]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>InhibitIdleShutdown(false)</onclick>
+                    <visible>System.HasShutdown + System.IsInhibit</visible>
+                </control>
+                <control type="button" id="9108">
+                    <width>560</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <textoffsetx>28</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+                    <label>$LOCALIZE[5]</label>
+                    <onclick>Dialog.Close(all,true)</onclick>
+                    <onclick>ActivateWindow(Settings)</onclick>
+                    <visible>true</visible>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

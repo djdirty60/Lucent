@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">50</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>160</left>
+            <top>90</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">1600</param>
+            <param name="height">900</param>
+            <param name="body">modal</param>
+        </include>
+            <control type="label" id="2">
+                <left>48</left>
+                <top>32</top>
+                <width>1500</width>
+                <height>56</height>
+                <font>font32</font>
+            </control>
+            <control type="label">
+                <left>48</left>
+                <top>90</top>
+                <width>1500</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+                <label>$INFO[Container(50).ListItem.FileNameAndPath]</label>
+            </control>
+            <control type="group" id="100">
+            <control type="list" id="50">
+                <left>48</left>
+                <top>150</top>
+                <width>1060</width>
+                <height>700</height>
+                <onright>101</onright>
+                <onup>noop</onup>
+                <ondown>noop</ondown>
+                <pagecontrol>60</pagecontrol>
+                <itemlayout height="80" width="1060">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1060</width>
+                        <height>72</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>0AFFFFFF</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>16</left>
+                        <top>12</top>
+                        <width>48</width>
+                        <height>48</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture>$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>80</left>
+                        <top>0</top>
+                        <width>680</width>
+                        <height>72</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>760</left>
+                        <top>0</top>
+                        <width>280</width>
+                        <height>72</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="80" width="1060">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1060</width>
+                        <height>72</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>16</left>
+                        <top>12</top>
+                        <width>48</width>
+                        <height>48</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture>$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>80</left>
+                        <top>0</top>
+                        <width>680</width>
+                        <height>72</height>
+                        <font>font_label</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>760</left>
+                        <top>0</top>
+                        <width>280</width>
+                        <height>72</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>FF3C4A56</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </focusedlayout>
+            </control>
+                <control type="scrollbar" id="60">
+                    <left>1116</left>
+                    <top>150</top>
+                    <height>700</height>
+                    <onleft>50</onleft>
+                    <onright>101</onright>
+                </control>
+            </control>
+            <control type="grouplist" id="101">
+                <left>1160</left>
+                <top>150</top>
+                <width>400</width>
+                <height>720</height>
+                <itemgap>12</itemgap>
+                <onleft>50</onleft>
+                <control type="button" id="21">
+                    <width>400</width>
+                    <label>$LOCALIZE[208]</label>
+                </control>
+                <control type="button" id="22">
+                    <width>400</width>
+                    <label>$LOCALIZE[40014]</label>
+                </control>
+                <control type="button" id="23">
+                    <width>400</width>
+                    <label>$LOCALIZE[40015]</label>
+                </control>
+                <control type="button" id="27">
+                    <width>400</width>
+                    <label>$LOCALIZE[13511]</label>
+                </control>
+                <control type="button" id="24">
+                    <width>400</width>
+                    <label>$LOCALIZE[40004]</label>
+                </control>
+                <control type="button" id="28">
+                    <width>400</width>
+                    <label>$LOCALIZE[118]</label>
+                </control>
+                <control type="button" id="26">
+                    <width>400</width>
+                    <label>$LOCALIZE[15015]</label>
+                </control>
+                <control type="button" id="29">
+                    <width>400</width>
+                    <label>$LOCALIZE[40046]</label>
+                </control>
+                <control type="button" id="25">
+                    <width>400</width>
+                    <label>$LOCALIZE[40023]</label>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

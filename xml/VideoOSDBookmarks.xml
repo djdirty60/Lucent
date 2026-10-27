@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">11</defaultcontrol>
+    <include>Anim_SlideUp</include>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>520</top>
+            <width>1920</width>
+            <height>560</height>
+            <texture>grad_bottom.png</texture>
+            <colordiffuse>F2000000</colordiffuse>
+        </control>
+        <control type="label">
+            <left>96</left>
+            <top>620</top>
+            <width>800</width>
+            <height>52</height>
+            <font>font27_title</font>
+            <label>$LOCALIZE[31052]</label>
+        </control>
+        <control type="grouplist" id="9001">
+            <right>96</right>
+            <top>612</top>
+            <width>1200</width>
+            <height>60</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>12</itemgap>
+            <ondown>11</ondown>
+            <control type="button" id="2">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12_bold</font>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
+                <label>$LOCALIZE[294]</label>
+            </control>
+            <control type="button" id="4">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12_bold</font>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
+                <label>$LOCALIZE[20406]</label>
+                <visible>VideoPlayer.Content(episodes)</visible>
+            </control>
+            <control type="button" id="3">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12_bold</font>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
+                <label>$LOCALIZE[296]</label>
+            </control>
+        </control>
+        <control type="fixedlist" id="11">
+            <left>72</left>
+            <top>700</top>
+            <width>1848</width>
+            <height>320</height>
+            <orientation>horizontal</orientation>
+            <focusposition>0</focusposition>
+            <onup>9001</onup>
+            <itemlayout width="348" height="300">
+                <control type="image">
+                    <left>24</left>
+                    <top>20</top>
+                    <width>320</width>
+                    <height>180</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Art(thumb)]</texture>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>210</top>
+                    <width>320</width>
+                    <height>36</height>
+                    <font>font12</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>244</top>
+                    <width>320</width>
+                    <height>32</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$INFO[ListItem.Label2]</label>
+                </control>
+            </itemlayout>
+            <focusedlayout width="348" height="300">
+                <control type="group">
+                    <left>24</left>
+                    <top>20</top>
+                    <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>368</width>
+                        <height>228</height>
+                        <texture border="38">rr14_glow.png</texture>
+                        <colordiffuse>glow</colordiffuse>
+                        <visible>Control.HasFocus(11)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>320</width>
+                        <height>180</height>
+                        <aspectratio>scale</aspectratio>
+                        <texture diffuse="mask_landscape.png">$INFO[ListItem.Art(thumb)]</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>320</width>
+                        <height>180</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                        <visible>Control.HasFocus(11)</visible>
+                    </control>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>210</top>
+                    <width>320</width>
+                    <height>36</height>
+                    <font>font12_bold</font>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>244</top>
+                    <width>320</width>
+                    <height>32</height>
+                    <font>font10</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[ListItem.Label2]</label>
+                </control>
+            </focusedlayout>
+        </control>
+    </controls>
+</window>

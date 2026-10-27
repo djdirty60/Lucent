@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">20</defaultcontrol>
+    <backgroundcolor>FF0B1119</backgroundcolor>
+    <controls>
+        <include>PlainBackground</include>
+        <include content="PageHeading">
+            <param name="label">$LOCALIZE[31064]</param>
+            <param name="sub"></param>
+        </include>
+        <include>Clock</include>
+        <control type="group">
+            <include>Anim_SlideLeft</include>
+        <include content="GlassPanel">
+            <param name="left">72</param>
+            <param name="top">150</param>
+            <param name="width">870</param>
+            <param name="height">880</param>
+            <param name="body">panel</param>
+        </include>
+            <control type="label" id="101">
+                <left>104</left>
+                <top>166</top>
+                <width>800</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text3</textcolor>
+            </control>
+            <control type="label" id="12">
+                <left>104</left>
+                <top>986</top>
+                <width>800</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+            </control>
+            <control type="list" id="20">
+                <left>96</left>
+                <top>220</top>
+                <width>820</width>
+                <height>750</height>
+                <onleft>noop</onleft>
+                <onright>21</onright>
+                <onup>noop</onup>
+                <ondown>noop</ondown>
+                <itemlayout height="70" width="820">
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="text3">$VAR[FileIcon]</texture>
+                        
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>560</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        
+                    </control>
+                    <control type="label">
+                        <left>630</left>
+                        <top>0</top>
+                        <width>170</width>
+                        <height>64</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>770</left>
+                        <top>16</top>
+                        <width>32</width>
+                        <height>32</height>
+                        <texture>buttons/check_fo.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="70" width="820">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>820</width>
+                        <height>64</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(20)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>820</width>
+                        <height>64</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(20)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="on_focus">$VAR[FileIcon]</texture>
+                        <visible>Control.HasFocus(20)</visible>
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>560</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(20)</visible>
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>560</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>!Control.HasFocus(20)</visible>
+                    </control>
+                    <control type="label">
+                        <left>630</left>
+                        <top>0</top>
+                        <width>170</width>
+                        <height>64</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>770</left>
+                        <top>16</top>
+                        <width>32</width>
+                        <height>32</height>
+                        <texture>buttons/check_fo.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+        <control type="group">
+            <include>Anim_SlideRight</include>
+        <include content="GlassPanel">
+            <param name="left">978</param>
+            <param name="top">150</param>
+            <param name="width">870</param>
+            <param name="height">880</param>
+            <param name="body">panel</param>
+        </include>
+            <control type="label" id="102">
+                <left>1010</left>
+                <top>166</top>
+                <width>800</width>
+                <height>44</height>
+                <font>font12_bold</font>
+                <textcolor>text3</textcolor>
+            </control>
+            <control type="label" id="13">
+                <left>1010</left>
+                <top>986</top>
+                <width>800</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+            </control>
+            <control type="list" id="21">
+                <left>1002</left>
+                <top>220</top>
+                <width>820</width>
+                <height>750</height>
+                <onleft>20</onleft>
+                <onright>noop</onright>
+                <onup>noop</onup>
+                <ondown>noop</ondown>
+                <itemlayout height="70" width="820">
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="text3">$VAR[FileIcon]</texture>
+                        
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>560</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        
+                    </control>
+                    <control type="label">
+                        <left>630</left>
+                        <top>0</top>
+                        <width>170</width>
+                        <height>64</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>770</left>
+                        <top>16</top>
+                        <width>32</width>
+                        <height>32</height>
+                        <texture>buttons/check_fo.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="70" width="820">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>820</width>
+                        <height>64</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(21)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>820</width>
+                        <height>64</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(21)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="on_focus">$VAR[FileIcon]</texture>
+                        <visible>Control.HasFocus(21)</visible>
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>560</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(21)</visible>
+                    </control>
+                    <control type="label">
+                        <left>72</left>
+                        <top>0</top>
+                        <width>560</width>
+                        <height>64</height>
+                        <font>font_label</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>!Control.HasFocus(21)</visible>
+                    </control>
+                    <control type="label">
+                        <left>630</left>
+                        <top>0</top>
+                        <width>170</width>
+                        <height>64</height>
+                        <align>right</align>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>770</left>
+                        <top>16</top>
+                        <width>32</width>
+                        <height>32</height>
+                        <texture>buttons/check_fo.png</texture>
+                        <visible>ListItem.IsSelected</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+    </controls>
+</window>

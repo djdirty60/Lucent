@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">100</defaultcontrol>
+    <include>Anim_Window</include>
+    <controls>
+        <control type="grouplist" id="100">
+            <left>96</left>
+            <top>980</top>
+            <width>1728</width>
+            <height>84</height>
+            <orientation>horizontal</orientation>
+            <align>center</align>
+            <itemgap>22</itemgap>
+            <include content="IconButton"><param name="id">101</param><param name="icon">prev</param><param name="onclick">PlayerControl(Previous)</param></include>
+            <include content="IconButton"><param name="id">102</param><param name="icon">pause</param><param name="onclick">PlayerControl(Play)</param><param name="visible">!Player.Paused</param></include>
+            <include content="IconButton"><param name="id">103</param><param name="icon">play</param><param name="onclick">PlayerControl(Play)</param><param name="visible">Player.Paused</param></include>
+            <include content="IconButton"><param name="id">104</param><param name="icon">next</param><param name="onclick">PlayerControl(Next)</param></include>
+            <include content="IconButton"><param name="id">105</param><param name="icon">shuffle</param><param name="onclick">PlayerControl(Random)</param></include>
+            <include content="IconButton"><param name="id">106</param><param name="icon">repeat</param><param name="onclick">PlayerControl(Repeat)</param></include>
+            <include content="IconButton"><param name="id">107</param><param name="icon">stop</param><param name="onclick">PlayerControl(Stop)</param></include>
+        </control>
+    </controls>
+</window>

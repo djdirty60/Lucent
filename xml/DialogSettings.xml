@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">5</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>310</left>
+            <top>110</top>
+        <include content="GlassPanel">
+            <param name="left">0</param>
+            <param name="top">0</param>
+            <param name="width">1300</param>
+            <param name="height">860</param>
+            <param name="body">modal</param>
+        </include>
+        <control type="label" id="2">
+            <left>56</left>
+            <top>36</top>
+            <width>1188</width>
+            <height>56</height>
+            <font>font32</font>
+            <label></label>
+        </control>
+        <control type="image">
+            <left>56</left>
+            <top>108</top>
+            <width>1188</width>
+            <height>1</height>
+            <texture>white.png</texture>
+            <colordiffuse>separator</colordiffuse>
+        </control>
+        <control type="grouplist" id="5">
+            <left>56</left>
+            <top>132</top>
+            <width>1170</width>
+            <height>580</height>
+            <itemgap>8</itemgap>
+            <pagecontrol>60</pagecontrol>
+            <onright>60</onright>
+            <onup>5</onup>
+            <ondown>9000</ondown>
+        </control>
+        <control type="scrollbar" id="60">
+            <left>1250</left>
+            <top>132</top>
+            <height>580</height>
+            <onleft>5</onleft>
+        </control>
+        <control type="grouplist" id="9000">
+            <left>56</left>
+            <top>752</top>
+            <width>1188</width>
+            <height>64</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>14</itemgap>
+            <onup>5</onup>
+            <control type="button" id="28"><width>auto</width></control>
+            <control type="button" id="29"><width>auto</width></control>
+            <control type="button" id="30"><width>auto</width></control>
+        </control>
+        <include content="SettingTemplates"><param name="width">1170</param></include>
+        </control>
+    </controls>
+</window>

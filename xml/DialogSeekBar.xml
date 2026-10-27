@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <visible>![Window.IsActive(videoosd) | Window.IsActive(fullscreeninfo)] + [Player.Seeking | Player.HasPerformedSeek(3) | [Player.Paused + !Player.Caching] | Player.Forwarding | Player.Rewinding | !String.IsEmpty(Player.SeekNumeric)] + !Window.IsActive(sliderdialog) + Window.IsActive(fullscreenvideo)</visible>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="300">WindowClose</animation>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>560</top>
+            <width>1920</width>
+            <height>520</height>
+            <texture>grad_bottom.png</texture>
+            <colordiffuse>F2000000</colordiffuse>
+        </control>
+        <control type="group">
+            <left>96</left>
+            <top>936</top>
+            <width>1728</width>
+            <control type="label">
+                <left>0</left>
+                <top>-56</top>
+                <width>600</width>
+                <height>40</height>
+                <font>font13_bold</font>
+                <label>$INFO[Player.Time]</label>
+                <visible>!Player.Seeking</visible>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>-56</top>
+                <width>600</width>
+                <height>40</height>
+                <font>font13_bold</font>
+                <label>$INFO[Player.SeekTime]$INFO[Player.SeekOffset,   (,)]</label>
+                <visible>Player.Seeking</visible>
+            </control>
+            <control type="label">
+                <right>0</right>
+                <top>-56</top>
+                <width>600</width>
+                <height>40</height>
+                <align>right</align>
+                <font>font13</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[Player.Duration]</label>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>6</height>
+                <info>Player.ProgressCache</info>
+                <texturebg border="3" colordiffuse="26FFFFFF">pill6.png</texturebg>
+                <midtexture border="3" colordiffuse="40FFFFFF">pill6.png</midtexture>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>6</height>
+                <info>Player.Progress</info>
+                <texturebg/>
+                <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
+            </control>
+            <control type="slider" id="401">
+                <left>0</left>
+                <top>-10</top>
+                <width>1728</width>
+                <height>26</height>
+                <texturesliderbar colordiffuse="00FFFFFF">pill6.png</texturesliderbar>
+                <textureslidernib colordiffuse="text">nib.png</textureslidernib>
+                <textureslidernibfocus colordiffuse="text">nib.png</textureslidernibfocus>
+                <visible>Player.SeekEnabled</visible>
+            </control>
+            <control type="progress" id="403">
+                <visible>false</visible>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>24</top>
+                <width>1728</width>
+                <height>40</height>
+                <align>center</align>
+                <font>font12_bold</font>
+                <textcolor>text2</textcolor>
+                <label>$INFO[Player.SeekNumeric]</label>
+                <visible>!String.IsEmpty(Player.SeekNumeric)</visible>
+            </control>
+        </control>
+        <control type="image">
+            <left>904</left>
+            <top>756</top>
+            <width>112</width>
+            <height>112</height>
+            <texture>buttons/pause_nf.png</texture>
+            <visible>Player.Paused + !Player.Seeking</visible>
+        </control>
+    </controls>
+</window>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <controls>
+        <!-- Buffering -->
+        <control type="group">
+            <visible>Player.Caching</visible>
+            <animation effect="fade" start="0" end="100" time="200" delay="300">Visible</animation>
+            <control type="group">
+                <left>888</left>
+                <top>468</top>
+                <control type="image">
+                    <left>-28</left>
+                    <top>-28</top>
+                    <width>200</width>
+                    <height>200</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>B30B1119</colordiffuse>
+                </control>
+                <control type="group">
+                    <left>40</left>
+                    <top>40</top>
+                    <include content="Spinner"><param name="size">64</param></include>
+                </control>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>660</top>
+                <width>1920</width>
+                <height>40</height>
+                <align>center</align>
+                <font>font12_bold</font>
+                <label>$LOCALIZE[31077]$INFO[Player.CacheLevel,  ,%]</label>
+            </control>
+        </control>
+        <!-- Codec info labels (filled by Kodi) -->
+        <control type="group">
+            <left>96</left>
+            <top>60</top>
+            <visible>Player.ShowInfo</visible>
+            <control type="label" id="10">
+                <left>0</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>34</height>
+                <font>font_mono</font>
+            </control>
+            <control type="label" id="11">
+                <left>0</left>
+                <top>34</top>
+                <width>1728</width>
+                <height>34</height>
+                <font>font_mono</font>
+            </control>
+            <control type="label" id="12">
+                <left>0</left>
+                <top>68</top>
+                <width>1728</width>
+                <height>34</height>
+                <font>font_mono</font>
+            </control>
+        </control>
+    </controls>
+</window>
