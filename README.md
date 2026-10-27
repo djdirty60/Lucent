@@ -1,4 +1,4 @@
-# Nuvio Arc – Kodi skin
+# Nuvio Arc – Kodi skin (NOT FOR USE IN TEST PHASE)
 
 A dark, cinematic Kodi skin inspired by **Nuvio Arc V2** (Cinematic Glass): large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
 
