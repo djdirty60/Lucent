@@ -7,6 +7,7 @@
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
+    <onload condition="!$EXP[NuvioAnyRow]">SetFocus(9000)</onload>
     <onload>SetProperty(nuvio.started,1,home)</onload>
     <controls>
         <!-- ============ Backdrop ============ -->
@@ -127,8 +128,8 @@
                 <height>870</height>
                 <orientation>vertical</orientation>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
-                <onright>9100</onright>
-                <onback>9100</onback>
+                <onright condition="$EXP[NuvioAnyRow]">9100</onright>
+                <onback condition="$EXP[NuvioAnyRow]">9100</onback>
                 <itemlayout width="360" height="84">
                     <control type="image">
                         <left>18</left>

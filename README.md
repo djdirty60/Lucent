@@ -85,11 +85,11 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.2.1.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.2.2.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.2.1.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.2.2.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
 

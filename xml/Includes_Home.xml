@@ -121,6 +121,66 @@
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w10.style)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w10.style)]</value>
     </variable>
+    <variable name="NuvioW1PathPoster">
+        <value condition="!$EXP[NuvioW1Land]">$VAR[NuvioW1Path]</value>
+    </variable>
+    <variable name="NuvioW1PathLand">
+        <value condition="$EXP[NuvioW1Land]">$VAR[NuvioW1Path]</value>
+    </variable>
+    <variable name="NuvioW2PathPoster">
+        <value condition="!$EXP[NuvioW2Land]">$VAR[NuvioW2Path]</value>
+    </variable>
+    <variable name="NuvioW2PathLand">
+        <value condition="$EXP[NuvioW2Land]">$VAR[NuvioW2Path]</value>
+    </variable>
+    <variable name="NuvioW3PathPoster">
+        <value condition="!$EXP[NuvioW3Land]">$VAR[NuvioW3Path]</value>
+    </variable>
+    <variable name="NuvioW3PathLand">
+        <value condition="$EXP[NuvioW3Land]">$VAR[NuvioW3Path]</value>
+    </variable>
+    <variable name="NuvioW4PathPoster">
+        <value condition="!$EXP[NuvioW4Land]">$VAR[NuvioW4Path]</value>
+    </variable>
+    <variable name="NuvioW4PathLand">
+        <value condition="$EXP[NuvioW4Land]">$VAR[NuvioW4Path]</value>
+    </variable>
+    <variable name="NuvioW5PathPoster">
+        <value condition="!$EXP[NuvioW5Land]">$VAR[NuvioW5Path]</value>
+    </variable>
+    <variable name="NuvioW5PathLand">
+        <value condition="$EXP[NuvioW5Land]">$VAR[NuvioW5Path]</value>
+    </variable>
+    <variable name="NuvioW6PathPoster">
+        <value condition="!$EXP[NuvioW6Land]">$VAR[NuvioW6Path]</value>
+    </variable>
+    <variable name="NuvioW6PathLand">
+        <value condition="$EXP[NuvioW6Land]">$VAR[NuvioW6Path]</value>
+    </variable>
+    <variable name="NuvioW7PathPoster">
+        <value condition="!$EXP[NuvioW7Land]">$VAR[NuvioW7Path]</value>
+    </variable>
+    <variable name="NuvioW7PathLand">
+        <value condition="$EXP[NuvioW7Land]">$VAR[NuvioW7Path]</value>
+    </variable>
+    <variable name="NuvioW8PathPoster">
+        <value condition="!$EXP[NuvioW8Land]">$VAR[NuvioW8Path]</value>
+    </variable>
+    <variable name="NuvioW8PathLand">
+        <value condition="$EXP[NuvioW8Land]">$VAR[NuvioW8Path]</value>
+    </variable>
+    <variable name="NuvioW9PathPoster">
+        <value condition="!$EXP[NuvioW9Land]">$VAR[NuvioW9Path]</value>
+    </variable>
+    <variable name="NuvioW9PathLand">
+        <value condition="$EXP[NuvioW9Land]">$VAR[NuvioW9Path]</value>
+    </variable>
+    <variable name="NuvioW10PathPoster">
+        <value condition="!$EXP[NuvioW10Land]">$VAR[NuvioW10Path]</value>
+    </variable>
+    <variable name="NuvioW10PathLand">
+        <value condition="$EXP[NuvioW10Land]">$VAR[NuvioW10Path]</value>
+    </variable>
 
     <expression name="NuvioW1Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.path))]</expression>
     <expression name="NuvioW1Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.style),land)]</expression>
@@ -162,12 +222,12 @@
     <expression name="NuvioW10Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.style),land)]</expression>
     <expression name="NuvioRow8110">$EXP[NuvioW10Has] + !$EXP[NuvioW10Land] + [Integer.IsGreater(Container(8110).NumItems,0) | Container(8110).IsUpdating]</expression>
     <expression name="NuvioRow8210">$EXP[NuvioW10Has] + $EXP[NuvioW10Land] + [Integer.IsGreater(Container(8210).NumItems,0) | Container(8210).IsUpdating]</expression>
-    <expression name="NuvioActiveRowVisible">[String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(8101)] | [String.IsEqual(Window(home).Property(nuvio.row),8201) + Control.IsVisible(8201)] | [String.IsEqual(Window(home).Property(nuvio.row),8102) + Control.IsVisible(8102)] | [String.IsEqual(Window(home).Property(nuvio.row),8202) + Control.IsVisible(8202)] | [String.IsEqual(Window(home).Property(nuvio.row),8103) + Control.IsVisible(8103)] | [String.IsEqual(Window(home).Property(nuvio.row),8203) + Control.IsVisible(8203)] | [String.IsEqual(Window(home).Property(nuvio.row),8104) + Control.IsVisible(8104)] | [String.IsEqual(Window(home).Property(nuvio.row),8204) + Control.IsVisible(8204)] | [String.IsEqual(Window(home).Property(nuvio.row),8105) + Control.IsVisible(8105)] | [String.IsEqual(Window(home).Property(nuvio.row),8205) + Control.IsVisible(8205)] | [String.IsEqual(Window(home).Property(nuvio.row),8106) + Control.IsVisible(8106)] | [String.IsEqual(Window(home).Property(nuvio.row),8206) + Control.IsVisible(8206)] | [String.IsEqual(Window(home).Property(nuvio.row),8107) + Control.IsVisible(8107)] | [String.IsEqual(Window(home).Property(nuvio.row),8207) + Control.IsVisible(8207)] | [String.IsEqual(Window(home).Property(nuvio.row),8108) + Control.IsVisible(8108)] | [String.IsEqual(Window(home).Property(nuvio.row),8208) + Control.IsVisible(8208)] | [String.IsEqual(Window(home).Property(nuvio.row),8109) + Control.IsVisible(8109)] | [String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(8209)] | [String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(8110)] | [String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(8210)]</expression>
-    <expression name="NuvioAnyRow">Control.IsVisible(8101) | Control.IsVisible(8201) | Control.IsVisible(8102) | Control.IsVisible(8202) | Control.IsVisible(8103) | Control.IsVisible(8203) | Control.IsVisible(8104) | Control.IsVisible(8204) | Control.IsVisible(8105) | Control.IsVisible(8205) | Control.IsVisible(8106) | Control.IsVisible(8206) | Control.IsVisible(8107) | Control.IsVisible(8207) | Control.IsVisible(8108) | Control.IsVisible(8208) | Control.IsVisible(8109) | Control.IsVisible(8209) | Control.IsVisible(8110) | Control.IsVisible(8210)</expression>
+    <expression name="NuvioActiveRowVisible">[String.IsEqual(Window(home).Property(nuvio.row),8101) + $EXP[NuvioRow8101]] | [String.IsEqual(Window(home).Property(nuvio.row),8201) + $EXP[NuvioRow8201]] | [String.IsEqual(Window(home).Property(nuvio.row),8102) + $EXP[NuvioRow8102]] | [String.IsEqual(Window(home).Property(nuvio.row),8202) + $EXP[NuvioRow8202]] | [String.IsEqual(Window(home).Property(nuvio.row),8103) + $EXP[NuvioRow8103]] | [String.IsEqual(Window(home).Property(nuvio.row),8203) + $EXP[NuvioRow8203]] | [String.IsEqual(Window(home).Property(nuvio.row),8104) + $EXP[NuvioRow8104]] | [String.IsEqual(Window(home).Property(nuvio.row),8204) + $EXP[NuvioRow8204]] | [String.IsEqual(Window(home).Property(nuvio.row),8105) + $EXP[NuvioRow8105]] | [String.IsEqual(Window(home).Property(nuvio.row),8205) + $EXP[NuvioRow8205]] | [String.IsEqual(Window(home).Property(nuvio.row),8106) + $EXP[NuvioRow8106]] | [String.IsEqual(Window(home).Property(nuvio.row),8206) + $EXP[NuvioRow8206]] | [String.IsEqual(Window(home).Property(nuvio.row),8107) + $EXP[NuvioRow8107]] | [String.IsEqual(Window(home).Property(nuvio.row),8207) + $EXP[NuvioRow8207]] | [String.IsEqual(Window(home).Property(nuvio.row),8108) + $EXP[NuvioRow8108]] | [String.IsEqual(Window(home).Property(nuvio.row),8208) + $EXP[NuvioRow8208]] | [String.IsEqual(Window(home).Property(nuvio.row),8109) + $EXP[NuvioRow8109]] | [String.IsEqual(Window(home).Property(nuvio.row),8209) + $EXP[NuvioRow8209]] | [String.IsEqual(Window(home).Property(nuvio.row),8110) + $EXP[NuvioRow8110]] | [String.IsEqual(Window(home).Property(nuvio.row),8210) + $EXP[NuvioRow8210]]</expression>
+    <expression name="NuvioAnyRow">$EXP[NuvioRow8101] | $EXP[NuvioRow8201] | $EXP[NuvioRow8102] | $EXP[NuvioRow8202] | $EXP[NuvioRow8103] | $EXP[NuvioRow8203] | $EXP[NuvioRow8104] | $EXP[NuvioRow8204] | $EXP[NuvioRow8105] | $EXP[NuvioRow8205] | $EXP[NuvioRow8106] | $EXP[NuvioRow8206] | $EXP[NuvioRow8107] | $EXP[NuvioRow8207] | $EXP[NuvioRow8108] | $EXP[NuvioRow8208] | $EXP[NuvioRow8109] | $EXP[NuvioRow8209] | $EXP[NuvioRow8110] | $EXP[NuvioRow8210]</expression>
 
     <include name="HomeBackdrops">
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(8101)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8101)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8101) + $EXP[NuvioRow8101]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8101]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -191,7 +251,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8201) + Control.IsVisible(8201)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8201) + !Control.IsVisible(8101)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8201) + $EXP[NuvioRow8201]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8201] + !$EXP[NuvioRow8101]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -215,7 +275,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8102) + Control.IsVisible(8102)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8102) + !Control.IsVisible(8101) + !Control.IsVisible(8201)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8102) + $EXP[NuvioRow8102]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8102] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -239,7 +299,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8202) + Control.IsVisible(8202)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8202) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8202) + $EXP[NuvioRow8202]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8202] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -263,7 +323,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8103) + Control.IsVisible(8103)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8103) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8103) + $EXP[NuvioRow8103]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8103] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -287,7 +347,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8203) + Control.IsVisible(8203)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8203) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8203) + $EXP[NuvioRow8203]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8203] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -311,7 +371,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8104) + Control.IsVisible(8104)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8104) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8104) + $EXP[NuvioRow8104]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8104] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -335,7 +395,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8204) + Control.IsVisible(8204)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8204) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8204) + $EXP[NuvioRow8204]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8204] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -359,7 +419,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8105) + Control.IsVisible(8105)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8105) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8105) + $EXP[NuvioRow8105]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8105] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -383,7 +443,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8205) + Control.IsVisible(8205)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8205) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8205) + $EXP[NuvioRow8205]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8205] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -407,7 +467,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8106) + Control.IsVisible(8106)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8106) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8106) + $EXP[NuvioRow8106]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8106] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -431,7 +491,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8206) + Control.IsVisible(8206)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8206) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8206) + $EXP[NuvioRow8206]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8206] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -455,7 +515,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8107) + Control.IsVisible(8107)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8107) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8107) + $EXP[NuvioRow8107]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8107] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -479,7 +539,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8207) + Control.IsVisible(8207)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8207) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8207) + $EXP[NuvioRow8207]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8207] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -503,7 +563,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8108) + Control.IsVisible(8108)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8108) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8108) + $EXP[NuvioRow8108]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8108] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -527,7 +587,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8208) + Control.IsVisible(8208)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8208) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8208) + $EXP[NuvioRow8208]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8208] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -551,7 +611,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8109) + Control.IsVisible(8109)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8109) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8109) + $EXP[NuvioRow8109]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8109] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -575,7 +635,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(8209)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8209) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208) + !Control.IsVisible(8109)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8209) + $EXP[NuvioRow8209]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8209] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208] + !$EXP[NuvioRow8109]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -599,7 +659,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(8110)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8110) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208) + !Control.IsVisible(8109) + !Control.IsVisible(8209)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8110) + $EXP[NuvioRow8110]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8110] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208] + !$EXP[NuvioRow8109] + !$EXP[NuvioRow8209]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -623,7 +683,7 @@
             </control>
         </control>
         <control type="group">
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(8210)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8210) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208) + !Control.IsVisible(8109) + !Control.IsVisible(8209) + !Control.IsVisible(8110)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8210) + $EXP[NuvioRow8210]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8210] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208] + !$EXP[NuvioRow8109] + !$EXP[NuvioRow8209] + !$EXP[NuvioRow8110]]</visible>
             <animation effect="fade" start="0" end="100" time="500">Visible</animation>
             <animation effect="fade" start="100" end="0" time="500">Hidden</animation>
             <control type="image">
@@ -654,7 +714,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(8101)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8101)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8101) + $EXP[NuvioRow8101]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8101]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -770,7 +830,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8201) + Control.IsVisible(8201)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8201) + !Control.IsVisible(8101)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8201) + $EXP[NuvioRow8201]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8201] + !$EXP[NuvioRow8101]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -886,7 +946,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8102) + Control.IsVisible(8102)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8102) + !Control.IsVisible(8101) + !Control.IsVisible(8201)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8102) + $EXP[NuvioRow8102]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8102] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1002,7 +1062,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8202) + Control.IsVisible(8202)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8202) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8202) + $EXP[NuvioRow8202]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8202] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1118,7 +1178,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8103) + Control.IsVisible(8103)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8103) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8103) + $EXP[NuvioRow8103]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8103] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1234,7 +1294,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8203) + Control.IsVisible(8203)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8203) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8203) + $EXP[NuvioRow8203]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8203] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1350,7 +1410,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8104) + Control.IsVisible(8104)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8104) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8104) + $EXP[NuvioRow8104]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8104] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1466,7 +1526,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8204) + Control.IsVisible(8204)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8204) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8204) + $EXP[NuvioRow8204]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8204] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1582,7 +1642,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8105) + Control.IsVisible(8105)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8105) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8105) + $EXP[NuvioRow8105]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8105] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1698,7 +1758,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8205) + Control.IsVisible(8205)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8205) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8205) + $EXP[NuvioRow8205]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8205] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1814,7 +1874,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8106) + Control.IsVisible(8106)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8106) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8106) + $EXP[NuvioRow8106]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8106] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -1930,7 +1990,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8206) + Control.IsVisible(8206)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8206) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8206) + $EXP[NuvioRow8206]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8206] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2046,7 +2106,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8107) + Control.IsVisible(8107)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8107) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8107) + $EXP[NuvioRow8107]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8107] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2162,7 +2222,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8207) + Control.IsVisible(8207)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8207) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8207) + $EXP[NuvioRow8207]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8207] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2278,7 +2338,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8108) + Control.IsVisible(8108)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8108) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8108) + $EXP[NuvioRow8108]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8108] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2394,7 +2454,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8208) + Control.IsVisible(8208)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8208) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8208) + $EXP[NuvioRow8208]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8208] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2510,7 +2570,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8109) + Control.IsVisible(8109)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8109) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8109) + $EXP[NuvioRow8109]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8109] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2626,7 +2686,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(8209)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8209) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208) + !Control.IsVisible(8109)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8209) + $EXP[NuvioRow8209]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8209] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208] + !$EXP[NuvioRow8109]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2742,7 +2802,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(8110)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8110) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208) + !Control.IsVisible(8109) + !Control.IsVisible(8209)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8110) + $EXP[NuvioRow8110]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8110] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208] + !$EXP[NuvioRow8109] + !$EXP[NuvioRow8209]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -2858,7 +2918,7 @@
             <top>100</top>
             <width>1100</width>
             <height>460</height>
-            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(8210)] | [!$EXP[NuvioActiveRowVisible] + Control.IsVisible(8210) + !Control.IsVisible(8101) + !Control.IsVisible(8201) + !Control.IsVisible(8102) + !Control.IsVisible(8202) + !Control.IsVisible(8103) + !Control.IsVisible(8203) + !Control.IsVisible(8104) + !Control.IsVisible(8204) + !Control.IsVisible(8105) + !Control.IsVisible(8205) + !Control.IsVisible(8106) + !Control.IsVisible(8206) + !Control.IsVisible(8107) + !Control.IsVisible(8207) + !Control.IsVisible(8108) + !Control.IsVisible(8208) + !Control.IsVisible(8109) + !Control.IsVisible(8209) + !Control.IsVisible(8110)]</visible>
+            <visible>[String.IsEqual(Window(home).Property(nuvio.row),8210) + $EXP[NuvioRow8210]] | [!$EXP[NuvioActiveRowVisible] + $EXP[NuvioRow8210] + !$EXP[NuvioRow8101] + !$EXP[NuvioRow8201] + !$EXP[NuvioRow8102] + !$EXP[NuvioRow8202] + !$EXP[NuvioRow8103] + !$EXP[NuvioRow8203] + !$EXP[NuvioRow8104] + !$EXP[NuvioRow8204] + !$EXP[NuvioRow8105] + !$EXP[NuvioRow8205] + !$EXP[NuvioRow8106] + !$EXP[NuvioRow8206] + !$EXP[NuvioRow8107] + !$EXP[NuvioRow8207] + !$EXP[NuvioRow8108] + !$EXP[NuvioRow8208] + !$EXP[NuvioRow8109] + !$EXP[NuvioRow8209] + !$EXP[NuvioRow8110]]</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
 
@@ -3001,7 +3061,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8101]</visible>
                     <onleft>9000</onleft>
                     <ondown>8201</ondown>
                     <onfocus>SetProperty(nuvio.row,8101,home)</onfocus>
@@ -3137,7 +3196,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW1Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW1PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 1 (land) -->
@@ -3169,7 +3228,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8201]</visible>
                     <onleft>9000</onleft>
                     <onup>8101</onup>
                     <ondown>8102</ondown>
@@ -3346,7 +3404,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW1Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW1PathLand]</content>
                 </control>
             </control>
             <!-- Widget 2 (poster) -->
@@ -3378,7 +3436,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8102]</visible>
                     <onleft>9000</onleft>
                     <onup>8201</onup>
                     <ondown>8202</ondown>
@@ -3515,7 +3572,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW2Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW2PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 2 (land) -->
@@ -3547,7 +3604,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8202]</visible>
                     <onleft>9000</onleft>
                     <onup>8102</onup>
                     <ondown>8103</ondown>
@@ -3724,7 +3780,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW2Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW2PathLand]</content>
                 </control>
             </control>
             <!-- Widget 3 (poster) -->
@@ -3756,7 +3812,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8103]</visible>
                     <onleft>9000</onleft>
                     <onup>8202</onup>
                     <ondown>8203</ondown>
@@ -3893,7 +3948,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW3Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW3PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 3 (land) -->
@@ -3925,7 +3980,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8203]</visible>
                     <onleft>9000</onleft>
                     <onup>8103</onup>
                     <ondown>8104</ondown>
@@ -4102,7 +4156,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW3Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW3PathLand]</content>
                 </control>
             </control>
             <!-- Widget 4 (poster) -->
@@ -4134,7 +4188,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8104]</visible>
                     <onleft>9000</onleft>
                     <onup>8203</onup>
                     <ondown>8204</ondown>
@@ -4271,7 +4324,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW4Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW4PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 4 (land) -->
@@ -4303,7 +4356,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8204]</visible>
                     <onleft>9000</onleft>
                     <onup>8104</onup>
                     <ondown>8105</ondown>
@@ -4480,7 +4532,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW4Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW4PathLand]</content>
                 </control>
             </control>
             <!-- Widget 5 (poster) -->
@@ -4512,7 +4564,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8105]</visible>
                     <onleft>9000</onleft>
                     <onup>8204</onup>
                     <ondown>8205</ondown>
@@ -4649,7 +4700,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW5Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW5PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 5 (land) -->
@@ -4681,7 +4732,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8205]</visible>
                     <onleft>9000</onleft>
                     <onup>8105</onup>
                     <ondown>8106</ondown>
@@ -4858,7 +4908,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW5Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW5PathLand]</content>
                 </control>
             </control>
             <!-- Widget 6 (poster) -->
@@ -4890,7 +4940,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8106]</visible>
                     <onleft>9000</onleft>
                     <onup>8205</onup>
                     <ondown>8206</ondown>
@@ -5027,7 +5076,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW6Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW6PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 6 (land) -->
@@ -5059,7 +5108,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8206]</visible>
                     <onleft>9000</onleft>
                     <onup>8106</onup>
                     <ondown>8107</ondown>
@@ -5236,7 +5284,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW6Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW6PathLand]</content>
                 </control>
             </control>
             <!-- Widget 7 (poster) -->
@@ -5268,7 +5316,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8107]</visible>
                     <onleft>9000</onleft>
                     <onup>8206</onup>
                     <ondown>8207</ondown>
@@ -5405,7 +5452,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW7Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW7PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 7 (land) -->
@@ -5437,7 +5484,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8207]</visible>
                     <onleft>9000</onleft>
                     <onup>8107</onup>
                     <ondown>8108</ondown>
@@ -5614,7 +5660,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW7Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW7PathLand]</content>
                 </control>
             </control>
             <!-- Widget 8 (poster) -->
@@ -5646,7 +5692,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8108]</visible>
                     <onleft>9000</onleft>
                     <onup>8207</onup>
                     <ondown>8208</ondown>
@@ -5783,7 +5828,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW8Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW8PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 8 (land) -->
@@ -5815,7 +5860,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8208]</visible>
                     <onleft>9000</onleft>
                     <onup>8108</onup>
                     <ondown>8109</ondown>
@@ -5992,7 +6036,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW8Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW8PathLand]</content>
                 </control>
             </control>
             <!-- Widget 9 (poster) -->
@@ -6024,7 +6068,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8109]</visible>
                     <onleft>9000</onleft>
                     <onup>8208</onup>
                     <ondown>8209</ondown>
@@ -6161,7 +6204,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW9Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW9PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 9 (land) -->
@@ -6193,7 +6236,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8209]</visible>
                     <onleft>9000</onleft>
                     <onup>8109</onup>
                     <ondown>8110</ondown>
@@ -6370,7 +6412,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW9Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW9PathLand]</content>
                 </control>
             </control>
             <!-- Widget 10 (poster) -->
@@ -6402,7 +6444,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8110]</visible>
                     <onleft>9000</onleft>
                     <onup>8209</onup>
                     <ondown>8210</ondown>
@@ -6539,7 +6580,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW10Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW10PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 10 (land) -->
@@ -6571,7 +6612,6 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <visible>$EXP[NuvioRow8210]</visible>
                     <onleft>9000</onleft>
                     <onup>8110</onup>
                     <onfocus>SetProperty(nuvio.row,8210,home)</onfocus>
@@ -6747,7 +6787,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never">$VAR[NuvioW10Path]</content>
+                    <content target="videos" limit="25" browse="never">$VAR[NuvioW10PathLand]</content>
                 </control>
             </control>
     </include>
