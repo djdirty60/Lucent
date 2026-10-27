@@ -18,11 +18,11 @@ A dark, cinematic Kodi skin inspired by **Nuvio Arc V2** (Cinematic Glass): larg
   - **Continue watching · Shows** and **Continue watching · Movies** (Seren + Trakt)
   - **Trending movies** and **Trending shows** (Seren)
   - **Recently added movies** and **Recently added episodes** (your Kodi library, only shown if you have one)
-  - **Up to 6 of your Trakt lists** – liked lists or your own lists, picked in the skin settings
-- Every row can be switched on or off. Empty rows hide themselves.
+  - **Your Trakt lists** – liked lists or your own lists
+- Rows are **widgets** that you choose yourself, see *Customising the menu and widgets* below. Empty rows hide themselves.
 
 ### Sidebar
-A slim icon rail that opens when you press left: Search, Home, Movies, TV shows, Library, Add-ons, Favourites, Settings and Power. Search, Movies and TV shows open the matching Seren menus directly.
+A slim icon rail that opens when you press left. Out of the box it has Search, Home, Movies, TV shows, Library, Add-ons, Favourites, Settings and Power, but **every tab can be changed**: its name, icon, what it opens when you click it, and its own widgets. When you move through the tabs, the home screen shows the widgets of that tab.
 
 ![Sidebar](screenshots/sidebar.jpg)
 
@@ -76,22 +76,32 @@ Info page with cast, the video player and its menu, seek bar, subtitles search, 
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.0.1.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.1.0.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.0.1.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.1.0.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
 
-### Choosing your Trakt lists
+### Customising the menu and widgets
 
-1. Make sure Seren is installed and connected to Trakt.
-2. Go to **Settings → Skin settings**.
-3. Choose **Choose Trakt lists for the home screen**.
-4. Tick up to 6 lists and confirm. They appear as rows on the home screen.
+1. Go to **Settings → Skin settings → Customise menu and widgets**.
+2. You see a list of your tabs. Choose a tab to change it:
+   - **Widgets on this tab** – add, rename, move or remove widgets. A widget can be:
+     - a Seren list (continue watching, trending, popular, anticipated, watchlist, …),
+     - one of your **Trakt lists** (liked or your own),
+     - something from your **Kodi library**,
+     - **any folder of any video add-on** (choose *Browse an add-on…* and walk to the folder you want),
+     - or a path you type yourself.
+     Every widget can be shown as **posters** or **landscape** cards (up to 10 per tab).
+   - **Name** and **Icon**.
+   - **When clicked** – show the widgets of this tab, open a Kodi screen, open a folder of an add-on, start an add-on, open one of your favourites, or a Kodi command you type yourself.
+   - **Move up / Move down**, **Make this the start tab**, **Remove this tab**.
+3. **+ Add a tab** adds a new tab (up to 12).
+4. **Restore the default menu** puts everything back the way it was.
 
-In the same screen you can switch rows on or off, remove all list rows and hide the clock.
+A tab without widgets shows the widgets of the start tab.
 
 ### Back to the default skin
 
@@ -103,6 +113,7 @@ In the same screen you can switch rows on or off, remove all list rows and hide 
 
 - **Seren is optional.** Without Seren the Seren rows are hidden and the skin works with your Kodi library only. With Seren, enter a free **Fanart.tv API key** in Seren for more logos.
 - **Pairs with the Seren theme** [Nuvio Arc V2 for Seren](https://github.com/djdirty60/Seren-Thema), so Seren's source select, scraping and playing-next windows match the skin.
+- **Screen size:** Kodi scales the skin to any resolution (720p, 1080p, 4K) by itself. If you see black edges or the picture is cut off, use **Skin settings → Calibrate the picture**.
 - **Not styled in this version:** Live TV (PVR), games and weather. Those windows won't open while this skin is active; switch to Estuary temporarily if you need them.
 - This is a first release. Feedback and bug reports are welcome – please open an issue and include a photo of the screen or your `kodi.log` if something looks wrong.
 
@@ -117,7 +128,7 @@ media/               textures, icons, badges
 fonts/               Inter font + licence
 colors/              colour palette
 language/            English and Dutch strings
-scripts/lists.py     helper to pick Trakt lists for the home screen
+scripts/menu.py      editor for the side menu and the widgets
 resources/           icon and fanart
 screenshots/         images for this README
 ```

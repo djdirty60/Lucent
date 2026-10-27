@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
     <defaultcontrol always="true">996</defaultcontrol>
+    <!-- Kodi centres this dialog on the focused control, so the window starts at 0,0
+         and its size is the size of the background image (id 999). -->
     <coordinates>
-        <left>660</left>
-        <top>200</top>
+        <left>0</left>
+        <top>0</top>
     </coordinates>
     <include>Anim_Dialog</include>
     <controls>
+        <!-- Dim the screen behind the menu (oversized because the dialog moves) -->
+        <control type="image">
+            <left>-1920</left>
+            <top>-1080</top>
+            <width>5760</width>
+            <height>3240</height>
+            <texture>white.png</texture>
+            <colordiffuse>99000000</colordiffuse>
+        </control>
+        <control type="button">
+            <left>-1920</left>
+            <top>-1080</top>
+            <width>5760</width>
+            <height>3240</height>
+            <texturefocus/>
+            <texturenofocus/>
+            <onclick>Action(close)</onclick>
+        </control>
+        <!-- Background: Kodi sets its height to 40 + the height of the buttons
+             (its height minus the grouplist height must stay 40). -->
         <control type="image" id="999">
             <left>0</left>
             <top>0</top>
@@ -19,7 +41,7 @@
             <left>20</left>
             <top>20</top>
             <width>560</width>
-            <height>840</height>
+            <height>640</height>
             <itemgap>4</itemgap>
         </control>
         <control type="button" id="1000">
@@ -30,7 +52,7 @@
             <focusedcolor>on_focus</focusedcolor>
             <textoffsetx>28</textoffsetx>
             <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
-            <texturenofocus border="20" colordiffuse="transparent">rr20.png</texturenofocus>
+            <texturenofocus/>
         </control>
     </controls>
 </window>

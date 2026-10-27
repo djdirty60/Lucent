@@ -3,7 +3,11 @@
 <window>
     <defaultcontrol always="true">9100</defaultcontrol>
     <backgroundcolor>FF0B1119</backgroundcolor>
-    <onload condition="String.IsEmpty(Window(home).Property(nuvio.row))">SetProperty(nuvio.row,8001,home)</onload>
+    <!-- First time: write the default menu; once per session: select the start tab -->
+    <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version))">RunScript(special://skin/scripts/menu.py,init)</onload>
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
+    <onload>SetProperty(nuvio.started,1,home)</onload>
     <controls>
         <!-- ============ Backdrop ============ -->
         <control type="image">
@@ -28,10 +32,10 @@
             <colordiffuse>E60B1119</colordiffuse>
         </control>
 
-        <!-- ============ Hero + rows (slide right while the sidebar is open) ============ -->
+        <!-- ============ Hero + rows (slide right while the side menu is open) ============ -->
         <control type="group">
-            <animation effect="slide" start="0,0" end="150,0" time="300" tween="cubic" easing="out" condition="ControlGroup(9000).HasFocus">Conditional</animation>
-            <animation effect="fade" start="100" end="45" time="300" condition="ControlGroup(9000).HasFocus">Conditional</animation>
+            <animation effect="slide" start="0,0" end="230,0" time="300" tween="cubic" easing="out" condition="Control.HasFocus(9000) + !System.HasVisibleModalDialog">Conditional</animation>
+            <animation effect="fade" start="100" end="45" time="300" condition="Control.HasFocus(9000) + !System.HasVisibleModalDialog">Conditional</animation>
 
             <control type="group">
                 <include>Anim_SlideLeft</include>
@@ -51,11 +55,12 @@
                 <include>HomeRows</include>
             </control>
 
-            <!-- Shown when no row has content yet -->
+            <!-- Shown when the tab has no widgets (or none of them has content) -->
             <control type="group">
                 <left>160</left>
                 <top>620</top>
-                <visible>!Integer.IsGreater(Container(8001).NumItems,0) + !Integer.IsGreater(Container(8002).NumItems,0) + !Integer.IsGreater(Container(8003).NumItems,0) + !Integer.IsGreater(Container(8004).NumItems,0) + !Integer.IsGreater(Container(8005).NumItems,0) + !Integer.IsGreater(Container(8006).NumItems,0) + !Container(8001).IsUpdating + !Container(8003).IsUpdating</visible>
+                <visible>!$EXP[NuvioAnyRow]</visible>
+                <animation effect="fade" start="0" end="100" time="300" delay="1500">Visible</animation>
                 <control type="label">
                     <left>0</left>
                     <top>0</top>
@@ -70,12 +75,22 @@
                     <width>1100</width>
                     <height>120</height>
                     <font>font_body</font>
+                    <label>$LOCALIZE[31104]</label>
+                    <visible>String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w1.path))</visible>
+                </control>
+                <control type="textbox">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>1100</width>
+                    <height>120</height>
+                    <font>font_body</font>
                     <label>$LOCALIZE[31089]</label>
+                    <visible>![String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w1.path))]</visible>
                 </control>
             </control>
         </control>
 
-        <!-- ============ Sidebar rail ============ -->
+        <!-- ============ Side menu ============ -->
         <control type="image">
             <left>0</left>
             <top>0</top>
@@ -85,15 +100,10 @@
             <colordiffuse>FA0B1119</colordiffuse>
             <animation effect="fade" start="0" end="100" time="250">Visible</animation>
             <animation effect="fade" start="100" end="0" time="200">Hidden</animation>
-            <visible>ControlGroup(9000).HasFocus</visible>
+            <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
         </control>
-        <control type="group" id="9000">
+        <control type="group">
             <include>Anim_Window</include>
-            <left>0</left>
-            <top>0</top>
-            <width>400</width>
-            <height>1080</height>
-            <defaultcontrol always="false">9002</defaultcontrol>
             <control type="image">
                 <left>36</left>
                 <top>64</top>
@@ -108,448 +118,93 @@
                 <height>52</height>
                 <font>font27_title</font>
                 <label>[B]NUVIO[/B] Arc</label>
-                <visible>ControlGroup(9000).HasFocus</visible>
+                <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
             </control>
-            <control type="button" id="9001">
+            <control type="list" id="9000">
                 <left>24</left>
-                <top>196</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9009</onup>
-                <ondown>9002</ondown>
+                <top>180</top>
+                <width>360</width>
+                <height>870</height>
+                <orientation>vertical</orientation>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
                 <onright>9100</onright>
-                <onclick>ActivateWindow(Videos,plugin://plugin.video.seren/?action=searchMenu,return)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>212</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/search.png</texture>
-                <visible>Control.HasFocus(9001)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>212</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/search.png</texture>
-                <visible>!Control.HasFocus(9001)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>196</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31002]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9001)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>196</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31002]</label>
-                <visible>Control.HasFocus(9001)</visible>
-            </control>
-            <control type="button" id="9002">
-                <left>24</left>
-                <top>280</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9001</onup>
-                <ondown>9003</ondown>
-                <onright>9100</onright>
-                <onclick>SetFocus(9100)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>296</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/home.png</texture>
-                <visible>Control.HasFocus(9002)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>296</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/home.png</texture>
-                <visible>!Control.HasFocus(9002)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>280</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31001]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9002)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>280</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31001]</label>
-                <visible>Control.HasFocus(9002)</visible>
-            </control>
-            <control type="button" id="9003">
-                <left>24</left>
-                <top>364</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9002</onup>
-                <ondown>9004</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(Videos,plugin://plugin.video.seren/?action=moviesHome,return)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>380</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/movies.png</texture>
-                <visible>Control.HasFocus(9003)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>380</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/movies.png</texture>
-                <visible>!Control.HasFocus(9003)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>364</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31003]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9003)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>364</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31003]</label>
-                <visible>Control.HasFocus(9003)</visible>
-            </control>
-            <control type="button" id="9004">
-                <left>24</left>
-                <top>448</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9003</onup>
-                <ondown>9005</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(Videos,plugin://plugin.video.seren/?action=showsHome,return)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>464</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/tv.png</texture>
-                <visible>Control.HasFocus(9004)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>464</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/tv.png</texture>
-                <visible>!Control.HasFocus(9004)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>448</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31004]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9004)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>448</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31004]</label>
-                <visible>Control.HasFocus(9004)</visible>
-            </control>
-            <control type="button" id="9005">
-                <left>24</left>
-                <top>532</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9004</onup>
-                <ondown>9006</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(Videos,videodb://,return)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>548</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/library.png</texture>
-                <visible>Control.HasFocus(9005)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>548</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/library.png</texture>
-                <visible>!Control.HasFocus(9005)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>532</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31005]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9005)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>532</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31005]</label>
-                <visible>Control.HasFocus(9005)</visible>
-            </control>
-            <control type="button" id="9006">
-                <left>24</left>
-                <top>616</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9005</onup>
-                <ondown>9007</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(AddonBrowser)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>632</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/addons.png</texture>
-                <visible>Control.HasFocus(9006)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>632</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/addons.png</texture>
-                <visible>!Control.HasFocus(9006)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>616</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31006]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9006)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>616</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31006]</label>
-                <visible>Control.HasFocus(9006)</visible>
-            </control>
-            <control type="button" id="9007">
-                <left>24</left>
-                <top>700</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9006</onup>
-                <ondown>9008</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(favouritesbrowser)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>716</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/favourites.png</texture>
-                <visible>Control.HasFocus(9007)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>716</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/favourites.png</texture>
-                <visible>!Control.HasFocus(9007)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>700</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31007]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9007)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>700</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31007]</label>
-                <visible>Control.HasFocus(9007)</visible>
-            </control>
-            <control type="button" id="9008">
-                <left>24</left>
-                <top>784</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9007</onup>
-                <ondown>9009</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(Settings)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>800</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/settings.png</texture>
-                <visible>Control.HasFocus(9008)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>800</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/settings.png</texture>
-                <visible>!Control.HasFocus(9008)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>784</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31008]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9008)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>784</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31008]</label>
-                <visible>Control.HasFocus(9008)</visible>
-            </control>
-            <control type="button" id="9009">
-                <left>24</left>
-                <top>868</top>
-                <width>340</width>
-                <height>68</height>
-                <label></label>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus/>
-                <onup>9008</onup>
-                <ondown>9001</ondown>
-                <onright>9100</onright>
-                <onclick>ActivateWindow(ShutdownMenu)</onclick>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>884</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="on_focus">icons/power.png</texture>
-                <visible>Control.HasFocus(9009)</visible>
-            </control>
-            <control type="image">
-                <left>42</left>
-                <top>884</top>
-                <width>36</width>
-                <height>36</height>
-                <texture colordiffuse="text3">icons/power.png</texture>
-                <visible>!Control.HasFocus(9009)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>868</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>text2</textcolor>
-                <label>$LOCALIZE[31009]</label>
-                <visible>ControlGroup(9000).HasFocus + !Control.HasFocus(9009)</visible>
-            </control>
-            <control type="label">
-                <left>100</left>
-                <top>868</top>
-                <width>250</width>
-                <height>68</height>
-                <font>font_mainmenu_small</font>
-                <textcolor>on_focus</textcolor>
-                <label>$LOCALIZE[31009]</label>
-                <visible>Control.HasFocus(9009)</visible>
+                <onback>9100</onback>
+                <itemlayout width="360" height="84">
+                    <control type="image">
+                        <left>18</left>
+                        <top>24</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                        <visible>false</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>24</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
+                        <visible>!false</visible>
+                    </control>
+                    <control type="label">
+                        <left>76</left>
+                        <top>8</top>
+                        <width>250</width>
+                        <height>68</height>
+                        <font>font_mainmenu_small</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="360" height="84">
+                    <control type="image">
+                        <left>0</left>
+                        <top>10</top>
+                        <width>340</width>
+                        <height>64</height>
+                        <texture border="32" colordiffuse="focus">pill64.png</texture>
+                        <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
+                    </control>
+                    <control type="image">
+                        <left>2</left>
+                        <top>28</top>
+                        <width>4</width>
+                        <height>28</height>
+                        <texture>white.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                        <visible>!Control.HasFocus(9000)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>24</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                        <visible>Control.HasFocus(9000)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>24</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture colordiffuse="text">$INFO[ListItem.Icon]</texture>
+                        <visible>!Control.HasFocus(9000)</visible>
+                    </control>
+                    <control type="label">
+                        <left>76</left>
+                        <top>8</top>
+                        <width>250</width>
+                        <height>68</height>
+                        <font>font_mainmenu_small</font>
+                        <textcolor>on_focus</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
+                    </control>
+                </focusedlayout>
+                <content>
+                    <include>HomeMenuItems</include>
+                </content>
             </control>
         </control>
 
