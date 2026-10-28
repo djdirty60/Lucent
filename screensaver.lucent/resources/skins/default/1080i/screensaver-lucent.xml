@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">1</defaultcontrol>
+    <backgroundcolor>FF000000</backgroundcolor>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>black.png</texture>
+        </control>
+        <control type="group">
+            <visible>String.IsEqual(Window.Property(slot),a)</visible>
+            <animation effect="fade" start="0" end="100" time="1600" delay="1100" tween="sine" easing="inout">Visible</animation>
+            <animation effect="zoom" start="100" end="118" center="960,540" time="44000" delay="1100" tween="linear">Visible</animation>
+            <animation effect="fade" start="100" end="0" time="1000" tween="sine" easing="inout">Hidden</animation>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>1920</width>
+                <height>1080</height>
+                <aspectratio>scale</aspectratio>
+                <texture background="true">$INFO[Window.Property(a.fanart)]</texture>
+            </control>
+            <control type="image">
+                <left>0</left>
+                <top>500</top>
+                <width>1920</width>
+                <height>580</height>
+                <texture>shade.png</texture>
+            </control>
+            <control type="image">
+                <left>120</left>
+                <top>690</top>
+                <width>640</width>
+                <height>210</height>
+                <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                <texture background="true">$INFO[Window.Property(a.logo)]</texture>
+                <visible>!String.IsEmpty(Window.Property(a.logo))</visible>
+            </control>
+            <control type="textbox">
+                <left>120</left>
+                <top>740</top>
+                <width>1100</width>
+                <height>160</height>
+                <font>font45_title</font>
+                <textcolor>FFFFFFFF</textcolor>
+                <aligny>bottom</aligny>
+                <label>$INFO[Window.Property(a.title)]</label>
+                <visible>String.IsEmpty(Window.Property(a.logo))</visible>
+            </control>
+            <control type="label">
+                <left>124</left>
+                <top>916</top>
+                <width>1300</width>
+                <height>44</height>
+                <font>font14</font>
+                <textcolor>CCFFFFFF</textcolor>
+                <label>$INFO[Window.Property(a.genres)]</label>
+                <visible>!String.IsEmpty(Window.Property(showgenres))</visible>
+            </control>
+        </control>
+        <control type="group">
+            <visible>String.IsEqual(Window.Property(slot),b)</visible>
+            <animation effect="fade" start="0" end="100" time="1600" delay="1100" tween="sine" easing="inout">Visible</animation>
+            <animation effect="zoom" start="100" end="118" center="960,540" time="44000" delay="1100" tween="linear">Visible</animation>
+            <animation effect="fade" start="100" end="0" time="1000" tween="sine" easing="inout">Hidden</animation>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>1920</width>
+                <height>1080</height>
+                <aspectratio>scale</aspectratio>
+                <texture background="true">$INFO[Window.Property(b.fanart)]</texture>
+            </control>
+            <control type="image">
+                <left>0</left>
+                <top>500</top>
+                <width>1920</width>
+                <height>580</height>
+                <texture>shade.png</texture>
+            </control>
+            <control type="image">
+                <left>120</left>
+                <top>690</top>
+                <width>640</width>
+                <height>210</height>
+                <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                <texture background="true">$INFO[Window.Property(b.logo)]</texture>
+                <visible>!String.IsEmpty(Window.Property(b.logo))</visible>
+            </control>
+            <control type="textbox">
+                <left>120</left>
+                <top>740</top>
+                <width>1100</width>
+                <height>160</height>
+                <font>font45_title</font>
+                <textcolor>FFFFFFFF</textcolor>
+                <aligny>bottom</aligny>
+                <label>$INFO[Window.Property(b.title)]</label>
+                <visible>String.IsEmpty(Window.Property(b.logo))</visible>
+            </control>
+            <control type="label">
+                <left>124</left>
+                <top>916</top>
+                <width>1300</width>
+                <height>44</height>
+                <font>font14</font>
+                <textcolor>CCFFFFFF</textcolor>
+                <label>$INFO[Window.Property(b.genres)]</label>
+                <visible>!String.IsEmpty(Window.Property(showgenres))</visible>
+            </control>
+        </control>
+        <control type="label">
+            <left>1400</left>
+            <top>50</top>
+            <width>420</width>
+            <height>50</height>
+            <font>font14</font>
+            <textcolor>CCFFFFFF</textcolor>
+            <align>right</align>
+            <label>$INFO[System.Time]</label>
+            <visible>!String.IsEmpty(Window.Property(showclock))</visible>
+        </control>
+    </controls>
+</window>
