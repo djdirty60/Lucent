@@ -695,7 +695,7 @@ class Sport(xbmcgui.WindowXML):
     def game_extra(self, ev):
         """Slow part (form, standings): returns {name: value} for the page, filled in once it is ready."""
         out = {}
-        if ev["kind"] == "event" and ev.get("circuit"):       # a race weekend: the circuit instead of the programme
+        if ev["kind"] == "event" and (ev.get("circuit") or ev.get("circname")):       # a race weekend: the circuit instead of the programme
             try:
                 c = sc.circuit_info(ev["circuit"], ev["league"])
                 direction = c.get("direction", "").lower()
@@ -706,7 +706,7 @@ class Sport(xbmcgui.WindowXML):
                 tiles = [(c.get("length", ""), sc.t("c_length")), (c.get("laps", ""), sc.t("c_laps")), (c.get("turns", ""), sc.t("c_turns")),
                          (c.get("record", ""), sc.t("circ_record") + (f"  {c['recyear']}" if c.get("recyear") else ""))]
                 out = {f"circt{i}{k}": v for i, (val, cap) in enumerate(tiles, 1) for k, v in (("v", val), ("c", cap if val else ""))}
-                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("image", ""),
+                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("png") or c.get("image", ""), "circpng": "1" if c.get("png") else "",
                        "circfacts": "  ·  ".join(facts),
                        "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""})
             except Exception as error:  # noqa: BLE001 - the circuit is a bonus

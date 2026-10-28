@@ -16,6 +16,7 @@ import datetime
 import re
 import time
 import unicodedata
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 import xbmc
@@ -324,12 +325,49 @@ def parse_event_kind(league, ev):
 CIRCUIT_PATH = DATA + "sport_circuits.json"
 
 
+def _is_transparent_png(raw):
+    """True for a PNG that really has see-through parts (alpha channel or tRNS chunk)."""
+    if raw[:8] != b"\x89PNG\r\n\x1a\n" or len(raw) < 33:
+        return False
+    return raw[25] in (4, 6) or b"tRNS" in raw[:2048]
+
+
+def circuit_png(cid, diagrams):
+    """Try to get the track drawing as a PNG with a see-through background; saved locally. Returns the file path or ''."""
+    target = DATA + f"circuit_{cid}.png"
+    try:
+        if _is_transparent_png(open(target, "rb").read()):
+            return target
+    except OSError:
+        pass
+    candidates = []
+    for d in diagrams:
+        rel, href = d.get("rel") or [], (d.get("href") or "").replace("http://", "https://")
+        if "circuit" in rel and not any("dark" in r or "info" in r for r in rel) and href:
+            base = href.rsplit(".", 1)[0]
+            path = base.split("espncdn.com", 1)[-1]
+            candidates += [base + ".png", f"https://a.espncdn.com/combiner/i?img={path}.png&w=1000",
+                           f"https://a.espncdn.com/combiner/i?img={path}.svg&w=1000&format=png"]
+    for url in candidates:
+        try:
+            request = urllib.request.Request(url, headers=dict(BROWSER))
+            with urllib.request.urlopen(request, timeout=20) as response:
+                raw = response.read()
+            if _is_transparent_png(raw):
+                with open(target, "wb") as handle:
+                    handle.write(raw)
+                return target
+        except Exception as error:  # noqa: BLE001 - try the next address
+            log(f"circuit png {url}: {error}")
+    return ""
+
+
 def circuit_info(cid, league="f1"):
     """Facts and drawing of a racing circuit from ESPN, remembered for good: {name, place, length, laps, turns, direction, record, image}."""
     if not cid:
         return {}
     known = ac.read_json(CIRCUIT_PATH, {}) or {}
-    if known.get(cid, {}).get("name") or known.get(cid, {}).get("image"):
+    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and "png" in known[cid]:
         return known[cid]
     path = LEAGUES.get(league, {}).get("path", "racing/f1")
     sport, slug = path.split("/", 1)
@@ -345,7 +383,8 @@ def circuit_info(cid, league="f1"):
                 break
         if image:
             break
-    info_ = {"name": data.get("fullName") or "", "place": place, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
+    png = circuit_png(cid, data.get("diagrams") or [])
+    info_ = {"name": data.get("fullName") or "", "place": place, "png": png, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
              "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
              "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image}
     if not (info_["name"] or info_["image"]):
