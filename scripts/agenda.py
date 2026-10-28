@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Lucent: the Calendar screen - Week | List | Month - of the series and films you follow.
+"""Lucent: the Calendar screen - Week | List | Month - of the series and films in your Trakt collection.
 
 RunScript(special://skin/scripts/agenda.py)           open the calendar
-RunScript(special://skin/scripts/agenda.py,follow)    follow / unfollow the item on the info page (the bell)
+RunScript(special://skin/scripts/agenda.py,follow)    switch the bell (notification) of the item on the info page on / off
 RunScript(special://skin/scripts/agenda.py,state)     info page: is this item followed? (Window(home) nuvio.agenda.followed)
 RunScript(special://skin/scripts/agenda.py,service)   background helper for the "new episode" pop-up
 RunScript(special://skin/scripts/agenda.py,ensure_tab) add the Calendar tab to the side menu (once)
@@ -35,18 +35,20 @@ TX = {
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"),
     "open_show": ("Open series", "Serie openen"), "open_movie": ("Open film", "Film openen"),
     "bell_on": ("Notifications on", "Meldingen aan"), "bell_off": ("Notifications off", "Meldingen uit"),
-    "unfollow": ("Unfollow", "Niet meer volgen"),
+    "unfollow": ("Remove from calendar", "Uit kalender halen"),
     "next_of": ("Next of {0}", "Volgende van {0}"),
     "times": ("Times in local time ({0})", "Tijden in lokale tijd ({0})"),
     "powered": ("Data from TMDB and TVmaze", "Gegevens van TMDB en TVmaze"),
     "episodes": ("{0} episodes", "{0} afleveringen"), "episode": ("1 episode", "1 aflevering"),
     "none_day": ("Nothing on this day", "Niets op deze dag"),
     "aired_on": ("Aired on {0}", "Uitgezonden op {0}"), "airs_on": ("Airs on {0}", "Verschijnt op {0}"),
-    "empty_title": ("You do not follow anything yet", "Je volgt nog niets"),
-    "empty_text": ("Open a series or film and choose the bell (Follow). New episodes then show up here, and you get a "
-                   "pop-up when one is out.",
-                   "Open een serie of film en kies de bel (Volgen). Nieuwe afleveringen staan dan hier en je krijgt "
-                   "een pop-up zodra er een uit is."),
+    "empty_title": ("Nothing to show yet", "Nog niets om te tonen"),
+    "empty_text": ("The calendar shows the series and films of your Trakt collection (Seren library). Log in to Trakt in "
+                   "Seren and add series to your library; they show up here by themselves. Or open a series or film and "
+                   "choose the bell on its info page.",
+                   "De kalender toont de series en films uit je Trakt-collectie (Seren-bibliotheek). Log in bij Trakt in "
+                   "Seren en zet series in je bibliotheek; ze komen dan vanzelf hier te staan. Of open een serie of film en "
+                   "kies de bel op de infopagina."),
     "loading": ("Loading the calendar…", "Kalender laden…"),
 }
 
@@ -90,6 +92,8 @@ def ep_title(ev):
     if ev["kind"] == "tv":
         return f"{core.ep_code(ev)}  ·  {ev['title']}" if ev["title"] else core.ep_code(ev)
     gap = (core.today() - parse(ev["date"])).days
+    if ev.get("digital"):
+        return core.tr("digital")
     return core.tr("cinema") if 0 <= gap <= 90 else core.tr("cinema_soon") if gap < 0 else core.tr("film")
 
 
@@ -373,7 +377,7 @@ class Agenda(xbmcgui.WindowXML):
         key = item.getProperty("showkey")
         rec = core.load_follow()["shows"].get(key)
         if rec:
-            core.set_notify(key, not rec.get("notify", True))
+            core.set_notify(key, not rec.get("notify", False))
             self.reload()
 
     def unfollow(self, control_id):

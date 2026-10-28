@@ -3,10 +3,13 @@
 
 The screen itself is scripts/agenda.py; this file holds everything that has no screen:
 
-  follow list     special://profile/addon_data/skin.lucent/agenda_follow.json  (the bell)
+  follow list     special://profile/addon_data/skin.lucent/agenda_follow.json  (what the calendar shows + the bells)
   episode cache   special://profile/addon_data/skin.lucent/agenda_cache.json   (6 hours)
   new episode     a pop-up "Watch now / Later", from the background helper (run_service)
 
+What the calendar shows: the series (still running) of your Trakt collection (the Seren library) and the films of
+your collection / watchlist that are about to come out; the same Trakt login as Seren. The bell of a title is OFF
+until you switch it on; with the bell on you get a pop-up for a new episode / the digital release of a film.
 Episodes, artwork and plots come from TMDB (the key of Seren, like the info page). The air time
 comes from TVmaze (free, no key) when it knows the show; otherwise only the date is known.
 """
@@ -25,6 +28,7 @@ import info  # http() and tmdb() helpers of the info page (same folder)
 DATA = "special://profile/addon_data/skin.lucent/"
 FOLLOW_PATH = DATA + "agenda_follow.json"
 CACHE_PATH = DATA + "agenda_cache.json"
+SYNC_TTL = 12 * 3600        # the Trakt collection is read again after this many seconds
 TTL = 6 * 3600              # episode data is refreshed after this many seconds
 PAST_DAYS = 45              # how far back the calendar looks
 FUTURE_DAYS = 200
@@ -38,14 +42,15 @@ HEADING = "Lucent"
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 T = {
     "new_ep": ("New episode", "Nieuwe aflevering"),
-    "new_movie": ("New film", "Nieuwe film"),
+    "new_movie": ("Film digitally out", "Film digitaal uit"),
     "ep_out": ("A new episode is out. Do you want to watch it now?", "Er is een nieuwe aflevering. Wil je hem nu kijken?"),
-    "movie_out": ("This film is out now. Do you want to watch it?", "Deze film is nu uit. Wil je hem kijken?"),
+    "movie_out": ("This film has a digital release now. Do you want to watch it?", "Deze film is nu digitaal uit. Wil je hem kijken?"),
+    "digital": ("Digital release", "Digitale release"),
     "watch_now": ("Watch now", "Nu kijken"),
     "later": ("Later", "Later"),
-    "following": ("You now follow {0}. New episodes show up in the calendar.",
-                  "Je volgt nu {0}. Nieuwe afleveringen staan in de kalender."),
-    "unfollowed": ("You no longer follow {0}", "Je volgt {0} niet meer"),
+    "following": ("Notification on for {0}. You get a pop-up for a new episode / the digital release.",
+                  "Melding aan voor {0}. Je krijgt een pop-up bij een nieuwe aflevering / digitale release."),
+    "unfollowed": ("Notification off for {0}", "Melding uit voor {0}"),
     "no_id": ("This title has no TMDB number, so it cannot be followed.", "Deze titel heeft geen TMDB-nummer en kan niet gevolgd worden."),
     "failed": ("Could not load the calendar data. Try again later.", "Kalendergegevens laden is niet gelukt. Probeer het later opnieuw."),
     "no_seren": ("Seren is not installed.", "Seren is niet geïnstalleerd."),
@@ -134,6 +139,7 @@ def load_follow():
     data.setdefault("shows", {})
     data.setdefault("notified", {})
     data.setdefault("snooze", {})
+    data.setdefault("hidden", [])
     return data
 
 
@@ -264,14 +270,35 @@ def tv_events(rec):
     return events, maze_id
 
 
+def digital_date(tmdb_id):
+    """Date of the digital release (TMDB type 4) of a film: the Netherlands first, then the US, then the earliest."""
+    data = info.tmdb(f"movie/{tmdb_id}/release_dates")
+    found = {}
+    for country in data.get("results") or []:
+        dates = [r["release_date"][:10] for r in country.get("release_dates") or [] if r.get("type") == 4 and r.get("release_date")]
+        if dates:
+            found[country["iso_3166_1"]] = min(dates)
+    for code in ("NL", "US", "GB"):
+        if code in found:
+            return found[code]
+    return min(found.values()) if found else ""
+
+
 def movie_events(rec):
     movie = info.tmdb(f"movie/{rec['tmdb']}")
-    date = movie.get("release_date") or ""
+    theatrical = movie.get("release_date") or ""
+    digital = ""
+    try:
+        digital = digital_date(rec["tmdb"])
+    except Exception as error:  # noqa: BLE001 - the cinema date is a fallback
+        log(f"release dates {rec['tmdb']}: {error}")
+    date = digital or theatrical
     if not date:
         return [], 0
     return [{
         "kind": "movie", "show": show_key("movie", rec["tmdb"]), "key": f"mv:{rec['tmdb']}", "tmdb": rec["tmdb"],
         "name": movie.get("title") or rec["name"], "title": "", "season": 0, "episode": 0, "date": date, "time": "",
+        "digital": bool(digital), "theatrical": theatrical,
         "plot": movie.get("overview") or "", "poster": img(movie.get("poster_path"), "w342"),
         "backdrop": img(movie.get("backdrop_path"), "w1280"), "still": img(movie.get("backdrop_path"), "w500"),
         "network": "", "rating": movie.get("vote_average") or 0,
@@ -283,9 +310,71 @@ def fetch(rec):
     return (tv_events if rec["kind"] == "tv" else movie_events)(rec)
 
 
+# ----------------------------------------------------------------------------- your Trakt collection
+RUNNING_STATUS_SKIP = ("ended", "canceled", "cancelled")
+FILM_LOOKBACK = 120         # films released in the cinema this many days ago can still get a digital release
+
+
+def wanted_from_trakt():
+    """{key: {kind, tmdb, name}} of what the calendar should show, read from Trakt. None when Trakt cannot be used."""
+    if not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
+        return None
+    trakt = info.Trakt()
+    if not trakt.token:
+        return None
+    wanted = {}
+    for entry in trakt.get("sync/collection/shows?extended=full,noseasons") or []:
+        show = entry.get("show") or {}
+        tmdb = (show.get("ids") or {}).get("tmdb")
+        if tmdb and (show.get("status") or "").lower() not in RUNNING_STATUS_SKIP:
+            wanted[show_key("tv", tmdb)] = {"kind": "tv", "tmdb": int(tmdb), "name": show.get("title") or ""}
+    lo = (today() - datetime.timedelta(days=FILM_LOOKBACK)).isoformat()
+    for path in ("sync/collection/movies", "sync/watchlist/movies"):
+        for entry in trakt.get(path + "?extended=full") or []:
+            movie = entry.get("movie") or {}
+            tmdb = (movie.get("ids") or {}).get("tmdb")
+            released = movie.get("released") or ""
+            if tmdb and released >= lo:
+                wanted[show_key("movie", tmdb)] = {"kind": "movie", "tmdb": int(tmdb), "name": movie.get("title") or ""}
+    return wanted
+
+
+def sync_trakt(force=False):
+    """Make the calendar follow your Trakt collection. New titles start with the bell OFF. Returns True when it changed."""
+    store = load_follow()
+    if not force and time.time() - store.get("synced", 0) < SYNC_TTL:
+        return False
+    try:
+        wanted = wanted_from_trakt()
+    except Exception as error:  # noqa: BLE001 - no network / token expired: keep what we have
+        log(f"trakt sync: {error}")
+        store["synced"] = time.time() - SYNC_TTL + 900          # try again in 15 minutes
+        write_json(FOLLOW_PATH, store)
+        return False
+    if wanted is None:
+        return False
+    changed = False
+    for key, rec in wanted.items():
+        if key in store["shows"] or key in store["hidden"]:
+            continue
+        store["shows"][key] = dict(rec, notify=False, source="trakt", added=today().isoformat(), maze=0)
+        changed = True
+    for key in [k for k, r in store["shows"].items() if r.get("source") == "trakt" and k not in wanted]:
+        del store["shows"][key]
+        changed = True
+    store["synced"] = time.time()
+    write_json(FOLLOW_PATH, store)
+    return changed
+
+
 # ----------------------------------------------------------------------------- the cache
 def refresh(force=False, only=None):
-    """Bring the episode cache up to date for the shows you follow. Returns True when something changed."""
+    """Bring the episode cache up to date for the shows in the calendar. Returns True when something changed."""
+    if not only:
+        try:
+            sync_trakt(force)
+        except Exception as error:  # noqa: BLE001
+            log(f"sync: {error}")
     store, cache = load_follow(), load_cache()
     changed = False
     for key in [k for k in cache["shows"] if k not in store["shows"]]:
@@ -317,6 +406,8 @@ def refresh(force=False, only=None):
 
 def stale():
     store, cache = load_follow(), load_cache()
+    if time.time() - store.get("synced", 0) > SYNC_TTL:
+        return True
     return any(time.time() - cache["shows"].get(k, {}).get("fetched", 0) > TTL for k in store["shows"])
 
 
@@ -329,35 +420,46 @@ def all_events():
         if not rec:
             continue
         for ev in entry.get("events", []):
-            out.append(dict(ev, notify=bool(rec.get("notify", True))))
+            out.append(dict(ev, notify=bool(rec.get("notify", False))))
     out.sort(key=lambda e: (e["date"], e["time"] or "99:99", e["name"], e.get("season", 0), e.get("episode", 0)))
     return out
 
 
 # ----------------------------------------------------------------------------- follow / bell
 def is_following(key):
-    return key in load_follow()["shows"]
+    """Is the bell (notification) on for this title?"""
+    rec = load_follow()["shows"].get(key)
+    return bool(rec and rec.get("notify"))
+
+
+def mark_past_done(key):
+    """What is already out must not pop up as 'new' when the bell is switched on."""
+    now = datetime.datetime.now()
+    store = load_follow()
+    for ev in load_cache()["shows"].get(key, {}).get("events", []):
+        out = ev["date"] < today().isoformat() or (ev["date"] == today().isoformat() and (not ev["time"] or ev["time"] <= now.strftime("%H:%M")))
+        if out:
+            store["notified"][ev["key"]] = "done"
+    write_json(FOLLOW_PATH, store)
 
 
 def toggle_follow(ref):
-    """Follow the show, or stop following it. Returns True when it is now followed."""
+    """Switch the bell of a title on or off (adding the title to the calendar when it is not there yet).
+    Returns True when the bell is now on."""
     key = show_key(ref["kind"], ref["tmdb"])
     store = load_follow()
-    if key in store["shows"]:
-        del store["shows"][key]
-        write_json(FOLLOW_PATH, store)
-        refresh()
-        return False
+    rec = store["shows"].get(key)
+    if rec:
+        now_on = not rec.get("notify")
+        set_notify(key, now_on)
+        return now_on
+    if key in store["hidden"]:
+        store["hidden"].remove(key)
     store["shows"][key] = {"kind": ref["kind"], "tmdb": ref["tmdb"], "name": ref["name"], "notify": True,
-                           "added": today().isoformat(), "maze": 0}
+                           "source": "manual", "added": today().isoformat(), "maze": 0}
     write_json(FOLLOW_PATH, store)
     refresh(only=key)
-    # what has already aired should not pop up as "new"
-    store = load_follow()
-    for ev in load_cache()["shows"].get(key, {}).get("events", []):
-        if ev["date"] <= today().isoformat():
-            store["notified"][ev["key"]] = "done"
-    write_json(FOLLOW_PATH, store)
+    mark_past_done(key)
     return True
 
 
@@ -366,6 +468,8 @@ def set_notify(key, on):
     if key in store["shows"]:
         store["shows"][key]["notify"] = bool(on)
         write_json(FOLLOW_PATH, store)
+        if on:
+            mark_past_done(key)
 
 
 def notifications_enabled():
@@ -373,9 +477,12 @@ def notifications_enabled():
 
 
 def unfollow(key):
+    """Take a title out of the calendar (a Trakt title stays away until you switch its bell on from the info page)."""
     store = load_follow()
-    if key in store["shows"]:
-        del store["shows"][key]
+    rec = store["shows"].pop(key, None)
+    if rec:
+        if rec.get("source") == "trakt" and key not in store["hidden"]:
+            store["hidden"].append(key)
         write_json(FOLLOW_PATH, store)
         refresh()
 
@@ -416,7 +523,9 @@ def due_events(now, store, events):
     out = []
     for ev in events:
         rec = store["shows"].get(ev["show"])
-        if not rec or not rec.get("notify", True) or ev["key"] in store["notified"]:
+        if not rec or not rec.get("notify", False) or ev["key"] in store["notified"]:
+            continue
+        if ev["kind"] == "movie" and not ev.get("digital"):
             continue
         snooze = store["snooze"].get(ev["key"])
         if snooze and snooze[0] > time.time():
