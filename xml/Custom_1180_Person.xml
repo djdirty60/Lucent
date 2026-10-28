@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window type="dialog" id="1180">
+    <defaultcontrol always="true">5400</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>white.png</texture>
+            <colordiffuse>F20B1119</colordiffuse>
+        </control>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture>vignette.png</texture>
+        </control>
+        <!-- photo -->
+        <control type="image">
+            <left>150</left>
+            <top>100</top>
+            <width>320</width>
+            <height>480</height>
+            <texture diffuse="mask_poster.png">default_poster.png</texture>
+        </control>
+        <control type="image">
+            <left>150</left>
+            <top>100</top>
+            <width>320</width>
+            <height>480</height>
+            <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
+            <texture diffuse="mask_poster.png" background="true">$INFO[Window(home).Property(nuvio.person.photo)]</texture>
+        </control>
+        <control type="image">
+            <left>150</left>
+            <top>100</top>
+            <width>320</width>
+            <height>480</height>
+            <texture border="14">rr14_edge.png</texture>
+            <colordiffuse>33FFFFFF</colordiffuse>
+        </control>
+        <!-- name, born, place, biography -->
+        <control type="label">
+            <left>530</left>
+            <top>100</top>
+            <width>1240</width>
+            <height>80</height>
+            <font>font52</font>
+            <textcolor>text</textcolor>
+            <label>$INFO[Window(home).Property(nuvio.person.name)]</label>
+        </control>
+        <control type="label">
+            <left>530</left>
+            <top>196</top>
+            <width>1240</width>
+            <height>40</height>
+            <font>font_label_bold</font>
+            <textcolor>text2</textcolor>
+            <label>$INFO[Window(home).Property(nuvio.person.born)]</label>
+        </control>
+        <control type="label">
+            <left>530</left>
+            <top>238</top>
+            <width>1240</width>
+            <height>40</height>
+            <font>font_label</font>
+            <textcolor>text3</textcolor>
+            <label>$INFO[Window(home).Property(nuvio.person.place)]</label>
+        </control>
+        <control type="textbox">
+            <left>530</left>
+            <top>300</top>
+            <width>1240</width>
+            <height>280</height>
+            <font>font_body</font>
+            <textcolor>text2</textcolor>
+            <label>$INFO[Window(home).Property(nuvio.person.bio)]</label>
+            <autoscroll delay="8000" time="3000" repeat="10000">true</autoscroll>
+        </control>
+        <control type="group">
+            <left>150</left>
+            <top>200</top>
+            <visible>String.IsEmpty(Window(home).Property(nuvio.person.name))</visible>
+            <include content="Spinner"><param name="size">48</param></include>
+        </control>
+        <!-- filmography -->
+        <control type="grouplist">
+            <left>150</left>
+            <top>616</top>
+            <width>1600</width>
+            <height>52</height>
+            <orientation>horizontal</orientation>
+            <itemgap>16</itemgap>
+            <control type="label">
+                <width>auto</width>
+                <height>52</height>
+                <font>font_mainmenu_small</font>
+                <textcolor>text</textcolor>
+                <label>$LOCALIZE[31120]</label>
+            </control>
+            <include content="InfoPill">
+                <param name="label">$INFO[Window(home).Property(nuvio.person.count)]</param>
+                <param name="bg">glass_strong</param>
+                <param name="color">text</param>
+                <param name="visible">!String.IsEmpty(Window(home).Property(nuvio.person.count))</param>
+            </include>
+        </control>
+        <control type="fixedlist" id="5400">
+            <left>126</left>
+            <top>676</top>
+            <width>1794</width>
+            <height>404</height>
+            <orientation>horizontal</orientation>
+            <focusposition>0</focusposition>
+            <scrolltime tween="cubic" easing="out">260</scrolltime>
+            <itemlayout width="228" height="400">
+                <control type="group">
+                    <left>24</left>
+                    <top>16</top>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>200</width>
+                        <height>300</height>
+                        <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>200</width>
+                        <height>300</height>
+                        <aspectratio scalediffuse="false">scale</aspectratio>
+                        <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>210</top>
+                        <width>200</width>
+                        <height>90</height>
+                        <texture diffuse="mask_poster.png">grad_bottom.png</texture>
+                        <colordiffuse>E6000000</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>8</left>
+                        <top>256</top>
+                        <width>184</width>
+                        <height>34</height>
+                        <align>center</align>
+                        <font>font10</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </control>
+                <control type="label">
+                    <left>28</left>
+                    <top>326</top>
+                    <width>192</width>
+                    <height>34</height>
+                    <font>font12</font>
+                    <textcolor>text2</textcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+            </itemlayout>
+            <focusedlayout width="228" height="400">
+                <control type="group">
+                    <left>24</left>
+                    <top>16</top>
+                    <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>200</width>
+                        <height>300</height>
+                        <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>200</width>
+                        <height>300</height>
+                        <aspectratio scalediffuse="false">scale</aspectratio>
+                        <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>210</top>
+                        <width>200</width>
+                        <height>90</height>
+                        <texture diffuse="mask_poster.png">grad_bottom.png</texture>
+                        <colordiffuse>E6000000</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>8</left>
+                        <top>256</top>
+                        <width>184</width>
+                        <height>34</height>
+                        <align>center</align>
+                        <font>font10</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>248</width>
+                        <height>348</height>
+                        <texture border="38">rr14_glow.png</texture>
+                        <colordiffuse>glow</colordiffuse>
+                        <visible>Control.HasFocus(5400)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>200</width>
+                        <height>300</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                        <visible>Control.HasFocus(5400)</visible>
+                    </control>
+                </control>
+                <control type="label">
+                    <left>28</left>
+                    <top>326</top>
+                    <width>192</width>
+                    <height>34</height>
+                    <font>font12_bold</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+            </focusedlayout>
+            <content>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.1.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.1.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.1.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.1.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.1.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.2.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.2.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.2.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.2.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.2.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.3.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.3.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.3.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.3.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.3.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.4.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.4.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.4.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.4.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.4.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.5.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.5.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.5.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.5.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.5.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.6.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.6.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.6.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.6.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.6.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.7.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.7.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.7.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.7.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.7.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.8.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.8.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.8.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.8.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.8.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.9.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.9.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.9.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.9.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.9.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.10.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.10.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.10.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.10.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.10.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.11.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.11.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.11.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.11.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.11.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.12.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.12.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.12.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.12.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.12.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.13.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.13.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.13.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.13.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.13.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.14.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.14.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.14.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.14.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.14.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.15.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.15.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.15.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.15.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.15.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.16.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.16.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.16.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.16.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.16.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.17.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.17.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.17.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.17.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.17.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.18.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.18.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.18.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.18.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.18.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.19.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.19.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.19.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.19.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.19.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.20.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.20.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.20.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.20.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.20.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.21.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.21.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.21.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.21.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.21.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.22.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.22.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.22.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.22.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.22.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.23.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.23.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.23.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.23.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.23.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.24.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.24.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.24.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.24.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.24.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.25.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.25.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.25.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.25.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.25.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.26.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.26.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.26.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.26.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.26.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.27.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.27.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.27.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.27.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.27.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.28.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.28.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.28.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.28.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.28.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.29.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.29.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.29.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.29.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.29.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.30.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.30.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.30.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.30.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.30.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.31.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.31.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.31.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.31.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.31.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.32.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.32.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.32.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.32.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.32.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.33.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.33.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.33.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.33.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.33.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.34.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.34.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.34.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.34.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.34.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.35.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.35.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.35.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.35.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.35.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.36.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.36.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.36.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.36.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.36.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.37.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.37.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.37.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.37.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.37.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.38.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.38.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.38.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.38.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.38.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.39.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.39.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.39.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.39.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.39.title))</visible>
+                </item>
+                <item>
+                    <label>$INFO[Window(home).Property(nuvio.person.film.40.title)]</label>
+                    <label2>$INFO[Window(home).Property(nuvio.person.film.40.sub)]</label2>
+                    <icon>$INFO[Window(home).Property(nuvio.person.film.40.poster)]</icon>
+                    <onclick>Dialog.Close(1180,true)</onclick>
+                    <onclick>Dialog.Close(movieinformation,true)</onclick>
+                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.40.path)]",return)</onclick>
+                    <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.40.title))</visible>
+                </item>
+            </content>
+        </control>
+    </controls>
+</window>

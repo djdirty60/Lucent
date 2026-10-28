@@ -43,6 +43,7 @@ Everything on one page. At the top: logo, buttons, director, ratings (IMDb, TMDB
 
 - **Library and lists** – tick where the title should be: your Seren library (Trakt collection), your Trakt watchlist and your own Trakt lists.
 - **Mark as watched** – marks it as watched or not watched on Trakt.
+- **Click a cast member or the director** to open their page: photo, birthday, place of birth, biography and filmography (via TMDB).
 
 These use your Trakt login from Seren, there is nothing new to set up. For studio logos, use **Skin settings → Install studio logos**.
 
@@ -68,6 +69,7 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 **Info page**
 ![Info page](screenshots/info.jpg)
 ![Info page, scrolled down](screenshots/info-more.jpg)
+![Person page](screenshots/person.jpg)
 
 **Player**
 ![Player](screenshots/player.jpg)
@@ -85,11 +87,11 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.2.3.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.3.0.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.2.3.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.3.0.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
 

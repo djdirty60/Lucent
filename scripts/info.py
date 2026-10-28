@@ -46,6 +46,12 @@ T = {
     "no_ids": ("This title has no Trakt or TMDB id.", "Deze titel heeft geen Trakt- of TMDB-nummer."),
     "watched": ("Marked as watched", "Gemarkeerd als bekeken"),
     "unwatched": ("Marked as not watched", "Gemarkeerd als niet bekeken"),
+    "director": ("Director", "Regisseur"),
+    "creator": ("Creator", "Bedenker"),
+    "born": ("Born: {0}", "Geboren: {0}"),
+    "died": ("Died: {0}", "Overleden: {0}"),
+    "years": ("{0} years", "{0} jaar"),
+    "failed_tmdb": ("TMDB did not respond. Try again later.", "TMDB reageert niet. Probeer het later opnieuw."),
 }
 
 
@@ -345,11 +351,132 @@ def load_studios():
         HOME.setProperty(f"nuvio.info.studio.{n}", studios[n - 1] if n <= len(studios) else "")
 
 
+MAX_CAST = 24
+PROFILE = TMDB_IMG + "w342"
+MONTHS = {
+    "nl": ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"],
+    "en": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+}
+
+
+def load_credits(item):
+    """Fill nuvio.info.cast.* (directors first, then the cast) from TMDB, with person ids for the person page."""
+    for n in range(1, MAX_CAST + 1):
+        for p in ("name", "role", "thumb", "id"):
+            HOME.clearProperty(f"nuvio.info.cast.{n}.{p}")
+    HOME.setProperty("nuvio.info.cast.count", "0")
+    if not item.tmdb.isdigit() or item.dbtype not in ("movie", "tvshow"):
+        return
+    try:
+        if item.dbtype == "movie":
+            credits = tmdb(f"movie/{item.tmdb}/credits")
+            people = [(p, tr("director")) for p in credits.get("crew") or [] if p.get("job") == "Director"][:2]
+            people += [(p, p.get("character") or "") for p in (credits.get("cast") or [])]
+        else:
+            show = tmdb(f"tv/{item.tmdb}")
+            credits = tmdb(f"tv/{item.tmdb}/aggregate_credits")
+            people = [(p, tr("creator")) for p in show.get("created_by") or []][:2]
+            people += [(p, ((p.get("roles") or [{}])[0].get("character") or "")) for p in (credits.get("cast") or [])]
+    except Exception as error:  # noqa: BLE001 - Kodi's own cast list is shown instead
+        log(f"credits: {error}")
+        return
+    if HOME.getProperty("nuvio.info.key") != item.key:
+        return
+    seen, n = set(), 0
+    for person, role in people:
+        if person.get("id") in seen or n >= MAX_CAST:
+            continue
+        seen.add(person.get("id"))
+        n += 1
+        HOME.setProperty(f"nuvio.info.cast.{n}.name", person.get("name", ""))
+        HOME.setProperty(f"nuvio.info.cast.{n}.role", role)
+        path = person.get("profile_path")
+        HOME.setProperty(f"nuvio.info.cast.{n}.thumb", f"{PROFILE}{path}" if path else "DefaultActor.png")
+        HOME.setProperty(f"nuvio.info.cast.{n}.id", str(person.get("id", "")))
+    HOME.setProperty("nuvio.info.cast.count", str(n))
+
+
+def nice_date(value):
+    try:
+        year, month, day = (int(x) for x in value.split("-"))
+        return f"{day} {MONTHS['nl' if _NL else 'en'][month - 1]} {year}"
+    except Exception:  # noqa: BLE001
+        return value
+
+
+def age(born, died=None):
+    import datetime
+    try:
+        b = datetime.date.fromisoformat(born)
+        d = datetime.date.fromisoformat(died) if died else datetime.date.today()
+        return d.year - b.year - ((d.month, d.day) < (b.month, b.day))
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def show_person(person_id):
+    """Open the person page (Custom_1180_Person.xml) and fill it from TMDB."""
+    if not str(person_id).isdigit():
+        return
+    for key in [k for k in ("name", "born", "place", "bio", "photo", "count")]:
+        HOME.clearProperty(f"nuvio.person.{key}")
+    for n in range(1, 41):
+        for p in ("title", "sub", "poster", "path"):
+            HOME.clearProperty(f"nuvio.person.film.{n}.{p}")
+    xbmc.executebuiltin("ActivateWindow(1180)")
+    try:
+        person = tmdb(f"person/{person_id}", append_to_response="combined_credits")
+        if not person.get("biography") and _NL:
+            person["biography"] = tmdb(f"person/{person_id}", language="en-US").get("biography", "")
+    except Exception as error:  # noqa: BLE001
+        log(f"person: {error}")
+        notify(tr("failed_tmdb"), xbmcgui.NOTIFICATION_WARNING)
+        return
+    born, died = person.get("birthday"), person.get("deathday")
+    if born:
+        years = age(born, died)
+        text = tr("born", nice_date(born)) + (f" ({tr('years', years)})" if years is not None and not died else "")
+        if died:
+            text += f"  ·  {tr('died', nice_date(died))} ({tr('years', years)})"
+        HOME.setProperty("nuvio.person.born", text)
+    HOME.setProperty("nuvio.person.place", person.get("place_of_birth") or "")
+    HOME.setProperty("nuvio.person.bio", person.get("biography") or "")
+    path = person.get("profile_path")
+    HOME.setProperty("nuvio.person.photo", f"{TMDB_IMG}h632{path}" if path else "DefaultActor.png")
+
+    credits = person.get("combined_credits") or {}
+    works, seen = [], set()
+    for entry in (credits.get("cast") or []) + [c for c in credits.get("crew") or [] if c.get("job") == "Director"]:
+        key = (entry.get("media_type"), entry.get("id"))
+        if key in seen or entry.get("media_type") not in ("movie", "tv"):
+            continue
+        if entry.get("media_type") == "tv" and entry.get("character", "").lower() in ("himself", "herself", "self"):
+            continue
+        seen.add(key)
+        works.append(entry)
+    HOME.setProperty("nuvio.person.count", str(len(works)))
+    works.sort(key=lambda e: e.get("popularity") or 0, reverse=True)
+    for n, work in enumerate(works[:40], start=1):
+        title = work.get("title") or work.get("name") or ""
+        date = work.get("release_date") or work.get("first_air_date") or ""
+        rating = work.get("vote_average") or 0
+        sub = "  ·  ".join(x for x in (f"★ {rating:.1f}" if rating else "", date[:4]) if x)
+        poster = work.get("poster_path")
+        action = "moviesSearchResults" if work.get("media_type") == "movie" else "showsSearchResults"
+        HOME.setProperty(f"nuvio.person.film.{n}.title", title)
+        HOME.setProperty(f"nuvio.person.film.{n}.sub", sub)
+        HOME.setProperty(f"nuvio.person.film.{n}.poster", f"{TMDB_IMG}w342{poster}" if poster else "")
+        HOME.setProperty(f"nuvio.person.film.{n}.path", f"{SEREN}?action={action}&action_args={urllib.parse.quote(title)}")
+    # set the name last: the page shows a spinner until it is there
+    HOME.setProperty("nuvio.person.name", person.get("name", ""))
+
+
 def load():
     item = Item()
     HOME.setProperty("nuvio.info.key", item.key)
     HOME.clearProperty("nuvio.info.watched")
     load_studios()
+    load_credits(item)
     load_videos(item)
     load_collection(item)
 
@@ -360,5 +487,7 @@ if __name__ == "__main__":
         choose_lists()
     elif action == "watched":
         toggle_watched()
+    elif action == "person":
+        show_person(sys.argv[2] if len(sys.argv) > 2 else "")
     else:
         load()
