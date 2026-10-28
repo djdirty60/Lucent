@@ -770,6 +770,39 @@
                     <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
                     <visible>System.HasAddon(plugin.video.seren)</visible>
                 </control>
+                <control type="label" id="2603">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31224]</label>
+                </control>
+                <control type="textbox" id="2604">
+                    <width>1180</width>
+                    <height>110</height>
+                    <font>font_body</font>
+                    <textcolor>text3</textcolor>
+                    <label>$LOCALIZE[31229]</label>
+                </control>
+                <control type="radiobutton" id="1602">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31225]</label>
+                    <selected>!Skin.HasSetting(nuvio.agenda.nonotify)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.agenda.nonotify)</onclick>
+                </control>
+                <control type="button" id="1603">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31226]</label>
+                    <onclick>RunScript(special://skin/scripts/agenda.py)</onclick>
+                </control>
             </control>
             <control type="grouplist" id="9107">
                 <left>600</left>

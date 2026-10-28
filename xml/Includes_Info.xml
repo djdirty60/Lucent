@@ -17,6 +17,10 @@
         <value condition="$EXP[NuvioTab3] + !Control.HasFocus(6003)">[COLOR text][B]$LOCALIZE[31119][/B][/COLOR]</value>
         <value>$LOCALIZE[31119]</value>
     </variable>
+    <variable name="NuvioAgendaBell">
+        <value condition="!String.IsEmpty(Window(home).Property(nuvio.agenda.followed))">$LOCALIZE[31228]</value>
+        <value>$LOCALIZE[31227]</value>
+    </variable>
     <variable name="NuvioInfoWatched">
         <value condition="[String.IsEqual(Window(home).Property(nuvio.info.watched),1) | [String.IsEmpty(Window(home).Property(nuvio.info.watched)) + Integer.IsGreater(ListItem.PlayCount,0)]]">✓  $LOCALIZE[31116]</value>
         <value>$LOCALIZE[31115]</value>

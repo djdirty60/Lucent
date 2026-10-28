@@ -9,6 +9,7 @@
     <onload>ClearProperty(nuvio.info.vid.count,home)</onload>
     <onload>ClearProperty(nuvio.info.cast.count,home)</onload>
     <onload>RunScript(special://skin/scripts/info.py,load)</onload>
+    <onload>RunScript(special://skin/scripts/agenda.py,state)</onload>
     <controls>
         <include content="Backdrop">
             <param name="fanart">$VAR[ItemFanart]</param>
@@ -95,6 +96,13 @@
                         <label>$VAR[NuvioInfoWatched]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,watched)</onclick>
                         <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + System.HasAddon(plugin.video.seren)</visible>
+                    </control>
+                    <control type="button" id="23">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$VAR[NuvioAgendaBell]</label>
+                        <onclick>RunScript(special://skin/scripts/agenda.py,follow)</onclick>
+                        <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))]</visible>
                     </control>
                     <control type="button" id="11">
                         <width>auto</width>

@@ -76,6 +76,7 @@ T = {
     "t_library": ("Library", "Bibliotheek"),
     "t_addons": ("Add-ons", "Add-ons"),
     "t_favourites": ("Favourites", "Favorieten"),
+    "t_calendar": ("Calendar", "Kalender"),
     "t_settings": ("Settings", "Instellingen"),
     "t_power": ("Power", "Afsluiten"),
     # widget names
@@ -333,6 +334,7 @@ def default_tabs():
         tab("t_library", "library", videos("videodb://"), library),
         tab("t_addons", "addons", "ActivateWindow(AddonBrowser)"),
         tab("t_favourites", "favourites", "ActivateWindow(favouritesbrowser)"),
+        tab("t_calendar", "calendar", "RunScript(special://skin/scripts/agenda.py)"),
         tab("t_settings", "settings", "ActivateWindow(Settings)"),
         tab("t_power", "power", "ActivateWindow(ShutdownMenu)"),
     ], 2
@@ -802,6 +804,7 @@ def init():
     menu = Menu()
     if not menu.tabs:
         menu.set_defaults()
+        put("nuvio.agenda.tab", "1")      # the default menu already has the Calendar tab
     menu.save()
     # select the start tab now that it is known (Home asked for this before the menu existed)
     pos = get("nuvio.homepos")
