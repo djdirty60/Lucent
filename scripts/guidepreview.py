@@ -28,8 +28,42 @@ def select_action_once():
     epg.rpc("Settings.SetSettingValue", {"setting": "epg.selectaction", "value": 1})
 
 
+def open_favourite_group():
+    """Open the favourite channel group once per visit of the guide (not again when coming back from full screen)."""
+    home = xbmcgui_window()
+    if home.getProperty("lucent.guide.applied"):
+        return
+    home.setProperty("lucent.guide.applied", "1")
+    want = xbmc.getInfoLabel("Skin.String(lucent.guide.group)")
+    if not want:
+        return
+    for _ in range(30):                       # wait until the groups are listed
+        if xbmc.getCondVisibility("Integer.IsGreater(Container(11).NumItems,0)"):
+            break
+        xbmc.sleep(200)
+    count = int(xbmc.getInfoLabel("Container(11).NumItems") or 0)
+    for index in range(count):
+        if xbmc.getInfoLabel(f"Container(11).ListItemAbsolute({index}).Label").strip() == want:
+            if index != int(xbmc.getInfoLabel("Container(11).CurrentItem") or 1) - 1:
+                xbmc.executebuiltin(f"SetFocus(11,{index},absolute)")
+                xbmc.sleep(400)
+                xbmc.executebuiltin("Action(Select)")
+                xbmc.sleep(900)
+            xbmc.executebuiltin("SetFocus(50)")
+            return
+
+
+def xbmcgui_window():
+    import xbmcgui
+    return xbmcgui.Window(10000)
+
+
 def run():
     select_action_once()
+    try:
+        open_favourite_group()
+    except Exception as error:  # noqa: BLE001
+        sc.log(f"guide favourite: {error}")
     monitor = xbmc.Monitor()
     ids = {}
     try:
@@ -55,8 +89,11 @@ def run():
             done = name
         if monitor.waitForAbort(0.4):
             return
+    monitor.waitForAbort(1.2)
+    if not (xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)") or xbmc.getCondVisibility("Window.IsActive(videoosd)")
+            or xbmc.getCondVisibility(GUIDE)):
+        xbmcgui_window().clearProperty("lucent.guide.applied")      # the guide was really left
     if started or xbmc.getCondVisibility("Pvr.IsPlayingTV"):
-        monitor.waitForAbort(1.2)
         if not (xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)") or xbmc.getCondVisibility("Window.IsActive(videoosd)")
                 or xbmc.getCondVisibility(GUIDE)):
             xbmc.executebuiltin("PlayerControl(Stop)")
