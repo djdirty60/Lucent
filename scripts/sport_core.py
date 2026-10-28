@@ -381,6 +381,21 @@ def fetch_range(key, first, last, workers=3):
     Days that fail (ESPN is busy) are asked again one by one; what still fails is remembered in PARTIAL."""
     path = LEAGUES[key]["path"]
     seen, out, got = set(), [], {}
+    if LEAGUES[key]["kind"] == "teams":
+        # one request per calendar year instead of one per day: far less load on ESPN (it blocks us when we ask too much)
+        try:
+            events = []
+            for year in sorted({int(first[:4]), int(last[:4])}):
+                data = espn_get(f"{ESPN}{path}/scoreboard?dates={year}&limit=1000")
+                if len(data.get("events") or []) >= 1000:
+                    raise ValueError("year answer is cut off")
+                events += parse_scoreboard(key, data)
+            events = [e for e in events if first <= espn_day(local_day(e["start"])) <= last]
+            if events:
+                PARTIAL[key] = []
+                return events
+        except Exception as error:  # noqa: BLE001
+            log(f"year {key}: {error}")
 
     def one(day):
         try:
@@ -392,7 +407,7 @@ def fetch_range(key, first, last, workers=3):
     with ThreadPoolExecutor(max_workers=workers) as pool:
         for day, res in pool.map(one, days):
             got[day] = res
-    for _pass in range(2):
+    for _pass in range(1):
         for day in [d for d, r in got.items() if isinstance(r, Exception)]:
             time.sleep(1)
             got[day] = one(day)[1]
