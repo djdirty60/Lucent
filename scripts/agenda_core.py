@@ -327,7 +327,8 @@ def wanted_from_trakt():
         show = entry.get("show") or {}
         tmdb = (show.get("ids") or {}).get("tmdb")
         if tmdb and (show.get("status") or "").lower() not in RUNNING_STATUS_SKIP:
-            wanted[show_key("tv", tmdb)] = {"kind": "tv", "tmdb": int(tmdb), "name": show.get("title") or ""}
+            wanted[show_key("tv", tmdb)] = {"kind": "tv", "tmdb": int(tmdb), "name": show.get("title") or "",
+                                            "trakt": (show.get("ids") or {}).get("trakt") or 0}
     lo = (today() - datetime.timedelta(days=FILM_LOOKBACK)).isoformat()
     for path in ("sync/collection/movies", "sync/watchlist/movies"):
         for entry in trakt.get(path + "?extended=full") or []:
@@ -509,10 +510,36 @@ def follow_button():
 
 
 # ----------------------------------------------------------------------------- opening a show in Seren
-def open_in_seren(name, kind):
+def trakt_show_id(tmdb):
+    """Trakt id of a series (what Seren's own series menu needs). Remembered in the calendar list."""
+    key = show_key("tv", tmdb)
+    store = load_follow()
+    rec = store["shows"].get(key)
+    if rec and rec.get("trakt"):
+        return rec["trakt"]
+    found = info.Trakt().get(f"search/tmdb/{tmdb}?type=show") or []
+    trakt = ((found[0].get("show") or {}).get("ids") or {}).get("trakt") if found else None
+    if trakt and rec:
+        rec["trakt"] = trakt
+        write_json(FOLLOW_PATH, store)
+    return trakt
+
+
+def open_in_seren(name, kind, tmdb=None):
+    """A series opens straight on its seasons in Seren; a film (and a series Trakt does not know) on the search results."""
     if not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
         xbmcgui.Dialog().notification(HEADING, tr("no_seren"), xbmcgui.NOTIFICATION_WARNING, 3000)
         return
+    if kind == "tv" and tmdb:
+        try:
+            trakt = trakt_show_id(tmdb)
+        except Exception as error:  # noqa: BLE001 - fall back to the search
+            log(f"trakt id of {tmdb}: {error}")
+            trakt = None
+        if trakt:
+            args = urllib.parse.quote(json.dumps({"mediatype": "tvshow", "trakt_id": int(trakt)}, sort_keys=True))
+            xbmc.executebuiltin(f'ActivateWindow(Videos,"{SEREN}?action=showSeasons&action_args={args}",return)')
+            return
     action = "moviesSearchResults" if kind == "movie" else "showsSearchResults"
     xbmc.executebuiltin(f'ActivateWindow(Videos,"{SEREN}?action={action}&action_args={urllib.parse.quote(name)}",return)')
 
@@ -573,7 +600,7 @@ def check_notifications():
         if announce(ev):
             store["notified"][ev["key"]] = "done"
             write_json(FOLLOW_PATH, store)
-            open_in_seren(ev["name"], ev["kind"])
+            open_in_seren(ev["name"], ev["kind"], ev["tmdb"])
             break
         count = (store["snooze"].get(ev["key"]) or [0, 0])[1] + 1
         if count >= 3:

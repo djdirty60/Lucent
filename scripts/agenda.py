@@ -258,7 +258,7 @@ class Agenda(xbmcgui.WindowXML):
                      "nextlabel": t("next_of", ev["name"]) if upcoming else ""}
             items.append(listitem(
                 ev["name"], ep_title(ev), ev["still"] or ev["poster"], header=header, time=ev["time"], datecol=core.day_short(d),
-                notify="1" if ev["notify"] else "", showkey=ev["show"], kind=ev["kind"], backdrop=ev["backdrop"],
+                notify="1" if ev["notify"] else "", showkey=ev["show"], tmdb=ev["tmdb"], kind=ev["kind"], backdrop=ev["backdrop"],
                 poster=ev["poster"], when=when_line(ev), dtitle=ep_title(ev), meta=meta(ev), plot=ev["plot"],
                 still=ev["still"], bellText=t("bell_on") if ev["notify"] else t("bell_off"),
                 openText=t("open_movie") if ev["kind"] == "movie" else t("open_show"), **nxt, **extra))
@@ -302,7 +302,7 @@ class Agenda(xbmcgui.WindowXML):
             sub = "  ·  ".join(x for x in ((core.tr("time_unknown") if not first["time"] else ""), first["network"]) if x)
             items.append(listitem(
                 card["name"], caption, first["still"] or first["poster"], time=first["time"], epcode=code,
-                caption2=sub or first["network"], notify="1" if card["notify"] else "", showkey=card["show"],
+                caption2=sub or first["network"], notify="1" if card["notify"] else "", showkey=card["show"], tmdb=card["tmdb"],
                 kind=card["kind"], backdrop=card["backdrop"], hwhen=t("airs_on" if card["date"] > core.today().isoformat() else "aired_on",
                                                                       when_line(first)),
                 hsub=f"{core.ep_code(first)}  ·  {first['title']}" if first["kind"] == "tv" and not multi else (code if multi else ep_title(first)),
@@ -364,11 +364,12 @@ class Agenda(xbmcgui.WindowXML):
             day = self.events_on(add_days(monday(self.anchor.replace(day=1)), self.getControl(GRID).getSelectedPosition()))
             if not day:
                 return
-            name, kind = day[0]["name"], day[0]["kind"]
+            name, kind, tmdb = day[0]["name"], day[0]["kind"], day[0]["tmdb"]
         else:
             name, kind = item.getLabel(), item.getProperty("kind") or "tv"
+            tmdb = item.getProperty("tmdb")
         self.close()
-        core.open_in_seren(name, kind)
+        core.open_in_seren(name, kind, int(tmdb) if str(tmdb).isdigit() else None)
 
     def toggle_bell(self, control_id):
         item = self.current(control_id)
