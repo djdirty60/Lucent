@@ -90,7 +90,7 @@ TX = {
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "nogames": ("No games planned right now", "Geen wedstrijden gepland"),
     "previewhint": ("OK on a channel: watch here", "OK op een zender: hier kijken"), "stoptext": ("Stop channel", "Zender stoppen"),
-    "c_laps": ("laps", "ronden"), "c_turns": ("turns", "bochten"), "c_cw": ("clockwise", "met de klok mee"),
+    "c_length": ("Length", "Lengte"), "c_laps": ("laps", "ronden"), "c_turns": ("turns", "bochten"), "c_cw": ("clockwise", "met de klok mee"),
     "c_ccw": ("anti-clockwise", "tegen de klok in"), "circ_record": ("Lap record", "Rondrecord"), "fullhint": ("OK again: full screen", "Nog een keer OK: beeldvullend"),
     "dayerr": ("ESPN did not answer for {} of {} days ({})", "ESPN gaf geen antwoord voor {} van {} dagen ({})"),
     "neterr": ("Could not reach ESPN ({})", "ESPN niet bereikbaar ({})"),

@@ -679,11 +679,17 @@ class Sport(xbmcgui.WindowXML):
             props["info2"] = ev.get("round", "")
         if props["layout"] == "race":
             mates = sorted((e for e in sc.all_cached() if e["league"] == ev["league"] and e["kind"] == "event" and e["title"] == ev["title"]),
-                           key=lambda e: e["start"])[:6]
+                           key=lambda e: e["start"])[:5]
+            now_ts = time.time()
+            next_n = next((i for i, e in enumerate(mates, 1) if e["start"] > now_ts), 0)
             for n, e in enumerate(mates, 1):
                 props[f"s{n}name"] = e.get("sub") or e["title"]
                 props[f"s{n}when"] = f"{ac.day_short(sc.local_day(e['start']))}  {sc.local_time(e['start'])}"
+                props[f"s{n}day"] = ac.day_short(sc.local_day(e["start"]))
+                props[f"s{n}time"] = sc.local_time(e["start"])
                 props[f"s{n}now"] = "1" if e["id"] == ev["id"] else ""
+                props[f"s{n}past"] = "1" if e["start"] + 2 * 3600 < now_ts else ""
+                props[f"s{n}next"] = "1" if n == next_n else ""
         return props
 
     def game_extra(self, ev):
@@ -697,9 +703,12 @@ class Sport(xbmcgui.WindowXML):
                                      f"{c['turns']} {sc.t('c_turns')}" if c.get("turns") else "",
                                      sc.t("c_cw") if "clock" in direction and "anti" not in direction and "counter" not in direction
                                      else (sc.t("c_ccw") if direction else "")) if x]
-                out = {"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("image", ""),
+                tiles = [(c.get("length", ""), sc.t("c_length")), (c.get("laps", ""), sc.t("c_laps")), (c.get("turns", ""), sc.t("c_turns")),
+                         (c.get("record", ""), sc.t("circ_record") + (f"  {c['recyear']}" if c.get("recyear") else ""))]
+                out = {f"circt{i}{k}": v for i, (val, cap) in enumerate(tiles, 1) for k, v in (("v", val), ("c", cap if val else ""))}
+                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("image", ""),
                        "circfacts": "  ·  ".join(facts),
-                       "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""}
+                       "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""})
             except Exception as error:  # noqa: BLE001 - the circuit is a bonus
                 sc.log(f"circuit: {error}")
             return out
