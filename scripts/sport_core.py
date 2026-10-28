@@ -393,6 +393,22 @@ def fetch_range(key, first, last, workers=4):
     return out
 
 
+def fetch_years(key, first_year, last_year):
+    """One call per calendar year (a whole season in one answer); [] when ESPN does not answer."""
+    path, out, seen = LEAGUES[key]["path"], [], set()
+    for year in range(first_year, last_year + 1):
+        try:
+            events = parse_scoreboard(key, espn_get(f"{ESPN}{path}/scoreboard?dates={year}&limit=1000"))
+        except Exception as error:  # noqa: BLE001
+            log(f"year {key} {year}: {error}")
+            continue
+        for ev in events:
+            if ev["id"] not in seen:
+                seen.add(ev["id"])
+                out.append(ev)
+    return out
+
+
 def fetch_league(key, first, last):
     return fetch_range(key, first, last)
 
@@ -726,12 +742,15 @@ def results(key, force=False):
         return entry["events"]
     today = ac.today()
     first = (today - datetime.timedelta(days=RESULTS_DAYS)).strftime("%Y%m%d")
-    try:
-        events = fetch_range(key, first, espn_day(today), workers=8)
-    except Exception as error:  # noqa: BLE001
-        log(f"results {key}: {error}")
-        return entry["events"] if entry else []
-    done = sorted((e for e in events if e["state"] == "post" and e["kind"] == "teams"), key=lambda e: -e["start"])
+    events = fetch_years(key, int(first[:4]), today.year)
+    if not events:                              # a year answer failed: ask day by day instead
+        try:
+            events = fetch_range(key, first, espn_day(today), workers=4)
+        except Exception as error:  # noqa: BLE001
+            log(f"results {key}: {error}")
+            return entry["events"] if entry else []
+    cut = time.time() - RESULTS_DAYS * 86400
+    done = sorted((e for e in events if e["state"] == "post" and e["kind"] == "teams" and e["start"] >= cut), key=lambda e: -e["start"])
     cache["results"][key] = {"fetched": time.time(), "events": done}
     save_cache(cache)
     return done
