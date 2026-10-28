@@ -57,8 +57,28 @@ def clean_name(name):
 
 
 def channels():
+    """All TV channels. 'alltv' first; when Kodi does not know it, the first TV channel group."""
     data = rpc("PVR.GetChannels", {"channelgroupid": "alltv", "properties": ["channel", "thumbnail"]})
-    return data.get("channels") or []
+    found = data.get("channels") or []
+    if found:
+        return found
+    groups = rpc("PVR.GetChannelGroups", {"channeltype": "tv"}).get("channelgroups") or []
+    for group in groups:
+        data = rpc("PVR.GetChannels", {"channelgroupid": group.get("channelgroupid"), "properties": ["channel", "thumbnail"]})
+        found = data.get("channels") or []
+        if found:
+            return found
+    return []
+
+
+def diagnose():
+    """Why is there no guide? A short Dutch/English reason for the screen."""
+    props = rpc("PVR.GetProperties", {"properties": ["available"]})
+    if not props.get("available"):
+        return sc.t("pvr_off")
+    if not channels():
+        return sc.t("pvr_nochan")
+    return sc.t("pvr_noepg")
 
 
 def broadcasts(channel_id):
@@ -95,7 +115,10 @@ def forget():
 
 
 def is_fresh():
-    return time.time() - load().get("fetched", 0) < EPG_TTL
+    """Read within 3 hours; an empty guide (IPTV Simple was still loading it) is tried again after 5 minutes."""
+    data = load()
+    age = time.time() - data.get("fetched", 0)
+    return age < (EPG_TTL if data.get("rows") else 300)
 
 
 def scan(progress=None, abort=None):

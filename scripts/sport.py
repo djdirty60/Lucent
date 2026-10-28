@@ -158,12 +158,20 @@ class Sport(xbmcgui.WindowXML):
         self.ready = True
         for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
-        self.has_pvr = len(epg.channels()) > 0
-        self.setProperty("sport.t.nochan", sc.t("nochan") if self.has_pvr else sc.t("noguide"))
+        self.check_pvr()
         self.view = "mine" if sc.has_follow() else "all"
         self.render()
         self.setFocusId(102 if self.view == "all" else 101)
         threading.Thread(target=self.background, daemon=True).start()
+
+    def check_pvr(self):
+        """Is there a TV guide? Asked again when the screen opens and when the guide has been read."""
+        self.has_pvr = len(epg.channels()) > 0
+        if self.has_pvr and not epg.load().get("rows"):
+            text = sc.t("pvr_noepg") if epg.is_fresh() else sc.t("nochan")
+        else:
+            text = sc.t("nochan") if self.has_pvr else epg.diagnose()
+        self.setProperty("sport.t.nochan", text)
 
     def onClose(self):
         self.closing = True
@@ -257,6 +265,8 @@ class Sport(xbmcgui.WindowXML):
         try:
             if not sc.all_cached():
                 self.status(sc.t("loading"))
+            if not self.has_pvr:
+                self.check_pvr()
             changed = sc.refresh(progress=None)
             if sc.LAST_FAIL[0] and sc.LAST_FAIL[0] == sc.LAST_FAIL[1]:
                 self.error = sc.t("neterr", sc.LAST_FAIL[2] or "?")
@@ -279,6 +289,7 @@ class Sport(xbmcgui.WindowXML):
                 self.status(sc.t("guide", 0))
                 epg.scan(progress=progress, abort=lambda: self.closing)
                 self.guide_busy = False
+                self.check_pvr()
                 if not self.closing:
                     self.render(keep_focus=True)
         except Exception as error:  # noqa: BLE001
@@ -1412,24 +1423,29 @@ def open_window():
     del window
 
 
-def ensure_tab():
-    """Add the Sport tab to the side menu once (before Settings)."""
-    if xbmc.getInfoLabel("Skin.String(nuvio.sport.tab)"):
+def add_tab(flag, label_key, icon, action, before=("ActivateWindow(Settings)",)):
+    """Put a tab in the side menu once (before Settings)."""
+    if xbmc.getInfoLabel(f"Skin.String({flag})"):
         return
     if not xbmc.getInfoLabel("Skin.String(nuvio.menu.version)"):
         return                              # the menu is not written yet; next time
-    xbmc.executebuiltin('Skin.SetString(nuvio.sport.tab,"1")', True)
+    xbmc.executebuiltin(f'Skin.SetString({flag},"1")', True)
     import menu
     m = menu.Menu()
-    action = "RunScript(special://skin/scripts/sport.py)"
     if any(tab["action"] == action for tab in m.tabs) or len(m.tabs) >= menu.NTABS:
         return
-    at = next((i for i, tab in enumerate(m.tabs) if tab["action"] == "ActivateWindow(Settings)"), len(m.tabs))
+    at = next((i for i, tab in enumerate(m.tabs) if tab["action"] in before), len(m.tabs))
     start = m.start_tab()
-    m.tabs.insert(at, {"label": menu.tr("t_sport"), "icon": "icons/sport.png", "action": action,
-                       "widgets": [], "actionlabel": ""})
+    m.tabs.insert(at, {"label": menu.tr(label_key), "icon": icon, "action": action, "widgets": [], "actionlabel": ""})
     m.start = start
     m.save()
+
+
+def ensure_tab():
+    """The Sport and TV tabs in the side menu (once each)."""
+    add_tab("nuvio.sport.tab", "t_sport", "icons/sport.png", "RunScript(special://skin/scripts/sport.py)")
+    add_tab("nuvio.tv.tab", "t_tv", "icons/tv.png", "RunScript(special://skin/scripts/tv.py)",
+            before=("RunScript(special://skin/scripts/sport.py)", "ActivateWindow(Settings)"))
 
 
 if __name__ == "__main__":

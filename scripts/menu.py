@@ -78,6 +78,7 @@ T = {
     "t_favourites": ("Favourites", "Favorieten"),
     "t_calendar": ("Calendar", "Kalender"),
     "t_sport": ("Sport", "Sport"),
+    "t_tv": ("TV", "TV"),
     "t_settings": ("Settings", "Instellingen"),
     "t_power": ("Power", "Afsluiten"),
     # widget names
