@@ -576,6 +576,14 @@
                         <label>$INFO[ListItem.Label2]</label>
                         <visible>!Control.HasFocus(50)</visible>
                     </control>
+                    <control type="image">
+                        <left>924</left>
+                        <top>27</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture colordiffuse="red">buttons/check_fo.png</texture>
+                        <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                    </control>
                 </focusedlayout>
             </control>
         </control>
