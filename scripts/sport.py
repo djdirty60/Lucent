@@ -148,7 +148,7 @@ class Sport(xbmcgui.WindowXML):
         if self.ready:
             return
         self.ready = True
-        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint"):
+        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
         self.has_pvr = len(epg.channels()) > 0
         self.setProperty("sport.t.nochan", sc.t("nochan") if self.has_pvr else sc.t("noguide"))
@@ -286,6 +286,7 @@ class Sport(xbmcgui.WindowXML):
         props = {
             "time": sc.local_time(ev["start"]), "status": status, "live": "1" if live else "",
             "hname": ev["home"].get("name", ""), "aname": ev["away"].get("name", ""),
+            "hrec": ev["home"].get("rec", ""), "arec": ev["away"].get("rec", ""),
             "hlogo": ev["home"].get("logo", ""), "alogo": ev["away"].get("logo", ""),
             "mid": score_text(ev), "lgicon": ev.get("lg", ""), "isevent": "1" if kind_event else "",
             "league": league_name(ev["league"]), "chan": best,
@@ -377,6 +378,8 @@ class Sport(xbmcgui.WindowXML):
             self.events = events
             self.by_id = {e["id"]: e for e in events}
             items = [self.event_item(ev, data) for ev in events]
+            self.setProperty("sport.listtitle", nice_day(self.day).upper() if abs((self.day - ac.today()).days) <= 1 else ac.day_long(self.day).upper())
+            self.setProperty("sport.listcount", sc.t("list_n", len(events)) if events else "")
         self.setProperty("sport.hashero", "1" if self.hero_events else "")
         control = self.getControl(LIST)
         position = control.getSelectedPosition() if keep_focus else 0

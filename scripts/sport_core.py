@@ -28,7 +28,7 @@ FOLLOW_PATH = DATA + "sport_follow.json"
 CACHE_PATH = DATA + "sport_cache.json"
 ESPN = "https://site.api.espn.com/apis/site/v2/sports/"
 ESPN_V2 = "https://site.api.espn.com/apis/v2/sports/"
-CACHE_VERSION = 2
+CACHE_VERSION = 3
 TTL = 15 * 60
 TTL_LIVE = 2 * 60
 STANDINGS_TTL = 60 * 60
@@ -88,8 +88,10 @@ TX = {
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "nogames": ("No games planned right now", "Geen wedstrijden gepland"),
     "neterr": ("Could not reach ESPN ({})", "ESPN niet bereikbaar ({})"),
+    "list_n": ("{} games", "{} wedstrijden"),
     "play_on": ("Watch on", "Kijk op"), "n_games": ("{} games", "{} wedstrijden"),
     "hint": ("OK: game menu   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdmenu   ◄ ►: door de rij   ▲ ▼: volgend team"),
+    "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
     "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
@@ -187,7 +189,8 @@ def side(competitor):
             "short": country_label(team.get("shortDisplayName") or team.get("displayName") or ""), "abbr": team.get("abbreviation") or "",
             "nick": team.get("name") or "", "logo": team.get("logo") or (team.get("flag") or {}).get("href") or "",
             "score": str(competitor.get("score", "") if not isinstance(competitor.get("score"), dict) else competitor["score"].get("displayValue", "")),
-            "color": team.get("color") or "", "alt": team.get("alternateColor") or ""}
+            "color": team.get("color") or "", "alt": team.get("alternateColor") or "",
+            "rec": next((r.get("summary", "") for r in (competitor.get("records") or []) if r.get("summary")), "")}
 
 
 def status_of(ev):
