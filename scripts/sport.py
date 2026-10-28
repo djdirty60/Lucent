@@ -159,6 +159,10 @@ class Sport(xbmcgui.WindowXML):
         for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
         self.check_pvr()
+        if not sc.all_cached():
+            self.setProperty("sport.loadtitle", sc.t("loading_title"))
+            self.setProperty("sport.loadtext", sc.t("loading_text"))
+            self.setProperty("sport.loading", "1")
         self.view = "mine" if sc.has_follow() else "all"
         self.render()
         self.setFocusId(102 if self.view == "all" else 101)
@@ -260,22 +264,39 @@ class Sport(xbmcgui.WindowXML):
     def status(self, text=""):
         self.setProperty("sport.status", text)
 
+    def set_progress(self, done, total):
+        self.setProperty("sport.progress", str(min(10, int(done * 10 / max(total, 1)))) if total else "")
+
     def background(self):
         """Fetch the games and read the IPTV guide without keeping the screen waiting."""
+        first_time = not sc.all_cached()
         try:
-            if not sc.all_cached():
-                self.status(sc.t("loading"))
+            if first_time:
+                self.setProperty("sport.loadtitle", sc.t("loading_title"))
+                self.setProperty("sport.loadtext", sc.t("loading_text"))
+                self.setProperty("sport.loading", "1")
+            else:
+                self.status(sc.t("updating"))
             if not self.has_pvr:
                 self.check_pvr()
-            changed = sc.refresh(progress=None)
+
+            def games_progress(done, total):
+                self.set_progress(done, total)
+                if first_time:
+                    self.setProperty("sport.loadtext", sc.t("loading_pct", int(done * 100 / max(total, 1))))
+
+            changed = sc.refresh(progress=games_progress)
             if sc.LAST_FAIL[0] and sc.LAST_FAIL[0] == sc.LAST_FAIL[1]:
                 self.error = sc.t("neterr", sc.LAST_FAIL[2] or "?")
             for league in {t["league"] for t in sc.load_follow()["teams"] if t.get("league") in sc.LEAGUES and t["league"] != sc.NATIONAL_LEAGUE}:
                 sc.standings(league)             # for "2nd in Eredivisie"
                 changed = True
             self.loaded = True
-            if (changed or self.view == "mine") and not self.closing:
-                self.render(keep_focus=True)
+            self.setProperty("sport.loading", "")
+            self.setProperty("sport.progress", "")
+            self.status(self.error)
+            if (changed or first_time or self.view == "mine") and not self.closing:
+                self.render(keep_focus=not first_time)
             if self.has_pvr and not epg.is_fresh() and not self.closing:
                 self.guide_busy = True
                 last = [0]
@@ -285,6 +306,7 @@ class Sport(xbmcgui.WindowXML):
                     if pct != last[0]:
                         last[0] = pct
                         self.status(sc.t("guide", pct))
+                        self.set_progress(done, total)
 
                 self.status(sc.t("guide", 0))
                 epg.scan(progress=progress, abort=lambda: self.closing)
@@ -296,7 +318,10 @@ class Sport(xbmcgui.WindowXML):
             sc.log(f"background: {error}")
         finally:
             self.guide_busy = False
+            self.loaded = True
             if not self.closing:
+                self.setProperty("sport.loading", "")
+                self.setProperty("sport.progress", "")
                 self.status(self.error)
 
     # ------------------------------------------------------------------ data -> list
@@ -467,13 +492,13 @@ class Sport(xbmcgui.WindowXML):
                 everything[e["id"]] = e
         live_all = sorted((e for e in everything.values() if e["state"] == "in"), key=lambda e: e["start"])
         coming_all = sorted((e for e in everything.values() if e["state"] == "pre"), key=lambda e: e["start"])
-        # the big card is for your favourites: games of followed teams (and names); only when there are none, anything followed
+        # the big card is only for your favourites: games of followed teams (and names); no favourites -> no big card
         fav = {}
         for row in rows:
             if row["kind"] in ("team", "name"):
                 for e in row["events"]:
                     fav[e["id"]] = e
-        pool = [e for e in live_all + coming_all if e["id"] in fav] or (live_all + coming_all)
+        pool = [e for e in live_all + coming_all if e["id"] in fav]
         hero = pool[:HERO_MAX]
         sections = []
         if live_all or coming_all:
@@ -518,7 +543,7 @@ class Sport(xbmcgui.WindowXML):
                 self.setProperty(f"sport.sec{k + 1}.on", "1")
                 cards = [self.event_item(ev, data) for ev in evs]
                 if not cards:
-                    cards = [listitem(sc.t("nogames") if self.loaded else sc.t("loading"), "", isevent="1", league=sec["title"], lgicon=sec["logo"], foot="", hcol="66" + "3A4A5C", acol="66" + "3A4A5C")]
+                    cards = [listitem(sc.t("nogames"), "", isevent="1", league=sec["title"], lgicon=sec["logo"], foot="", hcol="66" + "3A4A5C", acol="66" + "3A4A5C")]
                 self.fill_list(cid, cards, keep.get(cid, 0))
             else:
                 self.setProperty(f"sport.sec{k + 1}.on", "")

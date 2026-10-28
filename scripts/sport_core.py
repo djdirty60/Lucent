@@ -102,6 +102,8 @@ TX = {
     "pvr_off": ("Live TV is switched off in Kodi (Settings > PVR)", "Live TV staat uit in Kodi (Instellingen > PVR)"),
     "pvr_nochan": ("No TV channels yet - IPTV Simple Client is still loading or has no playlist", "Nog geen tv-zenders - IPTV Simple Client laadt nog of heeft geen zenderlijst"),
     "pvr_noepg": ("Channels found, but no programme guide yet", "Zenders gevonden, maar nog geen tv-gids"),
+    "loading_title": ("Loading games", "Wedstrijden laden"), "loading_text": ("One moment, the first time takes a little longer…", "Een momentje, de eerste keer duurt iets langer…"),
+    "loading_pct": ("{}%", "{}%"), "updating": ("Updating…", "Bijwerken…"),
     "play_on": ("Watch on", "Kijk op"), "n_games": ("{} games", "{} wedstrijden"),
     "hint": ("OK: game info   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdinfo   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
