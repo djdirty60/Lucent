@@ -210,7 +210,7 @@ class Sport(xbmcgui.WindowXML):
         elif self.getFocusId() == T_SPORTS:
             self.table_token += 1
             threading.Timer(0.45, self.sport_after, args=(self.table_token,)).start()
-        if self.view == "mine":
+        if self.view in ("mine", "all"):
             self.tint()
         if self.view == "follow" and self.getFocusId() in (F_SPORTS, F_COMPS):
             self.f_token += 1
@@ -590,7 +590,9 @@ class Sport(xbmcgui.WindowXML):
         """The background takes the colours of the game you are looking at."""
         fid = self.getFocusId()
         cid = HERO_LIST if fid in HERO_CHANNELS else fid
-        if cid != HERO_LIST and cid not in SECTION_LISTS:
+        if self.view == "all":
+            cid = LIST
+        elif cid != HERO_LIST and cid not in SECTION_LISTS:
             if not self.getProperty("sport.bgA") and self.hero_events:
                 cid = HERO_LIST
             else:
