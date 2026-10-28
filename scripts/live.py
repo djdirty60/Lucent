@@ -76,6 +76,24 @@ def colour(value, default):
     return "FF" + value.upper() if len(value) == 6 else default
 
 
+def show(ev):
+    home, away = ev["home"], ev["away"]
+    HOME.setProperty("live.sc.on", "1")
+    HOME.setProperty("live.sc.h", (home.get("abbr") or home.get("short") or home["name"])[:3].upper())
+    HOME.setProperty("live.sc.a", (away.get("abbr") or away.get("short") or away["name"])[:3].upper())
+    HOME.setProperty("live.sc.hs", home.get("score", ""))
+    HOME.setProperty("live.sc.as", away.get("score", ""))
+    HOME.setProperty("live.sc.clock", ev.get("status", ""))
+    HOME.setProperty("live.sc.hname", home.get("short") or home["name"])
+    HOME.setProperty("live.sc.aname", away.get("short") or away["name"])
+    HOME.setProperty("live.sc.hrec", home.get("rec", ""))
+    HOME.setProperty("live.sc.arec", away.get("rec", ""))
+    HOME.setProperty("live.sc.hlogo", home.get("logo", ""))
+    HOME.setProperty("live.sc.alogo", away.get("logo", ""))
+    HOME.setProperty("live.sc.hcol", colour(home.get("color"), "FFB3262E"))
+    HOME.setProperty("live.sc.acol", colour(away.get("color"), "FF1F4E9E"))
+
+
 def score(cid):
     import sport_core as sc
     import sport_epg as epg
@@ -87,26 +105,14 @@ def score(cid):
             continue
         if not any(str(c["cid"]) == str(cid) for c in epg.channels_for(ev, data)):
             continue
-        try:                                   # fresh numbers for this league (cheap, only when we found the game)
+        show(ev)                               # at once, from what we already hold
+        try:                                   # then fresh numbers for this league, shown when they arrive
             sc.refresh(keys=[ev["league"]])
-            ev = next((e for e in sc.all_cached() if e["id"] == ev["id"]), ev)
+            fresh = next((e for e in sc.all_cached() if e["id"] == ev["id"]), None)
+            if fresh and HOME.getProperty("live.sc.on"):
+                show(fresh)
         except Exception:  # noqa: BLE001
             pass
-        home, away = ev["home"], ev["away"]
-        HOME.setProperty("live.sc.on", "1")
-        HOME.setProperty("live.sc.h", (home.get("abbr") or home.get("short") or home["name"])[:3].upper())
-        HOME.setProperty("live.sc.a", (away.get("abbr") or away.get("short") or away["name"])[:3].upper())
-        HOME.setProperty("live.sc.hs", home.get("score", ""))
-        HOME.setProperty("live.sc.as", away.get("score", ""))
-        HOME.setProperty("live.sc.clock", ev.get("status", ""))
-        HOME.setProperty("live.sc.hname", home.get("short") or home["name"])
-        HOME.setProperty("live.sc.aname", away.get("short") or away["name"])
-        HOME.setProperty("live.sc.hrec", home.get("rec", ""))
-        HOME.setProperty("live.sc.arec", away.get("rec", ""))
-        HOME.setProperty("live.sc.hlogo", home.get("logo", ""))
-        HOME.setProperty("live.sc.alogo", away.get("logo", ""))
-        HOME.setProperty("live.sc.hcol", colour(home.get("color"), "FFB3262E"))
-        HOME.setProperty("live.sc.acol", colour(away.get("color"), "FF1F4E9E"))
         return True
     return False
 
