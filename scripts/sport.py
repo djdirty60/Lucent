@@ -299,6 +299,8 @@ class Sport(xbmcgui.WindowXML):
             changed = sc.refresh(progress=games_progress)
             if sc.LAST_FAIL[0] and sc.LAST_FAIL[0] == sc.LAST_FAIL[1]:
                 self.error = sc.t("neterr", sc.LAST_FAIL[2] or "?")
+            elif sc.DAYFAIL[0]:
+                self.error = sc.t("dayerr", sc.DAYFAIL[0], sc.DAYFAIL[1], sc.DAYFAIL[2] or "?")
             for league in {t["league"] for t in sc.load_follow()["teams"] if t.get("league") in sc.LEAGUES and t["league"] != sc.NATIONAL_LEAGUE}:
                 sc.standings(league)             # for "2nd in Eredivisie"
                 changed = True

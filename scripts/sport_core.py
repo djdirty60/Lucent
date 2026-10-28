@@ -89,6 +89,7 @@ TX = {
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "nogames": ("No games planned right now", "Geen wedstrijden gepland"),
+    "dayerr": ("ESPN did not answer for {} of {} days ({})", "ESPN gaf geen antwoord voor {} van {} dagen ({})"),
     "neterr": ("Could not reach ESPN ({})", "ESPN niet bereikbaar ({})"),
     "list_n": ("{} games", "{} wedstrijden"),
     "f_search": ("Search", "Zoeken"), "f_order": ("Order", "Volgorde"), "f_more": ("More", "Meer"),
@@ -373,6 +374,7 @@ def days_between(first, last):
     return [(a + datetime.timedelta(days=n)).strftime("%Y%m%d") for n in range((b - a).days + 1)]
 
 
+DAYFAIL = [0, 0, ""]   # days without an answer, days asked, last error (of the latest refresh)
 PARTIAL = {}   # competition -> days ESPN did not answer the last time (the old games of those days are kept)
 
 
@@ -381,22 +383,6 @@ def fetch_range(key, first, last, workers=3):
     Days that fail (ESPN is busy) are asked again one by one; what still fails is remembered in PARTIAL."""
     path = LEAGUES[key]["path"]
     seen, out, got = set(), [], {}
-    if LEAGUES[key]["kind"] == "teams":
-        # one request per calendar year instead of one per day: far less load on ESPN (it blocks us when we ask too much)
-        try:
-            events = []
-            for year in sorted({int(first[:4]), int(last[:4])}):
-                data = espn_get(f"{ESPN}{path}/scoreboard?dates={year}&limit=1000")
-                if len(data.get("events") or []) >= 1000:
-                    raise ValueError("year answer is cut off")
-                events += parse_scoreboard(key, data)
-            events = [e for e in events if first <= espn_day(local_day(e["start"])) <= last]
-            if events:
-                PARTIAL[key] = []
-                return events
-        except Exception as error:  # noqa: BLE001
-            log(f"year {key}: {error}")
-
     def one(day):
         try:
             return day, parse_scoreboard(key, espn_get(f"{ESPN}{path}/scoreboard?dates={day}&limit=400"))
@@ -412,6 +398,10 @@ def fetch_range(key, first, last, workers=3):
             time.sleep(1)
             got[day] = one(day)[1]
     failed = [d for d, r in got.items() if isinstance(r, Exception)]
+    DAYFAIL[0] += len(failed)
+    DAYFAIL[1] += len(days)
+    if failed:
+        DAYFAIL[2] = short_error(got[failed[0]])
     if len(failed) == len(days):
         raise got[failed[0]]
     PARTIAL[key] = failed
@@ -577,6 +567,7 @@ def refresh(force=False, keys=None, progress=None):
         return False
     done = [0]
     LAST_FAIL[:] = [0, len(todo), ""]
+    DAYFAIL[:] = [0, 0, ""]
 
     def work(key):
         try:
