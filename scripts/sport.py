@@ -517,7 +517,7 @@ class Sport(xbmcgui.WindowXML):
             logo = ""
             if kind == "team":
                 team = next((t for t in follow["teams"] if sc.team_ident(t) == ident), {"id": ident, "name": title})
-                events, sub, logo = sc.events_of_team(ident, title), sc.place_text(team), team.get("logo", "")
+                events, sub, logo = sc.events_of_team(ident, title), sc.place_text(team), team.get("logo", "") or sc.flag_logo(title)
             elif kind == "league":
                 events, sub = [e for e in sc.all_cached() if e["league"] == ident], ""
             else:

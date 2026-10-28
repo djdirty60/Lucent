@@ -144,6 +144,27 @@ COUNTRIES = {
     "Japan": "Japan", "South Korea": "Zuid-Korea", "Australia": "Australië", "Saudi Arabia": "Saoedi-Arabië",
     "Iran": "Iran", "Suriname": "Suriname", "Curaçao": "Curaçao", "Indonesia": "Indonesië",
 }
+COUNTRY_ISO = {
+    "Netherlands": "nl", "Belgium": "be", "Germany": "de", "France": "fr", "England": "gb-eng", "Spain": "es", "Italy": "it",
+    "Portugal": "pt", "Croatia": "hr", "Denmark": "dk", "Switzerland": "ch", "Austria": "at", "Poland": "pl", "Turkey": "tr",
+    "Norway": "no", "Sweden": "se", "Scotland": "gb-sct", "Wales": "gb-wls", "Ireland": "ie", "Northern Ireland": "gb-nir",
+    "Ukraine": "ua", "Greece": "gr", "Czechia": "cz", "Serbia": "rs", "Hungary": "hu", "Romania": "ro", "Slovakia": "sk",
+    "Slovenia": "si", "Finland": "fi", "Iceland": "is", "Morocco": "ma", "Senegal": "sn", "Nigeria": "ng", "Egypt": "eg",
+    "Ghana": "gh", "Brazil": "br", "Argentina": "ar", "Uruguay": "uy", "Colombia": "co", "Chile": "cl", "Ecuador": "ec",
+    "Mexico": "mx", "United States": "us", "Canada": "ca", "Japan": "jp", "South Korea": "kr", "Australia": "au",
+    "Saudi Arabia": "sa", "Iran": "ir", "Suriname": "sr", "Curaçao": "cw", "Indonesia": "id",
+}
+
+
+def flag_logo(name, logo=""):
+    """National teams: a plain flag instead of ESPN's crosshair country badge. Anything else keeps its logo."""
+    en = next((e for e, nl in COUNTRIES.items() if name in (e, nl)), "")
+    iso = COUNTRY_ISO.get(en)
+    if iso and (not logo or "/countries/" in logo):
+        return f"https://flagcdn.com/w160/{iso}.png"
+    return logo
+
+
 COUNTRY_COLOURS = {
     "Netherlands": "F36C21", "Belgium": "D0202E", "Germany": "3A3A3A", "France": "1D3F9E", "England": "1B2A5C", "Spain": "C60B1E",
     "Italy": "1F5FBF", "Portugal": "9E1B32", "Croatia": "D1232A", "Denmark": "C8102E", "Switzerland": "D52B1E", "Austria": "ED2939",
@@ -230,7 +251,7 @@ def side(competitor):
     full = team.get("displayName") or team.get("name") or ""
     return {"id": str(team.get("id") or ""), "name": country_label(full), "en": full,
             "short": country_label(team.get("shortDisplayName") or team.get("displayName") or ""), "abbr": team.get("abbreviation") or "",
-            "nick": team.get("name") or "", "logo": team.get("logo") or (team.get("flag") or {}).get("href") or "",
+            "nick": team.get("name") or "", "logo": flag_logo(full, team.get("logo") or (team.get("flag") or {}).get("href") or ""),
             "score": str(competitor.get("score", "") if not isinstance(competitor.get("score"), dict) else competitor["score"].get("displayValue", "")),
             "color": team.get("color") or "", "alt": team.get("alternateColor") or "",
             "rec": next((r.get("summary", "") for r in (competitor.get("records") or []) if r.get("summary")), "")}
@@ -443,7 +464,7 @@ def parse_standings(data):
             pts = shown("points") or shown("winPercent")
             gd = shown("pointDifferential")
             parsed.append({"rank": rank, "team": team.get("displayName") or team.get("name") or "", "id": str(team.get("id") or ""),
-                           "logo": team.get("logo") or (logos[0].get("href") if logos else ""), "gp": gp, "gd": gd, "pts": pts,
+                           "logo": flag_logo(team.get("displayName") or team.get("name") or "", team.get("logo") or (logos[0].get("href") if logos else "")), "gp": gp, "gd": gd, "pts": pts,
                            "w": shown("wins"), "d": shown("ties") or shown("draws"), "l": shown("losses"),
                            "note": ((entry.get("note") or {}).get("color") or ""),
                            "notetext": ((entry.get("note") or {}).get("description") or "")})
