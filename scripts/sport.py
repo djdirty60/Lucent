@@ -41,6 +41,11 @@ EPG_LEAGUE = "tv"
 ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT = 1, 2
 HERO_MAX = 6
 SPORT_ICON = "special://skin/media/icons/sport.png"
+SPORT_ICONS = {"soccer", "basketball", "football", "hockey", "baseball", "rugby", "aussie", "racing", "tennis", "golf", "mma"}
+
+
+def sport_icon(sport):
+    return f"special://skin/media/icons/sport_{sport}.png" if sport in SPORT_ICONS else SPORT_ICON
 LETTERS = {"W": "W", "D": "G", "L": "V"} if sc.NL else {}
 
 
@@ -795,7 +800,7 @@ class Sport(xbmcgui.WindowXML):
             n = (sum(1 for k in follow["leagues"] if k in sc.LEAGUES and sc.LEAGUES[k]["sport"] == sp)
                  + sum(1 for t in follow["teams"] if self.sport_of_team(t) == sp)
                  + (len(follow["names"]) if sp == "racing" else 0))
-            items.append(listitem(sc.sport_name(sp), "", sport=sp, badge=str(n) if n else ""))
+            items.append(listitem(sc.sport_name(sp), "", icon=sport_icon(sp), sport=sp, badge=str(n) if n else ""))
         self.f_sports = sports
         self.fill_list(F_SPORTS, items, sports.index(self.f_sport) if self.f_sport in sports else 0)
 
@@ -811,7 +816,7 @@ class Sport(xbmcgui.WindowXML):
         for k in keys:
             lg = sc.LEAGUES[k]
             sub = sc.t("f_followed") if k in follow["leagues"] else (sc.t("f_teams") if lg["kind"] == "teams" else sc.t("f_competition"))
-            items.append(listitem(lg["name"], sub, icon=SPORT_ICON, key=k, followed="1" if k in follow["leagues"] else ""))
+            items.append(listitem(lg["name"], sub, icon=sport_icon(lg["sport"]), key=k, followed="1" if k in follow["leagues"] else ""))
         if self.f_league not in keys:
             self.f_league = keys[0] if keys else ""
         self.fill_list(F_COMPS, items, keys.index(self.f_league) if self.f_league in keys else 0)
