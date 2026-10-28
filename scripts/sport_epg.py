@@ -262,5 +262,25 @@ def guess_channels(ev, data=None):
     return out[:MAX_CHANNELS]
 
 
+_PATHS = {}
+
+
+def channel_path(cid):
+    """pvr://... path of a channel (needed to play it in the small window instead of full screen); '' when not found."""
+    if not _PATHS:
+        groups = rpc("Files.GetDirectory", {"directory": "pvr://channels/tv/", "media": "files"}).get("files") or []
+        groups.sort(key=lambda g: 0 if "all" in (g.get("label") or "").lower() else 1)
+        for group in groups[:3]:
+            for entry in rpc("Files.GetDirectory", {"directory": group.get("file", ""), "media": "files"}).get("files") or []:
+                label, path = entry.get("label") or "", entry.get("file") or ""
+                if label and path.startswith("pvr://"):
+                    _PATHS.setdefault(label, path)
+            if _PATHS:
+                break
+    names = load().get("names", {})
+    raw = names.get(str(cid), "")
+    return _PATHS.get(raw, "") or next((v for k, v in _PATHS.items() if raw and (k.endswith(raw) or raw.endswith(k))), "")
+
+
 def play(cid):
     rpc("Player.Open", {"item": {"channelid": int(cid)}})

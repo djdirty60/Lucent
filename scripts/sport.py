@@ -254,7 +254,7 @@ class Sport(xbmcgui.WindowXML):
         elif cid in HERO_CHANNELS:
             self.preview_channel(CHANNEL_BUTTONS[cid])
         elif cid in CHANNEL_BUTTONS:
-            self.play_channel(CHANNEL_BUTTONS[cid])
+            self.preview_channel(CHANNEL_BUTTONS[cid])
         elif cid in (FOLLOW_HOME, FOLLOW_AWAY):
             self.toggle_team("home" if cid == FOLLOW_HOME else "away")
         elif cid == SHOW_TABLE:
@@ -1009,9 +1009,14 @@ class Sport(xbmcgui.WindowXML):
         threading.Thread(target=self.start_preview, args=(cid,), daemon=True).start()
 
     def start_preview(self, cid):
+        """Start the channel behind this page (windowed). When Kodi cannot do that, play it and come back to this page."""
+        path = epg.channel_path(cid)
+        if path:
+            xbmc.Player().play(path, windowed=True)
+            return
         wid = xbmcgui.getCurrentWindowId()
         epg.play(cid)
-        for _ in range(50):                       # Kodi opens the video full screen; go back to this page when it plays
+        for _ in range(50):
             time.sleep(0.2)
             if xbmc.getCondVisibility("Player.HasVideo"):
                 time.sleep(0.5)
