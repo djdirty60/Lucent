@@ -103,7 +103,8 @@ TX = {
     "f_noteams": ("This competition has no teams. Follow the whole competition with the button above.",
                   "Deze competitie heeft geen teams. Volg de hele competitie met de knop hierboven."),
     "g_form": ("FORM · LAST FIVE", "VORM · LAATSTE 5"), "g_info": ("INFO", "INFO"), "g_matchinfo": ("MATCH INFO", "WEDSTRIJDINFO"),
-    "g_fulltable": ("Full table  ›", "Volledige stand  ›"), "g_sessions": ("SCHEDULE", "PROGRAMMA"), "g_home": ("Home", "Thuis"), "g_away": ("Away", "Uit"),
+    "g_fulltable": ("Full table  ›", "Volledige stand  ›"), "g_sessions": ("SCHEDULE", "PROGRAMMA"), "res_pre": ("Not held yet", "Nog niet gereden"), "res_none": ("No results available", "Geen uitslag beschikbaar"),
+    "res_loading": ("Loading results…", "Uitslag laden…"), "res_live": ("In progress - provisional", "Bezig - voorlopig"), "res_title": ("Results", "Uitslag"), "g_home": ("Home", "Thuis"), "g_away": ("Away", "Uit"),
     "g_teamstats": ("TEAM STATS", "TEAMSTATISTIEKEN"), "g_top": ("TOP PERFORMERS", "TOPSPELERS"), "g_scoring": ("LATEST SCORING", "LAATSTE DOELPUNTEN"),
     "g_possession": ("Possession", "Balbezit"), "g_shots": ("Shots", "Schoten"), "g_ontarget": ("On goal", "Op doel"), "g_corners": ("Corner kicks", "Hoekschoppen"),
     "g_nodata": ("No match statistics yet", "Nog geen wedstrijdstatistieken"), "g_showing": ("SHOWING IT", "ZENDT HET UIT"),
@@ -311,7 +312,8 @@ def parse_event_kind(league, ev):
             rows.append({"id": f"{league}:{ev.get('id')}:{code}", "league": league, "kind": "event", "start": start, "state": state,
                          "status": label, "home": {}, "away": {}, "title": ev.get("name") or "", "sub": session_name(code),
                          "venue": "", "round": "", "circuit": str((ev.get("circuit") or {}).get("id") or ""),
-                         "circname": (ev.get("circuit") or {}).get("fullName") or ""})
+                         "circname": (ev.get("circuit") or {}).get("fullName") or "",
+                         "evid": str(ev.get("id") or ""), "comp": str(comp.get("id") or "")})
         return rows
     start = parse_iso(ev.get("date"))
     if start:
@@ -360,6 +362,60 @@ def circuit_png(cid, diagrams):
         except Exception as error:  # noqa: BLE001 - try the next address
             log(f"circuit png {url}: {error}")
     return ""
+
+
+RESULTS_PATH = DATA + "sport_results.json"
+ATHLETES_PATH = DATA + "sport_athletes.json"
+
+
+def session_results(league, evid, comp, final=True):
+    """Top 10 of one race session: [{pos, name, team}]. Finished sessions are remembered for good."""
+    if not (evid and comp):
+        return []
+    key = f"{league}:{evid}:{comp}"
+    store = ac.read_json(RESULTS_PATH, {}) or {}
+    if key in store:
+        return store[key]
+    path = LEAGUES.get(league, {}).get("path", "racing/f1")
+    sport, slug = path.split("/", 1)
+    data = espn_get(f"{CORE}{sport}/leagues/{slug}/events/{evid}/competitions/{comp}/competitors?limit=30")
+    items = [i for i in (data.get("items") or []) if i.get("order")]
+    items.sort(key=lambda i: i.get("order") or 99)
+    items = items[:10]
+    names = ac.read_json(ATHLETES_PATH, {}) or {}
+
+    def one(item):
+        m = re.search(r"/athletes/(\d+)", (item.get("athlete") or {}).get("$ref", ""))
+        aid = m.group(1) if m else ""
+        if not aid:
+            return ""
+        if aid in names:
+            return names[aid]
+        try:
+            d = espn_get(f"{CORE}{sport}/leagues/{slug}/athletes/{aid}")
+            return d.get("displayName") or d.get("fullName") or ""
+        except Exception as error:  # noqa: BLE001
+            log(f"athlete {aid}: {error}")
+            return ""
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        found = list(pool.map(one, items))
+    rows, complete = [], True
+    for item, name in zip(items, found):
+        m = re.search(r"/athletes/(\d+)", (item.get("athlete") or {}).get("$ref", ""))
+        if m and name:
+            names[m.group(1)] = name
+        complete = complete and bool(name)
+        veh = item.get("vehicle") or {}
+        rows.append({"pos": str(item.get("order")), "name": name or "?", "team": str(veh.get("manufacturer") or "")})
+    if rows:
+        try:
+            ac.write_json(ATHLETES_PATH, names)
+            if final and complete:
+                store[key] = rows
+                ac.write_json(RESULTS_PATH, store)
+        except Exception as error:  # noqa: BLE001
+            log(f"cannot save results: {error}")
+    return rows
 
 
 def circuit_of_event(ev):

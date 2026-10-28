@@ -690,6 +690,7 @@ class Sport(xbmcgui.WindowXML):
                 props[f"s{n}now"] = "1" if e["id"] == ev["id"] else ""
                 props[f"s{n}past"] = "1" if e["start"] + 2 * 3600 < now_ts else ""
                 props[f"s{n}next"] = "1" if n == next_n else ""
+                props[f"s{n}evid"], props[f"s{n}comp"], props[f"s{n}state"] = e.get("evid", ""), e.get("comp", ""), e.get("state", "pre")
         return props
 
     def game_extra(self, ev):
@@ -1643,6 +1644,39 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         self.setProperty("g.preview.name", name)
         focus_first(self, (311, 332, 321, 322, 323, 331))
         threading.Thread(target=self.extra, daemon=True).start()
+
+    def onFocus(self, cid):
+        if 3401 <= cid <= 3405:
+            self.res_n = cid - 3400
+            threading.Thread(target=self.show_results, args=(cid - 3400,), daemon=True).start()
+        elif getattr(self, "res_n", 0):
+            self.res_n = 0
+            self.setProperty("g.resshow", "")
+
+    def show_results(self, n):
+        def put(note, rows=()):
+            if getattr(self, "res_n", 0) != n or not self.alive:
+                return False
+            self.setProperty("g.resnote", note)
+            for i in range(1, 11):
+                row = rows[i - 1] if i <= len(rows) else {}
+                self.setProperty(f"g.r{i}p", row.get("pos", ""))
+                self.setProperty(f"g.r{i}n", row.get("name", ""))
+                self.setProperty(f"g.r{i}t", row.get("team", ""))
+            return True
+        state = self.props.get(f"s{n}state", "pre")
+        self.setProperty("g.resname", f"{sc.t('res_title')}  ·  {self.props.get(f's{n}name', '')}")
+        self.setProperty("g.resshow", "1")
+        if state == "pre":
+            put(sc.t("res_pre"))
+            return
+        put(sc.t("res_loading"))
+        try:
+            rows = sc.session_results(self.ev["league"], self.props.get(f"s{n}evid"), self.props.get(f"s{n}comp"), final=state == "post")
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"results: {error}")
+            rows = []
+        put("" if rows and state == "post" else (sc.t("res_live") if rows else sc.t("res_none")), rows)
 
     def extra(self):
         for key, value in self.parent.game_extra(self.ev).items():
