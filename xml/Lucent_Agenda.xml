@@ -173,6 +173,7 @@
             <control type="group">
                 <visible>String.IsEqual(Window.Property(agenda.view),list) + String.IsEmpty(Window.Property(agenda.empty))</visible>
                 <control type="list" id="200">
+                    <ondown>200</ondown>
                     <left>150</left>
                     <top>150</top>
                     <width>1060</width>
@@ -189,6 +190,7 @@
                             <height>60</height>
                             <font>font_heading_small</font>
                             <textcolor>text</textcolor>
+                            <selectedcolor>text</selectedcolor>
                             <label>$INFO[ListItem.Property(header)]</label>
                         </control>
                         <control type="label">
@@ -198,6 +200,7 @@
                             <height>52</height>
                             <font>font12</font>
                             <textcolor>text3</textcolor>
+                            <selectedcolor>text3</selectedcolor>
                             <label>$INFO[ListItem.Property(headerdate)]</label>
                             <visible>!String.IsEmpty(ListItem.Property(headerdate))</visible>
                         </control>
@@ -217,6 +220,7 @@
                             <height>60</height>
                             <font>font_heading_small</font>
                             <textcolor>text</textcolor>
+                            <selectedcolor>text</selectedcolor>
                             <label>$INFO[ListItem.Property(header)]</label>
                         </control>
                         <control type="label">
@@ -226,6 +230,7 @@
                             <height>52</height>
                             <font>font12</font>
                             <textcolor>text3</textcolor>
+                            <selectedcolor>text3</selectedcolor>
                             <label>$INFO[ListItem.Property(headerdate)]</label>
                             <visible>!String.IsEmpty(ListItem.Property(headerdate))</visible>
                         </control>
