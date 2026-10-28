@@ -45,7 +45,7 @@
                 <width>900</width>
                 <height>560</height>
                 <pagecontrol>60</pagecontrol>
-                <onright>60</onright>
+                <onright>9000</onright>
                 <ondown>9000</ondown>
                 <onup>3</onup>
                 <itemlayout height="84" width="900">
@@ -109,7 +109,7 @@
                         <top>18</top>
                         <width>40</width>
                         <height>40</height>
-                        <texture>buttons/check_nf.png</texture>
+                        <texture>buttons/check_nf.png</texture><colordiffuse>FFE5534B</colordiffuse>
                         <visible>ListItem.IsSelected</visible>
                     </control>
                 </focusedlayout>
@@ -120,7 +120,7 @@
                 <width>900</width>
                 <height>560</height>
                 <pagecontrol>60</pagecontrol>
-                <onright>60</onright>
+                <onright>9000</onright>
                 <ondown>9000</ondown>
                 <onup>6</onup>
                 <itemlayout height="112" width="900">
@@ -230,7 +230,7 @@
                         <top>32</top>
                         <width>40</width>
                         <height>40</height>
-                        <texture>buttons/check_nf.png</texture>
+                        <texture>buttons/check_nf.png</texture><colordiffuse>FFE5534B</colordiffuse>
                         <visible>ListItem.IsSelected</visible>
                     </control>
                 </focusedlayout>
@@ -250,8 +250,8 @@
                 <orientation>horizontal</orientation>
                 <align>right</align>
                 <itemgap>14</itemgap>
+                <onup condition="Control.IsVisible(6)">6</onup>
                 <onup>3</onup>
-                <onup>6</onup>
             <control type="button" id="5">
                 <width>auto</width>
                 <height>64</height>
