@@ -7,6 +7,7 @@ RunScript(special://skin/scripts/sport.py,ensure_tab)  add the Sport tab to the 
 The window is xml/Lucent_Sport.xml (gen_sport.py). Data: sport_core.py (ESPN), guide: sport_epg.py (Kodi PVR).
 """
 import datetime
+import re
 import sys
 import threading
 import time
@@ -379,6 +380,7 @@ class Sport(xbmcgui.WindowXML):
             props[f"ch{n}name"] = chan["name"]
             props[f"ch{n}sub"] = "  ·  ".join(bits)
             props[f"ch{n}cid"] = chan["cid"]
+            props[f"ch{n}icon"] = chan.get("icon") or ""
         props.update(self.plan_props(ev))
         foot = short_when(ev)
         if props.get("badge"):
@@ -605,6 +607,18 @@ class Sport(xbmcgui.WindowXML):
             return sc.t("g_in_dh", days, hours)
         return sc.t("g_in_h", hours, mins) if hours else sc.t("g_in_m", mins)
 
+    def progress(self, ev):
+        """0..10 for the bar under LIVE: minute / 90 (HT = 5, finished = 10)."""
+        if ev["state"] == "post":
+            return 10
+        if ev["state"] != "in":
+            return 0
+        text = (ev.get("status") or "").upper()
+        if text.startswith("HT") or "HALF" in text:
+            return 5
+        m = re.match(r"\s*(\d+)", text)
+        return max(1, min(10, round(int(m.group(1)) / 9))) if m else 1
+
     def game_props(self, ev):
         data = epg.load() if self.has_pvr else {}
         label, label2, props = self.event_props(ev, data)
@@ -616,6 +630,7 @@ class Sport(xbmcgui.WindowXML):
             props["hsub"] = props["asub"] = ""
             props["info1"] = ev.get("venue", "")
             props["info2"] = ev.get("round", "")
+            props["prog"] = str(self.progress(ev))
             props["score"] = (f"{props['hscore']} – {props['ascore']}" if props.get("hscore") != "" and props.get("ascore") != "" and ev["state"] in ("in", "post") else "")
         else:
             props["info1"] = ev.get("venue", "")
@@ -664,6 +679,13 @@ class Sport(xbmcgui.WindowXML):
         except Exception as error:  # noqa: BLE001
             sc.log(f"game_extra: {error}")
         return out
+
+    def game_detail(self, ev):
+        try:
+            return sc.match_detail(ev) if ev["kind"] == "teams" else {}
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"match_detail: {error}")
+            return {}
 
     def open_game(self, ev):
         while True:
@@ -1478,13 +1500,18 @@ class GameInfo(xbmcgui.WindowXMLDialog):
             self.setProperty(f"g.{key}", "" if value is None else str(value))
         for key, text in (("watch", sc.t("watch")), ("nochan", self.parent.getProperty("sport.t.nochan")), ("form", sc.t("g_form")),
                           ("info", sc.t("g_info")), ("matchinfo", sc.t("g_matchinfo")), ("fulltable", sc.t("g_fulltable")),
-                          ("sessions", sc.t("g_sessions"))):
+                          ("sessions", sc.t("g_sessions")), ("teamstats", sc.t("g_teamstats")), ("top", sc.t("g_top")),
+                          ("scoring", sc.t("g_scoring")), ("nodata", sc.t("g_nodata")), ("showing", sc.t("g_showing"))):
             self.setProperty(f"g.t.{key}", text)
         focus_first(self, (311, 332, 321, 322, 323, 331))
         threading.Thread(target=self.extra, daemon=True).start()
 
     def extra(self):
         for key, value in self.parent.game_extra(self.ev).items():
+            if not self.alive:
+                return
+            self.setProperty(f"g.{key}", value)
+        for key, value in self.parent.game_detail(self.ev).items():
             if not self.alive:
                 return
             self.setProperty(f"g.{key}", value)

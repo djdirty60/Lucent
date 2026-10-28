@@ -99,6 +99,9 @@ TX = {
                   "Deze competitie heeft geen teams. Volg de hele competitie met de knop hierboven."),
     "g_form": ("FORM · LAST FIVE", "VORM · LAATSTE 5"), "g_info": ("INFO", "INFO"), "g_matchinfo": ("MATCH INFO", "WEDSTRIJDINFO"),
     "g_fulltable": ("Full table  ›", "Volledige stand  ›"), "g_sessions": ("SCHEDULE", "PROGRAMMA"), "g_home": ("Home", "Thuis"), "g_away": ("Away", "Uit"),
+    "g_teamstats": ("TEAM STATS", "TEAMSTATISTIEKEN"), "g_top": ("TOP PERFORMERS", "TOPSPELERS"), "g_scoring": ("LATEST SCORING", "LAATSTE DOELPUNTEN"),
+    "g_possession": ("Possession", "Balbezit"), "g_shots": ("Shots", "Schoten"), "g_ontarget": ("On goal", "Op doel"), "g_corners": ("Corner kicks", "Hoekschoppen"),
+    "g_nodata": ("No match statistics yet", "Nog geen wedstrijdstatistieken"), "g_showing": ("SHOWING IT", "ZENDT HET UIT"),
     "g_standings": ("{} STANDINGS", "{} STAND"), "g_over": ("Finished", "Afgelopen"),
     "g_in_dh": ("in {} days {} h", "over {} dagen {} u"), "g_in_h": ("in {} h {} min", "over {} u {} min"), "g_in_m": ("in {} min", "over {} min"),
     "pvr_off": ("Live TV is switched off in Kodi (Settings > PVR)", "Live TV staat uit in Kodi (Instellingen > PVR)"),
@@ -408,6 +411,70 @@ def fetch_years(key, first_year, last_year):
             if ev["id"] not in seen:
                 seen.add(ev["id"])
                 out.append(ev)
+    return out
+
+
+def _num(text):
+    m = re.search(r"-?\d+(?:\.\d+)?", str(text or ""))
+    return float(m.group()) if m else 0.0
+
+
+def match_detail(ev):
+    """Statistics, top performers and goals of one game from ESPN's summary; {} when ESPN has nothing (every part is optional)."""
+    out = {}
+    key = ev["league"]
+    if key not in LEAGUES:
+        return out
+    eid = ev["id"].split(":", 1)[-1]
+    data = espn_get(f"{ESPN}{LEAGUES[key]['path']}/summary?event={eid}")
+    teams = (data.get("boxscore") or {}).get("teams") or []
+    by_side = {}
+    for tm in teams:
+        who = tm.get("homeAway") or ""
+        if not who:
+            who = "home" if str((tm.get("team") or {}).get("id")) == ev["home"].get("id") else "away"
+        by_side[who] = {s.get("name"): s.get("displayValue") for s in (tm.get("statistics") or [])}
+    wanted = (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners"))
+    n = 0
+    for name, label in wanted:
+        hv, av = by_side.get("home", {}).get(name), by_side.get("away", {}).get(name)
+        if hv in (None, "") and av in (None, ""):
+            continue
+        n += 1
+        h, a = _num(hv), _num(av)
+        out[f"st{n}l"] = t(label)
+        out[f"st{n}h"], out[f"st{n}a"] = str(hv if hv not in (None, "") else 0), str(av if av not in (None, "") else 0)
+        out[f"st{n}k"] = str(int(round(10 * h / (h + a)))) if h + a else "5"
+    k = 0
+    for block in data.get("leaders") or []:
+        abbr = (block.get("team") or {}).get("abbreviation", "")
+        for cat in (block.get("leaders") or [])[:2]:
+            lead = (cat.get("leaders") or [None])[0]
+            if not lead:
+                continue
+            k += 1
+            who = (lead.get("athlete") or {})
+            out[f"tp{k}t"] = f"{abbr}  {cat.get('displayName') or cat.get('name') or ''}".strip()
+            out[f"tp{k}n"] = who.get("shortName") or who.get("displayName") or ""
+            out[f"tp{k}v"] = (lead.get("mainStat") or {}).get("value") or ""
+            if k >= 4:
+                break
+        if k >= 4:
+            break
+    abbr_of = {ev["home"].get("id"): ev["home"].get("abbr") or ev["home"].get("name", ""), ev["away"].get("id"): ev["away"].get("abbr") or ev["away"].get("name", "")}
+    plays = [p for p in (data.get("keyEvents") or []) if p.get("scoringPlay")]
+    if not plays:
+        comp = ((data.get("header") or {}).get("competitions") or [{}])[0]
+        plays = [p for p in (comp.get("details") or []) if p.get("scoringPlay")]
+    for i, p in enumerate(reversed(plays[-5:]), 1):
+        tid = str((p.get("team") or {}).get("id", ""))
+        out[f"sc{i}m"] = (p.get("clock") or {}).get("displayValue", "")
+        out[f"sc{i}t"] = abbr_of.get(tid, "")
+        who = ""
+        parts = p.get("participants") or []
+        if parts:
+            who = (parts[0].get("athlete") or {}).get("displayName", "")
+        out[f"sc{i}x"] = (p.get("shortText") or p.get("text") or who or "").split(".")[0][:60]
     return out
 
 
