@@ -2,15 +2,21 @@
 """Lucent: A4KSubtitles as the subtitle service.
 
 RunScript(special://skin/scripts/subtitles.py,default)   make A4KSubtitles the default service for films and series
+RunScript(special://skin/scripts/subtitles.py,service)   background helper (started from Home): when a film or episode (for example from
+                                                         Seren) starts without subtitles in your language, open the subtitle search
+                                                         - only when "Search subtitles automatically" is on in Skin settings
 The "Search subtitles" button in the player menu opens Kodi's own subtitle search, which then uses that service.
 """
 import json
 import sys
+import time
 
 import xbmc
 import xbmcgui
 
 ADDON_ID = "service.subtitles.a4ksubtitles"
+HOME = xbmcgui.Window(10000)
+RUNNING = "nuvio.subs.running"
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 TEXT = {
     "done": ("A4KSubtitles is now the default subtitle service", "A4KSubtitles is nu de standaard ondertitelservice"),
@@ -38,6 +44,54 @@ def set_default():
     say("done" if ok else "failed", xbmcgui.NOTIFICATION_INFO if ok else xbmcgui.NOTIFICATION_WARNING)
 
 
+def wanted_codes():
+    """Language codes (ISO 639-1 / 2) of the language the Kodi interface uses."""
+    codes = {xbmc.getLanguage(xbmc.ISO_639_1).lower(), xbmc.getLanguage(xbmc.ISO_639_2).lower()}
+    if "nl" in codes or "dut" in codes:
+        codes |= {"nl", "nld", "dut"}
+    return {c for c in codes if c}
+
+
+class Watcher(xbmc.Player):
+    def __init__(self):
+        super().__init__()
+        self.monitor = xbmc.Monitor()
+
+    def onAVStarted(self):  # noqa: N802 - Kodi callback name
+        try:
+            self.look()
+        except Exception as error:  # noqa: BLE001 - never break playback
+            xbmc.log(f"[skin.lucent subtitles] {error}", xbmc.LOGINFO)
+
+    def look(self):
+        if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not xbmc.getCondVisibility(f"System.HasAddon({ADDON_ID})"):
+            return
+        if not self.isPlayingVideo() or xbmc.getCondVisibility("VideoPlayer.Content(livetv) | Player.IsInternetStream + String.IsEmpty(VideoPlayer.Title)"):
+            return
+        if self.monitor.waitForAbort(4):                  # let Kodi pick the streams and the subtitle first
+            return
+        if not self.isPlayingVideo():
+            return
+        have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
+        if have & wanted_codes():
+            return
+        xbmc.executebuiltin("ActivateWindow(subtitlesearch)")
+
+
+def run_service():
+    if time.time() - float(HOME.getProperty(RUNNING) or 0) < 120:
+        return
+    watcher = Watcher()
+    while not watcher.monitor.abortRequested():
+        HOME.setProperty(RUNNING, f"{time.time():.1f}")
+        if watcher.monitor.waitForAbort(30):
+            break
+    HOME.clearProperty(RUNNING)
+
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "default":
+    arg = sys.argv[1] if len(sys.argv) > 1 else ""
+    if arg == "default":
         set_default()
+    elif arg == "service":
+        run_service()

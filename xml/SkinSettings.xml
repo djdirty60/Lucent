@@ -770,6 +770,13 @@
                     <onclick>RunScript(special://skin/scripts/subtitles.py,default)</onclick>
                     <visible>System.HasAddon(service.subtitles.a4ksubtitles)</visible>
                 </control>
+                <control type="radiobutton" id="1508">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31238]</label>
+                    <selected>Skin.HasSetting(nuvio.autosubs)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.autosubs)</onclick>
+                    <visible>System.HasAddon(service.subtitles.a4ksubtitles)</visible>
+                </control>
                 <control type="label" id="2502">
                     <width>1180</width>
                     <height>76</height>
