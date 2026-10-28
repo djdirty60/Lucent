@@ -778,15 +778,22 @@
 <control type="label"><left>150</left><top>1020</top><width>1000</width><height>36</height><font>font_tiny</font><textcolor>text5</textcolor><label>$INFO[Window.Property(sport.t.f_hint)]</label></control>
 </control>
 <control type="group"><visible>String.IsEqual(Window.Property(sport.view),tables)</visible>
-<control type="list" id="400"><left>150</left><top>150</top><width>480</width><height>850</height>
-<orientation>vertical</orientation><onup>103</onup><onright>410</onright>
+<control type="list" id="395"><left>150</left><top>150</top><width>1620</width><height>68</height>
+<orientation>horizontal</orientation><onup>103</onup><ondown>400</ondown>
+<itemlayout width="220" height="68"><control type="label"><left>0</left><top>0</top><width>210</width><height>64</height><align>center</align>
+<font>font12</font><textcolor>text3</textcolor><label>$INFO[ListItem.Label]</label></control></itemlayout>
+<focusedlayout width="220" height="68"><control type="image"><left>0</left><top>0</top><width>210</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>Control.HasFocus(395)</visible></control><control type="image"><left>0</left><top>0</top><width>210</width><height>64</height><texture border="20">rr20_edge.png</texture><colordiffuse>E6FFFFFF</colordiffuse><visible>Control.HasFocus(395)</visible></control><control type="label"><left>0</left><top>0</top><width>210</width><height>64</height><align>center</align>
+<font>font12_bold</font><textcolor>text</textcolor><label>$INFO[ListItem.Label]</label></control></focusedlayout>
+</control>
+<control type="list" id="400"><left>150</left><top>240</top><width>480</width><height>760</height>
+<orientation>vertical</orientation><onup>395</onup><onright>410</onright>
 <itemlayout width="480" height="76"><control type="label"><left>20</left><top>0</top><width>440</width><height>76</height>
 <font>font12</font><textcolor>text3</textcolor><label>$INFO[ListItem.Label]</label></control></itemlayout>
 <focusedlayout width="480" height="76"><control type="image"><left>0</left><top>0</top><width>480</width><height>68</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>true</visible></control><control type="image"><left>0</left><top>0</top><width>480</width><height>68</height><texture border="20">rr20_edge.png</texture><colordiffuse>E6FFFFFF</colordiffuse><visible>true</visible></control><control type="label"><left>20</left><top>0</top><width>440</width><height>68</height>
 <font>font12_bold</font><textcolor>text</textcolor><label>$INFO[ListItem.Label]</label></control></focusedlayout>
 </control>
-<control type="list" id="410"><left>660</left><top>190</top><width>1100</width><height>810</height>
-<orientation>vertical</orientation><onleft>400</onleft><onup>103</onup>
+<control type="list" id="410"><left>660</left><top>240</top><width>1100</width><height>760</height>
+<orientation>vertical</orientation><onleft>400</onleft><onup>395</onup>
 <itemlayout width="1100" height="72"><control type="group"><visible>!String.IsEmpty(ListItem.Property(header))</visible><control type="label"><left>20</left><top>0</top><width>800</width><height>68</height><font>font_heading_small</font><textcolor>text</textcolor><label>$INFO[ListItem.Property(header)]</label></control>
 </control><control type="group"><visible>String.IsEmpty(ListItem.Property(header))</visible><control type="image"><left>0</left><top>8</top><width>8</width><height>52</height><texture>white.png</texture><colordiffuse>$INFO[ListItem.Property(edge)]</colordiffuse><visible>!String.IsEmpty(ListItem.Property(edge))</visible></control>
 <control type="label"><left>14</left><top>0</top><width>60</width><height>68</height><font>font12_bold</font><textcolor>text</textcolor><align>center</align><label>$INFO[ListItem.Property(rank)]</label></control>

@@ -35,7 +35,7 @@ HERO_CHANNELS = (341, 342, 343, 344)
 SECTION_LISTS = tuple(range(211, 221))
 FOLLOW_HOME, FOLLOW_AWAY, SHOW_TABLE = 321, 322, 323
 FIX_BUTTON, REMIND_BUTTON, RECORD_BUTTON = 331, 332, 333
-LEAGUE_LIST, TABLE_LIST = 400, 410
+LEAGUE_LIST, TABLE_LIST, T_SPORTS = 400, 410, 395
 EPG_LEAGUE = "tv"
 ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT = 1, 2
 HERO_MAX = 6
@@ -196,6 +196,9 @@ class Sport(xbmcgui.WindowXML):
             self.table_token += 1
             token = self.table_token
             threading.Timer(0.45, self.table_after, args=(token,)).start()
+        elif self.getFocusId() == T_SPORTS:
+            self.table_token += 1
+            threading.Timer(0.45, self.sport_after, args=(self.table_token,)).start()
         if self.view == "mine":
             self.tint()
         if self.view == "follow" and self.getFocusId() in (F_SPORTS, F_COMPS):
@@ -245,6 +248,8 @@ class Sport(xbmcgui.WindowXML):
             self.toggle_team("home" if cid == FOLLOW_HOME else "away")
         elif cid == SHOW_TABLE:
             self.open_table()
+        elif cid == T_SPORTS:
+            self.setFocusId(LEAGUE_LIST)
         elif cid == LEAGUE_LIST:
             self.setFocusId(TABLE_LIST)
         elif cid == TABLE_LIST:
@@ -1054,8 +1059,26 @@ class Sport(xbmcgui.WindowXML):
         self.setFocusId(TABLE_LIST)
 
     # ------------------------------------------------------------------ tables
-    def fill_leagues(self):
-        keys = [k for k, v in sc.LEAGUES.items() if v["kind"] == "teams"]
+    def table_sports(self):
+        sports = []
+        for k, v in sc.LEAGUES.items():
+            if v["kind"] == "teams" and v["sport"] not in sports:
+                sports.append(v["sport"])
+        order = {s: i for i, s in enumerate(SPORT_ORDER)}
+        sports.sort(key=lambda s: order.get(s, 99))
+        return sports
+
+    def fill_leagues(self, keep_sport=False):
+        sports = self.table_sports()
+        if not keep_sport or getattr(self, "t_sport", None) not in sports:
+            current = sc.LEAGUES.get(self.table_key, {}).get("sport")
+            self.t_sport = current if current in sports else (sports[0] if sports else "soccer")
+        chips = self.getControl(T_SPORTS)
+        chips.reset()
+        chips.addItems([listitem(sc.sport_name(s), sport=s) for s in sports])
+        chips.selectItem(sports.index(self.t_sport) if self.t_sport in sports else 0)
+        self.t_sports_shown = sports
+        keys = [k for k, v in sc.LEAGUES.items() if v["kind"] == "teams" and v["sport"] == self.t_sport]
         active, position = set(sc.league_keys()), {k: i for i, k in enumerate(sc.LEAGUES)}
         keys.sort(key=lambda k: (k not in self.follow["leagues"], k not in active, position[k]))
         control = self.getControl(LEAGUE_LIST)
@@ -1064,9 +1087,27 @@ class Sport(xbmcgui.WindowXML):
         self.league_keys_shown = keys
         index = keys.index(self.table_key) if self.table_key in keys else 0
         control.selectItem(index)
-        self.table_key = keys[index]
+        self.table_key = keys[index] if keys else ""
         self.table_pos = index
-        self.load_table(self.table_key)
+        if keys:
+            self.load_table(self.table_key)
+        else:
+            self.getControl(TABLE_LIST).reset()
+
+    def sport_after(self, token):
+        if token != self.table_token or self.closing:
+            return
+        try:
+            pos = self.getControl(T_SPORTS).getSelectedPosition()
+        except Exception:  # noqa: BLE001
+            return
+        shown = getattr(self, "t_sports_shown", [])
+        if 0 <= pos < len(shown) and shown[pos] != self.t_sport:
+            self.t_sport = shown[pos]
+            self.marks = set()
+            self.table_key = ""
+            self.fill_leagues(keep_sport=True)
+            self.getControl(T_SPORTS).selectItem(pos)
 
     def table_after(self, token):
         if token != self.table_token or self.closing:
