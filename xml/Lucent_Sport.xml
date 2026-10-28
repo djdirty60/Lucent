@@ -831,6 +831,8 @@
 <control type="label"><left>150</left><top>1020</top><width>1000</width><height>36</height><font>font_tiny</font><textcolor>text5</textcolor><label>$INFO[Window.Property(sport.t.f_hint)]</label></control>
 </control>
 <control type="group"><visible>String.IsEqual(Window.Property(sport.view),tables)</visible>
+<control type="image"><left>0</left><top>0</top><width>1920</width><height>1080</height><texture flipx="true">grad_left.png</texture><colordiffuse>$INFO[Container(410).ListItem.Property(ring)]</colordiffuse><visible>!String.IsEmpty(Container(410).ListItem.Property(ring))</visible></control>
+<control type="image"><left>1060</left><top>200</top><width>800</width><height>800</height><aspectratio>keep</aspectratio><texture>$INFO[Container(410).ListItem.Icon]</texture><colordiffuse>26FFFFFF</colordiffuse><fadetime>300</fadetime></control>
 <control type="list" id="395"><left>150</left><top>150</top><width>1620</width><height>68</height>
 <orientation>horizontal</orientation><onup>103</onup><ondown>400</ondown>
 <itemlayout width="220" height="68"><control type="label"><left>0</left><top>0</top><width>210</width><height>64</height><align>center</align>
