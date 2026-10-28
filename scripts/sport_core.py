@@ -345,7 +345,7 @@ def is_stale(entry, now, first, last):
 
 def fetch_league(key, first, last):
     path = LEAGUES[key]["path"]
-    data = info.http(f"{ESPN}{path}/scoreboard?dates={first.replace('-', '')}-{last.replace('-', '')}&limit=400")
+    data = espn_get(f"{ESPN}{path}/scoreboard?dates={first.replace('-', '')}-{last.replace('-', '')}&limit=400")
     return parse_scoreboard(key, data)
 
 
@@ -384,6 +384,27 @@ def league_keys():
     return keys
 
 
+BROWSER = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+           "Accept": "application/json"}
+
+
+def espn_get(url):
+    """ESPN answers a normal browser; one retry when it is busy (429 / 5xx)."""
+    try:
+        return info.http(url, headers=dict(BROWSER))
+    except Exception as error:  # noqa: BLE001
+        code = getattr(error, "code", 0)
+        if code == 429 or code >= 500:
+            time.sleep(2)
+            return info.http(url, headers=dict(BROWSER))
+        raise
+
+
+def short_error(error):
+    code = getattr(error, "code", 0)
+    return f"HTTP {code}" if code else (str(getattr(error, "reason", "") or error)[:30] or "?")
+
+
 LAST_FAIL = [0, 0, ""]        # failed, asked, last error text of the latest refresh
 
 
@@ -406,7 +427,7 @@ def refresh(force=False, keys=None, progress=None):
         except Exception as error:  # noqa: BLE001 - one competition failing must not stop the others
             log(f"{key}: {error}")
             LAST_FAIL[0] += 1
-            LAST_FAIL[2] = str(error)[:60]
+            LAST_FAIL[2] = short_error(error)
             return key, None
 
     changed = False
@@ -432,7 +453,7 @@ def standings(key, force=False):
     if entry and not force and time.time() - entry.get("fetched", 0) < STANDINGS_TTL:
         return entry["rows"]
     try:
-        rows = parse_standings(info.http(f"{ESPN_V2}{LEAGUES[key]['path']}/standings"))
+        rows = parse_standings(espn_get(f"{ESPN_V2}{LEAGUES[key]['path']}/standings"))
     except Exception as error:  # noqa: BLE001
         log(f"standings {key}: {error}")
         return entry["rows"] if entry else []
@@ -658,7 +679,7 @@ def results(key, force=False):
     today = ac.today()
     first = (today - datetime.timedelta(days=RESULTS_DAYS)).strftime("%Y%m%d")
     try:
-        events = parse_scoreboard(key, info.http(f"{ESPN}{LEAGUES[key]['path']}/scoreboard?dates={first}-{espn_day(today)}&limit=500"))
+        events = parse_scoreboard(key, espn_get(f"{ESPN}{LEAGUES[key]['path']}/scoreboard?dates={first}-{espn_day(today)}&limit=500"))
     except Exception as error:  # noqa: BLE001
         log(f"results {key}: {error}")
         return entry["events"] if entry else []
