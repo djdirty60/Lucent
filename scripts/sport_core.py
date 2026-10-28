@@ -297,11 +297,66 @@ def parse_event_kind(league, ev):
     return rows
 
 
+LOGO_PATH = DATA + "sport_logos.json"
+_LOGOS = {}
+
+
+def logo_map():
+    if not _LOGOS:
+        _LOGOS.update(ac.read_json(LOGO_PATH, {}) or {})
+    return _LOGOS
+
+
+def league_logo(key):
+    """Logo of a competition (from ESPN, remembered), '' while unknown."""
+    value = logo_map().get(key, "")
+    return "" if value == "-" else value
+
+
+def remember_logo(key, logo):
+    if logo and logo_map().get(key) != logo:
+        _LOGOS[key] = logo
+        try:
+            ac.write_json(LOGO_PATH, _LOGOS)
+        except Exception as error:  # noqa: BLE001
+            log(f"cannot save logos: {error}")
+
+
+def fetch_logos(keys, workers=3):
+    """Ask ESPN for the logo of competitions we do not know yet (one small request each). True when something new came in."""
+    todo = [k for k in keys if k in LEAGUES and k not in logo_map()]
+    if not todo:
+        return False
+
+    def one(key):
+        try:
+            data = espn_get(f"{ESPN}{LEAGUES[key]['path']}/scoreboard?limit=1")
+            logos = ((data or {}).get("leagues") or [{}])[0].get("logos") or [{}]
+            return key, logos[0].get("href", "")
+        except Exception as error:  # noqa: BLE001
+            log(f"logo {key}: {error}")
+            return key, None
+
+    found = False
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for key, logo in pool.map(one, todo):
+            if logo is None:
+                continue                      # ESPN busy: try again next time
+            _LOGOS[key] = logo or "-"
+            found = found or bool(logo)
+    try:
+        ac.write_json(LOGO_PATH, _LOGOS)
+    except Exception as error:  # noqa: BLE001
+        log(f"cannot save logos: {error}")
+    return found
+
+
 def parse_scoreboard(league, data):
     info_ = LEAGUES[league]
     out = []
     logos = ((data or {}).get("leagues") or [{}])[0].get("logos") or [{}]
     logo = logos[0].get("href", "")
+    remember_logo(league, logo)
     for ev in (data or {}).get("events") or []:
         try:
             if info_["kind"] == "teams":

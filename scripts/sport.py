@@ -822,6 +822,8 @@ class Sport(xbmcgui.WindowXML):
             logo = ""
             if kind == "team":
                 logo = next((t.get("logo", "") for t in follow["teams"] if sc.team_ident(t) == ident), "")
+            elif kind == "league":
+                logo = sc.league_logo(ident)
             chips.append(listitem(title, "", icon=logo, key=key, kind=kind, ident=ident))
         self.setProperty("sport.f.has", "1" if chips else "")
         self.setProperty("sport.f.count", sc.t("f_following", len(chips)))
@@ -853,7 +855,9 @@ class Sport(xbmcgui.WindowXML):
         for k in keys:
             lg = sc.LEAGUES[k]
             sub = sc.t("f_followed") if k in follow["leagues"] else (sc.t("f_teams") if lg["kind"] == "teams" else sc.t("f_competition"))
-            items.append(listitem(lg["name"], sub, icon=sport_icon(lg["sport"]), key=k, followed="1" if k in follow["leagues"] else ""))
+            items.append(listitem(lg["name"], sub, icon=sc.league_logo(k) or sport_icon(lg["sport"]), key=k, followed="1" if k in follow["leagues"] else ""))
+        if reload and any(k not in sc.logo_map() for k in keys):
+            threading.Thread(target=self.load_logos, args=(list(keys),), daemon=True).start()
         if self.f_league not in keys:
             self.f_league = keys[0] if keys else ""
         self.fill_list(F_COMPS, items, keys.index(self.f_league) if self.f_league in keys else 0)
@@ -861,6 +865,18 @@ class Sport(xbmcgui.WindowXML):
             self.show_league()
         else:
             self.set_follow_button()
+
+    def load_table_logos(self, keys):
+        if sc.fetch_logos(keys) and self.view == "tables" and not self.closing:
+            self.fill_leagues(keep_sport=True)
+
+    def load_logos(self, keys):
+        """Fetch the logos of the competitions on screen once, then show them."""
+        if sc.fetch_logos(keys) and self.view == "follow" and not self.closing:
+            self.fill_comps(reload=False)
+            self.fill_chips()
+            if self.view == "tables":
+                self.fill_leagues(keep_sport=True)
 
     def show_league(self):
         key = self.f_league
@@ -1199,7 +1215,9 @@ class Sport(xbmcgui.WindowXML):
         keys.sort(key=lambda k: (k not in self.follow["leagues"], k not in active, position[k]))
         control = self.getControl(LEAGUE_LIST)
         control.reset()
-        control.addItems([listitem(sc.LEAGUES[k]["name"], key=k) for k in keys])
+        control.addItems([listitem(sc.LEAGUES[k]["name"], icon=sc.league_logo(k), key=k) for k in keys])
+        if any(k not in sc.logo_map() for k in keys):
+            threading.Thread(target=self.load_table_logos, args=(list(keys),), daemon=True).start()
         self.league_keys_shown = keys
         index = keys.index(self.table_key) if self.table_key in keys else 0
         control.selectItem(index)
