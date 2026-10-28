@@ -287,7 +287,7 @@ FULLSCREEN_SETTING = "pvrplayback.switchtofullscreenchanneltypes"
 _SAVED = {"value": None, "token": 0}
 
 
-def play_windowed(cid):
+def play_windowed(cid, hold=8):
     """Start a channel without Kodi switching to full screen: the PVR 'switch to full screen' setting is set to Never
     for a few seconds. False when this Kodi has no such setting."""
     current = rpc("Settings.GetSettingValue", {"setting": FULLSCREEN_SETTING}).get("value")
@@ -302,7 +302,7 @@ def play_windowed(cid):
     rpc("Player.Open", {"item": {"channelid": int(cid)}})
 
     def put_back():
-        time.sleep(8)
+        time.sleep(hold)
         if _SAVED["token"] == token and _SAVED["value"] is not None:
             rpc("Settings.SetSettingValue", {"setting": FULLSCREEN_SETTING, "value": _SAVED["value"]})
             _SAVED["value"] = None

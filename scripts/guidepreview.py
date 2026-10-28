@@ -20,7 +20,16 @@ def focused():
     return name.strip()
 
 
+def select_action_once():
+    """OK on a programme switches to the channel (full screen); set once, so a later choice of the user stays."""
+    if xbmc.getInfoLabel("Skin.String(lucent.guideselect)"):
+        return
+    xbmc.executebuiltin('Skin.SetString(lucent.guideselect,"1")', True)
+    epg.rpc("Settings.SetSettingValue", {"setting": "epg.selectaction", "value": 1})
+
+
 def run():
+    select_action_once()
     monitor = xbmc.Monitor()
     ids = {}
     try:
@@ -41,7 +50,7 @@ def run():
         elif name and name != done and time.time() - since >= STAY and name in ids:
             cid, playing = ids[name], epg.playing_channel()
             if str(cid) != playing[0]:
-                if epg.play_windowed(cid):
+                if epg.play_windowed(cid, 3):
                     started = True
             done = name
         if monitor.waitForAbort(0.4):
