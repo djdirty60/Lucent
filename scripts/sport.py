@@ -706,7 +706,7 @@ class Sport(xbmcgui.WindowXML):
                                      sc.t("c_cw") if "clock" in direction and "anti" not in direction and "counter" not in direction
                                      else (sc.t("c_ccw") if direction else "")) if x]
                 tiles = [(c.get("length", ""), sc.t("c_length")), (c.get("laps", ""), sc.t("c_laps")), (c.get("turns", ""), sc.t("c_turns")),
-                         (c.get("record", ""), sc.t("circ_record") + (f"  {c['recyear']}" if c.get("recyear") else ""))]
+                         (c.get("record", ""), ("Record" + (f" {c['recyear']}" if c.get("recyear") else "")))]
                 out = {f"circt{i}{k}": v for i, (val, cap) in enumerate(tiles, 1) for k, v in (("v", val), ("c", cap if val else ""))}
                 out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("png") or c.get("image", ""), "circpng": "1" if c.get("png") else "",
                        "circfacts": "  ·  ".join(facts),
