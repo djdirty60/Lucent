@@ -373,25 +373,35 @@ def days_between(first, last):
     return [(a + datetime.timedelta(days=n)).strftime("%Y%m%d") for n in range((b - a).days + 1)]
 
 
-def fetch_range(key, first, last, workers=4):
-    """ESPN no longer accepts 'from-to' for dates (HTTP 400), so ask day by day (in parallel) and join the answers."""
+PARTIAL = {}   # competition -> days ESPN did not answer the last time (the old games of those days are kept)
+
+
+def fetch_range(key, first, last, workers=3):
+    """ESPN no longer accepts 'from-to' for dates (HTTP 400), so ask day by day and join the answers.
+    Days that fail (ESPN is busy) are asked again one by one; what still fails is remembered in PARTIAL."""
     path = LEAGUES[key]["path"]
-    failures, seen, out = [], set(), []
+    seen, out, got = set(), [], {}
 
     def one(day):
         try:
             return day, parse_scoreboard(key, espn_get(f"{ESPN}{path}/scoreboard?dates={day}&limit=400"))
         except Exception as error:  # noqa: BLE001
-            failures.append(error)
-            return day, None
+            return day, error
 
     days = days_between(first, last)
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        results_ = list(pool.map(one, days))
-    if failures and len(failures) == len(days):
-        raise failures[0]
-    for _day, events in results_:
-        for ev in events or []:
+        for day, res in pool.map(one, days):
+            got[day] = res
+    for _pass in range(2):
+        for day in [d for d, r in got.items() if isinstance(r, Exception)]:
+            time.sleep(1)
+            got[day] = one(day)[1]
+    failed = [d for d, r in got.items() if isinstance(r, Exception)]
+    if len(failed) == len(days):
+        raise got[failed[0]]
+    PARTIAL[key] = failed
+    for day in days:
+        for ev in got[day] if not isinstance(got[day], Exception) else []:
             if ev["id"] not in seen:
                 seen.add(ev["id"])
                 out.append(ev)
@@ -573,7 +583,14 @@ def refresh(force=False, keys=None, progress=None):
                 if key in cache["leagues"]:
                     cache["leagues"][key]["fetched"] = now - TTL + 60      # try again in a minute
                 continue
-            cache["leagues"][key] = {"fetched": now, "from": first, "to": last, "events": events}
+            fetched = now
+            failed = PARTIAL.pop(key, [])
+            if failed:      # keep the games we already had for the days ESPN did not answer, and ask again in a minute
+                old = [e for e in (cache["leagues"].get(key) or {}).get("events", []) if espn_day(local_day(e["start"])) in failed]
+                have = {e["id"] for e in events}
+                events = events + [e for e in old if e["id"] not in have]
+                fetched = now - TTL + 60
+            cache["leagues"][key] = {"fetched": fetched, "from": first, "to": last, "events": events}
             changed = True
     save_cache(cache)
     return changed
