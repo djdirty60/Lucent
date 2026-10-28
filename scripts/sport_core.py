@@ -329,7 +329,7 @@ def circuit_info(cid, league="f1"):
     if not cid:
         return {}
     known = ac.read_json(CIRCUIT_PATH, {}) or {}
-    if cid in known:
+    if known.get(cid, {}).get("name") or known.get(cid, {}).get("image"):
         return known[cid]
     path = LEAGUES.get(league, {}).get("path", "racing/f1")
     sport, slug = path.split("/", 1)
@@ -348,6 +348,8 @@ def circuit_info(cid, league="f1"):
     info_ = {"name": data.get("fullName") or "", "place": place, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
              "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
              "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image}
+    if not (info_["name"] or info_["image"]):
+        return info_                      # ESPN gave nothing (busy?): do not remember the emptiness, try again next time
     known[cid] = info_
     try:
         ac.write_json(CIRCUIT_PATH, known)
