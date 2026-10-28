@@ -362,6 +362,26 @@ def circuit_png(cid, diagrams):
     return ""
 
 
+def circuit_of_event(ev):
+    """Circuit id and name of a race weekend whose saved data has no circuit (older saved data): ask the scoreboard of that day."""
+    try:
+        path = LEAGUES.get(ev["league"], {}).get("path", "racing/f1")
+        for shift in (0, 1, -1):
+            day = (local_day(ev["start"]) + datetime.timedelta(days=shift)).strftime("%Y%m%d")
+            data = espn_get(f"{ESPN}{path}/scoreboard?dates={day}&limit=50")
+            for e in data.get("events") or []:
+                c = e.get("circuit") or {}
+                if c.get("id") and str(ev["id"]).split(":")[1:2] == [str(e.get("id"))]:
+                    return str(c["id"]), c.get("fullName") or ""
+            for e in data.get("events") or []:
+                c = e.get("circuit") or {}
+                if c.get("id") and (e.get("name") or "") == ev.get("title"):
+                    return str(c["id"]), c.get("fullName") or ""
+    except Exception as error:  # noqa: BLE001
+        log(f"circuit of event: {error}")
+    return "", ""
+
+
 def circuit_info(cid, league="f1"):
     """Facts and drawing of a racing circuit from ESPN, remembered for good: {name, place, length, laps, turns, direction, record, image}."""
     if not cid:

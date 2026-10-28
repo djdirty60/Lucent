@@ -695,8 +695,10 @@ class Sport(xbmcgui.WindowXML):
     def game_extra(self, ev):
         """Slow part (form, standings): returns {name: value} for the page, filled in once it is ready."""
         out = {}
-        if ev["kind"] == "event" and (ev.get("circuit") or ev.get("circname")):       # a race weekend: the circuit instead of the programme
+        if ev["kind"] == "event" and ev["league"] in sc.LEAGUES and sc.LEAGUES[ev["league"]]["sport"] == "racing":       # a race weekend: the circuit instead of the programme
             try:
+                if not ev.get("circuit"):
+                    ev["circuit"], ev["circname"] = sc.circuit_of_event(ev)
                 c = sc.circuit_info(ev["circuit"], ev["league"])
                 direction = c.get("direction", "").lower()
                 facts = [x for x in (c.get("length", ""), f"{c['laps']} {sc.t('c_laps')}" if c.get("laps") else "",
