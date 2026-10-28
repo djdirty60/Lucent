@@ -89,6 +89,7 @@ TX = {
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "nogames": ("No games planned right now", "Geen wedstrijden gepland"),
+    "previewhint": ("OK on a channel: watch here", "OK op een zender: hier kijken"), "fullhint": ("OK again: full screen", "Nog een keer OK: beeldvullend"),
     "dayerr": ("ESPN did not answer for {} of {} days ({})", "ESPN gaf geen antwoord voor {} van {} dagen ({})"),
     "neterr": ("Could not reach ESPN ({})", "ESPN niet bereikbaar ({})"),
     "list_n": ("{} games", "{} wedstrijden"),

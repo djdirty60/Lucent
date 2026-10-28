@@ -162,7 +162,7 @@ class Sport(xbmcgui.WindowXML):
         if self.ready:
             return
         self.ready = True
-        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
+        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "previewhint", "fullhint", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
         self.check_pvr()
         if not sc.all_cached():
@@ -196,6 +196,9 @@ class Sport(xbmcgui.WindowXML):
             return
         if aid in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.closing = True
+            if getattr(self, "preview_cid", ""):      # a channel watched in the small window stops with the page
+                self.preview_cid = ""
+                xbmc.Player().stop()
             self.close()
             return
         if self.getFocusId() == LEAGUE_LIST:
@@ -248,6 +251,8 @@ class Sport(xbmcgui.WindowXML):
             self.set_reminder()
         elif cid == RECORD_BUTTON:
             self.set_recording()
+        elif cid in HERO_CHANNELS:
+            self.preview_channel(CHANNEL_BUTTONS[cid])
         elif cid in CHANNEL_BUTTONS:
             self.play_channel(CHANNEL_BUTTONS[cid])
         elif cid in (FOLLOW_HOME, FOLLOW_AWAY):
@@ -988,6 +993,31 @@ class Sport(xbmcgui.WindowXML):
         if not item:
             return None, None
         return self.by_id.get(item.getProperty("evid")), item
+
+    def preview_channel(self, n):
+        """OK on a channel next to the big card: watch it in the small window; OK on the same channel again: full screen."""
+        item = self.current()[1]
+        cid = item.getProperty(f"ch{n}cid") if item else ""
+        if not cid:
+            return
+        if getattr(self, "preview_cid", "") == str(cid) and xbmc.getCondVisibility("Player.HasVideo"):
+            xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+            return
+        self.preview_cid = str(cid)
+        self.setProperty("sport.preview", str(cid))
+        self.setProperty("sport.preview.name", item.getProperty(f"ch{n}name"))
+        threading.Thread(target=self.start_preview, args=(cid,), daemon=True).start()
+
+    def start_preview(self, cid):
+        wid = xbmcgui.getCurrentWindowId()
+        epg.play(cid)
+        for _ in range(50):                       # Kodi opens the video full screen; go back to this page when it plays
+            time.sleep(0.2)
+            if xbmc.getCondVisibility("Player.HasVideo"):
+                time.sleep(0.5)
+                if not self.closing:
+                    xbmc.executebuiltin(f"ActivateWindow({wid})")
+                return
 
     def play_channel(self, n, item=None):
         item = item or self.current()[1]
