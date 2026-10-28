@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
     <defaultcontrol always="true">100</defaultcontrol>
-    <onload condition="!Player.Paused">SetFocus(103)</onload>
-    <onload condition="Player.Paused">SetFocus(104)</onload>
+    <onload condition="!Player.Paused + !Pvr.IsPlayingTV">SetFocus(103)</onload>
+    <onload condition="Player.Paused + !Pvr.IsPlayingTV">SetFocus(104)</onload>
+    <onload condition="!Player.Paused + Pvr.IsPlayingTV">SetFocus(203)</onload>
+    <onload condition="Player.Paused + Pvr.IsPlayingTV">SetFocus(204)</onload>
     <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
     <animation effect="fade" start="100" end="0" time="250">WindowClose</animation>
     <controls>
@@ -85,6 +87,7 @@
             <left>96</left>
             <top>892</top>
             <width>1728</width>
+            <visible>!Pvr.IsPlayingTV</visible>
             <control type="label">
                 <left>0</left>
                 <top>-56</top>
@@ -147,6 +150,193 @@
                 <visible>Player.SeekEnabled</visible>
             </control>
         </control>
+        <control type="group">
+            <left>96</left>
+            <top>892</top>
+            <width>1728</width>
+            <visible>Pvr.IsPlayingTV</visible>
+            <control type="label">
+                <left>0</left>
+                <top>-64</top>
+                <width>1300</width>
+                <height>40</height>
+                <font>font13_bold</font>
+                <label>$INFO[VideoPlayer.StartTime]  -  $INFO[VideoPlayer.EndTime]   $INFO[VideoPlayer.Title]</label>
+            </control>
+            <control type="label">
+                <right>0</right>
+                <top>-64</top>
+                <width>600</width>
+                <height>40</height>
+                <align>right</align>
+                <font>font13</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[PVR.EpgEventRemainingTime,,   ]</label>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>6</height>
+                <info>PVR.EpgEventProgress</info>
+                <texturebg border="3" colordiffuse="26FFFFFF">pill6.png</texturebg>
+                <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>-30</top>
+                <width>1300</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[VideoPlayer.NextStartTime,$LOCALIZE[31241]  ,   ]$INFO[VideoPlayer.NextTitle]</label>
+                <visible>!String.IsEmpty(VideoPlayer.NextTitle)</visible>
+            </control>
+        </control>
+            <control type="grouplist" id="200">
+                <left>96</left>
+                <top>936</top>
+                <width>1728</width>
+                <height>104</height>
+                <orientation>horizontal</orientation>
+                <align>center</align>
+                <itemgap>22</itemgap>
+                <visible>Pvr.IsPlayingTV</visible>
+                <usecontrolcoords>false</usecontrolcoords>
+            <control type="button" id="201">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/guide_fo.png</texturefocus>
+                <texturenofocus>buttons/guide_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>true</visible>
+                <onclick>RunScript(special://skin/scripts/tv.py)</onclick>
+            </control>
+            <control type="button" id="202">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/chdown_fo.png</texturefocus>
+                <texturenofocus>buttons/chdown_nf.png</texturenofocus>
+                <onclick>Action(ChannelDown)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="203">
+                <width>104</width>
+                <height>104</height>
+                <label></label>
+                <texturefocus>buttons/pause_fo.png</texturefocus>
+                <texturenofocus>buttons/pause_nf.png</texturenofocus>
+                <onclick>PlayerControl(Play)</onclick>
+                <visible>!Player.Paused</visible>
+            </control>
+            <control type="button" id="204">
+                <width>104</width>
+                <height>104</height>
+                <label></label>
+                <texturefocus>buttons/play_fo.png</texturefocus>
+                <texturenofocus>buttons/play_nf.png</texturenofocus>
+                <onclick>PlayerControl(Play)</onclick>
+                <visible>Player.Paused</visible>
+            </control>
+            <control type="button" id="205">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/chup_fo.png</texturefocus>
+                <texturenofocus>buttons/chup_nf.png</texturenofocus>
+                <onclick>Action(ChannelUp)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="206">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/rewind_fo.png</texturefocus>
+                <texturenofocus>buttons/rewind_nf.png</texturenofocus>
+                <onclick>Seek(-10)</onclick>
+                <visible>Player.SeekEnabled</visible>
+            </control>
+            <control type="button" id="207">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/forward_fo.png</texturefocus>
+                <texturenofocus>buttons/forward_nf.png</texturenofocus>
+                <onclick>Seek(30)</onclick>
+                <visible>Player.SeekEnabled</visible>
+            </control>
+            <control type="label" id="290">
+                <width>120</width>
+                <height>84</height>
+                <label></label>
+            </control>
+            <control type="button" id="211">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="212">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="213">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="214">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/rec_fo.png</texturefocus>
+                <texturenofocus>buttons/rec_nf.png</texturenofocus>
+                <onclick>Action(Record)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="217">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>Skin.ToggleSetting(nuvio.osdstats)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="215">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>true</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <control type="button" id="216">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stop_fo.png</texturefocus>
+                <texturenofocus>buttons/stop_nf.png</texturenofocus>
+                <onclick>PlayerControl(Stop)</onclick>
+                <visible>true</visible>
+            </control>
+            </control>
             <control type="grouplist" id="100">
                 <left>96</left>
                 <top>936</top>
@@ -156,6 +346,7 @@
                 <align>center</align>
                 <itemgap>22</itemgap>
                 <onup>87</onup>
+                <visible>!Pvr.IsPlayingTV</visible>
                 <usecontrolcoords>false</usecontrolcoords>
             <control type="button" id="101">
                 <width>84</width>
