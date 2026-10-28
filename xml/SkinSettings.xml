@@ -729,6 +729,32 @@
                     <label>$LOCALIZE[31168]</label>
                     <onclick>ActivateWindow(ServiceSettings)</onclick>
                 </control>
+                <control type="label" id="2502">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31231]</label>
+                </control>
+                <control type="radiobutton" id="1504">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31232]</label>
+                    <selected>!Skin.HasSetting(nuvio.update.off)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.update.off)</onclick>
+                </control>
+                <control type="button" id="1505">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31233]</label>
+                    <onclick>RunScript(special://skin/scripts/updater.py,check)</onclick>
+                </control>
             </control>
             <control type="grouplist" id="9106">
                 <left>600</left>
