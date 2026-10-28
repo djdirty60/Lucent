@@ -633,8 +633,106 @@ def short_error(error):
 LAST_FAIL = [0, 0, ""]        # failed, asked, last error text of the latest refresh
 
 
+NATIONAL_TTL = 12 * 3600
+CORE = "https://sports.core.api.espn.com/v2/sports/"
+
+
+def followed_countries():
+    """[(espn id, English name)] of the national teams you follow."""
+    english = set(COUNTRIES)
+    dutch = {nl: en for en, nl in COUNTRIES.items()}
+    out = []
+    for team in load_follow()["teams"]:
+        name = team.get("name") or ""
+        en = name if name in english else dutch.get(name)
+        if en and team.get("id"):
+            out.append((str(team["id"]), en))
+    return out
+
+
+def refresh_national(force=False):
+    """The games of a followed country are often further away than the 13 days we load (a Nations League game in
+    three weeks). Ask ESPN for the dates of its games and fetch exactly those days. Once per 12 hours."""
+    teams = followed_countries()
+    cache = load_cache()
+    extra = cache.get("extra") or {}
+    ids = sorted(t[0] for t in teams)
+    if not teams:
+        if extra:
+            cache.pop("extra", None)
+            save_cache(cache)
+        return False
+    if not force and extra.get("teams") == ids and time.time() - extra.get("fetched", 0) < NATIONAL_TTL:
+        return False
+    today = ac.today()
+    year = today.year
+    jobs = [(tid, key, season) for tid, _name in teams for key in NATIONAL if key in LEAGUES for season in (year, year + 1)]
+
+    def dates_of(job):
+        tid, key, season = job
+        sport, slug = LEAGUES[key]["path"].split("/", 1)
+        try:
+            data = espn_get(f"{CORE}{sport}/leagues/{slug}/seasons/{season}/teams/{tid}/events?limit=50")
+        except Exception:  # noqa: BLE001 - most competitions have nothing for this team: normal
+            return []
+        days = []
+        for item in (data or {}).get("items") or []:
+            ref = (item.get("$ref") or "").replace("http://", "https://")
+            try:
+                when = (espn_get(ref).get("date") or "")[:16]
+                stamp = datetime.datetime.strptime(when, "%Y-%m-%dT%H:%M").replace(tzinfo=datetime.timezone.utc).timestamp()
+            except Exception:  # noqa: BLE001
+                continue
+            day = local_day(stamp)
+            if today <= day <= today + datetime.timedelta(days=400):
+                days.append((key, espn_day(day)))
+        return days
+
+    wanted = set()
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for days in pool.map(dates_of, jobs):
+            wanted.update(days)
+    names = {norm(en) for _tid, en in teams} | {norm(COUNTRIES[en]) for _tid, en in teams}
+
+    def day_events(item):
+        key, day = item
+        try:
+            return parse_scoreboard(key, espn_get(f"{ESPN}{LEAGUES[key]['path']}/scoreboard?dates={day}&limit=400"))
+        except Exception as error:  # noqa: BLE001
+            log(f"national {key} {day}: {error}")
+            return None
+
+    events, failed = [], False
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        for rows in pool.map(day_events, sorted(wanted)):
+            if rows is None:
+                failed = True
+                continue
+            for e in rows:
+                if e.get("kind") == "teams" and (norm(e["home"].get("name")) in names or norm(e["away"].get("name")) in names
+                                                 or {e["home"].get("id"), e["away"].get("id")} & {t[0] for t in teams}):
+                    events.append(e)
+    old = extra.get("events", []) if failed else []
+    have = {e["id"] for e in events}
+    events += [e for e in old if e["id"] not in have]
+    cache["extra"] = {"fetched": int(time.time()) - (NATIONAL_TTL - 120 if failed else 0), "teams": ids, "events": events}
+    save_cache(cache)
+    return True
+
+
 def refresh(force=False, keys=None, progress=None):
     """Fetch the competitions that are out of date. Returns True when something changed."""
+    main = _refresh(force, keys, progress)
+    if keys is not None:
+        return main
+    try:                                   # after the normal games, so they are never held up
+        return refresh_national(force) or main
+    except Exception as error:  # noqa: BLE001 - the extra games must never stop the normal refresh
+        log(f"national: {error}")
+        return main
+
+
+def _refresh(force=False, keys=None, progress=None):
     now = int(time.time())
     first_d, last_d = window()
     first, last = first_d.isoformat().replace("-", ""), last_d.isoformat().replace("-", "")
@@ -772,6 +870,9 @@ def all_cached():
     for key, entry in cache["leagues"].items():
         if key in LEAGUES:
             out.extend(entry.get("events", []))
+    have = {e["id"] for e in out}
+    now = time.time()
+    out.extend(e for e in (cache.get("extra") or {}).get("events", []) if e["id"] not in have and e["start"] > now)   # later games of followed countries
     return out
 
 
