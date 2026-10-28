@@ -197,6 +197,16 @@ class Sport(xbmcgui.WindowXML):
             self.setFocusId(TABLE_LIST)
             return
         if aid in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
+            # Back goes up one step at a time: content -> its tab button -> My sport -> out of Sport
+            fid = self.getFocusId()
+            tab = next((b for b, name in VIEW_BUTTONS.items() if name == self.view), 101)
+            if fid not in VIEW_BUTTONS:
+                self.setFocusId(tab)
+                return
+            if self.view != "mine":
+                self.onClick(101)
+                self.setFocusId(101)
+                return
             self.closing = True
             self.close()      # a channel in the TV window keeps playing until Stop channel is used
             return
