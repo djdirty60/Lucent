@@ -526,7 +526,8 @@ class Sport(xbmcgui.WindowXML):
                            key=lambda e: (e["state"] != "in", e["state"] == "post", e["start"] if e["state"] != "post" else -e["start"]))
             if not logo and shown:
                 logo = shown[0].get("lg", "")
-            rows.append({"title": title, "sub": sub, "logo": logo, "events": shown, "kind": kind})
+            rows.append({"title": title, "sub": sub, "logo": logo, "events": shown, "kind": kind,
+                         "cardcol": sc.country_colour(title) if kind == "team" else ""})
         everything = {}
         for row in rows:
             for e in row["events"]:
@@ -585,6 +586,9 @@ class Sport(xbmcgui.WindowXML):
                 cards = [self.event_item(ev, data) for ev in evs]
                 if not cards:
                     cards = [listitem(sc.t("nogames"), "", isevent="1", league=sec["title"], lgicon=sec["logo"], foot="", hcol="66" + "3A4A5C", acol="66" + "3A4A5C")]
+                if sec.get("cardcol"):
+                    for card_item in cards:
+                        card_item.setProperty("cardcol", sec["cardcol"])
                 self.fill_list(cid, cards, keep.get(cid, 0))
             else:
                 self.setProperty(f"sport.sec{k + 1}.on", "")

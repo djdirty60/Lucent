@@ -142,8 +142,27 @@ COUNTRIES = {
     "Japan": "Japan", "South Korea": "Zuid-Korea", "Australia": "Australië", "Saudi Arabia": "Saoedi-Arabië",
     "Iran": "Iran", "Suriname": "Suriname", "Curaçao": "Curaçao", "Indonesia": "Indonesië",
 }
+COUNTRY_COLOURS = {
+    "Netherlands": "F36C21", "Belgium": "D0202E", "Germany": "3A3A3A", "France": "1D3F9E", "England": "1B2A5C", "Spain": "C60B1E",
+    "Italy": "1F5FBF", "Portugal": "9E1B32", "Croatia": "D1232A", "Denmark": "C8102E", "Switzerland": "D52B1E", "Austria": "ED2939",
+    "Poland": "DC143C", "Turkey": "E30A17", "Norway": "BA0C2F", "Sweden": "006AA7", "Scotland": "1B3F8B", "Wales": "C8102E",
+    "Ireland": "169B62", "Northern Ireland": "1B8A4A", "Ukraine": "0057B8", "Greece": "0D5EAF", "Czechia": "D7141A", "Serbia": "C6363C",
+    "Hungary": "477050", "Romania": "E0B800", "Slovakia": "0B4EA2", "Slovenia": "005DA4", "Finland": "003580", "Iceland": "02529C",
+    "Morocco": "C1272D", "Senegal": "00853F", "Nigeria": "008751", "Egypt": "CE1126", "Ghana": "006B3F", "Brazil": "F2C200",
+    "Argentina": "6CACE4", "Uruguay": "5AA6DB", "Colombia": "E8B800", "Chile": "D52B1E", "Ecuador": "E0B000", "Mexico": "006847",
+    "United States": "B22234", "Canada": "D52B1E", "Japan": "1F3E8E", "South Korea": "C60C30", "Australia": "F2B600",
+    "Saudi Arabia": "006C35", "Iran": "239F40", "Suriname": "377E3F", "Curaçao": "002B7F", "Indonesia": "CE1126",
+}
 COUNTRY_NL = {en: (nl if NL else en) for en, nl in COUNTRIES.items()}
 NATIONAL_LEAGUE = "fifa.friendly"
+
+
+def country_colour(name):
+    """Card colour (AARRGGBB) for a national team, '' for anything else. Accepts the English or the Dutch name."""
+    for en, nl in COUNTRIES.items():
+        if name in (en, nl):
+            return "CC" + COUNTRY_COLOURS.get(en, "3A4A5C")
+    return ""
 
 
 def country_label(name):
