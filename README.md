@@ -87,11 +87,11 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.3.1.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.4.0.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.3.1.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.4.0.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
 
@@ -105,6 +105,16 @@ Install the **Nuvio Arc Repository** once, then Kodi keeps the skin up to date b
    If the skin is already installed, choose **Versions** and pick the newest version from *Nuvio Arc Repository*. This links the skin to the repository.
 
 From then on new versions arrive automatically (Kodi's default: **Settings → System → Add-ons → Updates → Install updates automatically**).
+
+### Skin settings
+
+**Settings → Skin settings** is laid out like Nuvio's settings: categories on the left, options on the right.
+
+- **Appearance** – colour theme (Glass, White, Crimson, Emerald, Ocean, Violet, Amber, Gold, Rose, Rose Gold, Copper, Jade, Arctic Blue, Graphite), AMOLED mode (pure black), interface scale, font and language, clock, and the screensaver (dim when idle, timeout, dim strength).
+- **Layout** – menu and widgets, poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
+- **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings.
+
+**Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.nuvioarc/logos/` and the info page shows them instead of the names.
 
 ### Customising the menu and widgets
 

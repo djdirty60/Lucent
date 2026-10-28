@@ -2,7 +2,7 @@
 <!-- Nuvio Arc: home screen -->
 <window>
     <defaultcontrol always="true">9100</defaultcontrol>
-    <backgroundcolor>FF0B1119</backgroundcolor>
+    <backgroundcolor>bg</backgroundcolor>
     <!-- First time: write the default menu; once per session: select the start tab -->
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
@@ -30,7 +30,7 @@
             <width>1920</width>
             <height>560</height>
             <texture>grad_bottom.png</texture>
-            <colordiffuse>E60B1119</colordiffuse>
+            <colordiffuse>bg_90</colordiffuse>
         </control>
 
         <!-- ============ Hero + rows (slide right while the side menu is open) ============ -->
@@ -98,7 +98,7 @@
             <width>820</width>
             <height>1080</height>
             <texture>grad_left.png</texture>
-            <colordiffuse>FA0B1119</colordiffuse>
+            <colordiffuse>bg_98</colordiffuse>
             <animation effect="fade" start="0" end="100" time="250">Visible</animation>
             <animation effect="fade" start="100" end="0" time="200">Hidden</animation>
             <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
@@ -145,7 +145,7 @@
                         <width>36</width>
                         <height>36</height>
                         <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
-                        <visible>!false</visible>
+                        <visible>!false + [Control.HasFocus(9000) | !Skin.HasSetting(nuvio.sideicons.hide)]</visible>
                     </control>
                     <control type="label">
                         <left>76</left>
@@ -191,7 +191,7 @@
                         <width>36</width>
                         <height>36</height>
                         <texture colordiffuse="text">$INFO[ListItem.Icon]</texture>
-                        <visible>!Control.HasFocus(9000)</visible>
+                        <visible>!Control.HasFocus(9000) + [Control.HasFocus(9000) | !Skin.HasSetting(nuvio.sideicons.hide)]</visible>
                     </control>
                     <control type="label">
                         <left>76</left>

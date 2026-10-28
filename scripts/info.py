@@ -17,6 +17,7 @@ import urllib.request
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 HEADING = "Nuvio Arc"
 SEREN_ID = "plugin.video.seren"
@@ -91,13 +92,27 @@ class Item:
         self.tmdb = info("UniqueID(tmdb)") or info("Property(tmdb_id)")
         self.imdb = info("UniqueID(imdb)") or info("IMDBNumber") or info("Property(imdb_id)")
         self.watched = int(info("PlayCount") or 0) > 0
-        if self.dbtype in ("season", "episode"):
-            show_trakt = info("Property(trakt_show_id)")
-            self.show_ids = {"trakt": int(show_trakt)} if show_trakt.isdigit() else {}
+        # Seren gives episodes and seasons the ids of their show (tmdb/imdb) plus trakt_show_id
+        self.show_trakt = info("Property(trakt_show_id)") if self.dbtype in ("season", "episode") else ""
         self.key = self.trakt or self.tmdb or self.imdb or self.title
+
+    @property
+    def is_seren_episode(self):
+        return self.dbtype in ("season", "episode") and self.show_trakt.isdigit()
+
+    def as_show(self):
+        """The show an episode or season belongs to (for lists, credits, similar titles and trailers)."""
+        show = Item.__new__(Item)
+        show.__dict__.update(self.__dict__)
+        show.dbtype, show.trakt, show.show_trakt = "tvshow", self.show_trakt, ""
+        show.title = info("TVShowTitle") or self.title
+        return show
 
     def ids(self):
         ids = {}
+        if self.dbtype in ("season", "episode"):
+            # the tmdb/imdb ids here belong to the show, so only the episode's own trakt id is safe
+            return {"trakt": int(self.trakt)} if self.trakt.isdigit() else {}
         if self.trakt.isdigit():
             ids["trakt"] = int(self.trakt)
         if self.tmdb.isdigit():
@@ -168,6 +183,8 @@ def after_trakt_change():
 # ----------------------------------------------------------------------------- lists dialog
 def choose_lists():
     item = Item()
+    if item.is_seren_episode:
+        item = item.as_show()
     if not item.ids():
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
         return
@@ -321,6 +338,8 @@ def load_videos(item):
         for p in ("title", "sub", "thumb", "path"):
             HOME.clearProperty(f"nuvio.info.vid.{n}.{p}")
     HOME.setProperty("nuvio.info.vid.count", "0")
+    if item.is_seren_episode:
+        item = item.as_show()
     kind = {"movie": "movie", "tvshow": "tv"}.get(item.dbtype)
     if not kind or not item.tmdb.isdigit():
         return
@@ -365,6 +384,8 @@ def load_credits(item):
         for p in ("name", "role", "thumb", "id"):
             HOME.clearProperty(f"nuvio.info.cast.{n}.{p}")
     HOME.setProperty("nuvio.info.cast.count", "0")
+    if item.is_seren_episode:
+        item = item.as_show()
     if not item.tmdb.isdigit() or item.dbtype not in ("movie", "tvshow"):
         return
     try:
@@ -471,8 +492,22 @@ def show_person(person_id):
     HOME.setProperty("nuvio.person.name", person.get("name", ""))
 
 
+LOGO_DIR = "special://profile/addon_data/skin.nuvioarc/logos/"
+LOGO_SOURCES = ("imdb", "tmdb", "trakt")
+
+
+def load_logos():
+    """Your own rating logos: put imdb.png, tmdb.png and trakt.png in LOGO_DIR and the info page uses them."""
+    if not xbmcvfs.exists(LOGO_DIR):
+        xbmcvfs.mkdirs(LOGO_DIR)
+    for name in LOGO_SOURCES:
+        path = f"{LOGO_DIR}{name}.png"
+        HOME.setProperty(f"nuvio.logo.{name}", path if xbmcvfs.exists(path) else "")
+
+
 def load():
     item = Item()
+    load_logos()
     HOME.setProperty("nuvio.info.key", item.key)
     HOME.clearProperty("nuvio.info.watched")
     load_studios()

@@ -181,45 +181,50 @@
     <variable name="NuvioW10PathLand">
         <value condition="$EXP[NuvioW10Land]">$VAR[NuvioW10Path]</value>
     </variable>
+    <variable name="NuvioGlowColour">
+        <value condition="String.IsEqual(Skin.String(nuvio.glow),subtle)">glow_subtle</value>
+        <value condition="String.IsEqual(Skin.String(nuvio.glow),bold)">glow_bold</value>
+        <value>glow</value>
+    </variable>
 
     <expression name="NuvioW1Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.path))]</expression>
-    <expression name="NuvioW1Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.style),land)]</expression>
+    <expression name="NuvioW1Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8101">$EXP[NuvioW1Has] + !$EXP[NuvioW1Land] + [Integer.IsGreater(Container(8101).NumItems,0) | Container(8101).IsUpdating]</expression>
     <expression name="NuvioRow8201">$EXP[NuvioW1Has] + $EXP[NuvioW1Land] + [Integer.IsGreater(Container(8201).NumItems,0) | Container(8201).IsUpdating]</expression>
     <expression name="NuvioW2Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.path))]</expression>
-    <expression name="NuvioW2Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.style),land)]</expression>
+    <expression name="NuvioW2Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8102">$EXP[NuvioW2Has] + !$EXP[NuvioW2Land] + [Integer.IsGreater(Container(8102).NumItems,0) | Container(8102).IsUpdating]</expression>
     <expression name="NuvioRow8202">$EXP[NuvioW2Has] + $EXP[NuvioW2Land] + [Integer.IsGreater(Container(8202).NumItems,0) | Container(8202).IsUpdating]</expression>
     <expression name="NuvioW3Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.path))]</expression>
-    <expression name="NuvioW3Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.style),land)]</expression>
+    <expression name="NuvioW3Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8103">$EXP[NuvioW3Has] + !$EXP[NuvioW3Land] + [Integer.IsGreater(Container(8103).NumItems,0) | Container(8103).IsUpdating]</expression>
     <expression name="NuvioRow8203">$EXP[NuvioW3Has] + $EXP[NuvioW3Land] + [Integer.IsGreater(Container(8203).NumItems,0) | Container(8203).IsUpdating]</expression>
     <expression name="NuvioW4Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.path))]</expression>
-    <expression name="NuvioW4Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.style),land)]</expression>
+    <expression name="NuvioW4Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8104">$EXP[NuvioW4Has] + !$EXP[NuvioW4Land] + [Integer.IsGreater(Container(8104).NumItems,0) | Container(8104).IsUpdating]</expression>
     <expression name="NuvioRow8204">$EXP[NuvioW4Has] + $EXP[NuvioW4Land] + [Integer.IsGreater(Container(8204).NumItems,0) | Container(8204).IsUpdating]</expression>
     <expression name="NuvioW5Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.path))]</expression>
-    <expression name="NuvioW5Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.style),land)]</expression>
+    <expression name="NuvioW5Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8105">$EXP[NuvioW5Has] + !$EXP[NuvioW5Land] + [Integer.IsGreater(Container(8105).NumItems,0) | Container(8105).IsUpdating]</expression>
     <expression name="NuvioRow8205">$EXP[NuvioW5Has] + $EXP[NuvioW5Land] + [Integer.IsGreater(Container(8205).NumItems,0) | Container(8205).IsUpdating]</expression>
     <expression name="NuvioW6Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.path))]</expression>
-    <expression name="NuvioW6Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.style),land)]</expression>
+    <expression name="NuvioW6Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8106">$EXP[NuvioW6Has] + !$EXP[NuvioW6Land] + [Integer.IsGreater(Container(8106).NumItems,0) | Container(8106).IsUpdating]</expression>
     <expression name="NuvioRow8206">$EXP[NuvioW6Has] + $EXP[NuvioW6Land] + [Integer.IsGreater(Container(8206).NumItems,0) | Container(8206).IsUpdating]</expression>
     <expression name="NuvioW7Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.path))]</expression>
-    <expression name="NuvioW7Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.style),land)]</expression>
+    <expression name="NuvioW7Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8107">$EXP[NuvioW7Has] + !$EXP[NuvioW7Land] + [Integer.IsGreater(Container(8107).NumItems,0) | Container(8107).IsUpdating]</expression>
     <expression name="NuvioRow8207">$EXP[NuvioW7Has] + $EXP[NuvioW7Land] + [Integer.IsGreater(Container(8207).NumItems,0) | Container(8207).IsUpdating]</expression>
     <expression name="NuvioW8Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.path))]</expression>
-    <expression name="NuvioW8Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.style),land)]</expression>
+    <expression name="NuvioW8Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8108">$EXP[NuvioW8Has] + !$EXP[NuvioW8Land] + [Integer.IsGreater(Container(8108).NumItems,0) | Container(8108).IsUpdating]</expression>
     <expression name="NuvioRow8208">$EXP[NuvioW8Has] + $EXP[NuvioW8Land] + [Integer.IsGreater(Container(8208).NumItems,0) | Container(8208).IsUpdating]</expression>
     <expression name="NuvioW9Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.path))]</expression>
-    <expression name="NuvioW9Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.style),land)]</expression>
+    <expression name="NuvioW9Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8109">$EXP[NuvioW9Has] + !$EXP[NuvioW9Land] + [Integer.IsGreater(Container(8109).NumItems,0) | Container(8109).IsUpdating]</expression>
     <expression name="NuvioRow8209">$EXP[NuvioW9Has] + $EXP[NuvioW9Land] + [Integer.IsGreater(Container(8209).NumItems,0) | Container(8209).IsUpdating]</expression>
     <expression name="NuvioW10Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.path))]</expression>
-    <expression name="NuvioW10Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.style),land)]</expression>
+    <expression name="NuvioW10Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8110">$EXP[NuvioW10Has] + !$EXP[NuvioW10Land] + [Integer.IsGreater(Container(8110).NumItems,0) | Container(8110).IsUpdating]</expression>
     <expression name="NuvioRow8210">$EXP[NuvioW10Has] + $EXP[NuvioW10Land] + [Integer.IsGreater(Container(8210).NumItems,0) | Container(8210).IsUpdating]</expression>
     <expression name="NuvioActiveRowVisible">[String.IsEqual(Window(home).Property(nuvio.row),8101) + $EXP[NuvioRow8101]] | [String.IsEqual(Window(home).Property(nuvio.row),8201) + $EXP[NuvioRow8201]] | [String.IsEqual(Window(home).Property(nuvio.row),8102) + $EXP[NuvioRow8102]] | [String.IsEqual(Window(home).Property(nuvio.row),8202) + $EXP[NuvioRow8202]] | [String.IsEqual(Window(home).Property(nuvio.row),8103) + $EXP[NuvioRow8103]] | [String.IsEqual(Window(home).Property(nuvio.row),8203) + $EXP[NuvioRow8203]] | [String.IsEqual(Window(home).Property(nuvio.row),8104) + $EXP[NuvioRow8104]] | [String.IsEqual(Window(home).Property(nuvio.row),8204) + $EXP[NuvioRow8204]] | [String.IsEqual(Window(home).Property(nuvio.row),8105) + $EXP[NuvioRow8105]] | [String.IsEqual(Window(home).Property(nuvio.row),8205) + $EXP[NuvioRow8205]] | [String.IsEqual(Window(home).Property(nuvio.row),8106) + $EXP[NuvioRow8106]] | [String.IsEqual(Window(home).Property(nuvio.row),8206) + $EXP[NuvioRow8206]] | [String.IsEqual(Window(home).Property(nuvio.row),8107) + $EXP[NuvioRow8107]] | [String.IsEqual(Window(home).Property(nuvio.row),8207) + $EXP[NuvioRow8207]] | [String.IsEqual(Window(home).Property(nuvio.row),8108) + $EXP[NuvioRow8108]] | [String.IsEqual(Window(home).Property(nuvio.row),8208) + $EXP[NuvioRow8208]] | [String.IsEqual(Window(home).Property(nuvio.row),8109) + $EXP[NuvioRow8109]] | [String.IsEqual(Window(home).Property(nuvio.row),8209) + $EXP[NuvioRow8209]] | [String.IsEqual(Window(home).Property(nuvio.row),8110) + $EXP[NuvioRow8110]] | [String.IsEqual(Window(home).Property(nuvio.row),8210) + $EXP[NuvioRow8210]]</expression>
@@ -779,7 +784,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8101).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8101).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8101).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8101).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8101).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8101).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8101).ListItem.Rating]</param>
@@ -895,7 +904,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8201).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8201).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8201).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8201).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8201).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8201).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8201).ListItem.Rating]</param>
@@ -1011,7 +1024,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8102).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8102).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8102).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8102).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8102).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8102).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8102).ListItem.Rating]</param>
@@ -1127,7 +1144,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8202).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8202).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8202).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8202).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8202).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8202).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8202).ListItem.Rating]</param>
@@ -1243,7 +1264,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8103).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8103).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8103).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8103).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8103).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8103).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8103).ListItem.Rating]</param>
@@ -1359,7 +1384,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8203).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8203).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8203).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8203).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8203).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8203).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8203).ListItem.Rating]</param>
@@ -1475,7 +1504,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8104).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8104).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8104).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8104).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8104).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8104).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8104).ListItem.Rating]</param>
@@ -1591,7 +1624,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8204).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8204).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8204).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8204).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8204).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8204).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8204).ListItem.Rating]</param>
@@ -1707,7 +1744,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8105).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8105).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8105).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8105).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8105).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8105).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8105).ListItem.Rating]</param>
@@ -1823,7 +1864,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8205).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8205).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8205).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8205).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8205).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8205).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8205).ListItem.Rating]</param>
@@ -1939,7 +1984,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8106).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8106).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8106).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8106).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8106).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8106).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8106).ListItem.Rating]</param>
@@ -2055,7 +2104,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8206).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8206).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8206).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8206).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8206).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8206).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8206).ListItem.Rating]</param>
@@ -2171,7 +2224,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8107).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8107).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8107).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8107).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8107).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8107).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8107).ListItem.Rating]</param>
@@ -2287,7 +2344,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8207).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8207).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8207).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8207).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8207).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8207).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8207).ListItem.Rating]</param>
@@ -2403,7 +2464,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8108).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8108).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8108).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8108).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8108).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8108).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8108).ListItem.Rating]</param>
@@ -2519,7 +2584,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8208).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8208).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8208).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8208).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8208).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8208).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8208).ListItem.Rating]</param>
@@ -2635,7 +2704,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8109).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8109).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8109).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8109).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8109).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8109).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8109).ListItem.Rating]</param>
@@ -2751,7 +2824,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8209).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8209).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8209).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8209).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8209).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8209).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8209).ListItem.Rating]</param>
@@ -2867,7 +2944,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8110).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8110).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8110).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8110).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8110).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8110).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8110).ListItem.Rating]</param>
@@ -2983,7 +3064,11 @@
                 </include>
                 <include content="InfoPill">
                     <param name="label">$INFO[Container(8210).ListItem.Year]</param>
-                    <param name="visible">!String.IsEmpty(Container(8210).ListItem.Year)</param>
+                    <param name="visible">!String.IsEmpty(Container(8210).ListItem.Year) + ![Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8210).ListItem.Premiered)]</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8210).ListItem.Premiered]</param>
+                    <param name="visible">Skin.HasSetting(nuvio.fulldate) + !String.IsEmpty(Container(8210).ListItem.Premiered)</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">★ $INFO[Container(8210).ListItem.Rating]</param>
@@ -3104,6 +3189,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3122,6 +3217,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -3167,6 +3273,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3193,6 +3309,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -3272,6 +3399,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3300,7 +3437,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -3311,7 +3448,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -3357,6 +3494,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3393,7 +3540,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -3404,7 +3551,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -3484,6 +3631,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3502,6 +3659,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -3547,6 +3715,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3573,6 +3751,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -3652,6 +3841,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3680,7 +3879,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -3691,7 +3890,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -3737,6 +3936,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3773,7 +3982,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -3784,7 +3993,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -3864,6 +4073,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3882,6 +4101,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -3927,6 +4157,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -3953,6 +4193,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -4032,6 +4283,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4060,7 +4321,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -4071,7 +4332,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -4117,6 +4378,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4153,7 +4424,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -4164,7 +4435,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -4244,6 +4515,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4262,6 +4543,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -4307,6 +4599,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4333,6 +4635,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -4412,6 +4725,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4440,7 +4763,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -4451,7 +4774,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -4497,6 +4820,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4533,7 +4866,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -4544,7 +4877,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -4624,6 +4957,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4642,6 +4985,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -4687,6 +5041,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4713,6 +5077,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -4792,6 +5167,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4820,7 +5205,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -4831,7 +5216,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -4877,6 +5262,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -4913,7 +5308,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -4924,7 +5319,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -5004,6 +5399,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5022,6 +5427,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -5067,6 +5483,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5093,6 +5519,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -5172,6 +5609,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5200,7 +5647,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -5211,7 +5658,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -5257,6 +5704,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5293,7 +5750,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -5304,7 +5761,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -5384,6 +5841,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5402,6 +5869,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -5447,6 +5925,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5473,6 +5961,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -5552,6 +6051,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5580,7 +6089,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -5591,7 +6100,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -5637,6 +6146,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5673,7 +6192,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -5684,7 +6203,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -5764,6 +6283,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5782,6 +6311,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -5827,6 +6367,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5853,6 +6403,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -5932,6 +6493,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -5960,7 +6531,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -5971,7 +6542,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -6017,6 +6588,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6053,7 +6634,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -6064,7 +6645,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -6144,6 +6725,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6162,6 +6753,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -6207,6 +6809,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6233,6 +6845,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -6312,6 +6935,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6340,7 +6973,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -6351,7 +6984,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -6397,6 +7030,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6433,7 +7076,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -6444,7 +7087,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -6524,6 +7167,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6542,6 +7195,17 @@
                     <texture>buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <selectedcolor>text3</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -6587,6 +7251,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>220</width>
+                    <height>330</height>
+                    <texture diffuse="mask_poster.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6613,6 +7287,17 @@
                     <texture border="14">rr14_edge.png</texture>
                     <colordiffuse>text</colordiffuse>
                 </control>
+            </control>
+            <control type="label">
+                <left>4</left>
+                <top>348</top>
+                <width>212</width>
+                <height>30</height>
+                <font>font10_bold</font>
+                <textcolor>text</textcolor>
+                <selectedcolor>text</selectedcolor>
+                <label>$INFO[ListItem.Label]</label>
+                <visible>!Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>
@@ -6691,6 +7376,16 @@
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6719,7 +7414,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -6730,7 +7425,7 @@
                 <textcolor>text3</textcolor>
                 <selectedcolor>text3</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </itemlayout>
@@ -6776,6 +7471,16 @@
                     <texture colordiffuse="text3">icons/folder.png</texture>
                     <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(thumb)) + String.IsEmpty(ListItem.Art(fanart)) + String.IsEmpty(ListItem.Art(landscape))</visible>
                 </control>
+                <!-- "Watched titles: dim" -->
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>A6000000</colordiffuse>
+                    <visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
                 <!-- Resume progress -->
                 <control type="progress">
                     <left>16</left>
@@ -6812,7 +7517,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.TVShowTitle,,   ]$INFO[ListItem.Season,S,]$INFO[ListItem.Episode, · E,]</label>
-                <visible>!String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>!String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
             <control type="label">
                 <left>4</left>
@@ -6823,7 +7528,7 @@
                 <textcolor>text</textcolor>
                 <selectedcolor>text</selectedcolor>
                 <label>$INFO[ListItem.Label]</label>
-                <visible>String.IsEmpty(ListItem.TVShowTitle)</visible>
+                <visible>String.IsEmpty(ListItem.TVShowTitle) + !Skin.HasSetting(nuvio.posterlabels.hide)</visible>
             </control>
                         </control>
                     </focusedlayout>

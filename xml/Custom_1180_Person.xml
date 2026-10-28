@@ -9,7 +9,7 @@
             <width>1920</width>
             <height>1080</height>
             <texture>white.png</texture>
-            <colordiffuse>F20B1119</colordiffuse>
+            <colordiffuse>bg_95</colordiffuse>
         </control>
         <control type="image">
             <left>0</left>
@@ -211,8 +211,8 @@
                         <width>248</width>
                         <height>348</height>
                         <texture border="38">rr14_glow.png</texture>
-                        <colordiffuse>glow</colordiffuse>
-                        <visible>Control.HasFocus(5400)</visible>
+                        <colordiffuse>$VAR[NuvioGlowColour]</colordiffuse>
+                        <visible>Control.HasFocus(5400) + !String.IsEqual(Skin.String(nuvio.glow),off)</visible>
                     </control>
                     <control type="image">
                         <left>0</left>

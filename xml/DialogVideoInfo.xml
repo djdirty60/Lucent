@@ -20,7 +20,7 @@
             <width>1920</width>
             <height>1080</height>
             <texture>white.png</texture>
-            <colordiffuse>B30B1119</colordiffuse>
+            <colordiffuse>bg_70</colordiffuse>
             <visible>!ControlGroup(9000).HasFocus</visible>
             <animation effect="fade" start="0" end="100" time="300">Visible</animation>
             <animation effect="fade" start="100" end="0" time="300">Hidden</animation>
@@ -87,7 +87,7 @@
                         <height>72</height>
                         <label>+  $LOCALIZE[31114]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,lists)</onclick>
-                        <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + System.HasAddon(plugin.video.seren)</visible>
+                        <visible>[[[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)]] | [[String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)] + !String.IsEmpty(ListItem.Property(trakt_show_id))]] + System.HasAddon(plugin.video.seren)</visible>
                     </control>
                     <control type="button" id="22">
                         <width>auto</width>
@@ -100,7 +100,7 @@
                         <width>auto</width>
                         <height>72</height>
                         <label>$LOCALIZE[20410]</label>
-                        <visible>!String.IsEmpty(ListItem.Trailer)</visible>
+                        <visible>!String.IsEmpty(ListItem.Trailer) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
                     </control>
                     <control type="button" id="14">
                         <width>auto</width>
@@ -136,6 +136,7 @@
 
                 <!-- Ratings + season/episode -->
                 <control type="grouplist">
+                    <visible>!Skin.HasSetting(nuvio.info.hideratings) | !String.IsEmpty(ListItem.Season)</visible>
                     <left>96</left>
                     <top>532</top>
                     <width>1600</width>
@@ -152,25 +153,91 @@
                         <param name="label">IMDb  $INFO[ListItem.Rating(imdb)]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating(imdb))</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(imdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !!String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</param>
                     </include>
+                    <control type="group">
+                        <width>170</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(ListItem.Rating(imdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>4</top>
+                            <width>84</width>
+                            <height>36</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>94</left>
+                            <top>0</top>
+                            <width>76</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Rating(imdb)]</label>
+                        </control>
+                    </control>
                     <include content="InfoPill">
                         <param name="label">TMDB  $INFO[ListItem.Rating(tmdb)]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating(tmdb))</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(tmdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !!String.IsEmpty(Window(home).Property(nuvio.logo.tmdb))</param>
                     </include>
+                    <control type="group">
+                        <width>170</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(ListItem.Rating(tmdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !String.IsEmpty(Window(home).Property(nuvio.logo.tmdb))</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>4</top>
+                            <width>84</width>
+                            <height>36</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.tmdb)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>94</left>
+                            <top>0</top>
+                            <width>76</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Rating(tmdb)]</label>
+                        </control>
+                    </control>
                     <include content="InfoPill">
                         <param name="label">Trakt  $INFO[ListItem.Rating(trakt)]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating(trakt))</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(trakt)) + !Skin.HasSetting(nuvio.info.hideratings) + !!String.IsEmpty(Window(home).Property(nuvio.logo.trakt))</param>
                     </include>
+                    <control type="group">
+                        <width>170</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(ListItem.Rating(trakt)) + !Skin.HasSetting(nuvio.info.hideratings) + !String.IsEmpty(Window(home).Property(nuvio.logo.trakt))</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>4</top>
+                            <width>84</width>
+                            <height>36</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.trakt)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>94</left>
+                            <top>0</top>
+                            <width>76</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Rating(trakt)]</label>
+                        </control>
+                    </control>
                     <include content="InfoPill">
                         <param name="label">★  $INFO[ListItem.Rating]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
+                        <param name="visible">!Skin.HasSetting(nuvio.info.hideratings) + String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
                     </include>
                 </control>
 
@@ -811,8 +878,8 @@
                             <width>448</width>
                             <height>273</height>
                             <texture border="38">rr14_glow.png</texture>
-                            <colordiffuse>glow</colordiffuse>
-                            <visible>Control.HasFocus(5100)</visible>
+                            <colordiffuse>$VAR[NuvioGlowColour]</colordiffuse>
+                            <visible>Control.HasFocus(5100) + !String.IsEqual(Skin.String(nuvio.glow),off)</visible>
                         </control>
                         <control type="image">
                             <left>0</left>
@@ -930,8 +997,8 @@
                             <width>448</width>
                             <height>273</height>
                             <texture border="38">rr14_glow.png</texture>
-                            <colordiffuse>glow</colordiffuse>
-                            <visible>Control.HasFocus(5150)</visible>
+                            <colordiffuse>$VAR[NuvioGlowColour]</colordiffuse>
+                            <visible>Control.HasFocus(5150) + !String.IsEqual(Skin.String(nuvio.glow),off)</visible>
                         </control>
                         <control type="image">
                             <left>0</left>
@@ -1167,8 +1234,8 @@
                             <width>448</width>
                             <height>273</height>
                             <texture border="38">rr14_glow.png</texture>
-                            <colordiffuse>glow</colordiffuse>
-                            <visible>Control.HasFocus(5200)</visible>
+                            <colordiffuse>$VAR[NuvioGlowColour]</colordiffuse>
+                            <visible>Control.HasFocus(5200) + !String.IsEqual(Skin.String(nuvio.glow),off)</visible>
                         </control>
                         <control type="image">
                             <left>0</left>
