@@ -2,7 +2,6 @@
 <!-- Lucent: home screen -->
 <window>
     <defaultcontrol always="true">9100</defaultcontrol>
-    <backgroundcolor>bg</backgroundcolor>
     <!-- First time: write the default menu; once per session: select the start tab -->
     <onload condition="String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/migrate.py)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
