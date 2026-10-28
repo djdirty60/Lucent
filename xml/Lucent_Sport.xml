@@ -150,24 +150,24 @@
 </control><control type="label"><left>1340</left><top>630</top><width>580</width><height>34</height><font>font12_bold</font><textcolor>red</textcolor><label>$INFO[Container(200).ListItem.Property(when)]</label></control>
 <control type="label"><left>1340</left><top>662</top><width>580</width><height>32</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Property(venue)]</label></control>
 <control type="grouplist" id="9310"><left>1340</left><top>700</top><width>600</width><height>48</height><orientation>horizontal</orientation><itemgap>6</itemgap><onleft>200</onleft><ondown>9300</ondown><onup>351</onup>
-<control type="button" id="332"><width>292</width><height>48</height><font>font_tiny</font>
+<control type="button" id="332"><width>192</width><height>48</height><font>font_tiny</font>
 <textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Container(200).ListItem.Property(remindtext)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(remindtext))</visible></control>
-<control type="button" id="333"><width>292</width><height>48</height><font>font_tiny</font>
+<control type="button" id="333"><width>192</width><height>48</height><font>font_tiny</font>
 <textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Container(200).ListItem.Property(rectext)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(rectext))</visible></control>
-<control type="button" id="334"><width>292</width><height>48</height><font>font_tiny</font>
+<control type="button" id="334"><width>192</width><height>48</height><font>font_tiny</font>
 <textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Window.Property(sport.t.stoptext)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(sport.preview))</visible></control>
 </control>
+<control type="label"><left>1340</left><top>708</top><width>600</width><height>36</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(sport.t.nochan)]</label><visible>String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
 <control type="grouplist" id="9300"><left>1340</left><top>756</top><width>600</width><height>246</height><orientation>vertical</orientation><itemgap>5</itemgap><onleft>200</onleft><onup>9310</onup>
-<control type="label"><left>0</left><top>0</top><width>580</width><height>36</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(sport.t.nochan)]</label><visible>String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
 <control type="button" id="311"><width>580</width><height>44</height>
 <font>font10_bold</font><textoffsetx>20</textoffsetx>
 <label>$INFO[Container(200).ListItem.Property(ch1name)]</label><label2>$INFO[Container(200).ListItem.Property(ch1sub)]</label2>
