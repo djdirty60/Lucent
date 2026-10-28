@@ -388,7 +388,7 @@ class Sport(xbmcgui.WindowXML):
             for who, side in (("home", ev["home"]), ("away", ev["away"])):
                 if side.get("name"):
                     followed = sc.is_following_team(self.follow, side)
-                    props[f"follow{who}"] = sc.t("unfollow_team" if followed else "follow_team", side["name"])
+                    props[f"follow{who}"] = f"✓ {side['name']}" if followed else sc.t("follow_team", side["name"])
             if ev["league"] in sc.LEAGUES:
                 props["table"] = sc.t("show_table")
         return label, ev.get("sub", "") if kind_event else "", props

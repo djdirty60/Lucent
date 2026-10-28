@@ -58,20 +58,20 @@
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.ch4name))</visible></control>
 </control>
-<control type="grouplist" id="9310"><left>96</left><top>676</top><width>940</width><height>60</height><orientation>horizontal</orientation><itemgap>8</itemgap><onup>9300</onup><onright>323</onright>
-<control type="button" id="332"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>20</textoffsetx>
+<control type="grouplist" id="9310"><left>96</left><top>676</top><width>940</width><height>60</height><orientation>horizontal</orientation><itemgap>6</itemgap><onup>9300</onup><onright>323</onright>
+<control type="button" id="332"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.remindtext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.remindtext))</visible></control>
-<control type="button" id="333"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>20</textoffsetx>
+<control type="button" id="333"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.rectext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.rectext))</visible></control>
-<control type="button" id="321"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>20</textoffsetx>
+<control type="button" id="321"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.followhome)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.followhome))</visible></control>
-<control type="button" id="322"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>20</textoffsetx>
+<control type="button" id="322"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.followaway)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.followaway))</visible></control>
-<control type="button" id="331"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>20</textoffsetx>
+<control type="button" id="331"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.fixtext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.fixtext))</visible></control>
 </control>
@@ -180,7 +180,7 @@
 <control type="label"><left>1710</left><top>826</top><width>90</width><height>56</height><font>font12_bold</font><textcolor>text</textcolor><align>center</align><label>$INFO[Window.Property(g.t9pts)]</label></control>
 </control><control type="button" id="323"><left>1104</left><top>952</top><width>710</width><height>64</height><font>font10_bold</font><align>center</align>
 <label>$INFO[Window.Property(g.t.fulltable)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
-<onleft>9300</onleft><visible>!String.IsEmpty(Window.Property(g.tabletitle))</visible></control></control>
+<onleft condition="!String.IsEmpty(Window.Property(g.ch1name))">9300</onleft><onleft>9310</onleft><visible>!String.IsEmpty(Window.Property(g.tabletitle))</visible></control></control>
 <control type="group"><visible>!String.IsEqual(Window.Property(g.layout),teams)</visible><control type="label"><left>1114</left><top>250</top><width>690</width><height>36</height><font>font_tiny</font><textcolor>text4</textcolor><label>$INFO[Window.Property(g.t.sessions)]</label><visible>String.IsEqual(Window.Property(g.layout),race)</visible></control>
 <control type="label"><left>1114</left><top>300</top><width>690</width><height>60</height><font>font12</font><textcolor>text2</textcolor><label>$INFO[Window.Property(g.venue)]</label></control>
 </control>
