@@ -2,7 +2,6 @@
 
 # Lucent – Kodi skin (NOT FOR USE IN TEST PHASE)
 
-> Formerly called *Nuvio Arc*. The add-on id stays `skin.nuvioarc`, so updates and your settings keep working.
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
 
