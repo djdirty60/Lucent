@@ -119,7 +119,11 @@ TX = {
     "q_remove": ("Remove", "Verwijderen"),
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
-    "tvguide": ("TV guide", "TV-gids"), "round": ("Round", "Ronde"),
+    "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
+    "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
+    "q_search": ("Type a name", "Typ een naam"), "m_order": ("Change the order", "Volgorde aanpassen"),
+    "nohit": ("Nothing found for \"{0}\"", "Niets gevonden voor \"{0}\""), "as_name": ("Follow \"{0}\" as a name", "Volg \"{0}\" als naam"),
+    "q_move": ("Move where?", "Waarheen verplaatsen?"), "up": ("Up", "Omhoog"), "down": ("Down", "Omlaag"), "first": ("To the top", "Naar boven"), "round": ("Round", "Ronde"),
 }
 
 
@@ -184,7 +188,7 @@ def side(competitor):
             "short": team.get("shortDisplayName") or team.get("displayName") or "", "abbr": team.get("abbreviation") or "",
             "nick": team.get("name") or "", "logo": team.get("logo") or (team.get("flag") or {}).get("href") or "",
             "score": str(competitor.get("score", "") if not isinstance(competitor.get("score"), dict) else competitor["score"].get("displayValue", "")),
-            "color": team.get("color") or ""}
+            "color": team.get("color") or "", "alt": team.get("alternateColor") or ""}
 
 
 def status_of(ev):
@@ -351,8 +355,14 @@ def league_keys():
         if k in LEAGUES and k not in keys:
             keys.append(k)
     for team in load_follow()["teams"]:
-        if team.get("league") in LEAGUES and team["league"] not in keys:
-            keys.append(team["league"])
+        league = team.get("league")
+        if league not in LEAGUES:
+            continue
+        wider = [k for k, v in LEAGUES.items() if v["sport"] == "soccer" and v["kind"] == "teams"] \
+            if LEAGUES[league]["sport"] == "soccer" else [league]
+        for k in wider:
+            if k not in keys:
+                keys.append(k)
     return keys
 
 
@@ -429,6 +439,7 @@ def load_follow():
     data.setdefault("leagues", [])
     data.setdefault("teams", [])
     data.setdefault("names", [])
+    data.setdefault("order", [])
     return data
 
 
@@ -514,3 +525,76 @@ def team_terms(side_):
 
 def league_terms(league):
     return {norm(w) for w in LEAGUES[league]["words"] if len(norm(w)) >= 2}
+
+
+# ----------------------------------------------------------------------------- sections of "My sport"
+def section_key(kind, ident):
+    return f"{kind}:{ident}"
+
+
+def sections(follow=None):
+    """Everything you follow, in your own order: [(key, kind, ident, title)]."""
+    follow = follow or load_follow()
+    items = ([(section_key("team", t["id"]), "team", t["id"], t["name"]) for t in follow["teams"]]
+             + [(section_key("league", k), "league", k, LEAGUES[k]["name"]) for k in follow["leagues"] if k in LEAGUES]
+             + [(section_key("name", n), "name", n, n) for n in follow["names"]])
+    by_key = {row[0]: row for row in items}
+    ordered = [by_key[k] for k in follow["order"] if k in by_key]
+    return ordered + [row for row in items if row[0] not in follow["order"]]
+
+
+def save_order(keys):
+    follow = load_follow()
+    follow["order"] = keys
+    save_follow(follow)
+
+
+def events_of_team(team_id, name):
+    out = []
+    n = norm(name)
+    for ev in all_cached():
+        if ev["kind"] != "teams":
+            continue
+        for s in (ev["home"], ev["away"]):
+            if (team_id and s.get("id") == team_id) or norm(s.get("name")) == n:
+                out.append(ev)
+                break
+    return out
+
+
+def place_text(team):
+    """'2e in Eredivisie' from the stored table (no network); '' when unknown."""
+    league = team.get("league")
+    cache = load_cache()["standings"].get(league)
+    if not cache or league not in LEAGUES:
+        return ""
+    for row in cache["rows"]:
+        if row.get("id") == team["id"] and row.get("rank"):
+            rank = row["rank"]
+            return (f"{rank}e in {LEAGUES[league]['name']}" if NL else f"{rank}{'st' if rank == 1 else 'nd' if rank == 2 else 'rd' if rank == 3 else 'th'} in {LEAGUES[league]['name']}")
+    return ""
+
+
+def search_catalog(query):
+    """Competitions and teams that match a typed word: [(kind, ident, label, extra)]. Teams come from the games we hold."""
+    q = norm(query)
+    if not q:
+        return []
+    out = []
+    for key, lg in LEAGUES.items():
+        hay = norm(f"{lg['name']} {' '.join(lg['words'])}")
+        if q in hay:
+            out.append(("league", key, f"{sport_name(lg['sport'])}  ·  {lg['name']}", ""))
+    seen = set()
+    for ev in all_cached():
+        if ev["kind"] != "teams":
+            continue
+        for s in (ev["home"], ev["away"]):
+            if s.get("id") and norm(s["name"]).find(q) >= 0 and (s["id"], s["name"]) not in seen:
+                seen.add((s["id"], s["name"]))
+                out.append(("team", s["id"], f"{s['name']}  ·  {league_name_of(ev['league'])}", ev["league"] + "|" + s["name"] + "|" + s.get("logo", "")))
+    return out
+
+
+def league_name_of(key):
+    return LEAGUES[key]["name"] if key in LEAGUES else key

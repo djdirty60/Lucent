@@ -30,6 +30,8 @@ CHANNEL_BUTTONS = {311: 1, 312: 2, 313: 3, 314: 4}
 FOLLOW_HOME, FOLLOW_AWAY, SHOW_TABLE = 321, 322, 323
 LEAGUE_LIST, TABLE_LIST = 400, 410
 EPG_LEAGUE = "tv"
+ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT = 1, 2
+HERO_MAX = 6
 
 
 def nice_day(d):
@@ -85,6 +87,14 @@ def name_events(follow, data):
     return out
 
 
+def colour(hex_value, alpha="FF"):
+    """ESPN gives 'd4121a'; Kodi wants 'AARRGGBB'. Unknown colour -> a calm grey-blue."""
+    hex_value = (hex_value or "").strip("# ")
+    if len(hex_value) != 6 or any(c not in "0123456789abcdefABCDEF" for c in hex_value):
+        hex_value = "3a4a5c"
+    return alpha + hex_value.upper()
+
+
 def listitem(label, label2="", icon="", **props):
     item = xbmcgui.ListItem(label, label2)
     if icon:
@@ -101,6 +111,9 @@ class Sport(xbmcgui.WindowXML):
         self.anchor = ac.today()
         self.day = ac.today()
         self.events = []             # what the list shows (dicts)
+        self.by_id = {}
+        self.hero_events = []
+        self.hero_index = 0
         self.follow = sc.load_follow()
         self.ready = False
         self.closing = False
@@ -133,6 +146,11 @@ class Sport(xbmcgui.WindowXML):
             self.closing = True
             self.close()
             return
+        if aid in (ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT) and self.getFocusId() == LIST and self.view == "mine":
+            item = self.getControl(LIST).getSelectedItem()
+            if item and item.getProperty("hero"):
+                self.flip_hero(1 if aid == ACTION_MOVE_RIGHT else -1)
+                return
         if self.getFocusId() == LEAGUE_LIST:
             self.table_token += 1
             token = self.table_token
@@ -160,6 +178,12 @@ class Sport(xbmcgui.WindowXML):
             self.open_table()
         elif cid == LEAGUE_LIST:
             self.setFocusId(TABLE_LIST)
+        elif cid == LIST:
+            ev, item = self.current()
+            if item and item.getProperty("hero") and item.getProperty("ch1cid"):
+                self.play_channel(1)
+            elif item and item.getProperty("ch1cid"):
+                self.setFocusId(311)
 
     # ------------------------------------------------------------------ background work
     def status(self, text=""):
@@ -171,6 +195,9 @@ class Sport(xbmcgui.WindowXML):
             if not sc.all_cached():
                 self.status(sc.t("loading"))
             changed = sc.refresh(progress=None)
+            for league in {t["league"] for t in sc.load_follow()["teams"] if t.get("league") in sc.LEAGUES}:
+                sc.standings(league)             # for "2nd in Eredivisie"
+                changed = True
             if changed and not self.closing:
                 self.render(keep_focus=True)
             if self.has_pvr and not epg.is_fresh() and not self.closing:
@@ -200,16 +227,16 @@ class Sport(xbmcgui.WindowXML):
         self.follow = sc.load_follow()
         data = epg.load() if self.has_pvr else {}
         if self.view == "mine":
-            events = sc.mine_events()
-            events += name_events(self.follow, data)
-            live = [e for e in events if e["state"] == "in"]
-            rest = sorted((e for e in events if e["state"] != "in"), key=lambda e: e["start"])
-            return live + [e for e in rest if e["state"] == "pre"] + [e for e in rest if e["state"] == "post"][-6:], data
+            return [], data
         day_events = sc.events_on(self.day)
         live, coming, done = sc.order(day_events)
         return sorted(live + coming + done, key=lambda e: e["start"]), data
 
-    def event_item(self, ev, data, header=""):
+    def event_item(self, ev, data, header="", headersub=""):
+        label, label2, props = self.event_props(ev, data, header, headersub)
+        return listitem(label, label2, **props)
+
+    def event_props(self, ev, data, header="", headersub=""):
         kind_event = ev["kind"] == "event"
         chans = self.channels_of(ev, data)
         best = chans[0]["name"] if chans else ""
@@ -223,7 +250,8 @@ class Sport(xbmcgui.WindowXML):
             "mid": score_text(ev), "lgicon": ev.get("lg", ""), "isevent": "1" if kind_event else "",
             "league": league_name(ev["league"]), "chan": best,
             "when": when_line(ev), "venue": "  ·  ".join(x for x in (ev.get("venue"), ev.get("round")) if x),
-            "header": header, "evid": ev["id"],
+            "header": header, "headersub": headersub, "evid": ev["id"],
+            "hcol": colour(ev["home"].get("color"), "66"), "acol": colour(ev["away"].get("color") or ev["away"].get("alt"), "66"),
         }
         if kind_event and ev.get("sub") and ev["league"] != EPG_LEAGUE:
             props["when"] = f"{ev['sub']}  ·  {when_line(ev)}"
@@ -243,7 +271,7 @@ class Sport(xbmcgui.WindowXML):
                     props[f"follow{who}"] = sc.t("unfollow_team" if followed else "follow_team", side["name"])
             if ev["league"] in sc.LEAGUES:
                 props["table"] = sc.t("show_table")
-        return listitem(label, ev.get("sub", "") if kind_event else "", **props)
+        return label, ev.get("sub", "") if kind_event else "", props
 
     def channels_of(self, ev, data):
         if ev["league"] == EPG_LEAGUE:
@@ -263,18 +291,14 @@ class Sport(xbmcgui.WindowXML):
             self.fill_leagues()
             return
         events, data = self.pick_events()
-        self.events = events
-        items, last_day = [], None
-        for ev in events:
-            day = sc.local_day(ev["start"])
-            header = ""
-            if self.view == "mine" and day != last_day:
-                header = nice_day(day)
-            last_day = day
-            item = self.event_item(ev, data, header)
-            if header and day not in (ac.today(), ac.today() + datetime.timedelta(days=1)):
-                item.setProperty("headerdate", "")
-            items.append(item)
+        self.hero_events = []
+        if self.view == "mine":
+            items = self.mine_items(data)
+        else:
+            self.events = events
+            self.by_id = {e["id"]: e for e in events}
+            items = [self.event_item(ev, data) for ev in events]
+        self.setProperty("sport.hashero", "1" if self.hero_events else "")
         control = self.getControl(LIST)
         position = control.getSelectedPosition() if keep_focus else 0
         control.reset()
@@ -286,6 +310,88 @@ class Sport(xbmcgui.WindowXML):
             self.setProperty("sport.empty", "")
         else:
             self.empty_state()
+
+    def mine_items(self, data):
+        """Hero card, 'Live & Upcoming', then one block per team / competition / name you follow (your order)."""
+        follow = self.follow
+        now = time.time()
+        today = ac.today()
+        by_id, items = {}, []
+
+        def add(ev):
+            by_id[ev["id"]] = ev
+
+        def block(events):
+            live = [e for e in events if e["state"] == "in"]
+            coming = sorted((e for e in events if e["state"] == "pre"), key=lambda e: e["start"])
+            done = sorted((e for e in events if e["state"] == "post" and local_ok(e)), key=lambda e: -e["start"])
+            return live, coming, done
+
+        def local_ok(e):
+            return sc.local_day(e["start"]) >= today - datetime.timedelta(days=1)
+
+        rows = []
+        for key, kind, ident, title in sc.sections(follow):
+            if kind == "team":
+                team = next((t for t in follow["teams"] if t["id"] == ident), {"id": ident, "name": title})
+                events, sub = sc.events_of_team(ident, title), sc.place_text(team)
+            elif kind == "league":
+                events, sub = [e for e in sc.all_cached() if e["league"] == ident], ""
+            else:
+                events, sub = name_events({"names": [ident]}, data), sc.t("tvguide")
+            live, coming, done = block(events)
+            rows.append((title, sub, live + coming[:4] + done[:1], live, coming))
+        everything = {}
+        for _t, _s, shown, _l, _c in rows:
+            for e in shown:
+                everything[e["id"]] = e
+        live_all = sorted((e for e in everything.values() if e["state"] == "in"), key=lambda e: e["start"])
+        coming_all = sorted((e for e in everything.values() if e["state"] == "pre"), key=lambda e: e["start"])
+        upcoming = (live_all + coming_all)[:8]
+        self.hero_events = (live_all + coming_all)[:HERO_MAX]
+        self.hero_index = 0
+        if self.hero_events:
+            ev = self.hero_events[0]
+            label, label2, props = self.event_props(ev, data)
+            props["hero"] = "1"
+            props["heroof"] = self.hero_count()
+            items.append(listitem(label, label2, **props))
+            add(ev)
+        for n, ev in enumerate(upcoming):
+            header = headersub = ""
+            if n == 0:
+                header = sc.t("liveup")
+                headersub = f"{len(live_all)} live" if live_all else ""
+            items.append(self.event_item(ev, data, header, headersub))
+            add(ev)
+        for title, sub, shown, _live, _coming in rows:
+            first = True
+            for ev in sorted(shown, key=lambda e: (e["state"] != "in", e["state"] == "post", e["start"] if e["state"] != "post" else -e["start"])):
+                items.append(self.event_item(ev, data, title if first else "", sub if first else ""))
+                add(ev)
+                first = False
+        self.by_id = by_id
+        self.events = list(by_id.values())
+        return items
+
+    def hero_count(self):
+        return f"{self.hero_index + 1} / {len(self.hero_events)}"
+
+    def flip_hero(self, step):
+        if len(self.hero_events) < 2:
+            return
+        self.hero_index = (self.hero_index + step) % len(self.hero_events)
+        ev = self.hero_events[self.hero_index]
+        data = epg.load() if self.has_pvr else {}
+        label, label2, props = self.event_props(ev, data)
+        props["hero"] = "1"
+        props["heroof"] = self.hero_count()
+        item = self.getControl(LIST).getListItem(0)
+        item.setLabel(label)
+        item.setLabel2(label2)
+        for key, value in props.items():
+            item.setProperty(key, "" if value is None else str(value))
+        self.by_id[ev["id"]] = ev
 
     def empty_state(self):
         if self.view == "mine" and not sc.has_follow():
@@ -320,7 +426,7 @@ class Sport(xbmcgui.WindowXML):
         item = self.getControl(LIST).getSelectedItem()
         if not item:
             return None, None
-        return next((e for e in self.events if e["id"] == item.getProperty("evid")), None), item
+        return self.by_id.get(item.getProperty("evid")), item
 
     def play_channel(self, n):
         ev, item = self.current()
@@ -393,23 +499,61 @@ class Sport(xbmcgui.WindowXML):
     # ------------------------------------------------------------------ follow menu
     def follow_menu(self):
         dialog = xbmcgui.Dialog()
-        options = [sc.t("m_leagues"), sc.t("m_teams"), sc.t("m_name"), sc.t("m_manage")]
+        entries = [(sc.t("m_search"), self.search_follow), (sc.t("m_leagues"), self.choose_leagues),
+                   (sc.t("m_teams"), self.choose_teams), (sc.t("m_name"), self.add_name),
+                   (sc.t("m_order"), self.change_order), (sc.t("m_manage"), self.manage)]
         if self.has_pvr:
-            options.append(sc.t("m_guide"))
-        choice = dialog.select(sc.t("follow"), options)
-        if choice == 0:
-            self.choose_leagues()
-        elif choice == 1:
-            self.choose_teams()
-        elif choice == 2:
-            self.add_name()
-        elif choice == 3:
-            self.manage()
-        elif choice == 4:
+            entries.append((sc.t("m_guide"), None))
+        choice = dialog.select(sc.t("follow"), [e[0] for e in entries])
+        if choice < 0:
+            return
+        handler = entries[choice][1]
+        if handler is None:
             threading.Thread(target=self.rescan, daemon=True).start()
             return
-        if choice >= 0:
-            threading.Thread(target=self.after_follow_change, daemon=True).start()
+        handler()
+        threading.Thread(target=self.after_follow_change, daemon=True).start()
+
+    def search_follow(self):
+        text = xbmcgui.Dialog().input(sc.t("q_search"))
+        if not text or not text.strip():
+            return
+        text = text.strip()
+        hits = sc.search_catalog(text)
+        labels = [h[2] for h in hits] + [sc.t("as_name", text)]
+        pick = xbmcgui.Dialog().select(sc.t("m_search"), labels)
+        if pick < 0:
+            return
+        follow = sc.load_follow()
+        if pick == len(hits):
+            if text not in follow["names"]:
+                follow["names"].append(text)
+        else:
+            kind, ident, _label, extra = hits[pick]
+            if kind == "league":
+                if ident not in follow["leagues"]:
+                    follow["leagues"].append(ident)
+            elif not any(t["id"] == ident for t in follow["teams"]):
+                league, name, logo = (extra.split("|") + ["", "", ""])[:3]
+                follow["teams"].append({"league": league, "id": ident, "name": name, "logo": logo})
+        sc.save_follow(follow)
+
+    def change_order(self):
+        rows = sc.sections()
+        if len(rows) < 2:
+            return
+        dialog = xbmcgui.Dialog()
+        pick = dialog.select(sc.t("m_order"), [r[3] for r in rows])
+        if pick < 0:
+            return
+        move = dialog.select(sc.t("q_move"), [sc.t("first"), sc.t("up"), sc.t("down")])
+        if move < 0:
+            return
+        keys = [r[0] for r in rows]
+        key = keys.pop(pick)
+        at = 0 if move == 0 else max(pick - 1, 0) if move == 1 else min(pick + 1, len(keys))
+        keys.insert(at, key)
+        sc.save_order(keys)
 
     def rescan(self):
         if self.guide_busy:
