@@ -17,6 +17,7 @@ import xbmcgui
 import agenda_core as ac
 import sport_core as sc
 import sport_epg as epg
+import sport_plan as plan
 
 WINDOW_XML = "Lucent_Sport.xml"
 ACTION_PREVIOUS_MENU = 10
@@ -28,6 +29,7 @@ DAY_BUTTONS = range(111, 118)
 DAY_PREV, DAY_NEXT = 110, 118
 CHANNEL_BUTTONS = {311: 1, 312: 2, 313: 3, 314: 4}
 FOLLOW_HOME, FOLLOW_AWAY, SHOW_TABLE = 321, 322, 323
+FIX_BUTTON, REMIND_BUTTON, RECORD_BUTTON = 331, 332, 333
 LEAGUE_LIST, TABLE_LIST = 400, 410
 EPG_LEAGUE = "tv"
 ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT = 1, 2
@@ -170,6 +172,12 @@ class Sport(xbmcgui.WindowXML):
             self.shift_days(-7)
         elif cid == DAY_NEXT:
             self.shift_days(7)
+        elif cid == FIX_BUTTON:
+            self.fix_channel()
+        elif cid == REMIND_BUTTON:
+            self.set_reminder()
+        elif cid == RECORD_BUTTON:
+            self.set_recording()
         elif cid in CHANNEL_BUTTONS:
             self.play_channel(CHANNEL_BUTTONS[cid])
         elif cid in (FOLLOW_HOME, FOLLOW_AWAY):
@@ -264,6 +272,7 @@ class Sport(xbmcgui.WindowXML):
             props[f"ch{n}name"] = chan["name"]
             props[f"ch{n}sub"] = "  ·  ".join(bits)
             props[f"ch{n}cid"] = chan["cid"]
+        props.update(self.plan_props(ev))
         if not kind_event:
             for who, side in (("home", ev["home"]), ("away", ev["away"])):
                 if side.get("name"):
@@ -273,14 +282,29 @@ class Sport(xbmcgui.WindowXML):
                 props["table"] = sc.t("show_table")
         return label, ev.get("sub", "") if kind_event else "", props
 
+    def plan_props(self, ev):
+        """Texts of the three action buttons and the small badge on the row."""
+        out = {}
+        if ev["state"] == "post" or ev["league"] == EPG_LEAGUE:
+            return out
+        mode = plan.reminder_mode(ev["id"])
+        rec = plan.recording(ev["id"])
+        out["fixtext"] = plan.t("btn_fix")
+        out["remindtext"] = plan.t("btn_switch_on" if mode == "switch" else "btn_remind_on" if mode else "btn_remind")
+        out["rectext"] = plan.t("btn_rec_on" if rec else "btn_rec")
+        badges = [plan.t("badge_rec")] if rec else []
+        if mode:
+            badges.append(plan.t("badge_switch" if mode == "switch" else "badge_remind"))
+        out["badge"] = "  ·  ".join(badges)
+        return out
+
     def channels_of(self, ev, data):
         if ev["league"] == EPG_LEAGUE:
             raw = data.get("names", {}).get(str(ev.get("cid")), "")
             return [{"cid": ev["cid"], "name": epg.clean_name(raw) or raw, "q": epg.quality_of(raw), "score": 3,
                      "tag": sc.t("sure"), "live": ev["state"] == "in", "title": ev["title"], "start": ev["start"]}]
-        if not data:
-            return []
-        return epg.channels_for(ev, data)
+        found = epg.channels_for(ev, data) if data else []
+        return plan.with_fixes(ev, found, data or {})
 
     def render(self, keep_focus=False):
         self.setProperty("sport.view", self.view)
@@ -448,6 +472,81 @@ class Sport(xbmcgui.WindowXML):
                                       xbmcgui.NOTIFICATION_INFO, 2500, False)
         self.render(keep_focus=True)
 
+    def fix_channel(self):
+        ev, _item = self.current()
+        if not ev:
+            return
+        dialog = xbmcgui.Dialog()
+        chans = plan.all_channels()
+        if not chans:
+            dialog.notification(sc.t("title"), sc.t("noguide"), xbmcgui.NOTIFICATION_INFO, 3000, False)
+            return
+        options = ([plan.t("fix_clear")] if plan.fixed_cids(ev) else []) + [label for _cid, label in chans]
+        pick = dialog.select(plan.t("fix_pick"), options)
+        if pick < 0:
+            return
+        if plan.fixed_cids(ev) and pick == 0:
+            plan.clear_fix_game(ev)
+            self.render(keep_focus=True)
+            return
+        cid = chans[pick - (1 if plan.fixed_cids(ev) else 0)][0]
+        scopes = [("game", plan.t("fix_game")), ("league", plan.t("fix_league", league_name(ev["league"])))]
+        team_ident = ""
+        if ev["kind"] == "teams":
+            follow = sc.load_follow()
+            mine = next((s for s in (ev["home"], ev["away"]) if sc.is_following_team(follow, s)), ev["home"])
+            team_ident = mine.get("id") or mine.get("name")
+            scopes.append(("team", plan.t("fix_team", mine.get("name", ""))))
+        sel = dialog.select(plan.t("fix_scope"), [label for _k, label in scopes])
+        if sel < 0:
+            return
+        plan.set_fix(ev, scopes[sel][0], cid, team_ident)
+        self.render(keep_focus=True)
+
+    def set_reminder(self):
+        ev, _item = self.current()
+        if not ev or ev["state"] == "post":
+            return
+        modes = [("", plan.t("r_off")), ("remind", plan.t("r_remind")), ("switch", plan.t("r_switch"))]
+        current = plan.reminder_mode(ev["id"])
+        pick = xbmcgui.Dialog().select(plan.t("r_title"), [label for _m, label in modes],
+                                       preselect=[m for m, _l in modes].index(current))
+        if pick < 0:
+            return
+        data = epg.load() if self.has_pvr else {}
+        chans = self.channels_of(ev, data)
+        plan.set_reminder(ev, modes[pick][0], chans[0]["cid"] if chans else 0)
+        self.render(keep_focus=True)
+
+    def set_recording(self):
+        ev, _item = self.current()
+        if not ev or ev["state"] == "post":
+            return
+        dialog = xbmcgui.Dialog()
+        if plan.recording(ev["id"]):
+            if dialog.yesno(plan.t("btn_rec_on"), plan.t("rec_cancel"), nolabel=sc.t("q_cancel"), yeslabel=plan.t("rec_cancel")):
+                plan.cancel_recording(ev["id"])
+                self.render(keep_focus=True)
+            return
+        data = epg.load() if self.has_pvr else {}
+        chans = self.channels_of(ev, data)
+        if not chans:
+            dialog.notification(sc.t("title"), plan.t("rec_nochan"), xbmcgui.NOTIFICATION_INFO, 3500, False)
+            return
+        cid = chans[0]["cid"]
+        if len(chans) > 1:
+            pick = dialog.select(sc.t("watch"), [f"{c['name']}  ·  {c['tag']}" for c in chans])
+            if pick < 0:
+                return
+            cid = chans[pick]["cid"]
+        hours = [1, 2, 3, 4, 5, 6]
+        h = dialog.select(plan.t("rec_hours"), [plan.t("rec_hour") if n == 1 else plan.t("rec_hours_n", n) for n in hours],
+                          preselect=2)
+        if h < 0:
+            return
+        plan.set_recording(ev, cid, hours[h])
+        self.render(keep_focus=True)
+
     def open_table(self):
         ev, _ = self.current()
         if not ev or ev["league"] not in sc.LEAGUES:
@@ -501,7 +600,8 @@ class Sport(xbmcgui.WindowXML):
         dialog = xbmcgui.Dialog()
         entries = [(sc.t("m_search"), self.search_follow), (sc.t("m_leagues"), self.choose_leagues),
                    (sc.t("m_teams"), self.choose_teams), (sc.t("m_countries"), self.choose_countries), (sc.t("m_name"), self.add_name),
-                   (sc.t("m_order"), self.change_order), (sc.t("m_manage"), self.manage)]
+                   (sc.t("m_order"), self.change_order), (sc.t("m_manage"), self.manage),
+                   (plan.t("auto_off" if plan.load_plan()["auto"] is False else "auto_on"), self.toggle_auto)]
         if self.has_pvr:
             entries.append((sc.t("m_guide"), None))
         choice = dialog.select(sc.t("follow"), [e[0] for e in entries])
@@ -513,6 +613,10 @@ class Sport(xbmcgui.WindowXML):
             return
         handler()
         threading.Thread(target=self.after_follow_change, daemon=True).start()
+
+    def toggle_auto(self):
+        on = plan.toggle_auto()
+        xbmcgui.Dialog().notification(sc.t("title"), plan.t("auto_on" if on else "auto_off"), xbmcgui.NOTIFICATION_INFO, 3000, False)
 
     def search_follow(self):
         text = xbmcgui.Dialog().input(sc.t("q_search"))
@@ -695,5 +799,7 @@ if __name__ == "__main__":
     action = sys.argv[1] if len(sys.argv) > 1 else "open"
     if action == "ensure_tab":
         ensure_tab()
+    elif action == "service":
+        plan.run_service()
     else:
         open_window()

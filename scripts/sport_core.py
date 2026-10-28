@@ -116,7 +116,7 @@ TX = {
     "m_name": ("Add a name (team, driver, fighter…)", "Naam toevoegen (team, coureur, vechter…)"),
     "m_manage": ("Remove from my list", "Uit mijn lijst halen"), "m_guide": ("Read the IPTV guide again", "IPTV-gids opnieuw lezen"),
     "q_league": ("Which competition?", "Welke competitie?"), "q_name": ("Name to follow", "Naam om te volgen"),
-    "q_remove": ("Remove", "Verwijderen"),
+    "q_remove": ("Remove", "Verwijderen"), "q_cancel": ("Keep", "Laten staan"),
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
