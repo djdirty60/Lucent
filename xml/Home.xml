@@ -8,6 +8,7 @@
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
     <onload condition="!$EXP[NuvioAnyRow]">SetFocus(9000)</onload>
+    <onload>RunScript(special://skin/scripts/keymap.py)</onload>
     <onload>RunScript(special://skin/scripts/trailers.py)</onload>
     <onload>SetProperty(nuvio.started,1,home)</onload>
     <controls>
@@ -280,6 +281,8 @@
                 <visible>Control.HasFocus(9000) + !System.HasVisibleModalDialog</visible>
             </control>
             <control type="list" id="9000">
+                <onup>9000</onup>
+                <ondown>9000</ondown>
                 <left>24</left>
                 <top>180</top>
                 <width>360</width>

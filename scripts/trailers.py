@@ -94,6 +94,8 @@ class Trailers(xbmc.Player):
         super().__init__()
         self.monitor = xbmc.Monitor()
         self.ours = False          # the video playing now was started by us
+        self.requested = False     # we asked YouTube for a trailer and it has not ended yet
+        self.av_started = False
         self.video_id = ""
         self.started_at = 0.0
         self.focus_key = ""
@@ -107,23 +109,38 @@ class Trailers(xbmc.Player):
     def onAVStarted(self):
         # the YouTube add-on needs a few seconds to resolve; anything that starts much
         # later than our request was started by someone else
-        if not self.ours:
+        if not (self.ours or self.requested):
             return
         if time.time() - self.started_at > 45:
             self.let_go()
         else:
+            self.adopt()
+
+    def adopt(self):
+        """The trailer we asked for is playing: the skin shows the video (and expands the card) from now on."""
+        if not self.av_started:
             log("trailer is playing")
-            self.failures = 0
-            HOME.setProperty(PLAYING, "1")   # the skin shows the video (and expands the card) from now on
+        self.ours = True
+        self.av_started = True
+        self.failures = 0
+        HOME.setProperty(PLAYING, "1")
 
     def onPlayBackStopped(self):
-        self.let_go()
+        self.ended("stopped")
 
     def onPlayBackEnded(self):
+        self.ended("ended")
+
+    def ended(self, why):
+        # the YouTube add-on can send a stop of its own while it resolves the video:
+        # an early stop event is not the end of our trailer
+        if (self.ours or self.requested) and not self.av_started and time.time() - self.started_at < 5:
+            log(f"ignored early '{why}' event")
+            return
         self.let_go()
 
     def onPlayBackError(self):
-        if self.ours:
+        if self.ours or self.requested:
             self.failed("playback error")
         self.let_go()
 
@@ -138,7 +155,7 @@ class Trailers(xbmc.Player):
     def close_error_dialog(self):
         """YouTube / InputStream Adaptive shows an OK pop-up when a trailer cannot be played.
         While we are waiting for our own trailer, close it and count the failure."""
-        if (self.ours and not HOME.getProperty(PLAYING) and time.time() - self.started_at < 60
+        if ((self.ours or self.requested) and not HOME.getProperty(PLAYING) and time.time() - self.started_at < 60
                 and xbmc.getCondVisibility("Window.IsActive(okdialog)")):
             xbmc.executebuiltin("Dialog.Close(okdialog,true)")
             self.failed("error pop-up")
@@ -148,13 +165,14 @@ class Trailers(xbmc.Player):
 
     def let_go(self):
         self.ours = False
+        self.requested = False
+        self.av_started = False
         HOME.clearProperty(PLAYING)
 
     def stop_ours(self):
-        if self.ours:
+        if self.ours or self.requested:
             log("stop")
-            self.ours = False
-            HOME.clearProperty(PLAYING)
+            self.let_go()
             self.stop()
 
     # -- main loop
@@ -179,7 +197,8 @@ class Trailers(xbmc.Player):
         dialog = xbmc.getCondVisibility("[System.HasVisibleModalDialog | Window.IsActive(contextmenu)]"
                                         " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel)")
         fullscreen = xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)")
-        if self.ours and fullscreen:
+        busy = self.ours or self.requested
+        if busy and fullscreen:
             self.let_go()          # the user made it full screen: it is a normal video now
             return
         if not mode or not on_home or dialog:
@@ -197,14 +216,17 @@ class Trailers(xbmc.Player):
             self.focus_since = time.time()
             self.tried = ""
             return
-        if self.ours and not HOME.getProperty(PLAYING) and time.time() - self.started_at > 45:
+        if self.requested and not self.ours and self.isPlayingVideo():
+            self.adopt()            # the callback was missed: the video is clearly ours
+        if busy and not HOME.getProperty(PLAYING) and time.time() - self.started_at > 45:
             log("YouTube did not start the trailer")
             self.let_go()
-        if self.ours or focus.key == self.tried:
+            busy = False
+        if busy or focus.key == self.tried:
             return
         if time.time() < self.pause_until:
             return
-        if self.isPlaying() and not self.ours:
+        if self.isPlaying() and not busy:
             return                  # something else is playing (music, a video in the background)
         try:
             delay = float(skin("nuvio.trailer.delay") or 3)
@@ -226,6 +248,8 @@ class Trailers(xbmc.Player):
         self.video_id = video_id
         self.started_at = time.time()
         self.ours = True
+        self.requested = True
+        self.av_started = False
         item = xbmcgui.ListItem(focus.label)
         item.setProperty("nuvio.trailer", "1")
         self.play(YT + video_id, item, windowed=True)
