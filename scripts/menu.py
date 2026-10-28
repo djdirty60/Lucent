@@ -304,6 +304,15 @@ def widget(key, path, style):
     return {"label": tr(key), "path": path, "style": style}
 
 
+def addon_widgets():
+    """Rows shown when the Add-ons item is focused: video, program, music add-ons."""
+    return [{"label": tr_pair(n), "path": p, "style": st} for n, p, st in WIDGETS_OTHER[1:4]]
+
+
+def tr_pair(pair):
+    return pair[1] if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else pair[0]
+
+
 def default_tabs():
     """The menu of version 1.0, plus the rows and Trakt lists the user had chosen there."""
     home = []
@@ -334,7 +343,7 @@ def default_tabs():
         tab("t_movies", "movies", videos(seren("action=moviesHome")), movies),
         tab("t_shows", "tv", videos(seren("action=showsHome")), shows),
         tab("t_library", "library", videos("videodb://"), library),
-        tab("t_addons", "addons", "ActivateWindow(AddonBrowser)"),
+        tab("t_addons", "addons", "ActivateWindow(AddonBrowser)", addon_widgets()),
         tab("t_favourites", "favourites", "ActivateWindow(favouritesbrowser)"),
         tab("t_calendar", "calendar", "RunScript(special://skin/scripts/agenda.py)"),
         tab("t_settings", "settings", "ActivateWindow(Settings)"),
@@ -815,10 +824,28 @@ def init():
         xbmc.executebuiltin("SetFocus(9100)")
 
 
+def addons_once():
+    """One time for existing menus: give an Add-ons item without rows its add-on rows."""
+    if get("lucent.addonw"):
+        return
+    put("lucent.addonw", "1")
+    menu = Menu()
+    changed = False
+    for tab in menu.tabs:
+        if tab["action"] == "ActivateWindow(AddonBrowser)" and not tab["widgets"]:
+            tab["widgets"] = addon_widgets()
+            changed = True
+    if changed:
+        menu.save()
+        xbmc.executebuiltin("Container.Refresh")
+
+
 if __name__ == "__main__":
     arg = sys.argv[1] if len(sys.argv) > 1 else ""
     if arg == "init":
         init()
+    elif arg == "addons":
+        addons_once()
     elif arg == "reset":
         if xbmcgui.Dialog().yesno(HEADING, tr("reset_q")):
             m = Menu()
