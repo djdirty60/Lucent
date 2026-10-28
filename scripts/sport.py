@@ -1549,7 +1549,8 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         for key, text in (("watch", sc.t("watch")), ("nochan", self.parent.getProperty("sport.t.nochan")), ("form", sc.t("g_form")),
                           ("info", sc.t("g_info")), ("matchinfo", sc.t("g_matchinfo")), ("fulltable", sc.t("g_fulltable")),
                           ("sessions", sc.t("g_sessions")), ("teamstats", sc.t("g_teamstats")), ("top", sc.t("g_top")),
-                          ("scoring", sc.t("g_scoring")), ("nodata", sc.t("g_nodata")), ("showing", sc.t("g_showing"))):
+                          ("scoring", sc.t("g_scoring")), ("nodata", sc.t("g_nodata")), ("showing", sc.t("g_showing")),
+                          ("previewhint", sc.t("previewhint"))):
             self.setProperty(f"g.t.{key}", text)
         focus_first(self, (311, 332, 321, 322, 323, 331))
         threading.Thread(target=self.extra, daemon=True).start()
@@ -1564,7 +1565,23 @@ class GameInfo(xbmcgui.WindowXMLDialog):
                 return
             self.setProperty(f"g.{key}", value)
 
+    def preview(self, n):
+        """OK on a channel: watch it in the TV window of this page; OK on the same channel again: full screen."""
+        cid = self.props.get(f"ch{n}cid")
+        if not cid:
+            return
+        if getattr(self, "preview_cid", "") == str(cid) and xbmc.getCondVisibility("Player.HasVideo"):
+            xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+            return
+        self.preview_cid = str(cid)
+        self.setProperty("g.preview", str(cid))
+        self.setProperty("g.preview.name", self.props.get(f"ch{n}name", ""))
+        threading.Thread(target=self.parent.start_preview, args=(cid,), daemon=True).start()
+
     def onClick(self, cid):
+        if cid in (311, 312, 313, 314):
+            self.preview(cid - 310)
+            return
         if cid in (321, 322):
             # the club pop-up opens on top of this page, so the page stays where it is
             if self.parent.club_popup(self.ev, "home" if cid == 321 else "away"):
@@ -1580,6 +1597,9 @@ class GameInfo(xbmcgui.WindowXMLDialog):
     def onAction(self, action):
         if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.alive = False
+            if getattr(self, "preview_cid", ""):      # a channel watched in the TV window stops with the page
+                self.preview_cid = ""
+                xbmc.Player().stop()
             self.close()
 
 

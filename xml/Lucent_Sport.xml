@@ -131,81 +131,80 @@
 </focusedlayout>
 </control>
 <control type="group"><visible>!String.IsEqual(Window.Property(sport.view),tables) + !String.IsEqual(Window.Property(sport.view),mine) + !String.IsEqual(Window.Property(sport.view),follow) + String.IsEmpty(Window.Property(sport.empty)) + String.IsEmpty(Window.Property(sport.loading))</visible>
-<control type="image"><left>1310</left><top>140</top><width>640</width><height>850</height>
+<control type="image"><left>1310</left><top>140</top><width>640</width><height>300</height><texture border="20">rr20.png</texture><colordiffuse>FF05080C</colordiffuse></control><control type="label"><left>1320</left><top>140</top><width>620</width><height>300</height><font>font12</font><textcolor>text3</textcolor><align>center</align><label>$INFO[Window.Property(sport.t.previewhint)]</label><visible>!(!String.IsEmpty(Window.Property(sport.preview)) + Player.HasVideo)</visible></control>
+<control type="videowindow"><left>1312</left><top>142</top><width>636</width><height>296</height><visible>!String.IsEmpty(Window.Property(sport.preview)) + Player.HasVideo</visible></control><control type="image"><left>1326</left><top>154</top><width>72</width><height>32</height><texture border="15">rr14.png</texture><colordiffuse>FFE5534B</colordiffuse><visible>!String.IsEmpty(Window.Property(sport.preview)) + Player.HasVideo</visible></control><control type="label"><left>1326</left><top>154</top><width>72</width><height>32</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><label>LIVE</label><visible>!String.IsEmpty(Window.Property(sport.preview)) + Player.HasVideo</visible></control>
+<control type="label"><left>1408</left><top>154</top><width>500</width><height>32</height><font>font10_bold</font><textcolor>text</textcolor><label>$INFO[Window.Property(sport.preview.name)]</label><visible>!String.IsEmpty(Window.Property(sport.preview)) + Player.HasVideo</visible></control>
+<control type="image"><left>1310</left><top>452</top><width>640</width><height>558</height>
 <texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
-<control type="image"><left>1340</left><top>160</top><width>44</width><height>44</height><aspectratio>keep</aspectratio><texture>$INFO[Container(200).ListItem.Property(lgicon)]</texture></control>
-<control type="label"><left>1394</left><top>160</top><width>520</width><height>44</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Property(league)]</label></control>
-<control type="group"><visible>String.IsEmpty(Container(200).ListItem.Property(isevent))</visible><control type="image"><left>1370</left><top>214</top><width>120</width><height>120</height><aspectratio>keep</aspectratio><texture>$INFO[Container(200).ListItem.Property(hlogo)]</texture></control>
-<control type="image"><left>1730</left><top>214</top><width>120</width><height>120</height><aspectratio>keep</aspectratio><texture>$INFO[Container(200).ListItem.Property(alogo)]</texture></control>
-<control type="label"><left>1350</left><top>336</top><width>190</width><height>60</height><font>font10_bold</font><textcolor>text</textcolor><align>center</align><label>$INFO[Container(200).ListItem.Property(hname)]</label></control>
-<control type="label"><left>1690</left><top>336</top><width>190</width><height>60</height><font>font10_bold</font><textcolor>text</textcolor><align>center</align><label>$INFO[Container(200).ListItem.Property(aname)]</label></control>
-<control type="label"><left>1530</left><top>240</top><width>170</width><height>70</height><font>font37</font><textcolor>text</textcolor><align>center</align><label>$INFO[Container(200).ListItem.Property(mid)]</label></control>
-</control><control type="group"><visible>!String.IsEmpty(Container(200).ListItem.Property(isevent))</visible><control type="label"><left>1340</left><top>220</top><width>580</width><height>70</height><font>font37</font><textcolor>text</textcolor><label>$INFO[Container(200).ListItem.Label]</label></control>
-<control type="label"><left>1340</left><top>290</top><width>580</width><height>40</height><font>font12</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Label2]</label></control>
-</control><control type="label"><left>1340</left><top>398</top><width>580</width><height>38</height><font>font12_bold</font><textcolor>red</textcolor><label>$INFO[Container(200).ListItem.Property(when)]</label></control>
-<control type="label"><left>1340</left><top>434</top><width>580</width><height>36</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Property(venue)]</label></control>
-<control type="grouplist" id="9310"><left>1340</left><top>476</top><width>600</width><height>56</height><orientation>horizontal</orientation><itemgap>6</itemgap><onleft>200</onleft><ondown>9300</ondown><onup>200</onup>
-<control type="button" id="331"><width>190</width><height>56</height><font>font_tiny</font>
+<control type="image"><left>1340</left><top>464</top><width>36</width><height>36</height><aspectratio>keep</aspectratio><texture>$INFO[Container(200).ListItem.Property(lgicon)]</texture></control>
+<control type="label"><left>1386</left><top>462</top><width>520</width><height>40</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Property(league)]</label></control>
+<control type="group"><visible>String.IsEmpty(Container(200).ListItem.Property(isevent))</visible><control type="image"><left>1340</left><top>508</top><width>84</width><height>84</height><aspectratio>keep</aspectratio><texture>$INFO[Container(200).ListItem.Property(hlogo)]</texture></control>
+<control type="image"><left>1836</left><top>508</top><width>84</width><height>84</height><aspectratio>keep</aspectratio><texture>$INFO[Container(200).ListItem.Property(alogo)]</texture></control>
+<control type="label"><left>1320</left><top>594</top><width>140</width><height>36</height><font>font10_bold</font><textcolor>text</textcolor><align>center</align><label>$INFO[Container(200).ListItem.Property(hname)]</label></control>
+<control type="label"><left>1800</left><top>594</top><width>140</width><height>36</height><font>font10_bold</font><textcolor>text</textcolor><align>center</align><label>$INFO[Container(200).ListItem.Property(aname)]</label></control>
+<control type="label"><left>1500</left><top>520</top><width>260</width><height>60</height><font>font37</font><textcolor>text</textcolor><align>center</align><label>$INFO[Container(200).ListItem.Property(mid)]</label></control>
+</control><control type="group"><visible>!String.IsEmpty(Container(200).ListItem.Property(isevent))</visible><control type="label"><left>1340</left><top>500</top><width>580</width><height>60</height><font>font37</font><textcolor>text</textcolor><label>$INFO[Container(200).ListItem.Label]</label></control>
+<control type="label"><left>1340</left><top>560</top><width>580</width><height>40</height><font>font12</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Label2]</label></control>
+</control><control type="label"><left>1340</left><top>630</top><width>580</width><height>34</height><font>font12_bold</font><textcolor>red</textcolor><label>$INFO[Container(200).ListItem.Property(when)]</label></control>
+<control type="label"><left>1340</left><top>662</top><width>580</width><height>32</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(200).ListItem.Property(venue)]</label></control>
+<control type="grouplist" id="9310"><left>1340</left><top>700</top><width>600</width><height>48</height><orientation>horizontal</orientation><itemgap>6</itemgap><onleft>200</onleft><ondown>9300</ondown><onup>200</onup>
+<control type="button" id="331"><width>190</width><height>48</height><font>font_tiny</font>
 <textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Container(200).ListItem.Property(fixtext)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(fixtext))</visible></control>
-<control type="button" id="332"><width>190</width><height>56</height><font>font_tiny</font>
+<control type="button" id="332"><width>190</width><height>48</height><font>font_tiny</font>
 <textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Container(200).ListItem.Property(remindtext)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(remindtext))</visible></control>
-<control type="button" id="333"><width>190</width><height>56</height><font>font_tiny</font>
+<control type="button" id="333"><width>190</width><height>48</height><font>font_tiny</font>
 <textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Container(200).ListItem.Property(rectext)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(rectext))</visible></control>
 </control>
-<control type="label"><left>1340</left><top>546</top><width>580</width><height>34</height><font>font10_bold</font><textcolor>text4</textcolor><label>$INFO[Window.Property(sport.t.watch)]</label><visible>!String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
-<control type="label"><left>1340</left><top>546</top><width>580</width><height>34</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(sport.t.nochan)]</label><visible>String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
-<control type="grouplist" id="9300"><left>1340</left><top>582</top><width>600</width><height>410</height><orientation>vertical</orientation><itemgap>6</itemgap><onleft>200</onleft><onup>9310</onup>
-<control type="button" id="311"><width>580</width><height>52</height>
+<control type="label"><left>1340</left><top>756</top><width>580</width><height>30</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(sport.t.nochan)]</label><visible>String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
+<control type="grouplist" id="9300"><left>1340</left><top>756</top><width>600</width><height>246</height><orientation>vertical</orientation><itemgap>5</itemgap><onleft>200</onleft><onup>9310</onup>
+<control type="button" id="311"><width>580</width><height>44</height>
 <font>font10_bold</font><textoffsetx>20</textoffsetx>
 <label>$INFO[Container(200).ListItem.Property(ch1name)]</label><label2>$INFO[Container(200).ListItem.Property(ch1sub)]</label2>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
-<control type="button" id="312"><width>580</width><height>52</height>
+<control type="button" id="312"><width>580</width><height>44</height>
 <font>font10_bold</font><textoffsetx>20</textoffsetx>
 <label>$INFO[Container(200).ListItem.Property(ch2name)]</label><label2>$INFO[Container(200).ListItem.Property(ch2sub)]</label2>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(ch2name))</visible></control>
-<control type="button" id="313"><width>580</width><height>52</height>
+<control type="button" id="313"><width>580</width><height>44</height>
 <font>font10_bold</font><textoffsetx>20</textoffsetx>
 <label>$INFO[Container(200).ListItem.Property(ch3name)]</label><label2>$INFO[Container(200).ListItem.Property(ch3sub)]</label2>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(ch3name))</visible></control>
-<control type="button" id="314"><width>580</width><height>52</height>
+<control type="button" id="314"><width>580</width><height>44</height>
 <font>font10_bold</font><textoffsetx>20</textoffsetx>
 <label>$INFO[Container(200).ListItem.Property(ch4name)]</label><label2>$INFO[Container(200).ListItem.Property(ch4sub)]</label2>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(ch4name))</visible></control>
-<control type="button" id="321"><width>580</width><height>48</height><font>font10_bold</font>
+<control type="button" id="321"><width>580</width><height>40</height><font>font10_bold</font>
 <textoffsetx>20</textoffsetx><label>$INFO[Container(200).ListItem.Property(followhome)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(followhome))</visible></control>
-<control type="button" id="322"><width>580</width><height>48</height><font>font10_bold</font>
+<control type="button" id="322"><width>580</width><height>40</height><font>font10_bold</font>
 <textoffsetx>20</textoffsetx><label>$INFO[Container(200).ListItem.Property(followaway)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(followaway))</visible></control>
-<control type="button" id="323"><width>580</width><height>48</height><font>font10_bold</font>
+<control type="button" id="323"><width>580</width><height>40</height><font>font10_bold</font>
 <textoffsetx>20</textoffsetx><label>$INFO[Container(200).ListItem.Property(table)]</label>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(table))</visible></control>
-</control>
-<control type="group"><visible>!String.IsEmpty(Window.Property(sport.preview)) + Player.HasVideo</visible><control type="image"><left>1340</left><top>214</top><width>580</width><height>252</height><texture border="20">rr20.png</texture><colordiffuse>FF05080C</colordiffuse></control><control type="videowindow"><left>1342</left><top>216</top><width>576</width><height>248</height></control><control type="image"><left>1352</left><top>226</top><width>72</width><height>32</height><texture border="15">rr14.png</texture><colordiffuse>FFE5534B</colordiffuse></control><control type="label"><left>1352</left><top>226</top><width>72</width><height>32</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><label>LIVE</label></control>
-<control type="label"><left>1436</left><top>226</top><width>470</width><height>32</height><font>font10_bold</font><textcolor>text</textcolor><label>$INFO[Window.Property(sport.preview.name)]</label></control>
 </control>
 </control>
 </control>
