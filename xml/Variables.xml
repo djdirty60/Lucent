@@ -46,6 +46,25 @@
         <value condition="Integer.IsGreater(ListItem.Duration(mins),59)">$INFO[ListItem.Duration(h)]u $INFO[ListItem.Duration(mm)]m</value>
         <value condition="Integer.IsGreater(ListItem.Duration(mins),0)">$INFO[ListItem.Duration(mins)] min</value>
     </variable>
+    <variable name="LiveRes">
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,4K) | String.IsEqual(VideoPlayer.VideoResolution,8K)">$INFO[VideoPlayer.VideoResolution]</value>
+        <value>$INFO[VideoPlayer.VideoResolution]P</value>
+    </variable>
+    <variable name="LiveFps">
+        <value condition="String.StartsWith(Player.Process(videofps),23.9) | String.StartsWith(Player.Process(videofps),24)">24</value>
+        <value condition="String.StartsWith(Player.Process(videofps),25)">25</value>
+        <value condition="String.StartsWith(Player.Process(videofps),29.9) | String.StartsWith(Player.Process(videofps),30)">30</value>
+        <value condition="String.StartsWith(Player.Process(videofps),50)">50</value>
+        <value condition="String.StartsWith(Player.Process(videofps),59.9) | String.StartsWith(Player.Process(videofps),60)">60</value>
+        <value>$INFO[Player.Process(videofps)]</value>
+    </variable>
+    <variable name="LiveAudio">
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,2)">STEREO</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,1)">MONO</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,6)">5.1</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,8)">7.1</value>
+        <value>$INFO[VideoPlayer.AudioChannels] CH</value>
+    </variable>
     <variable name="PlayerTitle">
         <value condition="Pvr.IsPlayingTV + !String.IsEmpty(VideoPlayer.ChannelName)">$INFO[VideoPlayer.ChannelNumberLabel,,   ]$INFO[VideoPlayer.ChannelName]</value>
         <value condition="!String.IsEmpty(VideoPlayer.TVShowTitle)">$INFO[VideoPlayer.TVShowTitle]</value>
@@ -85,19 +104,17 @@
         <value condition="Control.HasFocus(117)">$LOCALIZE[31187]</value>
         <value condition="Control.HasFocus(115)">$LOCALIZE[31056]</value>
         <value condition="Control.HasFocus(116)">$LOCALIZE[31053]</value>
-        <value condition="Control.HasFocus(201)">$LOCALIZE[31242]</value>
-        <value condition="Control.HasFocus(202)">$LOCALIZE[31243]</value>
-        <value condition="Control.HasFocus(203)">$LOCALIZE[31076]</value>
-        <value condition="Control.HasFocus(204)">$LOCALIZE[208]</value>
-        <value condition="Control.HasFocus(205)">$LOCALIZE[31244]</value>
-        <value condition="Control.HasFocus(206)">$LOCALIZE[31098]</value>
-        <value condition="Control.HasFocus(207)">$LOCALIZE[31054]</value>
-        <value condition="Control.HasFocus(211)">$LOCALIZE[31048]</value>
-        <value condition="Control.HasFocus(212)">$LOCALIZE[31049]</value>
-        <value condition="Control.HasFocus(213)">$LOCALIZE[31050]</value>
-        <value condition="Control.HasFocus(214)">$LOCALIZE[31245]</value>
-        <value condition="Control.HasFocus(217)">$LOCALIZE[31187]</value>
-        <value condition="Control.HasFocus(215)">$LOCALIZE[31056]</value>
-        <value condition="Control.HasFocus(216)">$LOCALIZE[31053]</value>
+        <value condition="Control.HasFocus(220)">$LOCALIZE[5]</value>
+        <value condition="Control.HasFocus(402)">$LOCALIZE[31243]</value>
+        <value condition="Control.HasFocus(403)">$LOCALIZE[31244]</value>
+        <value condition="Control.HasFocus(406)">$LOCALIZE[31098]</value>
+        <value condition="Control.HasFocus(407)">$LOCALIZE[31054]</value>
+        <value condition="Control.HasFocus(411)">$LOCALIZE[31048]</value>
+        <value condition="Control.HasFocus(412)">$LOCALIZE[31049]</value>
+        <value condition="Control.HasFocus(413)">$LOCALIZE[31050]</value>
+        <value condition="Control.HasFocus(414)">$LOCALIZE[31245]</value>
+        <value condition="Control.HasFocus(417)">$LOCALIZE[31187]</value>
+        <value condition="Control.HasFocus(415)">$LOCALIZE[31056]</value>
+        <value condition="Control.HasFocus(416)">$LOCALIZE[31053]</value>
     </variable>
 </includes>
