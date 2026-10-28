@@ -22,7 +22,9 @@ import sport_plan as plan
 WINDOW_XML = "Lucent_Sport.xml"
 ACTION_PREVIOUS_MENU = 10
 ACTION_NAV_BACK = 92
-VIEW_BUTTONS = {101: "mine", 102: "all", 103: "tables"}
+VIEW_BUTTONS = {101: "mine", 102: "all", 103: "tables", 104: "follow"}
+F_CHIPS, F_SEARCH, F_ORDER, F_MORE, F_SPORTS, F_COMPS, F_BTN, F_TEAMS = 520, 521, 522, 523, 530, 540, 550, 560
+SPORT_ORDER = ("soccer", "basketball", "football", "hockey", "baseball", "rugby", "racing", "golf", "tennis", "mma", "aussie")
 FOLLOW_BUTTON = 104
 LIST = 200
 DAY_BUTTONS = range(111, 118)
@@ -139,6 +141,12 @@ class Sport(xbmcgui.WindowXML):
         self.guide_busy = False
         self.has_pvr = False
         self.sections_shown = 0
+        self.f_sport = "soccer"
+        self.f_league = ""
+        self.f_token = 0
+        self.f_dirty = False
+        self.f_has_teams = False
+        self.f_teams = []
         self.error = ""
         self.loaded = False
         self.last_tint = None
@@ -148,7 +156,7 @@ class Sport(xbmcgui.WindowXML):
         if self.ready:
             return
         self.ready = True
-        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all"):
+        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
         self.has_pvr = len(epg.channels()) > 0
         self.setProperty("sport.t.nochan", sc.t("nochan") if self.has_pvr else sc.t("noguide"))
@@ -178,15 +186,33 @@ class Sport(xbmcgui.WindowXML):
             threading.Timer(0.45, self.table_after, args=(token,)).start()
         if self.view == "mine":
             self.tint()
+        if self.view == "follow" and self.getFocusId() in (F_SPORTS, F_COMPS):
+            self.f_token += 1
+            threading.Timer(0.4, self.follow_after, args=(self.f_token, self.getFocusId())).start()
 
     def onClick(self, cid):
         if cid in VIEW_BUTTONS:
+            if self.view == "follow" and VIEW_BUTTONS[cid] != "follow" and self.f_dirty:
+                self.f_dirty = False
+                threading.Thread(target=self.after_follow_change, daemon=True).start()
             self.view = VIEW_BUTTONS[cid]
             self.marks = set()
             self.setProperty("sport.t.title", sc.t("title"))
             self.render()
-        elif cid == FOLLOW_BUTTON:
-            self.follow_menu()
+        elif cid in (F_SEARCH, F_ORDER, F_MORE):
+            {F_SEARCH: self.search_follow, F_ORDER: self.change_order, F_MORE: self.follow_menu}[cid]()
+            self.f_dirty = True
+            self.render(keep_focus=True)
+        elif cid == F_CHIPS:
+            self.unfollow_chip()
+        elif cid == F_SPORTS:
+            self.setFocusId(F_COMPS)
+        elif cid == F_COMPS:
+            self.setFocusId(F_TEAMS if self.f_has_teams else F_BTN)
+        elif cid == F_BTN:
+            self.toggle_league()
+        elif cid == F_TEAMS:
+            self.toggle_team_card()
         elif cid in DAY_BUTTONS:
             self.day = self.anchor + datetime.timedelta(days=cid - DAY_BUTTONS[0])
             self.render()
@@ -357,6 +383,10 @@ class Sport(xbmcgui.WindowXML):
         if self.view == "tables":
             self.setProperty("sport.empty", "")
             self.fill_leagues()
+            return
+        if self.view == "follow":
+            self.setProperty("sport.empty", "")
+            self.fill_follow(keep_focus)
             return
         events, data = self.pick_events()
         self.hero_events = []
@@ -549,6 +579,184 @@ class Sport(xbmcgui.WindowXML):
             self.toggle_team(action, ev)
         elif action == "table":
             self.open_table(ev)
+
+
+    # ------------------------------------------------------------------ Follow page
+    def sport_of_team(self, team):
+        league = team.get("league")
+        if league == sc.NATIONAL_LEAGUE:
+            return "soccer"
+        return sc.LEAGUES[league]["sport"] if league in sc.LEAGUES else ""
+
+    def fill_follow(self, keep_focus=False):
+        self.fill_chips()
+        self.fill_sports()
+        self.fill_comps()
+
+    def fill_chips(self):
+        follow = sc.load_follow()
+        chips = []
+        for key, kind, ident, title in sc.sections(follow):
+            logo = ""
+            if kind == "team":
+                logo = next((t.get("logo", "") for t in follow["teams"] if sc.team_ident(t) == ident), "")
+            chips.append(listitem(title, "", icon=logo, key=key, kind=kind, ident=ident))
+        self.setProperty("sport.f.has", "1" if chips else "")
+        self.setProperty("sport.f.count", sc.t("f_following", len(chips)))
+        pos = self.getControl(F_CHIPS).getSelectedPosition()
+        self.fill_list(F_CHIPS, chips, pos)
+
+    def fill_sports(self):
+        follow = sc.load_follow()
+        sports = [sp for sp in SPORT_ORDER if any(v["sport"] == sp for v in sc.LEAGUES.values())]
+        sports += sorted({v["sport"] for v in sc.LEAGUES.values()} - set(sports))
+        items = []
+        for sp in sports:
+            n = (sum(1 for k in follow["leagues"] if k in sc.LEAGUES and sc.LEAGUES[k]["sport"] == sp)
+                 + sum(1 for t in follow["teams"] if self.sport_of_team(t) == sp)
+                 + (len(follow["names"]) if sp == "racing" else 0))
+            items.append(listitem(sc.sport_name(sp), "", sport=sp, badge=str(n) if n else ""))
+        self.f_sports = sports
+        self.fill_list(F_SPORTS, items, sports.index(self.f_sport) if self.f_sport in sports else 0)
+
+    def comp_keys(self):
+        keys = [k for k, v in sc.LEAGUES.items() if v["sport"] == self.f_sport]
+        first = ("ned.1", "ned.2", "ned.cup", "bel.1") if sc.NL else ("eng.1", "esp.1", "ger.1", "ita.1")
+        return sorted(keys, key=lambda k: (first.index(k) if k in first else 9, not sc.LEAGUES[k]["default"], sc.LEAGUES[k]["name"]))
+
+    def fill_comps(self, reload=True):
+        follow = sc.load_follow()
+        keys = self.comp_keys()
+        items = []
+        for k in keys:
+            lg = sc.LEAGUES[k]
+            sub = sc.t("f_followed") if k in follow["leagues"] else (sc.t("f_teams") if lg["kind"] == "teams" else sc.t("f_competition"))
+            items.append(listitem(lg["name"], sub, icon=SPORT_ICON, key=k, followed="1" if k in follow["leagues"] else ""))
+        if self.f_league not in keys:
+            self.f_league = keys[0] if keys else ""
+        self.fill_list(F_COMPS, items, keys.index(self.f_league) if self.f_league in keys else 0)
+        if reload:
+            self.show_league()
+        else:
+            self.set_follow_button()
+
+    def show_league(self):
+        key = self.f_league
+        if not key:
+            return
+        self.set_follow_button()
+        self.f_has_teams = False
+        self.setProperty("sport.f.noteams", "")
+        threading.Thread(target=self.load_teams, args=(key, self.f_token), daemon=True).start()
+
+    def set_follow_button(self):
+        key = self.f_league
+        if key:
+            name = sc.LEAGUES[key]["name"]
+            self.setProperty("sport.f.btn", sc.t("f_stop", name) if key in sc.load_follow()["leagues"] else sc.t("f_follow", name))
+
+    def load_teams(self, key, token):
+        """Teams of a competition as colour cards (alphabetical). Fetches when ESPN has not been asked yet."""
+        try:
+            lg = sc.LEAGUES[key]
+            if lg["kind"] != "teams":
+                self.fill_list(F_TEAMS, [], 0)
+                self.setProperty("sport.f.noteams", "1")
+                return
+            teams = sc.teams_of(key)
+            if not teams and not sc.load_cache()["leagues"].get(key):
+                sc.refresh(keys=[key])
+                teams = sc.teams_of(key)
+            if key != self.f_league or self.closing:
+                return
+            follow = sc.load_follow()
+            colours = sc.colour_map()
+            items = []
+            for tid, name, logo in teams:
+                mine = sc.is_following_team(follow, {"id": tid, "name": name})
+                base = colours.get(tid, "FF3A4A5C")
+                items.append(listitem(name, "", icon=logo, tid=tid, logo=logo, mine="1" if mine else "",
+                                      tcol="99" + base[2:], tcol2="22" + base[2:]))
+            self.f_teams = teams
+            self.f_has_teams = bool(items)
+            self.setProperty("sport.f.noteams", "" if items else "1")
+            self.fill_list(F_TEAMS, items, 0)
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"load_teams {key}: {error}")
+
+    def follow_after(self, token, focus):
+        if token != self.f_token or self.closing or self.view != "follow":
+            return
+        if focus == F_SPORTS:
+            item = self.getControl(F_SPORTS).getSelectedItem()
+            if item and item.getProperty("sport") != self.f_sport:
+                self.f_sport = item.getProperty("sport")
+                self.f_league = ""
+                self.fill_comps()
+        elif focus == F_COMPS:
+            item = self.getControl(F_COMPS).getSelectedItem()
+            if item and item.getProperty("key") != self.f_league:
+                self.f_league = item.getProperty("key")
+                self.show_league()
+
+    def toggle_league(self):
+        key = self.f_league
+        if not key:
+            return
+        follow = sc.load_follow()
+        if key in follow["leagues"]:
+            follow["leagues"].remove(key)
+        else:
+            follow["leagues"].append(key)
+        sc.save_follow(follow)
+        self.f_dirty = True
+        self.refresh_follow_lists()
+
+    def toggle_team_card(self):
+        item = self.getControl(F_TEAMS).getSelectedItem()
+        if not item or not self.f_league:
+            return
+        side_ = {"id": item.getProperty("tid"), "name": item.getLabel(), "logo": item.getProperty("logo")}
+        followed = sc.toggle_team(self.f_league, side_)
+        item.setProperty("mine", "1" if followed else "")
+        xbmcgui.Dialog().notification(sc.t("title"), sc.t("follow_team" if followed else "unfollow_team", side_["name"]),
+                                      xbmcgui.NOTIFICATION_INFO, 2000, False)
+        self.f_dirty = True
+        self.refresh_follow_lists()
+
+    def unfollow_chip(self):
+        item = self.getControl(F_CHIPS).getSelectedItem()
+        if not item:
+            return
+        kind, ident = item.getProperty("kind"), item.getProperty("ident")
+        follow = sc.load_follow()
+        if kind == "team":
+            follow["teams"] = [t for t in follow["teams"] if sc.team_ident(t) != ident]
+        elif kind == "league":
+            follow["leagues"] = [k for k in follow["leagues"] if k != ident]
+        else:
+            follow["names"] = [n for n in follow["names"] if n != ident]
+        sc.save_follow(follow)
+        self.f_dirty = True
+        self.refresh_follow_lists()
+        self.fill_teams_marks()
+
+    def fill_teams_marks(self):
+        follow = sc.load_follow()
+        control = self.getControl(F_TEAMS)
+        for i in range(control.size()):
+            it = control.getListItem(i)
+            it.setProperty("mine", "1" if sc.is_following_team(follow, {"id": it.getProperty("tid"), "name": it.getLabel()}) else "")
+
+    def refresh_follow_lists(self):
+        """Redraw the strip, the badges and the follow button without losing your place."""
+        self.fill_chips()
+        pos = self.getControl(F_SPORTS).getSelectedPosition()
+        self.fill_sports()
+        self.getControl(F_SPORTS).selectItem(pos)
+        pos = self.getControl(F_COMPS).getSelectedPosition()
+        self.fill_comps(reload=False)
+        self.getControl(F_COMPS).selectItem(pos)
 
     def empty_state(self):
         if self.view == "mine" and not sc.has_follow():
