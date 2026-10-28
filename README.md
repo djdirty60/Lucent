@@ -50,8 +50,31 @@ Everything on one page. At the top: logo, buttons, director, ratings (IMDb, TMDB
 
 These use your Trakt login from Seren, there is nothing new to set up. For studio logos, use **Skin settings → Install studio logos**.
 
+### Calendar
+A **Calendar** tab (Week, List and Month) for the series and films of your Trakt collection that you follow with the bell on the info page. A pop-up tells you when a new episode is out (*Watch now / Later*) or when a film is released digitally. The series open straight on their seasons in Seren.
+
+### Sport (needs IPTV channels)
+A **Sport** tab with games from almost 200 competitions (football worldwide, NBA, NFL, NHL, MLB, rugby, Formula 1, IndyCar, NASCAR, golf, tennis, UFC and more), fetched from ESPN. It only appears when Kodi has TV channels.
+
+- **My sport** – a big card with your next game in the two club colours, a small live TV window and a row of cards for every team, country or competition you follow.
+- **All games** and **Tables** – every game with its channel, and league tables with form, place changes and Champions League / relegation colours.
+- **Follow** – follow teams, countries or whole competitions, with their own icons and logos.
+- **Game page** – score, LIVE minute, your channels (from your IPTV guide), statistics, latest goals and the table. Formula 1 has its own page: circuit drawing, length, laps, turns, lap record, the weekend programme as cards and the top 10 of every finished session.
+- **Reminders, automatic switching and recording** – a reminder 5 minutes before, optional switching to the channel, recording for 1 to 6 hours, and *Fix channel* per game, competition or team.
+- OK on a channel plays it in the small TV window, OK again goes full screen.
+
+### TV guide and live TV
+A **TV** tab with your IPTV channels: groups on the left, channels with logo and number, a timeline with the programmes, a header with the focused programme and a live preview. A *Favourite group* opens first every time. The live TV player has its own compact info bar (channel, LIVE, quality, score, now and next) and a menu with channel up/down, pause, record, subtitles, audio and recent channels.
+
+### Subtitles and updates
+- **A4KSubtitles support** – a *Search subtitles* button in the player menu and optional automatic search when a film or episode starts without subtitles in your language.
+- **Update pop-up** – when a new version is out you can choose *Update now*, *Later* or *Skip this version* (switch in Skin settings → Integrations).
+
+### Also in the home menu
+The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
+
 ### Everything else in the same style
-The video player and its menu, the video player and its menu, seek bar, subtitles search, bookmarks, Kodi settings, add-on settings, add-on info, file manager, keyboard, number pad, notifications, dialogs, power menu and screen calibration.
+The video player and its menu, seek bar, subtitle search, bookmarks, Kodi settings, add-on settings, add-on info, file manager, keyboard, number pad, notifications, dialogs, power menu, system info and screen calibration.
 
 ---
 
@@ -85,6 +108,12 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 **Keyboard**
 ![Keyboard](screenshots/keyboard.jpg)
+
+**Calendar**
+![Calendar](screenshots/calendar.jpg)
+
+**Sport**
+![Sport](screenshots/sport.jpg)
 
 ---
 
@@ -147,8 +176,8 @@ A tab without widgets shows the widgets of the start tab.
 - **Seren is optional.** Without Seren the Seren rows are hidden and the skin works with your Kodi library only. With Seren, enter a free **Fanart.tv API key** in Seren for more logos.
 - **Pairs with the Seren theme** [Lucent for Seren](https://github.com/djdirty60/Seren-Thema), so Seren's source select, scraping and playing-next windows match the skin.
 - **Screen size:** Kodi scales the skin to any resolution (720p, 1080p, 4K) by itself. If you see black edges or the picture is cut off, use **Skin settings → Calibrate the picture**.
-- **Not styled in this version:** Live TV (PVR), games and weather. Those windows won't open while this skin is active; switch to Estuary temporarily if you need them.
-- This is a first release. Feedback and bug reports are welcome – please open an issue and include a photo of the screen or your `kodi.log` if something looks wrong.
+- **Not styled:** games and weather. Those windows won't open while this skin is active; switch to Estuary temporarily if you need them. Live TV has the TV guide and player of this skin, but other PVR windows (recordings, timers) still need Estuary.
+- Feedback and bug reports are welcome – please open an issue and include a photo of the screen or your `kodi.log` if something looks wrong.
 
 ---
 
@@ -163,6 +192,11 @@ colors/              colour palette
 language/            English and Dutch strings
 scripts/menu.py      editor for the side menu and the widgets
 scripts/info.py      info page: collection, studios, Trakt lists and watched
+scripts/agenda*.py   Calendar tab
+scripts/sport*.py    Sport tab (ESPN games, tables, F1 page, reminders)
+scripts/tv.py        TV tab and guide, live.py = live TV player
+scripts/subtitles.py A4KSubtitles support
+scripts/updater.py   update pop-up
 resources/           icon and fanart
 repo/                Kodi repository (addons.xml + zips) for automatic updates
 repository.lucent.zip  the repository add-on to install once
@@ -174,6 +208,7 @@ screenshots/         images for this README
 ## Credits and licences
 
 - Inspired by the design of [Nuvio Arc](https://github.com/ysosrs123/NuvioTV-Fork). This skin is not affiliated with it.
-- Home rows use [Seren](https://github.com/nixgates/plugin.video.seren) by Nixgates. This skin is not affiliated with Seren either.
+- Home rows use [Seren](https://github.com/nixgates/plugin.video.seren) by Nixgates (also works with forks of it).
+- Sport data comes from ESPN. This skin is not affiliated with Seren either.
 - Font: [Inter](https://github.com/rsms/inter) by Rasmus Andersson, SIL Open Font License 1.1 (see `fonts/Inter-LICENSE.txt`).
 - Icons and badges are original designs. The badges are not official Dolby or DTS logos.
