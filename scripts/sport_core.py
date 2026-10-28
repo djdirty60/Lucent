@@ -43,49 +43,13 @@ TEXT = {
     "final": ("Full time", "Afgelopen"), "postponed": ("Postponed", "Uitgesteld"), "cancelled": ("Cancelled", "Afgelast"),
 }
 
-# key, ESPN path, name NL, name EN, sport, kind, shown in "All games", extra words that show up in a TV guide
-CATALOG = [
-    ("ned.1", "soccer/ned.1", "Eredivisie", "Eredivisie", "soccer", "teams", True, ["eredivisie"]),
-    ("ned.2", "soccer/ned.2", "Keuken Kampioen Divisie", "Dutch Eerste Divisie", "soccer", "teams", True, ["keuken kampioen", "eerste divisie"]),
-    ("ned.cup", "soccer/ned.cup", "KNVB Beker", "KNVB Cup", "soccer", "teams", True, ["knvb beker", "knvb cup"]),
-    ("bel.1", "soccer/bel.1", "Jupiler Pro League", "Belgian Pro League", "soccer", "teams", True, ["jupiler", "pro league"]),
-    ("eng.1", "soccer/eng.1", "Premier League", "Premier League", "soccer", "teams", True, ["premier league"]),
-    ("eng.2", "soccer/eng.2", "Championship", "EFL Championship", "soccer", "teams", False, ["championship"]),
-    ("eng.fa", "soccer/eng.fa", "FA Cup", "FA Cup", "soccer", "teams", True, ["fa cup"]),
-    ("eng.league_cup", "soccer/eng.league_cup", "League Cup", "League Cup", "soccer", "teams", False, ["league cup", "carabao"]),
-    ("esp.1", "soccer/esp.1", "La Liga", "La Liga", "soccer", "teams", True, ["la liga", "laliga"]),
-    ("esp.copa_del_rey", "soccer/esp.copa_del_rey", "Copa del Rey", "Copa del Rey", "soccer", "teams", False, ["copa del rey"]),
-    ("ger.1", "soccer/ger.1", "Bundesliga", "Bundesliga", "soccer", "teams", True, ["bundesliga"]),
-    ("ger.dfb_pokal", "soccer/ger.dfb_pokal", "DFB-Pokal", "DFB-Pokal", "soccer", "teams", False, ["dfb pokal", "dfb-pokal"]),
-    ("ita.1", "soccer/ita.1", "Serie A", "Serie A", "soccer", "teams", True, ["serie a"]),
-    ("ita.coppa_italia", "soccer/ita.coppa_italia", "Coppa Italia", "Coppa Italia", "soccer", "teams", False, ["coppa italia"]),
-    ("fra.1", "soccer/fra.1", "Ligue 1", "Ligue 1", "soccer", "teams", True, ["ligue 1"]),
-    ("por.1", "soccer/por.1", "Liga Portugal", "Portuguese Liga", "soccer", "teams", True, ["liga portugal", "primeira liga"]),
-    ("tur.1", "soccer/tur.1", "Süper Lig", "Turkish Super Lig", "soccer", "teams", False, ["super lig", "süper lig"]),
-    ("sco.1", "soccer/sco.1", "Scottish Premiership", "Scottish Premiership", "soccer", "teams", False, ["scottish premiership"]),
-    ("usa.1", "soccer/usa.1", "MLS", "MLS", "soccer", "teams", False, ["mls", "major league soccer"]),
-    ("uefa.champions", "soccer/uefa.champions", "Champions League", "Champions League", "soccer", "teams", True, ["champions league"]),
-    ("uefa.europa", "soccer/uefa.europa", "Europa League", "Europa League", "soccer", "teams", True, ["europa league"]),
-    ("uefa.europa.conf", "soccer/uefa.europa.conf", "Conference League", "Conference League", "soccer", "teams", True, ["conference league"]),
-    ("uefa.nations", "soccer/uefa.nations", "Nations League", "Nations League", "soccer", "teams", True, ["nations league"]),
-    ("uefa.euro", "soccer/uefa.euro", "EK voetbal", "European Championship", "soccer", "teams", True, ["ek voetbal", "european championship", "euro 20"]),
-    ("fifa.world", "soccer/fifa.world", "WK voetbal", "World Cup", "soccer", "teams", True, ["wk voetbal", "world cup", "wereldkampioenschap"]),
-    ("fifa.worldq.uefa", "soccer/fifa.worldq.uefa", "WK-kwalificatie Europa", "World Cup qualifying (Europe)", "soccer", "teams", True, ["wk kwalificatie", "wk-kwalificatie", "world cup qualifying", "wk kwal"]),
-    ("fifa.friendly", "soccer/fifa.friendly", "Oefeninterlands", "International friendlies", "soccer", "teams", False, ["oefeninterland", "vriendschappelijk", "friendly"]),
-    ("ned.w.1", "soccer/ned.w.1", "Eredivisie Vrouwen", "Dutch Eredivisie Women", "soccer", "teams", False, ["eredivisie vrouwen"]),
-    ("nba", "basketball/nba", "NBA", "NBA", "basketball", "teams", True, ["nba"]),
-    ("nfl", "football/nfl", "NFL", "NFL", "football", "teams", True, ["nfl"]),
-    ("nhl", "hockey/nhl", "NHL", "NHL", "hockey", "teams", False, ["nhl"]),
-    ("mlb", "baseball/mlb", "MLB", "MLB", "baseball", "teams", False, ["mlb"]),
-    ("f1", "racing/f1", "Formule 1", "Formula 1", "racing", "event", True, ["formule 1", "formula 1", "f1"]),
-    ("atp", "tennis/atp", "ATP-tennis", "ATP tennis", "tennis", "event", False, ["atp"]),
-    ("wta", "tennis/wta", "WTA-tennis", "WTA tennis", "tennis", "event", False, ["wta"]),
-    ("pga", "golf/pga", "PGA Tour", "PGA Tour", "golf", "event", False, ["pga"]),
-    ("ufc", "mma/ufc", "UFC", "UFC", "mma", "event", True, ["ufc"]),
-]
+import sport_catalog
+
+CATALOG = sport_catalog.build()
 LEAGUES = {row[0]: {"key": row[0], "path": row[1], "name": row[2] if NL else row[3], "sport": row[4], "kind": row[5],
                     "default": row[6], "words": list(row[7]) + [row[2].lower(), row[3].lower()]} for row in CATALOG}
-SPORT_NAMES = {"soccer": ("Football", "Voetbal"), "basketball": ("Basketball", "Basketbal"),
+SPORT_NAMES = {"rugby": ("Rugby", "Rugby"), "aussie": ("Australian football", "Australian football"),
+               "soccer": ("Football", "Voetbal"), "basketball": ("Basketball", "Basketbal"),
                "football": ("American football", "American football"), "hockey": ("Ice hockey", "IJshockey"),
                "baseball": ("Baseball", "Honkbal"), "racing": ("Racing", "Racen"), "tennis": ("Tennis", "Tennis"),
                "golf": ("Golf", "Golf"), "mma": ("Fighting", "Vechtsport")}
@@ -381,6 +345,25 @@ def fetch_league(key, first, last):
     return parse_scoreboard(key, data)
 
 
+UEFA_CLUBS = ["uefa.champions", "uefa.europa", "uefa.europa.conf"]
+NATIONAL = ["fifa.friendly", "fifa.world", "fifa.worldq.uefa", "uefa.nations", "uefa.euro", "uefa.euroq", "fifa.worldq.concacaf",
+            "fifa.worldq.conmebol", "fifa.worldq.afc", "fifa.worldq.caf", "conmebol.america", "concacaf.gold", "afc.asian.cup",
+            "caf.nations", "global.finalissima"]
+
+
+def wider_leagues(league):
+    """Where a followed team plays besides its league: the same country's cups, the UEFA club cups; national teams: all their tournaments."""
+    if league not in LEAGUES:
+        return [league]
+    if league in NATIONAL:
+        return [k for k in NATIONAL if k in LEAGUES]
+    if LEAGUES[league]["sport"] != "soccer":
+        return [league]
+    country = league.split(".")[0]
+    near = [k for k, v in LEAGUES.items() if v["sport"] == "soccer" and k.split(".")[0] == country and ".w." not in k]
+    return near + [k for k in UEFA_CLUBS if k in LEAGUES]
+
+
 def league_keys():
     """Competitions shown in 'All games' plus everything you follow."""
     keys = [k for k, v in LEAGUES.items() if v["default"]]
@@ -391,9 +374,7 @@ def league_keys():
         league = team.get("league")
         if league not in LEAGUES:
             continue
-        wider = [k for k, v in LEAGUES.items() if v["sport"] == "soccer" and v["kind"] == "teams"] \
-            if LEAGUES[league]["sport"] == "soccer" else [league]
-        for k in wider:
+        for k in wider_leagues(league):
             if k not in keys:
                 keys.append(k)
     return keys

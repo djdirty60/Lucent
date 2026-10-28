@@ -763,14 +763,29 @@ class Sport(xbmcgui.WindowXML):
             self.render()
 
     def choose_leagues(self):
-        keys = list(sc.LEAGUES)
-        labels = [f"{sc.sport_name(sc.LEAGUES[k]['sport'])}  ·  {sc.LEAGUES[k]['name']}" for k in keys]
-        pre = [i for i, k in enumerate(keys) if k in self.follow["leagues"]]
-        picked = xbmcgui.Dialog().multiselect(sc.t("m_leagues"), labels, preselect=pre)
+        """First the sport, then the competitions of that sport (a tick list)."""
+        dialog = xbmcgui.Dialog()
+        sports = []
+        for lg in sc.LEAGUES.values():
+            if lg["sport"] not in sports:
+                sports.append(lg["sport"])
+        follow = sc.load_follow()
+        labels = []
+        for sp in sports:
+            keys = [k for k, v in sc.LEAGUES.items() if v["sport"] == sp]
+            on = sum(1 for k in keys if k in follow["leagues"])
+            labels.append(f"{sc.sport_name(sp)}  ({len(keys)})" + (f"  ·  {on} ✓" if on else ""))
+        pick = dialog.select(sc.t("m_leagues"), labels)
+        if pick < 0:
+            return
+        keys = [k for k, v in sc.LEAGUES.items() if v["sport"] == sports[pick]]
+        pre = [i for i, k in enumerate(keys) if k in follow["leagues"]]
+        picked = dialog.multiselect(sc.sport_name(sports[pick]), [sc.LEAGUES[k]["name"] for k in keys], preselect=pre)
         if picked is None:
             return
+        chosen = {keys[i] for i in picked}
         follow = sc.load_follow()
-        follow["leagues"] = [keys[i] for i in picked]
+        follow["leagues"] = [k for k in follow["leagues"] if k not in keys] + [k for k in keys if k in chosen]
         sc.save_follow(follow)
 
     def choose_teams(self):
