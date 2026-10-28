@@ -734,6 +734,9 @@ class Sport(xbmcgui.WindowXML):
                     self.close()
                     epg.play(cid)
                 return
+            if result == "full":
+                epg.fullscreen()
+                return
             if result == "table":
                 self.open_table(ev)
                 return
@@ -1017,7 +1020,7 @@ class Sport(xbmcgui.WindowXML):
         if not cid:
             return
         name = item.getProperty(f"ch{n}name")
-        if epg.is_playing(cid, name):
+        if epg.is_playing(cid, name) or (self.getProperty("sport.preview") == str(cid) and xbmc.getCondVisibility("Player.HasVideo")):
             epg.fullscreen()
             return
         epg.set_active(cid, name)
@@ -1604,8 +1607,11 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         if not cid:
             return
         name = self.props.get(f"ch{n}name", "")
-        if epg.is_playing(cid, name):
-            epg.fullscreen()
+        if epg.is_playing(cid, name) or (self.getProperty("g.preview") == str(cid) and xbmc.getCondVisibility("Player.HasVideo")):
+            # a dialog cannot switch windows: close the page first, the Sport window then goes full screen
+            self.result = "full"
+            self.alive = False
+            self.close()
             return
         epg.set_active(cid, name)
         self.setProperty("g.preview", str(cid))

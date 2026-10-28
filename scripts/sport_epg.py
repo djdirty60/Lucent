@@ -364,8 +364,25 @@ def clear_active():
 
 
 def fullscreen():
-    rpc("GUI.SetFullscreen", {"fullscreen": True})
-    xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+    """Make the playing channel full screen. Tries a few ways, because Kodi is picky about which one it accepts."""
+    import threading
+
+    def go():
+        sc.log("fullscreen requested")
+        xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+        for attempt in range(3):
+            time.sleep(0.6)
+            if xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)"):
+                return
+            if attempt == 0:
+                rpc("GUI.ActivateWindow", {"window": "fullscreenvideo"})
+            elif attempt == 1:
+                xbmc.executebuiltin("Action(FullScreen)")
+            else:
+                rpc("GUI.SetFullscreen", {"fullscreen": True})
+        sc.log("fullscreen: Kodi did not switch")
+
+    threading.Thread(target=go, daemon=True).start()
 
 
 def stop():
