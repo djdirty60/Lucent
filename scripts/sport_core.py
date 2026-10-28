@@ -343,10 +343,40 @@ def is_stale(entry, now, first, last):
     return age > (TTL_LIVE if live_or_close(entry.get("events", []), now) else TTL)
 
 
-def fetch_league(key, first, last):
+def days_between(first, last):
+    """'20261027', '20261029' -> ['20261027', '20261028', '20261029']"""
+    a = datetime.datetime.strptime(first.replace("-", ""), "%Y%m%d").date()
+    b = datetime.datetime.strptime(last.replace("-", ""), "%Y%m%d").date()
+    return [(a + datetime.timedelta(days=n)).strftime("%Y%m%d") for n in range((b - a).days + 1)]
+
+
+def fetch_range(key, first, last, workers=4):
+    """ESPN no longer accepts 'from-to' for dates (HTTP 400), so ask day by day (in parallel) and join the answers."""
     path = LEAGUES[key]["path"]
-    data = espn_get(f"{ESPN}{path}/scoreboard?dates={first.replace('-', '')}-{last.replace('-', '')}&limit=400")
-    return parse_scoreboard(key, data)
+    failures, seen, out = [], set(), []
+
+    def one(day):
+        try:
+            return day, parse_scoreboard(key, espn_get(f"{ESPN}{path}/scoreboard?dates={day}&limit=400"))
+        except Exception as error:  # noqa: BLE001
+            failures.append(error)
+            return day, None
+
+    days = days_between(first, last)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        results_ = list(pool.map(one, days))
+    if failures and len(failures) == len(days):
+        raise failures[0]
+    for _day, events in results_:
+        for ev in events or []:
+            if ev["id"] not in seen:
+                seen.add(ev["id"])
+                out.append(ev)
+    return out
+
+
+def fetch_league(key, first, last):
+    return fetch_range(key, first, last)
 
 
 UEFA_CLUBS = ["uefa.champions", "uefa.europa", "uefa.europa.conf"]
@@ -431,7 +461,7 @@ def refresh(force=False, keys=None, progress=None):
             return key, None
 
     changed = False
-    with ThreadPoolExecutor(max_workers=6) as pool:
+    with ThreadPoolExecutor(max_workers=4) as pool:
         for key, events in pool.map(work, todo):
             done[0] += 1
             if progress:
@@ -679,7 +709,7 @@ def results(key, force=False):
     today = ac.today()
     first = (today - datetime.timedelta(days=RESULTS_DAYS)).strftime("%Y%m%d")
     try:
-        events = parse_scoreboard(key, espn_get(f"{ESPN}{LEAGUES[key]['path']}/scoreboard?dates={first}-{espn_day(today)}&limit=500"))
+        events = fetch_range(key, first, espn_day(today), workers=8)
     except Exception as error:  # noqa: BLE001
         log(f"results {key}: {error}")
         return entry["events"] if entry else []
