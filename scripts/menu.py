@@ -219,6 +219,14 @@ WIDGETS_OTHER = [
     (("Program add-ons", "Programma-add-ons"), "addons://sources/executable/", "poster"),
     (("Music add-ons", "Muziek-add-ons"), "addons://sources/audio/", "poster"),
     (("Recently updated add-ons", "Recent bijgewerkte add-ons"), "addons://recently_updated/", "poster"),
+    (("All installed add-ons", "Alle geïnstalleerde add-ons"), "addons://user/", "poster"),
+    (("Installed video add-ons", "Geïnstalleerde video-add-ons"), "addons://user/xbmc.addon.video", "poster"),
+    (("Installed program add-ons", "Geïnstalleerde programma-add-ons"), "addons://user/xbmc.addon.executable", "poster"),
+    (("Add-ons with an update", "Add-ons met een update"), "addons://outdated/", "poster"),
+    (("Add-ons to install: video", "Video-add-ons om te installeren"), "addons://repository/xbmc.addon.video", "poster"),
+    (("Pictures", "Afbeeldingen"), "sources://pictures/", "land"),
+    (("Music sources", "Muziekbronnen"), "sources://music/", "land"),
+    (("TV channels", "TV-zenders"), "pvr://channels/tv/", "land"),
 ]
 G = lambda en, nl: (en, nl)  # noqa: E731 - inline translation
 ACTION_GROUPS = [
@@ -826,13 +834,15 @@ def init():
 
 def addons_once():
     """One time for existing menus: give an Add-ons item without rows its add-on rows."""
-    if get("lucent.addonw"):
+    if get("lucent.addonw2"):
         return
-    put("lucent.addonw", "1")
+    put("lucent.addonw2", "1")
     menu = Menu()
     changed = False
     for tab in menu.tabs:
-        if tab["action"] == "ActivateWindow(AddonBrowser)" and not tab["widgets"]:
+        is_addons = "AddonBrowser" in tab["action"] or "addons" in tab.get("icon", "").lower() \
+            or tab["label"].strip().lower() in ("add-ons", "addons")
+        if is_addons and not tab["widgets"]:
             tab["widgets"] = addon_widgets()
             changed = True
     if changed:
