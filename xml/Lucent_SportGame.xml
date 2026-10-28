@@ -35,12 +35,15 @@
 <control type="label"><left>120</left><top>270</top><width>600</width><height>40</height><font>font12</font><textcolor>text2</textcolor><label>$INFO[Window.Property(g.label2)]</label></control>
 </control>
 <control type="image"><left>736</left><top>96</top><width>1</width><height>250</height><texture>white.png</texture><colordiffuse>33FFFFFF</colordiffuse></control>
-<control type="label"><left>736</left><top>126</top><width>300</width><height>36</height><font>font10_bold</font><textcolor>text2</textcolor><align>center</align><label>$INFO[Window.Property(g.dayshort)]</label></control>
-<control type="label"><left>736</left><top>160</top><width>300</width><height>80</height><font>font45</font><textcolor>text</textcolor><align>center</align><label>$INFO[Window.Property(g.clock)]</label></control>
-<control type="label"><left>736</left><top>250</top><width>300</width><height>40</height><font>font10</font><textcolor>text2</textcolor><align>center</align><label>$INFO[Window.Property(g.countdown)]</label></control>
-<control type="label"><left>96</left><top>366</top><width>940</width><height>36</height><font>font10_bold</font><textcolor>text4</textcolor><label>$INFO[Window.Property(g.t.watch)]</label><visible>!String.IsEmpty(Window.Property(g.ch1name))</visible></control>
+<control type="label"><left>736</left><top>126</top><width>300</width><height>36</height><font>font10_bold</font><textcolor>text2</textcolor><align>center</align><label>$INFO[Window.Property(g.dayshort)]</label><visible>String.IsEmpty(Window.Property(g.live))</visible></control>
+<control type="label"><left>736</left><top>126</top><width>300</width><height>36</height><font>font10_bold</font><textcolor>FFE5534B</textcolor><align>center</align><label>LIVE</label><visible>!String.IsEmpty(Window.Property(g.live))</visible></control>
+<control type="label"><left>736</left><top>160</top><width>300</width><height>80</height><font>font45</font><textcolor>text</textcolor><align>center</align><label>$INFO[Window.Property(g.clock)]</label><visible>String.IsEmpty(Window.Property(g.score))</visible></control>
+<control type="label"><left>736</left><top>160</top><width>300</width><height>80</height><font>font52</font><textcolor>text</textcolor><align>center</align><label>$INFO[Window.Property(g.score)]</label><visible>!String.IsEmpty(Window.Property(g.score))</visible></control>
+<control type="label"><left>736</left><top>250</top><width>300</width><height>40</height><font>font10</font><textcolor>text2</textcolor><align>center</align><label>$INFO[Window.Property(g.countdown)]</label><visible>String.IsEmpty(Window.Property(g.live))</visible></control>
+<control type="label"><left>736</left><top>250</top><width>300</width><height>40</height><font>font12_bold</font><textcolor>FFE5534B</textcolor><align>center</align><label>$INFO[Window.Property(g.countdown)]</label><visible>!String.IsEmpty(Window.Property(g.live))</visible></control>
+<control type="button" id="321"><left>96</left><top>96</top><width>640</width><height>125</height><label></label><texturefocus border="20" colordiffuse="FFE5534B">rr20_edge.png</texturefocus><texturenofocus colordiffuse="00FFFFFF">white.png</texturenofocus><onright>323</onright><ondown>322</ondown><onup>321</onup><visible>String.IsEqual(Window.Property(g.layout),teams)</visible></control><control type="button" id="322"><left>96</left><top>221</top><width>640</width><height>125</height><label></label><texturefocus border="20" colordiffuse="FFE5534B">rr20_edge.png</texturefocus><texturenofocus colordiffuse="00FFFFFF">white.png</texturenofocus><onright>323</onright><onup>321</onup><ondown condition="!String.IsEmpty(Window.Property(g.ch1name))">9300</ondown><ondown>9310</ondown><visible>String.IsEqual(Window.Property(g.layout),teams)</visible></control><control type="label"><left>96</left><top>366</top><width>940</width><height>36</height><font>font10_bold</font><textcolor>text4</textcolor><label>$INFO[Window.Property(g.t.watch)]</label><visible>!String.IsEmpty(Window.Property(g.ch1name))</visible></control>
 <control type="label"><left>96</left><top>366</top><width>940</width><height>36</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(g.t.nochan)]</label><visible>String.IsEmpty(Window.Property(g.ch1name))</visible></control>
-<control type="grouplist" id="9300"><left>96</left><top>406</top><width>940</width><height>250</height><orientation>vertical</orientation><itemgap>6</itemgap><onright>323</onright><ondown>9310</ondown>
+<control type="grouplist" id="9300"><left>96</left><top>406</top><width>940</width><height>250</height><orientation>vertical</orientation><itemgap>6</itemgap><onright>323</onright><onup>322</onup><ondown>9310</ondown>
 <control type="button" id="311"><width>940</width><height>56</height><font>font10_bold</font><textoffsetx>24</textoffsetx>
 <label>$INFO[Window.Property(g.ch1name)]</label><label2>$INFO[Window.Property(g.ch1sub)]</label2>
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
@@ -58,19 +61,13 @@
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.ch4name))</visible></control>
 </control>
-<control type="grouplist" id="9310"><left>96</left><top>676</top><width>940</width><height>60</height><orientation>horizontal</orientation><itemgap>6</itemgap><onup>9300</onup><onright>323</onright>
+<control type="grouplist" id="9310"><left>96</left><top>676</top><width>940</width><height>60</height><orientation>horizontal</orientation><itemgap>6</itemgap><onup condition="!String.IsEmpty(Window.Property(g.ch1name))">9300</onup><onup>322</onup><onright>323</onright>
 <control type="button" id="332"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.remindtext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.remindtext))</visible></control>
 <control type="button" id="333"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.rectext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.rectext))</visible></control>
-<control type="button" id="321"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
-<label>$INFO[Window.Property(g.followhome)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
-<visible>!String.IsEmpty(Window.Property(g.followhome))</visible></control>
-<control type="button" id="322"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
-<label>$INFO[Window.Property(g.followaway)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
-<visible>!String.IsEmpty(Window.Property(g.followaway))</visible></control>
 <control type="button" id="331"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.fixtext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.fixtext))</visible></control>

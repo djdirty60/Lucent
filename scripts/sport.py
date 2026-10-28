@@ -616,6 +616,7 @@ class Sport(xbmcgui.WindowXML):
             props["hsub"] = props["asub"] = ""
             props["info1"] = ev.get("venue", "")
             props["info2"] = ev.get("round", "")
+            props["score"] = (f"{props['hscore']} – {props['ascore']}" if props.get("hscore") != "" and props.get("ascore") != "" and ev["state"] in ("in", "post") else "")
         else:
             props["info1"] = ev.get("venue", "")
             props["info2"] = ev.get("round", "")
