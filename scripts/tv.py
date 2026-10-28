@@ -179,4 +179,7 @@ def open_window():
 
 
 if __name__ == "__main__":
-    open_window()
+    if len(sys.argv) > 1 and sys.argv[1] == "list":
+        open_window()                       # the old channel list
+    else:
+        xbmc.executebuiltin("ActivateWindow(TVGuide)")
