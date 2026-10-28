@@ -96,9 +96,9 @@
             <focusedchannellayout height="70" width="500">
                 <control type="image"><left>0</left><top>2</top><width>490</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse></control>
                 <control type="image"><left>0</left><top>2</top><width>490</width><height>64</height><texture border="20">rr20_edge.png</texture><colordiffuse>FFE5534B</colordiffuse></control>
-                <control type="label"><left>14</left><top>2</top><width>80</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.ChannelNumberLabel]</label></control>
+                <control type="label"><left>14</left><top>2</top><width>80</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[Container(50).ListItem.ChannelNumberLabel]</label></control>
                 <control type="image"><left>96</left><top>10</top><width>92</width><height>48</height><aspectratio>keep</aspectratio><texture>$INFO[ListItem.Icon]</texture></control>
-                <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.ChannelName]</label></control>
+                <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[Container(50).ListItem.ChannelName]</label></control>
             </focusedchannellayout>
             <itemlayout height="70" width="60">
                 <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
