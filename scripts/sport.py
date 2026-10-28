@@ -268,6 +268,9 @@ class Sport(xbmcgui.WindowXML):
             self.set_recording()
         elif cid == 334:
             self.stop_preview()
+        elif cid in (350, 351):
+            if epg.active()[0]:          # the TV window: OK makes the channel full screen
+                epg.fullscreen()
         elif cid in HERO_CHANNELS:
             self.preview_channel(CHANNEL_BUTTONS[cid])
         elif cid in CHANNEL_BUTTONS:
@@ -606,7 +609,7 @@ class Sport(xbmcgui.WindowXML):
     def tint(self):
         """The background takes the colours of the game you are looking at."""
         fid = self.getFocusId()
-        cid = HERO_LIST if fid in HERO_CHANNELS else fid
+        cid = HERO_LIST if fid in HERO_CHANNELS or fid == 350 else fid
         if self.view == "all":
             cid = LIST
         elif cid != HERO_LIST and cid not in SECTION_LISTS:
@@ -1628,6 +1631,12 @@ class GameInfo(xbmcgui.WindowXMLDialog):
     def onClick(self, cid):
         if cid in (311, 312, 313, 314):
             self.preview(cid - 310)
+            return
+        if cid == 350:
+            if epg.active()[0]:
+                self.result = "full"
+                self.alive = False
+                self.close()
             return
         if cid == 334:
             epg.stop()
