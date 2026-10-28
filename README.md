@@ -90,7 +90,7 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download [`repository.lucent.zip`](https://github.com/djdirty60/Skin-Nuvio-Arc/raw/main/repository.lucent.zip) and copy it to your device, for example to the *Download* folder.
+1. Download [`repository.lucent.zip`](https://github.com/djdirty60/Lucent/raw/main/repository.lucent.zip) and copy it to your device, for example to the *Download* folder.
 2. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
 3. Go to **Add-ons → Install from zip file** and choose `repository.lucent.zip`.
 4. Go to **Add-ons → Install from repository → Lucent Repository → Look and feel → Skin → Lucent** and choose **Install**.
