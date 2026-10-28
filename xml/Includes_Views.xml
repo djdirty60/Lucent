@@ -606,9 +606,12 @@
                 <orientation>horizontal</orientation>
                 <focusposition>0</focusposition>
                 <preloaditems>2</preloaditems>
-                <onup>9050</onup>
+                <onup condition="Integer.IsEqual(Container(51).CurrentItem,1)">9050</onup>
+                <onup>Action(PageUp)</onup>
+                <onup>Action(PageUp)</onup>
                 <onleft>9050</onleft>
-                <ondown>9050</ondown>
+                <ondown>Action(PageDown)</ondown>
+                <ondown>Action(PageDown)</ondown>
                 <pagecontrol>60</pagecontrol>
                 <viewtype label="$LOCALIZE[31032]">wrap</viewtype>
                 <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(seasons)</visible>
@@ -1003,9 +1006,12 @@
                 <orientation>horizontal</orientation>
                 <focusposition>0</focusposition>
                 <preloaditems>2</preloaditems>
-                <onup>9050</onup>
+                <onup condition="Integer.IsEqual(Container(53).CurrentItem,1)">9050</onup>
+                <onup>Action(PageUp)</onup>
+                <onup>Action(PageUp)</onup>
                 <onleft>9050</onleft>
-                <ondown>9050</ondown>
+                <ondown>Action(PageDown)</ondown>
+                <ondown>Action(PageDown)</ondown>
                 <pagecontrol>60</pagecontrol>
                 <viewtype label="$LOCALIZE[31034]">wrap</viewtype>
                 <visible>Container.Content(episodes) | Container.Content(movies) | Container.Content(tvshows) | Container.Content(videos) | Container.Content(musicvideos)</visible>
