@@ -20,7 +20,7 @@
                 <height>1080</height>
                 <aspectratio>scale</aspectratio>
                 <texture background="true">$INFO[Container(200).ListItem.Property(backdrop)]</texture>
-                <colordiffuse>66FFFFFF</colordiffuse>
+                <colordiffuse>3DFFFFFF</colordiffuse>
                 <visible>String.IsEqual(Window.Property(agenda.view),list)</visible>
                 <animation effect="fade" start="0" end="100" time="400">VisibleChange</animation>
             </control>
@@ -31,7 +31,7 @@
                 <height>1080</height>
                 <aspectratio>scale</aspectratio>
                 <texture background="true">$INFO[Container(430).ListItem.Property(backdrop)]</texture>
-                <colordiffuse>66FFFFFF</colordiffuse>
+                <colordiffuse>3DFFFFFF</colordiffuse>
                 <visible>String.IsEqual(Window.Property(agenda.view),week)</visible>
                 <animation effect="fade" start="0" end="100" time="400">VisibleChange</animation>
             </control>
@@ -316,30 +316,30 @@
                     <left>1270</left>
                     <top>716</top>
                     <width>600</width>
-                    <height>60</height>
+                    <height>64</height>
                     <orientation>horizontal</orientation>
                     <itemgap>12</itemgap>
                     <onleft>200</onleft>
                     <onup>200</onup>
                     <control type="button" id="302">
                         <width>auto</width>
-                        <height>60</height>
+                        <height>64</height>
                         <font>font10_bold</font>
-                        <textoffsetx>26</textoffsetx>
+                        <textoffsetx>22</textoffsetx>
                         <label>$INFO[Container(200).ListItem.Property(openText)]</label>
                     </control>
                     <control type="button" id="301">
                         <width>auto</width>
-                        <height>60</height>
+                        <height>64</height>
                         <font>font10_bold</font>
-                        <textoffsetx>26</textoffsetx>
+                        <textoffsetx>22</textoffsetx>
                         <label>$INFO[Container(200).ListItem.Property(bellText)]</label>
                     </control>
                     <control type="button" id="303">
                         <width>auto</width>
-                        <height>60</height>
+                        <height>64</height>
                         <font>font10_bold</font>
-                        <textoffsetx>26</textoffsetx>
+                        <textoffsetx>22</textoffsetx>
                         <label>$INFO[Window.Property(agenda.t.unfollow)]</label>
                     </control>
                 </control>
@@ -939,18 +939,18 @@
             </control>
             <control type="image">
                 <left>1316</left>
-                <top>172</top>
+                <top>168</top>
                 <width>130</width>
-                <height>60</height>
+                <height>64</height>
                 <texture border="32">pill64.png</texture>
                 <colordiffuse>99E5534B</colordiffuse>
                 <visible>!String.IsEmpty(Window.Property(agenda.chip.all))</visible>
             </control>
             <control type="button" id="421">
                 <left>1316</left>
-                <top>172</top>
+                <top>168</top>
                 <width>130</width>
-                <height>60</height>
+                <height>64</height>
                 <font>font10_bold</font>
                 <textoffsetx>0</textoffsetx>
                 <align>center</align>
@@ -962,18 +962,18 @@
             </control>
             <control type="image">
                 <left>1460</left>
-                <top>172</top>
+                <top>168</top>
                 <width>150</width>
-                <height>60</height>
+                <height>64</height>
                 <texture border="32">pill64.png</texture>
                 <colordiffuse>99E5534B</colordiffuse>
                 <visible>!String.IsEmpty(Window.Property(agenda.chip.tv))</visible>
             </control>
             <control type="button" id="422">
                 <left>1460</left>
-                <top>172</top>
+                <top>168</top>
                 <width>150</width>
-                <height>60</height>
+                <height>64</height>
                 <font>font10_bold</font>
                 <textoffsetx>0</textoffsetx>
                 <align>center</align>
@@ -985,18 +985,18 @@
             </control>
             <control type="image">
                 <left>1624</left>
-                <top>172</top>
+                <top>168</top>
                 <width>130</width>
-                <height>60</height>
+                <height>64</height>
                 <texture border="32">pill64.png</texture>
                 <colordiffuse>99E5534B</colordiffuse>
                 <visible>!String.IsEmpty(Window.Property(agenda.chip.movie))</visible>
             </control>
             <control type="button" id="423">
                 <left>1624</left>
-                <top>172</top>
+                <top>168</top>
                 <width>130</width>
-                <height>60</height>
+                <height>64</height>
                 <font>font10_bold</font>
                 <textoffsetx>0</textoffsetx>
                 <align>center</align>
@@ -1046,16 +1046,16 @@
                 <left>150</left>
                 <top>534</top>
                 <width>1200</width>
-                <height>88</height>
+                <height>84</height>
                 <font>font_body</font>
                 <textcolor>text2</textcolor>
                 <label>$INFO[Container(430).ListItem.Property(plot)]</label>
             </control>
             <control type="button" id="431">
                 <left>150</left>
-                <top>652</top>
+                <top>648</top>
                 <width>300</width>
-                <height>56</height>
+                <height>64</height>
                 <font>font10_bold</font>
                 <textoffsetx>0</textoffsetx>
                 <align>center</align>
