@@ -63,6 +63,7 @@
                         <height>76</height>
                         <font>font_label_bold</font>
                         <textcolor>text2</textcolor>
+                        <selectedcolor>text2</selectedcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                     <control type="image">
@@ -100,6 +101,7 @@
                         <height>76</height>
                         <font>font_label_bold</font>
                         <textcolor>on_focus</textcolor>
+                        <selectedcolor>on_focus</selectedcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                     <control type="image">
@@ -144,6 +146,7 @@
                         <height>48</height>
                         <font>font_label_bold</font>
                         <textcolor>text2</textcolor>
+                        <selectedcolor>text2</selectedcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                     <control type="label">
@@ -153,6 +156,7 @@
                         <height>40</height>
                         <font>font10</font>
                         <textcolor>text4</textcolor>
+                        <selectedcolor>text4</selectedcolor>
                         <label>$INFO[ListItem.Label2]</label>
                     </control>
                     <control type="image">
@@ -189,7 +193,17 @@
                         <width>76</width>
                         <height>76</height>
                         <aspectratio>keep</aspectratio>
+                        <texture background="true" colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                        <visible>String.StartsWith(ListItem.Icon,icons/) + Control.HasFocus(6)</visible>
+                    </control>
+                    <control type="image">
+                        <left>18</left>
+                        <top>14</top>
+                        <width>76</width>
+                        <height>76</height>
+                        <aspectratio>keep</aspectratio>
                         <texture background="true">$INFO[ListItem.Icon]</texture>
+                        <visible>!String.StartsWith(ListItem.Icon,icons/) + Control.HasFocus(6)</visible>
                     </control>
                     <control type="label">
                         <left>108</left>
@@ -198,6 +212,7 @@
                         <height>48</height>
                         <font>font_label_bold</font>
                         <textcolor>on_focus</textcolor>
+                        <selectedcolor>on_focus</selectedcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                     <control type="label">
@@ -207,6 +222,7 @@
                         <height>40</height>
                         <font>font10</font>
                         <textcolor>FF3C4A56</textcolor>
+                        <selectedcolor>FF3C4A56</selectedcolor>
                         <label>$INFO[ListItem.Label2]</label>
                     </control>
                     <control type="image">

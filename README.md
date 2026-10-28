@@ -87,11 +87,11 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.3.0.zip` from the [Releases page](../../releases/latest).
+1. Download `skin.nuvioarc-1.3.1.zip` from the [Releases page](../../releases/latest).
    Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
 2. Copy the file to your device, for example to the *Download* folder.
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.3.0.zip`.
+4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.3.1.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Nuvio Arc**.)
 
@@ -115,10 +115,12 @@ From then on new versions arrive automatically (Kodi's default: **Settings → S
      - one of your **Trakt lists** (liked or your own),
      - something from your **Kodi library**,
      - **any folder of any video add-on** (choose *Browse an add-on…* and walk to the folder you want),
+     - your favourites, add-ons or a playlist,
+     - more Kodi library lists (random, unwatched, in progress, top rated, sets, genres, music),
      - or a path you type yourself.
      Every widget can be shown as **posters** or **landscape** cards (up to 10 per tab).
    - **Name** and **Icon**.
-   - **When clicked** – show the widgets of this tab, open a Kodi screen, open a folder of an add-on, start an add-on, open one of your favourites, or a Kodi command you type yourself.
+   - **When clicked** – show the widgets of this tab, open a Kodi screen (Seren, library, music, add-ons, every settings page, power options), open a folder of an add-on, start an add-on, open one of your favourites, or a Kodi command you type yourself.
    - **Move up / Move down**, **Make this the start tab**, **Remove this tab**.
 3. **+ Add a tab** adds a new tab (up to 12).
 4. **Restore the default menu** puts everything back the way it was.

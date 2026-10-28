@@ -10,6 +10,7 @@ Everything is stored in skin strings (see gen_home.py for the names), so Home.xm
 import json
 import re
 import sys
+import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -118,7 +119,7 @@ T = {
 
 
 def tr(key, *args):
-    text = T[key][1 if _NL else 0]
+    text = (key if isinstance(key, tuple) else T[key])[1 if _NL else 0]
     return text.format(*args) if args else text
 
 
@@ -143,6 +144,15 @@ def videos(path):
     return f"ActivateWindow(Videos,{path},return)"
 
 
+def xsp(content, rules=None, order="title"):
+    """A smart-playlist filter for a library path (videodb://…?xsp=…)."""
+    data = {"type": content, "order": {"direction": "descending" if order in ("rating", "dateadded", "lastplayed") else "ascending",
+                                       "method": order}}
+    if rules:
+        data["rules"] = {"and": [{"field": f, "operator": op, "value": [v] if v else []} for f, op, v in rules]}
+    return urllib.parse.quote(json.dumps(data, separators=(",", ":")))
+
+
 WIDGETS_SEREN = [
     ("w_nextup", seren("action=showsNextUp"), "land"),
     ("w_ondeck", seren("action=onDeckMovies"), "land"),
@@ -157,6 +167,25 @@ WIDGETS_SEREN = [
     ("w_wl_m", seren("action=moviesMyWatchlist"), "poster"),
     ("w_wl_s", seren("action=showsMyWatchlist"), "poster"),
     ("w_upcoming", seren("action=myUpcomingEpisodes"), "land"),
+    (("Trending movies (recent)", "Trending films (recent)"), seren("action=movieTrendingRecent"), "poster"),
+    (("Popular movies (recent)", "Populaire films (recent)"), seren("action=moviePopularRecent"), "poster"),
+    (("Trending shows (recent)", "Trending series (recent)"), seren("action=showsTrendingRecent"), "poster"),
+    (("Popular shows (recent)", "Populaire series (recent)"), seren("action=showsPopularRecent"), "poster"),
+    (("Recommended movies", "Aanbevolen films"), seren("action=moviesRecommended"), "poster"),
+    (("Recommended shows", "Aanbevolen series"), seren("action=showsRecommended"), "poster"),
+    (("Most played movies", "Meest afgespeelde films"), seren("action=genericEndpoint&mediatype=movies&endpoint=played"), "poster"),
+    (("Most watched movies", "Meest bekeken films"), seren("action=genericEndpoint&mediatype=movies&endpoint=watched"), "poster"),
+    (("Most collected movies", "Meest verzamelde films"), seren("action=genericEndpoint&mediatype=movies&endpoint=collected"), "poster"),
+    (("Most played shows", "Meest afgespeelde series"), seren("action=genericEndpoint&mediatype=shows&endpoint=played"), "poster"),
+    (("Most watched shows", "Meest bekeken series"), seren("action=genericEndpoint&mediatype=shows&endpoint=watched"), "poster"),
+    (("Updated movies", "Bijgewerkte films"), seren("action=moviesUpdated"), "poster"),
+    (("Updated shows", "Bijgewerkte series"), seren("action=showsUpdated"), "poster"),
+    (("My movies (collection)", "Mijn films (collectie)"), seren("action=moviesMyCollection"), "poster"),
+    (("My shows (collection)", "Mijn series (collectie)"), seren("action=showsMyCollection"), "poster"),
+    (("Recently watched shows", "Recent bekeken series"), seren("action=showsRecentlyWatched"), "poster"),
+    (("My recent episodes", "Mijn recente afleveringen"), seren("action=showsMyRecentEpisodes"), "land"),
+    (("Shows in progress", "Series die je kijkt"), seren("action=showsMyProgress"), "poster"),
+    (("Watched movies", "Bekeken films"), seren("action=myWatchedMovies"), "poster"),
 ]
 WIDGETS_LIBRARY = [
     ("w_recent_m", "videodb://recentlyaddedmovies/", "poster"),
@@ -164,26 +193,104 @@ WIDGETS_LIBRARY = [
     ("w_inprog_s", "videodb://inprogresstvshows/", "poster"),
     ("w_all_m", "videodb://movies/titles/", "poster"),
     ("w_all_s", "videodb://tvshows/titles/", "poster"),
+    (("Random movies", "Willekeurige films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="random"), "poster"),
+    (("Unwatched movies", "Niet bekeken films"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("playcount", "is", "0")], order="dateadded"), "poster"),
+    (("Movies in progress", "Films die je kijkt"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
+    (("Top rated movies", "Best beoordeelde films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="rating"), "poster"),
+    (("Random shows", "Willekeurige series"), "videodb://tvshows/titles/?xsp=" + xsp("tvshows", order="random"), "poster"),
+    (("Unwatched shows", "Niet bekeken series"), "videodb://tvshows/titles/?xsp=" + xsp("tvshows", rules=[("playcount", "is", "0")], order="dateadded"), "poster"),
+    (("Movie sets", "Filmreeksen"), "videodb://movies/sets/", "poster"),
+    (("Movie genres", "Filmgenres"), "videodb://movies/genres/", "land"),
+    (("TV genres", "Seriegenres"), "videodb://tvshows/genres/", "land"),
+    (("Music videos", "Muziekvideo's"), "videodb://musicvideos/titles/", "land"),
+    (("Recently added albums", "Recent toegevoegde albums"), "musicdb://recentlyaddedalbums/", "poster"),
+    (("Recently played albums", "Recent afgespeelde albums"), "musicdb://recentlyplayedalbums/", "poster"),
+    (("Most played albums", "Meest afgespeelde albums"), "musicdb://top100/albums/", "poster"),
+    (("Random albums", "Willekeurige albums"), "musicdb://albums/?xsp=" + xsp("albums", order="random"), "poster"),
+    (("Artists", "Artiesten"), "musicdb://artists/", "poster"),
+    (("Video sources", "Videobronnen"), "sources://video/", "land"),
 ]
-KODI_SCREENS = [
-    ("k_seren_search", "icons/search.png", videos(seren("action=searchMenu"))),
-    ("k_seren_movies", "icons/movies.png", videos(seren("action=moviesHome"))),
-    ("k_seren_shows", "icons/tv.png", videos(seren("action=showsHome"))),
-    ("k_seren_mymovies", "icons/movies.png", videos(seren("action=myMovies"))),
-    ("k_seren_myshows", "icons/tv.png", videos(seren("action=myShows"))),
-    ("k_library", "icons/library.png", videos("videodb://")),
-    ("k_lib_m", "icons/movies.png", videos("videodb://movies/titles/")),
-    ("k_lib_s", "icons/tv.png", videos("videodb://tvshows/titles/")),
-    ("k_files", "icons/files.png", videos("sources://video/")),
-    ("k_vaddons", "icons/addons.png", videos("addons://sources/video/")),
-    ("k_addons", "icons/addons.png", "ActivateWindow(AddonBrowser)"),
-    ("k_favs", "icons/favourites.png", "ActivateWindow(favouritesbrowser)"),
-    ("k_music", "icons/music.png", "ActivateWindow(Music)"),
-    ("k_pictures", "icons/pictures.png", "ActivateWindow(Pictures)"),
-    ("k_settings", "icons/settings.png", "ActivateWindow(Settings)"),
-    ("k_skinsettings", "icons/settings.png", "ActivateWindow(SkinSettings)"),
-    ("k_power", "icons/power.png", "ActivateWindow(ShutdownMenu)"),
+WIDGETS_OTHER = [
+    (("Favourites", "Favorieten"), "favourites://", "land"),
+    (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
+    (("Program add-ons", "Programma-add-ons"), "addons://sources/executable/", "poster"),
+    (("Music add-ons", "Muziek-add-ons"), "addons://sources/audio/", "poster"),
+    (("Recently updated add-ons", "Recent bijgewerkte add-ons"), "addons://recently_updated/", "poster"),
 ]
+G = lambda en, nl: (en, nl)  # noqa: E731 - inline translation
+ACTION_GROUPS = [
+    (G("Seren", "Seren"), "icons/play.png", [
+        ("k_seren_search", "icons/search.png", videos(seren("action=searchMenu"))),
+        ("k_seren_movies", "icons/movies.png", videos(seren("action=moviesHome"))),
+        ("k_seren_shows", "icons/tv.png", videos(seren("action=showsHome"))),
+        ("k_seren_mymovies", "icons/movies.png", videos(seren("action=myMovies"))),
+        ("k_seren_myshows", "icons/tv.png", videos(seren("action=myShows"))),
+        (G("Seren · Trakt lists", "Seren · Trakt-lijsten"), "icons/trakt.png", videos(seren("action=myTraktLists&mediatype=movies"))),
+        (G("Seren · Tools", "Seren · Gereedschap"), "icons/settings.png", videos(seren("action=toolsMenu"))),
+        (G("Seren · Settings", "Seren · Instellingen"), "icons/settings.png", "Addon.OpenSettings(plugin.video.seren)"),
+    ]),
+    (G("Video library", "Videobibliotheek"), "icons/library.png", [
+        ("k_library", "icons/library.png", videos("videodb://")),
+        ("k_lib_m", "icons/movies.png", videos("videodb://movies/titles/")),
+        ("k_lib_s", "icons/tv.png", videos("videodb://tvshows/titles/")),
+        (G("Movie sets", "Filmreeksen"), "icons/movies.png", videos("videodb://movies/sets/")),
+        (G("Movie genres", "Filmgenres"), "icons/movies.png", videos("videodb://movies/genres/")),
+        (G("TV genres", "Seriegenres"), "icons/tv.png", videos("videodb://tvshows/genres/")),
+        (G("Recently added movies", "Recent toegevoegde films"), "icons/movies.png", videos("videodb://recentlyaddedmovies/")),
+        (G("Recently added episodes", "Recent toegevoegde afleveringen"), "icons/tv.png", videos("videodb://recentlyaddedepisodes/")),
+        (G("Shows in progress", "Series die je kijkt"), "icons/tv.png", videos("videodb://inprogresstvshows/")),
+        (G("Music videos", "Muziekvideo's"), "icons/music.png", videos("videodb://musicvideos/titles/")),
+        ("k_files", "icons/files.png", videos("sources://video/")),
+        (G("Video playlists", "Video-afspeellijsten"), "icons/list.png", videos("special://videoplaylists/")),
+        (G("Update video library", "Videobibliotheek bijwerken"), "icons/refresh.png", "UpdateLibrary(video)"),
+        (G("Clean video library", "Videobibliotheek opschonen"), "icons/refresh.png", "CleanLibrary(video)"),
+    ]),
+    (G("Music and pictures", "Muziek en foto's"), "icons/music.png", [
+        ("k_music", "icons/music.png", "ActivateWindow(Music)"),
+        (G("Artists", "Artiesten"), "icons/music.png", "ActivateWindow(Music,musicdb://artists/,return)"),
+        (G("Albums", "Albums"), "icons/music.png", "ActivateWindow(Music,musicdb://albums/,return)"),
+        (G("Songs", "Nummers"), "icons/music.png", "ActivateWindow(Music,musicdb://songs/,return)"),
+        (G("Music playlists", "Muziek-afspeellijsten"), "icons/list.png", "ActivateWindow(Music,special://musicplaylists/,return)"),
+        (G("Update music library", "Muziekbibliotheek bijwerken"), "icons/refresh.png", "UpdateLibrary(music)"),
+        ("k_pictures", "icons/pictures.png", "ActivateWindow(Pictures)"),
+    ]),
+    (G("Add-ons and favourites", "Add-ons en favorieten"), "icons/addons.png", [
+        ("k_addons", "icons/addons.png", "ActivateWindow(AddonBrowser)"),
+        ("k_vaddons", "icons/addons.png", videos("addons://sources/video/")),
+        (G("Program add-ons", "Programma-add-ons"), "icons/addons.png", "ActivateWindow(Programs,addons://sources/executable/,return)"),
+        (G("Music add-ons", "Muziek-add-ons"), "icons/music.png", "ActivateWindow(Music,addons://sources/audio/,return)"),
+        (G("Install from zip file", "Installeren vanuit zip-bestand"), "icons/download.png", "InstallFromZip"),
+        (G("Check for add-on updates", "Zoeken naar add-on-updates"), "icons/refresh.png", "UpdateAddonRepos"),
+        ("k_favs", "icons/favourites.png", "ActivateWindow(favouritesbrowser)"),
+    ]),
+    (G("Settings", "Instellingen"), "icons/settings.png", [
+        ("k_settings", "icons/settings.png", "ActivateWindow(Settings)"),
+        ("k_skinsettings", "icons/settings.png", "ActivateWindow(SkinSettings)"),
+        (G("Player", "Speler"), "icons/play.png", "ActivateWindow(PlayerSettings)"),
+        (G("Media", "Media"), "icons/library.png", "ActivateWindow(MediaSettings)"),
+        (G("Interface", "Interface"), "icons/view.png", "ActivateWindow(InterfaceSettings)"),
+        (G("Services", "Diensten"), "icons/globe.png", "ActivateWindow(ServiceSettings)"),
+        (G("System", "Systeem"), "icons/settings.png", "ActivateWindow(SystemSettings)"),
+        (G("Profiles", "Profielen"), "icons/user.png", "ActivateWindow(Profiles)"),
+        (G("File manager", "Bestandsbeheer"), "icons/files.png", "ActivateWindow(FileManager)"),
+        (G("System information", "Systeeminformatie"), "icons/info.png", "ActivateWindow(SystemInfo)"),
+        (G("Event log", "Gebeurtenissenlogboek"), "icons/list.png", "ActivateWindow(EventLog)"),
+        (G("Screen calibration", "Beeld kalibreren"), "icons/view.png", "ActivateWindow(ScreenCalibration)"),
+    ]),
+    (G("Power and system", "Afsluiten en systeem"), "icons/power.png", [
+        ("k_power", "icons/power.png", "ActivateWindow(ShutdownMenu)"),
+        (G("Quit Kodi", "Kodi afsluiten"), "icons/power.png", "Quit"),
+        (G("Restart device", "Apparaat herstarten"), "icons/refresh.png", "Reboot"),
+        (G("Shut down device", "Apparaat uitzetten"), "icons/power.png", "Powerdown"),
+        (G("Sleep", "Slaapstand"), "icons/power.png", "Suspend"),
+        (G("Start screensaver", "Schermbeveiliging starten"), "icons/eye.png", "ActivateScreensaver"),
+        (G("Log off profile", "Profiel afmelden"), "icons/user.png", "System.LogOff"),
+        (G("Reload skin", "Skin herladen"), "icons/refresh.png", "ReloadSkin()"),
+    ]),
+]
+# flat list, also used to describe an action
+KODI_SCREENS = [entry for _g, _i, entries in ACTION_GROUPS for entry in entries]
+
 ICONS = ["home", "search", "movies", "tv", "library", "star", "trakt", "favourites", "list", "eye", "play",
          "trailer", "calendar", "download", "addons", "folder", "files", "music", "pictures", "globe", "user",
          "bookmark", "info", "settings", "power"]
@@ -248,6 +355,7 @@ class Menu:
                                     "style": self._read(f"nuvio.tab{t}.w{w}.style") or "poster"})
             self.tabs.append({"label": label, "icon": self._read(f"nuvio.tab{t}.icon"),
                               "action": self._read(f"nuvio.tab{t}.action"), "widgets": widgets,
+                              "actionlabel": self._read(f"nuvio.tab{t}.actionlabel"),
                               "slot": t})
         # remember the start tab by object, so it follows moves
         start_slot = self._read("nuvio.hometab")
@@ -286,6 +394,7 @@ class Menu:
             wanted[f"nuvio.tab{t}.label"] = tab["label"] if tab else ""
             wanted[f"nuvio.tab{t}.icon"] = tab["icon"] if tab else ""
             wanted[f"nuvio.tab{t}.action"] = tab["action"] if tab else ""
+            wanted[f"nuvio.tab{t}.actionlabel"] = tab.get("actionlabel", "") if tab else ""
             for w in range(1, NWIDGETS + 1):
                 wd = tab["widgets"][w - 1] if tab and w <= len(tab["widgets"]) else None
                 for p in ("label", "path", "style"):
@@ -393,6 +502,19 @@ def browse(heading):
     return None
 
 
+def pick_playlist():
+    found = []
+    for folder in ("special://profile/playlists/video/", "special://profile/playlists/mixed/", "special://profile/playlists/music/"):
+        files = jsonrpc("Files.GetDirectory", {"directory": folder, "media": "files"}).get("files", []) or []
+        found += [(clean(f.get("label")), f.get("file")) for f in files if f.get("file", "").endswith((".xsp", ".m3u", ".m3u8"))]
+    if not found:
+        xbmcgui.Dialog().ok(HEADING, tr(G("You have no playlists yet. Make one in Kodi under Videos → Playlists.",
+                                          "Je hebt nog geen afspeellijsten. Maak er een in Kodi via Video's → Afspeellijsten.")))
+        return None
+    choice = select(tr(G("Playlists", "Afspeellijsten")), [f[0] for f in found], True, ["icons/list.png"] * len(found))
+    return found[choice] if choice >= 0 else None
+
+
 def trakt_lists():
     if not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
         xbmcgui.Dialog().ok(HEADING, tr("no_seren"))
@@ -418,8 +540,10 @@ def trakt_lists():
 
 # ----------------------------------------------------------------------------- editors
 def pick_widget():
-    sources = [tr("src_seren"), tr("src_trakt"), tr("src_library"), tr("src_browse"), tr("src_type")]
-    icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png"]
+    sources = [tr("src_seren"), tr("src_trakt"), tr("src_library"), tr("src_browse"), tr("src_type"),
+               tr(G("Favourites and add-ons", "Favorieten en add-ons")), tr(G("A playlist…", "Een afspeellijst…"))]
+    icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png",
+             "icons/favourites.png", "icons/list.png"]
     source = select(tr("add_widget"), sources, True, icons)
     style = "poster"
     if source == 0:
@@ -441,6 +565,17 @@ def pick_widget():
         label = tr(key)
     elif source == 3:
         picked = browse(tr("src_browse"))
+        if not picked:
+            return None
+        label, path = picked
+    elif source == 5:
+        choice = select(sources[5], [tr(k) for k, _p, _s in WIDGETS_OTHER])
+        if choice < 0:
+            return None
+        key, path, style = WIDGETS_OTHER[choice]
+        label = tr(key)
+    elif source == 6:
+        picked = pick_playlist()
         if not picked:
             return None
         label, path = picked
@@ -495,13 +630,26 @@ def edit_widgets(menu, tab):
         menu.save()
 
 
-def describe_action(action):
+def addon_title(addon_id):
+    return xbmc.getInfoLabel(f"System.AddonTitle({addon_id})") or addon_id
+
+
+def describe_action(action, label=""):
+    """A short, readable description of what a tab opens."""
     if action == SHOW_WIDGETS:
         return tr("act_widgets")
     for key, _icon, act in KODI_SCREENS:
         if act == action:
             return tr(key)
-    return action
+    if label:
+        return label
+    plugin = re.search(r"plugin://([^/?,)]+)", action)
+    if plugin:
+        return tr(G("Folder in {0}", "Map in {0}"), clean(addon_title(plugin.group(1))))
+    run = re.match(r"RunAddon\(([^)]+)\)", action)
+    if run:
+        return tr(G("Start {0}", "{0} starten"), clean(addon_title(run.group(1))))
+    return action if len(action) < 50 else action[:47] + "…"
 
 
 def pick_action():
@@ -511,10 +659,14 @@ def pick_action():
     choice = select(tr("action"), options, True, icons)
     if choice == 0:
         return SHOW_WIDGETS, None
-    if choice == 1:
-        pick = select(tr("act_window"), [tr(k) for k, _i, _a in KODI_SCREENS], True, [i for _k, i, _a in KODI_SCREENS])
+    while choice == 1:
+        group = select(tr("act_window"), [tr(g) for g, _i, _e in ACTION_GROUPS], True, [i for _g, i, _e in ACTION_GROUPS])
+        if group < 0:
+            return None, None
+        entries = ACTION_GROUPS[group][2]
+        pick = select(tr(ACTION_GROUPS[group][0]), [tr(k) for k, _i, _a in entries], True, [i for _k, i, _a in entries])
         if pick >= 0:
-            key, icon, action = KODI_SCREENS[pick]
+            key, icon, action = entries[pick]
             return action, (tr(key).split(" · ")[-1], icon)
     if choice == 2:
         picked = browse(tr("act_folder"))
@@ -562,7 +714,7 @@ def edit_tab(menu, tab):
     while True:
         start = menu.start_tab() is tab
         actions = [f"{tr('manage_widgets')}  ({len(tab['widgets'])})", f"{tr('rename')}: {tab['label']}",
-                   tr("icon"), f"{tr('action')}: {describe_action(tab['action'])}", tr("up"), tr("down")]
+                   tr("icon"), f"{tr('action')}: {describe_action(tab['action'], tab.get('actionlabel', ''))}", tr("up"), tr("down")]
         if not start:
             actions.append(tr("make_start"))
         actions.append(tr("remove_tab"))
@@ -579,10 +731,11 @@ def edit_tab(menu, tab):
         elif choice == 2:
             tab["icon"] = pick_icon(tab["icon"])
         elif choice == 3:
-            action, _suggest = pick_action()
+            action, suggest = pick_action()
             if not action:
                 continue
             tab["action"] = action
+            tab["actionlabel"] = suggest[0] if suggest else ""
         elif choice == 4 and index > 0:
             menu.tabs[index - 1], menu.tabs[index] = tab, menu.tabs[index - 1]
         elif choice == 5 and index < len(menu.tabs) - 1:
@@ -609,7 +762,8 @@ def add_tab(menu):
         return
     label, icon = suggest or (tr("new_tab"), "icons/star.png")
     label = keyboard(tr("rename"), label) or label
-    tab = {"label": label, "icon": icon, "action": action, "widgets": [], "slot": 0}
+    tab = {"label": label, "icon": icon, "action": action, "actionlabel": suggest[0] if suggest else "",
+           "widgets": [], "slot": 0}
     menu.tabs.append(tab)
     menu.save()
     edit_tab(menu, tab)
@@ -626,7 +780,7 @@ def editor():
         for tab in menu.tabs:
             labels.append(tab["label"] + (f"  ·  {tr('start')}" if tab is start else ""))
             n = len(tab["widgets"])
-            label2s.append(f"{describe_action(tab['action'])}  ·  " + (tr("widgets_n", n) if n else tr("no_widgets")))
+            label2s.append(f"{describe_action(tab['action'], tab.get('actionlabel', ''))}  ·  " + (tr("widgets_n", n) if n else tr("no_widgets")))
             icons.append(tab["icon"])
         labels += [tr("add_tab"), tr("reset")]
         label2s += ["", ""]
