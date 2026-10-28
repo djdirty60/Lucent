@@ -44,6 +44,8 @@
             <left>60</left><top>350</top><width>300</width><height>690</height>
             <orientation>vertical</orientation>
             <scrolltime tween="cubic" easing="out">200</scrolltime>
+            <animation effect="slide" start="0,0" end="-340,0" time="250" tween="cubic" easing="out" condition="!Control.HasFocus(11)">Conditional</animation>
+            <animation effect="fade" start="100" end="0" time="200" condition="!Control.HasFocus(11)">Conditional</animation>
             <onright>50</onright>
             <onleft>11</onleft>
             <onup>11</onup>
@@ -62,22 +64,24 @@
 
         <!-- ======== channels + timeline ======== -->
         <control type="epggrid" id="50">
-            <left>390</left>
+            <left>60</left>
             <top>340</top>
-            <width>1470</width>
+            <width>1800</width>
             <height>710</height>
             <orientation>vertical</orientation>
             <pagecontrol>60</pagecontrol>
             <scrolltime tween="cubic" easing="out">250</scrolltime>
-            <timeblocks>120</timeblocks>
+            <timeblocks>130</timeblocks>
             <minspertimeblock>1</minspertimeblock>
             <rulerunit>30</rulerunit>
+            <animation effect="slide" start="0,0" end="330,0" time="250" tween="cubic" easing="out" condition="Control.HasFocus(11)">Conditional</animation>
+            <animation effect="fade" start="100" end="35" time="250" condition="Control.HasFocus(11)">Conditional</animation>
             <onleft>11</onleft>
             <onback>SetFocus(11)</onback>
             <onright>60</onright>
             <onup>50</onup>
             <ondown>50</ondown>
-            <progresstexture border="3" colordiffuse="FFE5534B">white.png</progresstexture>
+            <progresstexture border="0,0,3,0">epg_now.png</progresstexture>
             <rulerlayout height="46" width="265">
                 <control type="label"><left>8</left><width>260</width><height>46</height><font>font10</font><textcolor>text3</textcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
             </rulerlayout>
