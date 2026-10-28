@@ -423,7 +423,7 @@ class Sport(xbmcgui.WindowXML):
         if live_all or coming_all:
             sections.append({"title": sc.t("liveup"), "sub": f"{len(live_all)} live" if live_all else "", "logo": SPORT_ICON,
                              "events": (live_all + coming_all)[:8]})
-        sections += [row for row in rows if row["events"]]
+        sections += rows                      # followed teams show up even without games (and without IPTV)
         for sec in sections:
             for e in sec["events"]:
                 by_id[e["id"]] = e
@@ -458,9 +458,12 @@ class Sport(xbmcgui.WindowXML):
                 self.setProperty(f"sport.sec{k + 1}.title", sec["title"])
                 self.setProperty(f"sport.sec{k + 1}.sub", sec["sub"])
                 self.setProperty(f"sport.sec{k + 1}.logo", sec["logo"] or SPORT_ICON)
-                self.setProperty(f"sport.sec{k + 1}.count", sc.t("n_games", len(evs)))
+                self.setProperty(f"sport.sec{k + 1}.count", sc.t("n_games", len(evs)) if evs else "")
                 self.setProperty(f"sport.sec{k + 1}.on", "1")
-                self.fill_list(cid, [self.event_item(ev, data) for ev in evs], keep.get(cid, 0))
+                cards = [self.event_item(ev, data) for ev in evs]
+                if not cards:
+                    cards = [listitem(sc.t("nogames"), "", isevent="1", league=sec["title"], lgicon=sec["logo"], foot="", hcol="66" + "3A4A5C", acol="66" + "3A4A5C")]
+                self.fill_list(cid, cards, keep.get(cid, 0))
             else:
                 self.setProperty(f"sport.sec{k + 1}.on", "")
                 self.fill_list(cid, [], 0)
