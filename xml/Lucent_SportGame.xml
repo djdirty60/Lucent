@@ -102,6 +102,9 @@
 <control type="button" id="333"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
 <label>$INFO[Window.Property(g.rectext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Window.Property(g.rectext))</visible></control>
+<control type="button" id="334"><width>auto</width><height>56</height><font>font_tiny</font><textoffsetx>14</textoffsetx>
+<label>$INFO[Window.Property(g.t.stoptext)]</label><focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
+<visible>!String.IsEmpty(Window.Property(g.preview))</visible></control>
 </control>
 <control type="group" id="9320"><left>96</left><top>780</top><control type="image"><left>0</left><top>0</top><width>460</width><height>256</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control><control type="image"><left>480</left><top>0</top><width>460</width><height>256</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control><control type="group"><visible>String.IsEqual(Window.Property(g.layout),teams)</visible><control type="label"><left>24</left><top>14</top><width>420</width><height>36</height><font>font_tiny</font><textcolor>text4</textcolor><label>$INFO[Window.Property(g.t.teamstats)]</label></control>
 <control type="label"><left>24</left><top>120</top><width>412</width><height>60</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(g.t.nodata)]</label><visible>String.IsEmpty(Window.Property(g.st1l))</visible></control>

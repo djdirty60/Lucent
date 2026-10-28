@@ -23,6 +23,7 @@ import sport_plan as plan
 WINDOW_XML = "Lucent_Sport.xml"
 ACTION_PREVIOUS_MENU = 10
 ACTION_NAV_BACK = 92
+ACTION_STOP = 13
 VIEW_BUTTONS = {101: "mine", 102: "all", 103: "tables", 104: "follow"}
 F_CHIPS, F_SEARCH, F_ORDER, F_MORE, F_SPORTS, F_COMPS, F_BTN, F_TEAMS = 520, 521, 522, 523, 530, 540, 550, 560
 SPORT_ORDER = ("soccer", "basketball", "football", "hockey", "baseball", "rugby", "racing", "golf", "tennis", "mma", "aussie")
@@ -162,9 +163,10 @@ class Sport(xbmcgui.WindowXML):
         if self.ready:
             return
         self.ready = True
-        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "previewhint", "fullhint", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
+        for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "previewhint", "fullhint", "stoptext", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
         self.check_pvr()
+        self.restore_preview()
         if not sc.all_cached():
             self.setProperty("sport.loadtitle", sc.t("loading_title"))
             self.setProperty("sport.loadtext", sc.t("loading_text"))
@@ -196,10 +198,10 @@ class Sport(xbmcgui.WindowXML):
             return
         if aid in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.closing = True
-            if getattr(self, "preview_cid", ""):      # a channel watched in the small window stops with the page
-                self.preview_cid = ""
-                xbmc.Player().stop()
-            self.close()
+            self.close()      # a channel in the TV window keeps playing until Stop channel is used
+            return
+        if aid == ACTION_STOP and epg.active()[0]:
+            self.stop_preview()
             return
         if self.getFocusId() == LEAGUE_LIST:
             self.table_token += 1
@@ -251,6 +253,8 @@ class Sport(xbmcgui.WindowXML):
             self.set_reminder()
         elif cid == RECORD_BUTTON:
             self.set_recording()
+        elif cid == 334:
+            self.stop_preview()
         elif cid in HERO_CHANNELS:
             self.preview_channel(CHANNEL_BUTTONS[cid])
         elif cid in CHANNEL_BUTTONS:
@@ -1000,13 +1004,24 @@ class Sport(xbmcgui.WindowXML):
         cid = item.getProperty(f"ch{n}cid") if item else ""
         if not cid:
             return
-        if getattr(self, "preview_cid", "") == str(cid) and xbmc.getCondVisibility("Player.HasVideo"):
-            xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+        if epg.active()[0] == str(cid):
+            epg.fullscreen()
             return
-        self.preview_cid = str(cid)
+        name = item.getProperty(f"ch{n}name")
+        epg.set_active(cid, name)
         self.setProperty("sport.preview", str(cid))
-        self.setProperty("sport.preview.name", item.getProperty(f"ch{n}name"))
+        self.setProperty("sport.preview.name", name)
         threading.Thread(target=self.start_preview, args=(cid,), daemon=True).start()
+
+    def restore_preview(self):
+        cid, name = epg.active()
+        self.setProperty("sport.preview", cid)
+        self.setProperty("sport.preview.name", name)
+
+    def stop_preview(self):
+        epg.stop()
+        self.setProperty("sport.preview", "")
+        self.setProperty("sport.preview.name", "")
 
     def start_preview(self, cid):
         """Start the channel behind this page (windowed). When Kodi cannot do that, play it and come back to this page."""
@@ -1554,6 +1569,10 @@ class GameInfo(xbmcgui.WindowXMLDialog):
                           ("scoring", sc.t("g_scoring")), ("nodata", sc.t("g_nodata")), ("showing", sc.t("g_showing")),
                           ("previewhint", sc.t("previewhint"))):
             self.setProperty(f"g.t.{key}", text)
+        self.setProperty("g.t.stoptext", sc.t("stoptext"))
+        cid, name = epg.active()
+        self.setProperty("g.preview", cid)
+        self.setProperty("g.preview.name", name)
         focus_first(self, (311, 332, 321, 322, 323, 331))
         threading.Thread(target=self.extra, daemon=True).start()
 
@@ -1572,17 +1591,23 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         cid = self.props.get(f"ch{n}cid")
         if not cid:
             return
-        if getattr(self, "preview_cid", "") == str(cid) and xbmc.getCondVisibility("Player.HasVideo"):
-            xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+        if epg.active()[0] == str(cid):
+            epg.fullscreen()
             return
-        self.preview_cid = str(cid)
+        name = self.props.get(f"ch{n}name", "")
+        epg.set_active(cid, name)
         self.setProperty("g.preview", str(cid))
-        self.setProperty("g.preview.name", self.props.get(f"ch{n}name", ""))
+        self.setProperty("g.preview.name", name)
         threading.Thread(target=self.parent.start_preview, args=(cid,), daemon=True).start()
 
     def onClick(self, cid):
         if cid in (311, 312, 313, 314):
             self.preview(cid - 310)
+            return
+        if cid == 334:
+            epg.stop()
+            self.setProperty("g.preview", "")
+            self.setProperty("g.preview.name", "")
             return
         if cid in (321, 322):
             # the club pop-up opens on top of this page, so the page stays where it is
@@ -1599,10 +1624,11 @@ class GameInfo(xbmcgui.WindowXMLDialog):
     def onAction(self, action):
         if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.alive = False
-            if getattr(self, "preview_cid", ""):      # a channel watched in the TV window stops with the page
-                self.preview_cid = ""
-                xbmc.Player().stop()
-            self.close()
+            self.close()      # the channel keeps playing
+        elif action.getId() == ACTION_STOP and epg.active()[0]:
+            epg.stop()
+            self.setProperty("g.preview", "")
+            self.setProperty("g.preview.name", "")
 
 
 def colour_of(side):

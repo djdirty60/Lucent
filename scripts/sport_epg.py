@@ -13,6 +13,7 @@ import re
 import time
 
 import xbmc
+import xbmcgui
 
 import agenda_core as ac
 import sport_core as sc
@@ -312,3 +313,36 @@ def play_windowed(cid):
 
 def play(cid):
     rpc("Player.Open", {"item": {"channelid": int(cid)}})
+
+
+# ---- the channel watched in the TV window (kept on the Kodi home window, so it survives leaving the page)
+def active():
+    """(channel id, name) of the channel playing from the sport pages, or ('', '') when nothing plays."""
+    home = xbmcgui.Window(10000)
+    cid = home.getProperty("lucent.sport.cid")
+    if cid and not xbmc.getCondVisibility("Player.HasVideo"):
+        clear_active()
+        return "", ""
+    return cid, home.getProperty("lucent.sport.name")
+
+
+def set_active(cid, name):
+    home = xbmcgui.Window(10000)
+    home.setProperty("lucent.sport.cid", str(cid))
+    home.setProperty("lucent.sport.name", name or "")
+
+
+def clear_active():
+    home = xbmcgui.Window(10000)
+    home.setProperty("lucent.sport.cid", "")
+    home.setProperty("lucent.sport.name", "")
+
+
+def fullscreen():
+    rpc("GUI.SetFullscreen", {"fullscreen": True})
+    xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+
+
+def stop():
+    clear_active()
+    xbmc.Player().stop()

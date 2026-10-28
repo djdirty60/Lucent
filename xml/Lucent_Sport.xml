@@ -158,6 +158,11 @@
 <focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
 <texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
 <visible>!String.IsEmpty(Container(200).ListItem.Property(rectext))</visible></control>
+<control type="button" id="334"><width>292</width><height>48</height><font>font_tiny</font>
+<textoffsetx>8</textoffsetx><align>center</align><label>$INFO[Window.Property(sport.t.stoptext)]</label>
+<focusedcolor>FFFFFFFF</focusedcolor><texturefocus border="20" colordiffuse="FFE5534B">rr20.png</texturefocus>
+<texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
+<visible>!String.IsEmpty(Window.Property(sport.preview))</visible></control>
 </control>
 <control type="label"><left>1340</left><top>756</top><width>580</width><height>30</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(sport.t.nochan)]</label><visible>String.IsEmpty(Container(200).ListItem.Property(ch1name))</visible></control>
 <control type="grouplist" id="9300"><left>1340</left><top>756</top><width>600</width><height>246</height><orientation>vertical</orientation><itemgap>5</itemgap><onleft>200</onleft><onup>9310</onup>
