@@ -8,44 +8,51 @@
         </include>
         <control type="group">
             <include>Anim_SlideLeft</include>
+        <include content="GlassPanel">
+            <param name="left">60</param>
+            <param name="top">80</param>
+            <param name="width">1800</param>
+            <param name="height">700</param>
+            <param name="body">panel</param>
+        </include>
             <control type="image">
-                <left>96</left>
-                <top>110</top>
+                <left>110</left>
+                <top>120</top>
                 <width>220</width>
                 <height>220</height>
                 <aspectratio>keep</aspectratio>
                 <texture diffuse="mask_square.png">$INFO[ListItem.Icon]</texture>
             </control>
             <control type="label">
-                <left>356</left>
-                <top>130</top>
-                <width>1400</width>
+                <left>370</left>
+                <top>140</top>
+                <width>1440</width>
                 <height>80</height>
                 <font>font52</font>
                 <label>$INFO[ListItem.AddonName]</label>
             </control>
             <control type="label">
-                <left>356</left>
-                <top>214</top>
-                <width>1400</width>
+                <left>370</left>
+                <top>224</top>
+                <width>1440</width>
                 <height>40</height>
                 <font>font13</font>
                 <textcolor>text3</textcolor>
                 <label>$INFO[ListItem.AddonCreator]$INFO[ListItem.AddonVersion,   ·   v,]$INFO[ListItem.AddonInstallDate,   ·   ,]</label>
             </control>
             <control type="label">
-                <left>356</left>
-                <top>262</top>
-                <width>1400</width>
+                <left>370</left>
+                <top>272</top>
+                <width>1440</width>
                 <height>40</height>
                 <font>font12</font>
                 <textcolor>amber</textcolor>
                 <label>$INFO[ListItem.AddonLifecycleDesc]</label>
             </control>
             <control type="textbox">
-                <left>96</left>
-                <top>370</top>
-                <width>1100</width>
+                <left>110</left>
+                <top>360</top>
+                <width>1180</width>
                 <height>300</height>
                 <font>font_body</font>
                 <textcolor>text2</textcolor>
@@ -53,18 +60,18 @@
                 <label>[B]$INFO[ListItem.AddonSummary][/B][CR][CR]$INFO[ListItem.AddonDescription]</label>
             </control>
             <control type="textbox">
-                <left>1260</left>
-                <top>370</top>
-                <width>560</width>
+                <left>1340</left>
+                <top>360</top>
+                <width>470</width>
                 <height>300</height>
                 <font>font10</font>
                 <textcolor>text4</textcolor>
                 <label>$INFO[ListItem.AddonNews]</label>
             </control>
             <control type="grouplist" id="9000">
-                <left>96</left>
-                <top>712</top>
-                <width>1728</width>
+                <left>110</left>
+                <top>688</top>
+                <width>1700</width>
                 <height>64</height>
                 <orientation>horizontal</orientation>
                 <itemgap>14</itemgap>
@@ -120,7 +127,7 @@
                     <visible>!String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
                 </control>
                 <control type="radiobutton" id="13">
-                    <width>470</width>
+                    <width>380</width>
                     <height>64</height>
                     <font>font_label_bold</font>
                     <textcolor>text</textcolor>
