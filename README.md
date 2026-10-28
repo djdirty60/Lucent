@@ -99,12 +99,6 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 Kodi also installs the YouTube add-on, which the skin uses for trailers.
 
-### Coming from the old name (Nuvio Arc)
-
-Lucent used to be called Nuvio Arc (add-on `skin.nuvioarc`). Lucent is now its own add-on, `skin.lucent`.
-If you had the old skin, Kodi updates it to a last version that installs Lucent and asks whether to switch.
-Choose **Yes**: on its first start Lucent takes over your menu, widgets and settings by itself.
-Afterwards you can uninstall the old skin (**Nuvio Arc (old – switch to Lucent)**) and the old repository (**Nuvio Arc Repository (old)**).
 
 ### Automatic updates
 
