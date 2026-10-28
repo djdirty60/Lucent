@@ -12,6 +12,10 @@
         <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
         <value>$INFO[ListItem.Icon]</value>
     </variable>
+    <variable name="ItemClearlogo">
+        <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>
+        <value>$INFO[ListItem.Art(tvshow.clearlogo)]</value>
+    </variable>
     <variable name="ItemLandscape">
         <value condition="String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
@@ -76,6 +80,7 @@
         <value condition="Control.HasFocus(112)">$LOCALIZE[31049]</value>
         <value condition="Control.HasFocus(113)">$LOCALIZE[31050]</value>
         <value condition="Control.HasFocus(114)">$LOCALIZE[31052]</value>
+        <value condition="Control.HasFocus(117)">$LOCALIZE[31187]</value>
         <value condition="Control.HasFocus(115)">$LOCALIZE[31056]</value>
         <value condition="Control.HasFocus(116)">$LOCALIZE[31053]</value>
     </variable>

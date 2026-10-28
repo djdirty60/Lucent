@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Nuvio Arc: helpers for the info page (DialogVideoInfo).
+"""Lucent: helpers for the info page (DialogVideoInfo).
 
 RunScript(special://skin/scripts/info.py,load)      fill the collection row and the studios
 RunScript(special://skin/scripts/info.py,lists)     choose: Seren library (Trakt collection), watchlist, own Trakt lists
@@ -19,7 +19,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
-HEADING = "Nuvio Arc"
+HEADING = "Lucent"
 SEREN_ID = "plugin.video.seren"
 SEREN = "plugin://plugin.video.seren/"
 TRAKT = "https://api.trakt.tv/"
@@ -70,13 +70,13 @@ def notify(text, icon=xbmcgui.NOTIFICATION_INFO):
 
 
 def log(text):
-    xbmc.log(f"[skin.nuvioarc] info.py: {text}", xbmc.LOGINFO)
+    xbmc.log(f"[skin.lucent] info.py: {text}", xbmc.LOGINFO)
 
 
 def http(url, data=None, headers=None, method=None):
     body = json.dumps(data).encode("utf-8") if data is not None else None
     headers = dict(headers or {})
-    headers.setdefault("User-Agent", "skin.nuvioarc (Kodi)")
+    headers.setdefault("User-Agent", "skin.lucent (Kodi)")
     request = urllib.request.Request(url, data=body, headers=headers, method=method)
     with urllib.request.urlopen(request, timeout=20) as response:
         raw = response.read()
@@ -492,7 +492,7 @@ def show_person(person_id):
     HOME.setProperty("nuvio.person.name", person.get("name", ""))
 
 
-LOGO_DIR = "special://profile/addon_data/skin.nuvioarc/logos/"
+LOGO_DIR = "special://profile/addon_data/skin.lucent/logos/"
 LOGO_SOURCES = ("imdb", "tmdb", "trakt")
 
 

@@ -228,6 +228,8 @@
     <expression name="NuvioRow8110">$EXP[NuvioW10Has] + !$EXP[NuvioW10Land] + [Integer.IsGreater(Container(8110).NumItems,0) | Container(8110).IsUpdating]</expression>
     <expression name="NuvioRow8210">$EXP[NuvioW10Has] + $EXP[NuvioW10Land] + [Integer.IsGreater(Container(8210).NumItems,0) | Container(8210).IsUpdating]</expression>
     <expression name="NuvioActiveRowVisible">[String.IsEqual(Window(home).Property(nuvio.row),8101) + $EXP[NuvioRow8101]] | [String.IsEqual(Window(home).Property(nuvio.row),8201) + $EXP[NuvioRow8201]] | [String.IsEqual(Window(home).Property(nuvio.row),8102) + $EXP[NuvioRow8102]] | [String.IsEqual(Window(home).Property(nuvio.row),8202) + $EXP[NuvioRow8202]] | [String.IsEqual(Window(home).Property(nuvio.row),8103) + $EXP[NuvioRow8103]] | [String.IsEqual(Window(home).Property(nuvio.row),8203) + $EXP[NuvioRow8203]] | [String.IsEqual(Window(home).Property(nuvio.row),8104) + $EXP[NuvioRow8104]] | [String.IsEqual(Window(home).Property(nuvio.row),8204) + $EXP[NuvioRow8204]] | [String.IsEqual(Window(home).Property(nuvio.row),8105) + $EXP[NuvioRow8105]] | [String.IsEqual(Window(home).Property(nuvio.row),8205) + $EXP[NuvioRow8205]] | [String.IsEqual(Window(home).Property(nuvio.row),8106) + $EXP[NuvioRow8106]] | [String.IsEqual(Window(home).Property(nuvio.row),8206) + $EXP[NuvioRow8206]] | [String.IsEqual(Window(home).Property(nuvio.row),8107) + $EXP[NuvioRow8107]] | [String.IsEqual(Window(home).Property(nuvio.row),8207) + $EXP[NuvioRow8207]] | [String.IsEqual(Window(home).Property(nuvio.row),8108) + $EXP[NuvioRow8108]] | [String.IsEqual(Window(home).Property(nuvio.row),8208) + $EXP[NuvioRow8208]] | [String.IsEqual(Window(home).Property(nuvio.row),8109) + $EXP[NuvioRow8109]] | [String.IsEqual(Window(home).Property(nuvio.row),8209) + $EXP[NuvioRow8209]] | [String.IsEqual(Window(home).Property(nuvio.row),8110) + $EXP[NuvioRow8110]] | [String.IsEqual(Window(home).Property(nuvio.row),8210) + $EXP[NuvioRow8210]]</expression>
+    <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
+    <expression name="NuvioTrailerBg">$EXP[NuvioTrailerOn] + !String.IsEqual(Skin.String(nuvio.posterfocus),expand)</expression>
     <expression name="NuvioAnyRow">$EXP[NuvioRow8101] | $EXP[NuvioRow8201] | $EXP[NuvioRow8102] | $EXP[NuvioRow8202] | $EXP[NuvioRow8103] | $EXP[NuvioRow8203] | $EXP[NuvioRow8104] | $EXP[NuvioRow8204] | $EXP[NuvioRow8105] | $EXP[NuvioRow8205] | $EXP[NuvioRow8106] | $EXP[NuvioRow8206] | $EXP[NuvioRow8107] | $EXP[NuvioRow8207] | $EXP[NuvioRow8108] | $EXP[NuvioRow8208] | $EXP[NuvioRow8109] | $EXP[NuvioRow8209] | $EXP[NuvioRow8110] | $EXP[NuvioRow8210]</expression>
 
     <include name="HomeBackdrops">
@@ -3137,6 +3139,13 @@
                     <visible>Container(8101).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8101)</visible>
+                </control>
                 <control type="fixedlist" id="8101">
                     <left>-40</left>
                     <top>40</top>
@@ -3148,6 +3157,8 @@
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
                     <onleft>9000</onleft>
                     <ondown>8201</ondown>
+                    <onback condition="Integer.IsGreater(Container(8101).CurrentItem,1)">SetFocus(8101,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8101).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8101,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -3231,6 +3242,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -3358,6 +3423,8 @@
                     <onleft>9000</onleft>
                     <onup>8101</onup>
                     <ondown>8102</ondown>
+                    <onback condition="Integer.IsGreater(Container(8201).CurrentItem,1)">SetFocus(8201,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8201).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8201,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -3578,6 +3645,13 @@
                     <visible>Container(8102).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8102)</visible>
+                </control>
                 <control type="fixedlist" id="8102">
                     <left>-40</left>
                     <top>40</top>
@@ -3590,6 +3664,8 @@
                     <onleft>9000</onleft>
                     <onup>8201</onup>
                     <ondown>8202</ondown>
+                    <onback condition="Integer.IsGreater(Container(8102).CurrentItem,1)">SetFocus(8102,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8102).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8102,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -3673,6 +3749,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -3800,6 +3930,8 @@
                     <onleft>9000</onleft>
                     <onup>8102</onup>
                     <ondown>8103</ondown>
+                    <onback condition="Integer.IsGreater(Container(8202).CurrentItem,1)">SetFocus(8202,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8202).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8202,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -4020,6 +4152,13 @@
                     <visible>Container(8103).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8103)</visible>
+                </control>
                 <control type="fixedlist" id="8103">
                     <left>-40</left>
                     <top>40</top>
@@ -4032,6 +4171,8 @@
                     <onleft>9000</onleft>
                     <onup>8202</onup>
                     <ondown>8203</ondown>
+                    <onback condition="Integer.IsGreater(Container(8103).CurrentItem,1)">SetFocus(8103,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8103).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8103,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -4115,6 +4256,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -4242,6 +4437,8 @@
                     <onleft>9000</onleft>
                     <onup>8103</onup>
                     <ondown>8104</ondown>
+                    <onback condition="Integer.IsGreater(Container(8203).CurrentItem,1)">SetFocus(8203,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8203).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8203,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -4462,6 +4659,13 @@
                     <visible>Container(8104).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8104)</visible>
+                </control>
                 <control type="fixedlist" id="8104">
                     <left>-40</left>
                     <top>40</top>
@@ -4474,6 +4678,8 @@
                     <onleft>9000</onleft>
                     <onup>8203</onup>
                     <ondown>8204</ondown>
+                    <onback condition="Integer.IsGreater(Container(8104).CurrentItem,1)">SetFocus(8104,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8104).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8104,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -4557,6 +4763,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -4684,6 +4944,8 @@
                     <onleft>9000</onleft>
                     <onup>8104</onup>
                     <ondown>8105</ondown>
+                    <onback condition="Integer.IsGreater(Container(8204).CurrentItem,1)">SetFocus(8204,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8204).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8204,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -4904,6 +5166,13 @@
                     <visible>Container(8105).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8105)</visible>
+                </control>
                 <control type="fixedlist" id="8105">
                     <left>-40</left>
                     <top>40</top>
@@ -4916,6 +5185,8 @@
                     <onleft>9000</onleft>
                     <onup>8204</onup>
                     <ondown>8205</ondown>
+                    <onback condition="Integer.IsGreater(Container(8105).CurrentItem,1)">SetFocus(8105,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8105).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8105,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -4999,6 +5270,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -5126,6 +5451,8 @@
                     <onleft>9000</onleft>
                     <onup>8105</onup>
                     <ondown>8106</ondown>
+                    <onback condition="Integer.IsGreater(Container(8205).CurrentItem,1)">SetFocus(8205,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8205).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8205,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -5346,6 +5673,13 @@
                     <visible>Container(8106).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8106)</visible>
+                </control>
                 <control type="fixedlist" id="8106">
                     <left>-40</left>
                     <top>40</top>
@@ -5358,6 +5692,8 @@
                     <onleft>9000</onleft>
                     <onup>8205</onup>
                     <ondown>8206</ondown>
+                    <onback condition="Integer.IsGreater(Container(8106).CurrentItem,1)">SetFocus(8106,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8106).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8106,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -5441,6 +5777,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -5568,6 +5958,8 @@
                     <onleft>9000</onleft>
                     <onup>8106</onup>
                     <ondown>8107</ondown>
+                    <onback condition="Integer.IsGreater(Container(8206).CurrentItem,1)">SetFocus(8206,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8206).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8206,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -5788,6 +6180,13 @@
                     <visible>Container(8107).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8107)</visible>
+                </control>
                 <control type="fixedlist" id="8107">
                     <left>-40</left>
                     <top>40</top>
@@ -5800,6 +6199,8 @@
                     <onleft>9000</onleft>
                     <onup>8206</onup>
                     <ondown>8207</ondown>
+                    <onback condition="Integer.IsGreater(Container(8107).CurrentItem,1)">SetFocus(8107,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8107).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8107,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -5883,6 +6284,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -6010,6 +6465,8 @@
                     <onleft>9000</onleft>
                     <onup>8107</onup>
                     <ondown>8108</ondown>
+                    <onback condition="Integer.IsGreater(Container(8207).CurrentItem,1)">SetFocus(8207,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8207).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8207,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -6230,6 +6687,13 @@
                     <visible>Container(8108).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8108)</visible>
+                </control>
                 <control type="fixedlist" id="8108">
                     <left>-40</left>
                     <top>40</top>
@@ -6242,6 +6706,8 @@
                     <onleft>9000</onleft>
                     <onup>8207</onup>
                     <ondown>8208</ondown>
+                    <onback condition="Integer.IsGreater(Container(8108).CurrentItem,1)">SetFocus(8108,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8108).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8108,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -6325,6 +6791,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -6452,6 +6972,8 @@
                     <onleft>9000</onleft>
                     <onup>8108</onup>
                     <ondown>8109</ondown>
+                    <onback condition="Integer.IsGreater(Container(8208).CurrentItem,1)">SetFocus(8208,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8208).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8208,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -6672,6 +7194,13 @@
                     <visible>Container(8109).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8109)</visible>
+                </control>
                 <control type="fixedlist" id="8109">
                     <left>-40</left>
                     <top>40</top>
@@ -6684,6 +7213,8 @@
                     <onleft>9000</onleft>
                     <onup>8208</onup>
                     <ondown>8209</ondown>
+                    <onback condition="Integer.IsGreater(Container(8109).CurrentItem,1)">SetFocus(8109,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8109).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8109,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -6767,6 +7298,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -6894,6 +7479,8 @@
                     <onleft>9000</onleft>
                     <onup>8109</onup>
                     <ondown>8110</ondown>
+                    <onback condition="Integer.IsGreater(Container(8209).CurrentItem,1)">SetFocus(8209,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8209).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8209,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">
@@ -7114,6 +7701,13 @@
                     <visible>Container(8110).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <control type="videowindow">
+                    <left>0</left>
+                    <top>56</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8110)</visible>
+                </control>
                 <control type="fixedlist" id="8110">
                     <left>-40</left>
                     <top>40</top>
@@ -7126,6 +7720,8 @@
                     <onleft>9000</onleft>
                     <onup>8209</onup>
                     <ondown>8210</ondown>
+                    <onback condition="Integer.IsGreater(Container(8110).CurrentItem,1)">SetFocus(8110,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8110).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8110,home)</onfocus>
                     <itemlayout width="248" height="370">
                         <control type="group">
@@ -7209,6 +7805,60 @@
             </control>
                         </control>
                     </itemlayout>
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>CC000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -7335,6 +7985,8 @@
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
                     <onleft>9000</onleft>
                     <onup>8110</onup>
+                    <onback condition="Integer.IsGreater(Container(8210).CurrentItem,1)">SetFocus(8210,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8210).CurrentItem,1)">SetFocus(9000)</onback>
                     <onfocus>SetProperty(nuvio.row,8210,home)</onfocus>
                     <itemlayout width="428" height="289">
                         <control type="group">

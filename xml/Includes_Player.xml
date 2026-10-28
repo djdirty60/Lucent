@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated: pause screen expressions and picture / sound badge variables -->
+<includes>
+    <expression name="NuvioPauseInfo">Player.Paused + !Player.Seeking + !Player.Caching + !String.IsEqual(Skin.String(nuvio.pauseinfo),off) + [[String.IsEmpty(Skin.String(nuvio.pauseinfo)) + System.IdleTime(5)] | [String.IsEqual(Skin.String(nuvio.pauseinfo),3) + System.IdleTime(3)] | [String.IsEqual(Skin.String(nuvio.pauseinfo),5) + System.IdleTime(5)] | [String.IsEqual(Skin.String(nuvio.pauseinfo),10) + System.IdleTime(10)] | [String.IsEqual(Skin.String(nuvio.pauseinfo),15) + System.IdleTime(15)] | [String.IsEqual(Skin.String(nuvio.pauseinfo),30) + System.IdleTime(30)] | [String.IsEqual(Skin.String(nuvio.pauseinfo),60) + System.IdleTime(60)]]</expression>
+    <variable name="NuvioFlagImg_res">
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,8K) + !String.IsEmpty(Skin.String(nuvio.flag.8k))">$INFO[Skin.String(nuvio.flag.8k)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,8K)">flags/8K.png</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,4K) + !String.IsEmpty(Skin.String(nuvio.flag.4k))">$INFO[Skin.String(nuvio.flag.4k)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,4K)">flags/4K.png</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,1080) + !String.IsEmpty(Skin.String(nuvio.flag.1080))">$INFO[Skin.String(nuvio.flag.1080)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,1080)">flags/1080P.png</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,720) + !String.IsEmpty(Skin.String(nuvio.flag.720))">$INFO[Skin.String(nuvio.flag.720)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,720)">flags/720P.png</value>
+        <value condition="[String.IsEqual(VideoPlayer.VideoResolution,480) | String.IsEqual(VideoPlayer.VideoResolution,540) | String.IsEqual(VideoPlayer.VideoResolution,576)] + !String.IsEmpty(Skin.String(nuvio.flag.sd))">$INFO[Skin.String(nuvio.flag.sd)]</value>
+        <value condition="[String.IsEqual(VideoPlayer.VideoResolution,480) | String.IsEqual(VideoPlayer.VideoResolution,540) | String.IsEqual(VideoPlayer.VideoResolution,576)]">flags/SD.png</value>
+    </variable>
+    <variable name="NuvioFlagImg_hdr">
+        <value condition="String.IsEqual(VideoPlayer.HdrType,dolbyvision) + !String.IsEmpty(Skin.String(nuvio.flag.dolbyvision))">$INFO[Skin.String(nuvio.flag.dolbyvision)]</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,dolbyvision)">flags/DV.png</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hdr10plus) + !String.IsEmpty(Skin.String(nuvio.flag.hdr10plus))">$INFO[Skin.String(nuvio.flag.hdr10plus)]</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hdr10plus)">flags/HDR10+.png</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hdr10) + !String.IsEmpty(Skin.String(nuvio.flag.hdr10))">$INFO[Skin.String(nuvio.flag.hdr10)]</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hdr10)">flags/HDR10.png</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hlg) + !String.IsEmpty(Skin.String(nuvio.flag.hlg))">$INFO[Skin.String(nuvio.flag.hlg)]</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hlg)">flags/HLG.png</value>
+    </variable>
+    <variable name="NuvioFlagImg_vcodec">
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,hevc) + !String.IsEmpty(Skin.String(nuvio.flag.hevc))">$INFO[Skin.String(nuvio.flag.hevc)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,hevc)">flags/HEVC.png</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,av1) + !String.IsEmpty(Skin.String(nuvio.flag.av1))">$INFO[Skin.String(nuvio.flag.av1)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,av1)">flags/AV1.png</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,h264) + !String.IsEmpty(Skin.String(nuvio.flag.h264))">$INFO[Skin.String(nuvio.flag.h264)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,h264)">flags/AVC.png</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,vp9) + !String.IsEmpty(Skin.String(nuvio.flag.vp9))">$INFO[Skin.String(nuvio.flag.vp9)]</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,vp9)">flags/VP9.png</value>
+    </variable>
+    <variable name="NuvioFlagImg_atmos">
+        <value condition="[String.IsEqual(VideoPlayer.AudioCodec,truehd_atmos) | String.IsEqual(VideoPlayer.AudioCodec,eac3_ddp_atmos)] + !String.IsEmpty(Skin.String(nuvio.flag.atmos))">$INFO[Skin.String(nuvio.flag.atmos)]</value>
+        <value condition="[String.IsEqual(VideoPlayer.AudioCodec,truehd_atmos) | String.IsEqual(VideoPlayer.AudioCodec,eac3_ddp_atmos)]">flags/ATMOS.png</value>
+    </variable>
+    <variable name="NuvioFlagImg_acodec">
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,dtshd_ma_x) + !String.IsEmpty(Skin.String(nuvio.flag.dtsx))">$INFO[Skin.String(nuvio.flag.dtsx)]</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,dtshd_ma_x)">flags/DTS-X.png</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,truehd) + !String.IsEmpty(Skin.String(nuvio.flag.truehd))">$INFO[Skin.String(nuvio.flag.truehd)]</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,truehd)">flags/TRUEHD.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_ma) + !String.IsEmpty(Skin.String(nuvio.flag.dtshd_ma))">$INFO[Skin.String(nuvio.flag.dtshd_ma)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_ma)">flags/DTS-HDMA.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_hra) + !String.IsEmpty(Skin.String(nuvio.flag.dtshd_hra))">$INFO[Skin.String(nuvio.flag.dtshd_hra)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_hra)">flags/DTS-HDHR.png</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,dts) + !String.IsEmpty(Skin.String(nuvio.flag.dts))">$INFO[Skin.String(nuvio.flag.dts)]</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,dts)">flags/DTS.png</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,eac3) + !String.IsEmpty(Skin.String(nuvio.flag.eac3))">$INFO[Skin.String(nuvio.flag.eac3)]</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,eac3)">flags/DD+.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,ac3) + !String.IsEmpty(Skin.String(nuvio.flag.ac3))">$INFO[Skin.String(nuvio.flag.ac3)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,ac3)">flags/DD.png</value>
+        <value condition="[String.StartsWith(VideoPlayer.AudioCodec,aac) | String.StartsWith(VideoPlayer.AudioCodec,he_aac)] + !String.IsEmpty(Skin.String(nuvio.flag.aac))">$INFO[Skin.String(nuvio.flag.aac)]</value>
+        <value condition="[String.StartsWith(VideoPlayer.AudioCodec,aac) | String.StartsWith(VideoPlayer.AudioCodec,he_aac)]">flags/AAC.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,flac) + !String.IsEmpty(Skin.String(nuvio.flag.flac))">$INFO[Skin.String(nuvio.flag.flac)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,flac)">flags/FLAC.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,opus) + !String.IsEmpty(Skin.String(nuvio.flag.opus))">$INFO[Skin.String(nuvio.flag.opus)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,opus)">flags/OPUS.png</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,pcm) + !String.IsEmpty(Skin.String(nuvio.flag.pcm))">$INFO[Skin.String(nuvio.flag.pcm)]</value>
+        <value condition="String.StartsWith(VideoPlayer.AudioCodec,pcm)">flags/PCM.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,mp3) + !String.IsEmpty(Skin.String(nuvio.flag.mp3))">$INFO[Skin.String(nuvio.flag.mp3)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,mp3)">flags/MP3.png</value>
+    </variable>
+    <variable name="NuvioFlagImg_ch">
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,8) + !String.IsEmpty(Skin.String(nuvio.flag.71))">$INFO[Skin.String(nuvio.flag.71)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,8)">flags/7.1.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,7) + !String.IsEmpty(Skin.String(nuvio.flag.61))">$INFO[Skin.String(nuvio.flag.61)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,7)">flags/6.1.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,6) + !String.IsEmpty(Skin.String(nuvio.flag.51))">$INFO[Skin.String(nuvio.flag.51)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,6)">flags/5.1.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,2) + !String.IsEmpty(Skin.String(nuvio.flag.20))">$INFO[Skin.String(nuvio.flag.20)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,2)">flags/2.0.png</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,1) + !String.IsEmpty(Skin.String(nuvio.flag.10))">$INFO[Skin.String(nuvio.flag.10)]</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioChannels,1)">flags/1.0.png</value>
+    </variable>
+    <variable name="NuvioStatsRes">
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,8K)">8K (4320p)</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,4K)">4K (2160p)</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,1080)">Full HD (1080p)</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,720)">HD (720p)</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,576)">SD (576p)</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,540)">SD (540p)</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoResolution,480)">SD (480p)</value>
+        <value>$INFO[VideoPlayer.VideoResolution]</value>
+    </variable>
+    <variable name="NuvioStatsVCodec">
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,hevc)">  ·  HEVC</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,h264)">  ·  H.264 / AVC</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,av1)">  ·  AV1</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,vp9)">  ·  VP9</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,mpeg2video)">  ·  MPEG-2</value>
+        <value condition="String.IsEqual(VideoPlayer.VideoCodec,vc1)">  ·  VC-1</value>
+        <value>$INFO[VideoPlayer.VideoCodec,  ·  ,]</value>
+    </variable>
+    <variable name="NuvioStatsACodec">
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,truehd_atmos)">Dolby TrueHD Atmos</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,eac3_ddp_atmos)">Dolby Digital+ Atmos</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_ma_x_imax)">DTS:X IMAX</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_ma_x)">DTS:X</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,truehd)">Dolby TrueHD</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_ma)">DTS-HD Master Audio</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dtshd_hra)">DTS-HD High Res</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,dts)">DTS</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,eac3)">Dolby Digital+</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,ac3)">Dolby Digital</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,aac)">AAC</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,flac)">FLAC</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,opus)">Opus</value>
+        <value condition="String.IsEqual(VideoPlayer.AudioCodec,mp3)">MP3</value>
+        <value>$INFO[VideoPlayer.AudioCodec]</value>
+    </variable>
+    <variable name="NuvioStatsSourceType">
+        <value condition="Player.IsInternetStream">$LOCALIZE[31215]</value>
+        <value>$LOCALIZE[31216]</value>
+    </variable>
+    <variable name="NuvioStatsHdr">
+        <value condition="String.IsEqual(VideoPlayer.HdrType,dolbyvision)">Dolby Vision$INFO[VideoPlayer.HdrDetail,  ·  Profile ,]</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hdr10plus)">HDR10+</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hdr10)">HDR10</value>
+        <value condition="String.IsEqual(VideoPlayer.HdrType,hlg)">HLG</value>
+        <value>SDR</value>
+    </variable>
+    <variable name="NuvioStatsHw">
+        <value condition="Player.Process(videohwdecoder)">  ·  $LOCALIZE[31217]</value>
+        <value>  ·  $LOCALIZE[31218]</value>
+    </variable>
+    <include name="NuvioStatsPanel">
+        <!-- ============ Playback statistics (player menu > statistics button) ============ -->
+        <control type="group">
+            <right>24</right>
+            <top>24</top>
+            <width>600</width>
+            <height>741</height>
+            <visible>Skin.HasSetting(nuvio.osdstats) + Player.HasVideo</visible>
+            <animation effect="fade" start="0" end="100" time="200">Visible</animation>
+            <animation effect="fade" start="100" end="0" time="200">Hidden</animation>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>600</width>
+                <height>741</height>
+                <texture border="48">panel.png</texture>
+                <colordiffuse>E6101418</colordiffuse>
+            </control>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>600</width>
+                <height>741</height>
+                <texture border="48">panel_edge.png</texture>
+                <colordiffuse>33FFFFFF</colordiffuse>
+            </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>20</top>
+                    <width>552</width>
+                    <height>28</height>
+                    <font>font_caps</font>
+                    <textcolor>text3</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31190]</label>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>52</top>
+                    <width>552</width>
+                    <height>1</height>
+                    <texture>white.png</texture>
+                    <colordiffuse>26FFFFFF</colordiffuse>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>60</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31195]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>60</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Filename]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>85</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31196]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>85</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.FolderPath]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>110</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31197]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>110</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$VAR[NuvioStatsSourceType]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>135</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31198]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>135</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Process(videolivebitrate),$LOCALIZE[291] ,]$INFO[Player.Process(audiolivebitrate),   ·   $LOCALIZE[292] ,]</label>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>166</top>
+                    <width>552</width>
+                    <height>28</height>
+                    <font>font_caps</font>
+                    <textcolor>text3</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31191]</label>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>198</top>
+                    <width>552</width>
+                    <height>1</height>
+                    <texture>white.png</texture>
+                    <colordiffuse>26FFFFFF</colordiffuse>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>206</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31199]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>206</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$VAR[NuvioStatsRes]$INFO[Player.Process(videofps),  ·  , fps]$VAR[NuvioStatsVCodec]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>231</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31200]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>231</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$VAR[NuvioStatsHdr]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>256</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31201]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>256</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Process(pixformat)]$INFO[Player.Process(videodar),  ·  ,:1]$INFO[Player.Process(videoscantype),  ·  ,]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>281</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31202]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>281</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Process(videodecoder)]$VAR[NuvioStatsHw]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>306</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31204]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>306</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[System.ScreenResolution]</label>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>338</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FF34C759</colordiffuse>
+                    <visible>Integer.IsGreater(Player.Process(videoqueuelevel),20)</visible>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>338</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FFF5A524</colordiffuse>
+                    <visible>!Integer.IsGreater(Player.Process(videoqueuelevel),20)</visible>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>331</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31205]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>331</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Process(videoqueuelevel),,%]</label>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>362</top>
+                    <width>552</width>
+                    <height>28</height>
+                    <font>font_caps</font>
+                    <textcolor>text3</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31192]</label>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>394</top>
+                    <width>552</width>
+                    <height>1</height>
+                    <texture>white.png</texture>
+                    <colordiffuse>26FFFFFF</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>409</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FF34C759</colordiffuse>
+                    <visible>!String.IsEmpty(VideoPlayer.AudioCodec)</visible>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>402</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31206]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>402</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$VAR[NuvioStatsACodec]$INFO[VideoPlayer.AudioChannels,  ·  ,ch]$INFO[Player.Process(audiosamplerate),  ·  , Hz]$INFO[Player.Process(audiobitspersample),  ·  , bit]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>427</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31207]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>427</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[VideoPlayer.AudioLanguage]$INFO[VideoPlayer.AudioName,  ·  ,]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>452</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31202]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>452</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Process(audiodecoder)]</label>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>484</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FF34C759</colordiffuse>
+                    <visible>Integer.IsGreater(Player.Process(audioqueuelevel),20)</visible>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>484</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FFF5A524</colordiffuse>
+                    <visible>!Integer.IsGreater(Player.Process(audioqueuelevel),20)</visible>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>477</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31205]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>477</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.Process(audioqueuelevel),,%]</label>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>508</top>
+                    <width>552</width>
+                    <height>28</height>
+                    <font>font_caps</font>
+                    <textcolor>text3</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31193]</label>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>540</top>
+                    <width>552</width>
+                    <height>1</height>
+                    <texture>white.png</texture>
+                    <colordiffuse>26FFFFFF</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>555</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FF34C759</colordiffuse>
+                    <visible>Integer.IsGreater(Player.CacheLevel,20)</visible>
+                </control>
+                <control type="image">
+                    <left>26</left>
+                    <top>555</top>
+                    <width>10</width>
+                    <height>10</height>
+                    <texture>mask_circle.png</texture>
+                    <colordiffuse>FFF5A524</colordiffuse>
+                    <visible>!Integer.IsGreater(Player.CacheLevel,20)</visible>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>548</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31208]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>548</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[Player.CacheLevel,,%]</label>
+                </control>
+                <control type="label">
+                    <left>24</left>
+                    <top>579</top>
+                    <width>552</width>
+                    <height>28</height>
+                    <font>font_caps</font>
+                    <textcolor>text3</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31194]</label>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>611</top>
+                    <width>552</width>
+                    <height>1</height>
+                    <texture>white.png</texture>
+                    <colordiffuse>26FFFFFF</colordiffuse>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>619</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31210]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>619</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[System.CpuUsage]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>644</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31211]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>644</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[System.CPUTemperature]$INFO[System.GPUTemperature,   ·   GPU ,]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>669</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31212]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>669</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[System.CpuFrequency]</label>
+                </control>
+                <control type="label">
+                    <left>46</left>
+                    <top>694</top>
+                    <width>170</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text4</textcolor>
+                    <label>$LOCALIZE[31213]</label>
+                </control>
+                <control type="label">
+                    <left>216</left>
+                    <top>694</top>
+                    <width>360</width>
+                    <height>25</height>
+                    <font>font10</font>
+                    <textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[System.Memory(used.percent)]$INFO[System.Memory(used),  ·  ,]</label>
+                </control>
+        </control>
+    </include>
+</includes>

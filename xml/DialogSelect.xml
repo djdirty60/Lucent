@@ -194,7 +194,7 @@
                         <height>76</height>
                         <aspectratio>keep</aspectratio>
                         <texture background="true" colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
-                        <visible>String.StartsWith(ListItem.Icon,icons/) + Control.HasFocus(6)</visible>
+                        <visible>$EXP[NuvioGlyphIcon] + Control.HasFocus(6)</visible>
                     </control>
                     <control type="image">
                         <left>18</left>
@@ -203,7 +203,7 @@
                         <height>76</height>
                         <aspectratio>keep</aspectratio>
                         <texture background="true">$INFO[ListItem.Icon]</texture>
-                        <visible>!String.StartsWith(ListItem.Icon,icons/) + Control.HasFocus(6)</visible>
+                        <visible>!$EXP[NuvioGlyphIcon] + Control.HasFocus(6)</visible>
                     </control>
                     <control type="label">
                         <left>108</left>

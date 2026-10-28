@@ -11,7 +11,7 @@
             <top>0</top>
             <width>1920</width>
             <height>360</height>
-            <texture>grad_top.png</texture>
+            <texture>osd_grad_top.png</texture>
             <colordiffuse>E6000000</colordiffuse>
         </control>
         <control type="image">
@@ -19,7 +19,7 @@
             <top>560</top>
             <width>1920</width>
             <height>520</height>
-            <texture>grad_bottom.png</texture>
+            <texture>osd_grad_bottom.png</texture>
             <colordiffuse>F2000000</colordiffuse>
         </control>
         <control type="group">
@@ -55,6 +55,7 @@
                 <label>$VAR[PlayerSubtitle]</label>
             </control>
         </control>
+
         <control type="label">
             <right>96</right>
             <top>56</top>
@@ -63,6 +64,7 @@
             <align>right</align>
             <font>font_clock</font>
             <label>$INFO[System.Time]</label>
+            <visible>!Skin.HasSetting(nuvio.osdstats)</visible>
         </control>
         <control type="label">
             <right>96</right>
@@ -73,7 +75,7 @@
             <font>font10</font>
             <textcolor>text3</textcolor>
             <label>$LOCALIZE[31047] $INFO[Player.FinishTime]</label>
-            <visible>Player.HasDuration</visible>
+            <visible>Player.HasDuration + !Skin.HasSetting(nuvio.osdstats)</visible>
         </control>
         </control>
         <control type="group">
@@ -116,8 +118,18 @@
                 <width>1728</width>
                 <height>6</height>
                 <info>Player.Progress</info>
-                <texturebg/>
+                <texturebg border="3" colordiffuse="00FFFFFF">pill6.png</texturebg>
                 <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>-3</top>
+                <width>1728</width>
+                <height>12</height>
+                <info>Player.Progress</info>
+                <texturebg border="3" colordiffuse="00FFFFFF">pill6.png</texturebg>
+                <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
+                <visible>Control.HasFocus(87)</visible>
             </control>
             <control type="slider" id="87">
                 <left>0</left>
@@ -128,8 +140,8 @@
                 <info>Player.Progress</info>
                 <texturesliderbar>slider_track26.png</texturesliderbar>
                 <texturesliderbardisabled>slider_track26.png</texturesliderbardisabled>
-                <textureslidernib colordiffuse="00FFFFFF">nib26.png</textureslidernib>
-                <textureslidernibfocus colordiffuse="text">nib26.png</textureslidernibfocus>
+                <textureslidernib/>
+                <textureslidernibfocus/>
                 <ondown>100</ondown>
                 <onup>noop</onup>
                 <visible>Player.SeekEnabled</visible>
@@ -240,14 +252,24 @@
                 <onclick>ActivateWindow(videobookmarks)</onclick>
                 <visible>true</visible>
             </control>
+            <control type="button" id="117">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>Skin.ToggleSetting(nuvio.osdstats)</onclick>
+                <visible>true</visible>
+            </control>
             <control type="button" id="115">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/info_fo.png</texturefocus>
                 <texturenofocus>buttons/info_nf.png</texturenofocus>
-                <onclick>ActivateWindow(playerprocessinfo)</onclick>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
                 <visible>true</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
             </control>
             <control type="button" id="116">
                 <width>84</width>
@@ -271,5 +293,6 @@
                 <label>$VAR[OSDButtonLabel]</label>
             </control>
         </control>
+        <include>NuvioStatsPanel</include>
     </controls>
 </window>

@@ -17,7 +17,7 @@
 
 ### Home screen
 - A big hero area with the backdrop, logo (or title), info pills and plot of the focused item.
-- Rows, like in Nuvio:
+- Rows:
   - **Continue watching · Shows** and **Continue watching · Movies** (Seren + Trakt)
   - **Trending movies** and **Trending shows** (Seren)
   - **Recently added movies** and **Recently added episodes** (your Kodi library, only shown if you have one)
@@ -90,34 +90,36 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 
 ## Installation
 
-1. Download `skin.nuvioarc-1.4.3.zip` from the [Releases page](../../releases/latest).
-   Don't use the green **Code → Download ZIP** button: Kodi needs the folder inside the zip to be called `skin.nuvioarc`, and only the release zip is built that way.
-2. Copy the file to your device, for example to the *Download* folder.
-3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
-4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.4.3.zip`.
+1. Download [`repository.lucent.zip`](https://github.com/djdirty60/Skin-Nuvio-Arc/raw/main/repository.lucent.zip) and copy it to your device, for example to the *Download* folder.
+2. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
+3. Go to **Add-ons → Install from zip file** and choose `repository.lucent.zip`.
+4. Go to **Add-ons → Install from repository → Lucent Repository → Look and feel → Skin → Lucent** and choose **Install**.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Lucent**.)
 
-### Automatic updates (recommended)
+Kodi also installs the YouTube add-on, which the skin uses for trailers.
 
-Install the **Lucent Repository** once, then Kodi keeps the skin up to date by itself.
+### Coming from the old name (Nuvio Arc)
 
-1. Download [`repository.nuvioarc.zip`](https://github.com/djdirty60/Skin-Nuvio-Arc/raw/main/repository.nuvioarc.zip) and copy it to your device.
-2. In Kodi go to **Add-ons → Install from zip file** and choose `repository.nuvioarc.zip`.
-3. Go to **Add-ons → Install from repository → Lucent Repository → Look and feel → Skin → Lucent** and choose **Install** (or **Update**).
-   If the skin is already installed, choose **Versions** and pick the newest version from *Lucent Repository*. This links the skin to the repository.
+Lucent used to be called Nuvio Arc (add-on `skin.nuvioarc`). Lucent is now its own add-on, `skin.lucent`.
+If you had the old skin, Kodi updates it to a last version that installs Lucent and asks whether to switch.
+Choose **Yes**: on its first start Lucent takes over your menu, widgets and settings by itself.
+Afterwards you can uninstall the old skin (**Nuvio Arc (old – switch to Lucent)**) and the old repository (**Nuvio Arc Repository (old)**).
 
+### Automatic updates
+
+Because the skin is installed from the **Lucent Repository**, Kodi keeps it up to date by itself.
 From then on new versions arrive automatically (Kodi's default: **Settings → System → Add-ons → Updates → Install updates automatically**).
 
 ### Skin settings
 
-**Settings → Skin settings** is laid out like Nuvio's settings: categories on the left, options on the right.
+**Settings → Skin settings** is laid out with categories on the left, options on the right.
 
 - **Appearance** – colour theme (Glass, White, Crimson, Emerald, Ocean, Violet, Amber, Gold, Rose, Rose Gold, Copper, Jade, Arctic Blue, Graphite), AMOLED mode (pure black), interface scale, font and language, clock, and the screensaver (dim when idle, timeout, dim strength).
 - **Layout** – menu and widgets, poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
 - **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings.
 
-**Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.nuvioarc/logos/` and the info page shows them instead of the names.
+**Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.lucent/logos/` and the info page shows them instead of the names.
 
 ### Customising the menu and widgets
 
@@ -159,7 +161,7 @@ A tab without widgets shows the widgets of the start tab.
 ## Folder structure
 
 ```
-addon.xml            add-on info (id: skin.nuvioarc)
+addon.xml            add-on info (id: skin.lucent)
 xml/                 all windows and includes
 media/               textures, icons, badges
 fonts/               Inter font + licence
@@ -169,7 +171,7 @@ scripts/menu.py      editor for the side menu and the widgets
 scripts/info.py      info page: collection, studios, Trakt lists and watched
 resources/           icon and fanart
 repo/                Kodi repository (addons.xml + zips) for automatic updates
-repository.nuvioarc.zip  the repository add-on to install once
+repository.lucent.zip  the repository add-on to install once
 screenshots/         images for this README
 ```
 

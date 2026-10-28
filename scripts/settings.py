@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Nuvio Arc: the choices in the skin settings that need a list or a Kodi setting.
+"""Lucent: the choices in the skin settings that need a list or a Kodi setting.
 
 RunScript(special://skin/scripts/settings.py,<what>)
   sync        read Kodi's own settings into the labels of the skin settings page
@@ -9,6 +9,7 @@ RunScript(special://skin/scripts/settings.py,<what>)
   landscape   landscape cards on Home watched     show / dim watched titles
   glow        edge glow on focused cards
   logos       where to put your own rating logos
+  pauseinfo   pause screen delay      flags       own picture / sound logos
   reset       restore all skin settings
 """
 import json
@@ -19,10 +20,12 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
-HEADING = "Nuvio Arc"
+HEADING = "Lucent"
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DIM = "screensaver.xbmc.builtin.dim"
-LOGO_DIR = "special://profile/addon_data/skin.nuvioarc/logos/"
+LOGO_DIR = "special://profile/addon_data/skin.lucent/logos/"
+FLAG_DIR = "special://profile/addon_data/skin.lucent/flags/"
+FLAG_KEYS = ['8k', '4k', '1080', '720', 'sd', 'dolbyvision', 'hdr10plus', 'hdr10', 'hlg', 'hevc', 'av1', 'h264', 'vp9', 'atmos', 'dtsx', 'truehd', 'dtshd_ma', 'dtshd_hra', 'dts', 'eac3', 'ac3', 'aac', 'flac', 'opus', 'pcm', 'mp3', '71', '61', '51', '20', '10']
 
 
 def tr(pair, *args):
@@ -44,6 +47,14 @@ SS_LEVELS = [(60, ("Gentle – the screen stays clearly visible", "Zacht – sch
              (10, ("Strong – barely visible", "Sterk – nauwelijks zichtbaar"))]
 LANDSCAPE = [("", ("Off", "Uit")), ("home", ("Home only", "Alleen startscherm"))]
 WATCHED = [("", ("Show", "Tonen")), ("dim", ("Dim", "Dimmen"))]
+PAUSE = [("3", ("After 3 seconds", "Na 3 seconden")), ("", ("After 5 seconds", "Na 5 seconden")),
+         ("10", ("After 10 seconds", "Na 10 seconden")), ("15", ("After 15 seconds", "Na 15 seconden")),
+         ("30", ("After 30 seconds", "Na 30 seconden")), ("60", ("After 1 minute", "Na 1 minuut")),
+         ("off", ("Off", "Uit"))]
+POSTERFOCUS = [("", ("Off", "Uit")), ("window", ("Trailer window with soft edge", "Trailervenster met zachte rand")),
+               ("hero", ("Hero media", "Hero-media")), ("expand", ("Expanded card", "Uitgevouwen kaart"))]
+TRAILER_DELAY = [("2", ("After 2 seconds", "Na 2 seconden")), ("", ("After 3 seconds", "Na 3 seconden")),
+                 ("5", ("After 5 seconds", "Na 5 seconden")), ("8", ("After 8 seconds", "Na 8 seconden"))]
 GLOW = [("off", ("Off", "Uit")), ("subtle", ("Subtle", "Subtiel")), ("", ("Balanced", "Gebalanceerd")),
         ("bold", ("Bold", "Sterk"))]
 
@@ -54,7 +65,7 @@ def jsonrpc(method, params):
     try:
         return json.loads(xbmc.executeJSONRPC(json.dumps(request))).get("result")
     except Exception as error:  # noqa: BLE001
-        xbmc.log(f"[skin.nuvioarc] settings.py {method}: {error}", xbmc.LOGWARNING)
+        xbmc.log(f"[skin.lucent] settings.py {method}: {error}", xbmc.LOGWARNING)
         return None
 
 
@@ -183,6 +194,39 @@ def explain_logos():
         "De infopagina toont dan het logo in plaats van de naam."), real))
 
 
+def scan_flags():
+    """Remember which own picture / sound logos exist (shown on the pause screen)."""
+    for key in FLAG_KEYS:
+        path = FLAG_DIR + key + ".png"
+        value = path if xbmcvfs.exists(path) else ""
+        if skin_string("nuvio.flag." + key) != value:
+            set_string("nuvio.flag." + key, value)
+
+
+def explain_flags():
+    if not xbmcvfs.exists(FLAG_DIR):
+        xbmcvfs.mkdirs(FLAG_DIR)
+    real = xbmcvfs.translatePath(FLAG_DIR)
+    xbmcgui.Dialog().textviewer(HEADING, tr((
+        "Put your own logos (PNG, preferably white on transparent) in this folder:[CR][B]{0}[/B][CR][CR]"
+        "Use these file names:[CR]{1}[CR][CR]The pause screen then shows your logo instead of the built-in badge. "
+        "Open the skin settings once more after adding files.",
+        "Zet je eigen logo's (PNG, het liefst wit op transparant) in deze map:[CR][B]{0}[/B][CR][CR]"
+        "Gebruik deze bestandsnamen:[CR]{1}[CR][CR]Het pauzescherm toont dan jouw logo in plaats van het ingebouwde label. "
+        "Open de skin-instellingen nog een keer nadat je bestanden hebt toegevoegd."),
+        real, ", ".join(k + ".png" for k in FLAG_KEYS)))
+    scan_flags()
+
+
+def pick_posterfocus():
+    pick_option("nuvio.posterfocus", POSTERFOCUS, tr(("Trailer on focus", "Trailer bij focus")))
+    if skin_string("nuvio.posterfocus"):
+        if not xbmc.getCondVisibility("System.HasAddon(plugin.video.youtube)"):
+            xbmc.executebuiltin("InstallAddon(plugin.video.youtube)", True)
+        # the trailer helper runs from the Home screen; start it now (it quits if it already runs)
+        xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+
+
 # ----------------------------------------------------------------------------- sync + reset
 def sync():
     """Fill the labels of the settings page from Kodi's own settings."""
@@ -199,17 +243,22 @@ def sync():
         pass
     accent = skin_string("nuvio.accent") or "glass"
     set_string("nuvio.accent.label", tr(dict(ACCENTS).get(accent, ACCENTS[0][1])))
-    for name, options in (("nuvio.landscape", LANDSCAPE), ("nuvio.watched", WATCHED), ("nuvio.glow", GLOW)):
+    scan_flags()
+    for name, options in (("nuvio.landscape", LANDSCAPE), ("nuvio.watched", WATCHED), ("nuvio.glow", GLOW),
+                          ("nuvio.pauseinfo", PAUSE), ("nuvio.posterfocus", POSTERFOCUS),
+                          ("nuvio.trailer.delay", TRAILER_DELAY)):
         set_string(name + ".label", tr(dict(options).get(skin_string(name), options[0][1])))
 
 
 def reset_all():
     if xbmcgui.Dialog().yesno(HEADING, tr(("Restore all skin settings? Your menu and widgets stay as they are.",
                                            "Alle skin-instellingen herstellen? Je menu en widgets blijven zoals ze zijn."))):
-        for name in ("nuvio.accent", "nuvio.accent.label", "nuvio.landscape", "nuvio.watched", "nuvio.glow"):
+        for name in ("nuvio.accent", "nuvio.accent.label", "nuvio.landscape", "nuvio.watched", "nuvio.glow",
+                     "nuvio.pauseinfo", "nuvio.posterfocus", "nuvio.trailer.delay"):
             set_string(name, "")
         for name in ("nuvio.amoled", "nuvio.posterlabels.hide", "nuvio.sideicons.hide", "nuvio.fulldate",
-                     "nuvio.fullbackdrop", "nuvio.info.hideratings", "nuvio.info.hidetrailer", "nuvio.hideclock"):
+                     "nuvio.fullbackdrop", "nuvio.info.hideratings", "nuvio.info.hidetrailer", "nuvio.hideclock",
+                     "nuvio.pauseinfo.hideflags"):
             set_bool(name, False)
         kodi_set("lookandfeel.skinzoom", 0)
         apply_colours()
@@ -224,5 +273,9 @@ if __name__ == "__main__":
         "landscape": lambda: pick_option("nuvio.landscape", LANDSCAPE, tr(("Landscape posters", "Liggende posters"))),
         "watched": lambda: pick_option("nuvio.watched", WATCHED, tr(("Watched titles", "Bekeken titels"))),
         "glow": lambda: pick_option("nuvio.glow", GLOW, tr(("Edge glow", "Randgloed"))),
+        "pauseinfo": lambda: pick_option("nuvio.pauseinfo", PAUSE, tr(("Show info after", "Info tonen na"))),
+        "flags": explain_flags,
+        "posterfocus": pick_posterfocus,
+        "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),
         "reset": reset_all,
     }.get(what, sync)()

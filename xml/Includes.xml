@@ -6,6 +6,7 @@
     <include file="Includes_Home.xml"/>
     <include file="Includes_Settings.xml"/>
     <include file="Includes_Info.xml"/>
+    <include file="Includes_Player.xml"/>
 
     <!-- ================= Constants ================= -->
     <constant name="SideGutter">96</constant>
@@ -322,6 +323,8 @@
     </include>
 
     <!-- Busy spinner -->
+    <!-- The skin's own white line icons (they turn dark on the white focus bar) -->
+    <expression name="NuvioGlyphIcon">String.StartsWith(ListItem.Icon,Default) | String.StartsWith(ListItem.Icon,icons/) | String.StartsWith(ListItem.Icon,buttons/) | String.StartsWith(ListItem.Icon,special://skin/)</expression>
     <include name="Spinner">
         <param name="size">64</param>
         <definition>

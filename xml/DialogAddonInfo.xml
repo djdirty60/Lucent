@@ -73,13 +73,13 @@
                     <width>auto</width>
                     <height>64</height>
                     <label>$LOCALIZE[208]</label>
-                    <visible>true</visible>
+                    <visible>!String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
                 </control>
                 <control type="button" id="6">
                     <width>auto</width>
                     <height>64</height>
                     <label></label>
-                    <visible>true</visible>
+                    <visible>!String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
                 </control>
                 <control type="button" id="8">
                     <width>auto</width>
@@ -97,22 +97,30 @@
                     <width>auto</width>
                     <height>64</height>
                     <label></label>
-                    <visible>true</visible>
+                    <visible>!String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
                 </control>
                 <control type="button" id="9">
                     <width>auto</width>
                     <height>64</height>
                     <label>$LOCALIZE[5]</label>
-                    <visible>true</visible>
+                    <visible>!String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
+                </control>
+                <control type="button" id="9001">
+                    <width>auto</width>
+                    <height>64</height>
+                    <label>$LOCALIZE[31181]</label>
+                    <visible>String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
+                    <onclick>Dialog.Close(addoninformation,true)</onclick>
+                    <onclick>ActivateWindow(SkinSettings)</onclick>
                 </control>
                 <control type="button" id="10">
                     <width>auto</width>
                     <height>64</height>
                     <label>$LOCALIZE[31099]</label>
-                    <visible>true</visible>
+                    <visible>!String.IsEqual(ListItem.Property(Addon.ID),skin.lucent)</visible>
                 </control>
                 <control type="radiobutton" id="13">
-                    <width>340</width>
+                    <width>470</width>
                     <height>64</height>
                     <font>font_label_bold</font>
                     <textcolor>text</textcolor>

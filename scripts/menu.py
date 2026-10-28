@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Nuvio Arc: edit the side menu (tabs) and the widgets of every tab.
+"""Lucent: edit the side menu (tabs) and the widgets of every tab.
 
 RunScript(special://skin/scripts/menu.py)          open the editor
 RunScript(special://skin/scripts/menu.py,init)     write the default menu if there is none yet
@@ -19,7 +19,7 @@ VERSION = "1"
 NTABS = 12
 NWIDGETS = 10
 SEREN = "plugin://plugin.video.seren/"
-HEADING = "Nuvio Arc"
+HEADING = "Lucent"
 
 # ----------------------------------------------------------------------------- texts
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
@@ -435,7 +435,7 @@ def jsonrpc(method, params):
     try:
         return json.loads(xbmc.executeJSONRPC(json.dumps(request))).get("result", {}) or {}
     except Exception as error:  # noqa: BLE001 - never crash the skin
-        xbmc.log(f"[skin.nuvioarc] menu.py {method} failed: {error}", xbmc.LOGWARNING)
+        xbmc.log(f"[skin.lucent] menu.py {method} failed: {error}", xbmc.LOGWARNING)
         return {}
 
 

@@ -8,7 +8,7 @@
         <include>PlainBackground</include>
         <include content="PageHeading">
             <param name="label">$LOCALIZE[31067]</param>
-            <param name="sub">Nuvio Arc $INFO[System.AddonVersion(skin.nuvioarc)]</param>
+            <param name="sub">Lucent $INFO[System.AddonVersion(skin.lucent)]</param>
         </include>
         <include>Clock</include>
         <control type="group">
@@ -379,6 +379,61 @@
                     <selected>Skin.HasSetting(nuvio.fullbackdrop)</selected>
                     <onclick>Skin.ToggleSetting(nuvio.fullbackdrop)</onclick>
                 </control>
+                <control type="label" id="2204">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31219]</label>
+                </control>
+                <control type="button" id="1213">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31220]</label>
+                    <label2>$INFO[Skin.String(nuvio.posterfocus.label)]</label2>
+                    <onclick>RunScript(special://skin/scripts/settings.py,posterfocus)</onclick>
+                </control>
+                <control type="button" id="1214">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31221]</label>
+                    <label2>$INFO[Skin.String(nuvio.trailer.delay.label)]</label2>
+                    <onclick>RunScript(special://skin/scripts/settings.py,trailerdelay)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.posterfocus))</visible>
+                </control>
+                <control type="button" id="1215">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31223]</label>
+                    <onclick>Addon.OpenSettings(plugin.video.youtube)</onclick>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.posterfocus)) + System.HasAddon(plugin.video.youtube)</visible>
+                </control>
+                <control type="textbox" id="2205">
+                    <width>1180</width>
+                    <height>70</height>
+                    <font>font_body</font>
+                    <textcolor>text3</textcolor>
+                    <label>$LOCALIZE[31222]</label>
+                </control>
                 <control type="label" id="2202">
                     <width>1180</width>
                     <height>76</height>
@@ -564,6 +619,47 @@
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31166]</label>
                     <onclick>ActivateWindow(InterfaceSettings)</onclick>
+                </control>
+                <control type="label" id="2402">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31182]</label>
+                </control>
+                <control type="button" id="1404">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31183]</label>
+                    <label2>$INFO[Skin.String(nuvio.pauseinfo.label)]</label2>
+                    <onclick>RunScript(special://skin/scripts/settings.py,pauseinfo)</onclick>
+                </control>
+                <control type="radiobutton" id="1405">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31184]</label>
+                    <selected>!Skin.HasSetting(nuvio.pauseinfo.hideflags)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.pauseinfo.hideflags)</onclick>
+                    <visible>!String.IsEqual(Skin.String(nuvio.pauseinfo),off)</visible>
+                </control>
+                <control type="button" id="1406">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31185]</label>
+                    <onclick>RunScript(special://skin/scripts/settings.py,flags)</onclick>
+                    <visible>!String.IsEqual(Skin.String(nuvio.pauseinfo),off)</visible>
                 </control>
             </control>
             <control type="grouplist" id="9105">
@@ -819,7 +915,7 @@
                     <font>font_caps</font>
                     <textcolor>text4</textcolor>
                     <aligny>bottom</aligny>
-                    <label>Nuvio Arc $INFO[System.AddonVersion(skin.nuvioarc)]</label>
+                    <label>Lucent $INFO[System.AddonVersion(skin.lucent)]</label>
                 </control>
                 <control type="textbox" id="2902">
                     <width>1180</width>

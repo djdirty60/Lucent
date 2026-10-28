@@ -5,59 +5,163 @@
     <controls>
         <control type="image">
             <left>0</left>
-            <top>0</top>
-            <width>1920</width>
-            <height>360</height>
-            <texture>grad_top.png</texture>
-            <colordiffuse>E6000000</colordiffuse>
-        </control>
-        <control type="image">
-            <left>0</left>
             <top>560</top>
             <width>1920</width>
             <height>520</height>
-            <texture>grad_bottom.png</texture>
+            <texture>osd_grad_bottom.png</texture>
             <colordiffuse>F2000000</colordiffuse>
         </control>
-        <control type="image">
-            <left>0</left>
-            <top>0</top>
-            <width>1200</width>
-            <height>1080</height>
-            <texture>grad_left.png</texture>
-            <colordiffuse>B3000000</colordiffuse>
-        </control>
-        <!-- Logo / title -->
+        <!-- ============ What you are watching + picture / sound ============ -->
         <control type="group">
-            <left>96</left>
-            <top>56</top>
+            <visible>true</visible>
+            <animation effect="fade" start="0" end="100" time="500">Visible</animation>
+            <animation effect="fade" start="100" end="0" time="250">Hidden</animation>
             <control type="image">
                 <left>0</left>
                 <top>0</top>
-                <width>440</width>
-                <height>150</height>
-                <aspectratio align="left" aligny="center">keep</aspectratio>
-                <texture background="true">$VAR[PlayerLogo]</texture>
+                <width>1920</width>
+                <height>1080</height>
+                <texture>white.png</texture>
+                <colordiffuse>99000000</colordiffuse>
             </control>
-            <control type="label">
+            <control type="image">
                 <left>0</left>
-                <top>40</top>
+                <top>0</top>
                 <width>1300</width>
-                <height>70</height>
-                <font>font45</font>
-                <label>$VAR[PlayerTitle]</label>
-                <visible>String.IsEmpty(Player.Art(clearlogo)) + String.IsEmpty(Player.Art(tvshow.clearlogo))</visible>
+                <height>1080</height>
+                <texture>osd_grad_left.png</texture>
+                <colordiffuse>E6000000</colordiffuse>
             </control>
-            <control type="label">
-                <left>0</left>
-                <top>160</top>
-                <width>1300</width>
-                <height>40</height>
-                <font>font13_bold</font>
-                <textcolor>text2</textcolor>
-                <label>$VAR[PlayerSubtitle]</label>
+            <control type="grouplist" id="7500">
+                <left>140</left>
+                <top>110</top>
+                <width>1100</width>
+                <height>700</height>
+                <orientation>vertical</orientation>
+                <itemgap>14</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <animation effect="slide" start="-40,0" end="0,0" time="500" tween="cubic" easing="out">Visible</animation>
+                <control type="label" id="7501">
+                    <width>1100</width>
+                    <height>40</height>
+                    <font>font_caps</font>
+                    <textcolor>text3</textcolor>
+                    <label>$LOCALIZE[31186]</label>
+                </control>
+                <control type="image" id="7502">
+                    <width>620</width>
+                    <height>200</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[PlayerLogo]</texture>
+                    <visible>!String.IsEmpty(Player.Art(clearlogo)) | !String.IsEmpty(Player.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="label" id="7503">
+                    <width>1100</width>
+                    <height>110</height>
+                    <font>font45</font>
+                    <label>$VAR[PlayerTitle]</label>
+                    <visible>String.IsEmpty(Player.Art(clearlogo)) + String.IsEmpty(Player.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="label" id="7504">
+                    <width>1100</width>
+                    <height>48</height>
+                    <font>font13_bold</font>
+                    <label>S$INFO[VideoPlayer.Season] · E$INFO[VideoPlayer.Episode]$INFO[VideoPlayer.Title,   ,]</label>
+                    <visible>!String.IsEmpty(VideoPlayer.TVShowTitle) + !String.IsEmpty(VideoPlayer.Episode)</visible>
+                </control>
+                <control type="label" id="7505">
+                    <width>1100</width>
+                    <height>40</height>
+                    <font>font12</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[VideoPlayer.Year]$INFO[VideoPlayer.Rating,   ★ ,]$INFO[VideoPlayer.Duration,   ,]$INFO[VideoPlayer.Genre,   ,]</label>
+                </control>
+                <control type="textbox" id="7506">
+                    <width>1000</width>
+                    <height>190</height>
+                    <font>font_body</font>
+                    <textcolor>text2</textcolor>
+                    <label>$INFO[VideoPlayer.Plot]</label>
+                    <visible>!String.IsEmpty(VideoPlayer.Plot)</visible>
+                </control>
+                <control type="label" id="7507">
+                    <width>1000</width>
+                    <height>16</height>
+                    <label></label>
+                </control>
+                <control type="grouplist" id="7600">
+                    <width>1100</width>
+                    <height>51</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>12</itemgap>
+                    <visible>true</visible>
+                <control type="image" id="7601">
+                    <width>132</width>
+                    <height>51</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$VAR[NuvioFlagImg_res]</texture>
+                    <visible>String.IsEqual(VideoPlayer.VideoResolution,8K) | String.IsEqual(VideoPlayer.VideoResolution,4K) | String.IsEqual(VideoPlayer.VideoResolution,1080) | String.IsEqual(VideoPlayer.VideoResolution,720) | [String.IsEqual(VideoPlayer.VideoResolution,480) | String.IsEqual(VideoPlayer.VideoResolution,540) | String.IsEqual(VideoPlayer.VideoResolution,576)]</visible>
+                </control>
+                <control type="image" id="7602">
+                    <width>132</width>
+                    <height>51</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$VAR[NuvioFlagImg_hdr]</texture>
+                    <visible>String.IsEqual(VideoPlayer.HdrType,dolbyvision) | String.IsEqual(VideoPlayer.HdrType,hdr10plus) | String.IsEqual(VideoPlayer.HdrType,hdr10) | String.IsEqual(VideoPlayer.HdrType,hlg)</visible>
+                </control>
+                <control type="image" id="7603">
+                    <width>132</width>
+                    <height>51</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$VAR[NuvioFlagImg_vcodec]</texture>
+                    <visible>String.IsEqual(VideoPlayer.VideoCodec,hevc) | String.IsEqual(VideoPlayer.VideoCodec,av1) | String.IsEqual(VideoPlayer.VideoCodec,h264) | String.IsEqual(VideoPlayer.VideoCodec,vp9)</visible>
+                </control>
+                <control type="image" id="7604">
+                    <width>132</width>
+                    <height>51</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$VAR[NuvioFlagImg_atmos]</texture>
+                    <visible>[String.IsEqual(VideoPlayer.AudioCodec,truehd_atmos) | String.IsEqual(VideoPlayer.AudioCodec,eac3_ddp_atmos)]</visible>
+                </control>
+                <control type="image" id="7605">
+                    <width>132</width>
+                    <height>51</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$VAR[NuvioFlagImg_acodec]</texture>
+                    <visible>String.StartsWith(VideoPlayer.AudioCodec,dtshd_ma_x) | String.StartsWith(VideoPlayer.AudioCodec,truehd) | String.IsEqual(VideoPlayer.AudioCodec,dtshd_ma) | String.IsEqual(VideoPlayer.AudioCodec,dtshd_hra) | String.StartsWith(VideoPlayer.AudioCodec,dts) | String.StartsWith(VideoPlayer.AudioCodec,eac3) | String.IsEqual(VideoPlayer.AudioCodec,ac3) | [String.StartsWith(VideoPlayer.AudioCodec,aac) | String.StartsWith(VideoPlayer.AudioCodec,he_aac)] | String.IsEqual(VideoPlayer.AudioCodec,flac) | String.IsEqual(VideoPlayer.AudioCodec,opus) | String.StartsWith(VideoPlayer.AudioCodec,pcm) | String.IsEqual(VideoPlayer.AudioCodec,mp3)</visible>
+                </control>
+                <control type="image" id="7606">
+                    <width>132</width>
+                    <height>51</height>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$VAR[NuvioFlagImg_ch]</texture>
+                    <visible>String.IsEqual(VideoPlayer.AudioChannels,8) | String.IsEqual(VideoPlayer.AudioChannels,7) | String.IsEqual(VideoPlayer.AudioChannels,6) | String.IsEqual(VideoPlayer.AudioChannels,2) | String.IsEqual(VideoPlayer.AudioChannels,1)</visible>
+                </control>
+                </control>
+                <control type="label" id="7508">
+                    <width>1100</width>
+                    <height>20</height>
+                    <label></label>
+                </control>
+                <control type="label" id="7509">
+                    <width>1100</width>
+                    <height>36</height>
+                    <font>font12</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[VideoPlayer.Director,$LOCALIZE[20339]: ,]</label>
+                    <visible>!String.IsEmpty(VideoPlayer.Director)</visible>
+                </control>
+                <control type="label" id="7510">
+                    <width>1100</width>
+                    <height>36</height>
+                    <font>font12</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[VideoPlayer.Studio,$LOCALIZE[572]: ,]$INFO[VideoPlayer.mpaa,   ·   ,]</label>
+                    <visible>!String.IsEmpty(VideoPlayer.Studio) | !String.IsEmpty(VideoPlayer.mpaa)</visible>
+                </control>
             </control>
         </control>
+
         <control type="label">
             <right>96</right>
             <top>56</top>
@@ -66,6 +170,7 @@
             <align>right</align>
             <font>font_clock</font>
             <label>$INFO[System.Time]</label>
+            <visible>!Skin.HasSetting(nuvio.osdstats)</visible>
         </control>
         <control type="label">
             <right>96</right>
@@ -76,16 +181,7 @@
             <font>font10</font>
             <textcolor>text3</textcolor>
             <label>$LOCALIZE[31047] $INFO[Player.FinishTime]</label>
-            <visible>Player.HasDuration</visible>
-        </control>
-        <control type="textbox">
-            <left>96</left>
-            <top>620</top>
-            <width>1000</width>
-            <height>200</height>
-            <font>font_body</font>
-            <textcolor>text2</textcolor>
-            <label>$INFO[VideoPlayer.Plot]</label>
+            <visible>Player.HasDuration + !Skin.HasSetting(nuvio.osdstats)</visible>
         </control>
         <control type="group">
             <left>96</left>
@@ -124,9 +220,10 @@
                 <width>1728</width>
                 <height>6</height>
                 <info>Player.Progress</info>
-                <texturebg/>
+                <texturebg border="3" colordiffuse="00FFFFFF">pill6.png</texturebg>
                 <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
             </control>
         </control>
+        <include>NuvioStatsPanel</include>
     </controls>
 </window>

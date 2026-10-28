@@ -82,7 +82,17 @@
                         <width>48</width>
                         <height>48</height>
                         <aspectratio>keep</aspectratio>
+                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                        <visible>$EXP[NuvioGlyphIcon] + Control.HasFocus(50)</visible>
+                    </control>
+                    <control type="image">
+                        <left>16</left>
+                        <top>12</top>
+                        <width>48</width>
+                        <height>48</height>
+                        <aspectratio>keep</aspectratio>
                         <texture>$INFO[ListItem.Icon]</texture>
+                        <visible>![$EXP[NuvioGlyphIcon] + Control.HasFocus(50)]</visible>
                     </control>
                     <control type="label">
                         <left>80</left>
