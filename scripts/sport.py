@@ -378,7 +378,8 @@ class Sport(xbmcgui.WindowXML):
         props["heroline"] = props["venue"]
         if kind_event and ev.get("sub") and ev["league"] != EPG_LEAGUE:
             props["when"] = f"{ev['sub']}  ·  {when_line(ev)}"
-        for n, chan in enumerate(chans, 1):
+        guessed = [] if chans or ev["state"] == "post" or not data or kind_event else epg.guess_channels(ev, data)
+        for n, chan in enumerate(chans or guessed, 1):
             bits = [chan["tag"]]
             if chan["q"]:
                 bits.append(chan["q"])

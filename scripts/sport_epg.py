@@ -238,5 +238,29 @@ def channels_for(ev, data=None):
     return out[:MAX_CHANNELS]
 
 
+SPORT_WORDS = ("sport", "espn", "dazn", "viaplay", "eleven", "voetbal", "football", "bein", "premier league", "f1")
+
+
+def guess_channels(ev, data=None):
+    """When the guide names no channel for a game: the sport channels of your list (Dutch / Belgian first), tagged Maybe."""
+    data = data or load()
+    names, icons = data.get("names", {}), data.get("icons", {})
+    seen, out = set(), []
+    for cid, raw in names.items():
+        low = raw.lower()
+        if not any(w in low for w in SPORT_WORDS) or any(w in low for w in ("xxx", "adult")):
+            continue
+        name = clean_name(raw) or raw
+        key = sc.norm(name)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"cid": int(cid) if str(cid).isdigit() else cid, "name": name, "country": country_of(raw), "q": quality_of(raw), "score": 0, "title": "", "start": ev["start"],
+                    "icon": icons.get(str(cid), ""), "live": False, "tag": sc.t("maybe")})
+    home_pref = ("NL", "BE")
+    out.sort(key=lambda c: (0 if c["country"] in home_pref else 1, {"4K": 0, "FHD": 1, "HD": 2, "": 3}.get(c["q"], 3), c["name"]))
+    return out[:MAX_CHANNELS]
+
+
 def play(cid):
     rpc("Player.Open", {"item": {"channelid": int(cid)}})
