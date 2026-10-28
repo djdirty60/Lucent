@@ -13,7 +13,6 @@
         <control type="group">
             <visible>String.IsEqual(Window.Property(slot),a)</visible>
             <animation effect="fade" start="0" end="100" time="1600" delay="1100" tween="sine" easing="inout">Visible</animation>
-            <animation effect="zoom" start="100" end="118" center="960,540" time="44000" delay="1100" tween="linear">Visible</animation>
             <animation effect="fade" start="100" end="0" time="1000" tween="sine" easing="inout">Hidden</animation>
             <control type="image">
                 <left>0</left>
@@ -22,6 +21,8 @@
                 <height>1080</height>
                 <aspectratio>scale</aspectratio>
                 <texture background="true">$INFO[Window.Property(a.fanart)]</texture>
+                <animation effect="zoom" start="100" end="112" center="960,540" time="46000" delay="1000" tween="sine" easing="out" condition="!String.IsEmpty(Window.Property(a.go))">Conditional</animation>
+                <animation effect="slide" start="0,0" end="-56,-18" time="46000" delay="1000" tween="sine" easing="out" condition="!String.IsEmpty(Window.Property(a.go))">Conditional</animation>
             </control>
             <control type="image">
                 <left>0</left>
@@ -64,7 +65,6 @@
         <control type="group">
             <visible>String.IsEqual(Window.Property(slot),b)</visible>
             <animation effect="fade" start="0" end="100" time="1600" delay="1100" tween="sine" easing="inout">Visible</animation>
-            <animation effect="zoom" start="100" end="118" center="960,540" time="44000" delay="1100" tween="linear">Visible</animation>
             <animation effect="fade" start="100" end="0" time="1000" tween="sine" easing="inout">Hidden</animation>
             <control type="image">
                 <left>0</left>
@@ -73,6 +73,8 @@
                 <height>1080</height>
                 <aspectratio>scale</aspectratio>
                 <texture background="true">$INFO[Window.Property(b.fanart)]</texture>
+                <animation effect="zoom" start="100" end="112" center="960,540" time="46000" delay="1000" tween="sine" easing="out" condition="!String.IsEmpty(Window.Property(b.go))">Conditional</animation>
+                <animation effect="slide" start="0,0" end="56,-18" time="46000" delay="1000" tween="sine" easing="out" condition="!String.IsEmpty(Window.Property(b.go))">Conditional</animation>
             </control>
             <control type="image">
                 <left>0</left>

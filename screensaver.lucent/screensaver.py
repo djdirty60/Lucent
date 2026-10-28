@@ -136,11 +136,15 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.close()
 
     def show(self, slot, item):
+        # restart the slow zoom and drift of this slot: switch it off while it is hidden, then on again
+        self.clearProperty(f"{slot}.go")
+        xbmc.Monitor().waitForAbort(0.2)
         self.setProperty(f"{slot}.fanart", item["fanart"])
         self.setProperty(f"{slot}.logo", item["logo"])
         self.setProperty(f"{slot}.title", item["title"])
         self.setProperty(f"{slot}.genres", item["genres"])
         self.setProperty("slot", slot)
+        self.setProperty(f"{slot}.go", "1")
 
     def run(self):
         seconds = max(8, ADDON.getSettingInt("seconds") or 18)
