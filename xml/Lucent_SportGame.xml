@@ -267,9 +267,14 @@
 <control type="group"><visible>!String.IsEqual(Window.Property(g.layout),teams)</visible><control type="image"><left>1114</left><top>464</top><width>44</width><height>44</height><aspectratio>keep</aspectratio><texture>$INFO[Window.Property(g.lgicon)]</texture></control>
 <control type="label"><left>1170</left><top>464</top><width>640</width><height>44</height><font>font12_bold</font><textcolor>text</textcolor><label>$INFO[Window.Property(g.league)]</label></control>
 <control type="label"><left>1114</left><top>520</top><width>690</width><height>44</height><font>font12_bold</font><textcolor>red</textcolor><label>$INFO[Window.Property(g.when)]</label></control>
-<control type="label"><left>1114</left><top>580</top><width>690</width><height>36</height><font>font_tiny</font><textcolor>text4</textcolor><label>$INFO[Window.Property(g.t.sessions)]</label><visible>String.IsEqual(Window.Property(g.layout),race)</visible></control>
-<control type="label"><left>1114</left><top>620</top><width>690</width><height>60</height><font>font12</font><textcolor>text2</textcolor><label>$INFO[Window.Property(g.venue)]</label></control>
-</control>
+<control type="label"><left>1114</left><top>620</top><width>690</width><height>60</height><font>font12</font><textcolor>text2</textcolor><label>$INFO[Window.Property(g.venue)]</label><visible>!String.IsEqual(Window.Property(g.layout),race)</visible></control>
+<control type="group"><visible>String.IsEqual(Window.Property(g.layout),race)</visible><control type="label"><left>1114</left><top>574</top><width>690</width><height>40</height><font>font12_bold</font><textcolor>text</textcolor><label>$INFO[Window.Property(g.circname)]</label></control>
+<control type="label"><left>1114</left><top>612</top><width>690</width><height>34</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(g.circplace)]</label></control>
+<control type="image"><left>1114</left><top>656</top><width>690</width><height>270</height><texture border="20">rr20.png</texture><colordiffuse>FFF4F6F8</colordiffuse><visible>!String.IsEmpty(Window.Property(g.circimg))</visible></control>
+<control type="image"><left>1134</left><top>664</top><width>650</width><height>254</height><aspectratio>keep</aspectratio><texture>$INFO[Window.Property(g.circimg)]</texture><visible>!String.IsEmpty(Window.Property(g.circimg))</visible></control>
+<control type="label"><left>1114</left><top>940</top><width>690</width><height>36</height><font>font10_bold</font><textcolor>text</textcolor><label>$INFO[Window.Property(g.circfacts)]</label></control>
+<control type="label"><left>1114</left><top>976</top><width>690</width><height>36</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[Window.Property(g.circrec)]</label></control>
+</control></control>
 </control>
 </controls>
 </window>

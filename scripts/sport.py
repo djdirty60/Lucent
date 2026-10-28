@@ -689,6 +689,20 @@ class Sport(xbmcgui.WindowXML):
     def game_extra(self, ev):
         """Slow part (form, standings): returns {name: value} for the page, filled in once it is ready."""
         out = {}
+        if ev["kind"] == "event" and ev.get("circuit"):       # a race weekend: the circuit instead of the programme
+            try:
+                c = sc.circuit_info(ev["circuit"], ev["league"])
+                direction = c.get("direction", "").lower()
+                facts = [x for x in (c.get("length", ""), f"{c['laps']} {sc.t('c_laps')}" if c.get("laps") else "",
+                                     f"{c['turns']} {sc.t('c_turns')}" if c.get("turns") else "",
+                                     sc.t("c_cw") if "clock" in direction and "anti" not in direction and "counter" not in direction
+                                     else (sc.t("c_ccw") if direction else "")) if x]
+                out = {"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("image", ""),
+                       "circfacts": "  ·  ".join(facts),
+                       "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""}
+            except Exception as error:  # noqa: BLE001 - the circuit is a bonus
+                sc.log(f"circuit: {error}")
+            return out
         if ev["kind"] != "teams" or ev["league"] not in sc.LEAGUES:
             return out
         key = ev["league"]

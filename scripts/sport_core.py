@@ -89,7 +89,9 @@ TX = {
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "nogames": ("No games planned right now", "Geen wedstrijden gepland"),
-    "previewhint": ("OK on a channel: watch here", "OK op een zender: hier kijken"), "stoptext": ("Stop channel", "Zender stoppen"), "fullhint": ("OK again: full screen", "Nog een keer OK: beeldvullend"),
+    "previewhint": ("OK on a channel: watch here", "OK op een zender: hier kijken"), "stoptext": ("Stop channel", "Zender stoppen"),
+    "c_laps": ("laps", "ronden"), "c_turns": ("turns", "bochten"), "c_cw": ("clockwise", "met de klok mee"),
+    "c_ccw": ("anti-clockwise", "tegen de klok in"), "circ_record": ("Lap record", "Rondrecord"), "fullhint": ("OK again: full screen", "Nog een keer OK: beeldvullend"),
     "dayerr": ("ESPN did not answer for {} of {} days ({})", "ESPN gaf geen antwoord voor {} van {} dagen ({})"),
     "neterr": ("Could not reach ESPN ({})", "ESPN niet bereikbaar ({})"),
     "list_n": ("{} games", "{} wedstrijden"),
@@ -286,7 +288,8 @@ def parse_event_kind(league, ev):
             state, label = status_of(comp if comp.get("status") else ev)
             rows.append({"id": f"{league}:{ev.get('id')}:{code}", "league": league, "kind": "event", "start": start, "state": state,
                          "status": label, "home": {}, "away": {}, "title": ev.get("name") or "", "sub": session_name(code),
-                         "venue": "", "round": ""})
+                         "venue": "", "round": "", "circuit": str((ev.get("circuit") or {}).get("id") or ""),
+                         "circname": (ev.get("circuit") or {}).get("fullName") or ""})
         return rows
     start = parse_iso(ev.get("date"))
     if start:
@@ -295,6 +298,41 @@ def parse_event_kind(league, ev):
         rows.append({"id": f"{league}:{ev.get('id')}", "league": league, "kind": "event", "start": start, "end": end, "state": state,
                      "status": label, "home": {}, "away": {}, "title": ev.get("name") or "", "sub": "", "venue": "", "round": ""})
     return rows
+
+
+CIRCUIT_PATH = DATA + "sport_circuits.json"
+
+
+def circuit_info(cid, league="f1"):
+    """Facts and drawing of a racing circuit from ESPN, remembered for good: {name, place, length, laps, turns, direction, record, image}."""
+    if not cid:
+        return {}
+    known = ac.read_json(CIRCUIT_PATH, {}) or {}
+    if cid in known:
+        return known[cid]
+    path = LEAGUES.get(league, {}).get("path", "racing/f1")
+    sport, slug = path.split("/", 1)
+    data = espn_get(f"{CORE}{sport}/leagues/{slug}/circuits/{cid}")
+    address = data.get("address") or {}
+    place = ", ".join(x for x in ((address.get("city") if isinstance(address, dict) else str(address)), (address.get("country") if isinstance(address, dict) else "")) if x)
+    image = ""
+    for rel_wanted in (("circuit",), ("full",)):
+        for d in data.get("diagrams") or []:
+            rel, href = d.get("rel") or [], d.get("href") or ""
+            if all(w in rel for w in rel_wanted) and not any("dark" in r or "info" in r for r in rel) and href.lower().endswith((".jpg", ".png")):
+                image = href
+                break
+        if image:
+            break
+    info_ = {"name": data.get("fullName") or "", "place": place, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
+             "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
+             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image}
+    known[cid] = info_
+    try:
+        ac.write_json(CIRCUIT_PATH, known)
+    except Exception as error:  # noqa: BLE001
+        log(f"cannot save circuits: {error}")
+    return info_
 
 
 LOGO_PATH = DATA + "sport_logos.json"
