@@ -729,6 +729,47 @@
                     <label>$LOCALIZE[31168]</label>
                     <onclick>ActivateWindow(ServiceSettings)</onclick>
                 </control>
+                <control type="label" id="2503">
+                    <width>1180</width>
+                    <height>76</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31234]</label>
+                </control>
+                <control type="textbox" id="2504">
+                    <width>1180</width>
+                    <height>110</height>
+                    <font>font_body</font>
+                    <textcolor>text3</textcolor>
+                    <label>$LOCALIZE[31235]</label>
+                </control>
+                <control type="button" id="1506">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31236]</label>
+                    <onclick>Addon.OpenSettings(service.subtitles.a4ksubtitles)</onclick>
+                    <visible>System.HasAddon(service.subtitles.a4ksubtitles)</visible>
+                </control>
+                <control type="button" id="1507">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31237]</label>
+                    <onclick>RunScript(special://skin/scripts/subtitles.py,default)</onclick>
+                    <visible>System.HasAddon(service.subtitles.a4ksubtitles)</visible>
+                </control>
                 <control type="label" id="2502">
                     <width>1180</width>
                     <height>76</height>
