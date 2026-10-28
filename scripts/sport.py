@@ -711,6 +711,8 @@ class Sport(xbmcgui.WindowXML):
                 self.set_recording(ev)
             elif result == "fix":
                 self.fix_channel(ev)
+            elif result == "done":
+                return
             elif result in ("home", "away"):
                 if self.club_popup(ev, result):
                     return
@@ -1517,6 +1519,13 @@ class GameInfo(xbmcgui.WindowXMLDialog):
             self.setProperty(f"g.{key}", value)
 
     def onClick(self, cid):
+        if cid in (321, 322):
+            # the club pop-up opens on top of this page, so the page stays where it is
+            if self.parent.club_popup(self.ev, "home" if cid == 321 else "away"):
+                self.result = "done"
+                self.alive = False
+                self.close()
+            return
         if cid in self.CLICKS:
             self.result = self.CLICKS[cid]
             self.alive = False
