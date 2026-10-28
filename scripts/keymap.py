@@ -16,12 +16,12 @@ PATH = DIR + "lucent-back-stop.xml"
 KEYMAP = """<keymap>
     <FullscreenVideo>
         <keyboard>
-            <backspace>Stop</backspace>
-            <escape>Stop</escape>
-            <browser_back>Stop</browser_back>
+            <backspace>RunScript(special://skin/scripts/fsback.py)</backspace>
+            <escape>RunScript(special://skin/scripts/fsback.py)</escape>
+            <browser_back>RunScript(special://skin/scripts/fsback.py)</browser_back>
         </keyboard>
         <remote>
-            <back>Stop</back>
+            <back>RunScript(special://skin/scripts/fsback.py)</back>
         </remote>
     </FullscreenVideo>
     <VirtualKeyboard>
@@ -53,7 +53,7 @@ def main():
         with xbmcvfs.File(PATH, "w") as fh:
             fh.write(KEYMAP)
         xbmc.executebuiltin("Action(reloadkeymaps)")
-        log("Back now stops the video")
+        log("Back now stops the video (or returns to the Sport page)")
     elif not enabled and have is not None:
         xbmcvfs.delete(PATH)
         xbmc.executebuiltin("Action(reloadkeymaps)")

@@ -165,6 +165,7 @@ class Sport(xbmcgui.WindowXML):
         self.ready = True
         for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "previewhint", "fullhint", "stoptext", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
+        xbmcgui.Window(10000).setProperty("lucent.sport.wid", str(xbmcgui.getCurrentWindowId()))
         self.check_pvr()
         self.restore_preview()
         if not sc.all_cached():
@@ -208,7 +209,9 @@ class Sport(xbmcgui.WindowXML):
                 self.setFocusId(101)
                 return
             self.closing = True
-            self.close()      # a channel in the TV window keeps playing until Stop channel is used
+            if epg.active()[0]:      # leaving Sport closes the channel in the TV window
+                epg.stop()
+            self.close()
             return
         if aid == ACTION_STOP and epg.active()[0]:
             self.stop_preview()
