@@ -282,5 +282,33 @@ def channel_path(cid):
     return _PATHS.get(raw, "") or next((v for k, v in _PATHS.items() if raw and (k.endswith(raw) or raw.endswith(k))), "")
 
 
+FULLSCREEN_SETTING = "pvrplayback.switchtofullscreenchanneltypes"
+_SAVED = {"value": None, "token": 0}
+
+
+def play_windowed(cid):
+    """Start a channel without Kodi switching to full screen: the PVR 'switch to full screen' setting is set to Never
+    for a few seconds. False when this Kodi has no such setting."""
+    current = rpc("Settings.GetSettingValue", {"setting": FULLSCREEN_SETTING}).get("value")
+    if current is None:
+        return False
+    if _SAVED["value"] is None:
+        _SAVED["value"] = current
+    _SAVED["token"] += 1
+    token = _SAVED["token"]
+    if current != 0:
+        rpc("Settings.SetSettingValue", {"setting": FULLSCREEN_SETTING, "value": 0})
+    rpc("Player.Open", {"item": {"channelid": int(cid)}})
+
+    def put_back():
+        time.sleep(8)
+        if _SAVED["token"] == token and _SAVED["value"] is not None:
+            rpc("Settings.SetSettingValue", {"setting": FULLSCREEN_SETTING, "value": _SAVED["value"]})
+            _SAVED["value"] = None
+    import threading
+    threading.Thread(target=put_back, daemon=True).start()
+    return True
+
+
 def play(cid):
     rpc("Player.Open", {"item": {"channelid": int(cid)}})

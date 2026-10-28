@@ -1014,6 +1014,8 @@ class Sport(xbmcgui.WindowXML):
         if path:
             xbmc.Player().play(path, windowed=True)
             return
+        if epg.play_windowed(cid):
+            return
         wid = xbmcgui.getCurrentWindowId()
         epg.play(cid)
         for _ in range(50):
