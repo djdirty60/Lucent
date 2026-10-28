@@ -28,6 +28,7 @@ import info  # http() and tmdb() helpers of the info page (same folder)
 DATA = "special://profile/addon_data/skin.lucent/"
 FOLLOW_PATH = DATA + "agenda_follow.json"
 CACHE_PATH = DATA + "agenda_cache.json"
+CACHE_VERSION = 2
 SYNC_TTL = 12 * 3600        # the Trakt collection is read again after this many seconds
 TTL = 6 * 3600              # episode data is refreshed after this many seconds
 PAST_DAYS = 45              # how far back the calendar looks
@@ -145,6 +146,8 @@ def load_follow():
 
 def load_cache():
     data = read_json(CACHE_PATH, {})
+    if data.get("v") != CACHE_VERSION:           # older entries have no logos: fetch everything again
+        data = {"v": CACHE_VERSION}
     data.setdefault("shows", {})
     return data
 
@@ -195,6 +198,17 @@ def img(path, size):
     return f"{IMG}{size}{path}" if path else ""
 
 
+def pick_logo(data):
+    """Best clear logo (Dutch, then English, then any) from a TMDB 'images' block; '' when there is none."""
+    logos = [x for x in ((data or {}).get("images") or {}).get("logos") or [] if x.get("file_path")
+             and not x["file_path"].lower().endswith(".svg")]
+    for lang in ("nl", "en", None):
+        for logo in logos:
+            if logo.get("iso_639_1") == lang:
+                return img(logo["file_path"], "w500")
+    return img(logos[0]["file_path"], "w500") if logos else ""
+
+
 def local_stamp(stamp):
     """('2026-10-28', '02:00') in the time zone of this device, from a TVmaze airstamp."""
     when = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone()
@@ -233,12 +247,12 @@ def maze_times(tmdb_id, maze_id):
 def tv_events(rec):
     """Events of one followed series (aired recently or still to come) and its TVmaze id."""
     tmdb_id = rec["tmdb"]
-    show = info.tmdb(f"tv/{tmdb_id}")
+    show = info.tmdb(f"tv/{tmdb_id}", append_to_response="images", include_image_language="nl,en,null")
     networks = show.get("networks") or []
     base = {
         "kind": "tv", "show": show_key("tv", tmdb_id), "tmdb": tmdb_id, "name": show.get("name") or rec["name"],
         "poster": img(show.get("poster_path"), "w342"), "backdrop": img(show.get("backdrop_path"), "w1280"),
-        "network": networks[0]["name"] if networks else "", "rating": show.get("vote_average") or 0,
+        "logo": pick_logo(show), "network": networks[0]["name"] if networks else "", "rating": show.get("vote_average") or 0,
         "genre": ", ".join(g["name"] for g in (show.get("genres") or [])[:2]), "show_plot": show.get("overview") or "",
     }
     seasons = {ep["season_number"] for ep in (show.get("last_episode_to_air"), show.get("next_episode_to_air")) if ep}
@@ -285,7 +299,7 @@ def digital_date(tmdb_id):
 
 
 def movie_events(rec):
-    movie = info.tmdb(f"movie/{rec['tmdb']}")
+    movie = info.tmdb(f"movie/{rec['tmdb']}", append_to_response="images", include_image_language="nl,en,null")
     theatrical = movie.get("release_date") or ""
     digital = ""
     try:
@@ -298,7 +312,7 @@ def movie_events(rec):
     return [{
         "kind": "movie", "show": show_key("movie", rec["tmdb"]), "key": f"mv:{rec['tmdb']}", "tmdb": rec["tmdb"],
         "name": movie.get("title") or rec["name"], "title": "", "season": 0, "episode": 0, "date": date, "time": "",
-        "digital": bool(digital), "theatrical": theatrical,
+        "digital": bool(digital), "theatrical": theatrical, "logo": pick_logo(movie),
         "plot": movie.get("overview") or "", "poster": img(movie.get("poster_path"), "w342"),
         "backdrop": img(movie.get("backdrop_path"), "w1280"), "still": img(movie.get("backdrop_path"), "w500"),
         "network": "", "rating": movie.get("vote_average") or 0,

@@ -261,7 +261,7 @@ class Agenda(xbmcgui.WindowXML):
                 notify="1" if ev["notify"] else "", showkey=ev["show"], tmdb=ev["tmdb"], kind=ev["kind"], backdrop=ev["backdrop"],
                 poster=ev["poster"], when=when_line(ev), dtitle=ep_title(ev), meta=meta(ev), plot=ev["plot"],
                 still=ev["still"], bellText=t("bell_on") if ev["notify"] else t("bell_off"),
-                openText=t("open_movie") if ev["kind"] == "movie" else t("open_show"), **nxt, **extra))
+                openText=t("open_movie") if ev["kind"] == "movie" else t("open_show"), logo=ev.get("logo", ""), **nxt, **extra))
         control = self.getControl(LIST)
         control.reset()
         control.addItems(items)
@@ -303,7 +303,7 @@ class Agenda(xbmcgui.WindowXML):
             items.append(listitem(
                 card["name"], caption, first["still"] or first["poster"], time=first["time"], epcode=code,
                 caption2=sub or first["network"], notify="1" if card["notify"] else "", showkey=card["show"], tmdb=card["tmdb"],
-                kind=card["kind"], backdrop=card["backdrop"], hwhen=t("airs_on" if card["date"] > core.today().isoformat() else "aired_on",
+                kind=card["kind"], backdrop=card["backdrop"], logo=card.get("logo", ""), hwhen=t("airs_on" if card["date"] > core.today().isoformat() else "aired_on",
                                                                       when_line(first)),
                 hsub=f"{core.ep_code(first)}  ·  {first['title']}" if first["kind"] == "tv" and not multi else (code if multi else ep_title(first)),
                 hmeta=meta(first), plot=first["plot"],

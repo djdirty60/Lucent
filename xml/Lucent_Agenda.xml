@@ -58,6 +58,8 @@
                 <height>1080</height>
                 <texture>vignette.png</texture>
             </control>
+            <control type="group">
+                <left>-54</left>
             <control type="label">
                 <left>150</left>
                 <top>62</top>
@@ -151,7 +153,7 @@
             <control type="group">
                 <visible>!String.IsEmpty(Window.Property(agenda.empty))</visible>
             <control type="label">
-                <left>360</left>
+                <left>414</left>
                 <top>400</top>
                 <width>1200</width>
                 <height>70</height>
@@ -161,7 +163,7 @@
                 <label>$INFO[Window.Property(agenda.t.empty_title)]</label>
             </control>
             <control type="textbox">
-                <left>460</left>
+                <left>514</left>
                 <top>490</top>
                 <width>1000</width>
                 <height>200</height>
@@ -1014,6 +1016,16 @@
                 <textcolor>text</textcolor>
                 <scroll>false</scroll>
                 <label>$INFO[Container(430).ListItem.Label]</label>
+                <visible>String.IsEmpty(Container(430).ListItem.Property(logo))</visible>
+            </control>
+            <control type="image">
+                <left>150</left>
+                <top>280</top>
+                <width>560</width>
+                <height>108</height>
+                <aspectratio align="left" aligny="center">keep</aspectratio>
+                <texture>$INFO[Container(430).ListItem.Property(logo)]</texture>
+                <visible>!String.IsEmpty(Container(430).ListItem.Property(logo))</visible>
             </control>
             <control type="label">
                 <left>150</left>
@@ -1066,7 +1078,7 @@
             </control>
             <control type="label">
                 <left>150</left>
-                <top>728</top>
+                <top>716</top>
                 <width>900</width>
                 <height>56</height>
                 <font>font_heading_small</font>
@@ -1084,16 +1096,16 @@
             </control>
                 <control type="list" id="430">
                     <left>150</left>
-                    <top>790</top>
-                    <width>1620</width>
-                    <height>270</height>
+                    <top>776</top>
+                    <width>1700</width>
+                    <height>304</height>
                     <orientation>horizontal</orientation>
                     <scrolltime tween="cubic" easing="out">200</scrolltime>
                     <onup>431</onup>
-                    <itemlayout width="380" height="270">
+                    <itemlayout width="404" height="304">
                         <include content="AgendaCard"><param name="focus">false</param></include>
                     </itemlayout>
-                    <focusedlayout width="380" height="270">
+                    <focusedlayout width="404" height="304">
                         <include content="AgendaCard"><param name="focus">true</param></include>
                     </focusedlayout>
                 </control>
@@ -1354,6 +1366,7 @@
                         <label>$INFO[Container(520).ListItem.Property(e3_sub)]</label>
                     </control>
                 </control>
+            </control>
             </control>
         </control>
     </controls>
