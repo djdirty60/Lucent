@@ -582,7 +582,8 @@ class Sport(xbmcgui.WindowXML):
     # ------------------------------------------------------------------ tables
     def fill_leagues(self):
         keys = [k for k, v in sc.LEAGUES.items() if v["kind"] == "teams"]
-        keys.sort(key=lambda k: (k not in self.follow["leagues"], k not in sc.league_keys(), list(sc.LEAGUES).index(k)))
+        active, position = set(sc.league_keys()), {k: i for i, k in enumerate(sc.LEAGUES)}
+        keys.sort(key=lambda k: (k not in self.follow["leagues"], k not in active, position[k]))
         control = self.getControl(LEAGUE_LIST)
         control.reset()
         control.addItems([listitem(sc.LEAGUES[k]["name"], key=k) for k in keys])
@@ -607,7 +608,11 @@ class Sport(xbmcgui.WindowXML):
             self.load_table(self.table_key)
 
     def load_table(self, key):
-        rows = sc.table_rows(key, self.marks)
+        try:
+            rows = sc.table_rows(key, self.marks)
+        except Exception as error:  # noqa: BLE001 - the extras (form, colours) must never hide the table itself
+            sc.log(f"table {key}: {error}")
+            rows = [dict(r, form=[], teamcol="", chg=0, edge="", mine=False) for r in sc.standings(key)]
         control = self.getControl(TABLE_LIST)
         control.reset()
         items = []
@@ -615,17 +620,17 @@ class Sport(xbmcgui.WindowXML):
             if "header" in row:
                 items.append(listitem(row["header"], header=row["header"]))
                 continue
-            props = {"rank": row["rank"], "gp": row["gp"], "gd": row["gd"], "pts": row["pts"], "teamid": row["id"],
-                     "edge": row["edge"], "mine": "1" if row["mine"] else "",
-                     "ring": ("66" + row["teamcol"][2:]) if row["teamcol"] else "", "wdl": "-".join(x for x in (row.get("w"), row.get("d"), row.get("l")) if x != "")}
-            chg = row["chg"]
+            props = {"rank": row.get("rank", ""), "gp": row.get("gp", ""), "gd": row.get("gd", ""), "pts": row.get("pts", ""),
+                     "teamid": row.get("id", ""), "edge": row.get("edge", ""), "mine": "1" if row.get("mine") else "",
+                     "ring": ("66" + row["teamcol"][2:]) if row.get("teamcol") else ""}
+            chg = row.get("chg", 0)
             props["chg"] = f"▲{chg}" if chg > 0 else f"▼{-chg}" if chg < 0 else ""
             props["chgcol"] = "FF3FB950" if chg > 0 else "FFE5534B"
             for n in range(5):
-                letter = row["form"][n] if n < len(row["form"]) else ""
+                letter = row["form"][n] if n < len(row.get("form", [])) else ""
                 props[f"f{n + 1}"] = letter
                 props[f"f{n + 1}c"] = sc.FORM_COLOURS.get(letter, "")
-            items.append(listitem(row["team"], icon=row["logo"], **props))
+            items.append(listitem(row.get("team", ""), icon=row.get("logo", ""), **props))
         control.addItems(items)
         self.setProperty("sport.notable", "" if items else "1")
         for n, (col, text) in enumerate(sc.legend(rows), 1):

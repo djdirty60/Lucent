@@ -28,7 +28,7 @@ FOLLOW_PATH = DATA + "sport_follow.json"
 CACHE_PATH = DATA + "sport_cache.json"
 ESPN = "https://site.api.espn.com/apis/site/v2/sports/"
 ESPN_V2 = "https://site.api.espn.com/apis/v2/sports/"
-CACHE_VERSION = 1
+CACHE_VERSION = 2
 TTL = 15 * 60
 TTL_LIVE = 2 * 60
 STANDINGS_TTL = 60 * 60
@@ -711,10 +711,10 @@ def table_rows(key, marks=()):
         row["form"] = form
         row["teamcol"] = colours.get(row["id"], "")
         prev = row.get("prev")
-        row["chg"] = (prev - row["rank"]) if prev else 0
+        row["chg"] = (prev - row["rank"]) if prev and isinstance(row.get("rank"), int) else 0
         edge = (row.get("note") or "").strip("#")
         row["edge"] = ("FF" + edge.upper()) if len(edge) == 6 else ""
-        row["mine"] = bool(is_following_team(follow, {"id": row["id"], "name": row["team"]})) or row["id"] in marks
+        row["mine"] = bool(is_following_team(follow, {"id": row["id"], "name": row.get("team", "")})) or row["id"] in marks
     return rows
 
 
