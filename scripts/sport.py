@@ -416,14 +416,21 @@ class Sport(xbmcgui.WindowXML):
                            key=lambda e: (e["state"] != "in", e["state"] == "post", e["start"] if e["state"] != "post" else -e["start"]))
             if not logo and shown:
                 logo = shown[0].get("lg", "")
-            rows.append({"title": title, "sub": sub, "logo": logo, "events": shown})
+            rows.append({"title": title, "sub": sub, "logo": logo, "events": shown, "kind": kind})
         everything = {}
         for row in rows:
             for e in row["events"]:
                 everything[e["id"]] = e
         live_all = sorted((e for e in everything.values() if e["state"] == "in"), key=lambda e: e["start"])
         coming_all = sorted((e for e in everything.values() if e["state"] == "pre"), key=lambda e: e["start"])
-        hero = (live_all + coming_all)[:HERO_MAX]
+        # the big card is for your favourites: games of followed teams (and names); only when there are none, anything followed
+        fav = {}
+        for row in rows:
+            if row["kind"] in ("team", "name"):
+                for e in row["events"]:
+                    fav[e["id"]] = e
+        pool = [e for e in live_all + coming_all if e["id"] in fav] or (live_all + coming_all)
+        hero = pool[:HERO_MAX]
         sections = []
         if live_all or coming_all:
             sections.append({"title": sc.t("liveup"), "sub": f"{len(live_all)} live" if live_all else "", "logo": SPORT_ICON,
