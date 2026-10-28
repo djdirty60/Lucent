@@ -798,6 +798,9 @@ def table_rows(key, marks=()):
     follow = load_follow()
     colours = colour_map()
     played = results(key)
+    if not played:                              # no season answer: use the finished games we already hold
+        played = sorted((e for e in all_cached() if e["league"] == key and e["state"] == "post" and e["kind"] == "teams"),
+                        key=lambda e: -e["start"])
     for row in rows:
         if "header" in row or not row.get("id"):
             continue

@@ -1074,11 +1074,12 @@ class Sport(xbmcgui.WindowXML):
         if not keep_sport or getattr(self, "t_sport", None) not in sports:
             current = sc.LEAGUES.get(self.table_key, {}).get("sport")
             self.t_sport = current if current in sports else (sports[0] if sports else "soccer")
-        chips = self.getControl(T_SPORTS)
-        chips.reset()
-        chips.addItems([listitem(sc.sport_name(s), sport=s) for s in sports])
-        chips.selectItem(sports.index(self.t_sport) if self.t_sport in sports else 0)
-        self.t_sports_shown = sports
+        if not keep_sport:                      # the sport buttons stay as they are while you move along them
+            chips = self.getControl(T_SPORTS)
+            chips.reset()
+            chips.addItems([listitem(sc.sport_name(s), sport=s) for s in sports])
+            chips.selectItem(sports.index(self.t_sport) if self.t_sport in sports else 0)
+            self.t_sports_shown = sports
         keys = [k for k, v in sc.LEAGUES.items() if v["kind"] == "teams" and v["sport"] == self.t_sport]
         active, position = set(sc.league_keys()), {k: i for i, k in enumerate(sc.LEAGUES)}
         keys.sort(key=lambda k: (k not in self.follow["leagues"], k not in active, position[k]))
@@ -1108,7 +1109,6 @@ class Sport(xbmcgui.WindowXML):
             self.marks = set()
             self.table_key = ""
             self.fill_leagues(keep_sport=True)
-            self.getControl(T_SPORTS).selectItem(pos)
 
     def table_after(self, token):
         if token != self.table_token or self.closing:
@@ -1128,7 +1128,11 @@ class Sport(xbmcgui.WindowXML):
             rows = sc.table_rows(key, self.marks)
         except Exception as error:  # noqa: BLE001 - the extras (form, colours) must never hide the table itself
             sc.log(f"table {key}: {error}")
-            rows = [dict(r, form=[], teamcol="", chg=0, edge="", mine=False) for r in sc.standings(key)]
+            try:
+                rows = [dict(r, form=[], teamcol="", chg=0, edge="", mine=False) for r in sc.standings(key)]
+            except Exception as error2:  # noqa: BLE001
+                sc.log(f"table {key} (standings): {error2}")
+                rows = []
         control = self.getControl(TABLE_LIST)
         control.reset()
         items = []
@@ -1437,6 +1441,20 @@ class Sport(xbmcgui.WindowXML):
         sc.save_follow(follow)
 
 
+def focus_first(window, ids):
+    """Focus the first of these controls that is visible. Controls shown by a window property only count a moment
+    after the property is set, so setFocusId is tried again for about two seconds."""
+    for _ in range(25):
+        for cid in ids:
+            try:
+                window.setFocusId(cid)
+                if window.getFocusId() == cid:
+                    return
+            except Exception:  # noqa: BLE001
+                pass
+        xbmc.sleep(80)
+
+
 class GameInfo(xbmcgui.WindowXMLDialog):
     """The page of one game; its layout depends on the kind of game (teams / race / event)."""
     CLICKS = {311: "play1", 312: "play2", 313: "play3", 314: "play4", 332: "remind", 333: "record", 321: "home", 322: "away",
@@ -1460,7 +1478,7 @@ class GameInfo(xbmcgui.WindowXMLDialog):
                           ("info", sc.t("g_info")), ("matchinfo", sc.t("g_matchinfo")), ("fulltable", sc.t("g_fulltable")),
                           ("sessions", sc.t("g_sessions"))):
             self.setProperty(f"g.t.{key}", text)
-        self.setFocusId(311 if self.props.get("ch1cid") else 332 if self.props.get("remindtext") else 321)
+        focus_first(self, (311, 332, 321, 322, 323, 331))
         threading.Thread(target=self.extra, daemon=True).start()
 
     def extra(self):
@@ -1503,7 +1521,7 @@ class ClubPopup(xbmcgui.WindowXMLDialog):
         for key, text in (("now", sc.t("c_now")), ("last", sc.t("c_last1")), ("next", sc.t("c_next1")), ("watch", sc.t("c_watch")),
                           ("games", sc.t("c_theirgames")), ("info", sc.t("c_teaminfo"))):
             self.setProperty(f"club.t.{key}", text)
-        self.setFocusId(801 if self.info.get("canwatch") else 802)
+        focus_first(self, (801, 802, 803, 804))
 
     def onClick(self, cid):
         names = {801: "watch", 802: "follow", 803: "games", 804: "info"}
@@ -1563,7 +1581,7 @@ class TeamCard(xbmcgui.WindowXMLDialog):
         self.setProperty("card.t.games", sc.t("c_games"))
         self.setProperty("card.t.last", sc.t("c_last"))
         self.setProperty("card.t.next", sc.t("c_next"))
-        self.setFocusId(301 if chans else 303)
+        focus_first(self, (301, 303, 304))
 
     def onClick(self, cid):
         names = {301: "watch", 302: "remind", 303: "follow", 304: "games"}
