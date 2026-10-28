@@ -240,13 +240,13 @@ class Sport(xbmcgui.WindowXML):
         elif cid == HERO_LIST or cid in SECTION_LISTS:
             ev, item = self.current()
             if ev and item:
-                self.game_menu(ev, item)
+                self.open_game(ev)
         elif cid == LIST:
             ev, item = self.current()
             if item and item.getProperty("hero") and item.getProperty("ch1cid"):
                 self.play_channel(1)
-            elif item and item.getProperty("ch1cid"):
-                self.setFocusId(311)
+            elif ev:
+                self.open_game(ev)
 
     # ------------------------------------------------------------------ background work
     def status(self, text=""):
@@ -542,6 +542,115 @@ class Sport(xbmcgui.WindowXML):
             self.last_tint = pair
             self.setProperty("sport.bgA", pair[0])
             self.setProperty("sport.bgB", pair[1])
+
+
+    # ------------------------------------------------------------------ game page
+    def game_layout(self, ev):
+        if ev["kind"] == "teams":
+            return "teams"
+        return "race" if ev["league"] in sc.LEAGUES and sc.LEAGUES[ev["league"]]["sport"] == "racing" else "event"
+
+    def countdown(self, ev):
+        if ev["state"] == "in":
+            return ev.get("status") or "LIVE"
+        if ev["state"] == "post":
+            return sc.t("g_over")
+        left = int(ev["start"] - time.time())
+        if left <= 0:
+            return ""
+        days, hours, mins = left // 86400, left % 86400 // 3600, left % 3600 // 60
+        if days:
+            return sc.t("g_in_dh", days, hours)
+        return sc.t("g_in_h", hours, mins) if hours else sc.t("g_in_m", mins)
+
+    def game_props(self, ev):
+        data = epg.load() if self.has_pvr else {}
+        label, label2, props = self.event_props(ev, data)
+        d = sc.local_day(ev["start"])
+        props.update(label=label, label2=label2, layout=self.game_layout(ev), dayshort=ac.day_short(d).upper(),
+                     clock=sc.local_time(ev["start"]), countdown=self.countdown(ev),
+                     crumb=f"‹ {sc.t('title')}     {props['league']}" + (f"  ·  {props['venue']}" if props["venue"] else ""))
+        if ev["kind"] == "teams":
+            props["hsub"] = props["asub"] = ""
+            props["info1"] = ev.get("venue", "")
+            props["info2"] = ev.get("round", "")
+        else:
+            props["info1"] = ev.get("venue", "")
+            props["info2"] = ev.get("round", "")
+        if props["layout"] == "race":
+            mates = sorted((e for e in sc.all_cached() if e["league"] == ev["league"] and e["kind"] == "event" and e["title"] == ev["title"]),
+                           key=lambda e: e["start"])[:6]
+            for n, e in enumerate(mates, 1):
+                props[f"s{n}name"] = e.get("sub") or e["title"]
+                props[f"s{n}when"] = f"{ac.day_short(sc.local_day(e['start']))}  {sc.local_time(e['start'])}"
+                props[f"s{n}now"] = "1" if e["id"] == ev["id"] else ""
+        return props
+
+    def game_extra(self, ev):
+        """Slow part (form, standings): returns {name: value} for the page, filled in once it is ready."""
+        out = {}
+        if ev["kind"] != "teams" or ev["league"] not in sc.LEAGUES:
+            return out
+        key = ev["league"]
+        marks = {s.get("id") for s in (ev["home"], ev["away"]) if s.get("id")}
+        try:
+            for side, who in (("h", "home"), ("a", "away")):
+                team = ev[who]
+                card = sc.team_card(key, team.get("id", ""), team.get("name", ""))
+                row = card["row"]
+                rec = "-".join(str(x) for x in (row.get("w"), row.get("d"), row.get("l")) if x not in ("", None))
+                out[f"{side}sub"] = "  ·  ".join(x for x in (rec, sc.t("g_home" if who == "home" else "g_away")) if x)
+                if row.get("rank"):
+                    out[f"{side}place"] = f"{row['rank']}e" if sc.NL else str(row["rank"])
+                for n in range(5):
+                    letter = card["recent"][n][1][0] if n < len(card["recent"]) else ""
+                    out[f"{side}f{n + 1}"] = LETTERS.get(letter, letter)
+                    out[f"{side}fc{n + 1}"] = sc.FORM_COLOURS.get(letter, "")
+            rows = [r for r in sc.table_rows(key, marks) if r.get("id")]
+            keep = set(range(min(3, len(rows))))
+            for i, r in enumerate(rows):
+                if r["id"] in marks:
+                    keep |= {i - 1, i, i + 1}
+            picked = [rows[i] for i in sorted(keep) if 0 <= i < len(rows)][:9]
+            for n, r in enumerate(picked, 1):
+                out[f"t{n}rank"], out[f"t{n}team"] = str(r.get("rank", "")), r.get("team", "")
+                out[f"t{n}gp"], out[f"t{n}gd"], out[f"t{n}pts"] = str(r.get("gp", "")), str(r.get("gd", "")), str(r.get("pts", ""))
+                out[f"t{n}mine"] = "1" if r["id"] in marks else ""
+            if picked:
+                out["tabletitle"] = sc.t("g_standings", league_name(key).upper())
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"game_extra: {error}")
+        return out
+
+    def open_game(self, ev):
+        while True:
+            props = self.game_props(ev)
+            window = GameInfo("Lucent_SportGame.xml", self.path(), "Default", "1080i")
+            window.setup(ev, props, self)
+            window.doModal()
+            result = window.result
+            del window
+            if result.startswith("play"):
+                cid = props.get(f"ch{result[4:]}cid")
+                if cid:
+                    self.closing = True
+                    self.close()
+                    epg.play(cid)
+                return
+            if result == "table":
+                self.open_table(ev)
+                return
+            if result == "remind":
+                self.remind_event(ev)
+            elif result == "record":
+                self.set_recording(ev)
+            elif result == "fix":
+                self.fix_channel(ev)
+            elif result in ("home", "away"):
+                self.toggle_team(result, ev)
+            else:
+                self.render(keep_focus=True)
+                return
 
     def game_menu(self, ev, item):
         """OK on a game: watch on a channel, remind, record, fix the channel, follow a team, show the table."""
@@ -1189,6 +1298,50 @@ class Sport(xbmcgui.WindowXML):
             else:
                 follow[kind] = [x for x in follow[kind] if x != ident]
         sc.save_follow(follow)
+
+
+class GameInfo(xbmcgui.WindowXMLDialog):
+    """The page of one game; its layout depends on the kind of game (teams / race / event)."""
+    CLICKS = {311: "play1", 312: "play2", 313: "play3", 314: "play4", 332: "remind", 333: "record", 321: "home", 322: "away",
+              331: "fix", 323: "table"}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.result = ""
+        self.ev = None
+        self.props = {}
+        self.parent = None
+        self.alive = True
+
+    def setup(self, ev, props, parent):
+        self.ev, self.props, self.parent = ev, props, parent
+
+    def onInit(self):
+        for key, value in self.props.items():
+            self.setProperty(f"g.{key}", "" if value is None else str(value))
+        for key, text in (("watch", sc.t("watch")), ("nochan", self.parent.getProperty("sport.t.nochan")), ("form", sc.t("g_form")),
+                          ("info", sc.t("g_info")), ("matchinfo", sc.t("g_matchinfo")), ("fulltable", sc.t("g_fulltable")),
+                          ("sessions", sc.t("g_sessions"))):
+            self.setProperty(f"g.t.{key}", text)
+        self.setFocusId(311 if self.props.get("ch1cid") else 332 if self.props.get("remindtext") else 321)
+        threading.Thread(target=self.extra, daemon=True).start()
+
+    def extra(self):
+        for key, value in self.parent.game_extra(self.ev).items():
+            if not self.alive:
+                return
+            self.setProperty(f"g.{key}", value)
+
+    def onClick(self, cid):
+        if cid in self.CLICKS:
+            self.result = self.CLICKS[cid]
+            self.alive = False
+            self.close()
+
+    def onAction(self, action):
+        if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
+            self.alive = False
+            self.close()
 
 
 class TeamCard(xbmcgui.WindowXMLDialog):
