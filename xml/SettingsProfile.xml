@@ -27,8 +27,12 @@
                 <ondown>2</ondown>
                 <control type="radiobutton" id="4">
                     <width>1180</width>
+                    <label>$LOCALIZE[31239]</label>
                 </control>
                 <control type="button" id="5">
+                    <label>$LOCALIZE[31240]</label>
+                    <label2>[B]$INFO[System.ProfileAutoLogin][/B]</label2>
+                    <enable>!Window.IsVisible(ProfileSettings) + !System.HasLoginScreen</enable>
                     <width>1180</width>
                     <height>72</height>
                     <font>font_label</font>
@@ -55,7 +59,7 @@
                         <width>36</width>
                         <height>36</height>
                         <aspectratio>keep</aspectratio>
-                        <texture colordiffuse="text3">$VAR[FileIcon]</texture>
+                        <texture colordiffuse="text3">icons/user.png</texture>
                         
                     </control>
                     <control type="label">
@@ -114,7 +118,7 @@
                         <width>36</width>
                         <height>36</height>
                         <aspectratio>keep</aspectratio>
-                        <texture colordiffuse="on_focus">$VAR[FileIcon]</texture>
+                        <texture colordiffuse="on_focus">icons/user.png</texture>
                         <visible>Control.HasFocus(2)</visible>
                     </control>
                     <control type="label">
