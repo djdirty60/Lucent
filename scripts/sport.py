@@ -688,7 +688,8 @@ class Sport(xbmcgui.WindowXML):
             elif result == "fix":
                 self.fix_channel(ev)
             elif result in ("home", "away"):
-                self.toggle_team(result, ev)
+                if self.club_popup(ev, result):
+                    return
             else:
                 self.render(keep_focus=True)
                 return
@@ -1159,13 +1160,16 @@ class Sport(xbmcgui.WindowXML):
         item = self.getControl(TABLE_LIST).getSelectedItem()
         if not item or item.getProperty("header") or not item.getProperty("teamid"):
             return
-        name, team_id = item.getLabel(), item.getProperty("teamid")
-        card = sc.team_card(self.table_key, team_id, name)
         logo = item.getArt("icon") if hasattr(item, "getArt") else ""
+        self.show_team_card(self.table_key, item.getProperty("teamid"), item.getLabel(), logo)
+
+    def show_team_card(self, key, team_id, name, logo):
+        """The team card. Returns True when it moved on (played a channel or opened the team's games)."""
+        card = sc.team_card(key, team_id, name)
         data = epg.load() if self.has_pvr else {}
         chans = self.channels_of(card["next"], data) if card["next"] else []
         window = TeamCard("Lucent_SportTeam.xml", self.path(), "Default", "1080i")
-        window.setup(self.table_key, team_id, name, logo, card, chans, sc.is_following_team(sc.load_follow(), {"id": team_id, "name": name}))
+        window.setup(key, team_id, name, logo, card, chans, sc.is_following_team(sc.load_follow(), {"id": team_id, "name": name}))
         window.doModal()
         result = window.result
         del window
@@ -1173,18 +1177,74 @@ class Sport(xbmcgui.WindowXML):
             self.closing = True
             self.close()
             epg.play(chans[0]["cid"])
+            return True
         elif result == "remind" and card["next"]:
             self.by_id[card["next"]["id"]] = card["next"]
             self.remind_event(card["next"])
         elif result == "follow":
-            sc.toggle_team(self.table_key, {"id": team_id, "name": name, "logo": logo})
-            self.load_table(self.table_key)
+            sc.toggle_team(key, {"id": team_id, "name": name, "logo": logo})
+            if self.view == "tables":
+                self.load_table(self.table_key)
         elif result == "games":
-            self.team_name = name
-            self.team_events = card["games"] + [e for e, _r in card["recent"]]
-            self.view = "team"
-            self.render()
-            self.setFocusId(LIST)
+            self.show_team_games(name, card)
+            return True
+        return False
+
+    def show_team_games(self, name, card):
+        self.team_name = name
+        self.team_events = card["games"] + [e for e, _r in card["recent"]]
+        self.view = "team"
+        self.render()
+        self.setFocusId(LIST)
+
+    def club_popup(self, ev, who):
+        """Click on a club on the game page: now / last / next game, Watch now, Follow, All their games, Team info.
+        Returns True when the game page should not come back."""
+        side = ev[who]
+        key, team_id, name = ev["league"], side.get("id", ""), side.get("name", "")
+        card = sc.team_card(key, team_id, name)
+        data = epg.load() if self.has_pvr else {}
+        live = next((e for e in card["games"] if e["state"] == "in"), ev if ev["state"] == "in" else None)
+        nxt = next((e for e in card["games"] if e["state"] == "pre"), None)
+        watch_ev = live or nxt
+        chans = self.channels_of(watch_ev, data) if watch_ev else []
+        followed = sc.is_following_team(sc.load_follow(), {"id": team_id, "name": name})
+
+        def vs(game):
+            mine_home = (team_id and game["home"].get("id") == team_id) or sc.norm(game["home"].get("name")) == sc.norm(name)
+            other = game["away" if mine_home else "home"]
+            return ("vs " if mine_home else "@ ") + other.get("name", "")
+
+        info = {"name": name, "logo": side.get("logo", ""), "sub": sc.league_name_of(key),
+                "col": colour_of(side), "followtext": sc.t("unfollow_team" if followed else "follow_team", name),
+                "now": f"{vs(live)}  ·  {live.get('status') or 'LIVE'}" if live else "",
+                "nowscore": f"{live['home'].get('score', '')}–{live['away'].get('score', '')}" if live else "",
+                "last": "", "lastscore": "", "lastc": "", "lastl": "",
+                "next": f"{vs(nxt)}  ·  {when_line(nxt)}" if nxt else sc.t("c_nonext"),
+                "nextchan": f"{chans[0]['name']}  ·  {chans[0]['tag']}" if chans else "",
+                "canwatch": "1" if chans else ""}
+        if card["recent"]:
+            last, (letter, score, _opp, _home) = card["recent"][0]
+            info.update(last=f"{vs(last)}  ·  {ac.day_short(sc.local_day(last['start']))}", lastscore=score,
+                        lastc=sc.FORM_COLOURS.get(letter, ""), lastl=LETTERS.get(letter, letter))
+        window = ClubPopup("Lucent_SportClub.xml", self.path(), "Default", "1080i")
+        window.setup(info)
+        window.doModal()
+        result = window.result
+        del window
+        if result == "watch" and chans:
+            self.closing = True
+            self.close()
+            epg.play(chans[0]["cid"])
+            return True
+        if result == "follow":
+            self.toggle_team(who, ev)
+        elif result == "games":
+            self.show_team_games(name, card)
+            return True
+        elif result == "info":
+            return self.show_team_card(key, team_id, name, side.get("logo", ""))
+        return False
 
     def path(self):
         import xbmcaddon
@@ -1418,6 +1478,41 @@ class GameInfo(xbmcgui.WindowXMLDialog):
     def onAction(self, action):
         if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.alive = False
+            self.close()
+
+
+def colour_of(side):
+    value = (side.get("color") or "").strip("#")
+    return "FF" + value.upper() if len(value) == 6 else "FF2A3441"
+
+
+class ClubPopup(xbmcgui.WindowXMLDialog):
+    """Small pop-up for a club: now / last / next game and four buttons."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.result = ""
+        self.info = {}
+
+    def setup(self, info):
+        self.info = info
+
+    def onInit(self):
+        for key, value in self.info.items():
+            self.setProperty(f"club.{key}", value)
+        for key, text in (("now", sc.t("c_now")), ("last", sc.t("c_last1")), ("next", sc.t("c_next1")), ("watch", sc.t("c_watch")),
+                          ("games", sc.t("c_theirgames")), ("info", sc.t("c_teaminfo"))):
+            self.setProperty(f"club.t.{key}", text)
+        self.setFocusId(801 if self.info.get("canwatch") else 802)
+
+    def onClick(self, cid):
+        names = {801: "watch", 802: "follow", 803: "games", 804: "info"}
+        if cid in names:
+            self.result = names[cid]
+            self.close()
+
+    def onAction(self, action):
+        if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.close()
 
 

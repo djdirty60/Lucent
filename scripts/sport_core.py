@@ -82,6 +82,8 @@ TX = {
     "q_league": ("Which competition?", "Welke competitie?"), "q_name": ("Name to follow", "Naam om te volgen"),
     "c_record": ("Record", "Seizoen"), "c_home": ("Home", "Thuis"), "c_away": ("Away", "Uit"),
     "c_nonext": ("No game planned", "Geen wedstrijd gepland"), "c_watch": ("Watch now", "Kijk nu"),
+    "c_now": ("NOW", "NU"), "c_last1": ("LAST", "LAATSTE"), "c_next1": ("NEXT", "VOLGENDE"),
+    "c_theirgames": ("All their games", "Al hun wedstrijden"), "c_teaminfo": ("Team info", "Teaminfo"),
     "c_games": ("All games", "Alle wedstrijden"), "c_last": ("LAST RESULTS", "LAATSTE UITSLAGEN"), "c_next": ("NEXT GAME", "VOLGENDE WEDSTRIJD"),
     "q_remove": ("Remove", "Verwijderen"), "q_cancel": ("Keep", "Laten staan"),
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
