@@ -356,7 +356,7 @@ class Sport(xbmcgui.WindowXML):
             "hrec": ev["home"].get("rec", ""), "arec": ev["away"].get("rec", ""),
             "hlogo": ev["home"].get("logo", ""), "alogo": ev["away"].get("logo", ""),
             "mid": score_text(ev), "lgicon": ev.get("lg", ""), "isevent": "1" if kind_event else "",
-            "league": league_name(ev["league"]), "chan": best,
+            "league": league_name(ev["league"]), "chan": best, "chanicon": (chans[0].get("icon") or "") if chans else "",
             "when": when_line(ev), "venue": "  ·  ".join(x for x in (ev.get("venue"), ev.get("round")) if x),
             "header": header, "headersub": headersub, "evid": ev["id"],
             "hcol": colour(ev["home"].get("color"), "66"), "acol": colour(ev["away"].get("color") or ev["away"].get("alt"), "66"),
@@ -413,7 +413,8 @@ class Sport(xbmcgui.WindowXML):
         if ev["league"] == EPG_LEAGUE:
             raw = data.get("names", {}).get(str(ev.get("cid")), "")
             return [{"cid": ev["cid"], "name": epg.clean_name(raw) or raw, "q": epg.quality_of(raw), "score": 3,
-                     "tag": sc.t("sure"), "live": ev["state"] == "in", "title": ev["title"], "start": ev["start"]}]
+                     "tag": sc.t("sure"), "live": ev["state"] == "in", "title": ev["title"], "start": ev["start"],
+                     "icon": data.get("icons", {}).get(str(ev.get("cid")), "")}]
         found = epg.channels_for(ev, data) if data else []
         return plan.with_fixes(ev, found, data or {})
 
