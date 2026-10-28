@@ -87,6 +87,7 @@ TX = {
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "nogames": ("No games planned right now", "Geen wedstrijden gepland"),
+    "neterr": ("Could not reach ESPN ({})", "ESPN niet bereikbaar ({})"),
     "play_on": ("Watch on", "Kijk op"), "n_games": ("{} games", "{} wedstrijden"),
     "hint": ("OK: game menu   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdmenu   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
@@ -383,6 +384,9 @@ def league_keys():
     return keys
 
 
+LAST_FAIL = [0, 0, ""]        # failed, asked, last error text of the latest refresh
+
+
 def refresh(force=False, keys=None, progress=None):
     """Fetch the competitions that are out of date. Returns True when something changed."""
     now = int(time.time())
@@ -393,6 +397,7 @@ def refresh(force=False, keys=None, progress=None):
     if not todo:
         return False
     done = [0]
+    LAST_FAIL[:] = [0, len(todo), ""]
 
     def work(key):
         try:
@@ -400,6 +405,8 @@ def refresh(force=False, keys=None, progress=None):
             return key, events
         except Exception as error:  # noqa: BLE001 - one competition failing must not stop the others
             log(f"{key}: {error}")
+            LAST_FAIL[0] += 1
+            LAST_FAIL[2] = str(error)[:60]
             return key, None
 
     changed = False

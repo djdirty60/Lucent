@@ -139,6 +139,8 @@ class Sport(xbmcgui.WindowXML):
         self.guide_busy = False
         self.has_pvr = False
         self.sections_shown = 0
+        self.error = ""
+        self.loaded = False
         self.last_tint = None
 
     # ------------------------------------------------------------------ window events
@@ -230,10 +232,13 @@ class Sport(xbmcgui.WindowXML):
             if not sc.all_cached():
                 self.status(sc.t("loading"))
             changed = sc.refresh(progress=None)
+            if sc.LAST_FAIL[0] and sc.LAST_FAIL[0] == sc.LAST_FAIL[1]:
+                self.error = sc.t("neterr", sc.LAST_FAIL[2] or "?")
             for league in {t["league"] for t in sc.load_follow()["teams"] if t.get("league") in sc.LEAGUES and t["league"] != sc.NATIONAL_LEAGUE}:
                 sc.standings(league)             # for "2nd in Eredivisie"
                 changed = True
-            if changed and not self.closing:
+            self.loaded = True
+            if (changed or self.view == "mine") and not self.closing:
                 self.render(keep_focus=True)
             if self.has_pvr and not epg.is_fresh() and not self.closing:
                 self.guide_busy = True
@@ -255,7 +260,7 @@ class Sport(xbmcgui.WindowXML):
         finally:
             self.guide_busy = False
             if not self.closing:
-                self.status("")
+                self.status(self.error)
 
     # ------------------------------------------------------------------ data -> list
     def pick_events(self):
@@ -462,7 +467,7 @@ class Sport(xbmcgui.WindowXML):
                 self.setProperty(f"sport.sec{k + 1}.on", "1")
                 cards = [self.event_item(ev, data) for ev in evs]
                 if not cards:
-                    cards = [listitem(sc.t("nogames"), "", isevent="1", league=sec["title"], lgicon=sec["logo"], foot="", hcol="66" + "3A4A5C", acol="66" + "3A4A5C")]
+                    cards = [listitem(sc.t("nogames") if self.loaded else sc.t("loading"), "", isevent="1", league=sec["title"], lgicon=sec["logo"], foot="", hcol="66" + "3A4A5C", acol="66" + "3A4A5C")]
                 self.fill_list(cid, cards, keep.get(cid, 0))
             else:
                 self.setProperty(f"sport.sec{k + 1}.on", "")
