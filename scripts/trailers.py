@@ -100,6 +100,8 @@ class Trailers(xbmc.Player):
         self.focus_since = 0.0
         self.tried = ""            # the card we already tried during this visit
         self.cache = {}
+        self.failures = 0          # trailers in a row that YouTube could not play
+        self.pause_until = 0.0     # after repeated failures we stop trying for a while
 
     # -- player callbacks: anything we did not start is not ours
     def onAVStarted(self):
@@ -111,6 +113,7 @@ class Trailers(xbmc.Player):
             self.let_go()
         else:
             log("trailer is playing")
+            self.failures = 0
             HOME.setProperty(PLAYING, "1")   # the skin shows the video (and expands the card) from now on
 
     def onPlayBackStopped(self):
@@ -120,7 +123,28 @@ class Trailers(xbmc.Player):
         self.let_go()
 
     def onPlayBackError(self):
+        if self.ours:
+            self.failed("playback error")
         self.let_go()
+
+    def failed(self, why):
+        self.failures += 1
+        log(f"trailer failed ({why}), {self.failures} in a row")
+        if self.failures >= 3:
+            self.pause_until = time.time() + 600
+            log("YouTube keeps failing: no more trailers for 10 minutes. "
+                "Update the YouTube and InputStream Adaptive add-ons.")
+
+    def close_error_dialog(self):
+        """YouTube / InputStream Adaptive shows an OK pop-up when a trailer cannot be played.
+        While we are waiting for our own trailer, close it and count the failure."""
+        if (self.ours and not HOME.getProperty(PLAYING) and time.time() - self.started_at < 60
+                and xbmc.getCondVisibility("Window.IsActive(okdialog)")):
+            xbmc.executebuiltin("Dialog.Close(okdialog,true)")
+            self.failed("error pop-up")
+            self.let_go()
+            return True
+        return False
 
     def let_go(self):
         self.ours = False
@@ -149,6 +173,8 @@ class Trailers(xbmc.Player):
 
     def tick(self):
         mode = skin("nuvio.posterfocus")
+        if self.close_error_dialog():
+            return
         on_home = xbmcgui.getCurrentWindowId() == HOME_ID
         dialog = xbmc.getCondVisibility("[System.HasVisibleModalDialog | Window.IsActive(contextmenu)]"
                                         " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel)")
@@ -175,6 +201,8 @@ class Trailers(xbmc.Player):
             log("YouTube did not start the trailer")
             self.let_go()
         if self.ours or focus.key == self.tried:
+            return
+        if time.time() < self.pause_until:
             return
         if self.isPlaying() and not self.ours:
             return                  # something else is playing (music, a video in the background)
