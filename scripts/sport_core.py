@@ -116,6 +116,9 @@ TX = {
     "m_name": ("Add a name (team, driver, fighter…)", "Naam toevoegen (team, coureur, vechter…)"),
     "m_manage": ("Remove from my list", "Uit mijn lijst halen"), "m_guide": ("Read the IPTV guide again", "IPTV-gids opnieuw lezen"),
     "q_league": ("Which competition?", "Welke competitie?"), "q_name": ("Name to follow", "Naam om te volgen"),
+    "c_record": ("Record", "Seizoen"), "c_home": ("Home", "Thuis"), "c_away": ("Away", "Uit"),
+    "c_nonext": ("No game planned", "Geen wedstrijd gepland"), "c_watch": ("Watch now", "Kijk nu"),
+    "c_games": ("All games", "Alle wedstrijden"), "c_last": ("LAST RESULTS", "LAATSTE UITSLAGEN"), "c_next": ("NEXT GAME", "VOLGENDE WEDSTRIJD"),
     "q_remove": ("Remove", "Verwijderen"), "q_cancel": ("Keep", "Laten staan"),
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
@@ -336,7 +339,9 @@ def parse_standings(data):
             gd = shown("pointDifferential")
             parsed.append({"rank": rank, "team": team.get("displayName") or team.get("name") or "", "id": str(team.get("id") or ""),
                            "logo": team.get("logo") or (logos[0].get("href") if logos else ""), "gp": gp, "gd": gd, "pts": pts,
-                           "note": ((entry.get("note") or {}).get("color") or "")})
+                           "w": shown("wins"), "d": shown("ties") or shown("draws"), "l": shown("losses"),
+                           "note": ((entry.get("note") or {}).get("color") or ""),
+                           "notetext": ((entry.get("note") or {}).get("description") or "")})
         parsed.sort(key=lambda row: row["rank"])
         rows.extend(parsed)
     return rows
@@ -440,9 +445,24 @@ def standings(key, force=False):
     except Exception as error:  # noqa: BLE001
         log(f"standings {key}: {error}")
         return entry["rows"] if entry else []
+    if entry:
+        track_places(entry["rows"], rows)
     cache["standings"][key] = {"fetched": time.time(), "rows": rows}
     save_cache(cache)
     return rows
+
+
+def track_places(old_rows, new_rows):
+    """Place changes since the last round: a team's 'prev' rank is the one it had before its games-played changed."""
+    old = {r["id"]: r for r in old_rows if r.get("id")}
+    for row in new_rows:
+        before = old.get(row.get("id"))
+        if not before:
+            continue
+        if before.get("gp") != row.get("gp"):
+            row["prev"] = before["rank"]
+        elif before.get("prev"):
+            row["prev"] = before["prev"]
 
 
 def teams_of(key):
@@ -629,3 +649,117 @@ def search_catalog(query):
 
 def league_name_of(key):
     return LEAGUES[key]["name"] if key in LEAGUES else key
+
+
+# ----------------------------------------------------------------------------- results, form, team cards
+RESULTS_DAYS = 70
+RESULTS_TTL = 60 * 60
+FORM_COLOURS = {"W": "FF3FB950", "D": "FF8B949E", "L": "FFE5534B"}
+GOLD = "FFD4A83A"
+
+
+def results(key, force=False):
+    """Finished games of a competition of the last ten weeks (one call), newest first. Cached for an hour."""
+    cache = load_cache()
+    entry = cache.setdefault("results", {}).get(key)
+    if entry and not force and time.time() - entry.get("fetched", 0) < RESULTS_TTL:
+        return entry["events"]
+    today = ac.today()
+    first = (today - datetime.timedelta(days=RESULTS_DAYS)).strftime("%Y%m%d")
+    try:
+        events = parse_scoreboard(key, info.http(f"{ESPN}{LEAGUES[key]['path']}/scoreboard?dates={first}-{espn_day(today)}&limit=500"))
+    except Exception as error:  # noqa: BLE001
+        log(f"results {key}: {error}")
+        return entry["events"] if entry else []
+    done = sorted((e for e in events if e["state"] == "post" and e["kind"] == "teams"), key=lambda e: -e["start"])
+    cache["results"][key] = {"fetched": time.time(), "events": done}
+    save_cache(cache)
+    return done
+
+
+def result_for(ev, team_id, team_name=""):
+    """('W'|'D'|'L', 'own-opp', opponent name, is_home) from a finished game, or None."""
+    n = norm(team_name)
+    for mine, other, home in ((ev["home"], ev["away"], True), (ev["away"], ev["home"], False)):
+        if (team_id and mine.get("id") == team_id) or (n and norm(mine.get("name")) == n):
+            try:
+                a, b = int(float(mine.get("score"))), int(float(other.get("score")))
+            except (TypeError, ValueError):
+                return None
+            return ("W" if a > b else "L" if a < b else "D", f"{a}–{b}", other.get("name", ""), home)
+    return None
+
+
+def team_results(key, team_id, team_name="", limit=5):
+    out = []
+    for ev in results(key):
+        res = result_for(ev, team_id, team_name)
+        if res:
+            out.append((ev, res))
+            if len(out) >= limit:
+                break
+    return out
+
+
+def colour_map():
+    """team id -> 'AARRGGBB' from the colours ESPN sends with the games."""
+    out = {}
+    for ev in all_cached():
+        for s in (ev.get("home"), ev.get("away")):
+            if s and s.get("id") and s.get("color") and s["id"] not in out:
+                out[s["id"]] = "FF" + s["color"].strip("#").upper()
+    return out
+
+
+def table_rows(key, marks=()):
+    """The table with everything the screen shows: form, place change, edge colour, team colour, and which rows are yours."""
+    rows = [dict(r) for r in standings(key)]
+    follow = load_follow()
+    colours = colour_map()
+    played = results(key)
+    for row in rows:
+        if "header" in row or not row.get("id"):
+            continue
+        form = []
+        for ev in played:
+            res = result_for(ev, row["id"], row["team"])
+            if res:
+                form.append(res[0])
+                if len(form) == 5:
+                    break
+        row["form"] = form
+        row["teamcol"] = colours.get(row["id"], "")
+        prev = row.get("prev")
+        row["chg"] = (prev - row["rank"]) if prev else 0
+        edge = (row.get("note") or "").strip("#")
+        row["edge"] = ("FF" + edge.upper()) if len(edge) == 6 else ""
+        row["mine"] = bool(is_following_team(follow, {"id": row["id"], "name": row["team"]})) or row["id"] in marks
+    return rows
+
+
+def legend(rows):
+    """[(colour, text)] of the coloured edges (Champions League, relegation, ...)."""
+    seen, out = set(), []
+    for row in rows:
+        if row.get("edge") and row.get("notetext") and row["edge"] not in seen:
+            seen.add(row["edge"])
+            out.append((row["edge"], row["notetext"]))
+    return out[:4]
+
+
+def team_card(key, team_id, name):
+    """Everything on the team card."""
+    row = next((r for r in standings(key) if r.get("id") == team_id), {})
+    recent = team_results(key, team_id, name, limit=5)
+    home = [r for _e, r in team_results(key, team_id, name, limit=30) if r[3]][:5]
+    away = [r for _e, r in team_results(key, team_id, name, limit=30) if not r[3]][:5]
+
+    def tally(rs):
+        return f"{sum(1 for r in rs if r[0] == 'W')}-{sum(1 for r in rs if r[0] == 'D')}-{sum(1 for r in rs if r[0] == 'L')}"
+
+    upcoming = sorted((e for e in all_cached() if e["state"] in ("pre", "in") and e["kind"] == "teams"
+                       and ((team_id and team_id in (e["home"].get("id"), e["away"].get("id")))
+                            or norm(name) in (norm(e["home"].get("name")), norm(e["away"].get("name"))))),
+                      key=lambda e: e["start"])
+    return {"row": row, "recent": recent, "home": tally(home), "away": tally(away),
+            "last3": recent[:3], "next": upcoming[0] if upcoming else None, "games": upcoming}

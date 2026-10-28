@@ -34,6 +34,7 @@ LEAGUE_LIST, TABLE_LIST = 400, 410
 EPG_LEAGUE = "tv"
 ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT = 1, 2
 HERO_MAX = 6
+LETTERS = {"W": "W", "D": "G", "L": "V"} if sc.NL else {}
 
 
 def nice_day(d):
@@ -120,6 +121,9 @@ class Sport(xbmcgui.WindowXML):
         self.ready = False
         self.closing = False
         self.table_key = ""
+        self.marks = set()
+        self.team_name = ""
+        self.team_events = []
         self.table_token = 0
         self.table_pos = -1
         self.guide_busy = False
@@ -144,6 +148,12 @@ class Sport(xbmcgui.WindowXML):
 
     def onAction(self, action):
         aid = action.getId()
+        if aid in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK) and self.view == "team":
+            self.view = "tables"
+            self.setProperty("sport.t.title", sc.t("title"))
+            self.render()
+            self.setFocusId(TABLE_LIST)
+            return
         if aid in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
             self.closing = True
             self.close()
@@ -161,6 +171,8 @@ class Sport(xbmcgui.WindowXML):
     def onClick(self, cid):
         if cid in VIEW_BUTTONS:
             self.view = VIEW_BUTTONS[cid]
+            self.marks = set()
+            self.setProperty("sport.t.title", sc.t("title"))
             self.render()
         elif cid == FOLLOW_BUTTON:
             self.follow_menu()
@@ -186,6 +198,8 @@ class Sport(xbmcgui.WindowXML):
             self.open_table()
         elif cid == LEAGUE_LIST:
             self.setFocusId(TABLE_LIST)
+        elif cid == TABLE_LIST:
+            self.open_team_card()
         elif cid == LIST:
             ev, item = self.current()
             if item and item.getProperty("hero") and item.getProperty("ch1cid"):
@@ -234,7 +248,7 @@ class Sport(xbmcgui.WindowXML):
     def pick_events(self):
         self.follow = sc.load_follow()
         data = epg.load() if self.has_pvr else {}
-        if self.view == "mine":
+        if self.view in ("mine", "team"):
             return [], data
         day_events = sc.events_on(self.day)
         live, coming, done = sc.order(day_events)
@@ -316,7 +330,12 @@ class Sport(xbmcgui.WindowXML):
             return
         events, data = self.pick_events()
         self.hero_events = []
-        if self.view == "mine":
+        if self.view == "team":
+            self.setProperty("sport.t.title", self.team_name)
+            self.events = self.team_events
+            self.by_id = {e["id"]: e for e in self.team_events}
+            items = [self.event_item(ev, data) for ev in self.team_events]
+        elif self.view == "mine":
             items = self.mine_items(data)
         else:
             self.events = events
@@ -505,6 +524,9 @@ class Sport(xbmcgui.WindowXML):
 
     def set_reminder(self):
         ev, _item = self.current()
+        self.remind_event(ev)
+
+    def remind_event(self, ev):
         if not ev or ev["state"] == "post":
             return
         modes = [("", plan.t("r_off")), ("remind", plan.t("r_remind")), ("switch", plan.t("r_switch"))]
@@ -552,6 +574,7 @@ class Sport(xbmcgui.WindowXML):
         if not ev or ev["league"] not in sc.LEAGUES:
             return
         self.table_key = ev["league"]
+        self.marks = {s.get("id") for s in (ev["home"], ev["away"]) if s.get("id")} if ev["kind"] == "teams" else set()
         self.view = "tables"
         self.render()
         self.setFocusId(TABLE_LIST)
@@ -579,21 +602,73 @@ class Sport(xbmcgui.WindowXML):
             return
         if pos != self.table_pos and 0 <= pos < len(self.league_keys_shown):
             self.table_pos = pos
+            self.marks = set()
             self.table_key = self.league_keys_shown[pos]
             self.load_table(self.table_key)
 
     def load_table(self, key):
-        rows = sc.standings(key)
+        rows = sc.table_rows(key, self.marks)
         control = self.getControl(TABLE_LIST)
         control.reset()
         items = []
         for row in rows:
             if "header" in row:
                 items.append(listitem(row["header"], header=row["header"]))
-            else:
-                items.append(listitem(row["team"], icon=row["logo"], rank=row["rank"], gp=row["gp"], gd=row["gd"], pts=row["pts"]))
+                continue
+            props = {"rank": row["rank"], "gp": row["gp"], "gd": row["gd"], "pts": row["pts"], "teamid": row["id"],
+                     "edge": row["edge"], "mine": "1" if row["mine"] else "",
+                     "ring": ("66" + row["teamcol"][2:]) if row["teamcol"] else "", "wdl": "-".join(x for x in (row.get("w"), row.get("d"), row.get("l")) if x != "")}
+            chg = row["chg"]
+            props["chg"] = f"▲{chg}" if chg > 0 else f"▼{-chg}" if chg < 0 else ""
+            props["chgcol"] = "FF3FB950" if chg > 0 else "FFE5534B"
+            for n in range(5):
+                letter = row["form"][n] if n < len(row["form"]) else ""
+                props[f"f{n + 1}"] = letter
+                props[f"f{n + 1}c"] = sc.FORM_COLOURS.get(letter, "")
+            items.append(listitem(row["team"], icon=row["logo"], **props))
         control.addItems(items)
         self.setProperty("sport.notable", "" if items else "1")
+        for n, (col, text) in enumerate(sc.legend(rows), 1):
+            self.setProperty(f"sport.leg{n}.col", col)
+            self.setProperty(f"sport.leg{n}.text", text)
+        for n in range(len(sc.legend(rows)) + 1, 5):
+            self.setProperty(f"sport.leg{n}.col", "")
+            self.setProperty(f"sport.leg{n}.text", "")
+
+    def open_team_card(self):
+        item = self.getControl(TABLE_LIST).getSelectedItem()
+        if not item or item.getProperty("header") or not item.getProperty("teamid"):
+            return
+        name, team_id = item.getLabel(), item.getProperty("teamid")
+        card = sc.team_card(self.table_key, team_id, name)
+        logo = item.getArt("icon") if hasattr(item, "getArt") else ""
+        data = epg.load() if self.has_pvr else {}
+        chans = self.channels_of(card["next"], data) if card["next"] else []
+        window = TeamCard("Lucent_SportTeam.xml", self.path(), "Default", "1080i")
+        window.setup(self.table_key, team_id, name, logo, card, chans, sc.is_following_team(sc.load_follow(), {"id": team_id, "name": name}))
+        window.doModal()
+        result = window.result
+        del window
+        if result == "watch" and chans:
+            self.closing = True
+            self.close()
+            epg.play(chans[0]["cid"])
+        elif result == "remind" and card["next"]:
+            self.by_id[card["next"]["id"]] = card["next"]
+            self.remind_event(card["next"])
+        elif result == "follow":
+            sc.toggle_team(self.table_key, {"id": team_id, "name": name, "logo": logo})
+            self.load_table(self.table_key)
+        elif result == "games":
+            self.team_name = name
+            self.team_events = card["games"] + [e for e, _r in card["recent"]]
+            self.view = "team"
+            self.render()
+            self.setFocusId(LIST)
+
+    def path(self):
+        import xbmcaddon
+        return xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
 
     # ------------------------------------------------------------------ follow menu
     def follow_menu(self):
@@ -765,6 +840,66 @@ class Sport(xbmcgui.WindowXML):
             else:
                 follow[kind] = [x for x in follow[kind] if x != ident]
         sc.save_follow(follow)
+
+
+class TeamCard(xbmcgui.WindowXMLDialog):
+    """The team card: record, home/away form, last three results, next game, Watch / Remind me, Follow, all games."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.result = ""
+        self.info = {}
+
+    def setup(self, key, team_id, name, logo, card, chans, followed):
+        self.info = {"key": key, "id": team_id, "name": name, "logo": logo, "card": card, "chans": chans, "followed": followed}
+
+    def onInit(self):
+        i, card = self.info, self.info["card"]
+        row = card["row"]
+        self.setProperty("card.name", i["name"])
+        self.setProperty("card.logo", i["logo"])
+        place = f"{row['rank']}e" if row.get("rank") and sc.NL else str(row.get("rank", ""))
+        self.setProperty("card.sub", f"{sc.league_name_of(i['key'])}  ·  {place}" if place else sc.league_name_of(i["key"]))
+        rec = "-".join(x for x in (row.get("w"), row.get("d"), row.get("l")) if x != "" and x is not None)
+        self.setProperty("card.record", f"{sc.t('c_record')}: {rec}   ·   {row.get('pts', '')} {sc.t('pts')}" if rec else "")
+        self.setProperty("card.home", f"{sc.t('c_home')}: {card['home']}")
+        self.setProperty("card.away", f"{sc.t('c_away')}: {card['away']}")
+        for n in range(5):
+            letter = card["recent"][n][1][0] if n < len(card["recent"]) else ""
+            self.setProperty(f"card.f{n + 1}", LETTERS.get(letter, letter))
+            self.setProperty(f"card.f{n + 1}c", sc.FORM_COLOURS.get(letter, ""))
+        for n in range(3):
+            if n < len(card["last3"]):
+                ev, (letter, score, opp, home) = card["last3"][n]
+                self.setProperty(f"card.r{n + 1}", f"{sc.local_time(ev['start']) and ac.day_short(sc.local_day(ev['start']))}   {'vs' if home else '@'} {opp}")
+                self.setProperty(f"card.r{n + 1}s", score)
+                self.setProperty(f"card.r{n + 1}c", sc.FORM_COLOURS[letter])
+            else:
+                for suffix in ("", "s", "c"):
+                    self.setProperty(f"card.r{n + 1}{suffix}", "")
+        nxt = card["next"]
+        self.setProperty("card.next", f"{when_line(nxt)}   {nxt['home'].get('name', '')} – {nxt['away'].get('name', '')}" if nxt else sc.t("c_nonext"))
+        chans = i["chans"]
+        self.setProperty("card.nextchan", f"{chans[0]['name']}  ·  {chans[0]['tag']}" if chans else "")
+        self.setProperty("card.canwatch", "1" if chans else "")
+        self.setProperty("card.canremind", "1" if nxt else "")
+        self.setProperty("card.followtext", sc.t("unfollow_team" if i["followed"] else "follow_team", i["name"]))
+        self.setProperty("card.t.watch", sc.t("c_watch"))
+        self.setProperty("card.t.remind", plan.t("btn_remind"))
+        self.setProperty("card.t.games", sc.t("c_games"))
+        self.setProperty("card.t.last", sc.t("c_last"))
+        self.setProperty("card.t.next", sc.t("c_next"))
+        self.setFocusId(301 if chans else 303)
+
+    def onClick(self, cid):
+        names = {301: "watch", 302: "remind", 303: "follow", 304: "games"}
+        if cid in names:
+            self.result = names[cid]
+            self.close()
+
+    def onAction(self, action):
+        if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
+            self.close()
 
 
 def open_window():
