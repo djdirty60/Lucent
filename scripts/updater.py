@@ -7,10 +7,13 @@ RunScript(special://skin/scripts/updater.py,check)     look now (Skin settings >
 The pop-up offers: Update now / Later / Skip this version. "Update now" refreshes the repositories and installs the new version.
 """
 import json
+import os
 import re
+import shutil
 import sys
 import time
 import urllib.request
+import zipfile
 
 import xbmc
 import xbmcaddon
@@ -19,6 +22,7 @@ import xbmcvfs
 
 HEADING = "Lucent"
 ADDONS_XML = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addons.xml"
+ZIPS_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/"
 WATCH = ("skin.lucent", "screensaver.lucent")        # add-ons of this repository that are checked when installed
 STATE_PATH = "special://profile/addon_data/skin.lucent/update_state.json"
 RUNNING = "nuvio.update.running"
@@ -35,6 +39,8 @@ T = {
     "skip": ("Skip this version", "Deze versie overslaan"),
     "busy": ("Updating {0}…", "{0} wordt bijgewerkt…"),
     "uptodate": ("Everything is up to date", "Alles is up-to-date"),
+    "done": ("{0} {1} installed", "{0} {1} is geïnstalleerd"),
+    "failed": ("Update failed, Kodi will try it again by itself", "Bijwerken mislukt, Kodi probeert het zelf opnieuw"),
     "offline": ("Could not check for updates", "Kon niet op updates controleren"),
 }
 
@@ -129,11 +135,70 @@ def ask(update):
     return {1: "now", 0: "later", 2: "skip"}.get(answer, "later")
 
 
+def download_zip(update):
+    """Download the new version to a temporary file and return its path."""
+    url = f"{ZIPS_URL}{update['id']}/{update['id']}-{update['version']}.zip"
+    target = xbmcvfs.translatePath(f"special://temp/{update['id']}-{update['version']}.zip")
+    request = urllib.request.Request(url, headers={"User-Agent": "skin.lucent (Kodi)"})
+    with urllib.request.urlopen(request, timeout=60) as response, open(target, "wb") as out:
+        shutil.copyfileobj(response, out)
+    return target
+
+
+def unpack(update, zip_path):
+    """Replace the add-on folder by the one in the zip (the old one is kept until the new one is in place)."""
+    addons = xbmcvfs.translatePath("special://home/addons/")
+    staging = os.path.join(addons, f".{update['id']}.new")
+    shutil.rmtree(staging, ignore_errors=True)
+    with zipfile.ZipFile(zip_path) as archive:
+        names = archive.namelist()
+        if f"{update['id']}/addon.xml" not in names:
+            raise RuntimeError("zip has no addon.xml")
+        archive.extractall(staging)
+    unpacked = os.path.join(staging, update["id"])
+    with open(os.path.join(unpacked, "addon.xml"), encoding="utf-8") as fh:
+        if f'version="{update["version"]}"' not in fh.read():
+            raise RuntimeError("zip has another version")
+    folder = os.path.join(addons, update["id"])
+    backup = folder + ".old"
+    shutil.rmtree(backup, ignore_errors=True)
+    if os.path.isdir(folder):
+        os.rename(folder, backup)
+    try:
+        os.rename(unpacked, folder)
+    except Exception:
+        if os.path.isdir(backup) and not os.path.isdir(folder):
+            os.rename(backup, folder)                   # put the old version back
+        raise
+    shutil.rmtree(backup, ignore_errors=True)
+    shutil.rmtree(staging, ignore_errors=True)
+
+
 def install(update, monitor):
-    xbmcgui.Dialog().notification(HEADING, tr("busy", update["name"]), xbmcgui.NOTIFICATION_INFO, 5000)
-    xbmc.executebuiltin("UpdateAddonRepos")
-    monitor.waitForAbort(8)                           # give Kodi a moment to learn about the new version
-    xbmc.executebuiltin(f"InstallAddon({update['id']})")
+    progress = xbmcgui.DialogProgressBG()
+    progress.create(HEADING, tr("busy", update["name"]))
+    try:
+        zip_path = download_zip(update)
+        progress.update(60)
+        unpack(update, zip_path)
+        try:
+            os.remove(zip_path)
+        except OSError:
+            pass
+    except Exception as error:  # noqa: BLE001 - fall back to Kodi's own update
+        log(f"direct update failed: {error}")
+        progress.close()
+        xbmcgui.Dialog().notification(HEADING, tr("failed"), xbmcgui.NOTIFICATION_WARNING, 5000)
+        xbmc.executebuiltin("UpdateAddonRepos")
+        return
+    progress.update(90)
+    xbmc.executebuiltin("UpdateLocalAddons")             # Kodi reads the new addon.xml
+    monitor.waitForAbort(3)
+    progress.close()
+    xbmcgui.Dialog().notification(HEADING, tr("done", update["name"], update["version"]), xbmcgui.NOTIFICATION_INFO, 5000)
+    if update["id"] == "skin.lucent":
+        monitor.waitForAbort(2)
+        xbmc.executebuiltin("ReloadSkin()")             # show the new version right away
 
 
 def check(manual=False):
