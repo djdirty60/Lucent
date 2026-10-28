@@ -46,7 +46,7 @@ def run():
             done = name
         if monitor.waitForAbort(0.4):
             return
-    if started:
+    if started or xbmc.getCondVisibility("Pvr.IsPlayingTV"):
         monitor.waitForAbort(1.2)
         if not (xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)") or xbmc.getCondVisibility("Window.IsActive(videoosd)")
                 or xbmc.getCondVisibility(GUIDE)):
