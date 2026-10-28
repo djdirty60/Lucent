@@ -120,6 +120,7 @@ TX = {
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
+    "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
     "q_search": ("Type a name", "Typ een naam"), "m_order": ("Change the order", "Volgorde aanpassen"),
     "nohit": ("Nothing found for \"{0}\"", "Niets gevonden voor \"{0}\""), "as_name": ("Follow \"{0}\" as a name", "Volg \"{0}\" als naam"),
@@ -130,6 +131,32 @@ TX = {
 def t(key, *args):
     text = TX[key][1 if NL else 0]
     return text.format(*args) if args else text
+
+
+# national teams: ESPN name -> Dutch name (shown when the phone / box is Dutch; the TV guide uses the Dutch names)
+COUNTRIES = {
+    "Netherlands": "Nederland", "Belgium": "België", "Germany": "Duitsland", "France": "Frankrijk", "England": "Engeland",
+    "Spain": "Spanje", "Italy": "Italië", "Portugal": "Portugal", "Croatia": "Kroatië", "Denmark": "Denemarken",
+    "Switzerland": "Zwitserland", "Austria": "Oostenrijk", "Poland": "Polen", "Turkey": "Turkije", "Norway": "Noorwegen",
+    "Sweden": "Zweden", "Scotland": "Schotland", "Wales": "Wales", "Ireland": "Ierland", "Northern Ireland": "Noord-Ierland",
+    "Ukraine": "Oekraïne", "Greece": "Griekenland", "Czechia": "Tsjechië", "Serbia": "Servië", "Hungary": "Hongarije",
+    "Romania": "Roemenië", "Slovakia": "Slowakije", "Slovenia": "Slovenië", "Finland": "Finland", "Iceland": "IJsland",
+    "Morocco": "Marokko", "Senegal": "Senegal", "Nigeria": "Nigeria", "Egypt": "Egypte", "Ghana": "Ghana",
+    "Brazil": "Brazilië", "Argentina": "Argentinië", "Uruguay": "Uruguay", "Colombia": "Colombia", "Chile": "Chili",
+    "Ecuador": "Ecuador", "Mexico": "Mexico", "United States": "Verenigde Staten", "Canada": "Canada",
+    "Japan": "Japan", "South Korea": "Zuid-Korea", "Australia": "Australië", "Saudi Arabia": "Saoedi-Arabië",
+    "Iran": "Iran", "Suriname": "Suriname", "Curaçao": "Curaçao", "Indonesia": "Indonesië",
+}
+COUNTRY_NL = {en: (nl if NL else en) for en, nl in COUNTRIES.items()}
+NATIONAL_LEAGUE = "fifa.friendly"
+
+
+def country_label(name):
+    return COUNTRY_NL.get(name, name)
+
+
+def team_ident(team):
+    return team.get("id") or team.get("name")
 
 
 def sport_name(sport):
@@ -184,8 +211,9 @@ def window():
 # ----------------------------------------------------------------------------- ESPN -> events
 def side(competitor):
     team = competitor.get("team") or competitor.get("athlete") or {}
-    return {"id": str(team.get("id") or ""), "name": team.get("displayName") or team.get("name") or "",
-            "short": team.get("shortDisplayName") or team.get("displayName") or "", "abbr": team.get("abbreviation") or "",
+    full = team.get("displayName") or team.get("name") or ""
+    return {"id": str(team.get("id") or ""), "name": country_label(full), "en": full,
+            "short": country_label(team.get("shortDisplayName") or team.get("displayName") or ""), "abbr": team.get("abbreviation") or "",
             "nick": team.get("name") or "", "logo": team.get("logo") or (team.get("flag") or {}).get("href") or "",
             "score": str(competitor.get("score", "") if not isinstance(competitor.get("score"), dict) else competitor["score"].get("displayValue", "")),
             "color": team.get("color") or "", "alt": team.get("alternateColor") or ""}
@@ -450,7 +478,7 @@ def save_follow(data):
 def is_following_team(follow, side_):
     if not side_:
         return False
-    ids = {t["id"] for t in follow["teams"]}
+    ids = {t["id"] for t in follow["teams"] if t.get("id")}
     names = {norm(t["name"]) for t in follow["teams"]}
     return (side_.get("id") in ids and side_.get("id")) or norm(side_.get("name")) in names
 
@@ -458,7 +486,7 @@ def is_following_team(follow, side_):
 def toggle_team(league, side_):
     """Follow / unfollow a team of a game. Returns True when it is followed afterwards."""
     follow = load_follow()
-    keep = [t for t in follow["teams"] if not (t["id"] == side_["id"] or norm(t["name"]) == norm(side_["name"]))]
+    keep = [t for t in follow["teams"] if not ((t["id"] and t["id"] == side_["id"]) or norm(t["name"]) == norm(side_["name"]))]
     followed = len(keep) == len(follow["teams"])
     if followed:
         keep.append({"league": league, "id": side_["id"], "name": side_["name"], "logo": side_.get("logo", "")})
@@ -513,7 +541,7 @@ def mine_events():
 def team_terms(side_):
     """Names a TV guide might use for a team: ['pec zwolle', 'zwolle'] (short names and stop words left out)."""
     terms = set()
-    for value in (side_.get("name"), side_.get("short"), side_.get("nick")):
+    for value in (side_.get("name"), side_.get("short"), side_.get("nick"), side_.get("en")):
         n = norm(value)
         if len(n) >= 4 and n not in STOP_WORDS:
             terms.add(n)
@@ -535,7 +563,7 @@ def section_key(kind, ident):
 def sections(follow=None):
     """Everything you follow, in your own order: [(key, kind, ident, title)]."""
     follow = follow or load_follow()
-    items = ([(section_key("team", t["id"]), "team", t["id"], t["name"]) for t in follow["teams"]]
+    items = ([(section_key("team", team_ident(t)), "team", team_ident(t), t["name"]) for t in follow["teams"]]
              + [(section_key("league", k), "league", k, LEAGUES[k]["name"]) for k in follow["leagues"] if k in LEAGUES]
              + [(section_key("name", n), "name", n, n) for n in follow["names"]])
     by_key = {row[0]: row for row in items}
@@ -585,6 +613,9 @@ def search_catalog(query):
         hay = norm(f"{lg['name']} {' '.join(lg['words'])}")
         if q in hay:
             out.append(("league", key, f"{sport_name(lg['sport'])}  ·  {lg['name']}", ""))
+    for en, nl in sorted(COUNTRIES.items(), key=lambda kv: kv[1]):
+        if q in norm(nl) or q in norm(en):
+            out.append(("country", en, f"{'Land' if NL else 'Country'}  ·  {COUNTRY_NL[en]}", ""))
     seen = set()
     for ev in all_cached():
         if ev["kind"] != "teams":

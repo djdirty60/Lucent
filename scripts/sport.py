@@ -195,7 +195,7 @@ class Sport(xbmcgui.WindowXML):
             if not sc.all_cached():
                 self.status(sc.t("loading"))
             changed = sc.refresh(progress=None)
-            for league in {t["league"] for t in sc.load_follow()["teams"] if t.get("league") in sc.LEAGUES}:
+            for league in {t["league"] for t in sc.load_follow()["teams"] if t.get("league") in sc.LEAGUES and t["league"] != sc.NATIONAL_LEAGUE}:
                 sc.standings(league)             # for "2nd in Eredivisie"
                 changed = True
             if changed and not self.closing:
@@ -333,7 +333,7 @@ class Sport(xbmcgui.WindowXML):
         rows = []
         for key, kind, ident, title in sc.sections(follow):
             if kind == "team":
-                team = next((t for t in follow["teams"] if t["id"] == ident), {"id": ident, "name": title})
+                team = next((t for t in follow["teams"] if sc.team_ident(t) == ident), {"id": ident, "name": title})
                 events, sub = sc.events_of_team(ident, title), sc.place_text(team)
             elif kind == "league":
                 events, sub = [e for e in sc.all_cached() if e["league"] == ident], ""
@@ -500,7 +500,7 @@ class Sport(xbmcgui.WindowXML):
     def follow_menu(self):
         dialog = xbmcgui.Dialog()
         entries = [(sc.t("m_search"), self.search_follow), (sc.t("m_leagues"), self.choose_leagues),
-                   (sc.t("m_teams"), self.choose_teams), (sc.t("m_name"), self.add_name),
+                   (sc.t("m_teams"), self.choose_teams), (sc.t("m_countries"), self.choose_countries), (sc.t("m_name"), self.add_name),
                    (sc.t("m_order"), self.change_order), (sc.t("m_manage"), self.manage)]
         if self.has_pvr:
             entries.append((sc.t("m_guide"), None))
@@ -530,7 +530,11 @@ class Sport(xbmcgui.WindowXML):
                 follow["names"].append(text)
         else:
             kind, ident, _label, extra = hits[pick]
-            if kind == "league":
+            if kind == "country":
+                name = sc.country_label(ident)
+                if not any(sc.norm(t["name"]) == sc.norm(name) for t in follow["teams"]):
+                    follow["teams"].append({"league": sc.NATIONAL_LEAGUE, "id": "", "name": name, "logo": ""})
+            elif kind == "league":
                 if ident not in follow["leagues"]:
                     follow["leagues"].append(ident)
             elif not any(t["id"] == ident for t in follow["teams"]):
@@ -617,6 +621,20 @@ class Sport(xbmcgui.WindowXML):
             {"league": key, "id": tid, "name": name, "logo": logo} for tid, name, logo in teams if tid in chosen]
         sc.save_follow(follow)
 
+    def choose_countries(self):
+        names = sorted(sc.COUNTRY_NL.values())
+        follow = sc.load_follow()
+        have = {sc.norm(t["name"]) for t in follow["teams"]}
+        pre = [i for i, n in enumerate(names) if sc.norm(n) in have]
+        picked = xbmcgui.Dialog().multiselect(sc.t("m_countries"), names, preselect=pre)
+        if picked is None:
+            return
+        chosen = {names[i] for i in picked}
+        listed = set(names)
+        follow["teams"] = [t for t in follow["teams"] if t["name"] not in listed] + [
+            {"league": sc.NATIONAL_LEAGUE, "id": "", "name": n, "logo": ""} for n in sorted(chosen)]
+        sc.save_follow(follow)
+
     def add_name(self):
         text = xbmcgui.Dialog().input(sc.t("q_name"))
         if text and text.strip():
@@ -629,7 +647,7 @@ class Sport(xbmcgui.WindowXML):
         follow = sc.load_follow()
         rows = ([("leagues", k, f"{sc.sport_name(sc.LEAGUES[k]['sport'])}  ·  {sc.LEAGUES[k]['name']}")
                  for k in follow["leagues"] if k in sc.LEAGUES]
-                + [("teams", t["id"], t["name"]) for t in follow["teams"]]
+                + [("teams", sc.team_ident(t), t["name"]) for t in follow["teams"]]
                 + [("names", n, n) for n in follow["names"]])
         if not rows:
             return
@@ -639,7 +657,7 @@ class Sport(xbmcgui.WindowXML):
         for i in picked:
             kind, ident, _ = rows[i]
             if kind == "teams":
-                follow["teams"] = [t for t in follow["teams"] if t["id"] != ident]
+                follow["teams"] = [t for t in follow["teams"] if sc.team_ident(t) != ident]
             else:
                 follow[kind] = [x for x in follow[kind] if x != ident]
         sc.save_follow(follow)
