@@ -1006,10 +1006,10 @@ class Sport(xbmcgui.WindowXML):
         cid = item.getProperty(f"ch{n}cid") if item else ""
         if not cid:
             return
-        if epg.active()[0] == str(cid):
+        name = item.getProperty(f"ch{n}name")
+        if epg.is_playing(cid, name):
             epg.fullscreen()
             return
-        name = item.getProperty(f"ch{n}name")
         epg.set_active(cid, name)
         self.setProperty("sport.preview", str(cid))
         self.setProperty("sport.preview.name", name)
@@ -1593,10 +1593,10 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         cid = self.props.get(f"ch{n}cid")
         if not cid:
             return
-        if epg.active()[0] == str(cid):
+        name = self.props.get(f"ch{n}name", "")
+        if epg.is_playing(cid, name):
             epg.fullscreen()
             return
-        name = self.props.get(f"ch{n}name", "")
         epg.set_active(cid, name)
         self.setProperty("g.preview", str(cid))
         self.setProperty("g.preview.name", name)

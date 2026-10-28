@@ -316,14 +316,39 @@ def play(cid):
 
 
 # ---- the channel watched in the TV window (kept on the Kodi home window, so it survives leaving the page)
+def playing_channel():
+    """(id, name) of the live TV channel Kodi is playing right now, wherever it was started; ('', '') for anything else."""
+    if not xbmc.getCondVisibility("Player.HasVideo"):
+        return "", ""
+    players = rpc("Player.GetActivePlayers")
+    players = players if isinstance(players, list) else []
+    for player in players:
+        item = rpc("Player.GetItem", {"playerid": player.get("playerid", 1), "properties": ["channel"]}).get("item") or {}
+        if item.get("type") == "channel":
+            return str(item.get("id", "")), item.get("channel") or item.get("label") or ""
+    return "", ""
+
+
 def active():
-    """(channel id, name) of the channel playing from the sport pages, or ('', '') when nothing plays."""
+    """(channel id, name) of the channel in the TV window: the one started from the sport pages, or any live channel
+    that is already playing (started somewhere else). ('', '') when nothing plays."""
     home = xbmcgui.Window(10000)
     cid = home.getProperty("lucent.sport.cid")
     if cid and not xbmc.getCondVisibility("Player.HasVideo"):
         clear_active()
-        return "", ""
+        cid = ""
+    pid, pname = playing_channel()
+    if pid and pid != cid:
+        set_active(pid, pname)
+        return pid, pname
     return cid, home.getProperty("lucent.sport.name")
+
+
+def is_playing(cid, name=""):
+    now_id, now_name = active()
+    if not now_id:
+        return False
+    return now_id == str(cid) or (bool(name) and now_name.strip().lower() == name.strip().lower())
 
 
 def set_active(cid, name):
