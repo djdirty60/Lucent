@@ -1,6 +1,10 @@
-# Nuvio Arc – Kodi skin (NOT FOR USE IN TEST PHASE)
+<p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-A dark, cinematic Kodi skin inspired by **Nuvio Arc V2** (Cinematic Glass): large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
+# Lucent – Kodi skin (NOT FOR USE IN TEST PHASE)
+
+> Formerly called *Nuvio Arc*. The add-on id stays `skin.nuvioarc`, so updates and your settings keep working.
+
+**Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
 
 ![Home screen](screenshots/home.jpg)
 
@@ -93,16 +97,16 @@ The video player and its menu, the video player and its menu, seek bar, subtitle
 3. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
 4. Go to **Add-ons → Install from zip file** and select `skin.nuvioarc-1.4.3.zip`.
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
-   (Later: **Settings → Interface → Skin → Nuvio Arc**.)
+   (Later: **Settings → Interface → Skin → Lucent**.)
 
 ### Automatic updates (recommended)
 
-Install the **Nuvio Arc Repository** once, then Kodi keeps the skin up to date by itself.
+Install the **Lucent Repository** once, then Kodi keeps the skin up to date by itself.
 
 1. Download [`repository.nuvioarc.zip`](https://github.com/djdirty60/Skin-Nuvio-Arc/raw/main/repository.nuvioarc.zip) and copy it to your device.
 2. In Kodi go to **Add-ons → Install from zip file** and choose `repository.nuvioarc.zip`.
-3. Go to **Add-ons → Install from repository → Nuvio Arc Repository → Look and feel → Skin → Nuvio Arc** and choose **Install** (or **Update**).
-   If the skin is already installed, choose **Versions** and pick the newest version from *Nuvio Arc Repository*. This links the skin to the repository.
+3. Go to **Add-ons → Install from repository → Lucent Repository → Look and feel → Skin → Lucent** and choose **Install** (or **Update**).
+   If the skin is already installed, choose **Versions** and pick the newest version from *Lucent Repository*. This links the skin to the repository.
 
 From then on new versions arrive automatically (Kodi's default: **Settings → System → Add-ons → Updates → Install updates automatically**).
 
@@ -146,7 +150,7 @@ A tab without widgets shows the widgets of the start tab.
 ## Good to know
 
 - **Seren is optional.** Without Seren the Seren rows are hidden and the skin works with your Kodi library only. With Seren, enter a free **Fanart.tv API key** in Seren for more logos.
-- **Pairs with the Seren theme** [Nuvio Arc V2 for Seren](https://github.com/djdirty60/Seren-Thema), so Seren's source select, scraping and playing-next windows match the skin.
+- **Pairs with the Seren theme** [Lucent for Seren](https://github.com/djdirty60/Seren-Thema), so Seren's source select, scraping and playing-next windows match the skin.
 - **Screen size:** Kodi scales the skin to any resolution (720p, 1080p, 4K) by itself. If you see black edges or the picture is cut off, use **Skin settings → Calibrate the picture**.
 - **Not styled in this version:** Live TV (PVR), games and weather. Those windows won't open while this skin is active; switch to Estuary temporarily if you need them.
 - This is a first release. Feedback and bug reports are welcome – please open an issue and include a photo of the screen or your `kodi.log` if something looks wrong.
