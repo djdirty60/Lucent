@@ -252,7 +252,7 @@
                     <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31144]</label>
-                    <onclick>ActivateWindow(InterfaceSettings)</onclick>
+                    <onclick>ActivateWindow(InterfaceSettings,regional)</onclick>
                 </control>
                 <control type="radiobutton" id="1105">
                     <width>1180</width>
@@ -569,7 +569,7 @@
                     <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31163]</label>
-                    <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                    <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,accounts)</onclick>
                     <visible>System.HasAddon(plugin.video.seren)</visible>
                 </control>
             </control>
@@ -615,7 +615,7 @@
                     <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31165]</label>
-                    <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                    <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,playback)</onclick>
                     <visible>System.HasAddon(plugin.video.seren)</visible>
                 </control>
                 <control type="button" id="1403">
@@ -628,7 +628,7 @@
                     <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31166]</label>
-                    <onclick>ActivateWindow(InterfaceSettings)</onclick>
+                    <onclick>ActivateWindow(PlayerSettings,language)</onclick>
                 </control>
                 <control type="label" id="2402">
                     <width>1180</width>
@@ -702,7 +702,7 @@
                     <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31163]</label>
-                    <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                    <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,accounts)</onclick>
                     <visible>System.HasAddon(plugin.video.seren)</visible>
                 </control>
                 <control type="button" id="1502">
@@ -841,7 +841,7 @@
                     <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31163]</label>
-                    <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                    <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,accounts)</onclick>
                     <visible>System.HasAddon(plugin.video.seren)</visible>
                 </control>
                 <control type="label" id="2603">
