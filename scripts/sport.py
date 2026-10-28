@@ -381,6 +381,9 @@ class Sport(xbmcgui.WindowXML):
             props[f"ch{n}sub"] = "  ·  ".join(bits)
             props[f"ch{n}cid"] = chan["cid"]
             props[f"ch{n}icon"] = chan.get("icon") or ""
+            props[f"ch{n}tag"] = (chan["tag"] or "").upper()
+            props[f"ch{n}q"] = chan["q"] or ""
+            props[f"ch{n}live"] = "1" if chan["live"] else ""
         props.update(self.plan_props(ev))
         foot = short_when(ev)
         if props.get("badge"):
@@ -665,11 +668,11 @@ class Sport(xbmcgui.WindowXML):
                     out[f"{side}f{n + 1}"] = LETTERS.get(letter, letter)
                     out[f"{side}fc{n + 1}"] = sc.FORM_COLOURS.get(letter, "")
             rows = [r for r in sc.table_rows(key, marks) if r.get("id")]
-            keep = set(range(min(3, len(rows))))
+            keep = set(range(min(2, len(rows))))
             for i, r in enumerate(rows):
                 if r["id"] in marks:
                     keep |= {i - 1, i, i + 1}
-            picked = [rows[i] for i in sorted(keep) if 0 <= i < len(rows)][:9]
+            picked = [rows[i] for i in sorted(keep) if 0 <= i < len(rows)][:7]
             for n, r in enumerate(picked, 1):
                 out[f"t{n}rank"], out[f"t{n}team"] = str(r.get("rank", "")), r.get("team", "")
                 out[f"t{n}gp"], out[f"t{n}gd"], out[f"t{n}pts"] = str(r.get("gp", "")), str(r.get("gd", "")), str(r.get("pts", ""))
