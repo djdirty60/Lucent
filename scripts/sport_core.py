@@ -86,6 +86,8 @@ TX = {
     "q_remove": ("Remove", "Verwijderen"), "q_cancel": ("Keep", "Laten staan"),
     "notable": ("No table for this competition", "Geen stand beschikbaar voor deze competitie"),
     "today": ("Today", "Vandaag"), "tomorrow": ("Tomorrow", "Morgen"), "yesterday": ("Yesterday", "Gisteren"),
+    "play_on": ("Watch on", "Kijk op"), "n_games": ("{} games", "{} wedstrijden"),
+    "hint": ("OK: game menu   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdmenu   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
     "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
