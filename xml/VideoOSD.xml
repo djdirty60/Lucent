@@ -171,7 +171,7 @@
                 <texturefocus>buttons/prev_fo.png</texturefocus>
                 <texturenofocus>buttons/prev_nf.png</texturenofocus>
                 <onclick>PlayerControl(Previous)</onclick>
-                <visible>Player.ChapterCount | Integer.IsGreater(Playlist.Length(video),1)</visible>
+                <visible>VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)</visible>
             </control>
             <control type="button" id="102">
                 <width>84</width>
@@ -180,6 +180,15 @@
                 <texturefocus>buttons/rewind_fo.png</texturefocus>
                 <texturenofocus>buttons/rewind_nf.png</texturenofocus>
                 <onclick>Seek(-10)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="116">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stop_fo.png</texturefocus>
+                <texturenofocus>buttons/stop_nf.png</texturenofocus>
+                <onclick>PlayerControl(Stop)</onclick>
                 <visible>true</visible>
             </control>
             <control type="button" id="103">
@@ -216,7 +225,7 @@
                 <texturefocus>buttons/next_fo.png</texturefocus>
                 <texturenofocus>buttons/next_nf.png</texturenofocus>
                 <onclick>PlayerControl(Next)</onclick>
-                <visible>Player.ChapterCount | Integer.IsGreater(Playlist.Length(video),1)</visible>
+                <visible>VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)</visible>
             </control>
             <control type="label" id="190">
                 <width>120</width>
@@ -286,15 +295,6 @@
                 <onclick>Dialog.Close(videoosd,true)</onclick>
                 <visible>true</visible>
                 <onclick>ActivateWindow(fullscreeninfo)</onclick>
-            </control>
-            <control type="button" id="116">
-                <width>84</width>
-                <height>84</height>
-                <label></label>
-                <texturefocus>buttons/stop_fo.png</texturefocus>
-                <texturenofocus>buttons/stop_nf.png</texturenofocus>
-                <onclick>PlayerControl(Stop)</onclick>
-                <visible>true</visible>
             </control>
             </control>
             <!-- Focused button name -->
