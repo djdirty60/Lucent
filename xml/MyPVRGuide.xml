@@ -29,8 +29,8 @@
                     <label>LIVE</label>
                     <visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible>
                 </control>
-                <control type="label"><left>0</left><top>44</top><width>1000</width><height>70</height><font>font_heading</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.EpgEventTitle]</label></control>
-                <control type="label"><left>0</left><top>116</top><width>1000</width><height>36</height><font>font12</font><textcolor>text2</textcolor><aligny>center</aligny><label>$INFO[ListItem.StartTime] – $INFO[ListItem.EndTime]$INFO[ListItem.EpgEventRemainingTime,  ·  ,]</label></control>
+                <control type="label"><left>0</left><top>44</top><width>1000</width><height>70</height><font>font_heading</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.EpgEventTitle]</label></control>
+                <control type="label"><left>0</left><top>116</top><width>1000</width><height>36</height><font>font12</font><textcolor>text2</textcolor><selectedcolor>text2</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.StartTime] – $INFO[ListItem.EndTime]$INFO[ListItem.EpgEventRemainingTime,  ·  ,]</label></control>
                 <control type="image"><left>0</left><top>160</top><width>520</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control>
                 <control type="progress"><left>0</left><top>160</top><width>520</width><height>6</height><info>ListItem.Progress</info><texturebg border="3" colordiffuse="00FFFFFF">pill6.png</texturebg><midtexture border="3" colordiffuse="FFE5534B">pill6.png</midtexture></control>
                 <control type="textbox"><left>0</left><top>176</top><width>1000</width><height>66</height><font>font_body</font><textcolor>text3</textcolor><label>$INFO[ListItem.Plot]</label></control>
@@ -54,13 +54,13 @@
             <ondown>11</ondown>
             <itemlayout width="300" height="72">
                 <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12</font><textcolor>text3</textcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
+                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
             </itemlayout>
             <focusedlayout width="300" height="72">
                 <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>!Control.HasFocus(11)</visible></control>
                 <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>FFFFFFFF</colordiffuse><visible>Control.HasFocus(11)</visible></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(11)</visible></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>FF0B1218</textcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
+                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(11)</visible></control>
+                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>FF0B1218</textcolor><selectedcolor>FF0B1218</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
             </focusedlayout>
         </control>
 
@@ -85,31 +85,31 @@
             <ondown>50</ondown>
             <progresstexture border="0,0,3,0" colordiffuse="00FFFFFF">epg_now.png</progresstexture>
             <rulerlayout height="46" width="265">
-                <control type="label"><left>8</left><width>260</width><height>46</height><font>font10</font><textcolor>text3</textcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
+                <control type="label"><left>8</left><width>260</width><height>46</height><font>font10</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
             </rulerlayout>
             <channellayout height="70" width="500">
                 <control type="image"><left>0</left><top>2</top><width>490</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
-                <control type="label"><left>14</left><top>2</top><width>80</width><height>64</height><font>font12_bold</font><textcolor>text3</textcolor><aligny>center</aligny><label>$INFO[ListItem.ChannelNumberLabel]</label></control>
+                <control type="label"><left>14</left><top>2</top><width>80</width><height>64</height><font>font12_bold</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.ChannelNumberLabel]</label></control>
                 <control type="image"><left>96</left><top>10</top><width>92</width><height>48</height><aspectratio>keep</aspectratio><texture>$INFO[ListItem.Icon]</texture></control>
-                <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.ChannelName]</label></control>
+                <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.ChannelName]</label></control>
             </channellayout>
             <focusedchannellayout height="70" width="500">
                 <control type="image"><left>0</left><top>2</top><width>490</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse></control>
                 <control type="image"><left>0</left><top>2</top><width>490</width><height>64</height><texture border="20">rr20_edge.png</texture><colordiffuse>FFE5534B</colordiffuse></control>
-                <control type="label"><left>14</left><top>2</top><width>80</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[Container(50).ListItem.ChannelNumberLabel]</label></control>
+                <control type="label"><left>14</left><top>2</top><width>80</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[Container(50).ListItem.ChannelNumberLabel]</label></control>
                 <control type="image"><left>96</left><top>10</top><width>92</width><height>48</height><aspectratio>keep</aspectratio><texture>$INFO[ListItem.Icon]</texture></control>
-                <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[Container(50).ListItem.ChannelName]</label></control>
+                <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[Container(50).ListItem.ChannelName]</label></control>
             </focusedchannellayout>
             <itemlayout height="70" width="60">
                 <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
-                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
+                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
                             <control type="progress" id="3"><left>12</left><top>56</top><width>32</width><height>5</height><info>ListItem.Progress</info><texturebg colordiffuse="00FFFFFF">pill6.png</texturebg><midtexture colordiffuse="FFE5534B">pill6.png</midtexture><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible></control>
             </itemlayout>
             <focusedlayout height="70" width="60">
                 <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>FFFFFFFF</colordiffuse><visible>Control.HasFocus(50)</visible></control>
                 <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>!Control.HasFocus(50)</visible></control>
-                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>FF0B1218</textcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(50)</visible></control>
-                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(50)</visible></control>
+                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>FF0B1218</textcolor><selectedcolor>FF0B1218</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(50)</visible></control>
+                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(50)</visible></control>
                             <control type="progress" id="3"><left>12</left><top>56</top><width>32</width><height>5</height><info>ListItem.Progress</info><texturebg colordiffuse="00FFFFFF">pill6.png</texturebg><midtexture colordiffuse="FFE5534B">pill6.png</midtexture><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible></control>
             </focusedlayout>
         </control>
@@ -122,6 +122,6 @@
             <onleft>50</onleft>
             <onright>50</onright>
         </control>
-        <control type="label"><left>1700</left><top>30</top><width>180</width><height>40</height><font>font12</font><textcolor>text2</textcolor><align>right</align><label>$INFO[System.Time]</label><visible>false</visible></control>
+        <control type="label"><left>1700</left><top>30</top><width>180</width><height>40</height><font>font12</font><textcolor>text2</textcolor><selectedcolor>text2</selectedcolor><align>right</align><label>$INFO[System.Time]</label><visible>false</visible></control>
     </controls>
 </window>
