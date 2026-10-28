@@ -457,6 +457,8 @@ def match_detail(ev):
             continue
         n += 1
         h, a = _num(hv), _num(av)
+        if name == "possessionPct":
+            hv, av = f"{round(h)}%", f"{round(a)}%"
         out[f"st{n}l"] = t(label)
         out[f"st{n}h"], out[f"st{n}a"] = str(hv if hv not in (None, "") else 0), str(av if av not in (None, "") else 0)
         out[f"st{n}k"] = str(int(round(10 * h / (h + a)))) if h + a else "5"
