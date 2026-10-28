@@ -314,7 +314,7 @@ def widget(key, path, style):
 
 def addon_widgets():
     """Rows shown when the Add-ons item is focused: video, program, music add-ons."""
-    return [{"label": tr_pair(WIDGETS_OTHER[0][0]), "path": WIDGETS_OTHER[0][1], "style": "land"}]
+    return [{"label": tr_pair(n), "path": p, "style": "land"} for n, p, _st in WIDGETS_OTHER[1:4]]
 
 
 def tr_pair(pair):
@@ -834,15 +834,15 @@ def init():
 
 def addons_once():
     """One time for existing menus: give an Add-ons item without rows its add-on rows."""
-    if get("lucent.addonw3"):
+    if get("lucent.addonw4"):
         return
-    put("lucent.addonw3", "1")
+    put("lucent.addonw4", "1")
     menu = Menu()
     changed = False
     for tab in menu.tabs:
         is_addons = "AddonBrowser" in tab["action"] or "addons" in tab.get("icon", "").lower() \
             or tab["label"].strip().lower() in ("add-ons", "addons")
-        mine = all(w["path"].startswith("addons://") for w in tab["widgets"])
+        mine = all(w["path"].startswith(("addons://", "favourites://")) for w in tab["widgets"])
         if is_addons and mine:
             tab["widgets"] = addon_widgets()
             changed = True
