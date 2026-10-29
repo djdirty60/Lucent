@@ -28,6 +28,11 @@ T = {
                       "[B]{0}[/B] uit de bibliotheek halen?\n\nHij gaat ook uit je Trakt-collectie, anders komt hij bij "
                       "de volgende ronde van Lucent Bibliotheek gewoon terug."),
     "removed": ("Removed from the library", "Uit de bibliotheek gehaald"),
+    "remove_part": ("Remove [B]{0}[/B] of {1} from the library?\n\nIt stays out, also after the next update of Lucent Library. "
+                    "Nothing changes on Trakt. Adding the series again (Library and lists) brings it back.",
+                    "[B]{0}[/B] van {1} uit de bibliotheek halen?\n\nHij blijft weg, ook na de volgende ronde van Lucent Bibliotheek. "
+                    "Op Trakt verandert niets. Zet je de serie opnieuw in de bibliotheek (Bibliotheek en lijsten), dan komt alles terug."),
+    "season_word": ("season {0}", "seizoen {0}"),
 }
 ART = {"poster": ("Poster", "Poster"), "fanart": ("Background", "Achtergrond"), "clearlogo": ("Logo", "Logo"),
        "landscape": ("Landscape", "Liggend"), "banner": ("Banner", "Banner"), "clearart": ("Clear art", "Clearart"),
@@ -79,7 +84,10 @@ class Item:
         self.kind = info("DBType")
         self.dbid = int(info("DBID") or 0)
         self.title = info("Title") or info("Label")
-        self.season = int(info("Season") or -1) if self.kind == "season" else 0
+        self.season = int(info("Season") or -1) if self.kind in ("season", "episode") else 0
+        self.episode = int(info("Episode") or 0) if self.kind == "episode" else 0
+        self.show_dbid = int(info("TvShowDBID") or 0)
+        self.show_title = info("TVShowTitle")
         self.trakt = info("UniqueID(trakt)")
         self.file = (info("FileNameAndPath") or info("Path")).replace("\\", "/")
 
@@ -106,13 +114,20 @@ class Item:
         if self.kind in ("movie", "tvshow"):
             out.append(("sorttitle", loc(EDIT_SORT)))
         out.append(("art", loc(CHOOSE_ART)))
-        if KIND[self.kind][3] and (self.kind != "episode" or not self.lucent_show()):
+        if self.kind in ("movie", "tvshow", "episode") or (self.kind == "season" and self.season >= 0):
             out.append(("remove", loc(REMOVE)))
         return out
 
-    def lucent_show(self):
-        """An episode of a Lucent series: one episode removed alone would come back, so the menu leaves that out."""
-        return LIB_ID in self.file
+    def show_trakt(self):
+        """For an episode or season of a Lucent series: the Trakt id of the series ('' for anything else)."""
+        if not self.show_dbid:
+            return ""
+        details = (rpc("VideoLibrary.GetTVShowDetails", {"tvshowid": self.show_dbid, "properties": ["file", "uniqueid"]}) or {}).get("tvshowdetails") or {}
+        trakt = str((details.get("uniqueid") or {}).get("trakt") or "")
+        return trakt if LIB_ID in details.get("file", "") and trakt.isdigit() else ""
+
+    def code(self):
+        return f"S{self.season:02d}E{self.episode:02d}" if self.kind == "episode" else f"S{self.season:02d}"
 
 
 def save(item, fields):
@@ -168,7 +183,9 @@ def choose_art(item):
 
 
 def remove(item):
-    lucent = item.kind in ("movie", "tvshow") and item.lucent()
+    if item.kind in ("episode", "season"):
+        return remove_part(item)
+    lucent = item.lucent()
     question = tr("remove_lucent" if lucent else "remove_q", item.title)
     if not xbmcgui.Dialog().yesno(loc(REMOVE), question):
         return False
@@ -178,6 +195,30 @@ def remove(item):
         xbmc.executebuiltin(f"RunScript({LIB_ID},remove,{kind},{item.trakt},trakt)")
     else:
         rpc(KIND[item.kind][3], item.ref())
+        xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)
+    xbmc.sleep(500)
+    xbmc.executebuiltin("Container.Refresh")
+    return True
+
+
+def remove_part(item):
+    """One episode or a whole season. Of a Lucent series it goes through Lucent Bibliotheek, which keeps it out for good
+    (otherwise the next run would simply bring it back); of any other series Kodi forgets the episode(s)."""
+    what = item.code() if item.kind == "episode" else tr("season_word", item.season)
+    show = item.show_title or item.title
+    if not xbmcgui.Dialog().yesno(loc(REMOVE), tr("remove_part", what, show)):
+        return False
+    xbmc.executebuiltin("Dialog.Close(movieinformation)")
+    trakt = item.show_trakt()
+    if trakt:
+        xbmc.executebuiltin(f"RunScript({LIB_ID},skip,{trakt},{item.code()})")
+    elif item.kind == "episode":
+        rpc("VideoLibrary.RemoveEpisode", {"episodeid": item.dbid})
+        xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)
+    else:
+        episodes = (rpc("VideoLibrary.GetEpisodes", {"tvshowid": item.show_dbid, "season": item.season}) or {}).get("episodes") or []
+        for ep in episodes:
+            rpc("VideoLibrary.RemoveEpisode", {"episodeid": ep["episodeid"]})
         xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)
     xbmc.sleep(500)
     xbmc.executebuiltin("Container.Refresh")
