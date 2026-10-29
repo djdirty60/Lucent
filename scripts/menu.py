@@ -218,6 +218,18 @@ WIDGETS_LIBRARY = [
     (("Artists", "Artiesten"), "musicdb://artists/", "poster"),
     (("Video sources", "Videobronnen"), "sources://video/", "land"),
 ]
+TMDB = "plugin://script.lucent.library/?action=tmdb&list="
+WIDGETS_TMDB = [                                  # Lucent's own rows, straight from TMDb (fast, no other add-on involved)
+    (("Trending movies", "Trending films"), TMDB + "trending_movie", "poster"),
+    (("Trending shows", "Trending series"), TMDB + "trending_tv", "poster"),
+    (("Popular movies", "Populaire films"), TMDB + "popular_movie", "poster"),
+    (("Popular shows", "Populaire series"), TMDB + "popular_tv", "poster"),
+    (("Top rated movies", "Best beoordeelde films"), TMDB + "toprated_movie", "poster"),
+    (("Top rated shows", "Best beoordeelde series"), TMDB + "toprated_tv", "poster"),
+    (("In cinemas now", "Nu in de bioscoop"), TMDB + "nowplaying_movie", "poster"),
+    (("Coming soon (movies)", "Binnenkort (films)"), TMDB + "upcoming_movie", "poster"),
+    (("Series on air", "Series die nu lopen"), TMDB + "airing_tv", "poster"),
+]
 WIDGETS_OTHER = [
     (("Favourites", "Favorieten"), "favourites://", "land"),
     (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
@@ -567,9 +579,10 @@ def trakt_lists():
 # ----------------------------------------------------------------------------- editors
 def pick_widget():
     sources = [tr("src_seren"), tr("src_trakt"), tr("src_library"), tr("src_browse"), tr("src_type"),
-               tr(G("Favourites and add-ons", "Favorieten en add-ons")), tr(G("A playlist…", "Een afspeellijst…"))]
+               tr(G("Favourites and add-ons", "Favorieten en add-ons")), tr(G("A playlist…", "Een afspeellijst…")),
+               tr(G("Lucent fast lists (TMDb)", "Lucent snelle lijsten (TMDb)"))]
     icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png",
-             "icons/favourites.png", "icons/list.png"]
+             "icons/favourites.png", "icons/list.png", "icons/star.png"]
     source = select(tr("add_widget"), sources, True, icons)
     style = "poster"
     if source == 0:
@@ -605,6 +618,12 @@ def pick_widget():
         if not picked:
             return None
         label, path = picked
+    elif source == 7:
+        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB])
+        if choice < 0:
+            return None
+        key, path, style = WIDGETS_TMDB[choice]
+        label = tr(key)
     elif source == 4:
         path = keyboard(tr("src_type"), "plugin://")
         if not path:
