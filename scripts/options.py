@@ -133,37 +133,38 @@ def edit_text(item, field, heading):
 
 
 def choose_art(item):
+    """Type list -> pictures of that type. Back from the pictures returns to the type list, back from there to Options."""
     kinds = (rpc("VideoLibrary.GetAvailableArtTypes", {"item": item.ref()}) or {}).get("availablearttypes") or []
     order = list(ART)
     kinds = sorted(set(kinds) | {"poster", "fanart"}, key=lambda k: order.index(k) if k in order else 99)
     labels = [ART.get(k, (k, k))[1 if NL else 0] for k in kinds]
-    pick = xbmcgui.Dialog().select(loc(CHOOSE_ART), labels)
-    if pick < 0:
-        return False
-    kind = kinds[pick]
-    found = (rpc("VideoLibrary.GetAvailableArt", {"item": item.ref(), "arttype": kind}) or {}).get("availableart") or []
-    entries = []
-    none = xbmcgui.ListItem(tr("none"))
-    entries.append(none)
-    for n, art in enumerate(found, start=1):
-        li = xbmcgui.ListItem(f"{labels[pick]} {n}")
-        thumb = art.get("previewurl") or art.get("url") or ""
-        li.setArt({"thumb": thumb, "icon": thumb})
-        li.setProperty("full", art.get("url") or thumb)          # the big preview next to the list
-        entries.append(li)
-    if len(entries) == 1:
-        xbmcgui.Dialog().notification(tr("options"), tr("nothing"), xbmcgui.NOTIFICATION_INFO, 3000)
-        return False
-    home = xbmcgui.Window(10000)
-    home.setProperty("lucent.artpick", kind)                     # DialogSelect: list to the left, big preview beside it
-    try:
-        choice = xbmcgui.Dialog().select(labels[pick], entries, useDetails=True)
-    finally:
-        home.clearProperty("lucent.artpick")
-    if choice < 0:
-        return False
-    value = None if choice == 0 else found[choice - 1].get("url")
-    return save(item, {"art": {kind: value}})
+    pick = 0
+    while True:
+        pick = xbmcgui.Dialog().select(loc(CHOOSE_ART), labels, preselect=pick)
+        if pick < 0:
+            return False                                         # back: to the Options menu
+        kind = kinds[pick]
+        found = (rpc("VideoLibrary.GetAvailableArt", {"item": item.ref(), "arttype": kind}) or {}).get("availableart") or []
+        if not found:
+            xbmcgui.Dialog().notification(tr("options"), tr("nothing"), xbmcgui.NOTIFICATION_INFO, 3000)
+            continue
+        entries = [xbmcgui.ListItem(tr("none"))]
+        for n, art in enumerate(found, start=1):
+            li = xbmcgui.ListItem(f"{labels[pick]} {n}")
+            thumb = art.get("previewurl") or art.get("url") or ""
+            li.setArt({"thumb": thumb, "icon": thumb})
+            li.setProperty("full", art.get("url") or thumb)      # the big preview next to the list
+            entries.append(li)
+        home = xbmcgui.Window(10000)
+        home.setProperty("lucent.artpick", kind)                 # DialogSelect: list to the left, big preview beside it
+        try:
+            choice = xbmcgui.Dialog().select(labels[pick], entries, useDetails=True, preselect=1)
+        finally:
+            home.clearProperty("lucent.artpick")
+        if choice < 0:
+            continue                                             # back: to the list of picture types
+        value = None if choice == 0 else found[choice - 1].get("url")
+        return save(item, {"art": {kind: value}})
 
 
 def remove(item):
@@ -180,7 +181,7 @@ def remove(item):
         xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)
     xbmc.sleep(500)
     xbmc.executebuiltin("Container.Refresh")
-    return False
+    return True                                                  # removed: the menu does not come back
 
 
 def reopen(item):
@@ -207,22 +208,32 @@ def run():
         log(f"not a library item ({item.kind} {item.dbid})")
         return
     choices = item.choices()
-    pick = xbmcgui.Dialog().contextmenu([label for _key, label in choices])
-    if pick < 0:
-        return
-    key = choices[pick][0]
-    changed = False
-    if key == "title":
-        changed = edit_text(item, "title", loc(EDIT_TITLE))
-    elif key == "sorttitle":
-        changed = edit_text(item, "sorttitle", loc(EDIT_SORT))
-    elif key == "art":
-        changed = choose_art(item)
-    elif key == "remove":
-        remove(item)
-    if changed:
-        time.sleep(0.2)
-        reopen(item)
+    pick = 0
+    while True:                                                  # back from a choice returns here, back here closes
+        home = xbmcgui.Window(10000)
+        home.setProperty("lucent.smallselect", "1")             # DialogSelect: compact, in the middle of the screen
+        try:
+            pick = xbmcgui.Dialog().select(tr("options"), [label for _key, label in choices], preselect=pick)
+        finally:
+            home.clearProperty("lucent.smallselect")
+        if pick < 0:
+            return
+        key = choices[pick][0]
+        changed = False
+        if key == "title":
+            changed = edit_text(item, "title", loc(EDIT_TITLE))
+        elif key == "sorttitle":
+            changed = edit_text(item, "sorttitle", loc(EDIT_SORT))
+        elif key == "art":
+            changed = choose_art(item)
+        elif key == "remove":
+            if remove(item):
+                return
+            continue
+        if changed:
+            time.sleep(0.2)
+            reopen(item)
+            return
 
 
 if __name__ == "__main__":
