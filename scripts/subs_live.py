@@ -281,9 +281,10 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             ctl.addItems(items)
             pos = next((i for i, li in enumerate(items) if li.getProperty("path") == focus_path), 0)
             ctl.selectItem(pos)
-            if not self.getFocusId() or self.getFocusId() == LIST or not focus_path:
-                if items and self.getFocusId() not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC):
-                    self.setFocusId(LIST)
+            if items and not getattr(self, "moved", False) and self.getFocusId() != LIST:
+                self.setFocusId(LIST)                 # the first results: straight into the list
+            elif not items and self.getFocusId() not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC):
+                self.setFocusId(BTN_CLOSE)            # an empty list cannot hold the focus
         except RuntimeError:
             pass
         self.status()
@@ -385,8 +386,21 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         self.close()
 
     def onAction(self, action):
-        if action.getId() in (9, 10, 92, 216, 247, 257, 275, 61467, 61448):
+        aid = action.getId()
+        if aid in (9, 10, 92, 216, 247, 257, 275, 61467, 61448):
             self.finish()
+            return
+        if aid in (1, 2, 3, 4):                       # left / right / up / down
+            self.moved = True
+            focus = self.getFocusId()
+            if focus not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC) and not self.list_size():
+                self.setFocusId(BTN_CLOSE)            # nothing in the list (yet): never stuck, go to the buttons
+
+    def list_size(self):
+        try:
+            return self.getControl(LIST).size()
+        except RuntimeError:
+            return 0
 
 
 def download(path):

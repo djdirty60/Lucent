@@ -2,7 +2,7 @@
 <!-- Lucent: live subtitle list (scripts/subs_live.py). Lists 601-608 load the subtitle add-ons in the background
      (one each, off screen); the script reads them as they arrive and fills list 500. -->
 <window>
-    <defaultcontrol always="true">500</defaultcontrol>
+    <defaultcontrol always="true">9501</defaultcontrol>
     <include>Anim_Dialog</include>
     <controls>
         <include>DialogDim</include>
@@ -56,7 +56,7 @@
             <control type="list" id="500">
                 <pagecontrol>60</pagecontrol>
                 <left>40</left><top>172</top><width>1240</width><height>624</height>
-                <onup>500</onup><ondown>9500</ondown><onright>9500</onright>
+                <onup>500</onup><ondown>9500</ondown><onright>9500</onright><onleft>9500</onleft>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
                 <itemlayout height="104" width="1240">
                     <control type="group">
@@ -179,7 +179,10 @@
             <control type="grouplist" id="9500">
                 <left>56</left><top>812</top><width>1208</width><height>64</height>
                 <orientation>horizontal</orientation><align>right</align><itemgap>16</itemgap>
-                <onup>500</onup>
+                <!-- an empty list cannot take the focus: then Up stays on the buttons -->
+                <onup condition="Integer.IsGreater(Container(500).NumItems,0)">500</onup>
+                <onup>noop</onup>
+                <ondown>noop</ondown>
                 <control type="button" id="9504">
                     <width>auto</width><height>64</height><font>font12_bold</font><textoffsetx>30</textoffsetx>
                     <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
