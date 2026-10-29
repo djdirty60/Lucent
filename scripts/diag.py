@@ -94,21 +94,27 @@ def row_state(path):
 
 
 def home_rows():
-    out, shown = [], 0
+    out = []
     lite = cond("Skin.HasSetting(lucent.lite)")
-    for n in range(1, 11):
-        path = xbmc.getInfoLabel(f"Skin.String(nuvio.home.w{n}.path)")
-        if not path:
-            continue
-        label = xbmc.getInfoLabel(f"Skin.String(nuvio.home.w{n}.label)") or f"{n}"
-        if lite and n > 6:
-            out.append(line(1, f"{n}. {label}: " + t("not built (light mode)", "niet opgebouwd (lichte stand)"),
-                            t("Light mode only builds rows 1-6. Switch it off in the setup assistant (Light mode) if your box can take it.",
-                              "De lichte stand bouwt alleen rij 1-6. Zet hem uit in de setup-assistent (Lichte modus) als je apparaat het aankan.")))
-            continue
-        shown += 1
-        state, text = row_state(path)
-        out.append(line(state, f"{n}. {label}: {text}"))
+    for tab in range(0, 13):                                   # 0 = start tab copy, then every tab of the side menu
+        title = xbmc.getInfoLabel(f"Skin.String(nuvio.tab{tab}.label)") if tab else t("Start tab", "Starttab")
+        rows = []
+        for n in range(1, 11):
+            base = f"nuvio.home.w{n}" if tab == 0 else f"nuvio.tab{tab}.w{n}"
+            path = xbmc.getInfoLabel(f"Skin.String({base}.path)")
+            if not path:
+                continue
+            label = xbmc.getInfoLabel(f"Skin.String({base}.label)") or f"{n}"
+            if lite and n > 6:
+                rows.append(line(1, f"{n}. {label}: " + t("not built (light mode)", "niet opgebouwd (lichte stand)"),
+                                 t("Light mode only builds rows 1-6. Switch it off in Settings > Skin settings.",
+                                   "De lichte stand bouwt alleen rij 1-6. Zet hem uit bij Instellingen > Skin-instellingen.")))
+                continue
+            state, text = row_state(path)
+            rows.append(line(state, f"{n}. {label}: {text}"))
+        if rows and (tab or True):
+            out.append(f"[B]{title}[/B]")
+            out.extend(rows)
     return out
 
 
@@ -132,7 +138,7 @@ def test():
     rows.append(line(2, t("Light mode: ", "Lichte stand: ") + (t("on", "aan") if lite else t("off", "uit"))))
     hr = home_rows()
     if hr:
-        rows.append(t("Home rows (start tab):", "Home-rijen (starttab):"))
+        rows.append(t("Rows per tab:", "Rijen per tab:"))
         rows.extend(hr)
     bad = sum(1 for r in rows if r.startswith("[COLOR FFE5534B]") or r.startswith("[COLOR FFE5A100]"))
     head = t("Everything looks fine.", "Alles ziet er goed uit.") if not bad else \
