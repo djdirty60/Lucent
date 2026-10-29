@@ -63,14 +63,28 @@ class Watcher(xbmc.Player):
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] {error}", xbmc.LOGINFO)
 
+    def is_youtube(self):
+        """A YouTube video (a trailer, or something started from the YouTube add-on)."""
+        if HOME.getProperty("nuvio.trailer.playing"):
+            return True
+        names = [xbmc.getInfoLabel("Player.Filenameandpath"), xbmc.getInfoLabel("Player.Folderpath")]
+        try:
+            names.append(self.getPlayingFile())
+        except RuntimeError:
+            pass
+        text = " ".join(n for n in names if n).lower()
+        return any(word in text for word in ("plugin.video.youtube", "youtube.com", "googlevideo.com", "youtu.be"))
+
     def look(self):
         if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not xbmc.getCondVisibility(f"System.HasAddon({ADDON_ID})"):
             return
         if not self.isPlayingVideo() or xbmc.getCondVisibility("VideoPlayer.Content(livetv) | Player.IsInternetStream + String.IsEmpty(VideoPlayer.Title)"):
             return
+        if self.is_youtube():
+            return                                       # trailers and other YouTube videos: never search subtitles
         if self.monitor.waitForAbort(4):                  # let Kodi pick the streams and the subtitle first
             return
-        if not self.isPlayingVideo():
+        if not self.isPlayingVideo() or self.is_youtube():
             return
         have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
         if have & wanted_codes():

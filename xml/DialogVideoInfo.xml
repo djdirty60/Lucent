@@ -76,11 +76,13 @@
                         <width>auto</width>
                         <height>72</height>
                         <label>▶  $LOCALIZE[208]</label>
+                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
                     </control>
                     <control type="button" id="9">
                         <width>auto</width>
                         <height>72</height>
                         <label>$LOCALIZE[31018]</label>
+                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
                         <visible>ListItem.IsResumable + !String.IsEmpty(ListItem.DBID)</visible>
                     </control>
                     <control type="button" id="21">
@@ -104,10 +106,14 @@
                         <onclick>RunScript(special://skin/scripts/agenda.py,follow)</onclick>
                         <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))]</visible>
                     </control>
+                    <!-- Kodi's own Trailer button (id 11): it closes this page and plays the trailer full screen;
+                         trailerback.py opens the page again afterwards. -->
                     <control type="button" id="11">
                         <width>auto</width>
                         <height>72</height>
                         <label>$LOCALIZE[20410]</label>
+                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                         <visible>!String.IsEmpty(ListItem.Trailer) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
                     </control>
                     <control type="button" id="14">
@@ -818,6 +824,13 @@
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
                     <onup>6002</onup>
                     <ondown>5200</ondown>
+                    <!-- a similar title opens its own page (it used to start playing at once): openpage.py opens the list and presses Info -->
+                    <onclick>SetProperty(nuvio.open.pos,$INFO[Container(5100).CurrentItem],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Container(5100).ListItem.UniqueID(tmdb)],home)</onclick>
+                    <onclick condition="String.IsEqual(Container(5100).ListItem.DBType,tvshow)">SetProperty(nuvio.open.type,tv,home)</onclick>
+                    <onclick condition="!String.IsEqual(Container(5100).ListItem.DBType,tvshow)">SetProperty(nuvio.open.type,movie,home)</onclick>
+                    <onclick>SetProperty(nuvio.open.trakt,$INFO[Container(5100).ListItem.Property(trakt_id)],home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,related)</onclick>
                     <itemlayout width="428" height="335">
                     <control type="group">
                         <left>40</left>
@@ -1045,6 +1058,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.1.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.1.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.1.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.1.title))</visible>
                         </item>
                         <item>
@@ -1052,6 +1067,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.2.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.2.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.2.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.2.title))</visible>
                         </item>
                         <item>
@@ -1059,6 +1076,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.3.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.3.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.3.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.3.title))</visible>
                         </item>
                         <item>
@@ -1066,6 +1085,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.4.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.4.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.4.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.4.title))</visible>
                         </item>
                         <item>
@@ -1073,6 +1094,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.5.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.5.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.5.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.5.title))</visible>
                         </item>
                         <item>
@@ -1080,6 +1103,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.6.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.6.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.6.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.6.title))</visible>
                         </item>
                         <item>
@@ -1087,6 +1112,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.7.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.7.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.7.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.7.title))</visible>
                         </item>
                         <item>
@@ -1094,6 +1121,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.8.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.8.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.8.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.8.title))</visible>
                         </item>
                         <item>
@@ -1101,6 +1130,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.9.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.9.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.9.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.9.title))</visible>
                         </item>
                         <item>
@@ -1108,6 +1139,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.10.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.10.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.10.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.10.title))</visible>
                         </item>
                         <item>
@@ -1115,6 +1148,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.11.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.11.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.11.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.11.title))</visible>
                         </item>
                         <item>
@@ -1122,6 +1157,8 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.vid.12.sub)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.vid.12.thumb)]</icon>
                             <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.12.path)])</onclick>
+                            <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.vid.12.title))</visible>
                         </item>
                     </content>
@@ -1282,8 +1319,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.1.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.1.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.1.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.1.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.1.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.1.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.1.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.1.title))</visible>
                         </item>
                         <item>
@@ -1291,8 +1332,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.2.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.2.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.2.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.2.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.2.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.2.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.2.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.2.title))</visible>
                         </item>
                         <item>
@@ -1300,8 +1345,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.3.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.3.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.3.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.3.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.3.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.3.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.3.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.3.title))</visible>
                         </item>
                         <item>
@@ -1309,8 +1358,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.4.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.4.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.4.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.4.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.4.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.4.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.4.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.4.title))</visible>
                         </item>
                         <item>
@@ -1318,8 +1371,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.5.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.5.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.5.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.5.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.5.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.5.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.5.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.5.title))</visible>
                         </item>
                         <item>
@@ -1327,8 +1384,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.6.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.6.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.6.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.6.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.6.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.6.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.6.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.6.title))</visible>
                         </item>
                         <item>
@@ -1336,8 +1397,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.7.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.7.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.7.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.7.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.7.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.7.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.7.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.7.title))</visible>
                         </item>
                         <item>
@@ -1345,8 +1410,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.8.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.8.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.8.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.8.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.8.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.8.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.8.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.8.title))</visible>
                         </item>
                         <item>
@@ -1354,8 +1423,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.9.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.9.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.9.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.9.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.9.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.9.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.9.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.9.title))</visible>
                         </item>
                         <item>
@@ -1363,8 +1436,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.10.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.10.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.10.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.10.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.10.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.10.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.10.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.10.title))</visible>
                         </item>
                         <item>
@@ -1372,8 +1449,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.11.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.11.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.11.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.11.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.11.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.11.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.11.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.11.title))</visible>
                         </item>
                         <item>
@@ -1381,8 +1462,12 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.12.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.12.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.12.current)]</property>
-                            <onclick>Dialog.Close(movieinformation)</onclick>
-                            <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.info.coll.12.path)]",return)</onclick>
+                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.12.path)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.12.year)]",home)</onclick>
+                            <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.12.id)],home)</onclick>
+                            <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
+                            <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.coll.12.title))</visible>
                         </item>
                     </content>
@@ -1428,13 +1513,30 @@
                             <visible>!false</visible>
                         </control>
                         <control type="image">
+                            <left>8</left>
+                            <top>8</top>
+                            <width>284</width>
+                            <height>104</height>
+                            <texture border="16" colordiffuse="FFF2F2F2">rr20.png</texture>
+                            <visible>!String.IsEmpty(ListItem.Thumb)</visible>
+                        </control>
+                        <control type="image">
+                            <left>28</left>
+                            <top>18</top>
+                            <width>244</width>
+                            <height>84</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture>$INFO[ListItem.Thumb]</texture>
+                            <visible>!String.IsEmpty(ListItem.Thumb)</visible>
+                        </control>
+                        <control type="image">
                             <left>30</left>
                             <top>20</top>
                             <width>240</width>
                             <height>80</height>
                             <aspectratio>keep</aspectratio>
-                            <texture colordiffuse="text">$INFO[ListItem.Icon]</texture>
-                            <visible>System.HasAddon(resource.images.studios.white)</visible>
+                            <texture colordiffuse="text">$INFO[ListItem.Label,resource://resource.images.studios.white/,.png]</texture>
+                            <visible>System.HasAddon(resource.images.studios.white) + String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="label">
                             <left>20</left>
@@ -1447,7 +1549,7 @@
                             <textcolor>text</textcolor>
                             <selectedcolor>text</selectedcolor>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!System.HasAddon(resource.images.studios.white)</visible>
+                            <visible>!System.HasAddon(resource.images.studios.white) + String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="label">
                             <left>0</left>
@@ -1480,13 +1582,30 @@
                             <visible>!Control.HasFocus(5300)</visible>
                         </control>
                         <control type="image">
+                            <left>8</left>
+                            <top>8</top>
+                            <width>284</width>
+                            <height>104</height>
+                            <texture border="16" colordiffuse="FFF2F2F2">rr20.png</texture>
+                            <visible>!String.IsEmpty(ListItem.Thumb)</visible>
+                        </control>
+                        <control type="image">
+                            <left>28</left>
+                            <top>18</top>
+                            <width>244</width>
+                            <height>84</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture>$INFO[ListItem.Thumb]</texture>
+                            <visible>!String.IsEmpty(ListItem.Thumb)</visible>
+                        </control>
+                        <control type="image">
                             <left>30</left>
                             <top>20</top>
                             <width>240</width>
                             <height>80</height>
                             <aspectratio>keep</aspectratio>
-                            <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
-                            <visible>System.HasAddon(resource.images.studios.white)</visible>
+                            <texture colordiffuse="on_focus">$INFO[ListItem.Label,resource://resource.images.studios.white/,.png]</texture>
+                            <visible>System.HasAddon(resource.images.studios.white) + String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="label">
                             <left>20</left>
@@ -1499,7 +1618,7 @@
                             <textcolor>on_focus</textcolor>
                             <selectedcolor>on_focus</selectedcolor>
                             <label>$INFO[ListItem.Label]</label>
-                            <visible>!System.HasAddon(resource.images.studios.white)</visible>
+                            <visible>!System.HasAddon(resource.images.studios.white) + String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="label">
                             <left>0</left>
@@ -1518,25 +1637,33 @@
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.1)]</label>
                             <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.1)].png</icon>
-                            <onclick>noop</onclick>
+                            <thumb>$INFO[Window(home).Property(nuvio.info.studio.1.logo)]</thumb>
+                            <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.1)]",home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.1))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.2)]</label>
                             <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.2)].png</icon>
-                            <onclick>noop</onclick>
+                            <thumb>$INFO[Window(home).Property(nuvio.info.studio.2.logo)]</thumb>
+                            <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.2)]",home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.2))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.3)]</label>
                             <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.3)].png</icon>
-                            <onclick>noop</onclick>
+                            <thumb>$INFO[Window(home).Property(nuvio.info.studio.3.logo)]</thumb>
+                            <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.3)]",home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.3))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.4)]</label>
                             <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.4)].png</icon>
-                            <onclick>noop</onclick>
+                            <thumb>$INFO[Window(home).Property(nuvio.info.studio.4.logo)]</thumb>
+                            <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.4)]",home)</onclick>
+                            <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
                             <visible>!String.IsEmpty(Window(home).Property(nuvio.info.studio.4))</visible>
                         </item>
                     </content>

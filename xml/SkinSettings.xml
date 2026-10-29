@@ -191,6 +191,8 @@
                 <param name="body">panel</param>
             </include>
             <control type="grouplist" id="9101">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9101</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -303,6 +305,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9102">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9102</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -390,6 +394,7 @@
                     <textcolor>text4</textcolor>
                     <aligny>bottom</aligny>
                     <label>$LOCALIZE[31219]</label>
+                    <visible>Skin.HasSetting(nuvio.trailers.menu)</visible>
                 </control>
                 <control type="button" id="1213">
                     <width>1180</width>
@@ -403,6 +408,7 @@
                     <label>$LOCALIZE[31220]</label>
                     <label2>$INFO[Skin.String(nuvio.posterfocus.label)]</label2>
                     <onclick>RunScript(special://skin/scripts/settings.py,posterfocus)</onclick>
+                    <visible>Skin.HasSetting(nuvio.trailers.menu)</visible>
                 </control>
                 <control type="button" id="1214">
                     <width>1180</width>
@@ -416,7 +422,7 @@
                     <label>$LOCALIZE[31221]</label>
                     <label2>$INFO[Skin.String(nuvio.trailer.delay.label)]</label2>
                     <onclick>RunScript(special://skin/scripts/settings.py,trailerdelay)</onclick>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.posterfocus))</visible>
+                    <visible>Skin.HasSetting(nuvio.trailers.menu) + !String.IsEmpty(Skin.String(nuvio.posterfocus))</visible>
                 </control>
                 <control type="button" id="1215">
                     <width>1180</width>
@@ -429,7 +435,14 @@
                     <texturenofocus border="20" >card_soft.png</texturenofocus>
                     <label>$LOCALIZE[31223]</label>
                     <onclick>Addon.OpenSettings(plugin.video.youtube)</onclick>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.posterfocus)) + System.HasAddon(plugin.video.youtube)</visible>
+                    <visible>Skin.HasSetting(nuvio.trailers.menu) + !String.IsEmpty(Skin.String(nuvio.posterfocus)) + System.HasAddon(plugin.video.youtube)</visible>
+                </control>
+                <control type="radiobutton" id="1216">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31250]</label>
+                    <selected>Skin.HasSetting(nuvio.trailer.test)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.trailer.test)</onclick>
+                    <visible>Skin.HasSetting(nuvio.trailers.menu) + !String.IsEmpty(Skin.String(nuvio.posterfocus)) + Pvr.HasTVChannels</visible>
                 </control>
                 <control type="textbox" id="2205">
                     <width>1180</width>
@@ -437,6 +450,7 @@
                     <font>font_body</font>
                     <textcolor>text3</textcolor>
                     <label>$LOCALIZE[31222]</label>
+                    <visible>Skin.HasSetting(nuvio.trailers.menu)</visible>
                 </control>
                 <control type="label" id="2202">
                     <width>1180</width>
@@ -485,6 +499,20 @@
                     <label>$LOCALIZE[31160]</label>
                     <onclick>RunScript(special://skin/scripts/settings.py,logos)</onclick>
                 </control>
+                <control type="radiobutton" id="1217">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31251]</label>
+                    <selected>Skin.HasSetting(nuvio.ok.movie.page)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.ok.movie.page)</onclick>
+                    <onclick>RunScript(special://skin/scripts/keymap.py)</onclick>
+                </control>
+                <control type="radiobutton" id="1218">
+                    <width>1180</width>
+                    <label>$LOCALIZE[31252]</label>
+                    <selected>Skin.HasSetting(nuvio.ok.episode.page)</selected>
+                    <onclick>Skin.ToggleSetting(nuvio.ok.episode.page)</onclick>
+                    <onclick>RunScript(special://skin/scripts/keymap.py)</onclick>
+                </control>
                 <control type="radiobutton" id="1211">
                     <width>1180</width>
                     <label>$LOCALIZE[31161]</label>
@@ -506,6 +534,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9103">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9103</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -571,6 +601,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9104">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9104</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -669,6 +701,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9105">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9105</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -772,6 +806,18 @@
                     <onclick>Skin.ToggleSetting(nuvio.autosubs)</onclick>
                     <visible>System.HasAddon(service.subtitles.a4ksubtitles)</visible>
                 </control>
+                <control type="button" id="1509">
+                    <width>1180</width>
+                    <height>72</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>32</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus border="20" >card_soft.png</texturenofocus>
+                    <label>$LOCALIZE[31253]</label>
+                    <onclick>RunScript(special://skin/scripts/info.py,tmdbkey)</onclick>
+                </control>
                 <control type="label" id="2502">
                     <width>1180</width>
                     <height>76</height>
@@ -800,6 +846,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9106">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9106</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -873,6 +921,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9107">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9107</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -905,6 +955,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9108">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9108</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -1017,6 +1069,8 @@
                 </control>
             </control>
             <control type="grouplist" id="9109">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9109</onright>
                 <left>600</left>
                 <top>180</top>
                 <width>1180</width>
@@ -1056,10 +1110,18 @@
                 </control>
             </control>
             <control type="scrollbar" id="60">
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),1)">9101</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),2)">9102</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),3)">9103</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),4)">9104</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),5)">9105</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),6)">9106</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),7)">9107</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),8)">9108</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),9)">9109</onleft>
                 <left>1792</left>
                 <top>180</top>
                 <height>820</height>
-                <onleft>9000</onleft>
             </control>
         </control>
     </controls>

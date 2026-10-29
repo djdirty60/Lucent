@@ -25,6 +25,7 @@
             <width>320</width>
             <height>480</height>
             <texture diffuse="mask_poster.png">default_poster.png</texture>
+            <visible>String.IsEmpty(Window(home).Property(nuvio.person.studio))</visible>
         </control>
         <control type="image">
             <left>150</left>
@@ -33,6 +34,7 @@
             <height>480</height>
             <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
             <texture diffuse="mask_poster.png" background="true">$INFO[Window(home).Property(nuvio.person.photo)]</texture>
+            <visible>String.IsEmpty(Window(home).Property(nuvio.person.studio))</visible>
         </control>
         <control type="image">
             <left>150</left>
@@ -41,6 +43,26 @@
             <height>480</height>
             <texture border="14">rr14_edge.png</texture>
             <colordiffuse>33FFFFFF</colordiffuse>
+            <visible>String.IsEmpty(Window(home).Property(nuvio.person.studio))</visible>
+        </control>
+        <!-- studio logo: on a light plate, whole logo visible -->
+        <control type="group">
+            <left>150</left>
+            <top>100</top>
+            <visible>!String.IsEmpty(Window(home).Property(nuvio.person.studio))</visible>
+            <control type="image">
+                <width>320</width>
+                <height>240</height>
+                <texture border="20" colordiffuse="FFF2F2F2">rr20.png</texture>
+            </control>
+            <control type="image">
+                <left>24</left>
+                <top>24</top>
+                <width>272</width>
+                <height>192</height>
+                <aspectratio>keep</aspectratio>
+                <texture background="true">$INFO[Window(home).Property(nuvio.person.photo)]</texture>
+            </control>
         </control>
         <!-- name, born, place, biography -->
         <control type="label">
@@ -100,6 +122,15 @@
                 <font>font_mainmenu_small</font>
                 <textcolor>text</textcolor>
                 <label>$LOCALIZE[31120]</label>
+                <visible>String.IsEmpty(Window(home).Property(nuvio.person.studio))</visible>
+            </control>
+            <control type="label">
+                <width>auto</width>
+                <height>52</height>
+                <font>font_mainmenu_small</font>
+                <textcolor>text</textcolor>
+                <label>$LOCALIZE[31254]</label>
+                <visible>!String.IsEmpty(Window(home).Property(nuvio.person.studio))</visible>
             </control>
             <include content="InfoPill">
                 <param name="label">$INFO[Window(home).Property(nuvio.person.count)]</param>
@@ -240,360 +271,480 @@
                     <label>$INFO[Window(home).Property(nuvio.person.film.1.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.1.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.1.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.1.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.1.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.1.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.1.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.1.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.1.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.2.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.2.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.2.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.2.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.2.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.2.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.2.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.2.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.2.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.3.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.3.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.3.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.3.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.3.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.3.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.3.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.3.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.3.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.4.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.4.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.4.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.4.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.4.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.4.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.4.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.4.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.4.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.5.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.5.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.5.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.5.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.5.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.5.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.5.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.5.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.5.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.6.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.6.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.6.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.6.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.6.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.6.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.6.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.6.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.6.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.7.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.7.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.7.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.7.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.7.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.7.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.7.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.7.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.7.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.8.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.8.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.8.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.8.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.8.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.8.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.8.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.8.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.8.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.9.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.9.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.9.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.9.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.9.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.9.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.9.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.9.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.9.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.10.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.10.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.10.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.10.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.10.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.10.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.10.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.10.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.10.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.11.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.11.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.11.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.11.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.11.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.11.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.11.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.11.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.11.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.12.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.12.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.12.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.12.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.12.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.12.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.12.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.12.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.12.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.13.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.13.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.13.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.13.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.13.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.13.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.13.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.13.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.13.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.14.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.14.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.14.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.14.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.14.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.14.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.14.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.14.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.14.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.15.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.15.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.15.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.15.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.15.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.15.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.15.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.15.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.15.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.16.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.16.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.16.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.16.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.16.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.16.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.16.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.16.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.16.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.17.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.17.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.17.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.17.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.17.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.17.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.17.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.17.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.17.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.18.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.18.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.18.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.18.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.18.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.18.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.18.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.18.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.18.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.19.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.19.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.19.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.19.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.19.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.19.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.19.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.19.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.19.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.20.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.20.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.20.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.20.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.20.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.20.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.20.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.20.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.20.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.21.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.21.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.21.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.21.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.21.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.21.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.21.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.21.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.21.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.22.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.22.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.22.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.22.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.22.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.22.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.22.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.22.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.22.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.23.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.23.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.23.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.23.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.23.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.23.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.23.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.23.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.23.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.24.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.24.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.24.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.24.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.24.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.24.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.24.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.24.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.24.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.25.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.25.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.25.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.25.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.25.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.25.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.25.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.25.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.25.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.26.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.26.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.26.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.26.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.26.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.26.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.26.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.26.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.26.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.27.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.27.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.27.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.27.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.27.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.27.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.27.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.27.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.27.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.28.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.28.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.28.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.28.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.28.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.28.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.28.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.28.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.28.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.29.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.29.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.29.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.29.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.29.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.29.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.29.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.29.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.29.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.30.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.30.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.30.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.30.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.30.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.30.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.30.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.30.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.30.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.31.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.31.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.31.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.31.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.31.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.31.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.31.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.31.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.31.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.32.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.32.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.32.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.32.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.32.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.32.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.32.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.32.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.32.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.33.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.33.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.33.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.33.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.33.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.33.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.33.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.33.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.33.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.34.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.34.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.34.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.34.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.34.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.34.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.34.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.34.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.34.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.35.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.35.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.35.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.35.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.35.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.35.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.35.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.35.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.35.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.36.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.36.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.36.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.36.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.36.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.36.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.36.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.36.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.36.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.37.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.37.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.37.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.37.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.37.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.37.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.37.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.37.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.37.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.38.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.38.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.38.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.38.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.38.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.38.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.38.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.38.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.38.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.39.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.39.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.39.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.39.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.39.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.39.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.39.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.39.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.39.title))</visible>
                 </item>
                 <item>
                     <label>$INFO[Window(home).Property(nuvio.person.film.40.title)]</label>
                     <label2>$INFO[Window(home).Property(nuvio.person.film.40.sub)]</label2>
                     <icon>$INFO[Window(home).Property(nuvio.person.film.40.poster)]</icon>
-                    <onclick>Dialog.Close(1180,true)</onclick>
-                    <onclick>Dialog.Close(movieinformation,true)</onclick>
-                    <onclick>ActivateWindow(Videos,"$INFO[Window(home).Property(nuvio.person.film.40.path)]",return)</onclick>
+                    <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.person.film.40.path)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.person.film.40.date)]",home)</onclick>
+                    <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.person.film.40.id)],home)</onclick>
+                    <onclick>SetProperty(nuvio.open.type,$INFO[Window(home).Property(nuvio.person.film.40.type)],home)</onclick>
+                    <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
+                    <onclick>RunScript(special://skin/scripts/info.py,open,path)</onclick>
                     <visible>!String.IsEmpty(Window(home).Property(nuvio.person.film.40.title))</visible>
                 </item>
             </content>

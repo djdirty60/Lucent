@@ -42,13 +42,17 @@ A slim icon rail that opens when you press left. Out of the box it has Search, H
 The skin picks a fitting view automatically. You can change it with the **View** button at the top right.
 
 ### Info page
-Everything on one page. At the top: logo, buttons, director, ratings (IMDb, TMDB, Trakt), plot, genres, release date and details. Scroll down for tabs **Cast and crew | Similar titles | Trailers** (left/right switches them), the **collection** the film belongs to (for example all Toy Story films, via TMDB) and the **production companies**.
+Everything on one page. At the top: logo, buttons, director, ratings (IMDb, TMDB, Trakt), plot, genres, release date and details. Scroll down for tabs **Cast and crew | Similar titles | Trailers** (left/right switches them), the **collection** the film belongs to (for example all Toy Story films, via TMDB) and the **production companies** with their logos.
 
 - **Library and lists** – tick where the title should be: your Seren library (Trakt collection), your Trakt watchlist and your own Trakt lists.
 - **Mark as watched** – marks it as watched or not watched on Trakt.
 - **Click a cast member or the director** to open their page: photo, birthday, place of birth, biography and filmography (via TMDB).
+- **Click a studio** under Production to see its logo, where it is from and its most popular films and series.
+- **Click a title** under Similar titles, in the collection, or on an actor or studio page to open its own info page. **Play** always goes through Seren.
+- **Back walks the whole way back**: film → actor → film → Back brings you to the actor, Back again to the film you started from.
+- **Trailer** plays the trailer and brings you back to the page afterwards.
 
-These use your Trakt login from Seren, there is nothing new to set up. For studio logos, use **Skin settings → Install studio logos**.
+The Trakt parts use your Trakt login from Seren. Cast, collections, studios and the pages opened from them need a free **TMDB API key**: Lucent uses the one you entered in Seren, or enter your own in **Skin settings → Integrations → TMDB API key** (get one for free at [themoviedb.org](https://www.themoviedb.org/settings/api)). Studio logos come from the studio logo packs (installed with the skin); a studio that is not in the pack gets its logo from TMDB.
 
 ### Calendar
 A **Calendar** tab (Week, List and Month) for the series and films of your Trakt collection that you follow with the bell on the info page. A pop-up tells you when a new episode is out (*Watch now / Later*) or when a film is released digitally. The series open straight on their seasons in Seren.
@@ -126,7 +130,7 @@ The video player and its menu, seek bar, subtitle search, bookmarks, Kodi settin
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Lucent**.)
 
-Kodi also installs the YouTube add-on, which the skin uses for trailers.
+Kodi also installs the YouTube add-on (for trailers) and the white and coloured studio logo packs.
 
 
 ### Automatic updates
@@ -139,8 +143,8 @@ From then on new versions arrive automatically (Kodi's default: **Settings → S
 **Settings → Skin settings** is laid out with categories on the left, options on the right.
 
 - **Appearance** – colour theme (Glass, White, Crimson, Emerald, Ocean, Violet, Amber, Gold, Rose, Rose Gold, Copper, Jade, Arctic Blue, Graphite), AMOLED mode (pure black), interface scale, font and language, clock, and the screensaver (dim when idle, timeout, dim strength).
-- **Layout** – menu and widgets, poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
-- **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings.
+- **Layout** – menu and widgets, what OK does on a film or episode (open its page first, or start the stream at once), poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
+- **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings. Integrations also has your TMDB API key, A4KSubtitles and the update pop-up.
 
 **Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.lucent/logos/` and the info page shows them instead of the names.
 
@@ -175,6 +179,7 @@ A tab without widgets shows the widgets of the start tab.
 
 - **Seren is optional.** Without Seren the Seren rows are hidden and the skin works with your Kodi library only. With Seren, enter a free **Fanart.tv API key** in Seren for more logos.
 - **Pairs with the Seren theme** [Lucent for Seren](https://github.com/djdirty60/Seren-Thema), so Seren's source select, scraping and playing-next windows match the skin.
+- **Remote:** the Home button of the remote goes to the Home screen from almost every window (not yet on the film / series page on every box). In lists with a scroll bar (file browser, settings) press Right to get on the bar, then Up/Down scroll a page at a time.
 - **Screen size:** Kodi scales the skin to any resolution (720p, 1080p, 4K) by itself. If you see black edges or the picture is cut off, use **Skin settings → Calibrate the picture**.
 - **Not styled:** games and weather. Those windows won't open while this skin is active; switch to Estuary temporarily if you need them. Live TV has the TV guide and player of this skin, but other PVR windows (recordings, timers) still need Estuary.
 - Feedback and bug reports are welcome – please open an issue and include a photo of the screen or your `kodi.log` if something looks wrong.
@@ -191,7 +196,7 @@ fonts/               Inter font + licence
 colors/              colour palette
 language/            English and Dutch strings
 scripts/menu.py      editor for the side menu and the widgets
-scripts/info.py      info page: collection, studios, Trakt lists and watched
+scripts/info.py      info page: collection, studios, person / studio pages, opening titles and going back, Trakt lists and watched
 scripts/agenda*.py   Calendar tab
 scripts/sport*.py    Sport tab (ESPN games, tables, F1 page, reminders)
 scripts/tv.py        TV tab and guide, live.py = live TV player

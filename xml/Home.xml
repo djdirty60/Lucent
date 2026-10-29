@@ -16,7 +16,10 @@
     <onload condition="Pvr.HasTVChannels">RunScript(special://skin/scripts/sport.py,service)</onload>
     <onload>RunScript(special://skin/scripts/updater.py,service)</onload>
     <onload>RunScript(special://skin/scripts/subtitles.py,service)</onload>
-    <onload>RunScript(special://skin/scripts/trailers.py)</onload>
+    <!-- poster trailers are switched off for now (set the skin setting nuvio.trailers.menu to bring them back) -->
+    <onload condition="Skin.HasSetting(nuvio.trailers.menu)">RunScript(special://skin/scripts/trailers.py)</onload>
+    <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.posterfocus)</onload>
+    <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.trailer.test)</onload>
     <onload>SetProperty(nuvio.started,1,home)</onload>
     <controls>
         <!-- ============ Poster focus trailer ============
@@ -381,6 +384,17 @@
             </control>
         </control>
 
+        <!-- TEST (only with the trailer test switch): what Kodi thinks about the video -->
+        <control type="label">
+            <left>40</left>
+            <top>4</top>
+            <width>1880</width>
+            <height>30</height>
+            <font>font10</font>
+            <textcolor>FFFFD54A</textcolor>
+            <label>[B]TEST[/B]  mode: $INFO[Skin.String(nuvio.posterfocus)]  |  eigen: $INFO[Window(home).Property(nuvio.trailer.playing)]  |  [COLOR FF9EE7FF]$INFO[Window(home).Property(nuvio.trailer.dbg)][/COLOR]  |  decoder: $INFO[Player.Process(videodecoder)] $INFO[Player.Process(videohwdecoder),HW ,]  |  $INFO[Player.Process(videowidth)]x$INFO[Player.Process(videoheight)]</label>
+            <visible>Skin.HasSetting(nuvio.trailer.test)</visible>
+        </control>
         <include>Clock</include>
     </controls>
 </window>

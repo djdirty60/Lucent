@@ -31,6 +31,27 @@ def log(text):
     xbmc.log(f"[skin.lucent] trailers: {text}", xbmc.LOGINFO)
 
 
+_DBG = {"last": "", "next": 0.0}
+
+
+def dbg(text):
+    """Shown in the yellow test line on Home. Only written while the test switch is on, and only when the text changes
+    (every property write makes Home redraw, which a weak box feels)."""
+    if text == _DBG["last"]:
+        return
+    now = time.time()
+    if now < _DBG["next"]:
+        return
+    if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.trailer.test)"):
+        if _DBG["last"]:
+            HOME.clearProperty("nuvio.trailer.dbg")
+            _DBG["last"] = ""
+        return
+    _DBG["next"] = now + 0.5
+    _DBG["last"] = text
+    HOME.setProperty("nuvio.trailer.dbg", text)
+
+
 def label(name):
     return xbmc.getInfoLabel(name)
 
@@ -103,6 +124,8 @@ class Trailers(xbmc.Player):
         self.tried = ""            # the card we already tried during this visit
         self.cache = {}
         self.failures = 0          # trailers in a row that YouTube could not play
+        self.stray_since = 0.0     # since when a video without an owner plays behind Home
+        self.lost_since = 0.0      # since when the focused card is not readable
         self.pause_until = 0.0     # after repeated failures we stop trying for a while
 
     # -- player callbacks: anything we did not start is not ours
@@ -163,6 +186,10 @@ class Trailers(xbmc.Player):
             return True
         return False
 
+    def is_youtube(self):
+        text = " ".join([label("Player.Filenameandpath"), label("Player.Folderpath")]).lower()
+        return "plugin.video.youtube" in text or "googlevideo.com" in text
+
     def let_go(self):
         self.ours = False
         self.requested = False
@@ -178,6 +205,7 @@ class Trailers(xbmc.Player):
     # -- main loop
     def run(self):
         log("started")
+        dbg("service started")
         while not self.monitor.abortRequested():
             HOME.setProperty(RUNNING, f"{time.time():.1f}")
             try:
@@ -198,44 +226,75 @@ class Trailers(xbmc.Player):
                                         " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel)")
         fullscreen = xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)")
         busy = self.ours or self.requested
+        # safety net: a YouTube video that plays behind the Home screen and that we do not own is a stray trailer
+        # (it lost its owner, for example after a window change): stop it after a few seconds
+        if on_home and not busy and not fullscreen and self.isPlayingVideo() and self.is_youtube():
+            self.stray_since = self.stray_since or time.time()
+            if time.time() - self.stray_since > 3:
+                log("stopping a stray YouTube video behind Home")
+                self.stray_since = 0.0
+                self.stop()
+                return
+        else:
+            self.stray_since = 0.0
         if busy and fullscreen:
+            dbg("fullscreen: let go")
             self.let_go()          # the user made it full screen: it is a normal video now
             return
         if not mode or not on_home or dialog:
+            dbg(f"waiting: mode={mode or '-'} home={on_home} dialog={dialog}")
             self.stop_ours()
             self.focus_key = ""
             return
         focus = Focus()
         if not focus.valid():
+            # the row refreshes now and then (Seren reloads widgets): the card is gone for a moment.
+            # Only let go when it stays gone.
+            if not self.lost_since:
+                self.lost_since = time.time()
+            if time.time() - self.lost_since < 2.0 and (self.focus_key or busy):
+                dbg(f"focus gone for a moment: row={focus.row or '-'} label={focus.label or '-'}")
+                return
+            dbg(f"no focus: row={focus.row or '-'} label={focus.label or '-'}")
             self.stop_ours()
             self.focus_key = ""
             return
+        self.lost_since = 0.0
         if focus.key != self.focus_key:
+            dbg(f"new card: {self.focus_key[:28]} -> {focus.key[:28]}")
             self.stop_ours()
             self.focus_key = focus.key
             self.focus_since = time.time()
             self.tried = ""
             return
-        if self.requested and not self.ours and self.isPlayingVideo():
-            self.adopt()            # the callback was missed: the video is clearly ours
+        if (self.requested or self.ours) and not HOME.getProperty(PLAYING) and self.isPlayingVideo():
+            # the callback was missed (it is on some boxes): a video is playing and we asked for it, so it is ours
+            self.adopt()
         if busy and not HOME.getProperty(PLAYING) and time.time() - self.started_at > 45:
             log("YouTube did not start the trailer")
             self.let_go()
             busy = False
+        dbg(f"busy={busy} req={self.requested} ours={self.ours} av={self.av_started} playing={self.isPlayingVideo()} tried={focus.key == self.tried}")
         if busy or focus.key == self.tried:
             return
         if time.time() < self.pause_until:
+            dbg(f"PAUSED {int(self.pause_until - time.time())}s (YouTube failed 3 times)")
             return
         if self.isPlaying() and not busy:
+            dbg("something else is playing: not starting")
             return                  # something else is playing (music, a video in the background)
         try:
             delay = float(skin("nuvio.trailer.delay") or 3)
         except ValueError:
             delay = 3.0
-        if time.time() - self.focus_since < delay:
+        waited = time.time() - self.focus_since
+        if waited < delay:
+            dbg(f"counting {waited:.0f}s of {delay:.0f}s")
             return
         self.tried = focus.key
-        video_id = self.cache.get(focus.key)
+        dbg("starting")
+        test = xbmc.getCondVisibility("Skin.HasSetting(nuvio.trailer.test)")
+        video_id = "live-test" if test else self.cache.get(focus.key)
         if not video_id:
             video_id = youtube_id(focus.trailer) or tmdb_trailer(focus)
             self.cache[focus.key] = video_id
@@ -250,6 +309,18 @@ class Trailers(xbmc.Player):
         self.ours = True
         self.requested = True
         self.av_started = False
+        if test:
+            # TEST: a live channel in the same place instead of a YouTube trailer
+            import sport_epg as epg  # only for the test mode
+            found = epg.channels()
+            if not found:
+                log("test: no TV channels")
+                self.let_go()
+                return
+            log(f"test: playing channel {found[0].get('label') or found[0].get('channelid')}")
+            if not epg.play_windowed(found[0]["channelid"]):
+                epg.play(found[0]["channelid"])
+            return
         item = xbmcgui.ListItem(focus.label)
         item.setProperty("nuvio.trailer", "1")
         self.play(YT + video_id, item, windowed=True)
