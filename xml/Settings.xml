@@ -538,6 +538,20 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31638]</label>
+                        <label2>$LOCALIZE[31640]</label2>
+                        <icon>icons/sport.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.goals.off)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr) + !Skin.HasSetting(lucent.goals.off)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31639]</label>
+                        <label2>$LOCALIZE[31640]</label2>
+                        <icon>icons/sport.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.goals.off)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr) + Skin.HasSetting(lucent.goals.off)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[128]</label>
                         <label2>$LOCALIZE[31275]</label2>
                         <icon>icons/tv.png</icon>
