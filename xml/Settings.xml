@@ -1033,8 +1033,7 @@
                         <label>$LOCALIZE[31330]</label>
                         <label2>$LOCALIZE[31331]</label2>
                         <icon>icons/sparkle.png</icon>
-                        <onclick>SetProperty(lucent.ss.cat,9,home)</onclick>
-                        <onclick>ActivateWindow(SkinSettings)</onclick>
+                        <onclick>RunScript(special://skin/scripts/about.py)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
                     </item>
                     <item>
@@ -1057,6 +1056,20 @@
                         <icon>icons/download.png</icon>
                         <onclick>ActivateWindow(SystemSettings,addons)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31646]</label>
+                        <label2>$LOCALIZE[31232]</label2>
+                        <icon>icons/refresh.png</icon>
+                        <onclick>Skin.ToggleSetting(nuvio.update.off)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about) + !Skin.HasSetting(nuvio.update.off)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31647]</label>
+                        <label2>$LOCALIZE[31232]</label2>
+                        <icon>icons/refresh.png</icon>
+                        <onclick>Skin.ToggleSetting(nuvio.update.off)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about) + Skin.HasSetting(nuvio.update.off)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31644]</label>
