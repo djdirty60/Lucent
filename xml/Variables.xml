@@ -38,6 +38,17 @@
         <value>$INFO[Container.Art(fanart)]</value>
     </variable>
     <!-- season page: scores of the season (Seren), else of its series in the Kodi library (list 5699) -->
+    <!-- TV windows (gen_pvr.py): the picture and the "now" title of the focused channel / programme / recording -->
+    <variable name="LucentPvrInfoArt">
+        <value condition="!String.IsEmpty(ListItem.EpgEventIcon)">$INFO[ListItem.EpgEventIcon]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
+        <value condition="!String.IsEmpty(ListItem.ChannelLogo)">$INFO[ListItem.ChannelLogo]</value>
+        <value>$INFO[ListItem.Icon]</value>
+    </variable>
+    <variable name="LucentPvrNowTitle">
+        <value condition="!String.IsEmpty(ListItem.EpgEventTitle)">$INFO[ListItem.EpgEventTitle]</value>
+        <value>$INFO[ListItem.Title]</value>
+    </variable>
     <variable name="LucentShowScoresPath">
         <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID) + String.IsEmpty(Container(56).ListItem.Rating(imdb)) + String.IsEmpty(Container(56).ListItem.Rating(trakt))">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
     </variable>

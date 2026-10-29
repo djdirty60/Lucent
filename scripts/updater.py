@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Lucent: pop-up when a new version of Lucent (or the Lucent screensaver) is in the repository.
+"""Lucent: pop-up when a new version of anything from Lucent is in the repository (the skin, Lucent Bibliotheek,
+the screensaver, the repository add-on, and whatever is added there later - when it is installed here).
 
-RunScript(special://skin/scripts/updater.py,service)   background helper, started from the Home screen
+The Lucent helper (helper.py) calls check() every 6 hours.
 RunScript(special://skin/scripts/updater.py,check)     look now (Skin settings > Add-ons > Check for updates)
 
-The pop-up offers: Update now / Later / Skip this version. "Update now" refreshes the repositories and installs the new version.
+All updates come in one pop-up: Update now / Later / Skip these versions. "Update now" refreshes the repositories and installs the new version.
 """
 import json
 import os
@@ -20,13 +21,16 @@ import xbmcvfs
 HEADING = "Lucent"
 ADDONS_XML = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addons.xml"
 ZIPS_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/"
-WATCH = ("skin.lucent", "screensaver.lucent")        # add-ons of this repository that are checked when installed
+FAMILY = "lucent"                                    # every add-on in our repository with this in its id, when installed
+LIBRARY_LOCK = "special://profile/addon_data/script.lucent.library/busy.lock"
 STATE_PATH = "special://profile/addon_data/skin.lucent/update_state.json"
 HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 
 T = {
     "title": ("{0} {1} is available", "{0} {1} is beschikbaar"),
+    "titles": ("{0} updates for Lucent", "{0} updates voor Lucent"),
+    "skips": ("Skip these versions", "Deze versies overslaan"),
     "installed": ("You have {0}.", "Je hebt nu {0}."),
     "new": ("What's new:", "Nieuw:"),
     "now": ("Update now", "Nu bijwerken"),
@@ -110,23 +114,38 @@ def release_notes(news, installed, limit=4):
 def available_updates():
     available = fetch_available()
     out = []
-    for addon_id in WATCH:
-        have = installed_version(addon_id)
-        if not have or addon_id not in available:
+    for addon_id in sorted(available):
+        if FAMILY not in addon_id:
             continue
+        have = installed_version(addon_id)
+        if not have:
+            continue                                     # not installed here: never pushed on you
         version, news = available[addon_id]
         if version_key(version) > version_key(have):
             out.append({"id": addon_id, "name": xbmcaddon.Addon(addon_id).getAddonInfo("name"), "have": have, "version": version,
-                        "notes": release_notes(news, have)})
-    return out
+                        "notes": release_notes(news, have, limit=4 if addon_id == "skin.lucent" else 2)})
+    # the skin last: installing it reloads the skin
+    return sorted(out, key=lambda u: u["id"] == "skin.lucent")
 
 
-def ask(update):
-    message = tr("installed", update["have"])
-    if update["notes"]:
-        message += "\n\n" + tr("new") + "\n" + update["notes"]
-    answer = xbmcgui.Dialog().yesnocustom(tr("title", update["name"], update["version"]), message,
-                                          tr("skip"), tr("later"), tr("now"), autoclose=60000,
+def ask(updates):
+    if len(updates) == 1:
+        update = updates[0]
+        title = tr("title", update["name"], update["version"])
+        message = tr("installed", update["have"])
+        if update["notes"]:
+            message += "\n\n" + tr("new") + "\n" + update["notes"]
+        skip = tr("skip")
+    else:
+        title = tr("titles", len(updates))
+        lines = []
+        for update in updates:
+            lines.append(f"[B]{update['name']} {update['version']}[/B]  ({tr('installed', update['have']).rstrip('.')})")
+            if update["notes"]:
+                lines.append(update["notes"].split("\n")[0][:220])
+        message = "\n".join(lines)
+        skip = tr("skips")
+    answer = xbmcgui.Dialog().yesnocustom(title, message, skip, tr("later"), tr("now"), autoclose=60000,
                                           defaultbutton=xbmcgui.DLG_YESNO_YES_BTN)   # no answer within a minute: later
     return {1: "now", 0: "later", 2: "skip"}.get(answer, "later")
 
@@ -193,12 +212,47 @@ def install(update, monitor):
     progress.update(90)
     xbmc.executebuiltin("UpdateLocalAddons")             # Kodi reads the new addon.xml
     monitor.waitForAbort(3)
+    if update["id"] != "skin.lucent":
+        restart(update["id"], monitor)
     progress.close()
     xbmcgui.Dialog().notification(HEADING, tr("done", update["name"], update["version"]), xbmcgui.NOTIFICATION_INFO, 5000)
     if update["id"] == "skin.lucent":
         monitor.waitForAbort(2)
         xbmcgui.Window(10000).setProperty("lucent.helper.stop", "1")   # the running helper makes way for the new code
         xbmc.executebuiltin("ReloadSkin()")             # show the new version right away
+
+
+def rpc(method, params):
+    request = {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
+    try:
+        return json.loads(xbmc.executeJSONRPC(json.dumps(request))).get("result")
+    except Exception as error:  # noqa: BLE001
+        log(f"rpc {method}: {error}")
+        return None
+
+
+def restart(addon_id, monitor):
+    """Switch an add-on off and on again, so a background part (like the service of Lucent Bibliotheek) starts with
+    the new code right away instead of after a Kodi restart. Only for add-ons that have such a background part."""
+    try:
+        folder = xbmcvfs.translatePath(f"special://home/addons/{addon_id}/addon.xml")
+        with open(folder, encoding="utf-8") as fh:
+            if "xbmc.service" not in fh.read():
+                return                                   # nothing runs in the background: nothing to restart
+    except OSError:
+        return
+    rpc("Addons.SetAddonEnabled", {"addonid": addon_id, "enabled": False})
+    monitor.waitForAbort(1)
+    rpc("Addons.SetAddonEnabled", {"addonid": addon_id, "enabled": True})
+
+
+def library_busy():
+    """Lucent Bibliotheek is writing the library right now: do not replace its files in the middle of that."""
+    try:
+        path = xbmcvfs.translatePath(LIBRARY_LOCK)
+        return os.path.exists(path) and time.time() - os.path.getmtime(path) < 2 * 3600
+    except Exception:  # noqa: BLE001
+        return False
 
 
 def check(manual=False):
@@ -211,26 +265,29 @@ def check(manual=False):
             xbmcgui.Dialog().notification(HEADING, tr("offline"), xbmcgui.NOTIFICATION_WARNING, 4000)
         return
     state = read_state()
-    shown = False
+    if not manual:
+        updates = [u for u in updates if state.get("skip", {}).get(u["id"]) != u["version"]
+                   and state.get("later", {}).get(u["id"], 0) <= time.time()]
+    if not updates:
+        write_state(state)
+        if manual:
+            xbmcgui.Dialog().notification(HEADING, tr("uptodate"), xbmcgui.NOTIFICATION_INFO, 3000)
+        return
+    if not manual and xbmc.getCondVisibility("Player.HasMedia | System.ScreenSaverActive | System.HasModalDialog"):
+        return                                           # never interrupt a film, the screensaver or another dialog
+    choice = ask(updates)
     for update in updates:
-        if not manual and (state.get("skip", {}).get(update["id"]) == update["version"]
-                           or state.get("later", {}).get(update["id"], 0) > time.time()):
-            continue
-        if not manual and xbmc.getCondVisibility("Player.HasMedia | System.ScreenSaverActive | System.HasModalDialog"):
-            continue                                     # never interrupt a film, the screensaver or another dialog
-        shown = True
-        choice = ask(update)
         if choice == "now":
+            if update["id"] == "script.lucent.library" and library_busy():
+                log("Lucent Bibliotheek is busy: its update waits until the next check")
+                state.setdefault("later", {})[update["id"]] = time.time() + 15 * 60
+                continue
             install(update, monitor)
         elif choice == "skip":
             state.setdefault("skip", {})[update["id"]] = update["version"]
         else:
             state.setdefault("later", {})[update["id"]] = time.time() + 24 * 3600
     write_state(state)
-    if manual and not shown and not updates:
-        xbmcgui.Dialog().notification(HEADING, tr("uptodate"), xbmcgui.NOTIFICATION_INFO, 3000)
-
-
 
 if __name__ == "__main__":
     check(manual=True)

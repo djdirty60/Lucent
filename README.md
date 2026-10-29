@@ -86,8 +86,11 @@ Settings: *Skin settings > Integrations > Lucent Library* (update now, update ev
 ### Also in the home menu
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 
+### Alphabet bar
+Under the poster rows of films and series (sorted A–Z) sits a bar **# A B … Z**: the current letter lights up, press Down, pick a letter and OK jumps there.
+
 ### Everything else in the same style
-The video player and its menu, seek bar, subtitle search, bookmarks, Kodi settings, add-on settings, add-on info, file manager, keyboard, number pad, notifications, dialogs, power menu, system info and screen calibration.
+All TV (PVR) windows – group and channel manager, programme info, guide search, the channel list while watching. The video player and its menu, seek bar, subtitle search, bookmarks, Kodi settings, add-on settings, add-on info, file manager, keyboard, number pad, notifications, dialogs, power menu, system info and screen calibration.
 
 ---
 
