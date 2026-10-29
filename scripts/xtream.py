@@ -177,13 +177,55 @@ def apply(path, fresh, server, m3u, epg, output):
         values.setdefault("epgTimeShift", "0")
         values.setdefault("useInputstreamAdaptiveforHls", "true" if output == "m3u8" else "false")
     write_settings(path, values)
+    # the add-on clears its own caches when you change a setting in its dialog; we wrote the file, so do it here
+    num = re.search(r"instance-settings-(\d+)\.xml$", path).group(1)
+    for name in (f"iptv.m3u.cache-{num}", f"xmltv.xml.cache-{num}", "iptv.m3u.cache", "xmltv.xml.cache"):
+        if xbmcvfs.exists(DATA + name):
+            xbmcvfs.delete(DATA + name)
 
 
-def restart_addon():
-    """IPTV Simple reads its instance files when it starts: switch it off and on again."""
+def enabled():
+    return xbmc.getCondVisibility(f"System.AddonIsEnabled({IPTV})")
+
+
+def wait_until(check, seconds, monitor):
+    for _ in range(int(seconds * 2)):
+        if check():
+            return True
+        if monitor.waitForAbort(0.5):
+            return False
+    return check()
+
+
+def channel_count():
+    result = rpc("PVR.GetChannels", {"channelgroupid": "alltv", "limits": {"end": 1}}) or {}
+    return int((result.get("limits") or {}).get("total") or 0)
+
+
+def restart_addon(busy):
+    """IPTV Simple reads its instance files when it starts: switch it off, wait until Kodi's TV part has really let go
+    of it, switch it on again and wait for the channels. Kodi needs a while for this; too quick and the 'on' is lost."""
+    monitor = xbmc.Monitor()
+    busy.update(10, t("Stopping IPTV Simple…", "IPTV Simple stoppen…"))
     rpc("Addons.SetAddonEnabled", {"addonid": IPTV, "enabled": False})
-    xbmc.Monitor().waitForAbort(2)
-    rpc("Addons.SetAddonEnabled", {"addonid": IPTV, "enabled": True})
+    wait_until(lambda: not enabled(), 20, monitor)
+    monitor.waitForAbort(4)                                 # the PVR manager finishes stopping the client
+    busy.update(30, t("Starting IPTV Simple…", "IPTV Simple starten…"))
+    for attempt in range(3):
+        rpc("Addons.SetAddonEnabled", {"addonid": IPTV, "enabled": True})
+        if wait_until(enabled, 10, monitor):
+            break
+        log(f"enable attempt {attempt + 1} did not stick")
+    if not enabled():
+        return "off"
+    for n in range(90):                                    # up to 45 s for the first channels
+        count = channel_count()
+        busy.update(40 + n // 2, t(f"Loading channels… {count}", f"Zenders laden… {count}"))
+        if count:
+            return "ok"
+        if busy.iscanceled() or monitor.waitForAbort(0.5):
+            break
+    return "nochannels"
 
 
 # ----------------------------------------------------------------------------- the flow
@@ -230,11 +272,25 @@ def run():
         dialog.ok("Xtream", t("Could not write IPTV Simple's settings.", "Kon de instellingen van IPTV Simple niet opslaan."))
         return
     log(f"settings written to {path.rsplit('/', 1)[-1]} ({urllib.parse.urlsplit(server).hostname})")
-    restart_addon()
-    dialog.ok("Xtream", message + "\n\n" + t("IPTV Simple is set up and restarting. The channels appear in a moment; "
-                                             "the guide can take a few minutes the first time.",
-                                             "IPTV Simple is ingesteld en start opnieuw. De zenders verschijnen zo; "
-                                             "de gids kan de eerste keer een paar minuten duren."))
+    busy = xbmcgui.DialogProgress()
+    busy.create("Xtream", t("Restarting IPTV Simple…", "IPTV Simple opnieuw starten…"))
+    try:
+        state = restart_addon(busy)
+    finally:
+        busy.close()
+    if state == "ok":
+        dialog.ok("Xtream", message + "\n\n" + t(f"IPTV Simple is set up: {channel_count()} channels. The guide can take a "
+                                                 "few minutes the first time.",
+                                                 f"IPTV Simple is ingesteld: {channel_count()} zenders. De gids kan de eerste "
+                                                 "keer een paar minuten duren."))
+        return
+    why = t("IPTV Simple did not come back on.", "IPTV Simple is niet meer aangegaan.") if state == "off" else \
+        t("IPTV Simple is on, but no channels came in yet (a big list can take a minute).",
+          "IPTV Simple staat aan, maar er zijn nog geen zenders binnen (een grote lijst kan een minuut duren).")
+    if dialog.yesno("Xtream", why + "\n\n" + t("The settings are saved. Restart Kodi now so it loads the channels cleanly?",
+                                                 "De instellingen zijn opgeslagen. Kodi nu opnieuw starten, zodat hij de zenders "
+                                                 "schoon laadt?")):
+        xbmc.executebuiltin("RestartApp")
 
 
 if __name__ == "__main__":
