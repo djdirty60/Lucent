@@ -1822,23 +1822,31 @@
                         <font>font12</font>
                         <textcolor>text5</textcolor>
                         <label>|</label>
-                        <visible>!String.IsEmpty(Container(56).ListItem.Rating(imdb)) | !String.IsEmpty(Container(56).ListItem.Rating(trakt))</visible>
+                        <visible>[!String.IsEmpty(Container(56).ListItem.Rating(imdb)) | !String.IsEmpty(Container(5699).ListItem.Rating(imdb))] | [!String.IsEmpty(Container(56).ListItem.Rating(trakt)) | !String.IsEmpty(Container(5699).ListItem.Rating(trakt))] | [!String.IsEmpty(Container(56).ListItem.Rating(tmdb)) | !String.IsEmpty(Container(56).ListItem.Rating(themoviedb)) | !String.IsEmpty(Container(5699).ListItem.Rating(tmdb)) | !String.IsEmpty(Container(5699).ListItem.Rating(themoviedb))]</visible>
                     </control>
                     <control type="label">
                         <width>auto</width>
                         <height>44</height>
                         <font>font12</font>
                         <textcolor>text2</textcolor>
-                        <label>IMDb $INFO[Container(56).ListItem.Rating(imdb)]</label>
-                        <visible>!String.IsEmpty(Container(56).ListItem.Rating(imdb))</visible>
+                        <label>IMDb $VAR[LucentS56Imdb]</label>
+                        <visible>[!String.IsEmpty(Container(56).ListItem.Rating(imdb)) | !String.IsEmpty(Container(5699).ListItem.Rating(imdb))]</visible>
                     </control>
                     <control type="label">
                         <width>auto</width>
                         <height>44</height>
                         <font>font12</font>
                         <textcolor>text2</textcolor>
-                        <label>Trakt $INFO[Container(56).ListItem.Rating(trakt)]</label>
-                        <visible>!String.IsEmpty(Container(56).ListItem.Rating(trakt))</visible>
+                        <label>Trakt $VAR[LucentS56Trakt]</label>
+                        <visible>[!String.IsEmpty(Container(56).ListItem.Rating(trakt)) | !String.IsEmpty(Container(5699).ListItem.Rating(trakt))]</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>TMDb $VAR[LucentS56Tmdb]</label>
+                        <visible>![!String.IsEmpty(Container(56).ListItem.Rating(imdb)) | !String.IsEmpty(Container(5699).ListItem.Rating(imdb))] + ![!String.IsEmpty(Container(56).ListItem.Rating(trakt)) | !String.IsEmpty(Container(5699).ListItem.Rating(trakt))] + [!String.IsEmpty(Container(56).ListItem.Rating(tmdb)) | !String.IsEmpty(Container(56).ListItem.Rating(themoviedb)) | !String.IsEmpty(Container(5699).ListItem.Rating(tmdb)) | !String.IsEmpty(Container(5699).ListItem.Rating(themoviedb))]</visible>
                     </control>
                     <control type="label">
                         <width>auto</width>
@@ -2009,6 +2017,16 @@
                         <visible>!Control.HasFocus(56)</visible>
                     </control>
                 </focusedlayout>
+            </control>
+            <!-- a season from the Kodi library has no scores of its own: this hidden list fetches its series (Lucent Bibliotheek) -->
+            <control type="list" id="5699">
+                <left>-3000</left>
+                <top>0</top>
+                <width>10</width>
+                <height>10</height>
+                <itemlayout width="10" height="10"/>
+                <focusedlayout width="10" height="10"/>
+                <content target="videos" browse="never">$VAR[LucentShowScoresPath]</content>
             </control>
             <!-- the episodes of the chosen season -->
             <control type="list" id="5601">

@@ -37,6 +37,24 @@
         <value condition="!String.IsEmpty(ListItem.Property(Fanart_Image))">$INFO[ListItem.Property(Fanart_Image)]</value>
         <value>$INFO[Container.Art(fanart)]</value>
     </variable>
+    <!-- season page: scores of the season (Seren), else of its series in the Kodi library (list 5699) -->
+    <variable name="LucentShowScoresPath">
+        <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID) + String.IsEmpty(Container(56).ListItem.Rating(imdb)) + String.IsEmpty(Container(56).ListItem.Rating(trakt))">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
+    </variable>
+    <variable name="LucentS56Imdb">
+        <value condition="!String.IsEmpty(Container(56).ListItem.Rating(imdb))">$INFO[Container(56).ListItem.Rating(imdb)]</value>
+        <value>$INFO[Container(5699).ListItem.Rating(imdb)]</value>
+    </variable>
+    <variable name="LucentS56Trakt">
+        <value condition="!String.IsEmpty(Container(56).ListItem.Rating(trakt))">$INFO[Container(56).ListItem.Rating(trakt)]</value>
+        <value>$INFO[Container(5699).ListItem.Rating(trakt)]</value>
+    </variable>
+    <variable name="LucentS56Tmdb">
+        <value condition="!String.IsEmpty(Container(56).ListItem.Rating(tmdb))">$INFO[Container(56).ListItem.Rating(tmdb)]</value>
+        <value condition="!String.IsEmpty(Container(56).ListItem.Rating(themoviedb))">$INFO[Container(56).ListItem.Rating(themoviedb)]</value>
+        <value condition="!String.IsEmpty(Container(5699).ListItem.Rating(tmdb))">$INFO[Container(5699).ListItem.Rating(tmdb)]</value>
+        <value>$INFO[Container(5699).ListItem.Rating(themoviedb)]</value>
+    </variable>
     <variable name="LucentSeasonSummary">
         <value condition="Integer.IsGreater(Container(5601).NumItems,0) + !String.IsEmpty(Container(56).ListItem.Property(WatchedEpisodes))">[B]$INFO[Container(56).ListItem.Label][/B]   [COLOR FF6F7C88]|[/COLOR]   $INFO[Container(5601).NumItems] $LOCALIZE[31563]   [COLOR FF6F7C88]|[/COLOR]   [COLOR FF4CC38A][B]✓ $INFO[Container(56).ListItem.Property(WatchedEpisodes)] $LOCALIZE[31564][/B][/COLOR]</value>
         <value condition="Integer.IsGreater(Container(5601).NumItems,0)">[B]$INFO[Container(56).ListItem.Label][/B]   [COLOR FF6F7C88]|[/COLOR]   $INFO[Container(5601).NumItems] $LOCALIZE[31563]</value>
