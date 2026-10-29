@@ -47,6 +47,7 @@
 
             <!-- Categories -->
             <control type="grouplist" id="3">
+                <pagecontrol>61</pagecontrol>
                 <left>40</left>
                 <top>128</top>
                 <width>400</width>
@@ -56,6 +57,14 @@
                 <onup>3</onup>
                 <ondown>20</ondown>
                 <usecontrolcoords>true</usecontrolcoords>
+            </control>
+            <control type="scrollbar" id="61">
+                <left>452</left>
+                <top>128</top>
+                <height>680</height>
+                <onleft>3</onleft>
+                <onright>5</onright>
+                <visible>Control.IsVisible(3)</visible>
             </control>
             <include content="CategoryTemplate"><param name="width">400</param></include>
             <control type="button" id="20">
@@ -110,7 +119,8 @@
                 <height>34</height>
                 <font>font10</font>
                 <textcolor>text4</textcolor>
-            </control>
+<include>TextAutoScroll</include>
+</control>
             <control type="grouplist" id="9000">
                 <left>496</left>
                 <top>860</top>

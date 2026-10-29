@@ -54,6 +54,7 @@
 
             <!-- results -->
             <control type="list" id="500">
+                <pagecontrol>60</pagecontrol>
                 <left>40</left><top>172</top><width>1240</width><height>624</height>
                 <onup>500</onup><ondown>9500</ondown><onright>9500</onright>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
@@ -156,6 +157,14 @@
                         </control>
                     </control>
                 </focusedlayout>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>1292</left>
+                <top>172</top>
+                <height>624</height>
+                <onleft>500</onleft>
+                <onright>9500</onright>
+                <visible>Control.IsVisible(500)</visible>
             </control>
 
             <!-- empty / waiting -->

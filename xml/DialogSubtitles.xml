@@ -58,6 +58,7 @@
                 <onright>120</onright>
             </control>
             <control type="list" id="150">
+                <pagecontrol>60</pagecontrol>
                 <onup>150</onup>
                 <ondown>150</ondown>
                 <left>48</left>
@@ -127,6 +128,14 @@
                         <visible>!Control.HasFocus(150)</visible>
                     </control>
                 </focusedlayout>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>500</left>
+                <top>180</top>
+                <height>620</height>
+                <onleft>150</onleft>
+                <onright>120</onright>
+                <visible>Control.IsVisible(150)</visible>
             </control>
             <control type="list" id="120">
                 <onright condition="Control.IsVisible(73)">73</onright>

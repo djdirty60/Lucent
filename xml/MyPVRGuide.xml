@@ -33,7 +33,9 @@
                 <control type="label"><left>0</left><top>116</top><width>1000</width><height>36</height><font>font12</font><textcolor>text2</textcolor><selectedcolor>text2</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.StartTime] – $INFO[ListItem.EndTime]$INFO[ListItem.EpgEventRemainingTime,  ·  ,]</label></control>
                 <control type="image"><left>0</left><top>160</top><width>520</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control>
                 <control type="progress"><left>0</left><top>160</top><width>520</width><height>6</height><info>ListItem.Progress</info><texturebg border="3" colordiffuse="00FFFFFF">pill6.png</texturebg><midtexture border="3" colordiffuse="FFE5534B">pill6.png</midtexture></control>
-                <control type="textbox"><left>0</left><top>176</top><width>1000</width><height>66</height><font>font_body</font><textcolor>text3</textcolor><label>$INFO[ListItem.Plot]</label></control>
+                <control type="textbox"><left>0</left><top>176</top><width>1000</width><height>66</height><font>font_body</font><textcolor>text3</textcolor><label>$INFO[ListItem.Plot]</label>
+<include>TextAutoScroll</include>
+</control>
             </control>
             <!-- preview of the channel that is playing -->
             <control type="image"><left>1290</left><top>20</top><width>486</width><height>230</height><texture border="20">rr20.png</texture><colordiffuse>22FFFFFF</colordiffuse><visible>Player.HasVideo</visible></control>
@@ -47,12 +49,13 @@
             <animation effect="slide" start="0,0" end="-340,0" time="250" tween="cubic" easing="out" condition="!Control.HasFocus(11) + !Control.HasFocus(70)">Conditional</animation>
             <animation effect="fade" start="100" end="0" time="200" condition="!Control.HasFocus(11) + !Control.HasFocus(70)">Conditional</animation>
             <font>font_tiny</font><align>center</align><textoffsetx>0</textoffsetx>
-            <label>$VAR[GuideFavLabel]</label><textcolor>FFD4A83A</textcolor><focusedcolor>FF0B1218</focusedcolor>
-            <texturefocus border="28" colordiffuse="FFFFFFFF">pill64.png</texturefocus><texturenofocus border="28" colordiffuse="glass">pill64.png</texturenofocus>
+            <label>$VAR[GuideFavLabel]</label><textcolor>FFD4A83A</textcolor><focusedcolor>on_focus</focusedcolor>
+            <texturefocus border="28" colordiffuse="focus">pill64.png</texturefocus><texturenofocus border="28" colordiffuse="glass">pill64.png</texturenofocus>
             <onclick>RunScript(special://skin/scripts/guidefav.py)</onclick>
             <onup>70</onup><ondown>11</ondown><onleft>70</onleft><onright>50</onright>
         </control>
         <control type="list" id="11">
+            <pagecontrol>61</pagecontrol>
             <left>60</left><top>412</top><width>300</width><height>628</height>
             <orientation>vertical</orientation>
             <scrolltime tween="cubic" easing="out">200</scrolltime>
@@ -74,6 +77,14 @@
                 <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>on_focus</textcolor><selectedcolor>on_focus</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
             <control type="label"><left>236</left><top>0</top><width>44</width><height>64</height><font>font12_bold</font><textcolor>FFD4A83A</textcolor><align>center</align><label>★</label><visible>String.IsEqual(ListItem.Label,Skin.String(lucent.guide.group))</visible></control>
 </focusedlayout>
+        </control>
+        <control type="scrollbar" id="61">
+            <left>372</left>
+            <top>412</top>
+            <height>628</height>
+            <onleft>11</onleft>
+            <onright>50</onright>
+            <visible>Control.IsVisible(11)</visible>
         </control>
 
         <!-- ======== channels + timeline ======== -->
@@ -125,11 +136,7 @@
             </focusedlayout>
         </control>
         <control type="scrollbar" id="60">
-            <left>1872</left><top>386</top><width>10</width><height>640</height>
-            <orientation>vertical</orientation>
-            <texturesliderbackground colordiffuse="14FFFFFF">white.png</texturesliderbackground>
-            <texturesliderbar colordiffuse="55FFFFFF">white.png</texturesliderbar>
-            <texturesliderbarfocus colordiffuse="FFFFFFFF">white.png</texturesliderbarfocus>
+            <left>1872</left><top>386</top><height>640</height>
             <onleft>50</onleft>
             <onright>50</onright>
         </control>

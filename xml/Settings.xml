@@ -302,6 +302,9 @@
                 </control>
             </control>
             <control type="list" id="9100">
+                <pagecontrol>60</pagecontrol>
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9100</onright>
                 <visible>!String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
                 <left>-24</left>
                 <top>286</top>
@@ -310,7 +313,6 @@
                 <onup>9100</onup>
                 <ondown>9100</ondown>
                 <onleft>9000</onleft>
-                <onright>9100</onright>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
                 <itemlayout width="1270" height="104">
                     <control type="image">
@@ -852,6 +854,14 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
                     </item>
                 </content>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>1240</left>
+                <top>286</top>
+                <height>780</height>
+                <onleft>9100</onleft>
+                <onright>9100</onright>
+                <visible>Control.IsVisible(9100)</visible>
             </control>
             <!-- About: the same list, lower (under the version header) and shorter, so it scrolls within the screen -->
             <control type="list" id="9101">
@@ -1409,7 +1419,7 @@
                 </content>
             </control>
             <control type="scrollbar" id="61">
-                <left>1232</left>
+                <left>1240</left>
                 <top>516</top>
                 <height>540</height>
                 <onleft>9101</onleft>

@@ -38,11 +38,22 @@
             <colordiffuse>modal</colordiffuse>
         </control>
         <control type="grouplist" id="996">
+            <pagecontrol>60</pagecontrol>
+            <onright condition="Control.IsVisible(60)">60</onright>
+            <onright>noop</onright>
             <left>20</left>
             <top>20</top>
             <width>560</width>
             <height>640</height>
             <itemgap>4</itemgap>
+        </control>
+        <control type="scrollbar" id="60">
+            <left>586</left>
+            <top>20</top>
+            <height>640</height>
+            <onleft>996</onleft>
+            <onright>996</onright>
+            <visible>Control.IsVisible(996)</visible>
         </control>
         <control type="button" id="1000">
             <width>560</width>

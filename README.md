@@ -1,6 +1,8 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (NOT FOR USE IN TEST PHASE)
+# Lucent – Kodi skin (Beta 1)
+
+> **Beta:** this is the first public beta. Everything is in place, but expect small bugs – please report them.
 
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.

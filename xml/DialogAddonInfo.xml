@@ -56,7 +56,7 @@
                 <height>300</height>
                 <font>font_body</font>
                 <textcolor>text2</textcolor>
-                <autoscroll delay="8000" time="3000" repeat="10000">true</autoscroll>
+                <include>TextAutoScroll</include>
                 <label>[B]$INFO[ListItem.AddonSummary][/B][CR][CR]$INFO[ListItem.AddonDescription]</label>
             </control>
             <control type="textbox">
@@ -67,7 +67,8 @@
                 <font>font10</font>
                 <textcolor>text4</textcolor>
                 <label>$INFO[ListItem.AddonNews]</label>
-            </control>
+<include>TextAutoScroll</include>
+</control>
             <control type="grouplist" id="9000">
                 <left>110</left>
                 <top>688</top>

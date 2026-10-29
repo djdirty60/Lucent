@@ -170,12 +170,13 @@
                 <font>font_body</font>
                 <textcolor>text3</textcolor>
                 <label>$INFO[Window.Property(agenda.t.empty_text)]</label>
-                <autoscroll time="3000" delay="4000" repeat="5000">true</autoscroll>
+                <include>TextAutoScroll</include>
             </control>
             </control>
             <control type="group">
                 <visible>String.IsEqual(Window.Property(agenda.view),list) + String.IsEmpty(Window.Property(agenda.empty))</visible>
                 <control type="list" id="200">
+                    <pagecontrol>60</pagecontrol>
                     <ondown>200</ondown>
                     <left>150</left>
                     <top>150</top>
@@ -246,6 +247,14 @@
                         <include content="AgendaRow"><param name="focus">true</param></include>
                     </focusedlayout>
                 </control>
+                <control type="scrollbar" id="60">
+                    <left>1222</left>
+                    <top>150</top>
+                    <height>850</height>
+                    <onleft>200</onleft>
+                    <onright>9300</onright>
+                    <visible>Control.IsVisible(200)</visible>
+                </control>
                 <control type="image">
                     <left>1240</left>
                     <top>140</top>
@@ -314,7 +323,7 @@
                     <font>font10</font>
                     <textcolor>text2</textcolor>
                     <label>$INFO[Container(200).ListItem.Property(plot)]</label>
-                    <autoscroll time="3000" delay="4000" repeat="5000">true</autoscroll>
+                    <include>TextAutoScroll</include>
                 </control>
                 <control type="grouplist" id="9300">
                     <left>1270</left>
@@ -1064,7 +1073,7 @@
                 <font>font_body</font>
                 <textcolor>text2</textcolor>
                 <label>$INFO[Container(430).ListItem.Property(plot)]</label>
-                <autoscroll time="3000" delay="4000" repeat="5000">true</autoscroll>
+                <include>TextAutoScroll</include>
             </control>
             <control type="button" id="431">
                 <left>150</left>
@@ -1222,6 +1231,9 @@
                 <label>$INFO[Window.Property(agenda.wd6)]</label>
             </control>
                 <control type="panel" id="520">
+                    <pagecontrol>61</pagecontrol>
+                    <onright condition="Control.IsVisible(61)">61</onright>
+                    <onright>noop</onright>
                     <left>150</left>
                     <top>272</top>
                     <width>1050</width>
@@ -1235,6 +1247,14 @@
                     <focusedlayout width="150" height="124">
                         <include content="AgendaCell"><param name="focus">true</param></include>
                     </focusedlayout>
+                </control>
+                <control type="scrollbar" id="61">
+                    <left>1212</left>
+                    <top>272</top>
+                    <height>744</height>
+                    <onleft>520</onleft>
+                    <onright>520</onright>
+                    <visible>Control.IsVisible(520)</visible>
                 </control>
                 <control type="image">
                     <left>1240</left>

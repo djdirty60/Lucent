@@ -32,6 +32,7 @@
         <control type="group">
             <include>Anim_SlideRight</include>
             <control type="grouplist" id="3">
+                <pagecontrol>61</pagecontrol>
                 <left>80</left>
                 <top>160</top>
                 <width>460</width>
@@ -41,6 +42,14 @@
                 <onup>3</onup>
                 <ondown>20</ondown>
                 <usecontrolcoords>true</usecontrolcoords>
+            </control>
+            <control type="scrollbar" id="61">
+                <left>552</left>
+                <top>160</top>
+                <height>760</height>
+                <onleft>3</onleft>
+                <onright>5</onright>
+                <visible>Control.IsVisible(3)</visible>
             </control>
             <include content="CategoryTemplate"><param name="width">440</param></include>
             <!-- Settings level (Basic / Standard / Advanced / Expert), label set by Kodi -->

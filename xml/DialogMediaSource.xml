@@ -31,6 +31,7 @@
                 <label>$LOCALIZE[31101]</label>
             </control>
             <control type="list" id="10">
+                <pagecontrol>60</pagecontrol>
                 <left>56</left>
                 <top>156</top>
                 <width>760</width>
@@ -150,6 +151,14 @@
                         <visible>ListItem.IsSelected</visible>
                     </control>
                 </focusedlayout>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>828</left>
+                <top>156</top>
+                <height>340</height>
+                <onleft>10</onleft>
+                <onright>9001</onright>
+                <visible>Control.IsVisible(10)</visible>
             </control>
             <control type="grouplist" id="9001">
                 <left>844</left>

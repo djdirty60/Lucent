@@ -41,6 +41,7 @@
                 <ondown>5000</ondown>
             </control>
             <control type="grouplist" id="5000">
+                <pagecontrol>60</pagecontrol>
                 <left>50</left>
                 <top>214</top>
                 <width>830</width>
@@ -100,7 +101,18 @@
                     <height>62</height>
                 </control>
             </control>
+            <control type="scrollbar" id="60">
+                <left>892</left>
+                <top>214</top>
+                <height>670</height>
+                <onleft>5000</onleft>
+                <onright>6000</onright>
+                <visible>Control.IsVisible(5000)</visible>
+            </control>
             <control type="grouplist" id="6000">
+                <pagecontrol>61</pagecontrol>
+                <onright condition="Control.IsVisible(61)">61</onright>
+                <onright>noop</onright>
                 <left>920</left>
                 <top>214</top>
                 <width>830</width>
@@ -159,6 +171,14 @@
                     <label>$LOCALIZE[19125]</label>
                     <height>62</height>
                 </control>
+            </control>
+            <control type="scrollbar" id="61">
+                <left>1762</left>
+                <top>214</top>
+                <height>670</height>
+                <onleft>6000</onleft>
+                <onright>6000</onright>
+                <visible>Control.IsVisible(6000)</visible>
             </control>
             <control type="grouplist" id="9000">
                 <left>50</left>

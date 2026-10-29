@@ -44,12 +44,14 @@
                 </control>
             </control>
             <control type="list" id="2">
+                <pagecontrol>60</pagecontrol>
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>noop</onright>
                 <left>370</left>
                 <top>360</top>
                 <width>1180</width>
                 <height>640</height>
                 <onleft>noop</onleft>
-                <onright>noop</onright>
                 <onup>9000</onup>
                 <ondown>2</ondown>
                 <itemlayout height="70" width="1180">
@@ -163,6 +165,14 @@
                         <visible>ListItem.IsSelected</visible>
                     </control>
                 </focusedlayout>
+            </control>
+            <control type="scrollbar" id="60">
+                <left>1562</left>
+                <top>360</top>
+                <height>640</height>
+                <onleft>2</onleft>
+                <onright>2</onright>
+                <visible>Control.IsVisible(2)</visible>
             </control>
         </control>
     </controls>

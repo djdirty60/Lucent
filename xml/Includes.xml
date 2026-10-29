@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <includes>
+    <!-- one way of scrolling long text everywhere: wait 6 s, scroll slowly, start over 8 s after the end -->
+    <include name="TextAutoScroll">
+        <autoscroll delay="6000" time="3000" repeat="8000">true</autoscroll>
+    </include>
+
     <include file="Defaults.xml"/>
     <include file="Variables.xml"/>
     <include file="Includes_Views.xml"/>
