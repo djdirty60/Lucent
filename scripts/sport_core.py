@@ -34,7 +34,8 @@ CACHE_VERSION = 3
 TTL = 15 * 60
 TTL_LIVE = 2 * 60
 STANDINGS_TTL = 60 * 60
-DAYS_BACK = 1
+DAYS_BACK = 0           # games that were played before today are not fetched (All games starts at today)
+FUTURE_TTL = 6 * 3600   # days after today change rarely (kick-off times, a new game): asked again every 6 hours
 DAYS_AHEAD = 13
 NL = ac.LANG == "nl"
 
@@ -615,13 +616,6 @@ def live_or_close(events, now):
     return any(e["state"] == "in" or abs(e["start"] - now) < 3 * 3600 for e in events)
 
 
-def is_stale(entry, now, first, last):
-    if not entry or entry.get("from", "9") > first or entry.get("to", "") < last:
-        return True
-    age = now - entry.get("fetched", 0)
-    return age > (TTL_LIVE if live_or_close(entry.get("events", []), now) else TTL)
-
-
 def days_between(first, last):
     """'20261027', '20261029' -> ['20261027', '20261028', '20261029']"""
     a = datetime.datetime.strptime(first.replace("-", ""), "%Y%m%d").date()
@@ -633,7 +627,7 @@ DAYFAIL = [0, 0, ""]   # days without an answer, days asked, last error (of the 
 PARTIAL = {}   # competition -> days ESPN did not answer the last time (the old games of those days are kept)
 
 
-def fetch_range(key, first, last, workers=3):
+def fetch_range(key, first, last, workers=3, days=None):
     """ESPN no longer accepts 'from-to' for dates (HTTP 400), so ask day by day and join the answers.
     Days that fail (ESPN is busy) are asked again one by one; what still fails is remembered in PARTIAL."""
     path = LEAGUES[key]["path"]
@@ -644,7 +638,7 @@ def fetch_range(key, first, last, workers=3):
         except Exception as error:  # noqa: BLE001
             return day, error
 
-    days = days_between(first, last)
+    days = days or days_between(first, last)
     with ThreadPoolExecutor(max_workers=workers) as pool:
         for day, res in pool.map(one, days):
             got[day] = res
@@ -750,8 +744,8 @@ def match_detail(ev):
     return out
 
 
-def fetch_league(key, first, last):
-    return fetch_range(key, first, last)
+def fetch_league(key, first, last, days=None):
+    return fetch_range(key, first, last, days=days)
 
 
 UEFA_CLUBS = ["uefa.champions", "uefa.europa", "uefa.europa.conf"]
@@ -912,22 +906,50 @@ def refresh(force=False, keys=None, progress=None):
         return main
 
 
+def stale_days(entry, now, first, last, force=False):
+    """The days of a competition that need asking again: today every 15 minutes (2 when a game is on or about to start),
+    later days every 6 hours, days never asked at once. Days before today are never asked."""
+    days = days_between(first, last)
+    if force or not entry:
+        return days
+    asked = entry.get("days") or {}
+    today = days[0]
+    todays = [e for e in entry.get("events", []) if espn_day(local_day(e["start"])) == today]
+    out = []
+    for day in days:
+        age = now - asked.get(day, 0)
+        if day == today:
+            if age > (TTL_LIVE if live_or_close(todays, now) else TTL):
+                out.append(day)
+        elif age > FUTURE_TTL:
+            out.append(day)
+    return out
+
+
+def is_stale(entry, now, first, last):
+    return bool(stale_days(entry, now, first, last))
+
+
 def _refresh(force=False, keys=None, progress=None):
     now = int(time.time())
     first_d, last_d = window()
     first, last = first_d.isoformat().replace("-", ""), last_d.isoformat().replace("-", "")
     cache = load_cache()
-    todo = [k for k in (keys or league_keys()) if force or is_stale(cache["leagues"].get(k), now, first, last)]
-    if not todo:
+    plan = {}
+    for k in (keys or league_keys()):
+        days = stale_days(cache["leagues"].get(k), now, first, last, force)
+        if days:
+            plan[k] = days
+    if not plan:
         return False
+    todo = list(plan)
     done = [0]
     LAST_FAIL[:] = [0, len(todo), ""]
     DAYFAIL[:] = [0, 0, ""]
 
     def work(key):
         try:
-            events = fetch_league(key, first, last)
-            return key, events
+            return key, fetch_league(key, first, last, days=plan[key])
         except Exception as error:  # noqa: BLE001 - one competition failing must not stop the others
             log(f"{key}: {error}")
             LAST_FAIL[0] += 1
@@ -941,17 +963,17 @@ def _refresh(force=False, keys=None, progress=None):
             if progress:
                 progress(done[0], len(todo))
             if events is None:
-                if key in cache["leagues"]:
-                    cache["leagues"][key]["fetched"] = now - TTL + 60      # try again in a minute
-                continue
-            fetched = now
-            failed = PARTIAL.pop(key, [])
-            if failed:      # keep the games we already had for the days ESPN did not answer, and ask again in a minute
-                old = [e for e in (cache["leagues"].get(key) or {}).get("events", []) if espn_day(local_day(e["start"])) in failed]
-                have = {e["id"] for e in events}
-                events = events + [e for e in old if e["id"] not in have]
-                fetched = now - TTL + 60
-            cache["leagues"][key] = {"fetched": fetched, "from": first, "to": last, "events": events}
+                continue                       # a stale day is asked again next time
+            old = cache["leagues"].get(key) or {}
+            failed = set(PARTIAL.pop(key, []))
+            fresh = [d for d in plan[key] if d not in failed]
+            asked = {d: t for d, t in (old.get("days") or {}).items() if first <= d <= last}
+            asked.update({d: now for d in fresh})
+            have = {e["id"] for e in events}
+            keep = [e for e in old.get("events", [])                 # the other days (and days ESPN did not answer)
+                    if e["id"] not in have and first <= espn_day(local_day(e["start"])) <= last
+                    and espn_day(local_day(e["start"])) not in fresh]
+            cache["leagues"][key] = {"fetched": now, "from": first, "to": last, "days": asked, "events": events + keep}
             changed = True
     save_cache(cache)
     return changed
