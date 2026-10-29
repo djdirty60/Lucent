@@ -7,9 +7,12 @@
 The log copy removes: user names / passwords in links (?username=, /live/user/pass/), the Xtream login saved by Lucent,
 tokens / API keys, and the server address of the provider. Nothing is sent anywhere; the file stays on the box.
 """
+import hashlib
 import json
 import re
 import sys
+import time
+import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -47,6 +50,68 @@ def addon_line(addon_id, name, fix_missing, fix_off=None):
     return line(st, f"{name}: {note}", fix_missing if st == 0 else (fix_off or t("Switch it on in Add-ons.", "Zet hem aan bij Add-ons.")))
 
 
+LIBDATA = "special://profile/addon_data/script.lucent.library/"
+
+
+def read_json(path):
+    try:
+        with xbmcvfs.File(xbmcvfs.translatePath(path)) as fh:
+            return json.loads(fh.read() or "null")
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def row_state(path):
+    """(state 2/1/0, text) for one Home row: has the library fetched it yet?"""
+    base = "plugin://script.lucent.library/?"
+    if path.startswith(base + "action=tmdb"):
+        q = urllib.parse.parse_qs(path.split("?", 1)[1])
+        name = (q.get("list") or [""])[0]
+        if name == "tl":
+            name = f"tl_{(q.get('user') or [''])[0]}_{(q.get('id') or [''])[0]}"
+        saved = read_json(f"{LIBDATA}tmdb/{name}.json") or {}
+        reg = (read_json(f"{LIBDATA}tmdb/registry.json") or {}).get(name) or {}
+        n = len(saved.get("items") or [])
+        if n:
+            age = int((time.time() - saved.get("time", 0)) / 60)
+            return 2, t(f"{n} titles, fetched {age} min ago", f"{n} titels, {age} min geleden opgehaald")
+        if reg.get("why"):
+            return 0, t("nothing: ", "niets: ") + str(reg["why"])
+        return 1, t("not fetched yet (the service does one row at a time)", "nog niet opgehaald (de service doet één rij tegelijk)")
+    key = hashlib.md5(path.encode("utf-8")).hexdigest()
+    saved = read_json(f"{LIBDATA}widgets/{key}.json") or {}
+    reg = read_json(f"{LIBDATA}widgets/reg/{key}.json") or {}
+    n = len(saved.get("items") or [])
+    if n:
+        age = int((time.time() - saved.get("time", 0)) / 60)
+        return 2, t(f"{n} titles, fetched {age} min ago", f"{n} titels, {age} min geleden opgehaald")
+    if reg.get("retry", 0) > time.time():
+        wait = int((reg["retry"] - time.time()) / 60) + 1
+        return 0, t(f"the last try failed, trying again in {wait} min", f"de vorige poging mislukte, opnieuw over {wait} min")
+    if reg:
+        return 1, t("waiting to be fetched (one row at a time, Seren can be slow)", "wacht om opgehaald te worden (één rij tegelijk, Seren kan traag zijn)")
+    return 1, t("the library has not seen this row yet", "de bibliotheek heeft deze rij nog niet gezien")
+
+
+def home_rows():
+    out, shown = [], 0
+    lite = cond("Skin.HasSetting(lucent.lite)")
+    for n in range(1, 11):
+        path = xbmc.getInfoLabel(f"Skin.String(nuvio.home.w{n}.path)")
+        if not path:
+            continue
+        label = xbmc.getInfoLabel(f"Skin.String(nuvio.home.w{n}.label)") or f"{n}"
+        if lite and n > 6:
+            out.append(line(1, f"{n}. {label}: " + t("not built (light mode)", "niet opgebouwd (lichte stand)"),
+                            t("Light mode only builds rows 1-6. Switch it off in the setup assistant (Light mode) if your box can take it.",
+                              "De lichte stand bouwt alleen rij 1-6. Zet hem uit in de setup-assistent (Lichte modus) als je apparaat het aankan.")))
+            continue
+        shown += 1
+        state, text = row_state(path)
+        out.append(line(state, f"{n}. {label}: {text}"))
+    return out
+
+
 def test():
     rows = [
         addon_line("plugin.video.seren", "Seren", t("Settings > Lucent > Install Seren (or run the setup assistant).",
@@ -65,6 +130,10 @@ def test():
     rows.append(line(2, t("Kodi version: ", "Kodi-versie: ") + (xbmc.getInfoLabel("System.BuildVersion") or "?").split(" ")[0]))
     lite = cond("Skin.HasSetting(lucent.lite)")
     rows.append(line(2, t("Light mode: ", "Lichte stand: ") + (t("on", "aan") if lite else t("off", "uit"))))
+    hr = home_rows()
+    if hr:
+        rows.append(t("Home rows (start tab):", "Home-rijen (starttab):"))
+        rows.extend(hr)
     bad = sum(1 for r in rows if r.startswith("[COLOR FFE5534B]") or r.startswith("[COLOR FFE5A100]"))
     head = t("Everything looks fine.", "Alles ziet er goed uit.") if not bad else \
         t(f"{bad} thing(s) need attention:", f"{bad} ding(en) vragen aandacht:")

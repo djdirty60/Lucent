@@ -253,7 +253,8 @@ def ac_look():
     lite = cond("Skin.HasSetting(lucent.lite)")
     fy = not cond("Skin.HasSetting(lucent.fy.off)")
     return [(t("Light mode: on", "Lichte modus: aan") if lite else t("Light mode: off", "Lichte modus: uit"),
-             lambda: run("Skin.ToggleSetting(lucent.lite)")),
+             lambda: (run("Skin.ToggleSetting(lucent.lite)"), xbmc.sleep(400),
+                      run("RunScript(special://skin/scripts/settings.py,litebuild)"))),
             (t("Tonight for you: on", "Vanavond voor jou: aan") if fy else t("Tonight for you: off", "Vanavond voor jou: uit"),
              lambda: run("Skin.ToggleSetting(lucent.fy.off)")),
             (t("Menu and rows", "Menu en rijen"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
