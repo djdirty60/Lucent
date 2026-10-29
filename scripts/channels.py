@@ -265,6 +265,19 @@ def by_word(cfg, entries):
     return [g for g in counts if g not in keep]
 
 
+ADULT_WORDS = ("xxx", "adult", "adults", "porn", "porno", "erotic", "erotiek", "sex", "playboy", "hustler", "brazzers")
+
+
+def adult_groups(entries):
+    """Groups that look like adult content, from their name (xxx, adult, 18+, porn ...)."""
+    out = []
+    for g in groups_of(entries):
+        text = norm(g)
+        if any(re.search(rf"(^| ){w}( |$)", text) or (len(w) > 4 and w in text) for w in ADULT_WORDS):
+            out.append(g)
+    return out
+
+
 def menu():
     if not xbmc.getCondVisibility(f"System.HasAddon({xtream.IPTV})"):
         xbmcgui.Dialog().ok(t("Channels", "Zenders"), t("IPTV Simple is not installed.", "IPTV Simple staat er niet op."))
@@ -292,6 +305,7 @@ def menu():
     hidden_n = len(cfg.get("hide_groups") or []) + len(cfg.get("hide_names") or [])
     options = [("groups", t("Choose the groups to show", "Kies de groepen die je wilt zien")),
                ("words", t("Quick: only groups with a word (NL, BE, SPORT …)", "Snel: alleen groepen met een woord (NL, BE, SPORT …)"))]
+    options.append(("adult", t("Hide adult groups (xxx, adult, 18+ …)", "Verberg volwassen-groepen (xxx, adult, 18+ …)")))
     if here and here.get("name"):
         options.append(("now", t(f"Hide the channel I am watching: {here['name']}", f"Verberg de zender die ik kijk: {here['name']}")))
     if hidden_n:
@@ -310,6 +324,16 @@ def menu():
         if new is None:
             return
         cfg["hide_groups"] = new
+    elif kind == "adult":
+        found = adult_groups(entries)
+        if not found:
+            xbmcgui.Dialog().ok(t("Channels", "Zenders"), t("No adult groups found by name.", "Geen volwassen-groepen gevonden op naam."))
+            return
+        counts = groups_of(entries)
+        names = ", ".join(f"{g} ({counts[g]})" for g in found[:6]) + (" …" if len(found) > 6 else "")
+        if not xbmcgui.Dialog().yesno(t("Channels", "Zenders"), t(f"Hide {len(found)} groups: {names}?", f"{len(found)} groepen verbergen: {names}?")):
+            return
+        cfg["hide_groups"] = sorted(set(cfg.get("hide_groups") or []) | set(found))
     elif kind == "now":
         cfg["hide_names"] = sorted(set(cfg.get("hide_names") or []) | {here["name"]})
     elif kind == "all":
