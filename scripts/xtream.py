@@ -61,17 +61,28 @@ def clean_server(text):
 
 
 def check(server, user, password):
-    """What the server says about this login: (ok, message)."""
+    """What the server says about this login: (ok, message). Tried as several programs: some panels only talk to
+    the apps they know (TiviMate, Smarters, VLC)."""
     url = f"{server}/player_api.php?{urllib.parse.urlencode({'username': user, 'password': password})}"
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8", "replace") or "{}")
-    except Exception as error:  # noqa: BLE001
-        kind = type(error).__name__
-        log(f"server did not answer ({kind})")
-        return False, t(f"The server did not answer ({kind}). Check the address.",
-                        f"De server antwoordt niet ({kind}). Controleer het adres.")
+    data, kind, body = None, "", ""
+    for _opt, agent in AGENTS:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": agent})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                body = resp.read().decode("utf-8", "replace")
+            data = json.loads(body or "{}")
+            if isinstance(data, dict) and data.get("user_info"):
+                break
+        except json.JSONDecodeError:
+            data = None                                   # a page instead of data: shown below
+        except Exception as error:  # noqa: BLE001
+            kind = type(error).__name__ + (f" {error.code}" if isinstance(error, urllib.error.HTTPError) else "")
+            data = None
+    if not isinstance(data, dict) or not data.get("user_info"):
+        said = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", body)).strip()[:60]
+        log(f"server did not answer the login ({said or kind or 'no user_info'})")
+        return False, t(f"The server did not answer the login ({said or kind or 'no answer'}). Check the address and port.",
+                        f"De server beantwoordt de inlog niet ({said or kind or 'geen antwoord'}). Controleer adres en poort.")
     info = data.get("user_info") or {}
     if str(info.get("auth")) != "1":
         return False, t("The server does not accept this user name and password.",
@@ -97,6 +108,9 @@ def check(server, user, password):
 AGENTS = [("", UA), ("VLC/3.0.20 LibVLC/3.0.20", "VLC/3.0.20 LibVLC/3.0.20"),
           ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"),
+          ("TiviMate/5.1.6 (Android 11)", "TiviMate/5.1.6 (Android 11)"),
+          ("IPTVSmartersPlayer", "IPTVSmartersPlayer"),
+          ("okhttp/4.9.3", "okhttp/4.9.3"),
           ("Kodi/21.0 (Linux)", "Kodi/21.0 (Linux)")]
 
 
