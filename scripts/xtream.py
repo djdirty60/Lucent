@@ -83,6 +83,8 @@ def check(server, user, password):
         log(f"server did not answer the login ({said or kind or 'no user_info'})")
         return False, t(f"The server did not answer the login ({said or kind or 'no answer'}). Check the address and port.",
                         f"De server beantwoordt de inlog niet ({said or kind or 'geen antwoord'}). Controleer adres en poort.")
+    LAST["login"] = data
+    LAST["agent"] = agent
     info = data.get("user_info") or {}
     if str(info.get("auth")) != "1":
         return False, t("The server does not accept this user name and password.",
@@ -103,6 +105,9 @@ def check(server, user, password):
     if info.get("max_connections"):
         parts.append(t(f"{info['max_connections']} connections", f"{info['max_connections']} verbindingen"))
     return True, "  ·  ".join(parts)
+
+
+LAST = {}                                   # the login answer and the user agent the panel accepted
 
 
 AGENTS = [("", UA), ("VLC/3.0.20 LibVLC/3.0.20", "VLC/3.0.20 LibVLC/3.0.20"),
@@ -151,6 +156,80 @@ def probe_m3u(server, user, password, output, busy=None):
                 continue                                  # blocked for this agent: try the next agent quickly
     return 0, t(f"the server refuses the channel list (first answer: {first})",
                 f"de server weigert de zenderlijst (eerste antwoord: {first})"), "", ""
+
+
+def api(server, user, password, action, agent):
+    url = f"{server}/player_api.php?{urllib.parse.urlencode({'username': user, 'password': password, 'action': action})}"
+    code, body = fetch_head(url, agent)
+    try:
+        data = json.loads(body) if body else None
+    except ValueError:
+        data = None
+    return data if isinstance(data, list) else []
+
+
+def own_m3u(server, user, password, output, agent):
+    """Build the channel list ourselves through player_api.php (what the apps do): the panels that refuse get.php
+    nearly always answer this. Returns (m3u text, channels, catch-up channels)."""
+    cats = {str(c.get("category_id")): c.get("category_name") or "" for c in api(server, user, password, "get_live_categories", agent)}
+    streams = api(server, user, password, "get_live_streams", agent)
+    if not streams:
+        return "", 0, 0
+    lines = [f'#EXTM3U x-tvg-url="{server}/xmltv.php?{urllib.parse.urlencode({"username": user, "password": password})}"']
+    catchup = 0
+    for st in sorted(streams, key=lambda x: int(x.get("num") or 0)):
+        sid = st.get("stream_id")
+        if sid is None:
+            continue
+        name = str(st.get("name") or "").replace('"', "'").replace(",", " ")
+        attrs = [f'tvg-id="{st.get("epg_channel_id") or ""}"', f'tvg-name="{name}"', f'tvg-logo="{st.get("stream_icon") or ""}"',
+                 f'group-title="{cats.get(str(st.get("category_id")), "").replace(chr(34), chr(39))}"']
+        if st.get("num"):
+            attrs.append(f'tvg-chno="{st.get("num")}"')
+        if str(st.get("tv_archive")) == "1":
+            days = st.get("tv_archive_duration") or 1
+            attrs.append(f'catchup="xc" catchup-days="{days}"')
+            catchup += 1
+        lines.append(f"#EXTINF:-1 {' '.join(attrs)},{name}")
+        lines.append(f"{server}/live/{urllib.parse.quote(user)}/{urllib.parse.quote(password)}/{sid}.{output}")
+    return "\n".join(lines) + "\n", len(streams), catchup
+
+
+M3U_DIR = "special://profile/addon_data/skin.lucent/"
+LOGIN_FILE = M3U_DIR + "xtream.json"
+
+
+def save_login(server, user, password, output, agent, path):
+    xbmcvfs.mkdirs(M3U_DIR)
+    with xbmcvfs.File(LOGIN_FILE, "w") as fh:
+        fh.write(json.dumps({"server": server, "user": user, "password": password, "output": output, "agent": agent, "m3u": path}))
+
+
+def refresh_file():
+    """Once a day (from the Lucent helper): build the channel list again, so new channels of the provider come in."""
+    if not xbmcvfs.exists(LOGIN_FILE):
+        return
+    try:
+        with xbmcvfs.File(LOGIN_FILE) as fh:
+            cfg = json.loads(fh.read() or "{}")
+        text, count, _cu = own_m3u(cfg["server"], cfg["user"], cfg["password"], cfg.get("output", "ts"), cfg.get("agent") or UA)
+        if count:
+            with xbmcvfs.File(cfg["m3u"], "w") as fh:
+                fh.write(text)
+            log(f"channel list refreshed: {count} channels")
+    except Exception as error:  # noqa: BLE001
+        log(f"refresh: {type(error).__name__}")
+
+
+def probe_epg(server, user, password):
+    """The guide link that works (xmltv.php, else the lite-panel variant), with the agent: ('' when none works)."""
+    cred = urllib.parse.urlencode({"username": user, "password": password})
+    for name in ("xmltv.php", "get_litepanels_xmltv.php"):
+        for _opt, agent in AGENTS:
+            code, body = fetch_head(f"{server}/{name}?{cred}", agent)
+            if body and "<tv" in body[:4000]:
+                return f"{server}/{name}?{cred}", _opt
+    return "", ""
 
 
 def strip_secrets(text):
@@ -243,19 +322,23 @@ def pick_instance(server):
     return DATA + f"instance-settings-{existing[-1][0] + 1}.xml", True
 
 
-def apply(path, fresh, server, m3u, epg, output):
+def apply(path, fresh, server, m3u, epg, output, local=False, agent=""):
     values = read_settings(path) if not fresh else {}
     host = urllib.parse.urlsplit(server).hostname or "xtream"
     values.update({
         "kodi_addon_instance_name": f"Xtream · {host}",
         "kodi_addon_instance_enabled": "true",
-        "m3uPathType": "1", "m3uUrl": m3u, "m3uCache": "true",
+        "m3uPathType": "0" if local else "1", "m3uPath" if local else "m3uUrl": m3u, "m3uCache": "true",
         "m3uRefreshMode": "2", "m3uRefreshHour": "4",            # the list is fetched again once a day, at night
         "epgPathType": "1", "epgUrl": epg, "epgCache": "true",
+        "epgTSOverride": "false",
         "catchupEnabled": "true",                                   # replay: Xtream builds the links for it
         "allChannelsCatchupMode": "5",                              # 5 = Xtream codes
         "useFFmpegReconnect": "true",
     })
+    values.pop("m3uUrl" if local else "m3uPath", None)
+    if agent:
+        values["defaultUserAgent"] = agent                  # the streams are asked the way the panel accepts
     if fresh:
         values.setdefault("startNum", "1")
         values.setdefault("numberByOrder", "false")
@@ -359,15 +442,36 @@ def run():
         if agent:                                        # IPTV Simple must ask the same way (Kodi's |User-Agent= option)
             m3u += "|User-Agent=" + urllib.parse.quote(agent)
             epg += "|User-Agent=" + urllib.parse.quote(agent)
+    local = False
     if count <= 0:
-        if not dialog.yesno("Xtream", t(f"Channel list: {note}.", f"Zenderlijst: {note}.") + "\n\n" +
-                            t("IPTV Simple will not get channels from this either. Save anyway?",
-                              "IPTV Simple krijgt hier ook geen zenders uit. Toch opslaan?")):
+        # the panel refuses get.php: build the list ourselves through player_api (the way the IPTV apps do it)
+        busy = xbmcgui.DialogProgress()
+        busy.create("Xtream", t("The server refuses the list; building it ourselves…", "De server weigert de lijst; zelf opbouwen…"))
+        agent = LAST.get("agent") or UA
+        text, count, cu = own_m3u(server, user, password, output, agent)
+        busy.close()
+        if count:
+            host = urllib.parse.urlsplit(server).hostname or "xtream"
+            m3u = M3U_DIR + f"xtream-{re.sub(r'[^A-Za-z0-9.-]', '_', host)}.m3u"
+            xbmcvfs.mkdirs(M3U_DIR)
+            with xbmcvfs.File(m3u, "w") as fh:
+                fh.write(text)
+            save_login(server, user, password, output, agent, m3u)
+            local = True
+            message += "\n" + t(f"Channel list built by Lucent: {count} channels ({cu} with replay)",
+                                 f"Zenderlijst door Lucent opgebouwd: {count} zenders ({cu} met terugkijken)")
+            epg_url, epg_agent = probe_epg(server, user, password)
+            epg = epg_url + ("|User-Agent=" + urllib.parse.quote(epg_agent) if epg_agent else "") if epg_url else ""
+            if not epg_url:
+                message += "\n" + t("No TV guide: the server refuses it", "Geen tv-gids: de server weigert hem")
+        elif not dialog.yesno("Xtream", t(f"Channel list: {note}.", f"Zenderlijst: {note}.") + "\n\n" +
+                              t("The server also gives no channels through its API. Save anyway?",
+                                "De server geeft ook via zijn API geen zenders. Toch opslaan?")):
             return
     else:
         message += "\n" + t(f"Channel list: {count} channels", f"Zenderlijst: {count} zenders")
     try:
-        apply(path, fresh, server, m3u, epg, output)
+        apply(path, fresh, server, m3u, epg, output, local, (LAST.get("agent") or "") if local else agent)
     except Exception as error:  # noqa: BLE001
         log(f"could not write the settings: {type(error).__name__}")
         dialog.ok("Xtream", t("Could not write IPTV Simple's settings.", "Kon de instellingen van IPTV Simple niet opslaan."))
@@ -399,4 +503,8 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "refresh":
+        refresh_file()
+    else:
+        run()

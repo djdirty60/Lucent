@@ -81,6 +81,12 @@ def run():
     def calendar():
         agenda_core.check_notifications()
 
+    def xtream_list():
+        import xbmcvfs
+        if xbmcvfs.exists("special://profile/addon_data/skin.lucent/xtream.json"):
+            import xtream
+            xtream.refresh_file()
+
     def subtitles():
         if cond("Skin.HasSetting(nuvio.autosubs)"):
             if subs["watcher"] is None:
@@ -94,6 +100,7 @@ def run():
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
         Job("calendar", 120, 60, calendar),
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
+        Job("xtream list", 24 * 3600, 300, xtream_list),   # the channel list Lucent builds itself: once a day
     ]
     quick = [Job("subtitles", 30, 5, subtitles)]
     stop = threading.Event()
