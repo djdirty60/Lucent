@@ -219,6 +219,7 @@ def install(update, monitor):
     if update["id"] == "skin.lucent":
         monitor.waitForAbort(2)
         xbmcgui.Window(10000).setProperty("lucent.helper.stop", "1")   # the running helper makes way for the new code
+        xbmcgui.Window(10000).clearProperty("nuvio.started")           # Home runs its start-up (and the new helper) again
         xbmc.executebuiltin("ReloadSkin()")             # show the new version right away
 
 

@@ -14,12 +14,9 @@
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
     <onload condition="!$EXP[NuvioAnyRow]">SetFocus(9000)</onload>
-    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/keymap.py)</onload>
-    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/settings.py,scanlogos)</onload>
-    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/agenda.py,ensure_tab)</onload>
-    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + Pvr.HasTVChannels">RunScript(special://skin/scripts/sport.py,ensure_tab)</onload>
-    <!-- one background helper does calendar, sport, updates, Tonight for you, poster colour and subtitles -->
-    <onload>RunScript(special://skin/scripts/helper.py)</onload>
+    <!-- once per Kodi start, one Python start: key maps, rating logos, Calendar / Sport tabs, then the background helper
+         (calendar, sport, updates, Tonight for you, poster colour, subtitles). After a skin update nuvio.started is cleared so it runs again. -->
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/startup.py)</onload>
     <!-- poster trailers are switched off for now (set the skin setting nuvio.trailers.menu to bring them back) -->
     <onload condition="Skin.HasSetting(nuvio.trailers.menu)">RunScript(special://skin/scripts/trailers.py)</onload>
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.posterfocus)</onload>

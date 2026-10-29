@@ -102,7 +102,7 @@ The player menu has a moon button: stop after this episode or film, or after 15,
 *Skin settings > Backup and restore*: one zip file (USB stick or network share) with Lucent's settings and menu, Kodi's favourites and sources, and the settings of Seren, IPTV Simple, Lucent Library and Lucent Subtitles. Restoring puts it all back and restarts Kodi. The backup holds your logins – keep it to yourself.
 
 ### Light mode
-For boxes with little memory (on by itself with 2 GB or less): Home builds only six rows – rows 7–10 are not created at all – without the colour glow and snow. The skin reloads once when you switch it.
+For boxes with little memory (on by itself with 2 GB or less): Home builds only six rows – rows 7–10 are not created at all – Seren is asked for small artwork, and there is no colour glow and no snow. The skin reloads once when you switch it.
 
 ### Options on the info page
 For titles in the Kodi library the info page has an **Options** button: edit title, edit sort title, choose art, remove from library.

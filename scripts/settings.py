@@ -331,6 +331,25 @@ def lite_check():
         xbmc.log(f"[skin.lucent] {mb} MB memory: light mode switched on", xbmc.LOGINFO)
 
 
+def lite_artwork(lite):
+    """Light mode asks Seren for small artwork (posters 342 px, backdrops 780 px instead of 500 / 1280): about a third
+    of the picture memory, which is what a 2 GB box runs out of first. Your own choice is remembered and put back."""
+    try:
+        import xbmcaddon
+        seren = xbmcaddon.Addon("plugin.video.seren")
+    except Exception:  # noqa: BLE001 - not installed
+        return
+    key, saved = "artwork.preferredsize", xbmc.getInfoLabel("Skin.String(lucent.lite.artprev)")
+    current = seren.getSetting(key) or "1"
+    if lite:
+        if current != "2":
+            xbmc.executebuiltin(f'Skin.SetString(lucent.lite.artprev,"{current}")')
+            seren.setSetting(key, "2")
+    elif saved:
+        seren.setSetting(key, saved if saved in ("0", "1") else "1")
+        xbmc.executebuiltin("Skin.Reset(lucent.lite.artprev)")
+
+
 def lite_build():
     """Light mode does not build widgets 7-10 at all; Home is kept in memory, so the skin reloads once when it changes."""
     lite = xbmc.getCondVisibility("Skin.HasSetting(lucent.lite)")
@@ -338,8 +357,11 @@ def lite_build():
     if lite == built:
         return
     xbmc.executebuiltin('Skin.SetString(lucent.lite.built,"1")' if lite else "Skin.Reset(lucent.lite.built)")
+    lite_artwork(lite)
     xbmc.log(f"[skin.lucent] light mode {'on' if lite else 'off'}: reloading the skin", xbmc.LOGINFO)
     xbmc.sleep(300)
+    xbmcgui.Window(10000).setProperty("lucent.helper.stop", "1")
+    xbmcgui.Window(10000).clearProperty("nuvio.started")
     xbmc.executebuiltin("ReloadSkin()")
 
 
