@@ -250,6 +250,24 @@ def window():
 
 
 # ----------------------------------------------------------------------------- ESPN -> events
+def _lum(h):
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def club_hex(color, alt=""):
+    """6-digit hex of a club colour that white text can be read on: the main colour, or the second one when the main
+    colour is white / very light (Groningen ...); when both are light the lightest is darkened."""
+    ok = [c.strip("# ").lower() for c in (color, alt) if re.fullmatch(r"[0-9a-fA-F]{6}", (c or "").strip("# "))]
+    for c in ok:
+        if _lum(c) <= 0.5:
+            return c
+    if ok:
+        c = min(ok, key=_lum)
+        return "".join(f"{int(int(c[i:i + 2], 16) * 0.45):02x}" for i in (0, 2, 4))
+    return ""
+
+
 def side(competitor):
     team = competitor.get("team") or competitor.get("athlete") or {}
     full = team.get("displayName") or team.get("name") or ""

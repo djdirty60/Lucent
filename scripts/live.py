@@ -70,9 +70,10 @@ def clear_score():
         HOME.clearProperty(f"live.sc.{key}")
 
 
-def colour(value, default):
-    value = (value or "").strip("#")
-    return "FF" + value.upper() if len(value) == 6 else default
+def colour(side, default):
+    import sport_core as sc
+    value = sc.club_hex(side.get("color"), side.get("alt"))
+    return "FF" + value.upper() if value else default
 
 
 def show(ev):
@@ -89,8 +90,8 @@ def show(ev):
     HOME.setProperty("live.sc.arec", away.get("rec", ""))
     HOME.setProperty("live.sc.hlogo", home.get("logo", ""))
     HOME.setProperty("live.sc.alogo", away.get("logo", ""))
-    HOME.setProperty("live.sc.hcol", colour(home.get("color"), "FFB3262E"))
-    HOME.setProperty("live.sc.acol", colour(away.get("color"), "FF1F4E9E"))
+    HOME.setProperty("live.sc.hcol", colour(home, "FFB3262E"))
+    HOME.setProperty("live.sc.acol", colour(away, "FF1F4E9E"))
 
 
 def score(cid):

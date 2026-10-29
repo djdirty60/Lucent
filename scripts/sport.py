@@ -393,13 +393,13 @@ class Sport(xbmcgui.WindowXML):
             "league": league_name(ev["league"]), "chan": best, "chanicon": (chans[0].get("icon") or "") if chans else "",
             "when": when_line(ev), "venue": "  ·  ".join(x for x in (ev.get("venue"), ev.get("round")) if x),
             "header": header, "headersub": headersub, "evid": ev["id"],
-            "hcol": colour(ev["home"].get("color"), "66"), "acol": colour(ev["away"].get("color") or ev["away"].get("alt"), "66"),
+            "hcol": colour(sc.club_hex(ev["home"].get("color"), ev["home"].get("alt")), "66"), "acol": colour(sc.club_hex(ev["away"].get("color"), ev["away"].get("alt")), "66"),
         }
         shown = ev["state"] in ("in", "post")
         props["hscore"] = str(ev["home"].get("score", "")) if shown and not kind_event else ""
         props["ascore"] = str(ev["away"].get("score", "")) if shown and not kind_event else ""
-        props["hbar"] = colour(ev["home"].get("color"))
-        props["abar"] = colour(ev["away"].get("color") or ev["away"].get("alt"))
+        props["hbar"] = colour(sc.club_hex(ev["home"].get("color"), ev["home"].get("alt")))
+        props["abar"] = colour(sc.club_hex(ev["away"].get("color"), ev["away"].get("alt")))
         props["herochip"] = sc.t("livenow") if live else short_when(ev)
         props["heroline"] = props["venue"]
         if kind_event and ev.get("sub") and ev["league"] != EPG_LEAGUE:
@@ -1711,8 +1711,8 @@ class GameInfo(xbmcgui.WindowXMLDialog):
 
 
 def colour_of(side):
-    value = (side.get("color") or "").strip("#")
-    return "FF" + value.upper() if len(value) == 6 else "FF2A3441"
+    value = sc.club_hex(side.get("color"), side.get("alt"))
+    return "FF" + value.upper() if value else "FF2A3441"
 
 
 class ClubPopup(xbmcgui.WindowXMLDialog):
