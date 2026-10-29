@@ -248,7 +248,12 @@ def by_word(cfg, entries):
     if not words:
         return None
     counts = groups_of(entries)
-    keep = [g for g in counts if any(re.search(rf"(^| ){re.escape(w)}( |$)", norm(g)) or w in norm(g) for w in words)]
+    def matches(group, word):
+        text = norm(group)
+        if re.search(rf"(^| ){re.escape(word)}( |$)", text):
+            return True                                       # the word on its own: "(NL) Sport", "|NL|", "NL - Films"
+        return len(word) > 3 and word in text                 # longer words also inside others ("sport" in "Eurosport")
+    keep = [g for g in counts if any(matches(g, w) for w in words)]
     if not keep:
         xbmcgui.Dialog().ok(t("Channels", "Zenders"), t("No group contains those words.", "Geen enkele groep bevat die woorden."))
         return None
