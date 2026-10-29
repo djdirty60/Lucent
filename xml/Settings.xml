@@ -685,6 +685,20 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31651]</label>
+                        <label2>$LOCALIZE[31653]</label2>
+                        <icon>icons/settings.png</icon>
+                        <onclick>RunAddon(service.coreelec.settings)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system) + System.HasAddon(service.coreelec.settings)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31652]</label>
+                        <label2>$LOCALIZE[31653]</label2>
+                        <icon>icons/settings.png</icon>
+                        <onclick>RunAddon(service.libreelec.settings)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system) + System.HasAddon(service.libreelec.settings)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[16000]</label>
                         <label2>$LOCALIZE[31296]</label2>
                         <icon>icons/info.png</icon>

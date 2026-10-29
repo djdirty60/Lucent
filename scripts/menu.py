@@ -340,7 +340,9 @@ ACTION_GROUPS = [
         (G("System information", "Systeeminformatie"), "icons/info.png", "ActivateWindow(SystemInfo)"),
         (G("Event log", "Gebeurtenissenlogboek"), "icons/list.png", "ActivateWindow(EventLog)"),
         (G("Screen calibration", "Beeld kalibreren"), "icons/view.png", "ActivateWindow(ScreenCalibration)"),
-    ]),
+    ] + [(G(f"{name} settings", f"{name}-instellingen"), "icons/settings.png", f"RunAddon({addon})")   # the box's own settings (network, updates ...)
+         for addon, name in (("service.coreelec.settings", "CoreELEC"), ("service.libreelec.settings", "LibreELEC"))
+         if xbmc.getCondVisibility(f"System.HasAddon({addon})")]),
     (G("Power and system", "Afsluiten en systeem"), "icons/power.png", [
         ("k_power", "icons/power.png", "ActivateWindow(ShutdownMenu)"),
         (G("Quit Kodi", "Kodi afsluiten"), "icons/power.png", "Quit"),
