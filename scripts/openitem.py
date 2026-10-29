@@ -9,6 +9,8 @@ import xbmc
 
 def main():
     dbtype = xbmc.getInfoLabel("ListItem.DBType")
+    if xbmc.getInfoLabel("ListItem.Property(lucent_open)"):          # Lucent's own rows open their page themselves
+        dbtype = ""
     page = ((dbtype == "movie" and xbmc.getCondVisibility("Skin.HasSetting(nuvio.ok.movie.page)"))
             or (dbtype == "episode" and xbmc.getCondVisibility("Skin.HasSetting(nuvio.ok.episode.page)")))
     xbmc.executebuiltin("Action(Info)" if page else "Action(Select)")
