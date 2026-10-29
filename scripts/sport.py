@@ -369,8 +369,8 @@ class Sport(xbmcgui.WindowXML):
         if self.view in ("mine", "team"):
             return [], data
         day_events = sc.events_on(self.day)
-        live, coming, done = sc.order(day_events)
-        return sorted(live + coming + done, key=lambda e: e["start"]), data
+        live, coming, _done = sc.order(day_events)        # games that are over are left out
+        return sorted(live + coming, key=lambda e: e["start"]), data
 
     def event_item(self, ev, data, header="", headersub=""):
         label, label2, props = self.event_props(ev, data, header, headersub)
@@ -506,11 +506,7 @@ class Sport(xbmcgui.WindowXML):
     def mine_data(self, data):
         """Hero games and one block per team / competition / name you follow (your order): ([events], [section dicts])."""
         follow = self.follow
-        today = ac.today()
         by_id = {}
-
-        def local_ok(e):
-            return sc.local_day(e["start"]) >= today - datetime.timedelta(days=1)
 
         rows = []
         for key, kind, ident, title in sc.sections(follow):
@@ -524,9 +520,7 @@ class Sport(xbmcgui.WindowXML):
                 events, sub = name_events({"names": [ident]}, data), sc.t("tvguide")
             live = [e for e in events if e["state"] == "in"]
             coming = sorted((e for e in events if e["state"] == "pre"), key=lambda e: e["start"])
-            done = sorted((e for e in events if e["state"] == "post" and local_ok(e)), key=lambda e: -e["start"])
-            shown = sorted(live + coming[:4] + done[:1],
-                           key=lambda e: (e["state"] != "in", e["state"] == "post", e["start"] if e["state"] != "post" else -e["start"]))
+            shown = live + coming[:4]                          # games that are over are left out
             if not logo and shown:
                 logo = shown[0].get("lg", "")
             rows.append({"title": title, "sub": sub, "logo": logo, "events": shown, "kind": kind,
