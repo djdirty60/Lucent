@@ -27,6 +27,17 @@ def main():
         if waited > START_WAIT:
             log("the trailer did not start, nothing to come back to")
             return
+    # the trailer started: it must be full screen. When Kodi leaves it windowed behind the page / Home, press Full screen
+    shown = False
+    for attempt in range(8):
+        if xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)"):
+            shown = True
+            break
+        if attempt in (3, 6):
+            log("trailer is playing behind the page: switching to full screen")
+            xbmc.executebuiltin("Action(FullScreen)")
+        if monitor.waitForAbort(0.5):
+            return
     while player.isPlayingVideo():
         if monitor.waitForAbort(0.5):
             return
