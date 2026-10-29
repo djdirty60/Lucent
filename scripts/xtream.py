@@ -93,6 +93,46 @@ def check(server, user, password):
     return True, "  ·  ".join(parts)
 
 
+def probe_m3u(m3u):
+    """Fetch the channel list ourselves: (number of channels, note). Separates 'the provider gives nothing' from
+    'IPTV Simple does not pick it up'."""
+    try:
+        req = urllib.request.Request(m3u, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            head = resp.read(6 * 1024 * 1024).decode("utf-8", "replace")
+    except Exception as error:  # noqa: BLE001
+        return -1, t(f"the server did not give the channel list ({type(error).__name__})",
+                     f"de server gaf de zenderlijst niet ({type(error).__name__})")
+    if "#EXTM3U" not in head[:2000]:
+        return 0, t("the answer is not a channel list (M3U)", "het antwoord is geen zenderlijst (M3U)")
+    return head.count("#EXTINF"), ""
+
+
+def strip_secrets(text):
+    return re.sub(r"(username|password)=[^&\s\"']*", r"\1=***", text)
+
+
+def iptv_log_lines(limit=3):
+    """What IPTV Simple complained about lately (Kodi's log, without any logins)."""
+    try:
+        path = xbmcvfs.translatePath("special://logpath/kodi.log")
+        with open(path, "rb") as fh:
+            fh.seek(0, 2)
+            size = fh.tell()
+            fh.seek(max(0, size - 600 * 1024))
+            tail = fh.read().decode("utf-8", "replace").splitlines()
+    except Exception:  # noqa: BLE001
+        return []
+    out = []
+    for line in reversed(tail):
+        low = line.lower()
+        if "iptvsimple" in low and ("error" in low or "unable" in low or "fail" in low or "warning" in low):
+            out.append(strip_secrets(line.split("]: ", 1)[-1].split(": ", 1)[-1])[:140])
+            if len(out) >= limit:
+                break
+    return out
+
+
 def links(server, user, password, output):
     cred = {"username": user, "password": password}
     m3u = f"{server}/get.php?{urllib.parse.urlencode(dict(cred, type='m3u_plus', output=output))}"
@@ -265,6 +305,17 @@ def run():
     if not path:
         return
     m3u, epg = links(server, user, password, output)
+    busy = xbmcgui.DialogProgress()
+    busy.create("Xtream", t("Fetching the channel list from the server…", "Zenderlijst ophalen bij de server…"))
+    count, note = probe_m3u(m3u)
+    busy.close()
+    if count <= 0:
+        if not dialog.yesno("Xtream", t(f"Channel list: {note}.", f"Zenderlijst: {note}.") + "\n\n" +
+                            t("IPTV Simple will not get channels from this either. Save anyway?",
+                              "IPTV Simple krijgt hier ook geen zenders uit. Toch opslaan?")):
+            return
+    else:
+        message += "\n" + t(f"Channel list: {count} channels", f"Zenderlijst: {count} zenders")
     try:
         apply(path, fresh, server, m3u, epg, output)
     except Exception as error:  # noqa: BLE001
@@ -287,6 +338,10 @@ def run():
     why = t("IPTV Simple did not come back on.", "IPTV Simple is niet meer aangegaan.") if state == "off" else \
         t("IPTV Simple is on, but no channels came in yet (a big list can take a minute).",
           "IPTV Simple staat aan, maar er zijn nog geen zenders binnen (een grote lijst kan een minuut duren).")
+    said = iptv_log_lines()
+    if said:
+        why += "\n" + t("IPTV Simple says: ", "IPTV Simple meldt: ") + " | ".join(said)
+    log(f"no channels after setup; iptvsimple log: {said}")
     if dialog.yesno("Xtream", why + "\n\n" + t("The settings are saved. Restart Kodi now so it loads the channels cleanly?",
                                                  "De instellingen zijn opgeslagen. Kodi nu opnieuw starten, zodat hij de zenders "
                                                  "schoon laadt?")):
