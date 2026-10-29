@@ -21,6 +21,7 @@ DONE = "lucent.setup.done"
 SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
 A4K = "service.subtitles.a4ksubtitles"
+SUBS = "service.subtitles.lucent"
 LIB = "script.lucent.library"
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
 
@@ -147,28 +148,43 @@ def ac_iptv():
     return out
 
 
-def a4k_default():
+def subs_default():
     value = (rpc("Settings.GetSettingValue", {"setting": "subtitles.movie"}) or {}).get("value")
-    return value == A4K
+    return value == (SUBS if has(SUBS) else A4K)
+
+
+def subs_keys():
+    """(OpenSubtitles key + login filled in, SubDL key filled in) of Lucent Ondertitels."""
+    try:
+        import xbmcaddon
+        addon = xbmcaddon.Addon(SUBS)
+        return (bool(addon.getSetting("os_key").strip() and addon.getSetting("os_user").strip() and addon.getSetting("os_pass")),
+                bool(addon.getSetting("subdl_key").strip()))
+    except Exception:  # noqa: BLE001
+        return False, False
 
 
 def st_subs():
-    if not has(A4K):
-        return "todo", t("A4KSubtitles is not installed", "A4KSubtitles is nog niet geïnstalleerd")
-    parts = [t("A4KSubtitles is the default", "A4KSubtitles is de standaard") if a4k_default()
-             else t("A4KSubtitles is there but not the default", "A4KSubtitles staat erop maar is niet de standaard")]
+    if not has(SUBS):
+        if has(A4K):
+            return "todo", t("A4KSubtitles is used; Lucent Subtitles (faster, more Dutch) is not installed yet",
+                             "A4KSubtitles wordt gebruikt; Lucent Ondertitels (sneller, meer Nederlands) staat er nog niet op")
+        return "todo", t("No subtitle add-on installed", "Geen ondertitel-add-on geïnstalleerd")
+    os_ok, subdl_ok = subs_keys()
+    parts = [t("Lucent Subtitles is the default", "Lucent Ondertitels is de standaard") if subs_default()
+             else t("Lucent Subtitles is not the default yet", "Lucent Ondertitels is nog niet de standaard"),
+             "OpenSubtitles ✓" if os_ok else t("OpenSubtitles: no account", "OpenSubtitles: geen account"),
+             "SubDL ✓" if subdl_ok else t("SubDL: no key", "SubDL: geen sleutel")]
     parts.append(t("searching automatically", "zoekt automatisch") if cond("Skin.HasSetting(nuvio.autosubs)")
                  else t("not searching automatically", "zoekt niet automatisch"))
-    if xbmc.getInfoLabel("Skin.String(lucent.gemini.key)"):
-        parts.append(t("AI translation ready", "AI-vertalen klaar"))
-    return ("ok" if a4k_default() else "todo"), "  ·  ".join(parts)
+    return ("ok" if subs_default() and (os_ok or subdl_ok) else "todo"), "  ·  ".join(parts)
 
 
 def ac_subs():
-    if not has(A4K):
-        return [(t("Install A4KSubtitles", "A4KSubtitles installeren"), lambda: install(A4K))]
-    out = []
-    if not a4k_default():
+    if not has(SUBS):
+        return [(t("Install Lucent Subtitles", "Lucent Ondertitels installeren"), lambda: install(SUBS))]
+    out = [(t("Accounts and keys", "Accounts en sleutels"), lambda: run(f"Addon.OpenSettings({SUBS})"))]
+    if not subs_default():
         out.append((t("Make it the default", "Als standaard instellen"), lambda: run("RunScript(special://skin/scripts/subtitles.py,default)")))
     auto = cond("Skin.HasSetting(nuvio.autosubs)")
     out.append((t("Automatic search: on", "Automatisch zoeken: aan") if auto else t("Automatic search: off", "Automatisch zoeken: uit"),
@@ -340,12 +356,14 @@ STEPS = [
       "de versterker (passthrough): Dolby, DTS en Atmos gaan onbewerkt naar je soundbar of receiver - zet dit alleen aan als je die hebt."
       "\n\nHDR en Dolby Vision geeft CoreELEC vanzelf door."), st_play, ac_play),
     ("subs", "icons/subtitles.png", ("Subtitles", "Ondertitels"),
-     ("A4KSubtitles searches several subtitle sites at once. Lucent shows all results in one list, in your language "
-      "first, and can put a subtitle in sync with the video.\n\nOptional: with a free Gemini key (aistudio.google.com) "
-      "Lucent translates the best English subtitle into your language when there is none.",
-      "A4KSubtitles zoekt op meerdere ondertitelsites tegelijk. Lucent toont alles in één lijst, jouw taal eerst, en kan "
-      "een ondertitel gelijkzetten met de video.\n\nOptioneel: met een gratis Gemini-sleutel (aistudio.google.com) vertaalt "
-      "Lucent de beste Engelse ondertitel naar jouw taal als er geen is."), st_subs, ac_subs),
+     ("Lucent Subtitles asks OpenSubtitles, SubDL and Podnapisi at the same time and puts the subtitles that fit your "
+      "video exactly first. Make two free accounts and fill them in under 'Accounts and keys':\n"
+      "1. opensubtitles.com: sign up, then Profile > API consumers > New consumer (the API key) - plus your user name and password.\n"
+      "2. subdl.com: sign up, then Account > API key.\nOptional: a free Gemini key (aistudio.google.com) translates English subtitles.",
+      "Lucent Ondertitels vraagt OpenSubtitles, SubDL en Podnapisi tegelijk en zet de ondertitels die precies bij je video "
+      "passen bovenaan. Maak twee gratis accounts en vul ze in bij 'Accounts en sleutels':\n"
+      "1. opensubtitles.com: aanmelden, dan Profiel > API consumers > New consumer (de API-sleutel) - plus je gebruikersnaam en wachtwoord.\n"
+      "2. subdl.com: aanmelden, dan Account > API-sleutel.\nOptioneel: een gratis Gemini-sleutel (aistudio.google.com) vertaalt Engelse ondertitels."), st_subs, ac_subs),
     ("library", "icons/library.png", ("Lucent Library", "Lucent Bibliotheek"),
      ("Lucent Library turns your Trakt collection into Kodi's own library: films and series with their own pages, "
       "'Continue watching' and 'Next episode' rows, and scores.\n\nImportant: first load your whole collection in Seren "

@@ -7,6 +7,7 @@
     <onload>ClearProperty(lucent.kids.ok,home)</onload>
     <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">RunScript(special://skin/scripts/settings.py,litecheck)</onload>
     <onload condition="[Skin.HasSetting(lucent.lite) + String.IsEmpty(Skin.String(lucent.lite.built))] | [!Skin.HasSetting(lucent.lite) + !String.IsEmpty(Skin.String(lucent.lite.built))]">RunScript(special://skin/scripts/settings.py,litebuild)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.subs.switched)) + System.HasAddon(service.subtitles.lucent)">RunScript(special://skin/scripts/subtitles.py,switch)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/migrate.py)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + String.IsEmpty(Skin.String(lucent.addonw4))">RunScript(special://skin/scripts/menu.py,addons)</onload>

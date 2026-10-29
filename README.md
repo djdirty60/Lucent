@@ -71,7 +71,8 @@ A **Sport** tab with games from almost 200 competitions (football worldwide, NBA
 A **TV** tab with your IPTV channels: groups on the left, channels with logo and number, a timeline with the programmes, a header with the focused programme and a live preview. A *Favourite group* opens first every time. The live TV player has its own compact info bar (channel, LIVE, quality, score, now and next) and a menu with channel up/down, pause, record, subtitles, audio and recent channels.
 
 ### Subtitles and updates
-- **A4KSubtitles support** – a *Search subtitles* button in the player menu and optional automatic search when a film or episode starts without subtitles in your language.
+- **Lucent Subtitles** – Lucent's own subtitle add-on (installed with the skin): asks OpenSubtitles, SubDL and Podnapisi at the same time with a time limit, puts subtitles that fit your exact video first (file hash and release name), finds season packs and saves everything as UTF-8. Needs a free OpenSubtitles account with an API key (*Profile → API consumers*) and a free SubDL API key; Podnapisi works without. Fill them in via the setup assistant or *Skin settings → Integrations → Subtitle add-on settings*.
+- A *Search subtitles* button in the player menu and optional automatic search when a film or episode starts without subtitles in your language (A4KSubtitles still works too).
 - **Update pop-up** – when a new version is out you can choose *Update now*, *Later* or *Skip this version* (switch in Skin settings → Integrations).
 
 ### Lucent Library (your collection as a Kodi library)
