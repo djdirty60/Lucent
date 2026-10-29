@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent: setup assistant (scripts/setup.py fills it). Steps on the left; on the right what the step is for,
+     how it stands now (a green tick or an orange note) and buttons that set it up. -->
+<window>
+    <defaultcontrol always="true">300</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>120</left>
+            <top>70</top>
+            <include content="GlassPanel">
+                <param name="left">0</param>
+                <param name="top">0</param>
+                <param name="width">1680</param>
+                <param name="height">940</param>
+                <param name="body">modal</param>
+            </include>
+            <!-- heading -->
+            <control type="image">
+                <left>50</left>
+                <top>40</top>
+                <width>56</width>
+                <height>56</height>
+                <aspectratio>keep</aspectratio>
+                <texture>lucent_mark.png</texture>
+            </control>
+            <control type="label">
+                <left>124</left>
+                <top>40</top>
+                <width>700</width>
+                <height>56</height>
+                <font>font32</font>
+                <textcolor>text</textcolor>
+                <label>$INFO[Window.Property(heading)]</label>
+            </control>
+            <!-- the steps -->
+            <control type="list" id="100">
+                <left>50</left>
+                <top>134</top>
+                <width>440</width>
+                <height>760</height>
+                <onright>300</onright>
+                <onleft>noop</onleft>
+                <onup>100</onup>
+                <ondown>100</ondown>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <itemlayout width="440" height="92">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>440</width>
+                        <height>84</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>ListItem.Property(current)</visible>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>22</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>80</left>
+                        <top>0</top>
+                        <width>290</width>
+                        <height>84</height>
+                        <font>font_label_bold</font>
+                        <textcolor>text2</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>370</left>
+                        <top>0</top>
+                        <width>50</width>
+                        <height>84</height>
+                        <font>font13</font>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <textcolor>FF4CC38A</textcolor>
+                        <label>✓</label>
+                        <visible>String.IsEqual(ListItem.Property(state),ok)</visible>
+                    </control>
+                    <control type="label">
+                        <left>370</left>
+                        <top>0</top>
+                        <width>50</width>
+                        <height>84</height>
+                        <font>font13</font>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <textcolor>FFE8A33D</textcolor>
+                        <label>●</label>
+                        <visible>String.IsEqual(ListItem.Property(state),todo)</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="440" height="92">
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>440</width>
+                        <height>84</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>focus</colordiffuse>
+                        <visible>Control.HasFocus(100)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>440</width>
+                        <height>84</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass_strong</colordiffuse>
+                        <visible>!Control.HasFocus(100) + ListItem.Property(current)</visible>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>22</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                        <visible>Control.HasFocus(100)</visible>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>22</top>
+                        <width>40</width>
+                        <height>40</height>
+                        <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
+                        <visible>!Control.HasFocus(100)</visible>
+                    </control>
+                    <control type="label">
+                        <left>80</left>
+                        <top>0</top>
+                        <width>290</width>
+                        <height>84</height>
+                        <font>font_label_bold</font>
+                        <textcolor>on_focus</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(100)</visible>
+                    </control>
+                    <control type="label">
+                        <left>80</left>
+                        <top>0</top>
+                        <width>290</width>
+                        <height>84</height>
+                        <font>font_label_bold</font>
+                        <textcolor>text</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>!Control.HasFocus(100)</visible>
+                    </control>
+                    <control type="label">
+                        <left>370</left>
+                        <top>0</top>
+                        <width>50</width>
+                        <height>84</height>
+                        <font>font13</font>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <textcolor>FF4CC38A</textcolor>
+                        <label>✓</label>
+                        <visible>String.IsEqual(ListItem.Property(state),ok)</visible>
+                    </control>
+                    <control type="label">
+                        <left>370</left>
+                        <top>0</top>
+                        <width>50</width>
+                        <height>84</height>
+                        <font>font13</font>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <textcolor>FFE8A33D</textcolor>
+                        <label>●</label>
+                        <visible>String.IsEqual(ListItem.Property(state),todo)</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="image">
+                <left>530</left>
+                <top>134</top>
+                <width>1</width>
+                <height>760</height>
+                <texture>white.png</texture>
+                <colordiffuse>separator</colordiffuse>
+            </control>
+            <!-- the step itself -->
+            <control type="group">
+                <left>580</left>
+                <top>134</top>
+                <control type="label">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>1050</width>
+                    <height>40</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <label>$INFO[Window.Property(stepno)]</label>
+                </control>
+                <control type="label">
+                    <left>0</left>
+                    <top>40</top>
+                    <width>1050</width>
+                    <height>80</height>
+                    <font>font_heading</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[Window.Property(title)]</label>
+                </control>
+                <control type="textbox">
+                    <left>0</left>
+                    <top>136</top>
+                    <width>1030</width>
+                    <height>300</height>
+                    <font>font_body</font>
+                    <textcolor>text2</textcolor>
+                    <label>$INFO[Window.Property(body)]</label>
+                </control>
+                <!-- how it stands now -->
+                <control type="group">
+                    <top>460</top>
+                    <visible>!String.IsEmpty(Window.Property(status))</visible>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>1030</width>
+                        <height>84</height>
+                        <texture border="20">rr20.png</texture>
+                        <colordiffuse>glass</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>28</left>
+                        <top>30</top>
+                        <width>24</width>
+                        <height>24</height>
+                        <texture>mask_circle.png</texture>
+                        <colordiffuse>$INFO[Window.Property(statecolor)]</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>74</left>
+                        <top>0</top>
+                        <width>930</width>
+                        <height>84</height>
+                        <font>font12</font>
+                        <textcolor>text</textcolor>
+                        <aligny>center</aligny>
+                        <wrapmultiline>true</wrapmultiline>
+                        <label>$INFO[Window.Property(status)]</label>
+                    </control>
+                </control>
+                <!-- what you can do here -->
+                <control type="grouplist" id="300">
+                    <left>0</left>
+                    <top>580</top>
+                    <width>1050</width>
+                    <height>150</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>14</itemgap>
+                    <onleft>100</onleft>
+                    <onright>noop</onright>
+                    <onup>noop</onup>
+                    <ondown>400</ondown>
+                    <control type="button" id="301">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(act1)]</label>
+                        <visible>!String.IsEmpty(Window.Property(act1))</visible>
+                    </control>
+                    <control type="button" id="302">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(act2)]</label>
+                        <visible>!String.IsEmpty(Window.Property(act2))</visible>
+                    </control>
+                    <control type="button" id="303">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(act3)]</label>
+                        <visible>!String.IsEmpty(Window.Property(act3))</visible>
+                    </control>
+                </control>
+                <control type="grouplist" id="400">
+                    <left>0</left>
+                    <top>696</top>
+                    <width>1030</width>
+                    <height>64</height>
+                    <orientation>horizontal</orientation>
+                    <align>right</align>
+                    <itemgap>14</itemgap>
+                    <onleft>100</onleft>
+                    <onright>noop</onright>
+                    <onup>300</onup>
+                    <ondown>noop</ondown>
+                    <control type="button" id="403">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(later)]</label>
+                        <visible>!String.IsEmpty(Window.Property(later))</visible>
+                    </control>
+                    <control type="button" id="401">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(prev)]</label>
+                        <visible>!String.IsEmpty(Window.Property(prev))</visible>
+                    </control>
+                    <control type="button" id="402">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(next)]</label>
+                    </control>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>
