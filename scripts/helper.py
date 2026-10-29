@@ -92,6 +92,12 @@ def run():
             import backup
             backup.auto_backup()
 
+    def channel_filter():
+        import xbmcvfs
+        if xbmcvfs.exists("special://profile/addon_data/skin.lucent/channel_filter.json"):
+            import channels
+            channels.refresh()
+
     def subtitles():
         if cond("Skin.HasSetting(nuvio.autosubs)"):
             if subs["watcher"] is None:
@@ -106,7 +112,8 @@ def run():
         Job("calendar", 120, 60, calendar),
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)
-        Job("xtream list", 24 * 3600, 300, xtream_list),   # the channel list Lucent builds itself: once a day
+        Job("xtream list", 24 * 3600, 300, xtream_list),             # the channel list Lucent builds itself: once a day
+        Job("channel filter", 24 * 3600, 420, channel_filter),       # then the shortened list again, with your choices
     ]
     quick = [Job("subtitles", 30, 5, subtitles)]
     stop = threading.Event()
