@@ -67,9 +67,9 @@ def check(server, user, password):
     data, kind, body = None, "", ""
     for _opt, agent in AGENTS:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": agent})
+            req = urllib.request.Request(url, headers=browser_headers(agent))
             with urllib.request.urlopen(req, timeout=15) as resp:
-                body = resp.read().decode("utf-8", "replace")
+                body = unpack(resp.read(), resp).decode("utf-8", "replace")
             data = json.loads(body or "{}")
             if isinstance(data, dict) and data.get("user_info"):
                 break
@@ -119,12 +119,32 @@ AGENTS = [("", UA), ("VLC/3.0.20 LibVLC/3.0.20", "VLC/3.0.20 LibVLC/3.0.20"),
           ("Kodi/21.0 (Linux)", "Kodi/21.0 (Linux)")]
 
 
-def fetch_head(url, agent):
-    """(HTTP code or exception name, first 6 MB of the answer)"""
+def browser_headers(agent):
+    """What a real browser (and the requests library the IPTV apps use) sends along; some panels check for it."""
+    return {"User-Agent": agent, "Accept": "*/*", "Accept-Language": "en-US,en;q=0.9,nl;q=0.8",
+            "Accept-Encoding": "gzip, deflate", "Connection": "keep-alive"}
+
+
+def unpack(raw, resp):
+    enc = (resp.headers.get("Content-Encoding") or "").lower()
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": agent})
+        if "gzip" in enc or raw[:2] == b"\x1f\x8b":
+            import gzip
+            raw = gzip.decompress(raw)
+        elif "deflate" in enc:
+            import zlib
+            raw = zlib.decompress(raw, -zlib.MAX_WBITS)
+    except Exception:  # noqa: BLE001 - then it was not compressed after all
+        pass
+    return raw
+
+
+def fetch_head(url, agent, limit=6 * 1024 * 1024):
+    """(HTTP code or exception name, text of the answer up to `limit`)"""
+    try:
+        req = urllib.request.Request(url, headers=browser_headers(agent))
         with urllib.request.urlopen(req, timeout=30) as resp:
-            return resp.status, resp.read(6 * 1024 * 1024).decode("utf-8", "replace")
+            return resp.status, unpack(resp.read(limit), resp).decode("utf-8", "replace")
     except urllib.error.HTTPError as error:
         return error.code, ""
     except Exception as error:  # noqa: BLE001
@@ -158,14 +178,21 @@ def probe_m3u(server, user, password, output, busy=None):
                 f"de server weigert de zenderlijst (eerste antwoord: {first})"), "", ""
 
 
+API_NOTES = []                              # what the API answered, for the message when it gives nothing
+
+
 def api(server, user, password, action, agent):
     url = f"{server}/player_api.php?{urllib.parse.urlencode({'username': user, 'password': password, 'action': action})}"
-    code, body = fetch_head(url, agent)
+    code, body = fetch_head(url, agent, limit=40 * 1024 * 1024)
     try:
         data = json.loads(body) if body else None
     except ValueError:
         data = None
-    return data if isinstance(data, list) else []
+    if not isinstance(data, list):
+        said = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", body or "")).strip()[:40]
+        API_NOTES.append(f"{action.replace('get_live_', '')}: {code}{' ' + said if said else ''}")
+        return []
+    return data
 
 
 def own_m3u(server, user, password, output, agent):
@@ -464,9 +491,11 @@ def run():
             epg = epg_url + ("|User-Agent=" + urllib.parse.quote(epg_agent) if epg_agent else "") if epg_url else ""
             if not epg_url:
                 message += "\n" + t("No TV guide: the server refuses it", "Geen tv-gids: de server weigert hem")
-        elif not dialog.yesno("Xtream", t(f"Channel list: {note}.", f"Zenderlijst: {note}.") + "\n\n" +
+        elif not dialog.yesno("Xtream", t(f"Channel list: {note}.", f"Zenderlijst: {note}.") + "\n" +
+                              t("API: ", "API: ") + (" | ".join(API_NOTES[-2:]) or "-") + "\n\n" +
                               t("The server also gives no channels through its API. Save anyway?",
                                 "De server geeft ook via zijn API geen zenders. Toch opslaan?")):
+            log(f"api refused: {API_NOTES[-2:]}")
             return
     else:
         message += "\n" + t(f"Channel list: {count} channels", f"Zenderlijst: {count} zenders")
