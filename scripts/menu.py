@@ -834,7 +834,8 @@ def init():
     pos = get("nuvio.homepos")
     if pos and xbmc.getCondVisibility("Window.IsActive(home)"):
         xbmc.executebuiltin(f"Control.SetFocus(9000,{pos})", True)
-        xbmc.executebuiltin("SetFocus(9100)")
+        if xbmc.getCondVisibility("Control.IsVisible(9991)"):        # only when the start tab has rows already
+            xbmc.executebuiltin("SetFocus(9100)")
 
 
 def addons_once():

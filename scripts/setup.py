@@ -85,9 +85,36 @@ def st_seren():
     return "ok", t(f"Linked to Trakt{' as ' + user if user else ''}", f"Gekoppeld met Trakt{' als ' + user if user else ''}")
 
 
+SEREN_REPO = "repository.nixgates"
+
+
+def install_seren():
+    """Seren is not in Kodi's own repository: first its own repository (Nixgates, offered through the Lucent
+    repository), then Seren from there. Runs in the background; Kodi asks to confirm each install."""
+    import threading
+
+    def go():
+        monitor = xbmc.Monitor()
+        if not has(SEREN_REPO):
+            xbmc.executebuiltin(f"InstallAddon({SEREN_REPO})")
+            for _ in range(120):
+                if has(SEREN_REPO) or monitor.waitForAbort(1):
+                    break
+            if not has(SEREN_REPO):
+                xbmcgui.Dialog().ok("Seren", t("The Seren repository (Nixgates) could not be installed. Update the Lucent "
+                                               "repository (Add-ons > Check for updates) and try again.",
+                                               "De repository van Seren (Nixgates) kon niet worden geïnstalleerd. Werk de "
+                                               "Lucent-repository bij (Add-ons > Controleren op updates) en probeer het opnieuw."))
+                return
+            xbmc.executebuiltin("UpdateAddonRepos")
+            monitor.waitForAbort(6)
+        xbmc.executebuiltin(f"InstallAddon({SEREN})")
+    threading.Thread(target=go, daemon=True).start()
+
+
 def ac_seren():
     if not has(SEREN):
-        return [(t("Install Seren", "Seren installeren"), lambda: install(SEREN))]
+        return [(t("Install Seren", "Seren installeren"), install_seren)]
     out = []
     if not setting(SEREN, "trakt.auth"):
         out.append((t("Link Trakt", "Trakt koppelen"), lambda: run(f"RunPlugin(plugin://{SEREN}/?action=authTrakt)")))

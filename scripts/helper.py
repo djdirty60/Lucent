@@ -127,6 +127,25 @@ def run():
         xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")
         log("Kodi's subtitle search -> Lucent live list")
 
+    lost = {"n": 0}
+
+    def home_focus():
+        """Home without any focus (for example OK on the Home tab while it has no rows yet, or after closing the setup
+        assistant on a new installation): nothing reacts to the remote any more. Give the focus back to the menu."""
+        if not cond("Window.IsActive(home) + !System.HasVisibleModalDialog + !Window.IsVisible(contextmenu)"):
+            lost["n"] = 0
+            return
+        try:
+            fid = HOME.getFocusId()
+        except RuntimeError:
+            fid = 0
+        stuck = fid == 0 or (fid == 9100 and not cond("Control.IsVisible(9991)"))
+        lost["n"] = lost["n"] + 1 if stuck else 0
+        if lost["n"] >= 2:
+            lost["n"] = 0
+            xbmc.executebuiltin("SetFocus(9000)")
+            log("Home had no focus - back to the menu")
+
     try:
         while not monitor.abortRequested():
             if HOME.getProperty(STOP):
@@ -139,6 +158,10 @@ def run():
                 subtitle_window(now)
             except Exception as error:  # noqa: BLE001
                 log(f"subtitles: {error}")
+            try:
+                home_focus()
+            except Exception as error:  # noqa: BLE001
+                log(f"focus: {error}")
             fast = colour.tick()
             if monitor.waitForAbort(0.25 if fast else 1):
                 break
