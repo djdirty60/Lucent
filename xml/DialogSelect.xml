@@ -7,6 +7,8 @@
         <control type="group">
             <left>460</left>
             <top>90</top>
+            <!-- choosing a picture (Lucent Options > Choose art): the list moves left, a big preview sits next to it -->
+            <animation effect="slide" start="0,0" end="-400,0" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.artpick))">Conditional</animation>
         <include content="GlassPanel">
             <param name="left">0</param>
             <param name="top">0</param>
@@ -264,6 +266,27 @@
                 <height>64</height>
                 <label>$LOCALIZE[222]</label>
             </control>
+            </control>
+        </control>
+        <control type="group">
+            <left>1100</left>
+            <top>90</top>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.artpick))</visible>
+            <include content="GlassPanel">
+                <param name="left">0</param>
+                <param name="top">0</param>
+                <param name="width">760</param>
+                <param name="height">900</param>
+                <param name="body">modal</param>
+            </include>
+            <control type="image">
+                <left>40</left>
+                <top>40</top>
+                <width>680</width>
+                <height>820</height>
+                <aspectratio>keep</aspectratio>
+                <fadetime>200</fadetime>
+                <texture background="true">$VAR[LucentArtPreview]</texture>
             </control>
         </control>
     </controls>

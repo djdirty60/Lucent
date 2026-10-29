@@ -39,6 +39,11 @@
     </variable>
     <!-- season page: scores of the season (Seren), else of its series in the Kodi library (list 5699) -->
     <!-- TV windows (gen_pvr.py): the picture and the "now" title of the focused channel / programme / recording -->
+    <!-- Lucent Options > Choose art: the full picture of the focused choice (the list itself shows a small one) -->
+    <variable name="LucentArtPreview">
+        <value condition="!String.IsEmpty(Container(6).ListItem.Property(full))">$INFO[Container(6).ListItem.Property(full)]</value>
+        <value>$INFO[Container(6).ListItem.Art(thumb)]</value>
+    </variable>
     <variable name="LucentPvrInfoArt">
         <value condition="!String.IsEmpty(ListItem.EpgEventIcon)">$INFO[ListItem.EpgEventIcon]</value>
         <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>

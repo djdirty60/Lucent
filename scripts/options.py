@@ -149,11 +149,17 @@ def choose_art(item):
         li = xbmcgui.ListItem(f"{labels[pick]} {n}")
         thumb = art.get("previewurl") or art.get("url") or ""
         li.setArt({"thumb": thumb, "icon": thumb})
+        li.setProperty("full", art.get("url") or thumb)          # the big preview next to the list
         entries.append(li)
     if len(entries) == 1:
         xbmcgui.Dialog().notification(tr("options"), tr("nothing"), xbmcgui.NOTIFICATION_INFO, 3000)
         return False
-    choice = xbmcgui.Dialog().select(labels[pick], entries, useDetails=True)
+    home = xbmcgui.Window(10000)
+    home.setProperty("lucent.artpick", kind)                     # DialogSelect: list to the left, big preview beside it
+    try:
+        choice = xbmcgui.Dialog().select(labels[pick], entries, useDetails=True)
+    finally:
+        home.clearProperty("lucent.artpick")
     if choice < 0:
         return False
     value = None if choice == 0 else found[choice - 1].get("url")
