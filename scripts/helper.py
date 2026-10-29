@@ -98,6 +98,14 @@ def run():
             import channels
             channels.refresh()
 
+    def catchup_tick():
+        if cond("Skin.HasSetting(lucent.catchup.off)"):
+            return
+        if subs.get("catchup") is None:
+            import catchup
+            subs["catchup"] = catchup.Watcher()            # a Kodi player listener, like the subtitle one
+        subs["catchup"].tick()
+
     def subtitles():
         if cond("Skin.HasSetting(nuvio.autosubs)"):
             if subs["watcher"] is None:
@@ -115,7 +123,7 @@ def run():
         Job("xtream list", 24 * 3600, 300, xtream_list),             # the channel list Lucent builds itself: once a day
         Job("channel filter", 24 * 3600, 420, channel_filter),       # then the shortened list again, with your choices
     ]
-    quick = [Job("subtitles", 30, 5, subtitles)]
+    quick = [Job("subtitles", 30, 5, subtitles), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
     stop = threading.Event()
 
     def beat():
