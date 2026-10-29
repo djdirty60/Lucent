@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-    <visible>![Window.IsActive(videoosd) | Window.IsActive(fullscreeninfo)] + [Player.Seeking | Player.HasPerformedSeek(3) | [Player.Paused + !Player.Caching] | Player.Forwarding | Player.Rewinding | !String.IsEmpty(Player.SeekNumeric)] + !Window.IsActive(sliderdialog) + Window.IsActive(fullscreenvideo)</visible>
+    <visible>![Window.IsActive(videoosd) | Window.IsActive(fullscreeninfo)] + [Player.Seeking | Player.HasPerformedSeek(3) | [Player.Paused + !Player.Caching] | Player.Forwarding | Player.Rewinding | !String.IsEmpty(Player.SeekNumeric)] + !Window.IsActive(sliderdialog) + !Window.IsActive(subtitlesearch) + !Window.IsActive(Lucent_Subtitles.xml) + !System.HasActiveModalDialog + Window.IsActive(fullscreenvideo)</visible>
     <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
     <animation effect="fade" start="100" end="0" time="300">WindowClose</animation>
     <controls>
@@ -225,6 +225,9 @@
                 </control>
             </control>
         </control>
-        <include>NuvioStatsPanel</include>
+        <control type="group"><!-- statistics: drawn once, by the top-most player screen -->
+            <visible>!Window.IsVisible(videoosd) + !Window.IsVisible(fullscreeninfo)</visible>
+            <include>NuvioStatsPanel</include>
+        </control>
     </controls>
 </window>

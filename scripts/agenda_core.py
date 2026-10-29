@@ -37,7 +37,6 @@ IMG = "https://image.tmdb.org/t/p/"
 TVMAZE = "https://api.tvmaze.com/"
 SEREN = "plugin://plugin.video.seren/"
 HOME = xbmcgui.Window(10000)
-RUNNING = "nuvio.agenda.service"      # heartbeat of the background helper
 HEADING = "Lucent"
 
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
@@ -105,9 +104,8 @@ def month_title(d):
 def ep_code(ev):
     if ev.get("kind") != "tv":
         return ""
-    prefix = "S" if not _NL else "S"
     suffix = "E" if not _NL else "A"
-    return f"{prefix}{ev['season']} {suffix}{ev['episode']}"
+    return f"S{ev['season']} {suffix}{ev['episode']}"
 
 
 def number(value):
@@ -116,23 +114,38 @@ def number(value):
 
 
 # ----------------------------------------------------------------------------- storage
+def _read_one(path, default):
+    if not xbmcvfs.exists(path):
+        return None
+    with xbmcvfs.File(path) as fh:
+        data = json.loads(fh.read())
+    return data if isinstance(data, type(default)) else None
+
+
 def read_json(path, default):
-    try:
-        if not xbmcvfs.exists(path):
-            return default
-        with xbmcvfs.File(path) as fh:
-            raw = fh.read()
-        data = json.loads(raw)
-        return data if isinstance(data, type(default)) else default
-    except Exception as error:  # noqa: BLE001 - a broken file must never break the skin
-        log(f"cannot read {path}: {error}")
-        return default
+    for candidate in (path, path + ".tmp"):        # .tmp: a write that was cut off (power loss) left the old file broken
+        try:
+            data = _read_one(candidate, default)
+            if data is not None:
+                return data
+        except Exception as error:  # noqa: BLE001 - a broken file must never break the skin
+            log(f"cannot read {candidate}: {error}")
+    return default
 
 
 def write_json(path, data):
+    """Write to a temporary file first and only then put it in place, so a cut-off write never empties a list."""
     xbmcvfs.mkdirs(DATA)
-    with xbmcvfs.File(path, "w") as fh:
-        fh.write(json.dumps(data, ensure_ascii=False))
+    tmp = path + ".tmp"
+    with xbmcvfs.File(tmp, "w") as fh:
+        ok = fh.write(json.dumps(data, ensure_ascii=False))
+    if ok is False:
+        raise OSError(f"cannot write {tmp}")
+    if xbmcvfs.exists(path):
+        xbmcvfs.delete(path)                        # rename does not overwrite on every system
+    if not xbmcvfs.rename(tmp, path):
+        xbmcvfs.copy(tmp, path)
+        xbmcvfs.delete(tmp)
 
 
 def load_follow():
@@ -383,8 +396,11 @@ def sync_trakt(force=False):
 
 
 # ----------------------------------------------------------------------------- the cache
-def refresh(force=False, only=None):
-    """Bring the episode cache up to date for the shows in the calendar. Returns True when something changed."""
+def refresh(force=False, only=None, limit=None):
+    """Bring the episode cache up to date for the shows in the calendar. Returns True when something changed.
+
+    limit: ask the internet for at most this many shows (the oldest first); the background helper uses a few per
+    round so it never sits for minutes on a long list."""
     if not only:
         try:
             sync_trakt(force)
@@ -395,12 +411,17 @@ def refresh(force=False, only=None):
     for key in [k for k in cache["shows"] if k not in store["shows"]]:
         del cache["shows"][key]
         changed = True
-    for key, rec in store["shows"].items():
+    asked = 0
+    for key in sorted(store["shows"], key=lambda k: cache["shows"].get(k, {}).get("fetched", 0)):
+        rec = store["shows"][key]
         entry = cache["shows"].get(key)
         if only and key != only:
             continue
         if not (force or not entry or time.time() - entry.get("fetched", 0) > TTL):
             continue
+        if limit and asked >= limit:
+            break
+        asked += 1
         try:
             events, maze = fetch(rec)
         except Exception as error:  # noqa: BLE001 - keep the old data, try again in a while
@@ -564,7 +585,11 @@ def due_events(now, store, events):
     out = []
     for ev in events:
         rec = store["shows"].get(ev["show"])
-        if not rec or not rec.get("notify", False) or ev["key"] in store["notified"]:
+        if not rec or ev["key"] in store["notified"]:
+            continue
+        films_auto = ev["kind"] == "movie" and rec.get("source") == "trakt" \
+            and not xbmc.getCondVisibility("Skin.HasSetting(lucent.films.notify.off)")
+        if not rec.get("notify", False) and not films_auto:
             continue
         if ev["kind"] == "movie" and not ev.get("digital"):
             continue
@@ -588,23 +613,51 @@ def busy_now():
                                   " | Window.IsActive(fullscreenvideo)")
 
 
+def providers_line(tmdb_id):
+    """'Watch on Netflix, Videoland' for a film (TMDB / JustWatch), '' when unknown."""
+    if not tmdb_id:
+        return ""
+    try:
+        result = (info.tmdb(f"movie/{tmdb_id}/watch/providers").get("results") or {}).get(info._region()) or {}
+    except Exception as error:  # noqa: BLE001
+        log(f"providers: {error}")
+        return ""
+    names = []
+    for group in ("flatrate", "free", "ads", "rent"):
+        for p in sorted(result.get(group) or [], key=lambda p: p.get("display_priority", 99)):
+            if p.get("provider_name") and p["provider_name"] not in names:
+                names.append(p["provider_name"])
+    if not names:
+        return ""
+    return ("Te zien op " if _NL else "Watch on ") + ", ".join(names[:3])
+
+
 def announce(ev):
     """Ask 'Watch now / Later'. Returns True when the user wants to watch."""
     movie = ev["kind"] == "movie"
     code = "" if movie else f" · {ep_code(ev)}" + (f" · {ev['title']}" if ev["title"] else "")
     text = f"[B]{ev['name']}[/B]{code}\n\n{tr('movie_out' if movie else 'ep_out')}"
-    return xbmcgui.Dialog().yesno(tr("new_movie" if movie else "new_ep"), text, nolabel=tr("later"), yeslabel=tr("watch_now"))
+    if movie:
+        where = providers_line(ev.get("tmdb"))
+        if where:
+            text += f"\n{where}"
+    return xbmcgui.Dialog().yesno(tr("new_movie" if movie else "new_ep"), text, nolabel=tr("later"), yeslabel=tr("watch_now"),
+                               autoclose=60000)   # no answer within a minute counts as "later"
 
 
 def check_notifications():
     """One round of the background helper. Returns the number of pop-ups shown."""
     if not notifications_enabled():
         return 0
+    try:
+        sync_trakt()                                # has its own wait time; also works before anything is followed
+    except Exception as error:  # noqa: BLE001
+        log(f"sync: {error}")
     store = load_follow()
     if not store["shows"]:
         return 0
     if stale():
-        refresh()
+        refresh(limit=5)
     store = load_follow()
     shown = 0
     for ev in due_events(datetime.datetime.now(), store, all_events())[:3]:
@@ -623,30 +676,3 @@ def check_notifications():
             store["snooze"][ev["key"]] = [time.time() + 6 * 3600, count]
         write_json(FOLLOW_PATH, store)
     return shown
-
-
-def running():
-    try:
-        return time.time() - float(HOME.getProperty(RUNNING) or 0) < 900
-    except ValueError:
-        return False
-
-
-def run_service():
-    """Background helper, started from the Home screen (like the trailer helper)."""
-    if running():
-        return
-    monitor = xbmc.Monitor()
-    log("service started")
-    HOME.setProperty(RUNNING, f"{time.time():.1f}")
-    if monitor.waitForAbort(60):      # let Kodi finish starting up first
-        return
-    while not monitor.abortRequested():
-        HOME.setProperty(RUNNING, f"{time.time():.1f}")
-        try:
-            check_notifications()
-        except Exception as error:  # noqa: BLE001 - never die silently in a loop
-            log(f"service error: {error}")
-        if monitor.waitForAbort(120):
-            break
-    HOME.clearProperty(RUNNING)

@@ -74,6 +74,13 @@ A **TV** tab with your IPTV channels: groups on the left, channels with logo and
 - **A4KSubtitles support** – a *Search subtitles* button in the player menu and optional automatic search when a film or episode starts without subtitles in your language.
 - **Update pop-up** – when a new version is out you can choose *Update now*, *Later* or *Skip this version* (switch in Skin settings → Integrations).
 
+### Lucent Library (your collection as a Kodi library)
+**Lucent Library** (`script.lucent.library`, installed with the skin) turns your Trakt collection into Kodi's own library: films and series as small `.strm` files that play through Seren, kept up to date in the background.
+
+> **Important:** first load your **whole collection in Seren** – open *Movies > My movies (collection)* and *TV shows > My shows (collection)* in Seren and wait until everything is in. Lucent Library only takes over what Seren already knows; titles Seren has not loaded yet are added on a later run.
+
+Settings: *Skin settings > Integrations > Lucent Library* (update now, update every 6/12/24 hours, watched marks to Trakt, Surprise me).
+
 ### Also in the home menu
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 

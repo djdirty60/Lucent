@@ -5,7 +5,6 @@ Kodi closes the page when the Trailer button starts the video, so afterwards you
 and not on the page. This helper is started by the Trailer button, waits until the trailer has started and
 ended (or you pressed Back), and then opens the page again for the item that is still selected underneath.
 """
-import time
 
 import xbmc
 

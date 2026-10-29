@@ -9,7 +9,7 @@
 <include content="GlassPanel"><param name="left">0</param><param name="top">0</param><param name="width">1140</param><param name="height">740</param><param name="body">modal</param></include>
 <control type="image"><left>0</left><top>0</top><width>1140</width><height>160</height><texture border="20">rr20.png</texture><colordiffuse>$INFO[Window.Property(club.col)]</colordiffuse></control>
 <control type="image"><left>0</left><top>0</top><width>1140</width><height>160</height><texture border="20">rr20.png</texture><colordiffuse>55000000</colordiffuse></control>
-<control type="image"><left>44</left><top>24</top><width>112</width><height>112</height><aspectratio>keep</aspectratio><texture>$INFO[Window.Property(club.logo)]</texture></control>
+<control type="image"><left>44</left><top>24</top><width>112</width><height>112</height><aspectratio>keep</aspectratio><texture background="true">$INFO[Window.Property(club.logo)]</texture></control>
 <control type="label"><left>190</left><top>28</top><width>900</width><height>64</height><font>font45</font><textcolor>text</textcolor><label>$INFO[Window.Property(club.name)]</label></control>
 <control type="label"><left>190</left><top>94</top><width>900</width><height>40</height><font>font12</font><textcolor>text2</textcolor><label>$INFO[Window.Property(club.sub)]</label></control>
 <control type="group"><left>44</left><top>176</top><width>1052</width><height>120</height><visible>!String.IsEmpty(Window.Property(club.now))</visible><control type="label"><left>0</left><top>0</top><width>400</width><height>30</height><font>font_tiny</font><textcolor>text4</textcolor><label>$INFO[Window.Property(club.t.now)]</label></control>

@@ -32,7 +32,10 @@
                 <label>$LOCALIZE[31077]$INFO[Player.CacheLevel,  ,%]</label>
             </control>
         </control>
-        <include>NuvioStatsPanel</include>
+        <control type="group"><!-- statistics: drawn once, by the top-most player screen -->
+            <visible>!Window.IsVisible(videoosd) + !Window.IsVisible(fullscreeninfo) + !Window.IsVisible(seekbar)</visible>
+            <include>NuvioStatsPanel</include>
+        </control>
         <!-- Codec info labels (filled by Kodi) -->
         <control type="group">
             <left>96</left>

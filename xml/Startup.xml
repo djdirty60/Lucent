@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Start of Kodi: the Lucent moon rises with a glow (about 3 seconds), then the start window.
+     Skin settings > Appearance > Intro at start switches it off. -->
 <window>
-    <onload>ReplaceWindow($INFO[System.StartupWindow])</onload>
+    <onload condition="Skin.HasSetting(lucent.intro.off)">ReplaceWindow($INFO[System.StartupWindow])</onload>
+    <onload condition="!Skin.HasSetting(lucent.intro.off)">AlarmClock(lucentintro,ReplaceWindow($INFO[System.StartupWindow]),00:03,silent)</onload>
     <controls>
         <control type="image">
             <left>0</left>
@@ -10,12 +13,55 @@
             <texture>white.png</texture>
             <colordiffuse>bg</colordiffuse>
         </control>
-        <control type="image">
-            <left>912</left>
-            <top>492</top>
-            <width>96</width>
-            <height>96</height>
-            <texture colordiffuse="text">icons/logo.png</texture>
+        <control type="group">
+            <visible>!Skin.HasSetting(lucent.intro.off)</visible>
+            <animation effect="fade" start="100" end="0" time="450" delay="2500">WindowOpen</animation>
+            <!-- glow in the theme colour -->
+            <control type="image">
+                <left>460</left>
+                <top>40</top>
+                <width>1000</width>
+                <height>1000</height>
+                <texture>tint_glow.png</texture>
+                <colordiffuse>glow_bold</colordiffuse>
+                <animation effect="fade" start="0" end="100" time="1200" delay="200" tween="sine" easing="out">WindowOpen</animation>
+                <animation effect="zoom" start="60" end="100" center="960,540" time="1600" delay="200" tween="cubic" easing="out">WindowOpen</animation>
+            </control>
+            <!-- the moon -->
+            <control type="image">
+                <left>810</left>
+                <top>300</top>
+                <width>300</width>
+                <height>300</height>
+                <texture>lucent_mark.png</texture>
+                <animation effect="fade" start="0" end="100" time="900" tween="sine" easing="out">WindowOpen</animation>
+                <animation effect="slide" start="0,60" end="0,0" time="1100" tween="cubic" easing="out">WindowOpen</animation>
+                <animation effect="zoom" start="85" end="100" center="960,450" time="1100" tween="cubic" easing="out">WindowOpen</animation>
+            </control>
+            <!-- name -->
+            <control type="label">
+                <left>0</left>
+                <top>630</top>
+                <width>1920</width>
+                <height>110</height>
+                <font>font60</font>
+                <textcolor>text</textcolor>
+                <align>center</align>
+                <label>Lucent</label>
+                <animation effect="fade" start="0" end="100" time="700" delay="700">WindowOpen</animation>
+                <animation effect="slide" start="0,24" end="0,0" time="700" delay="700" tween="cubic" easing="out">WindowOpen</animation>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>740</top>
+                <width>1920</width>
+                <height>40</height>
+                <font>font10</font>
+                <textcolor>text4</textcolor>
+                <align>center</align>
+                <label>$INFO[System.AddonVersion(skin.lucent)]</label>
+                <animation effect="fade" start="0" end="100" time="600" delay="1200">WindowOpen</animation>
+            </control>
         </control>
     </controls>
 </window>

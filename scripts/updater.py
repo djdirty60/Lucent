@@ -9,11 +9,8 @@ The pop-up offers: Update now / Later / Skip this version. "Update now" refreshe
 import json
 import os
 import re
-import shutil
-import sys
 import time
 import urllib.request
-import zipfile
 
 import xbmc
 import xbmcaddon
@@ -25,8 +22,6 @@ ADDONS_XML = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addon
 ZIPS_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/"
 WATCH = ("skin.lucent", "screensaver.lucent")        # add-ons of this repository that are checked when installed
 STATE_PATH = "special://profile/addon_data/skin.lucent/update_state.json"
-RUNNING = "nuvio.update.running"
-CHECK_EVERY = 6 * 3600
 HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 
@@ -131,7 +126,8 @@ def ask(update):
     if update["notes"]:
         message += "\n\n" + tr("new") + "\n" + update["notes"]
     answer = xbmcgui.Dialog().yesnocustom(tr("title", update["name"], update["version"]), message,
-                                          tr("skip"), tr("later"), tr("now"), defaultbutton=xbmcgui.DLG_YESNO_YES_BTN)
+                                          tr("skip"), tr("later"), tr("now"), autoclose=60000,
+                                          defaultbutton=xbmcgui.DLG_YESNO_YES_BTN)   # no answer within a minute: later
     return {1: "now", 0: "later", 2: "skip"}.get(answer, "later")
 
 
@@ -141,12 +137,15 @@ def download_zip(update):
     target = xbmcvfs.translatePath(f"special://temp/{update['id']}-{update['version']}.zip")
     request = urllib.request.Request(url, headers={"User-Agent": "skin.lucent (Kodi)"})
     with urllib.request.urlopen(request, timeout=60) as response, open(target, "wb") as out:
+        import shutil
         shutil.copyfileobj(response, out)
     return target
 
 
 def unpack(update, zip_path):
     """Replace the add-on folder by the one in the zip (the old one is kept until the new one is in place)."""
+    import shutil
+    import zipfile
     addons = xbmcvfs.translatePath("special://home/addons/")
     staging = os.path.join(addons, f".{update['id']}.new")
     shutil.rmtree(staging, ignore_errors=True)
@@ -198,6 +197,7 @@ def install(update, monitor):
     xbmcgui.Dialog().notification(HEADING, tr("done", update["name"], update["version"]), xbmcgui.NOTIFICATION_INFO, 5000)
     if update["id"] == "skin.lucent":
         monitor.waitForAbort(2)
+        xbmcgui.Window(10000).setProperty("lucent.helper.stop", "1")   # the running helper makes way for the new code
         xbmc.executebuiltin("ReloadSkin()")             # show the new version right away
 
 
@@ -216,9 +216,8 @@ def check(manual=False):
         if not manual and (state.get("skip", {}).get(update["id"]) == update["version"]
                            or state.get("later", {}).get(update["id"], 0) > time.time()):
             continue
-        if xbmc.getCondVisibility("Player.HasMedia"):    # never interrupt a film
-            if not manual:
-                continue
+        if not manual and xbmc.getCondVisibility("Player.HasMedia | System.ScreenSaverActive | System.HasModalDialog"):
+            continue                                     # never interrupt a film, the screensaver or another dialog
         shown = True
         choice = ask(update)
         if choice == "now":
@@ -232,42 +231,6 @@ def check(manual=False):
         xbmcgui.Dialog().notification(HEADING, tr("uptodate"), xbmcgui.NOTIFICATION_INFO, 3000)
 
 
-def running():
-    try:
-        return time.time() - float(HOME.getProperty(RUNNING) or 0) < 30 * 60
-    except ValueError:
-        return False
-
-
-def run_service():
-    if running():
-        return
-    monitor = xbmc.Monitor()
-    HOME.setProperty(RUNNING, f"{time.time():.1f}")
-    if monitor.waitForAbort(90):                         # let Kodi finish starting up first
-        return
-    while not monitor.abortRequested():
-        HOME.setProperty(RUNNING, f"{time.time():.1f}")
-        if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.update.off)"):
-            try:
-                check()
-            except Exception as error:  # noqa: BLE001 - never die silently in a loop
-                log(f"service error: {error}")
-        waited = 0
-        while waited < CHECK_EVERY and not monitor.abortRequested():
-            HOME.setProperty(RUNNING, f"{time.time():.1f}")
-            if monitor.waitForAbort(600):
-                break
-            waited += 600
-        else:
-            continue
-        break
-    HOME.clearProperty(RUNNING)
-
 
 if __name__ == "__main__":
-    arg = sys.argv[1] if len(sys.argv) > 1 else "check"
-    if arg == "service":
-        run_service()
-    else:
-        check(manual=True)
+    check(manual=True)

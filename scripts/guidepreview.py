@@ -100,4 +100,7 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    finally:
+        epg.restore_fullscreen()            # your own "switch to full screen" setting back, however the guide was left

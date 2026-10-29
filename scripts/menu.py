@@ -190,7 +190,12 @@ WIDGETS_SEREN = [
     (("Shows in progress", "Series die je kijkt"), seren("action=showsMyProgress"), "poster"),
     (("Watched movies", "Bekeken films"), seren("action=myWatchedMovies"), "poster"),
 ]
+LIB = "plugin://script.lucent.library/?action=lib&kind="
 WIDGETS_LIBRARY = [
+    (("Continue watching (library)", "Verder kijken (bibliotheek)"), LIB + "continue", "land"),
+    (("Next episode (library)", "Volgende aflevering (bibliotheek)"), LIB + "nextup", "land"),
+    (("Series with new episodes", "Series met nieuwe afleveringen"), LIB + "newepisodes", "poster"),
+    (("New in your collection", "Nieuw in je collectie"), LIB + "newin", "poster"),
     ("w_recent_m", "videodb://recentlyaddedmovies/", "poster"),
     ("w_recent_e", "videodb://recentlyaddedepisodes/", "land"),
     ("w_inprog_s", "videodb://inprogresstvshows/", "poster"),

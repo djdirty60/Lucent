@@ -284,31 +284,48 @@ def channel_path(cid):
 
 
 FULLSCREEN_SETTING = "pvrplayback.switchtofullscreenchanneltypes"
-_SAVED = {"value": None, "token": 0}
+SAVED_PROP = "lucent.fs.saved"          # "<your own value>|<time>" on the Kodi home window, so it survives this script
 
 
 def play_windowed(cid, hold=8):
     """Start a channel without Kodi switching to full screen: the PVR 'switch to full screen' setting is set to Never
-    for a few seconds. False when this Kodi has no such setting."""
+    for a few seconds. Your own value is kept on the home window and always put back (also when this script ends
+    early: restore_fullscreen() from the caller, and the helper as a safety net). False when Kodi has no such setting."""
+    home = xbmcgui.Window(10000)
     current = rpc("Settings.GetSettingValue", {"setting": FULLSCREEN_SETTING}).get("value")
     if current is None:
         return False
-    if _SAVED["value"] is None:
-        _SAVED["value"] = current
-    _SAVED["token"] += 1
-    token = _SAVED["token"]
+    saved = home.getProperty(SAVED_PROP)
+    original = saved.split("|")[0] if saved else str(current)
+    token = f"{time.time():.3f}"
+    home.setProperty(SAVED_PROP, f"{original}|{token}")
     if current != 0:
         rpc("Settings.SetSettingValue", {"setting": FULLSCREEN_SETTING, "value": 0})
     rpc("Player.Open", {"item": {"channelid": int(cid)}})
 
     def put_back():
         time.sleep(hold)
-        if _SAVED["token"] == token and _SAVED["value"] is not None:
-            rpc("Settings.SetSettingValue", {"setting": FULLSCREEN_SETTING, "value": _SAVED["value"]})
-            _SAVED["value"] = None
+        if home.getProperty(SAVED_PROP).endswith("|" + token):     # no newer preview started in the meantime
+            restore_fullscreen()
     import threading
     threading.Thread(target=put_back, daemon=True).start()
     return True
+
+
+def restore_fullscreen(min_age=0):
+    """Put your own 'switch to full screen' value back. min_age: only when the preview is at least this old (seconds)."""
+    home = xbmcgui.Window(10000)
+    saved = home.getProperty(SAVED_PROP)
+    if not saved:
+        return
+    value, _, when = saved.partition("|")
+    try:
+        if min_age and time.time() - float(when or 0) < min_age:
+            return
+        rpc("Settings.SetSettingValue", {"setting": FULLSCREEN_SETTING, "value": int(value)})
+    except ValueError:
+        pass
+    home.clearProperty(SAVED_PROP)
 
 
 def play(cid):

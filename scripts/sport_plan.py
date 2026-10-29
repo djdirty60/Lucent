@@ -4,7 +4,7 @@
   sport_fix.json    channels you chose yourself: per game, per competition or per team
   sport_plan.json   reminders (remind | switch), recordings, and the 'automatic reminders for my teams' switch
 
-The background helper (RunScript(special://skin/scripts/sport.py,service)) calls check() every 30 seconds:
+The Lucent helper (helper.py) calls tick() -> check() every 30 seconds:
   remind   a notification 5 minutes before kick-off
   switch   1 minute before kick-off a question with 10 seconds to cancel, then the channel opens
   record   an instant recording on the channel from 2 minutes before kick-off for the chosen number of hours
@@ -21,7 +21,6 @@ import sport_epg as epg
 
 FIX_PATH = ac.DATA + "sport_fix.json"
 PLAN_PATH = ac.DATA + "sport_plan.json"
-RUNNING = "nuvio.sport.running"
 REMIND_LEAD = 5 * 60
 SWITCH_LEAD = 60
 RECORD_LEAD = 2 * 60
@@ -297,24 +296,122 @@ def send_notice(text):
     xbmcgui.Dialog().notification(sc.t("title"), text, xbmcgui.NOTIFICATION_INFO, 8000, True)
 
 
-def run_service():
-    if time.time() - float(HOME.getProperty(RUNNING) or 0) < 120:
-        return
-    monitor = xbmc.Monitor()
-    last_refresh = 0
-    while not monitor.abortRequested():
-        HOME.setProperty(RUNNING, f"{time.time():.1f}")
+# ----------------------------------------------------------------------------- the sport card on Home
+HS = "lucent.hs."
+HS_KEYS = ("show", "id", "title", "hname", "aname", "hlogo", "alogo", "hcol", "acol", "when", "live", "score", "league",
+           "lglogo", "channel", "cid")
+_HS_CHAN = {}          # event id -> (time asked, channel id)
+_HS_REFRESH = [0.0]
+HS_BEFORE = 6 * 3600   # show a game from 6 hours before kick-off
+
+
+def _side_colour(side):
+    value = (side.get("color") or "").strip("#")
+    return value.upper() if len(value) == 6 else "2A3441"
+
+
+def home_game(now=None):
+    """The game of a team you follow to show on Home: live first, else the next one today (within 6 hours)."""
+    now = now or time.time()
+    follow = sc.load_follow()
+    if not follow["teams"]:
+        return None
+    today = ac.today()
+    live, coming = [], []
+    for ev in sc.all_cached():
+        if ev["kind"] != "teams":
+            continue
+        if not (sc.is_following_team(follow, ev["home"]) or sc.is_following_team(follow, ev["away"])):
+            continue
+        if ev["state"] == "in":
+            live.append(ev)
+        elif ev["state"] == "pre" and sc.local_day(ev["start"]) == today and ev["start"] - now < HS_BEFORE \
+                and ev["start"] > now - 3 * 3600:
+            coming.append(ev)
+    live.sort(key=lambda e: e["start"])
+    coming.sort(key=lambda e: e["start"])
+    return (live or coming or [None])[0]
+
+
+def _channel_for(ev, now):
+    asked, cid = _HS_CHAN.get(ev["id"], (0, 0))
+    if now - asked > 10 * 60:
         try:
-            plan = load_plan()
-            if sc.has_follow() or plan["remind"] or plan["record"]:
-                if plan["auto"] and time.time() - last_refresh > 15 * 60:
-                    last_refresh = time.time()
-                    sc.refresh()
-                    if time.time() - epg.load().get("fetched", 0) > 6 * 3600 and not xbmc.Player().isPlaying():
-                        epg.scan(abort=monitor.abortRequested)
-                check()
+            cid = best_channel(ev, load_plan()["remind"].get(ev["id"]))
         except Exception as error:  # noqa: BLE001
-            sc.log(f"plan helper: {error}")
-        if monitor.waitForAbort(30):
-            break
-    HOME.clearProperty(RUNNING)
+            sc.log(f"home card channel: {error}")
+            cid = 0
+        _HS_CHAN[ev["id"]] = (now, cid)
+    return cid
+
+
+def home_card(now=None):
+    """Fill Window(home).Property(lucent.hs.*) for the sport card on Home (cleared when there is nothing)."""
+    now = now or time.time()
+    ev = None
+    if not xbmc.getCondVisibility("Skin.HasSetting(lucent.hs.off)"):
+        try:
+            ev = home_game(now)
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"home card: {error}")
+    if ev and (ev["state"] == "in" or ev["start"] - now < 15 * 60) and now - _HS_REFRESH[0] > 120:
+        _HS_REFRESH[0] = now
+        try:
+            sc.refresh(keys=[ev["league"]])          # fresh score / status while the game is (about to be) on
+            ev = home_game(now) or ev
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"home card refresh: {error}")
+    if not ev:
+        for key in HS_KEYS:
+            HOME.clearProperty(HS + key)
+        return
+    cid = _channel_for(ev, now)
+    live = ev["state"] == "in"
+    if live:
+        when = ev.get("status") or "LIVE"
+    else:
+        when = f"{sc.t('today')}  {sc.local_time(ev['start'])}"
+    values = {
+        "id": ev["id"], "title": game_title(ev),
+        "hname": ev["home"].get("short") or ev["home"].get("name", ""), "aname": ev["away"].get("short") or ev["away"].get("name", ""),
+        "hlogo": ev["home"].get("logo", ""), "alogo": ev["away"].get("logo", ""),
+        "hcol": _side_colour(ev["home"]), "acol": _side_colour(ev["away"]),
+        "when": when, "live": "1" if live else "",
+        "score": f"{ev['home'].get('score', '')} – {ev['away'].get('score', '')}" if live else "",
+        "league": sc.league_name_of(ev["league"]),
+        "lglogo": sc.league_logo(ev["league"]),
+        "channel": channel_name(cid) if cid else "", "cid": str(cid or ""),
+    }
+    for key, value in values.items():
+        if HOME.getProperty(HS + key) != value:
+            HOME.setProperty(HS + key, value)
+    HOME.setProperty(HS + "show", "1")
+
+
+def open_home_card():
+    """OK on the sport card: watch the channel, or open the game in Sport when no channel is known."""
+    cid = HOME.getProperty(HS + "cid")
+    if cid.isdigit() and int(cid):
+        epg.play(int(cid))
+        return
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+
+
+def tick(state, monitor):
+    """One round of the sport helper (every 30 seconds): refresh, reminders / switching / recording, the Home card."""
+    try:
+        epg.restore_fullscreen(min_age=60)          # safety net: a preview script that ended before it could put it back
+        plan = load_plan()
+        if sc.has_follow() or plan["remind"] or plan["record"]:
+            if plan["auto"] and time.time() - state.get("refresh", 0) > 15 * 60:
+                state["refresh"] = time.time()
+                sc.refresh()
+                if time.time() - epg.load().get("fetched", 0) > 6 * 3600 and not xbmc.Player().isPlaying():
+                    epg.scan(abort=monitor.abortRequested)
+            check()
+        home_card()
+    except Exception as error:  # noqa: BLE001
+        sc.log(f"plan helper: {error}")
+    finally:
+        epg.forget()                                # do not keep the whole TV guide in the helper's memory
+

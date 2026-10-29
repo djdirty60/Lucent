@@ -2,21 +2,18 @@
 """Lucent: A4KSubtitles as the subtitle service.
 
 RunScript(special://skin/scripts/subtitles.py,default)   make A4KSubtitles the default service for films and series
-RunScript(special://skin/scripts/subtitles.py,service)   background helper (started from Home): when a film or episode (for example from
-                                                         Seren) starts without subtitles in your language, open the subtitle search
-                                                         - only when "Search subtitles automatically" is on in Skin settings
+Watcher: used by the Lucent helper (helper.py) - when a film or episode (for example from Seren) starts without
+subtitles in your language, open the subtitle list - only when "Search subtitles automatically" is on in Skin settings
 The "Search subtitles" button in the player menu opens Kodi's own subtitle search, which then uses that service.
 """
 import json
 import sys
-import time
 
 import xbmc
 import xbmcgui
 
 ADDON_ID = "service.subtitles.a4ksubtitles"
 HOME = xbmcgui.Window(10000)
-RUNNING = "nuvio.subs.running"
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 TEXT = {
     "done": ("A4KSubtitles is now the default subtitle service", "A4KSubtitles is nu de standaard ondertitelservice"),
@@ -89,23 +86,15 @@ class Watcher(xbmc.Player):
         have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
         if have & wanted_codes():
             return
-        xbmc.executebuiltin("ActivateWindow(subtitlesearch)")
+        if xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):
+            xbmc.executebuiltin("ActivateWindow(subtitlesearch)")
+        else:
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")   # Lucent's live list
 
-
-def run_service():
-    if time.time() - float(HOME.getProperty(RUNNING) or 0) < 120:
-        return
-    watcher = Watcher()
-    while not watcher.monitor.abortRequested():
-        HOME.setProperty(RUNNING, f"{time.time():.1f}")
-        if watcher.monitor.waitForAbort(30):
-            break
-    HOME.clearProperty(RUNNING)
 
 
 if __name__ == "__main__":
     arg = sys.argv[1] if len(sys.argv) > 1 else ""
     if arg == "default":
         set_default()
-    elif arg == "service":
-        run_service()
+

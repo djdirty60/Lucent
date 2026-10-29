@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <includes>
+    <!-- Fold state of the skin settings sections -->
+    <variable name="LucentFoldState_2201">
+        <value condition="Skin.HasSetting(lucent.ss.open.2201)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <variable name="LucentFoldState_2505">
+        <value condition="Skin.HasSetting(lucent.ss.open.2505)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <variable name="LucentFoldState_2204">
+        <value condition="Skin.HasSetting(lucent.ss.open.2204)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <variable name="LucentFoldState_2202">
+        <value condition="Skin.HasSetting(lucent.ss.open.2202)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <variable name="LucentFoldState_2203">
+        <value condition="Skin.HasSetting(lucent.ss.open.2203)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <variable name="LucentFoldState_2501">
+        <value condition="Skin.HasSetting(lucent.ss.open.2501)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <variable name="LucentFoldState_2503">
+        <value condition="Skin.HasSetting(lucent.ss.open.2503)">$LOCALIZE[31401]</value>
+        <value>$LOCALIZE[31400]</value>
+    </variable>
+    <!-- /fold -->
+    <!-- Explanation under the title of a Kodi settings page -->
+    <variable name="LucentSettingsSub">
+        <value condition="Window.IsActive(playersettings)">$LOCALIZE[31260]</value>
+        <value condition="Window.IsActive(mediasettings)">$LOCALIZE[31267]</value>
+        <value condition="Window.IsActive(pvrsettings)">$LOCALIZE[31274]</value>
+        <value condition="Window.IsActive(interfacesettings)">$LOCALIZE[31281]</value>
+        <value condition="Window.IsActive(systemsettings)">$LOCALIZE[31287]</value>
+        <value condition="Window.IsActive(servicesettings)">$LOCALIZE[31295]</value>
+    </variable>
     <!-- Templates Kodi clones for every setting row (ids 7-15 are fixed by Kodi) -->
     <include name="SettingTemplates">
         <param name="width">1180</param>
@@ -7,7 +46,7 @@
         <definition>
             <control type="button" id="7">
                 <width>$PARAM[width]</width>
-                <height>72</height>
+                <height>76</height>
                 <font>font_label</font>
                 <textcolor>text2</textcolor>
                 <focusedcolor>on_focus</focusedcolor>
@@ -57,15 +96,15 @@
             <control type="button" id="10">
                 <width>$PARAM[width]</width>
                 <height>68</height>
-                <font>font_label_bold</font>
+                <font>font_label</font>
                 <textcolor>text3</textcolor>
                 <focusedcolor>on_focus</focusedcolor>
                 <selectedcolor>text</selectedcolor>
-                <textoffsetx>28</textoffsetx>
-                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
-                <texturenofocus border="32" colordiffuse="transparent">pill64.png</texturenofocus>
-                <alttexturefocus border="32" colordiffuse="focus">pill64.png</alttexturefocus>
-                <alttexturenofocus border="32" colordiffuse="glass">pill64.png</alttexturenofocus>
+                <textoffsetx>40</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus colordiffuse="transparent">catsel.png</texturenofocus>
+                <alttexturefocus border="20" colordiffuse="focus">rr20.png</alttexturefocus>
+                <alttexturenofocus colordiffuse="focus">catsel.png</alttexturenofocus>
             </control>
         </definition>
     </include>

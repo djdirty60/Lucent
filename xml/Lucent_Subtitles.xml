@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent: live subtitle list (scripts/subs_live.py). Lists 601-608 load the subtitle add-ons in the background
+     (one each, off screen); the script reads them as they arrive and fills list 500. -->
+<window>
+    <defaultcontrol always="true">500</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+
+        <!-- the add-ons, one hidden list each (they load by themselves, all at the same time) -->
+        <control type="group">
+            <left>-3000</left>
+            <top>0</top>
+            <control type="list" id="601"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.1)]</content></control>
+            <control type="list" id="602"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.2)]</content></control>
+            <control type="list" id="603"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.3)]</content></control>
+            <control type="list" id="604"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.4)]</content></control>
+            <control type="list" id="605"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.5)]</content></control>
+            <control type="list" id="606"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.6)]</content></control>
+            <control type="list" id="607"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.7)]</content></control>
+            <control type="list" id="608"><width>10</width><height>10</height><itemlayout height="1" width="10"/><focusedlayout height="1" width="10"/><content>$INFO[Window.Property(src.8)]</content></control>
+        </control>
+
+        <control type="group">
+            <left>300</left>
+            <top>90</top>
+            <include content="GlassPanel"><param name="left">0</param><param name="top">0</param><param name="width">1320</param><param name="height">900</param><param name="body">modal</param></include>
+
+            <!-- header -->
+            <control type="label">
+                <left>56</left><top>40</top><width>900</width><height>60</height>
+                <font>font37_title</font><textcolor>text</textcolor>
+                <label>$LOCALIZE[31597]</label>
+            </control>
+            <control type="label">
+                <left>56</left><top>100</top><width>1000</width><height>36</height>
+                <font>font12</font><textcolor>text3</textcolor>
+                <label>$INFO[Window.Property(title)]</label>
+            </control>
+            <control type="group">
+                <left>1000</left><top>48</top>
+                <visible>!String.IsEmpty(Window.Property(busy))</visible>
+                <include content="Spinner"><param name="size">44</param></include>
+            </control>
+            <control type="label">
+                <left>660</left><top>100</top><width>604</width><height>36</height>
+                <font>font10</font><textcolor>text4</textcolor><align>right</align>
+                <label>$INFO[Window.Property(status)]</label>
+            </control>
+            <control type="image">
+                <left>56</left><top>152</top><width>1208</width><height>2</height>
+                <texture>white.png</texture><colordiffuse>separator</colordiffuse>
+            </control>
+
+            <!-- results -->
+            <control type="list" id="500">
+                <left>40</left><top>172</top><width>1240</width><height>624</height>
+                <onup>500</onup><ondown>9500</ondown><onright>9500</onright>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <itemlayout height="104" width="1240">
+                    <control type="group">
+                        <left>16</left><top>8</top>
+                        <control type="image">
+                            <width>1208</width><height>88</height>
+                            <texture border="20">rr20.png</texture><colordiffuse>0FFFFFFF</colordiffuse>
+                            <visible>!String.IsEmpty(ListItem.Property(mine))</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>22</top><width>88</width><height>44</height>
+                            <texture border="22">pill44.png</texture>
+                            <colordiffuse>$INFO[ListItem.Property(pillcol)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>22</top><width>88</width><height>44</height>
+                            <font>font10_bold</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny>
+                            <label>$INFO[ListItem.Property(code)]</label>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>10</top><width>700</width><height>40</height>
+                            <font>font13_bold</font><textcolor>text2</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>48</top><width>800</width><height>32</height>
+                            <font>font10</font><textcolor>text4</textcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                        <control type="label">
+                            <left>840</left><top>10</top><width>344</width><height>40</height>
+                            <font>font10_bold</font><textcolor>text3</textcolor><align>right</align>
+                            <label>$INFO[ListItem.Property(source)]</label>
+                        </control>
+                        <control type="label">
+                            <left>840</left><top>48</top><width>344</width><height>32</height>
+                            <font>font10</font><textcolor>green</textcolor><align>right</align>
+                            <label>$INFO[ListItem.Property(badges)]</label>
+                        </control>
+                    </control>
+                </itemlayout>
+                <focusedlayout height="104" width="1240">
+                    <control type="group">
+                        <left>16</left><top>8</top>
+                        <control type="image">
+                            <width>1208</width><height>88</height>
+                            <texture border="20">rr20.png</texture><colordiffuse>FFFFFFFF</colordiffuse>
+                            <visible>Control.HasFocus(500)</visible>
+                        </control>
+                        <control type="image">
+                            <width>1208</width><height>88</height>
+                            <texture border="20">rr20.png</texture><colordiffuse>1AFFFFFF</colordiffuse>
+                            <visible>!Control.HasFocus(500)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>22</top><width>88</width><height>44</height>
+                            <texture border="22">pill44.png</texture>
+                            <colordiffuse>$INFO[ListItem.Property(pillcol)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>22</top><width>88</width><height>44</height>
+                            <font>font10_bold</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny>
+                            <label>$INFO[ListItem.Property(code)]</label>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>10</top><width>700</width><height>40</height>
+                            <font>font13_bold</font><textcolor>FF0B1119</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>Control.HasFocus(500)</visible>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>10</top><width>700</width><height>40</height>
+                            <font>font13_bold</font><textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>!Control.HasFocus(500)</visible>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>48</top><width>800</width><height>32</height>
+                            <font>font10</font><textcolor>FF3A4550</textcolor><scroll>true</scroll>
+                            <label>$INFO[ListItem.Label2]</label>
+                            <visible>Control.HasFocus(500)</visible>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>48</top><width>800</width><height>32</height>
+                            <font>font10</font><textcolor>text4</textcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                            <visible>!Control.HasFocus(500)</visible>
+                        </control>
+                        <control type="label">
+                            <left>840</left><top>10</top><width>344</width><height>40</height>
+                            <font>font10_bold</font><textcolor>FF3A4550</textcolor><align>right</align>
+                            <label>$INFO[ListItem.Property(source)]</label>
+                        </control>
+                        <control type="label">
+                            <left>840</left><top>48</top><width>344</width><height>32</height>
+                            <font>font10</font><textcolor>FF2E8B5E</textcolor><align>right</align>
+                            <label>$INFO[ListItem.Property(badges)]</label>
+                        </control>
+                    </control>
+                </focusedlayout>
+            </control>
+
+            <!-- empty / waiting -->
+            <control type="label">
+                <left>56</left><top>420</top><width>1208</width><height>60</height>
+                <font>font13</font><textcolor>text4</textcolor><align>center</align>
+                <label>$INFO[Window.Property(empty)]</label>
+                <visible>Integer.IsEqual(Container(500).NumItems,0)</visible>
+            </control>
+
+            <!-- buttons -->
+            <control type="grouplist" id="9500">
+                <left>56</left><top>812</top><width>1208</width><height>64</height>
+                <orientation>horizontal</orientation><align>right</align><itemgap>16</itemgap>
+                <onup>500</onup>
+                <control type="button" id="9504">
+                    <width>auto</width><height>64</height><font>font12_bold</font><textoffsetx>30</textoffsetx>
+                    <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                    <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                    <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                    <label>$LOCALIZE[31609]</label>
+                </control>
+                <control type="button" id="9503">
+                    <width>auto</width><height>64</height><font>font12_bold</font><textoffsetx>30</textoffsetx>
+                    <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                    <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                    <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                    <label>$LOCALIZE[31607]</label>
+                </control>
+                <control type="button" id="9502">
+                    <width>auto</width><height>64</height><font>font12_bold</font><textoffsetx>30</textoffsetx>
+                    <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                    <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                    <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                    <label>$LOCALIZE[31606]</label>
+                </control>
+                <control type="button" id="9501">
+                    <width>auto</width><height>64</height><font>font12_bold</font><textoffsetx>30</textoffsetx>
+                    <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                    <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                    <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                    <label>$LOCALIZE[31605]</label>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

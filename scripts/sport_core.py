@@ -20,6 +20,7 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 import xbmc
+import xbmcvfs
 
 import agenda_core as ac
 import info
@@ -336,10 +337,12 @@ def _is_transparent_png(raw):
 
 def circuit_png(cid, diagrams):
     """Try to get the track drawing as a PNG with a see-through background; saved locally. Returns the file path or ''."""
-    target = DATA + f"circuit_{cid}.png"
+    target = DATA + f"circuit_{cid}.png"           # Kodi shows this special:// path ...
+    local = xbmcvfs.translatePath(target)           # ... but Python can only open the real path
     try:
-        if _is_transparent_png(open(target, "rb").read()):
-            return target
+        with open(local, "rb") as handle:
+            if _is_transparent_png(handle.read()):
+                return target
     except OSError:
         pass
     candidates = []
@@ -356,7 +359,8 @@ def circuit_png(cid, diagrams):
             with urllib.request.urlopen(request, timeout=20) as response:
                 raw = response.read()
             if _is_transparent_png(raw):
-                with open(target, "wb") as handle:
+                xbmcvfs.mkdirs(DATA)
+                with open(local, "wb") as handle:
                     handle.write(raw)
                 return target
         except Exception as error:  # noqa: BLE001 - try the next address
@@ -443,8 +447,8 @@ def circuit_info(cid, league="f1"):
     if not cid:
         return {}
     known = ac.read_json(CIRCUIT_PATH, {}) or {}
-    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and "png" in known[cid]:
-        return known[cid]
+    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and known[cid].get("pv") == 2:
+        return known[cid]                 # pv 2: the drawing was really looked for (before 1.30.115 it could never be saved)
     path = LEAGUES.get(league, {}).get("path", "racing/f1")
     sport, slug = path.split("/", 1)
     data = espn_get(f"{CORE}{sport}/leagues/{slug}/circuits/{cid}")
@@ -462,7 +466,7 @@ def circuit_info(cid, league="f1"):
     png = circuit_png(cid, data.get("diagrams") or [])
     info_ = {"name": data.get("fullName") or "", "place": place, "png": png, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
              "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
-             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image}
+             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image, "pv": 2}
     if not (info_["name"] or info_["image"]):
         return info_                      # ESPN gave nothing (busy?): do not remember the emptiness, try again next time
     known[cid] = info_
@@ -1065,19 +1069,6 @@ def events_on(day, keys=None):
                 + [t["league"] for t in load_follow()["teams"]])
     return [e for e in all_cached() if e["league"] in shown and local_day(e["start"]) == day]
 
-
-def mine_events():
-    """Games of what you follow (competitions, teams), live first, then by time. Results of yesterday are included."""
-    follow = load_follow()
-    out = []
-    for ev in all_cached():
-        if ev["league"] in follow["leagues"]:
-            out.append(ev)
-        elif ev["kind"] == "teams" and (is_following_team(follow, ev["home"]) or is_following_team(follow, ev["away"])):
-            out.append(ev)
-    live, coming, done = order(out)
-    done = [e for e in done if local_day(e["start"]) >= ac.today() - datetime.timedelta(days=1)]
-    return live + coming + list(reversed(done))
 
 
 def team_terms(side_):

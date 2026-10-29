@@ -4,6 +4,22 @@
     <backgroundcolor>bg</backgroundcolor>
     <controls>
         <include>PlainBackground</include>
+        <control type="image">
+            <left>460</left>
+            <top>-260</top>
+            <width>1000</width>
+            <height>1000</height>
+            <texture>tint_glow.png</texture>
+            <colordiffuse>glow</colordiffuse>
+        </control>
+        <control type="image">
+            <left>900</left>
+            <top>90</top>
+            <width>120</width>
+            <height>120</height>
+            <texture>lucent_mark.png</texture>
+            <animation effect="fade" start="0" end="100" time="600">WindowOpen</animation>
+        </control>
         <control type="label">
             <left>0</left>
             <top>220</top>
@@ -45,12 +61,20 @@
                 <control type="group">
                     <animation effect="zoom" start="100" end="110" center="120,120" time="200" tween="cubic" easing="out">Focus</animation>
                     <control type="image">
+                        <left>-10</left>
+                        <top>-10</top>
+                        <width>260</width>
+                        <height>260</height>
+                        <texture>tint_glow.png</texture>
+                        <colordiffuse>glow_bold</colordiffuse>
+                    </control>
+                    <control type="image">
                         <left>32</left>
                         <top>32</top>
                         <width>176</width>
                         <height>176</height>
                         <texture>mask_circle.png</texture>
-                        <colordiffuse>text</colordiffuse>
+                        <colordiffuse>focus</colordiffuse>
                     </control>
                     <control type="image">
                         <left>40</left>

@@ -3,19 +3,20 @@
 <window>
     <defaultcontrol always="true">9100</defaultcontrol>
     <!-- First time: write the default menu; once per session: select the start tab -->
+    <!-- boxes with 2 GB memory or less get the light mode once (Skin settings > Advanced) -->
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">RunScript(special://skin/scripts/settings.py,litecheck)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/migrate.py)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + String.IsEmpty(Skin.String(lucent.addonw4))">RunScript(special://skin/scripts/menu.py,addons)</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
     <onload condition="!$EXP[NuvioAnyRow]">SetFocus(9000)</onload>
-    <onload>RunScript(special://skin/scripts/keymap.py)</onload>
-    <onload>RunScript(special://skin/scripts/agenda.py,ensure_tab)</onload>
-    <onload condition="Pvr.HasTVChannels">RunScript(special://skin/scripts/sport.py,ensure_tab)</onload>
-    <onload>RunScript(special://skin/scripts/agenda.py,service)</onload>
-    <onload condition="Pvr.HasTVChannels">RunScript(special://skin/scripts/sport.py,service)</onload>
-    <onload>RunScript(special://skin/scripts/updater.py,service)</onload>
-    <onload>RunScript(special://skin/scripts/subtitles.py,service)</onload>
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/keymap.py)</onload>
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/settings.py,scanlogos)</onload>
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/agenda.py,ensure_tab)</onload>
+    <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + Pvr.HasTVChannels">RunScript(special://skin/scripts/sport.py,ensure_tab)</onload>
+    <!-- one background helper does calendar, sport, updates, Tonight for you, poster colour and subtitles -->
+    <onload>RunScript(special://skin/scripts/helper.py)</onload>
     <!-- poster trailers are switched off for now (set the skin setting nuvio.trailers.menu to bring them back) -->
     <onload condition="Skin.HasSetting(nuvio.trailers.menu)">RunScript(special://skin/scripts/trailers.py)</onload>
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.posterfocus)</onload>
@@ -202,6 +203,8 @@
             <colordiffuse>bg_90</colordiffuse>
         </control>
 
+        <include>PosterTint</include>
+        <include>SeasonDecor</include>
         <!-- ============ Hero + rows (slide right while the side menu is open) ============ -->
         <control type="group">
             <animation effect="slide" start="0,0" end="230,0" time="300" tween="cubic" easing="out" condition="Control.HasFocus(9000) + !System.HasVisibleModalDialog">Conditional</animation>
@@ -283,6 +286,7 @@
                 <height>48</height>
                 <texture colordiffuse="text">icons/logo.png</texture>
             </control>
+            <include>SeasonBadge</include>
             <control type="label">
                 <left>100</left>
                 <top>62</top>
@@ -309,16 +313,8 @@
                         <top>24</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
-                        <visible>false</visible>
-                    </control>
-                    <control type="image">
-                        <left>18</left>
-                        <top>24</top>
-                        <width>36</width>
-                        <height>36</height>
                         <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
-                        <visible>!false + [Control.HasFocus(9000) | !Skin.HasSetting(nuvio.sideicons.hide)]</visible>
+                        <visible>Control.HasFocus(9000) | !Skin.HasSetting(nuvio.sideicons.hide)</visible>
                     </control>
                     <control type="label">
                         <left>76</left>

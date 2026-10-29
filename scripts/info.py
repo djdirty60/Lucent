@@ -9,8 +9,10 @@ Trakt calls use the Trakt login of Seren (the same account, nothing new to set u
 Everything shown on the page goes through Window(home) properties named nuvio.info.*.
 """
 import json
+import re
 import sys
 import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -42,8 +44,12 @@ T = {
     "no_seren": ("Seren is not installed.", "Seren is niet geïnstalleerd."),
     "no_login": ("You are not logged in to Trakt in Seren. Log in via Seren → Settings → Trakt.",
                  "Je bent in Seren niet ingelogd bij Trakt. Log in via Seren → Instellingen → Trakt."),
-    "expired": ("Your Trakt login has expired. Open Seren once so it can renew it, then try again.",
-                "Je Trakt-login is verlopen. Open Seren één keer zodat hij hem vernieuwt en probeer het dan opnieuw."),
+    "expired": ("Trakt does not accept Seren's login any more (Trakt code {0}). Seren could not renew it either, so "
+                "Seren has to be linked to Trakt again: you get a code that you enter on trakt.tv/activate.",
+                "Trakt accepteert de login van Seren niet meer (Trakt-code {0}). Seren kon hem ook niet vernieuwen, dus "
+                "Seren moet opnieuw aan Trakt gekoppeld worden: je krijgt een code die je invult op trakt.tv/activate."),
+    "relink": ("Link again now", "Nu opnieuw koppelen"),
+    "later": ("Later", "Later"),
     "failed": ("Trakt did not respond. Try again later.", "Trakt reageert niet. Probeer het later opnieuw."),
     "no_ids": ("This title has no Trakt or TMDB id.", "Deze titel heeft geen Trakt- of TMDB-nummer."),
     "watched": ("Marked as watched", "Gemarkeerd als bekeken"),
@@ -88,7 +94,10 @@ def http(url, data=None, headers=None, method=None):
 
 # ----------------------------------------------------------------------------- the current item
 class Item:
-    def __init__(self):
+    def __init__(self, prefix="ListItem."):
+        def info(label):                           # read from the focused item, or from a named list
+            return xbmc.getInfoLabel(f"{prefix}{label}")
+        self._prefix = prefix
         self.dbtype = info("DBType") or "movie"
         self.title = info("Title") or info("Label")
         self.trakt = info("Property(trakt_id)")
@@ -108,7 +117,7 @@ class Item:
         show = Item.__new__(Item)
         show.__dict__.update(self.__dict__)
         show.dbtype, show.trakt, show.show_trakt = "tvshow", self.show_trakt, ""
-        show.title = info("TVShowTitle") or self.title
+        show.title = xbmc.getInfoLabel(f"{self._prefix}TVShowTitle") or self.title
         return show
 
     def ids(self):
@@ -140,22 +149,82 @@ class Item:
 
 
 # ----------------------------------------------------------------------------- Trakt (Seren's login)
+def seren_client_id(seren):
+    """The Trakt app key Seren itself uses. Its login only works with that same key, and Seren versions differ:
+    taken from Seren's setting, else read from Seren's own code (its built-in default)."""
+    key = seren.getSetting("trakt.clientid").strip()
+    if key:
+        return key
+    if _CLIENT_ID:
+        return _CLIENT_ID[0]
+    try:
+        path = xbmcvfs.translatePath("special://home/addons/plugin.video.seren/resources/lib/indexers/trakt.py")
+        with open(path, encoding="utf-8") as fh:
+            found = re.search(r'"trakt\.clientid",\s*"([0-9a-f]{64})"', fh.read())
+        if found:
+            _CLIENT_ID.append(found.group(1))       # read Seren's code once per script, not for every Trakt call
+            return found.group(1)
+    except Exception:  # noqa: BLE001
+        pass
+    return "0c9a30819e4af6ffaf3b954cbeae9b54499088513863c03c02911de00ac2de79"
+
+
+_CLIENT_ID = []
+
+
+def seren_refresh_login(old_token, wait=20):
+    """Trakt logins only last a day now. Seren renews its own login whenever it starts talking to Trakt, so let it
+    do that (a sync) and wait for the new login - renewing it ourselves would leave Seren with a dead one."""
+    xbmc.executebuiltin(f"RunPlugin({SEREN}?action=syncTraktActivities)")
+    monitor = xbmc.Monitor()
+    for _ in range(int(wait * 2)):
+        if monitor.waitForAbort(0.5):
+            break
+        token = xbmcaddon.Addon(SEREN_ID).getSetting("trakt.auth")
+        if token and token != old_token:
+            log("Trakt login renewed by Seren")
+            return token
+    log("Trakt login: Seren did not renew it")
+    return old_token
+
+
 class Trakt:
     def __init__(self):
         seren = xbmcaddon.Addon(SEREN_ID)
-        self.client_id = seren.getSetting("trakt.clientid") or \
-            "0c9a30819e4af6ffaf3b954cbeae9b54499088513863c03c02911de00ac2de79"
+        self.client_id = seren_client_id(seren)
         self.token = seren.getSetting("trakt.auth")
+        try:
+            expires = float(seren.getSetting("trakt.expires") or 0)
+        except ValueError:
+            expires = 0
+        if self.token and expires and expires < time.time() + 120:
+            self.token = seren_refresh_login(self.token)
 
     def headers(self):
         return {"Content-Type": "application/json", "trakt-api-version": "2",
                 "trakt-api-key": self.client_id, "Authorization": f"Bearer {self.token}"}
 
+    def _call(self, path, data=None):
+        try:
+            if data is None:
+                return http(TRAKT + path, headers=self.headers())
+            return http(TRAKT + path, data=data, headers=self.headers(), method="POST")
+        except urllib.error.HTTPError as error:
+            if error.code != 401 or not self.token:
+                raise
+            new = seren_refresh_login(self.token)          # rejected: let Seren renew it once, then try again
+            if new == self.token:
+                raise
+            self.token = new
+            if data is None:
+                return http(TRAKT + path, headers=self.headers())
+            return http(TRAKT + path, data=data, headers=self.headers(), method="POST")
+
     def get(self, path):
-        return http(TRAKT + path, headers=self.headers())
+        return self._call(path)
 
     def post(self, path, data):
-        return http(TRAKT + path, data=data, headers=self.headers(), method="POST")
+        return self._call(path, data)
 
 
 def trakt_or_explain():
@@ -169,10 +238,46 @@ def trakt_or_explain():
     return trakt
 
 
-def explain_error(error):
-    log(f"Trakt error: {error}")
+TRAKT_CODES = {
+    400: ("Trakt did not understand the request", "Trakt begreep het verzoek niet"),
+    404: ("Trakt does not know this title", "Trakt kent deze titel niet"),
+    409: ("It was already there", "Het stond er al"),
+    420: ("Trakt says this list is full (the most items Trakt allows for your account)",
+          "Trakt zegt dat deze lijst vol zit (het maximum dat Trakt voor je account toestaat)"),
+    423: ("Your Trakt account is locked - contact Trakt support", "Je Trakt-account is geblokkeerd - neem contact op met Trakt"),
+    426: ("Only for Trakt VIP", "Alleen voor Trakt VIP"),
+    429: ("Too many requests to Trakt - wait a minute", "Te veel verzoeken naar Trakt - wacht een minuut"),
+}
+
+
+def explain_error(error, where=""):
+    body, extra = "", ""
+    if isinstance(error, urllib.error.HTTPError):
+        try:
+            body = error.read().decode("utf-8", "replace")[:300]
+        except Exception:  # noqa: BLE001
+            pass
+        hdr = error.headers or {}
+        vip, limit = hdr.get("X-VIP-User", ""), hdr.get("X-Account-Limit", "")
+        if vip or limit:
+            extra = f"\n[COLOR grey]Trakt: VIP = {vip or '?'}{((', limiet = ' if _NL else ', limit = ') + limit) if limit else ''}[/COLOR]"
+    log(f"Trakt error{' at ' + where if where else ''}: {error} {body} {extra.strip()}")
+    head = f"[B]{where}[/B]: " if where else ""
+    if isinstance(error, urllib.error.HTTPError) and error.code not in (401, 403):
+        text = TRAKT_CODES.get(error.code)
+        text = text[1 if _NL else 0] if text else ("Trakt is busy or down" if not _NL else "Trakt is druk of ligt eruit") \
+            if error.code >= 500 else (f"Trakt answered {error.code}" if not _NL else f"Trakt antwoordde {error.code}")
+        xbmcgui.Dialog().ok(HEADING, f"{head}{text}. (Trakt-code {error.code}){extra}")
+        return
+    if isinstance(error, (urllib.error.URLError, TimeoutError, OSError)) and not isinstance(error, urllib.error.HTTPError):
+        xbmcgui.Dialog().ok(HEADING, ("No connection with Trakt: " if not _NL else "Geen verbinding met Trakt: ") + str(error)[:120])
+        return
+    if not isinstance(error, urllib.error.HTTPError):
+        xbmcgui.Dialog().ok(HEADING, ("Something went wrong: " if not _NL else "Er ging iets mis: ") + f"{type(error).__name__}: {str(error)[:120]}")
+        return
     if isinstance(error, urllib.error.HTTPError) and error.code in (401, 403):
-        xbmcgui.Dialog().ok(HEADING, tr("expired"))
+        if xbmcgui.Dialog().yesno(HEADING, tr("expired", error.code), nolabel=tr("later"), yeslabel=tr("relink")):
+            xbmc.executebuiltin(f"RunPlugin({SEREN}?action=authTrakt)")      # Seren's own Trakt link (code + activate)
     else:
         notify(tr("failed"), xbmcgui.NOTIFICATION_WARNING)
 
@@ -183,12 +288,74 @@ def after_trakt_change():
     xbmc.executebuiltin("Container.Refresh")
 
 
+# ----------------------------------------------------------------------------- series from Kodi's own library
+def library_show_ids(prefix="ListItem."):
+    """{'trakt', 'tmdb', 'imdb', 'tvdb', 'title'} of the series a library season / episode belongs to.
+
+    Seasons in Kodi's library carry no ids of their own; the series (made by Lucent Bibliotheek) does,
+    so ask Kodi for the series by its library number."""
+    show_id = ""
+    for label in (f"{prefix}TvShowDBID", "ListItem.TvShowDBID"):
+        show_id = xbmc.getInfoLabel(label)
+        if show_id.isdigit():
+            break
+    if not show_id.isdigit() and xbmc.getInfoLabel(f"{prefix}DBType") == "tvshow":
+        show_id = xbmc.getInfoLabel(f"{prefix}DBID")
+    if not show_id.isdigit():
+        match = re.search(r"videodb://tvshows/[^/]+/(\d+)/", xbmc.getInfoLabel("Container.FolderPath"))
+        show_id = match.group(1) if match else ""
+    if not show_id.isdigit():
+        return {}
+    request = {"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShowDetails",
+               "params": {"tvshowid": int(show_id), "properties": ["uniqueid", "imdbnumber", "title"]}}
+    try:
+        details = json.loads(xbmc.executeJSONRPC(json.dumps(request))).get("result", {}).get("tvshowdetails", {})
+    except Exception as error:  # noqa: BLE001
+        log(f"library show {show_id}: {error}")
+        return {}
+    ids = {k: str(v) for k, v in (details.get("uniqueid") or {}).items() if v}
+    if str(details.get("imdbnumber", "")).startswith("tt"):
+        ids.setdefault("imdb", details["imdbnumber"])
+    ids["title"] = details.get("title", "")
+    log(f"library show {show_id}: {ids}")
+    return ids
+
+
+def trakt_show_from(ids):
+    """The Trakt number of a series from its tmdb / imdb / tvdb number (Trakt search, Seren's login)."""
+    if str(ids.get("trakt", "")).isdigit():
+        return str(ids["trakt"])
+    if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})"):
+        return ""
+    trakt = Trakt()
+    for kind in ("tmdb", "imdb", "tvdb"):
+        if ids.get(kind):
+            try:
+                for hit in trakt.get(f"search/{kind}/{ids[kind]}?type=show") or []:
+                    found = (hit.get("show") or {}).get("ids", {}).get("trakt")
+                    if found:
+                        return str(found)
+            except Exception as error:  # noqa: BLE001
+                log(f"trakt search {kind}: {error}")
+    return ""
+
+
 # ----------------------------------------------------------------------------- lists dialog
-def choose_lists():
-    item = Item()
-    if item.is_seren_episode:
-        item = item.as_show()
+def choose_lists(container=""):
+    item = Item(f"Container({container}).ListItem." if container.isdigit() else "ListItem.")
+    if item.dbtype in ("season", "episode") and (item.is_seren_episode or item.tmdb.isdigit() or item.imdb.startswith("tt")):
+        item = item.as_show()                      # a season or episode: put the whole series in the list
+    if not item.ids() and item.dbtype in ("season", "episode", "tvshow"):
+        lib = library_show_ids(item._prefix)       # Kodi's own library: the ids sit on the series
+        if lib:
+            item.dbtype, item.show_trakt = "tvshow", ""
+            item.trakt, item.tmdb, item.imdb = lib.get("trakt", ""), lib.get("tmdb", ""), lib.get("imdb", "")
+            item.title = lib.get("title") or item.title
+            if not item.ids() and lib.get("tvdb"):
+                item.trakt = trakt_show_from(lib)
     if not item.ids():
+        log(f"lists: no ids (container={container!r} type={item.dbtype} trakt={item.trakt!r} show={item.show_trakt!r} "
+            f"tmdb={item.tmdb!r} imdb={item.imdb!r})")
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
         return
     if item.kind not in ("movie", "show"):
@@ -212,9 +379,14 @@ def choose_lists():
         lists = trakt.get("users/me/lists") or []
         for n, lst in enumerate(lists[:25]):
             if progress.iscanceled():
+                progress.close()
                 return
             slug = lst.get("ids", {}).get("trakt")
-            entries = trakt.get(f"users/me/lists/{slug}/items/{item.kind}")
+            try:
+                entries = trakt.get(f"users/me/lists/{slug}/items/{item.kind}")
+            except Exception as error:  # noqa: BLE001 - skip this one list, show the rest
+                log(f"Trakt list {lst.get('name')}: {error}")
+                continue
             rows.append((tr("list", lst.get("name", "")), any(item.matches(e) for e in entries),
                          f"users/me/lists/{slug}/items", f"users/me/lists/{slug}/items/remove"))
             progress.update(50 + int(50 * (n + 1) / max(1, len(lists[:25]))))
@@ -234,20 +406,47 @@ def choose_lists():
     if chosen is None:
         return
     changes = 0
-    try:
-        for n, (_label, in_list, add_path, remove_path) in enumerate(rows):
-            wanted = n in chosen
-            if wanted != in_list:
-                trakt.post(add_path if wanted else remove_path, item.payload())
-                changes += 1
-    except Exception as error:  # noqa: BLE001
-        explain_error(error)
-        return
+    for n, (label, in_list, add_path, remove_path) in enumerate(rows):
+        wanted = n in chosen
+        if wanted == in_list:
+            continue
+        try:
+            trakt.post(add_path if wanted else remove_path, item.payload())
+        except Exception as error:  # noqa: BLE001 - say which one failed, go on with the others
+            explain_error(error, label)
+            continue
+        changes += 1
+        if add_path == "sync/collection":
+            to_kodi_library(item, trakt, "add" if wanted else "remove")
     if changes:
         notify(tr("saved"))
         after_trakt_change()
     else:
         notify(tr("nothing"))
+
+
+def to_kodi_library(item, trakt, action):
+    """Library row: besides Trakt, write (or remove) the title in the Kodi library at once (Lucent Bibliotheek)."""
+    if not xbmc.getCondVisibility("System.HasAddon(script.lucent.library)"):
+        return
+    kind = "movie" if item.kind == "movie" else "show"
+    trakt_id = item.trakt if str(item.trakt).isdigit() else ""
+    if not trakt_id:
+        for name, value in (("tmdb", item.tmdb), ("imdb", item.imdb)):
+            if value and (value.isdigit() or value.startswith("tt")):
+                try:
+                    for hit in trakt.get(f"search/{name}/{value}?type={kind}") or []:
+                        trakt_id = str(((hit.get(kind) or {}).get("ids") or {}).get("trakt") or "")
+                        if trakt_id:
+                            break
+                except Exception as error:  # noqa: BLE001
+                    log(f"library: trakt search {name}: {error}")
+            if trakt_id:
+                break
+    if trakt_id:
+        xbmc.executebuiltin(f"RunScript(script.lucent.library,{action},{kind},{trakt_id})")
+    else:
+        log(f"library: no trakt id for {item.title}")
 
 
 # ----------------------------------------------------------------------------- watched
@@ -267,6 +466,13 @@ def toggle_watched():
         explain_error(error)
         return
     HOME.setProperty("nuvio.info.watched", "0" if watched else "1")
+    dbid = info("DBID")
+    if dbid.isdigit() and item.dbtype in ("movie", "episode"):     # Kodi's own library: the same mark at once
+        HOME.setProperty("lucent.lib.syncing", str(time.time()))   # Lucent Bibliotheek: Trakt knows already
+        method = "VideoLibrary.SetMovieDetails" if item.dbtype == "movie" else "VideoLibrary.SetEpisodeDetails"
+        key = "movieid" if item.dbtype == "movie" else "episodeid"
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method,
+                                        "params": {key: int(dbid), "playcount": 0 if watched else 1}}))
     notify(tr("unwatched") if watched else tr("watched"))
     after_trakt_change()
 
@@ -286,8 +492,14 @@ def _read_key(path):
         return ""
 
 
+_KEY = {"value": "", "time": 0.0}
+
+
 def tmdb_key():
-    """Your own free TMDB key: from Seren's setting, else the key you entered in Skin settings (or in the Lucent library add-on)."""
+    """Your own free TMDB key: from Seren's setting, else the key you entered in Skin settings (or in the Lucent library add-on).
+    Remembered for 10 minutes (the background helper asks for it hundreds of times)."""
+    if _KEY["value"] and time.time() - _KEY["time"] < 600:
+        return _KEY["value"]
     try:
         key = (xbmcaddon.Addon(SEREN_ID).getSetting("tmdb.apikey") or "").strip()
     except Exception:  # noqa: BLE001 - Seren not installed
@@ -296,6 +508,7 @@ def tmdb_key():
         if key:
             break
         key = _read_key(path)
+    _KEY.update(value=key, time=time.time())
     return key
 
 
@@ -309,6 +522,7 @@ def set_tmdb_key():
     xbmcvfs.mkdirs("special://profile/addon_data/skin.lucent/")
     with xbmcvfs.File(TMDB_KEYFILES[0], "w") as fh:
         fh.write(key.strip())
+    _KEY["time"] = 0.0                              # use the new key right away
     notify(tr("saved"))
 
 
@@ -402,6 +616,55 @@ def load_videos(item):
         HOME.setProperty(f"nuvio.info.vid.{n}.thumb", f"https://img.youtube.com/vi/{key}/hqdefault.jpg")
         HOME.setProperty(f"nuvio.info.vid.{n}.path", f"plugin://plugin.video.youtube/play/?video_id={key}")
     HOME.setProperty("nuvio.info.vid.count", str(len(videos)))
+
+
+MAX_PROVIDERS = 6
+
+
+def _region():
+    """Country for the streaming services: from Kodi's language (nl -> NL), else NL."""
+    try:
+        code = xbmc.getLanguage(xbmc.ISO_639_1, True) or ""
+        if "-" in code:
+            return code.split("-")[1].upper()
+        return {"nl": "NL", "en": "GB", "de": "DE", "fr": "FR", "be": "BE"}.get(code.lower(), "NL")
+    except Exception:  # noqa: BLE001
+        return "NL"
+
+
+def load_providers(item):
+    """Fill nuvio.info.prov.* with the streaming services where this title can be watched (TMDB / JustWatch)."""
+    for n in range(1, MAX_PROVIDERS + 1):
+        HOME.clearProperty(f"nuvio.info.prov.{n}.logo")
+        HOME.clearProperty(f"nuvio.info.prov.{n}.name")
+    HOME.setProperty("nuvio.info.prov.count", "0")
+    HOME.clearProperty("nuvio.info.prov.names")
+    if item.is_seren_episode:
+        item = item.as_show()
+    kind = {"movie": "movie", "tvshow": "tv"}.get(item.dbtype)
+    if not kind or not item.tmdb.isdigit():
+        return
+    try:
+        result = (tmdb(f"{kind}/{item.tmdb}/watch/providers").get("results") or {}).get(_region()) or {}
+    except Exception as error:  # noqa: BLE001
+        log(f"providers: {error}")
+        return
+    if HOME.getProperty("nuvio.info.key") != item.key:
+        return
+    seen, providers = set(), []
+    for group in ("flatrate", "free", "ads"):
+        for p in sorted(result.get(group) or [], key=lambda p: p.get("display_priority", 99)):
+            if p.get("provider_id") in seen:
+                continue
+            seen.add(p.get("provider_id"))
+            providers.append(p)
+    providers = providers[:MAX_PROVIDERS]
+    for n, p in enumerate(providers, start=1):
+        HOME.setProperty(f"nuvio.info.prov.{n}.name", p.get("provider_name", ""))
+        logo = p.get("logo_path")
+        HOME.setProperty(f"nuvio.info.prov.{n}.logo", f"{TMDB_IMG}w92{logo}" if logo else "")
+    HOME.setProperty("nuvio.info.prov.names", ", ".join(p.get("provider_name", "") for p in providers[:3]))
+    HOME.setProperty("nuvio.info.prov.count", str(len(providers)))
 
 
 STUDIO_PACK = "resource://resource.images.studios.white/"
@@ -587,7 +850,7 @@ def show_person(person_id):
         key = (entry.get("media_type"), entry.get("id"))
         if key in seen or entry.get("media_type") not in ("movie", "tv"):
             continue
-        if entry.get("media_type") == "tv" and entry.get("character", "").lower() in ("himself", "herself", "self"):
+        if entry.get("media_type") == "tv" and (entry.get("character") or "").lower() in ("himself", "herself", "self"):
             continue
         seen.add(key)
         works.append(entry)
@@ -846,7 +1109,8 @@ def watch_back(gen):
                 HOME.clearProperty("nuvio.open.current")
                 return
             waited += 0.2
-        while xbmc.getCondVisibility("Window.IsActive(movieinformation) | Window.IsActive(1180)"):
+        while xbmc.getCondVisibility("Window.IsActive(movieinformation) | Window.IsActive(1180)") \
+                and HOME.getProperty("nuvio.open.gen") == str(gen):
             if monitor.waitForAbort(0.3):
                 return
         if HOME.getProperty("nuvio.open.gen") != str(gen):
@@ -892,7 +1156,7 @@ def open_title():
         return
     # the pages we leave: the film page and, when we come from it, the person / studio page on top
     leaving = []
-    ident = page_identity()
+    ident = page_identity() if xbmc.getCondVisibility("Window.IsActive(movieinformation)") else None
     if ident:
         leaving.append(["title"] + ident)
     overlay = _overlay_open()
@@ -928,7 +1192,7 @@ def open_title():
 
 
 LOGO_DIR = "special://profile/addon_data/skin.lucent/logos/"
-LOGO_SOURCES = ("imdb", "tmdb", "trakt")
+LOGO_SOURCES = ("imdb", "tmdb", "trakt", "rt")
 
 
 def load_logos():
@@ -938,6 +1202,22 @@ def load_logos():
     for name in LOGO_SOURCES:
         path = f"{LOGO_DIR}{name}.png"
         HOME.setProperty(f"nuvio.logo.{name}", path if xbmcvfs.exists(path) else "")
+
+
+def resume_show():
+    """Series page (seasons as tabs): Continue = Seren's own 'play the next episode' for this series."""
+    trakt = ""
+    for name in ("Container(56).ListItem.Property(trakt_show_id)", "Container(56).ListItem.Property(tvshow.trakt_id)",
+                 "ListItem.Property(trakt_show_id)"):
+        trakt = xbmc.getInfoLabel(name)
+        if trakt.isdigit():
+            break
+    if not trakt.isdigit():
+        trakt = trakt_show_from(library_show_ids("Container(56).ListItem."))   # a series from Kodi's own library
+    if not trakt.isdigit():
+        notify(tr("no_seren") if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})") else tr("no_ids"))
+        return
+    xbmc.executebuiltin(f"PlayMedia({seren_play_url('tv', int(trakt))})")
 
 
 def load():
@@ -950,6 +1230,7 @@ def load():
     HOME.setProperty("nuvio.info.key", item.key)
     HOME.clearProperty("nuvio.info.watched")
     load_studios()
+    load_providers(item)
     load_credits(item)
     load_videos(item)
     load_collection(item)
@@ -958,13 +1239,15 @@ def load():
 if __name__ == "__main__":
     action = sys.argv[1] if len(sys.argv) > 1 else "load"
     if action == "lists":
-        choose_lists()
+        choose_lists(sys.argv[2] if len(sys.argv) > 2 else "")
     elif action == "watched":
         toggle_watched()
     elif action == "studio":
         show_studio(HOME.getProperty("nuvio.open.studio"))
     elif action == "open":
         open_title()
+    elif action == "resumeshow":
+        resume_show()
     elif action == "tmdbkey":
         set_tmdb_key()
     elif action == "person":

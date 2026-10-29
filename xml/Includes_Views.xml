@@ -100,6 +100,7 @@
     <!-- Top bar of media windows: folder name, item count, view / sort pills, clock -->
     <include name="MediaTopBar">
         <control type="label">
+            <visible>!Control.IsVisible(56)</visible>
             <left>96</left>
             <top>40</top>
             <width>1100</width>
@@ -117,7 +118,34 @@
             <font>font10</font>
             <textcolor>text4</textcolor>
             <label>$INFO[Container.NumItems,, $LOCALIZE[31036]]$INFO[Container.SortMethod,   ·   ,]</label>
+            <visible>!Control.IsVisible(56) + ![String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)]</visible>
             <include>Anim_Window</include>
+        </control>
+        <!-- a film collection: how far you are; Kijk de volgende sits in the side menu -->
+        <control type="grouplist">
+            <left>96</left>
+            <top>86</top>
+            <width>1100</width>
+            <height>36</height>
+            <orientation>horizontal</orientation>
+            <itemgap>14</itemgap>
+            <visible>String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)</visible>
+            <include>Anim_Window</include>
+            <control type="label">
+                <width>auto</width>
+                <height>36</height>
+                <font>font10_bold</font>
+                <textcolor>text3</textcolor>
+                <label>$LOCALIZE[31596]  ·  $INFO[Container.TotalWatched] $LOCALIZE[31594] $INFO[Container.NumItems] $LOCALIZE[31564]</label>
+            </control>
+            <control type="label">
+                <width>auto</width>
+                <height>36</height>
+                <font>font10_bold</font>
+                <textcolor>green</textcolor>
+                <label>✓</label>
+                <visible>Integer.IsEqual(Container.TotalUnWatched,0) + Integer.IsGreater(Container.NumItems,0)</visible>
+            </control>
         </control>
         <include>Clock</include>
         <control type="scrollbar" id="60">
@@ -351,6 +379,120 @@
                     <label>$LOCALIZE[653]</label>
                     <visible>[Window.IsActive(videos) | Window.IsActive(music)]</visible>
                 </control>
+                <control type="button" id="9068">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>▶  $LOCALIZE[31595]</label>
+                    <onclick>RunScript(script.lucent.library,nextinset,$INFO[Container.FolderPath])</onclick>
+                    <visible>System.HasAddon(script.lucent.library) + Integer.IsGreater(Container.TotalUnWatched,0) + String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)</visible>
+                </control>
+                <control type="label" id="9053">
+                    <width>560</width>
+                    <height>70</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>        [B]$LOCALIZE[31588][/B]</label>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible>
+                </control>
+                <control type="button" id="9062">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31589]</label>
+                    <onclick>Container.Update(plugin://script.lucent.library/?action=lib&amp;kind=unwatched&amp;type=$VAR[LucentFilterType])</onclick>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible>
+                </control>
+                <control type="button" id="9063">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31590]</label>
+                    <onclick>Container.Update(videodb://$VAR[LucentFilterNode]/genres/)</onclick>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible>
+                </control>
+                <control type="button" id="9064">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31591]</label>
+                    <onclick>Container.Update(videodb://$VAR[LucentFilterNode]/years/)</onclick>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible>
+                </control>
+                <control type="button" id="9065">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31592]</label>
+                    <onclick>Container.Update(plugin://script.lucent.library/?action=lib&amp;kind=short&amp;type=movie)</onclick>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + Container.Content(movies) + System.HasAddon(script.lucent.library)</visible>
+                </control>
+                <control type="button" id="9066">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31593]</label>
+                    <onclick>Container.Update(plugin://script.lucent.library/?action=lib&amp;kind=recent&amp;type=$VAR[LucentFilterType])</onclick>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible>
+                </control>
+                <control type="button" id="9067">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31581]</label>
+                    <onclick>RunScript(script.lucent.library,surprise,$VAR[LucentFilterPick])</onclick>
+                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible>
+                </control>
                 </control>
             </control>
         </control>
@@ -442,6 +584,7 @@
                 <onup>50</onup>
                 <onleft>9050</onleft>
                 <pagecontrol>60</pagecontrol>
+                <visible>!Container.Content(seasons) | Skin.HasSetting(lucent.seasontabs.off)</visible>
                 <viewtype label="$LOCALIZE[31031]">list</viewtype>
                 <include>Anim_SlideLeft</include>
                 <itemlayout height="90" width="980">
@@ -488,6 +631,28 @@
                         <height>36</height>
                         <texture colordiffuse="red">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                    </control>
+                    <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                    <control type="image">
+                        <left>848</left>
+                        <top>29</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <texture border="18" colordiffuse="red">pill44.png</texture>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
+                    <control type="label">
+                        <left>848</left>
+                        <top>29</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <font>font10_bold</font>
+                        <textcolor>white</textcolor>
+                        <selectedcolor>white</selectedcolor>
+                        <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
                     </control>
                 </itemlayout>
                 <focusedlayout height="90" width="980">
@@ -583,6 +748,28 @@
                         <texture colordiffuse="red">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                     </control>
+                    <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                    <control type="image">
+                        <left>848</left>
+                        <top>29</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <texture border="18" colordiffuse="red">pill44.png</texture>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
+                    <control type="label">
+                        <left>848</left>
+                        <top>29</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <font>font10_bold</font>
+                        <textcolor>white</textcolor>
+                        <selectedcolor>white</selectedcolor>
+                        <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
                 </focusedlayout>
             </control>
         </control>
@@ -614,7 +801,7 @@
                 <ondown>Action(PageDown)</ondown>
                 <pagecontrol>60</pagecontrol>
                 <viewtype label="$LOCALIZE[31032]">wrap</viewtype>
-                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(seasons)</visible>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | [Container.Content(seasons) + Skin.HasSetting(lucent.seasontabs.off)]</visible>
                 <include>Anim_SlideUp</include>
                 <itemlayout width="248" height="386">
                     <control type="group">
@@ -681,6 +868,28 @@
                             <height>40</height>
                             <texture colordiffuse="red">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                        </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>96</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>96</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
                         </control>
                         <control type="image">
                             <left>12</left>
@@ -768,6 +977,28 @@
                             <texture colordiffuse="red">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>96</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>96</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
                         <control type="image">
                             <left>12</left>
                             <top>12</top>
@@ -820,7 +1051,7 @@
                 <onleft>9050</onleft>
                 <pagecontrol>60</pagecontrol>
                 <viewtype label="$LOCALIZE[31033]">icon</viewtype>
-                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(seasons)</visible>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | [Container.Content(seasons) + Skin.HasSetting(lucent.seasontabs.off)]</visible>
                 <include>Anim_SlideUp</include>
                 <itemlayout width="236" height="343">
                     <control type="group">
@@ -887,6 +1118,28 @@
                             <height>40</height>
                             <texture colordiffuse="red">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                        </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>82</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>82</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
                         </control>
                         <control type="image">
                             <left>12</left>
@@ -973,6 +1226,28 @@
                             <height>40</height>
                             <texture colordiffuse="red">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                        </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>82</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>82</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
                         </control>
                         <control type="image">
                             <left>12</left>
@@ -1082,6 +1357,28 @@
                             <texture colordiffuse="red">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>276</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>276</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
                         <control type="image">
                             <left>12</left>
                             <top>12</top>
@@ -1177,6 +1474,28 @@
                             <height>40</height>
                             <texture colordiffuse="red">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                        </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>276</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>276</left>
+                            <top>14</top>
+                            <width>112</width>
+                            <height>36</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
                         </control>
                         <control type="image">
                             <left>12</left>
@@ -1306,6 +1625,28 @@
                         <texture colordiffuse="red">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                     </control>
+                    <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                    <control type="image">
+                        <left>234</left>
+                        <top>44</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <texture border="18" colordiffuse="red">pill44.png</texture>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
+                    <control type="label">
+                        <left>234</left>
+                        <top>44</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <font>font10_bold</font>
+                        <textcolor>white</textcolor>
+                        <selectedcolor>white</selectedcolor>
+                        <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
                 </itemlayout>
                 <focusedlayout height="240" width="1776">
                     <control type="image">
@@ -1380,12 +1721,901 @@
                         <texture colordiffuse="red">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                     </control>
+                    <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                    <control type="image">
+                        <left>234</left>
+                        <top>44</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <texture border="18" colordiffuse="red">pill44.png</texture>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
+                    <control type="label">
+                        <left>234</left>
+                        <top>44</top>
+                        <width>112</width>
+                        <height>32</height>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <font>font10_bold</font>
+                        <textcolor>white</textcolor>
+                        <selectedcolor>white</selectedcolor>
+                        <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                        <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+    </include>
+
+    <!-- View 56: a series page - the seasons as tabs, the episodes of the chosen season below (Seren seasons list) -->
+    <include name="View_56">
+        <control type="group">
+            <visible>Control.IsVisible(56)</visible>
+            <include>Anim_SlideLeft</include>
+            <control type="image">
+                <left>96</left>
+                <top>60</top>
+                <width>640</width>
+                <height>160</height>
+                <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                <texture background="true">$INFO[Container(56).ListItem.Art(tvshow.clearlogo)]</texture>
+            </control>
+            <control type="textbox">
+                <left>96</left>
+                <top>60</top>
+                <width>1300</width>
+                <height>160</height>
+                <font>font60</font>
+                <aligny>bottom</aligny>
+                <label>$INFO[Container(56).ListItem.TVShowTitle]</label>
+                <visible>String.IsEmpty(Container(56).ListItem.Art(tvshow.clearlogo))</visible>
+            </control>
+            <control type="grouplist">
+                <left>96</left>
+                <top>240</top>
+                <width>1700</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>12</itemgap>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31558]</param>
+                        <param name="bg">green</param>
+                        <param name="color">white</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.Contains(Container(56).ListItem.Status,returning) | String.Contains(Container(56).ListItem.Status,continuing)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31557]</param>
+                        <param name="bg">glass_strong</param>
+                        <param name="color">text</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.Contains(Container(56).ListItem.Status,ended)</param>
+                    </include>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[Container(56).ListItem.Year]</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.Year)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>true</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[Container(56).NumItems] $LOCALIZE[31562]</label>
+                        <visible>true</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.Rating(imdb)) | !String.IsEmpty(Container(56).ListItem.Rating(trakt))</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>IMDb $INFO[Container(56).ListItem.Rating(imdb)]</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.Rating(imdb))</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>Trakt $INFO[Container(56).ListItem.Rating(trakt)]</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.Rating(trakt))</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.MPAA)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[Container(56).ListItem.MPAA]</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.MPAA)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.Genre)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text3</textcolor>
+                        <label>$INFO[Container(56).ListItem.Genre]</label>
+                        <visible>!String.IsEmpty(Container(56).ListItem.Genre)</visible>
+                    </control>
+            </control>
+            <control type="textbox">
+                <left>96</left>
+                <top>298</top>
+                <width>900</width>
+                <height>80</height>
+                <font>font_body</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[Container(56).ListItem.Plot]</label>
+            </control>
+            <!-- season summary: its own dark capsule at the right; the capsule grows and shrinks with the text -->
+            <control type="grouplist">
+                <left>1080</left>
+                <top>536</top>
+                <width>744</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <align>right</align>
+                <control type="button">
+                    <width>auto</width>
+                    <height>64</height>
+                    <font>font12</font>
+                    <textoffsetx>30</textoffsetx>
+                    <textcolor>text</textcolor>
+                    <disabledcolor>text</disabledcolor>
+                    <texturenofocus border="32" colordiffuse="D91A1F27">pill64.png</texturenofocus>
+                    <texturefocus border="32" colordiffuse="D91A1F27">pill64.png</texturefocus>
+                    <enable>false</enable>
+                    <label>$VAR[LucentSeasonSummary]</label>
+                    <visible>!String.IsEmpty(Container(56).ListItem.Label)</visible>
+                </control>
+            </control>
+            <control type="image">
+                <left>96</left>
+                <top>604</top>
+                <width>1728</width>
+                <height>2</height>
+                <texture>white.png</texture>
+                <colordiffuse>separator</colordiffuse>
+            </control>
+        </control>
+        <control type="group" id="9256">
+            <visible>Control.IsVisible(56)</visible>
+            <!-- buttons -->
+            <control type="grouplist" id="5610">
+                <left>96</left>
+                <top>404</top>
+                <width>1728</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <itemgap>16</itemgap>
+                <ondown>56</ondown>
+                <onleft>9050</onleft>
+                <onup>5610</onup>
+                    <control type="button" id="5611">
+                        <width>auto</width>
+                        <height>64</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <textoffsetx>30</textoffsetx>
+                        <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                        <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                        <label>▶  $LOCALIZE[31565]</label>
+                        <onclick>RunScript(special://skin/scripts/info.py,resumeshow)</onclick>
+                    </control>
+                    <control type="button" id="5612">
+                        <width>auto</width>
+                        <height>64</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <textoffsetx>30</textoffsetx>
+                        <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                        <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                        <label>+  $LOCALIZE[31114]</label>
+                        <onclick>RunScript(special://skin/scripts/info.py,lists,56)</onclick>
+                    </control>
+                    <control type="button" id="5613">
+                        <width>auto</width>
+                        <height>64</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <textoffsetx>30</textoffsetx>
+                        <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                        <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                        <label>$LOCALIZE[31566]</label>
+                        <onclick>SetFocus(56)</onclick>
+                        <onclick>Action(Info)</onclick>
+                    </control>
+            </control>
+            <!-- season tabs: the real container of this window -->
+            <control type="list" id="56">
+                <left>84</left>
+                <top>536</top>
+                <width>950</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <onup>5610</onup>
+                <ondown>5601</ondown>
+                <onleft>9050</onleft>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <viewtype label="$LOCALIZE[31567]">list</viewtype>
+                <visible>Container.Content(seasons) + !Skin.HasSetting(lucent.seasontabs.off)</visible>
+                <onclick>SetFocus(5601)</onclick>
+                <itemlayout width="190" height="64">
+                    <control type="label">
+                        <left>12</left><top>0</top><width>166</width><height>64</height>
+                        <font>font_label_bold</font><textcolor>text4</textcolor><align>center</align>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="190" height="64">
+                    <control type="image">
+                        <left>8</left><top>6</top><width>174</width><height>52</height>
+                        <texture border="26" colordiffuse="focus">pill64.png</texture>
+                        <visible>Control.HasFocus(56)</visible>
+                    </control>
+                    <control type="image">
+                        <left>8</left><top>6</top><width>174</width><height>52</height>
+                        <texture border="26" colordiffuse="glass_strong">pill64.png</texture>
+                        <visible>!Control.HasFocus(56)</visible>
+                    </control>
+                    <control type="label">
+                        <left>12</left><top>0</top><width>166</width><height>64</height>
+                        <font>font_label_bold</font><textcolor>on_focus</textcolor><align>center</align>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>Control.HasFocus(56)</visible>
+                    </control>
+                    <control type="label">
+                        <left>12</left><top>0</top><width>166</width><height>64</height>
+                        <font>font_label_bold</font><textcolor>text</textcolor><align>center</align>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>!Control.HasFocus(56)</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <!-- the episodes of the chosen season -->
+            <control type="list" id="5601">
+                <left>72</left>
+                <top>624</top>
+                <width>1848</width>
+                <height>400</height>
+                <orientation>horizontal</orientation>
+                <onup>56</onup>
+                <onleft>9050</onleft>
+                <scrolltime tween="cubic" easing="out">260</scrolltime>
+                <preloaditems>1</preloaditems>
+                <itemlayout width="446" height="340">
+                    <control type="group">
+                        <left>24</left><top>14</top>                            <control type="image">
+                                <left>0</left><top>0</top><width>420</width><height>236</height>
+                                <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                            </control>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>420</width><height>236</height>
+                                <texture diffuse="mask_landscape.png">white.png</texture>
+                                <colordiffuse>80000000</colordiffuse>
+                                <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                            </control>
+                            <control type="image">
+                                <left>14</left><top>12</top><width>76</width><height>34</height>
+                                <texture border="16" colordiffuse="99000000">pill44.png</texture>
+                            </control>
+                            <control type="label">
+                                <left>14</left><top>12</top><width>76</width><height>34</height>
+                                <font>font10_bold</font><textcolor>white</textcolor><align>center</align><aligny>center</aligny>
+                                <label>E$INFO[ListItem.Episode]</label>
+                            </control>
+                            <control type="image">
+                                <left>374</left><top>12</top><width>34</width><height>34</height>
+                                <texture colordiffuse="red">buttons/check_fo.png</texture>
+                                <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                            </control>
+                            <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                            <control type="image">
+                                <left>296</left>
+                                <top>14</top>
+                                <width>112</width>
+                                <height>30</height>
+                                <texture border="18" colordiffuse="red">pill44.png</texture>
+                                <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                            </control>
+                            <control type="label">
+                                <left>296</left>
+                                <top>14</top>
+                                <width>112</width>
+                                <height>30</height>
+                                <align>center</align>
+                                <aligny>center</aligny>
+                                <font>font10_bold</font>
+                                <textcolor>white</textcolor>
+                                <selectedcolor>white</selectedcolor>
+                                <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                                <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                            </control>
+                            <control type="progress">
+                                <left>14</left><top>218</top><width>392</width><height>6</height>
+                                <info>ListItem.PercentPlayed</info>
+                                <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                            </control>
+                            <control type="label">
+                                <left>0</left><top>250</top><width>420</width><height>34</height>
+                                <font>font12_bold</font><textcolor>text</textcolor>
+                                <label>$INFO[ListItem.Title]</label>
+                            </control>
+                            <control type="label">
+                                <left>0</left><top>286</top><width>420</width><height>30</height>
+                                <font>font10</font><textcolor>text4</textcolor>
+                                <label>$INFO[ListItem.Duration(mins),, min]$INFO[ListItem.Premiered,  ·  ,]</label>
+                            </control>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="446" height="340">
+                    <control type="group">
+                        <left>24</left><top>14</top>
+                        <animation effect="zoom" start="100" end="104" center="210,118" time="200" tween="cubic" easing="out">Focus</animation>
+                        <control type="image">
+                            <left>-24</left><top>-24</top><width>468</width><height>284</height>
+                            <texture border="44">rr20_glow.png</texture>
+                            <colordiffuse>glow</colordiffuse>
+                            <visible>Control.HasFocus(5601)</visible>
+                        </control>                            <control type="image">
+                                <left>0</left><top>0</top><width>420</width><height>236</height>
+                                <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                            </control>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>420</width><height>236</height>
+                                <texture diffuse="mask_landscape.png">white.png</texture>
+                                <colordiffuse>80000000</colordiffuse>
+                                <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                            </control>
+                            <control type="image">
+                                <left>14</left><top>12</top><width>76</width><height>34</height>
+                                <texture border="16" colordiffuse="99000000">pill44.png</texture>
+                            </control>
+                            <control type="label">
+                                <left>14</left><top>12</top><width>76</width><height>34</height>
+                                <font>font10_bold</font><textcolor>white</textcolor><align>center</align><aligny>center</aligny>
+                                <label>E$INFO[ListItem.Episode]</label>
+                            </control>
+                            <control type="image">
+                                <left>374</left><top>12</top><width>34</width><height>34</height>
+                                <texture colordiffuse="red">buttons/check_fo.png</texture>
+                                <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                            </control>
+                            <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                            <control type="image">
+                                <left>296</left>
+                                <top>14</top>
+                                <width>112</width>
+                                <height>30</height>
+                                <texture border="18" colordiffuse="red">pill44.png</texture>
+                                <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                            </control>
+                            <control type="label">
+                                <left>296</left>
+                                <top>14</top>
+                                <width>112</width>
+                                <height>30</height>
+                                <align>center</align>
+                                <aligny>center</aligny>
+                                <font>font10_bold</font>
+                                <textcolor>white</textcolor>
+                                <selectedcolor>white</selectedcolor>
+                                <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                                <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                            </control>
+                            <control type="progress">
+                                <left>14</left><top>218</top><width>392</width><height>6</height>
+                                <info>ListItem.PercentPlayed</info>
+                                <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                            </control>
+                        <control type="image">
+                            <left>0</left><top>0</top><width>420</width><height>236</height>
+                            <texture border="20">rr20_ring.png</texture>
+                            <colordiffuse>focus</colordiffuse>
+                            <visible>Control.HasFocus(5601)</visible>
+                        </control>
+                            <control type="label">
+                                <left>0</left><top>250</top><width>420</width><height>34</height>
+                                <font>font12_bold</font><textcolor>text</textcolor>
+                                <label>$INFO[ListItem.Title]</label>
+                            </control>
+                            <control type="label">
+                                <left>0</left><top>286</top><width>420</width><height>30</height>
+                                <font>font10</font><textcolor>text3</textcolor>
+                                <label>$INFO[ListItem.Duration(mins),, min]$INFO[ListItem.Premiered,  ·  ,]</label>
+                            </control>
+                    </control>
+                </focusedlayout>
+                <content target="videos" browse="never">$INFO[Container(56).ListItem.FolderPath]</content>
+            </control>
+            <control type="group">
+                <left>928</left>
+                <top>720</top>
+                <visible>Container(5601).IsUpdating</visible>
+                <include content="Spinner"><param name="size">48</param></include>
+            </control>
+            <control type="label">
+                <left>96</left>
+                <top>1030</top>
+                <width>1700</width>
+                <height>30</height>
+                <font>font_tiny</font>
+                <textcolor>text5</textcolor>
+                <label>$LOCALIZE[31568]</label>
+            </control>
+        </control>
+    </include>
+    <!-- View 57: Showcase - big 16:9 cards with the title logo over the picture, info of the chosen title below -->
+    <include name="View_57">
+        <control type="group">
+            <visible>Control.IsVisible(57)</visible>
+            <include>Anim_SlideLeft</include>
+            <control type="grouplist">
+                <left>96</left>
+                <top>770</top>
+                <width>1700</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>12</itemgap>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31558]</param>
+                        <param name="bg">green</param>
+                        <param name="color">white</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.Contains(ListItem.Status,returning) | String.Contains(ListItem.Status,continuing)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31557]</param>
+                        <param name="bg">glass_strong</param>
+                        <param name="color">text</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.Contains(ListItem.Status,ended)</param>
+                    </include>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Year]</label>
+                        <visible>!String.IsEmpty(ListItem.Year)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>Integer.IsGreater(ListItem.Duration(mins),0)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$VAR[ItemDuration]</label>
+                        <visible>Integer.IsGreater(ListItem.Duration(mins),0)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>!String.IsEmpty(ListItem.Rating(imdb)) | !String.IsEmpty(ListItem.Rating(trakt))</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>IMDb $INFO[ListItem.Rating(imdb)]</label>
+                        <visible>!String.IsEmpty(ListItem.Rating(imdb))</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>Trakt $INFO[ListItem.Rating(trakt)]</label>
+                        <visible>!String.IsEmpty(ListItem.Rating(trakt))</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>!String.IsEmpty(ListItem.MPAA)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.MPAA]</label>
+                        <visible>!String.IsEmpty(ListItem.MPAA)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>!String.IsEmpty(ListItem.Genre)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>text3</textcolor>
+                        <label>$INFO[ListItem.Genre]</label>
+                        <visible>!String.IsEmpty(ListItem.Genre)</visible>
+                    </control>
+            </control>
+            <control type="textbox">
+                <left>96</left>
+                <top>830</top>
+                <width>1300</width>
+                <height>124</height>
+                <font>font_body</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[ListItem.Plot]</label>
+            </control>
+        </control>
+        <control type="group" id="9257">
+            <control type="fixedlist" id="57">
+                <onback>ClearProperty(nuvio.back,home)</onback>
+                <onback condition="Integer.IsGreater(Container(57).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
+                <onback condition="Integer.IsGreater(Container(57).CurrentItem,1)">SetFocus(57,0,absolute)</onback>
+                <onback condition="!String.IsEmpty(Window(home).Property(nuvio.back))">9257</onback>
+                <left>72</left>
+                <top>140</top>
+                <width>1848</width>
+                <height>620</height>
+                <orientation>horizontal</orientation>
+                <focusposition>0</focusposition>
+                <preloaditems>2</preloaditems>
+                <onup>9050</onup>
+                <onleft condition="Integer.IsEqual(Container(57).CurrentItem,1)">9050</onleft>
+                <ondown>Action(PageDown)</ondown>
+                <pagecontrol>60</pagecontrol>
+                <viewtype label="$LOCALIZE[31571]">bigwrap</viewtype>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(episodes) | Container.Content(videos)</visible>
+                <include>Anim_SlideUp</include>
+                <itemlayout width="990" height="600">
+                    <control type="group">
+                        <left>24</left>
+                        <top>24</top>
+                        <control type="image">
+                            <width>960</width>
+                            <height>540</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>960</width>
+                            <height>540</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
+                        </control>
+                        <control type="image">
+                            <top>220</top>
+                            <width>960</width>
+                            <height>320</height>
+                            <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                            <colordiffuse>E6000000</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>34</left>
+                            <top>270</top>
+                            <width>480</width>
+                            <height>160</height>
+                            <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                            <texture background="true">$VAR[ItemLogo]</texture>
+                        </control>
+                        <control type="label">
+                            <left>34</left>
+                            <top>360</top>
+                            <width>892</width>
+                            <height>70</height>
+                            <font>font45_title</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                        </control>
+                        <control type="image">
+                            <left>34</left>
+                            <top>452</top>
+                            <width>150</width>
+                            <height>40</height>
+                            <texture border="20">pill44.png</texture>
+                            <colordiffuse>glass_strong</colordiffuse>
+                            <visible>!String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>34</left>
+                            <top>452</top>
+                            <width>150</width>
+                            <height>40</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$VAR[ItemSE]</label>
+                            <visible>!String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>200</left>
+                            <top>452</top>
+                            <width>726</width>
+                            <height>40</height>
+                            <aligny>center</aligny>
+                            <font>font12</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$VAR[ItemDuration]$INFO[ListItem.Premiered,  ·  ,]</label>
+                            <visible>!String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>34</left>
+                            <top>452</top>
+                            <width>892</width>
+                            <height>40</height>
+                            <aligny>center</aligny>
+                            <font>font12</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Year]$VAR[ItemDuration,  ·  ,]$INFO[ListItem.Rating,  ·  ★ ,]</label>
+                            <visible>String.IsEmpty(ListItem.Episode) | !Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>34</left>
+                            <top>506</top>
+                            <width>892</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>900</left>
+                            <top>18</top>
+                            <width>42</width>
+                            <height>42</height>
+                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                        </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>830</left>
+                            <top>20</top>
+                            <width>112</width>
+                            <height>38</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>830</left>
+                            <top>20</top>
+                            <width>112</width>
+                            <height>38</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>18</top>
+                            <width>42</width>
+                            <height>42</height>
+                            <texture>buttons/play_fo.png</texture>
+                            <visible>ListItem.IsPlaying</visible>
+                        </control>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="990" height="600">
+                    <control type="group">
+                        <left>24</left>
+                        <top>24</top>
+                        <animation effect="zoom" start="100" end="103" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                        <animation effect="zoom" start="103" end="100" center="auto" time="160" tween="cubic" easing="out">UnFocus</animation>
+                        <control type="image">
+                            <left>-24</left>
+                            <top>-24</top>
+                            <width>1008</width>
+                            <height>588</height>
+                            <texture border="38">rr14_glow.png</texture>
+                            <colordiffuse>glow</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <width>960</width>
+                            <height>540</height>
+                            <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>960</width>
+                            <height>540</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
+                        </control>
+                        <control type="image">
+                            <top>220</top>
+                            <width>960</width>
+                            <height>320</height>
+                            <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                            <colordiffuse>E6000000</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>34</left>
+                            <top>270</top>
+                            <width>480</width>
+                            <height>160</height>
+                            <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                            <texture background="true">$VAR[ItemLogo]</texture>
+                        </control>
+                        <control type="label">
+                            <left>34</left>
+                            <top>360</top>
+                            <width>892</width>
+                            <height>70</height>
+                            <font>font45_title</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                        </control>
+                        <control type="image">
+                            <left>34</left>
+                            <top>452</top>
+                            <width>150</width>
+                            <height>40</height>
+                            <texture border="20">pill44.png</texture>
+                            <colordiffuse>focus</colordiffuse>
+                            <visible>!String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>34</left>
+                            <top>452</top>
+                            <width>150</width>
+                            <height>40</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>on_focus</textcolor>
+                            <selectedcolor>on_focus</selectedcolor>
+                            <label>$VAR[ItemSE]</label>
+                            <visible>!String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>200</left>
+                            <top>452</top>
+                            <width>726</width>
+                            <height>40</height>
+                            <aligny>center</aligny>
+                            <font>font12</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$VAR[ItemDuration]$INFO[ListItem.Premiered,  ·  ,]</label>
+                            <visible>!String.IsEmpty(ListItem.Episode) + Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>34</left>
+                            <top>452</top>
+                            <width>892</width>
+                            <height>40</height>
+                            <aligny>center</aligny>
+                            <font>font12</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Year]$VAR[ItemDuration,  ·  ,]$INFO[ListItem.Rating,  ·  ★ ,]</label>
+                            <visible>String.IsEmpty(ListItem.Episode) | !Integer.IsGreater(ListItem.Episode,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>34</left>
+                            <top>506</top>
+                            <width>892</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>900</left>
+                            <top>18</top>
+                            <width>42</width>
+                            <height>42</height>
+                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
+                        </control>
+                        <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
+                        <control type="image">
+                            <left>830</left>
+                            <top>20</top>
+                            <width>112</width>
+                            <height>38</height>
+                            <texture border="18" colordiffuse="red">pill44.png</texture>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>830</left>
+                            <top>20</top>
+                            <width>112</width>
+                            <height>38</height>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <font>font10_bold</font>
+                            <textcolor>white</textcolor>
+                            <selectedcolor>white</selectedcolor>
+                            <label>$INFO[ListItem.Property(UnWatchedEpisodes)] $LOCALIZE[31572]</label>
+                            <visible>String.IsEqual(ListItem.DBType,tvshow) + Integer.IsGreater(ListItem.Property(UnWatchedEpisodes),0) + Integer.IsGreater(ListItem.Property(WatchedEpisodes),0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>18</top>
+                            <width>42</width>
+                            <height>42</height>
+                            <texture>buttons/play_fo.png</texture>
+                            <visible>ListItem.IsPlaying</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>960</width>
+                            <height>540</height>
+                            <texture border="14">rr14_edge.png</texture>
+                            <colordiffuse>text</colordiffuse>
+                            <visible>Control.HasFocus(57)</visible>
+                        </control>
+                    </control>
                 </focusedlayout>
             </control>
         </control>
     </include>
 
     <include name="MediaViews">
+        <include>View_56</include>
+        <include>View_57</include>
         <include>View_51</include>
         <include>View_52</include>
         <include>View_55</include>

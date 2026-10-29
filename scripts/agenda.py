@@ -4,7 +4,6 @@
 RunScript(special://skin/scripts/agenda.py)           open the calendar
 RunScript(special://skin/scripts/agenda.py,follow)    switch the bell (notification) of the item on the info page on / off
 RunScript(special://skin/scripts/agenda.py,state)     info page: is this item followed? (Window(home) nuvio.agenda.followed)
-RunScript(special://skin/scripts/agenda.py,service)   background helper for the "new episode" pop-up
 RunScript(special://skin/scripts/agenda.py,ensure_tab) add the Calendar tab to the side menu (once)
 
 The window is xml/Lucent_Agenda.xml (see gen_agenda.py); this file fills its lists and handles the buttons.
@@ -435,8 +434,6 @@ if __name__ == "__main__":
         core.follow_button()
     elif action == "state":
         core.state()
-    elif action == "service":
-        core.run_service()
     elif action == "ensure_tab":
         ensure_tab()
     else:

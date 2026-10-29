@@ -791,44 +791,6 @@ class Sport(xbmcgui.WindowXML):
                 self.render(keep_focus=True)
                 return
 
-    def game_menu(self, ev, item):
-        """OK on a game: watch on a channel, remind, record, fix the channel, follow a team, show the table."""
-        options, actions = [], []
-        for n in range(1, 5):
-            if item.getProperty(f"ch{n}cid"):
-                options.append(f"{sc.t('play_on')} {item.getProperty(f'ch{n}name')}  ·  {item.getProperty(f'ch{n}sub')}")
-                actions.append(("play", n))
-        if item.getProperty("remindtext"):
-            options += [item.getProperty("remindtext"), item.getProperty("rectext"), item.getProperty("fixtext")]
-            actions += [("remind", 0), ("record", 0), ("fix", 0)]
-        for who in ("home", "away"):
-            if item.getProperty(f"follow{who}"):
-                options.append(item.getProperty(f"follow{who}"))
-                actions.append((who, 0))
-        if item.getProperty("table"):
-            options.append(item.getProperty("table"))
-            actions.append(("table", 0))
-        if not options:
-            return
-        title = item.getLabel() if ev["kind"] == "event" else f"{item.getLabel()}  ·  {item.getProperty('when')}"
-        pick = xbmcgui.Dialog().select(title, options)
-        if pick < 0:
-            return
-        action, n = actions[pick]
-        if action == "play":
-            self.play_channel(n, item)
-        elif action == "remind":
-            self.remind_event(ev)
-        elif action == "record":
-            self.set_recording(ev)
-        elif action == "fix":
-            self.fix_channel(ev)
-        elif action in ("home", "away"):
-            self.toggle_team(action, ev)
-        elif action == "table":
-            self.open_table(ev)
-
-
     # ------------------------------------------------------------------ Follow page
     def sport_of_team(self, team):
         league = team.get("league")
@@ -1806,7 +1768,7 @@ class TeamCard(xbmcgui.WindowXMLDialog):
         for n in range(3):
             if n < len(card["last3"]):
                 ev, (letter, score, opp, home) = card["last3"][n]
-                self.setProperty(f"card.r{n + 1}", f"{sc.local_time(ev['start']) and ac.day_short(sc.local_day(ev['start']))}   {'vs' if home else '@'} {opp}")
+                self.setProperty(f"card.r{n + 1}", f"{ac.day_short(sc.local_day(ev['start']))}   {'vs' if home else '@'} {opp}")
                 self.setProperty(f"card.r{n + 1}s", score)
                 self.setProperty(f"card.r{n + 1}c", sc.FORM_COLOURS[letter])
             else:
@@ -1841,7 +1803,10 @@ def open_window():
     import xbmcaddon
     path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
     window = Sport(WINDOW_XML, path, "Default", "1080i")
-    window.doModal()
+    try:
+        window.doModal()
+    finally:
+        epg.restore_fullscreen()
     del window
 
 
@@ -1874,7 +1839,7 @@ if __name__ == "__main__":
     action = sys.argv[1] if len(sys.argv) > 1 else "open"
     if action == "ensure_tab":
         ensure_tab()
-    elif action == "service":
-        plan.run_service()
+    elif action == "homecard":
+        plan.open_home_card()
     else:
         open_window()

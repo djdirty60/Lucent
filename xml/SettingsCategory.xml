@@ -4,79 +4,126 @@
     <backgroundcolor>bg</backgroundcolor>
     <controls>
         <include>PlainBackground</include>
-        <include content="PageHeading">
-            <param name="label">$LOCALIZE[5]</param>
-            <param name="sub">$INFO[Control.GetLabel(2)]</param>
-        </include>
         <include>Clock</include>
         <control type="label" id="2">
             <visible>false</visible>
         </control>
 
-        <!-- Categories -->
+        <!-- Left: heading and the categories of this section -->
+        <control type="label">
+            <left>96</left>
+            <top>52</top>
+            <width>440</width>
+            <height>52</height>
+            <font>font_heading_small</font>
+            <textcolor>text</textcolor>
+            <label>$LOCALIZE[5]</label>
+        </control>
+        <control type="label">
+            <left>96</left>
+            <top>100</top>
+            <width>440</width>
+            <height>34</height>
+            <font>font10</font>
+            <textcolor>text4</textcolor>
+            <label>$INFO[Control.GetLabel(2)]</label>
+        </control>
         <control type="group">
-            <include>Anim_SlideLeft</include>
+            <include>Anim_SlideRight</include>
             <control type="grouplist" id="3">
-                <left>96</left>
-                <top>170</top>
-                <width>420</width>
-                <height>740</height>
-                <itemgap>6</itemgap>
+                <left>80</left>
+                <top>160</top>
+                <width>460</width>
+                <height>760</height>
+                <itemgap>2</itemgap>
                 <onright>5</onright>
                 <onup>3</onup>
                 <ondown>20</ondown>
                 <usecontrolcoords>true</usecontrolcoords>
             </control>
-            <include content="CategoryTemplate"><param name="width">420</param></include>
+            <include content="CategoryTemplate"><param name="width">440</param></include>
             <!-- Settings level (Basic / Standard / Advanced / Expert), label set by Kodi -->
             <control type="button" id="20">
                 <left>96</left>
-                <top>950</top>
+                <top>956</top>
                 <width>420</width>
-                <height>64</height>
-                <font>font12_bold</font>
+                <height>60</height>
+                <font>font10_bold</font>
+                <textcolor>text3</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
                 <textoffsetx>28</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus>
                 <onup>3</onup>
                 <ondown>3</ondown>
                 <onright>5</onright>
             </control>
         </control>
+        <control type="image">
+            <left>560</left>
+            <top>160</top>
+            <width>2</width>
+            <height>860</height>
+            <texture>white.png</texture>
+            <colordiffuse>separator</colordiffuse>
+        </control>
 
-        <!-- Settings -->
+        <!-- Right: title, explanation and the settings -->
         <control type="group">
-            <include>Anim_SlideRight</include>
-            <include content="GlassPanel">
-                <param name="left">570</param>
-                <param name="top">150</param>
-                <param name="width">1280</param>
-                <param name="height">780</param>
-            </include>
+            <left>620</left>
+            <include>Anim_SlideLeft</include>
+            <control type="label">
+                <left>0</left>
+                <top>150</top>
+                <width>1200</width>
+                <height>60</height>
+                <font>font37</font>
+                <textcolor>text</textcolor>
+                <label>$INFO[Control.GetLabel(2)]</label>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>208</top>
+                <width>1200</width>
+                <height>36</height>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <label>$VAR[LucentSettingsSub]</label>
+            </control>
+            <control type="image">
+                <left>0</left>
+                <top>254</top>
+                <width>48</width>
+                <height>5</height>
+                <texture border="2">white.png</texture>
+                <colordiffuse>focus</colordiffuse>
+            </control>
             <control type="grouplist" id="5">
                 <onright condition="Control.IsVisible(60)">60</onright>
                 <onright>5</onright>
-                <left>620</left>
-                <top>180</top>
-                <width>1180</width>
-                <height>720</height>
-                <itemgap>8</itemgap>
+                <left>0</left>
+                <top>290</top>
+                <width>1200</width>
+                <height>640</height>
+                <itemgap>10</itemgap>
                 <pagecontrol>60</pagecontrol>
                 <onleft>3</onleft>
                 <onup>5</onup>
                 <ondown>5</ondown>
             </control>
             <control type="scrollbar" id="60">
-                <left>1822</left>
-                <top>180</top>
-                <height>720</height>
+                <left>1222</left>
+                <top>290</top>
+                <height>640</height>
                 <onleft>5</onleft>
             </control>
             <include content="SettingDescription">
-                <param name="left">600</param>
+                <param name="left">0</param>
                 <param name="top">950</param>
-                <param name="width">1240</param>
+                <param name="width">1200</param>
             </include>
         </control>
 
-        <include content="SettingTemplates"><param name="width">1180</param><param name="cpos">1090</param></include>
+        <include content="SettingTemplates"><param name="width">1200</param><param name="cpos">1110</param></include>
     </controls>
 </window>

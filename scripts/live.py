@@ -6,7 +6,6 @@ live.py,play,<id>  switch to a channel
 import json
 import os
 import sys
-import time
 
 import xbmc
 import xbmcgui
@@ -96,13 +95,14 @@ def show(ev):
 
 def score(cid):
     import sport_core as sc
+    live = [ev for ev in sc.all_cached() if ev.get("kind") == "teams" and ev.get("state") == "in"]
+    if not live:
+        return False                           # no game is live: do not load the whole TV guide while a video plays
     import sport_epg as epg
     data = epg.load()
     if not data or not data.get("rows"):
         return False
-    for ev in sc.all_cached():
-        if ev.get("kind") != "teams" or ev.get("state") != "in":
-            continue
+    for ev in live:
         if not any(str(c["cid"]) == str(cid) for c in epg.channels_for(ev, data)):
             continue
         show(ev)                               # at once, from what we already hold

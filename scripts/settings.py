@@ -83,6 +83,9 @@ def skin_string(name):
 
 
 def set_string(name, value):
+    """Only write when it really changes: every write makes Kodi save all skin settings to disk."""
+    if skin_string(name) == (value or ""):
+        return
     if value:
         xbmc.executebuiltin(f'Skin.SetString({name},"{value}")', True)
     else:
@@ -90,6 +93,8 @@ def set_string(name, value):
 
 
 def set_bool(name, on):
+    if bool(xbmc.getCondVisibility(f"Skin.HasSetting({name})")) == bool(on):
+        return
     xbmc.executebuiltin(f"Skin.SetBool({name})" if on else f"Skin.Reset({name})", True)
 
 
@@ -183,9 +188,48 @@ def pick_option(name, options, heading):
 
 
 # ----------------------------------------------------------------------------- logos
+LOGO_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/logos/"
+LOGO_NAMES = ("imdb", "tmdb", "trakt", "rt")
+
+
+def scan_logos():
+    """Window(home).Property(nuvio.logo.<name>) for the rating logos you have (used on Home and the info page)."""
+    home = xbmcgui.Window(10000)
+    for name in LOGO_NAMES:
+        path = f"{LOGO_DIR}{name}.png"
+        home.setProperty(f"nuvio.logo.{name}", path if xbmcvfs.exists(path) else "")
+
+
+def fetch_logos():
+    """Copy the rating logos of the Lucent GitHub page to the logo folder. Returns how many were saved."""
+    import urllib.request
+    saved = 0
+    for name in LOGO_NAMES:
+        try:
+            req = urllib.request.Request(LOGO_URL + name + ".png", headers={"User-Agent": "Kodi skin.lucent"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = resp.read()
+            if data[:8] != b"\x89PNG\r\n\x1a\n":
+                continue
+            with xbmcvfs.File(f"{LOGO_DIR}{name}.png", "wb") as fh:
+                fh.write(bytearray(data))
+            saved += 1
+        except Exception:  # noqa: BLE001 - this logo is not there
+            continue
+    scan_logos()
+    return saved
+
+
 def explain_logos():
     if not xbmcvfs.exists(LOGO_DIR):
         xbmcvfs.mkdirs(LOGO_DIR)
+    if xbmcgui.Dialog().yesno(HEADING, tr((
+            "Fetch the rating logos from the Lucent page on GitHub (github.com/djdirty60/Lucent, folder logos)?",
+            "De beoordelingslogo's ophalen van de Lucent-pagina op GitHub (github.com/djdirty60/Lucent, map logos)?")),
+            nolabel=tr(("Own logos", "Eigen logo's")), yeslabel=tr(("Fetch", "Ophalen"))):
+        n = fetch_logos()
+        xbmcgui.Dialog().notification(HEADING, tr(("{0} logos saved", "{0} logo's opgeslagen"), n), xbmcgui.NOTIFICATION_INFO, 5000)
+        return
     real = xbmcvfs.translatePath(LOGO_DIR)
     xbmcgui.Dialog().ok(HEADING, tr((
         "Put your own logos in this folder as imdb.png, tmdb.png and trakt.png:[CR][B]{0}[/B][CR]"
@@ -265,6 +309,28 @@ def reset_all():
         sync()
 
 
+def total_memory_mb():
+    """Memory of the box in MB (0 when unknown)."""
+    try:
+        with open("/proc/meminfo") as fh:
+            for line in fh:
+                if line.startswith("MemTotal:"):
+                    return int(line.split()[1]) // 1024
+    except Exception:  # noqa: BLE001 - not Linux / Android without access
+        pass
+    digits = "".join(ch for ch in xbmc.getInfoLabel("System.Memory(total)") if ch.isdigit())
+    return int(digits) if digits else 0
+
+
+def lite_check():
+    """Once: boxes with 2 GB of memory or less get the light mode (fewer helpers, fewer rows, no snow)."""
+    mb = total_memory_mb()
+    xbmc.executebuiltin('Skin.SetString(lucent.lite.checked,"%d")' % (mb or 1))
+    if 0 < mb <= 2600 and not xbmc.getCondVisibility("Skin.HasSetting(lucent.lite)"):
+        xbmc.executebuiltin("Skin.SetBool(lucent.lite)")
+        xbmc.log(f"[skin.lucent] {mb} MB memory: light mode switched on", xbmc.LOGINFO)
+
+
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "sync"
     {
@@ -278,4 +344,6 @@ if __name__ == "__main__":
         "posterfocus": pick_posterfocus,
         "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),
         "reset": reset_all,
+        "litecheck": lite_check,
+        "scanlogos": scan_logos,
     }.get(what, sync)()

@@ -8,6 +8,7 @@
     <onload>ClearProperty(nuvio.info.tab,home)</onload>
     <onload>ClearProperty(nuvio.info.vid.count,home)</onload>
     <onload>ClearProperty(nuvio.info.cast.count,home)</onload>
+    <onload>ClearProperty(nuvio.info.prov.count,home)</onload>
     <onload>RunScript(special://skin/scripts/info.py,load)</onload>
     <onload>RunScript(special://skin/scripts/agenda.py,state)</onload>
     <controls>
@@ -280,11 +281,82 @@
                     <animation effect="slide" start="0,0" end="0,56" time="0" condition="String.IsEqual(ListItem.DBType,episode)">Conditional</animation>
                 </control>
 
+                <!-- Where to watch (TMDB / JustWatch), right of the details -->
+                <control type="group">
+                    <visible>Integer.IsGreater(Window(home).Property(nuvio.info.prov.count),0)</visible>
+                    <animation effect="fade" start="0" end="100" time="300">Visible</animation>
+                    <control type="label">
+                        <left>1200</left>
+                        <top>860</top>
+                        <width>624</width>
+                        <height>40</height>
+                        <font>font_tiny</font>
+                        <textcolor>text4</textcolor>
+                        <align>right</align>
+                        <label>$LOCALIZE[31531]   ·   $INFO[Window(home).Property(nuvio.info.prov.names)]</label>
+                    </control>
+                    <control type="grouplist">
+                        <left>1200</left>
+                        <top>906</top>
+                        <width>624</width>
+                        <height>56</height>
+                        <orientation>horizontal</orientation>
+                        <align>right</align>
+                        <itemgap>12</itemgap>
+                    <control type="image">
+                        <width>56</width>
+                        <height>56</height>
+                        <texture diffuse="mask_square.png" background="true">$INFO[Window(home).Property(nuvio.info.prov.1.logo)]</texture>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.info.prov.1.logo))</visible>
+                    </control>
+                    <control type="image">
+                        <width>56</width>
+                        <height>56</height>
+                        <texture diffuse="mask_square.png" background="true">$INFO[Window(home).Property(nuvio.info.prov.2.logo)]</texture>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.info.prov.2.logo))</visible>
+                    </control>
+                    <control type="image">
+                        <width>56</width>
+                        <height>56</height>
+                        <texture diffuse="mask_square.png" background="true">$INFO[Window(home).Property(nuvio.info.prov.3.logo)]</texture>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.info.prov.3.logo))</visible>
+                    </control>
+                    <control type="image">
+                        <width>56</width>
+                        <height>56</height>
+                        <texture diffuse="mask_square.png" background="true">$INFO[Window(home).Property(nuvio.info.prov.4.logo)]</texture>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.info.prov.4.logo))</visible>
+                    </control>
+                    <control type="image">
+                        <width>56</width>
+                        <height>56</height>
+                        <texture diffuse="mask_square.png" background="true">$INFO[Window(home).Property(nuvio.info.prov.5.logo)]</texture>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.info.prov.5.logo))</visible>
+                    </control>
+                    <control type="image">
+                        <width>56</width>
+                        <height>56</height>
+                        <texture diffuse="mask_square.png" background="true">$INFO[Window(home).Property(nuvio.info.prov.6.logo)]</texture>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.info.prov.6.logo))</visible>
+                    </control>
+                    </control>
+                    <control type="label">
+                        <left>1200</left>
+                        <top>966</top>
+                        <width>624</width>
+                        <height>30</height>
+                        <font>font_tiny</font>
+                        <textcolor>text5</textcolor>
+                        <align>right</align>
+                        <label>$LOCALIZE[31532]</label>
+                    </control>
+                </control>
+
                 <!-- Genres • date -->
                 <control type="grouplist">
                     <left>96</left>
                     <top>872</top>
-                    <width>1700</width>
+                    <width>1080</width>
                     <height>44</height>
                     <orientation>horizontal</orientation>
                     <itemgap>14</itemgap>
@@ -318,7 +390,7 @@
                 <control type="grouplist">
                     <left>96</left>
                     <top>932</top>
-                    <width>1700</width>
+                    <width>1080</width>
                     <height>44</height>
                     <orientation>horizontal</orientation>
                     <itemgap>14</itemgap>
@@ -560,7 +632,7 @@
                             <width>180</width>
                             <height>180</height>
                             <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
-                            <texture diffuse="mask_circle.png" fallback="DefaultActor.png">$INFO[ListItem.Icon]</texture>
+                            <texture diffuse="mask_circle.png" fallback="DefaultActor.png" background="true">$INFO[ListItem.Icon]</texture>
                         </control>
                         <control type="label">
                             <left>14</left>
@@ -605,7 +677,7 @@
                                 <width>180</width>
                                 <height>180</height>
                                 <aspectratio scalediffuse="false" aligny="top">scale</aspectratio>
-                                <texture diffuse="mask_circle.png" fallback="DefaultActor.png">$INFO[ListItem.Icon]</texture>
+                                <texture diffuse="mask_circle.png" fallback="DefaultActor.png" background="true">$INFO[ListItem.Icon]</texture>
                             </control>
                         </control>
                         <control type="label">
@@ -1526,7 +1598,7 @@
                             <width>244</width>
                             <height>84</height>
                             <aspectratio>keep</aspectratio>
-                            <texture>$INFO[ListItem.Thumb]</texture>
+                            <texture background="true">$INFO[ListItem.Thumb]</texture>
                             <visible>!String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="image">
@@ -1595,7 +1667,7 @@
                             <width>244</width>
                             <height>84</height>
                             <aspectratio>keep</aspectratio>
-                            <texture>$INFO[ListItem.Thumb]</texture>
+                            <texture background="true">$INFO[ListItem.Thumb]</texture>
                             <visible>!String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="image">

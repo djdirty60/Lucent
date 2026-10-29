@@ -4,6 +4,7 @@
 Pictures come from TMDB (trending films / series) or from the Kodi library. Two slots (a and b) take turns;
 the window XML fades one out through black and the other in, and zooms it slowly.
 """
+import re
 import json
 import random
 import urllib.parse
@@ -12,6 +13,7 @@ import urllib.request
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
 PATH = ADDON.getAddonInfo("path")
@@ -19,6 +21,23 @@ TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
 KEY = "9f3ca569aa46b6fb13931ec96ab8ae7e"       # the public key Seren also uses by default
 LANG = "nl-NL" if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else "en-US"
+
+
+def seren_client_id(seren):
+    """The Trakt app key Seren itself uses. Its login only works with that same key, and Seren versions differ:
+    taken from Seren's setting, else read from Seren's own code (its built-in default)."""
+    key = seren.getSetting("trakt.clientid").strip()
+    if key:
+        return key
+    try:
+        path = xbmcvfs.translatePath("special://home/addons/plugin.video.seren/resources/lib/indexers/trakt.py")
+        with open(path, encoding="utf-8") as fh:
+            found = re.search(r'"trakt\.clientid",\s*"([0-9a-f]{64})"', fh.read())
+        if found:
+            return found.group(1)
+    except Exception:  # noqa: BLE001
+        pass
+    return "0c9a30819e4af6ffaf3b954cbeae9b54499088513863c03c02911de00ac2de79"
 
 
 def log(text):
@@ -64,16 +83,63 @@ def trending(kind):
     return out
 
 
-def tmdb_item(kind, tmdb_id):
+def tmdb_item(kind, tmdb_id, where=False):
     data = tmdb(f"{kind}/{tmdb_id}", append_to_response="images", include_image_language="nl,en,null")
     if not data.get("backdrop_path"):
         return None
+    year = (data.get("release_date") or data.get("first_air_date") or "")[:4]
+    genres = [g["name"] for g in (data.get("genres") or [])[:3]]
     return {
         "fanart": f"{IMG}original{data['backdrop_path']}",
         "logo": pick_logo(data.get("images")),
         "title": data.get("title") or data.get("name") or "",
-        "genres": "  ·  ".join(g["name"] for g in (data.get("genres") or [])[:3]),
+        "genres": "  ·  ".join(([year] if where and year else []) + genres),
+        "where": where_to_watch(kind, tmdb_id) if where else "",
     }
+
+
+REGION = "NL" if LANG == "nl-NL" else "GB"
+
+
+def watchlist():
+    """[(kind, tmdb id)] of your Trakt watchlist (films and series), through Seren's Trakt login."""
+    try:
+        seren = xbmcaddon.Addon("plugin.video.seren")
+    except Exception:  # noqa: BLE001
+        return []
+    token = seren.getSetting("trakt.auth")
+    if not token:
+        return []
+    client = seren_client_id(seren)
+    headers = {"Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": client,
+               "Authorization": f"Bearer {token}", "User-Agent": "screensaver.lucent"}
+    out = []
+    for path, kind, key in (("sync/watchlist/movies", "movie", "movie"), ("sync/watchlist/shows", "tv", "show")):
+        try:
+            request = urllib.request.Request(f"https://api.trakt.tv/{path}", headers=headers)
+            with urllib.request.urlopen(request, timeout=15) as response:
+                for entry in json.loads(response.read().decode("utf-8")) or []:
+                    tmdb_id = ((entry.get(key) or {}).get("ids") or {}).get("tmdb")
+                    if tmdb_id:
+                        out.append((kind, tmdb_id))
+        except Exception as error:  # noqa: BLE001
+            log(f"watchlist {kind}: {error}")
+    return out
+
+
+def where_to_watch(kind, tmdb_id):
+    try:
+        result = (tmdb(f"{kind}/{tmdb_id}/watch/providers").get("results") or {}).get(REGION) or {}
+    except Exception:  # noqa: BLE001
+        return ""
+    names = []
+    for group in ("flatrate", "free", "ads"):
+        for p in sorted(result.get(group) or [], key=lambda p: p.get("display_priority", 99)):
+            if p.get("provider_name") and p["provider_name"] not in names:
+                names.append(p["provider_name"])
+    if not names:
+        return ""
+    return ("Te zien op " if LANG == "nl-NL" else "Watch on ") + ", ".join(names[:3])
 
 
 def library_items():
@@ -97,6 +163,8 @@ def library_items():
 def build_queue(source):
     if source == 3:
         return library_items()
+    if source == 4:
+        return watchlist() or trending("movie") + trending("tv")
     queue = []
     if source in (0, 1):
         queue += trending("movie")
@@ -143,12 +211,14 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.setProperty(f"{slot}.logo", item["logo"])
         self.setProperty(f"{slot}.title", item["title"])
         self.setProperty(f"{slot}.genres", item["genres"])
+        self.setProperty(f"{slot}.where", item.get("where", ""))
         self.setProperty("slot", slot)
         self.setProperty(f"{slot}.go", "1")
 
     def run(self):
         seconds = max(8, ADDON.getSettingInt("seconds") or 18)
-        queue = build_queue(ADDON.getSettingInt("source"))
+        source = ADDON.getSettingInt("source")
+        queue = build_queue(source)
         if not queue:
             log("nothing to show")
             self.exit()
@@ -160,7 +230,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
             kind, ref = queue[index % len(queue)]
             index += 1
             try:
-                item = ref if kind is None else tmdb_item(kind, ref)
+                item = ref if kind is None else tmdb_item(kind, ref, where=source == 4)
             except Exception as error:  # noqa: BLE001 - skip this one
                 log(f"{kind} {ref}: {error}")
                 item = None
