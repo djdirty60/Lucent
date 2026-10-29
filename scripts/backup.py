@@ -72,12 +72,9 @@ def collect():
     return out
 
 
-def make_backup():
-    folder = xbmcgui.Dialog().browse(3, t("Where should the backup go? (USB stick, network share ...)",
-                                          "Waar moet de back-up heen? (USB-stick, netwerkmap …)"), "files")
-    if not folder:
-        return
-    name = time.strftime("lucent-backup-%Y%m%d-%H%M.zip")
+def write_zip(folder, prefix):
+    """Zip everything worth keeping into folder; returns (target path, number of files). Raises OSError when it fails."""
+    name = time.strftime(f"{prefix}-%Y%m%d-%H%M.zip")
     temp = xbmcvfs.translatePath("special://temp/" + name)
     files = collect()
     try:
@@ -89,15 +86,76 @@ def make_backup():
         target = folder.rstrip("/\\") + "/" + name
         if not xbmcvfs.copy(temp, target):
             raise OSError(t("could not write to that folder", "kon niet naar die map schrijven"))
-    except Exception as error:  # noqa: BLE001
-        log(f"backup failed: {error}")
-        xbmcgui.Dialog().ok(t("Backup", "Back-up"), t(f"The backup failed: {error}", f"De back-up is mislukt: {error}"))
-        return
     finally:
         try:
             os.remove(temp)
         except OSError:
             pass
+    return target, len(files)
+
+
+AUTO_DIR, AUTO_LAST, AUTO_DAYS, AUTO_KEEP = "lucent.backup.auto.dir", "lucent.backup.auto.last", 7, 4
+
+
+def auto_backup():
+    """Called by the helper (every hour): once a week a silent backup into the chosen folder; keeps the last 4."""
+    folder = xbmc.getInfoLabel(f"Skin.String({AUTO_DIR})")
+    if not folder:
+        return
+    try:
+        last = float(xbmc.getInfoLabel(f"Skin.String({AUTO_LAST})") or 0)
+    except ValueError:
+        last = 0
+    if time.time() - last < AUTO_DAYS * 86400:
+        return
+    try:
+        target, count = write_zip(folder, "lucent-auto")
+        _dirs, names = xbmcvfs.listdir(folder)
+        old = sorted(n for n in names if n.startswith("lucent-auto-") and n.endswith(".zip"))[:-AUTO_KEEP]
+        for n in old:
+            xbmcvfs.delete(folder.rstrip("/\\") + "/" + n)
+        xbmc.executebuiltin(f"Skin.SetString({AUTO_LAST},{time.time():.0f})")
+        xbmc.executebuiltin(f'Skin.SetString({LAST},"{time.strftime("%d-%m-%Y %H:%M")}")')
+        log(f"auto backup: {count} files -> {target}")
+    except Exception as error:  # noqa: BLE001
+        log(f"auto backup failed: {error}")
+        xbmcgui.Dialog().notification(t("Backup", "Back-up"), t("The automatic backup could not be saved (is the USB stick in?)",
+                                                              "De automatische back-up kon niet worden bewaard (zit de USB-stick erin?)"),
+                                      xbmcgui.NOTIFICATION_WARNING, 6000, True)
+        xbmc.executebuiltin(f"Skin.SetString({AUTO_LAST},{time.time() - (AUTO_DAYS - 1) * 86400:.0f})")   # try again tomorrow
+
+
+def auto_menu():
+    folder = xbmc.getInfoLabel(f"Skin.String({AUTO_DIR})")
+    if folder:
+        pick = xbmcgui.Dialog().select(t("Automatic backup", "Automatische back-up"),
+                                       [t(f"Switch off (now: {folder})", f"Uitzetten (nu: {folder})"), t("Choose another folder", "Andere map kiezen")])
+        if pick == 0:
+            xbmc.executebuiltin(f"Skin.Reset({AUTO_DIR})")
+            return
+        if pick != 1:
+            return
+    new = xbmcgui.Dialog().browse(3, t("Folder for the weekly backup (best: a USB stick)", "Map voor de wekelijkse back-up (liefst een USB-stick)"), "files")
+    if not new:
+        return
+    xbmc.executebuiltin(f'Skin.SetString({AUTO_DIR},"{new}")')
+    xbmc.executebuiltin(f"Skin.SetString({AUTO_LAST},0)")
+    xbmcgui.Dialog().notification(t("Backup", "Back-up"), t("Once a week, the last 4 are kept", "Elke week een back-up, de laatste 4 blijven bewaard"),
+                                  "special://skin/media/icons/cloud.png", 4000, False)
+
+
+def make_backup():
+    folder = xbmcgui.Dialog().browse(3, t("Where should the backup go? (USB stick, network share ...)",
+                                          "Waar moet de back-up heen? (USB-stick, netwerkmap …)"), "files")
+    if not folder:
+        return
+    try:
+        target, count = write_zip(folder, "lucent-backup")
+    except Exception as error:  # noqa: BLE001
+        log(f"backup failed: {error}")
+        xbmcgui.Dialog().ok(t("Backup", "Back-up"), t(f"The backup failed: {error}", f"De back-up is mislukt: {error}"))
+        return
+    files = range(count)
     when = time.strftime("%d-%m-%Y %H:%M")
     xbmc.executebuiltin(f'Skin.SetString({LAST},"{when}")')
     log(f"backup: {len(files)} files -> {target}")
@@ -190,11 +248,15 @@ def restore():
 def menu():
     last = last_backup()
     pick = xbmcgui.Dialog().select(t("Backup", "Back-up") + (t(f"  ·  last: {last}", f"  ·  laatste: {last}") if last else ""),
-                                   [t("Make a backup", "Back-up maken"), t("Restore a backup", "Back-up terugzetten")])
+                                   [t("Make a backup", "Back-up maken"), t("Restore a backup", "Back-up terugzetten"),
+                                    t("Automatic weekly backup", "Automatische wekelijkse back-up") +
+                                    (t("  (on)", "  (aan)") if xbmc.getInfoLabel(f"Skin.String({AUTO_DIR})") else t("  (off)", "  (uit)"))])
     if pick == 0:
         make_backup()
     elif pick == 1:
         restore()
+    elif pick == 2:
+        auto_menu()
 
 
 if __name__ == "__main__":
@@ -203,5 +265,7 @@ if __name__ == "__main__":
         make_backup()
     elif action == "restore":
         restore()
+    elif action == "auto":
+        auto_backup()
     else:
         menu()
