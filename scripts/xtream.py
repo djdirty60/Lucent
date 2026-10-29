@@ -12,6 +12,7 @@ The login is never written to Kodi's log.
 import json
 import re
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -93,19 +94,49 @@ def check(server, user, password):
     return True, "  ·  ".join(parts)
 
 
-def probe_m3u(m3u):
-    """Fetch the channel list ourselves: (number of channels, note). Separates 'the provider gives nothing' from
-    'IPTV Simple does not pick it up'."""
+AGENTS = [("", UA), ("VLC/3.0.20 LibVLC/3.0.20", "VLC/3.0.20 LibVLC/3.0.20"),
+          ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"),
+          ("Kodi/21.0 (Linux)", "Kodi/21.0 (Linux)")]
+
+
+def fetch_head(url, agent):
+    """(HTTP code or exception name, first 6 MB of the answer)"""
     try:
-        req = urllib.request.Request(m3u, headers={"User-Agent": UA})
+        req = urllib.request.Request(url, headers={"User-Agent": agent})
         with urllib.request.urlopen(req, timeout=30) as resp:
-            head = resp.read(6 * 1024 * 1024).decode("utf-8", "replace")
+            return resp.status, resp.read(6 * 1024 * 1024).decode("utf-8", "replace")
+    except urllib.error.HTTPError as error:
+        return error.code, ""
     except Exception as error:  # noqa: BLE001
-        return -1, t(f"the server did not give the channel list ({type(error).__name__})",
-                     f"de server gaf de zenderlijst niet ({type(error).__name__})")
-    if "#EXTM3U" not in head[:2000]:
-        return 0, t("the answer is not a channel list (M3U)", "het antwoord is geen zenderlijst (M3U)")
-    return head.count("#EXTINF"), ""
+        return type(error).__name__, ""
+
+
+def probe_m3u(server, user, password, output, busy=None):
+    """Fetch the channel list ourselves, trying what providers are picky about: the program that asks (user agent)
+    and the list type. Returns (channels, note, working m3u url, user agent or '')."""
+    cred = {"username": user, "password": password}
+    variants = [(output, "m3u_plus"), (output, "m3u"), ("m3u8" if output == "ts" else "ts", "m3u_plus")]
+    first = ""
+    n = 0
+    for agent_opt, agent in AGENTS:
+        for out, kind in variants:
+            n += 1
+            if busy:
+                busy.update(min(95, n * 8), t(f"Fetching the channel list… (try {n})", f"Zenderlijst ophalen… (poging {n})"))
+            m3u = f"{server}/get.php?{urllib.parse.urlencode(dict(cred, type=kind, output=out))}"
+            code, body = fetch_head(m3u, agent)
+            if not first:
+                first = str(code)
+            if body and "#EXTM3U" in body[:2000]:
+                count = body.count("#EXTINF")
+                if count:
+                    log(f"channel list ok with agent '{agent_opt or 'default'}', type={kind}, output={out}: {count} channels")
+                    return count, "", m3u, agent_opt
+            if code in (401, 403) and kind == "m3u_plus" and out == output:
+                continue                                  # blocked for this agent: try the next agent quickly
+    return 0, t(f"the server refuses the channel list (first answer: {first})",
+                f"de server weigert de zenderlijst (eerste antwoord: {first})"), "", ""
 
 
 def strip_secrets(text):
@@ -307,8 +338,13 @@ def run():
     m3u, epg = links(server, user, password, output)
     busy = xbmcgui.DialogProgress()
     busy.create("Xtream", t("Fetching the channel list from the server…", "Zenderlijst ophalen bij de server…"))
-    count, note = probe_m3u(m3u)
+    count, note, good_m3u, agent = probe_m3u(server, user, password, output, busy)
     busy.close()
+    if good_m3u:
+        m3u = good_m3u
+        if agent:                                        # IPTV Simple must ask the same way (Kodi's |User-Agent= option)
+            m3u += "|User-Agent=" + urllib.parse.quote(agent)
+            epg += "|User-Agent=" + urllib.parse.quote(agent)
     if count <= 0:
         if not dialog.yesno("Xtream", t(f"Channel list: {note}.", f"Zenderlijst: {note}.") + "\n\n" +
                             t("IPTV Simple will not get channels from this either. Save anyway?",
