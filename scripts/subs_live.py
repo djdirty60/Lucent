@@ -90,7 +90,9 @@ def search_languages():
 
 def subtitle_addons():
     found = rpc("Addons.GetAddons", {"type": "xbmc.subtitle.module", "enabled": True, "properties": ["name"]})
-    return [(a["addonid"], a.get("name") or a["addonid"]) for a in found.get("addons", [])][:SOURCES]
+    addons = [(a["addonid"], a.get("name") or a["addonid"]) for a in found.get("addons", [])]
+    own = [a for a in addons if a[0] == "service.subtitles.lucent"]
+    return (own or addons)[:SOURCES]                   # Lucent Ondertitels asks all sites itself
 
 
 # ----------------------------------------------------------------------------- the window

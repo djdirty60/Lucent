@@ -72,7 +72,7 @@ A **TV** tab with your IPTV channels: groups on the left, channels with logo and
 
 ### Subtitles and updates
 - **Lucent Subtitles** – Lucent's own subtitle add-on (installed with the skin): asks OpenSubtitles, SubDL and Podnapisi at the same time with a time limit, puts subtitles that fit your exact video first (file hash and release name), finds season packs and saves everything as UTF-8. Needs a free OpenSubtitles account with an API key (*Profile → API consumers*) and a free SubDL API key; Podnapisi works without. Fill them in via the setup assistant or *Skin settings → Integrations → Subtitle add-on settings*.
-- A *Search subtitles* button in the player menu and optional automatic search when a film or episode starts without subtitles in your language (A4KSubtitles still works too).
+- A *Search subtitles* button in the player menu and optional automatic search when a film or episode starts without subtitles in your language.
 - **Update pop-up** – when a new version is out you can choose *Update now*, *Later* or *Skip this version* (switch in Skin settings → Integrations).
 
 ### Lucent Library (your collection as a Kodi library)
@@ -97,7 +97,7 @@ The player menu has a moon button: stop after this episode or film, or after 15,
 *Skin settings > Kids mode*: choose a PIN and which side-menu items stay. In kids mode the Options button on the info page is gone and the settings ask for the PIN; *Kids mode off* sits at the bottom of the side menu. It locks the menu – it does not filter what Seren shows.
 
 ### Backup and restore
-*Skin settings > Backup and restore*: one zip file (USB stick or network share) with Lucent's settings and menu, Kodi's favourites and sources, and the settings of Seren, IPTV Simple, Lucent Library and A4KSubtitles. Restoring puts it all back and restarts Kodi. The backup holds your logins – keep it to yourself.
+*Skin settings > Backup and restore*: one zip file (USB stick or network share) with Lucent's settings and menu, Kodi's favourites and sources, and the settings of Seren, IPTV Simple, Lucent Library and Lucent Subtitles. Restoring puts it all back and restarts Kodi. The backup holds your logins – keep it to yourself.
 
 ### Light mode
 For boxes with little memory (on by itself with 2 GB or less): Home builds only six rows – rows 7–10 are not created at all – without the colour glow and snow. The skin reloads once when you switch it.
@@ -175,7 +175,7 @@ From then on new versions arrive automatically (Kodi's default: **Settings → S
 
 - **Appearance** – colour theme (Glass, White, Crimson, Emerald, Ocean, Violet, Amber, Gold, Rose, Rose Gold, Copper, Jade, Arctic Blue, Graphite), AMOLED mode (pure black), interface scale, font and language, clock, and the screensaver (dim when idle, timeout, dim strength).
 - **Layout** – menu and widgets, what OK does on a film or episode (open its page first, or start the stream at once), poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
-- **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings. Integrations also has your TMDB API key, A4KSubtitles and the update pop-up.
+- **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings. Integrations also has your TMDB API key, Lucent Subtitles and the update pop-up.
 
 **Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.lucent/logos/` and the info page shows them instead of the names.
 
@@ -231,7 +231,7 @@ scripts/info.py      info page: collection, studios, person / studio pages, open
 scripts/agenda*.py   Calendar tab
 scripts/sport*.py    Sport tab (ESPN games, tables, F1 page, reminders)
 scripts/tv.py        TV tab and guide, live.py = live TV player
-scripts/subtitles.py A4KSubtitles support
+scripts/subtitles.py Lucent Subtitles as the subtitle service
 scripts/updater.py   update pop-up
 resources/           icon and fanart
 repo/                Kodi repository (addons.xml + zips) for automatic updates

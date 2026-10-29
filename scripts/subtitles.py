@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Lucent: the subtitle service (Lucent Ondertitels, else A4KSubtitles).
+"""Lucent: Lucent Ondertitels as the subtitle service.
 
-RunScript(special://skin/scripts/subtitles.py,default)   make A4KSubtitles the default service for films and series
+RunScript(special://skin/scripts/subtitles.py,default)   make Lucent Ondertitels the default service for films and series
 Watcher: used by the Lucent helper (helper.py) - when a film or episode (for example from Seren) starts without
 subtitles in your language, open the subtitle list - only when "Search subtitles automatically" is on in Skin settings
 The "Search subtitles" button in the player menu opens Kodi's own subtitle search, which then uses that service.
@@ -13,7 +13,7 @@ import xbmc
 import xbmcgui
 
 OWN_ID = "service.subtitles.lucent"
-A4K_ID = "service.subtitles.a4ksubtitles"
+OLD_IDS = ("service.subtitles.a4ksubtitles",)    # only to recognise the old default once
 HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 TEXT = {
@@ -28,11 +28,7 @@ def say(key, icon=xbmcgui.NOTIFICATION_INFO, name=""):
 
 
 def service_id():
-    """Lucent's own subtitle add-on when it is there, else A4KSubtitles."""
-    for aid in (OWN_ID, A4K_ID):
-        if xbmc.getCondVisibility(f"System.HasAddon({aid})"):
-            return aid
-    return ""
+    return OWN_ID if xbmc.getCondVisibility(f"System.HasAddon({OWN_ID})") else ""
 
 
 def set_default():
@@ -49,7 +45,7 @@ def set_default():
             xbmc.log(f"[skin.lucent subtitles] {setting}: {error}", xbmc.LOGINFO)
             ok = False
     say("done" if ok else "failed", xbmcgui.NOTIFICATION_INFO if ok else xbmcgui.NOTIFICATION_WARNING,
-        "Lucent Ondertitels" if addon_id == OWN_ID else "A4KSubtitles")
+        "Lucent Ondertitels")
 
 
 def wanted_codes():
@@ -105,17 +101,22 @@ class Watcher(xbmc.Player):
 
 
 def switch_once():
-    """Once, when Lucent Ondertitels has just been installed: it becomes the default instead of A4KSubtitles
-    (only when A4KSubtitles or nothing was the default - another choice of your own is left alone)."""
-    xbmc.executebuiltin('Skin.SetString(lucent.subs.switched,"1")')
+    """Once, when Lucent Ondertitels has just been installed: it becomes the default instead of the old service
+    (only when that or nothing was the default - another choice of your own is left alone), and the old service's
+    own automatic search is switched off so it no longer pops up next to Lucent's list."""
+    xbmc.executebuiltin('Skin.SetString(lucent.subs.switched,"2")')
     query = {"jsonrpc": "2.0", "id": 1, "method": "Settings.GetSettingValue", "params": {"setting": "subtitles.movie"}}
     try:
         current = json.loads(xbmc.executeJSONRPC(json.dumps(query))).get("result", {}).get("value") or ""
     except Exception:  # noqa: BLE001
         current = ""
-    if current in ("", A4K_ID):
+    if current in ("",) + OLD_IDS:
         set_default()
-
+    for old in OLD_IDS:
+        if xbmc.getCondVisibility(f"System.HasAddon({old})"):
+            off = {"jsonrpc": "2.0", "id": 1, "method": "Addons.SetAddonEnabled", "params": {"addonid": old, "enabled": False}}
+            xbmc.executeJSONRPC(json.dumps(off))
+            xbmc.log(f"[skin.lucent subtitles] {old} switched off (Lucent Ondertitels replaces it)", xbmc.LOGINFO)
 
 if __name__ == "__main__":
     arg = sys.argv[1] if len(sys.argv) > 1 else ""

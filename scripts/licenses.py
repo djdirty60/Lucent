@@ -16,7 +16,9 @@ DATA = [
 SOFTWARE = [
     ("Seren", 31518, "https://github.com/nixgates/plugin.video.seren"),
     ("YouTube", 31519, "https://github.com/anxdpanic/plugin.video.youtube"),
-    ("A4KSubtitles", 31520, "https://github.com/a4k-openproject/a4kSubtitles"),
+    ("OpenSubtitles", 31520, "https://www.opensubtitles.com"),
+    ("SubDL", 31520, "https://subdl.com"),
+    ("Podnapisi", 31520, "https://www.podnapisi.net"),
     (31521, 31522, "https://github.com/xbmc/repo-resources"),
     ("Inter", 31523, "https://rsms.me/inter"),
     ("Nuvio Arc", 31524, "https://github.com/ysosrs123/NuvioTV-Fork"),

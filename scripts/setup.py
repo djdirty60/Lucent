@@ -20,7 +20,6 @@ NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DONE = "lucent.setup.done"
 SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
-A4K = "service.subtitles.a4ksubtitles"
 SUBS = "service.subtitles.lucent"
 LIB = "script.lucent.library"
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
@@ -150,7 +149,7 @@ def ac_iptv():
 
 def subs_default():
     value = (rpc("Settings.GetSettingValue", {"setting": "subtitles.movie"}) or {}).get("value")
-    return value == (SUBS if has(SUBS) else A4K)
+    return value == SUBS
 
 
 def subs_keys():
@@ -166,10 +165,7 @@ def subs_keys():
 
 def st_subs():
     if not has(SUBS):
-        if has(A4K):
-            return "todo", t("A4KSubtitles is used; Lucent Subtitles (faster, more Dutch) is not installed yet",
-                             "A4KSubtitles wordt gebruikt; Lucent Ondertitels (sneller, meer Nederlands) staat er nog niet op")
-        return "todo", t("No subtitle add-on installed", "Geen ondertitel-add-on geïnstalleerd")
+        return "todo", t("Lucent Subtitles is not installed", "Lucent Ondertitels is niet geïnstalleerd")
     os_ok, subdl_ok = subs_keys()
     parts = [t("Lucent Subtitles is the default", "Lucent Ondertitels is de standaard") if subs_default()
              else t("Lucent Subtitles is not the default yet", "Lucent Ondertitels is nog niet de standaard"),

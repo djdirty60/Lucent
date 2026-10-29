@@ -117,7 +117,7 @@ def run():
     swap = {"t": 0.0}
 
     def subtitle_window(now):
-        """Kodi's own subtitle search opened (for example by A4KSubtitles' auto-search): show Lucent's live list instead."""
+        """Kodi's own subtitle search opened (for example by another add-on's auto-search): show Lucent's live list instead."""
         if now - swap["t"] < 8 or not cond("Window.IsActive(subtitlesearch)"):
             return
         if cond("Skin.HasSetting(lucent.subs.native.off)") or not cond("Player.HasVideo"):
