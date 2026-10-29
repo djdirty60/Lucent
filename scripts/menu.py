@@ -230,6 +230,42 @@ WIDGETS_TMDB = [                                  # Lucent's own rows, straight 
     (("Coming soon (movies)", "Binnenkort (films)"), TMDB + "upcoming_movie", "poster"),
     (("Series on air", "Series die nu lopen"), TMDB + "airing_tv", "poster"),
 ]
+WIDGETS_TRAKT = [                                 # Trakt lists, fast too (your Seren login; pictures come from TMDb)
+    (("My watchlist (movies)", "Mijn watchlist (films)"), TMDB + "trakt_watchlist_movie", "poster"),
+    (("My watchlist (shows)", "Mijn watchlist (series)"), TMDB + "trakt_watchlist_tv", "poster"),
+    (("Recommended for you (movies)", "Aanbevolen voor jou (films)"), TMDB + "trakt_recommended_movie", "poster"),
+    (("Recommended for you (shows)", "Aanbevolen voor jou (series)"), TMDB + "trakt_recommended_tv", "poster"),
+    (("Trakt trending (movies)", "Trakt trending (films)"), TMDB + "trakt_trending_movie", "poster"),
+    (("Trakt trending (shows)", "Trakt trending (series)"), TMDB + "trakt_trending_tv", "poster"),
+    (("Trakt anticipated (movies)", "Trakt verwacht (films)"), TMDB + "trakt_anticipated_movie", "poster"),
+    (("Trakt anticipated (shows)", "Trakt verwacht (series)"), TMDB + "trakt_anticipated_tv", "poster"),
+]
+
+
+def pick_trakt_fast():
+    """Fixed Trakt rows, or one of your own / liked Trakt lists (asked from Trakt at this moment)."""
+    mine = tr(G("My own and liked lists…", "Mijn eigen en gelikete lijsten…"))
+    choice = select(tr(G("Trakt (fast)", "Trakt (snel)")), [tr(n) for n, _p, _s in WIDGETS_TRAKT] + [mine])
+    if choice < 0:
+        return None
+    if choice < len(WIDGETS_TRAKT):
+        key, path, style = WIDGETS_TRAKT[choice]
+        return tr(key), path, style
+    busy(True)
+    entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://script.lucent.library/?action=traktlists",
+                                             "media": "files", "properties": ["title"]}).get("files", []) or []
+    busy(False)
+    entries = [e for e in entries if e.get("file")]
+    if not entries:
+        xbmcgui.Dialog().ok(HEADING, tr(G("No Trakt lists found. Log in to Trakt in Seren first (and make or like a list on trakt.tv).",
+                                          "Geen Trakt-lijsten gevonden. Log eerst in op Trakt in Seren (en maak of like een lijst op trakt.tv).")))
+        return None
+    pick = select(mine, [clean(e.get("label") or e.get("title")) for e in entries], True, ["icons/trakt.png"] * len(entries))
+    if pick < 0:
+        return None
+    return clean(entries[pick].get("label") or entries[pick].get("title")), entries[pick]["file"], "poster"
+
+
 WIDGETS_OTHER = [
     (("Favourites", "Favorieten"), "favourites://", "land"),
     (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
@@ -619,11 +655,18 @@ def pick_widget():
             return None
         label, path = picked
     elif source == 7:
-        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB])
+        trakt_entry = tr(G("Trakt lists (fast)…", "Trakt-lijsten (snel)…"))
+        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB] + [trakt_entry])
         if choice < 0:
             return None
-        key, path, style = WIDGETS_TMDB[choice]
-        label = tr(key)
+        if choice == len(WIDGETS_TMDB):
+            picked = pick_trakt_fast()
+            if not picked:
+                return None
+            label, path, style = picked
+        else:
+            key, path, style = WIDGETS_TMDB[choice]
+            label = tr(key)
     elif source == 4:
         path = keyboard(tr("src_type"), "plugin://")
         if not path:
