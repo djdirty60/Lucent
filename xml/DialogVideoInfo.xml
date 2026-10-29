@@ -107,27 +107,19 @@
                         <onclick>RunScript(special://skin/scripts/agenda.py,follow)</onclick>
                         <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))]</visible>
                     </control>
-                    <!-- Kodi's own Trailer button (id 11): it closes this page and plays the trailer full screen;
-                         trailerback.py opens the page again afterwards. -->
-                    <control type="button" id="11">
-                        <width>auto</width>
-                        <height>72</height>
-                        <label>$LOCALIZE[20410]</label>
-                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
-                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
-                        <visible>!String.IsEmpty(ListItem.Trailer) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
-                    </control>
                     <control type="button" id="14">
                         <width>auto</width>
                         <height>72</height>
                         <label>$LOCALIZE[40000]</label>
                         <visible>ListItem.HasVideoVersions</visible>
                     </control>
-                    <control type="button" id="7">
+                    <!-- Options: edit title / sort title, choose art, remove from library (Kodi's Manage menu) -->
+                    <control type="button" id="24">
                         <width>auto</width>
                         <height>72</height>
-                        <label>$LOCALIZE[31063]</label>
-                        <visible>!String.IsEmpty(ListItem.DBID)</visible>
+                        <label>$LOCALIZE[31619]</label>
+                        <onclick>RunScript(special://skin/scripts/options.py)</onclick>
+                        <visible>!String.IsEmpty(ListItem.DBID) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,set)]</visible>
                     </control>
                     <control type="button" id="6">
                         <width>auto</width>

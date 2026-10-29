@@ -86,6 +86,9 @@ Settings: *Skin settings > Integrations > Lucent Library* (update now, update ev
 ### Also in the home menu
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 
+### Options on the info page
+For titles in the Kodi library the info page has an **Options** button: edit title, edit sort title, choose art, remove from library.
+
 ### Alphabet bar
 Under the poster rows of films and series (sorted A–Z) sits a bar **# A B … Z**: the current letter lights up, press Down, pick a letter and OK jumps there.
 
