@@ -101,57 +101,6 @@ BELANGRIJK: laad eerst je hele collectie in Seren (Films > Mijn films (collectie
     </extension>
 </addon>
 
-<addon id="repository.nuvioarc" name="Nuvio Arc Repository (old)" version="1.0.3" provider-name="Claude">
-    <requires>
-        <import addon="xbmc.addon" version="12.0.0"/>
-        <import addon="repository.lucent" version="1.0.1"/>
-    </requires>
-    <extension point="xbmc.addon.repository" name="Nuvio Arc Repository (old)">
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/</datadir>
-            <hashes>false</hashes>
-        </dir>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="en_GB">Old name of the Lucent Repository - installs the Lucent Repository</summary>
-        <summary lang="nl_NL">Oude naam van de Lucent Repository - installeert de Lucent Repository</summary>
-        <description lang="en_GB">Install this once. Kodi then keeps the Lucent skin up to date by itself.</description>
-        <description lang="nl_NL">Installeer dit één keer. Kodi houdt de Lucent-skin daarna zelf up-to-date.</description>
-        <platform>all</platform>
-        <license>GPL-2.0-or-later</license>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.jpg</fanart>
-        </assets>
-    </extension>
-</addon>
-
-<addon id="skin.nuvioarc" version="1.7.1" name="Nuvio Arc (old – switch to Lucent)" provider-name="Claude">
-    <requires>
-        <import addon="xbmc.gui" version="5.17.0"/>
-        <import addon="plugin.video.youtube" version="6.8.0"/>
-        <import addon="skin.lucent" version="1.30.80"/>
-    </requires>
-    <extension point="xbmc.gui.skin" debugging="false">
-        <res width="1920" height="1080" aspect="16:9" default="true" folder="xml"/>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="en_GB">Lucent - a cinematic glass skin</summary>
-        <summary lang="nl_NL">Lucent - een cinematische glas-skin</summary>
-        <description lang="en_GB">A dark, cinematic Kodi skin with glass panels, large backdrops and rows for Trakt continue watching, trending titles, your library and your liked Trakt lists (via Seren).</description>
-        <description lang="nl_NL">Een donkere, cinematische Kodi-skin met glazen panelen, grote achtergronden en rijen voor Trakt verder kijken, trending titels, je bibliotheek en je Trakt-lijsten (via Seren).</description>
-        <news>1.7.1: Nuvio Arc is now called Lucent (skin.lucent). This update installs Lucent and offers to switch; your settings come along. Afterwards you can uninstall this old skin.</news>
-        <platform>all</platform>
-        <license>GPL-2.0-or-later. Inter font: SIL Open Font License 1.1 (see fonts/Inter-LICENSE.txt)</license>
-        <assets>
-            <icon>resources/icon.png</icon>
-            <fanart>resources/fanart.jpg</fanart>
-        </assets>
-    </extension>
-</addon>
-
 <addon id="service.lucent.updater"
        name="Lucent – Update-melding"
        version="1.1.0"
