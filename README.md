@@ -87,7 +87,7 @@ Settings: *Skin settings > Integrations > Lucent Library* (update now, update ev
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 
 ### Setup assistant
-The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple), subtitles, Lucent Library and the look – each step shows how it stands and has a button to set it up. Open it again via *Settings > About > Setup assistant*.
+The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple), subtitles, Lucent Library and the look – each step shows how it stands and has a button to set it up. Open it again via *Skin settings > Setup assistant* or *Settings > About > Setup assistant*.
 
 ### Options on the info page
 For titles in the Kodi library the info page has an **Options** button: edit title, edit sort title, choose art, remove from library.
