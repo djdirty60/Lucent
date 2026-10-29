@@ -84,6 +84,7 @@ SPORT_CHANNEL_WORDS = (
     "mola", "sportklub", "sport1", "sport 1", "sport2", "sport 2", "ad sp", "mbc action",
 )
 NOT_SPORT = ("xxx", "adult", "18+", "transport", "passport", "sportswear")
+ALWAYS = ("npo 1", "npo1", "npo 2", "npo2", "npo 3", "npo3", "nederland 1", "nederland 2", "nederland 3")   # public channels with football
 MIN_SPORT = 3
 
 
@@ -91,6 +92,8 @@ def is_sport_name(name):
     low = " " + re.sub(r"[^a-z0-9+]+", " ", (name or "").lower()) + " "
     if any(w in low for w in NOT_SPORT):
         return False
+    if any(re.search(rf" {re.escape(w)}( (hd|fhd|uhd|4k|sd))? $", low) for w in ALWAYS):   # NPO 1, not NPO 1 Extra
+        return True
     return any(w in low for w in SPORT_CHANNEL_WORDS)
 
 
