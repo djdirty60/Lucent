@@ -71,6 +71,7 @@ A **Sport** tab with games from almost 200 competitions (football worldwide, NBA
 
 ### TV guide and live TV
 A **TV** tab with your IPTV channels: groups on the left, channels with logo and number, a timeline with the programmes, a header with the focused programme and a live preview. A *Favourite group* opens first every time. The live TV player has its own compact info bar (channel, LIVE, quality, score, now and next) and a menu with channel up/down, pause, record, subtitles, audio and recent channels.
+- **Xtream login**: enter your provider's server address, user name and password (setup assistant → Live TV, or Settings → Live TV); Lucent checks the login and sets up IPTV Simple Client (channel list, guide, replay).
 
 ### Subtitles and updates
 - **Lucent Subtitles** – Lucent's own subtitle add-on (installed with the skin): asks OpenSubtitles, SubDL and Podnapisi at the same time with a time limit, puts subtitles that fit your exact video first (file hash and release name), finds season packs and saves everything as UTF-8. Needs a free OpenSubtitles account with an API key (*Profile → API consumers*) and a free SubDL API key; Podnapisi works without. Fill them in via the setup assistant or *Skin settings → Integrations → Subtitle add-on settings*.

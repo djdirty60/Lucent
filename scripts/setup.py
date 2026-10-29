@@ -168,7 +168,8 @@ def ac_iptv():
         if xbmc.getInfoLabel(f"System.AddonVersion({IPTV})"):
             return [(t("Switch on", "Aanzetten"), lambda: rpc("Addons.SetAddonEnabled", {"addonid": IPTV, "enabled": True}))]
         return [(t("Install IPTV Simple Client", "IPTV Simple Client installeren"), lambda: install(IPTV))]
-    out = [(t("Channel list and guide", "Zenderlijst en gids"), lambda: run(f"Addon.OpenSettings({IPTV})"))]
+    out = [(t("Xtream login", "Xtream-inlog"), lambda: run("RunScript(special://skin/scripts/xtream.py)")),
+           (t("Channel list and guide", "Zenderlijst en gids"), lambda: run(f"Addon.OpenSettings({IPTV})"))]
     if tv_channels():
         out.append((t("Open the TV guide", "Tv-gids openen"), lambda: run("ActivateWindow(TVGuide)")))
     return out
@@ -359,14 +360,15 @@ STEPS = [
       "maakt alles sneller en vollediger.\n\nZo krijg je er een: maak een account op themoviedb.org, dan Instellingen > "
       "API > 'Aanmaken' (persoonlijk gebruik). Kopieer de 'API-sleutel' (de korte, 32 tekens)."), st_tmdb, ac_tmdb),
     ("iptv", "icons/tv.png", ("Live TV (IPTV)", "Live tv (IPTV)"),
-     ("For live TV Kodi uses IPTV Simple Client. Fill in the link to your channel list (M3U) and to the TV guide (EPG/XMLTV) "
-      "from your provider. With an Xtream login, your provider usually also gives an M3U link "
-      "(…/get.php?username=…&password=…&type=m3u_plus).\n\nAfter that Lucent shows the TV guide, the Sport tab "
-      "and live scores on the channels.",
-      "Voor live tv gebruikt Kodi IPTV Simple Client. Vul daarin de link naar je zenderlijst (M3U) en naar de tv-gids "
-      "(EPG/XMLTV) van je aanbieder in. Heb je een Xtream-login, dan geeft je aanbieder meestal ook een M3U-link "
-      "(…/get.php?username=…&password=…&type=m3u_plus).\n\nDaarna toont Lucent de tv-gids, de Sport-tab en live "
-      "standen bij de zenders."), st_iptv, ac_iptv),
+     ("For live TV Kodi uses IPTV Simple Client. Have an Xtream login (server address, user name, password)? "
+      "Press 'Xtream login': Lucent checks it with the server and sets up IPTV Simple for you - channels, guide and replay. "
+      "Got an M3U and EPG link instead? Fill those in under 'Channel list and guide'.\n\nAfter that Lucent shows the TV "
+      "guide, the Sport tab and live scores on the channels.",
+      "Voor live tv gebruikt Kodi IPTV Simple Client. Heb je een Xtream-login (serveradres, gebruikersnaam, wachtwoord)? "
+      "Druk op 'Xtream-inlog': Lucent controleert hem bij de server en stelt IPTV Simple voor je in - zenders, gids en "
+      "terugkijken. Heb je een M3U- en EPG-link? Vul die in bij 'Zenderlijst en gids'.\n\nDaarna toont Lucent de tv-gids, "
+      "de Sport-tab en live standen bij de zenders."),
+     st_iptv, ac_iptv),
     ("play", "icons/videosettings.png", ("Picture and sound", "Beeld en geluid"),
      ("Three things that make watching smoother. A bigger buffer: Kodi loads more of the stream ahead, so it stutters less "
       "(Lucent picks a size that suits the memory of this box). Frame rate that follows the video: films are made at 24 frames "
