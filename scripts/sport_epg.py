@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Lucent: Sport tab - reads the IPTV guide (Kodi PVR, e.g. IPTV Simple Client) and finds where a game is on.
 
-scan()              reads the guide of all TV channels (in the background), stores it in sport_epg.json (3 hours)
+scan()              reads the guide of the sport channels (sport_channels(): by channel / group name), stores it in
+                    sport_epg.json (3 hours)
 channels_for(ev)    the channels that show a game: [{cid, name, tag, q, score, title, start, live}]
 Matching uses the programme title and description:
   3  both teams are named                 -> "Zeker"
@@ -72,6 +73,47 @@ def channels():
     return []
 
 
+# channels and channel groups that carry sport: by name. Lower case; matched as a word part.
+SPORT_CHANNEL_WORDS = (
+    "sport", "espn", "dazn", "viaplay", "eleven", "bein", "sky sp", "bt sp", "tnt", "eurosport", "ziggo sp", "canal+ sp",
+    "premier", "f1", "formula", "formule", "motogp", "moto gp", "ufc", "fight", "boxing", "wwe", "nba", "nfl", "nhl", "mlb",
+    "golf", "tennis", "setanta", "supersport", "super sport", "arena", "sportklub", "sport klub", "match", "foot", "calcio",
+    "liga", "bundesliga", "ligue", "ppv", "pay per view", "racing", "motorsport", "cycling", "wieler", "schaats", "olymp",
+    "red bull", "extreme", "fox sp", "nbc sp", "cbs sp", "optus", "stan sport", "kayo", "tsn", "sportsnet", "rmc sp",
+    "sportitalia", "sportdigital", "sportv", "band sp", "polsat sp", "nova sp", "cosmote sp", "digi sp", "sport tv", "sporttv",
+    "mola", "sportklub", "sport1", "sport 1", "sport2", "sport 2", "ad sp", "mbc action",
+)
+NOT_SPORT = ("xxx", "adult", "18+", "transport", "passport", "sportswear")
+MIN_SPORT = 3
+
+
+def is_sport_name(name):
+    low = " " + re.sub(r"[^a-z0-9+]+", " ", (name or "").lower()) + " "
+    if any(w in low for w in NOT_SPORT):
+        return False
+    return any(w in low for w in SPORT_CHANNEL_WORDS)
+
+
+def sport_channels():
+    """Only the channels that carry sport: every channel of a sport group, plus channels with a sport name.
+    When that finds almost nothing (unrecognisable names) all channels are used, so Sport never stays empty."""
+    all_chans = channels()
+    by_id = {c["channelid"]: c for c in all_chans}
+    picked = {c["channelid"] for c in all_chans if is_sport_name(c.get("label") or c.get("channel"))}
+    groups = rpc("PVR.GetChannelGroups", {"channeltype": "tv"}).get("channelgroups") or []
+    for group in groups:
+        if not is_sport_name(group.get("label")):
+            continue
+        data = rpc("PVR.GetChannels", {"channelgroupid": group.get("channelgroupid")})
+        for c in data.get("channels") or []:
+            if c.get("channelid") in by_id:
+                picked.add(c["channelid"])
+    if len(picked) < MIN_SPORT:
+        sc.log(f"guide: only {len(picked)} sport channels recognised, reading all {len(all_chans)}")
+        return all_chans
+    return [c for c in all_chans if c["channelid"] in picked]
+
+
 def diagnose():
     """Why is there no guide? A short Dutch/English reason for the screen."""
     props = rpc("PVR.GetProperties", {"properties": ["available"]})
@@ -126,7 +168,7 @@ def scan(progress=None, abort=None):
     """Read the guide of every TV channel. progress(done, total); abort() -> True stops. Returns the number of programmes."""
     now = int(time.time())
     horizon = now + (sc.DAYS_AHEAD + 1) * 86400
-    chans = channels()
+    chans = sport_channels()                       # not the whole IPTV list: the sport channels only
     rows, total = [], len(chans)
     for index, chan in enumerate(chans, 1):
         if abort and abort():
@@ -144,7 +186,7 @@ def scan(progress=None, abort=None):
     forget()
     ac.write_json(EPG_PATH, {"fetched": now, "rows": rows, "names": {str(k): v for k, v in names.items()},
                              "icons": {str(k): v for k, v in icons.items()}})
-    sc.log(f"guide read: {total} channels, {len(rows)} programmes")
+    sc.log(f"guide read: {total} sport channels, {len(rows)} programmes")
     return len(rows)
 
 
