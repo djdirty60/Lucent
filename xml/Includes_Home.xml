@@ -10858,6 +10858,10 @@
                     <content target="videos" limit="25" browse="never">$VAR[NuvioW6PathLand]</content>
                 </control>
             </control>
+            <!-- Widgets 7-10: not built at all in light mode (Skin setting lucent.lite; the skin reloads when it changes) -->
+            <include condition="!Skin.HasSetting(lucent.lite)">HomeRowsExtra</include>
+    </include>
+    <include name="HomeRowsExtra">
             <!-- Widget 7 (poster) -->
             <control type="group">
                 <width>1760</width>
@@ -13291,7 +13295,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab1.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab1.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab1.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab1.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab1.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab1)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab2.label)]</label>
@@ -13328,7 +13332,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab2.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab2.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab2.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab2.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab2.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab2)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab3.label)]</label>
@@ -13365,7 +13369,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab3.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab3.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab3.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab3.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab3.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab3)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab4.label)]</label>
@@ -13402,7 +13406,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab4.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab4.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab4.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab4.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab4.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab4)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab5.label)]</label>
@@ -13439,7 +13443,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab5.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab5.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab5.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab5.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab5.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab5)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab6.label)]</label>
@@ -13476,7 +13480,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab6.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab6.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab6.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab6.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab6.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab6)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab7.label)]</label>
@@ -13513,7 +13517,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab7.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab7.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab7.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab7.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab7.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab7)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab8.label)]</label>
@@ -13550,7 +13554,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab8.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab8.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab8.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab8.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab8.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab8)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab9.label)]</label>
@@ -13587,7 +13591,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab9.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab9.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab9.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab9.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab9.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab9)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab10.label)]</label>
@@ -13624,7 +13628,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab10.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab10.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab10.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab10.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab10.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab10)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab11.label)]</label>
@@ -13661,7 +13665,7 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab11.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab11.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab11.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab11.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab11.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab11)]</visible>
                 </item>
                 <item>
                     <label>$INFO[Skin.String(nuvio.tab12.label)]</label>
@@ -13698,7 +13702,14 @@
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab12.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab12.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab12.w10.style)]</property>
-                    <visible>!String.IsEmpty(Skin.String(nuvio.tab12.label))</visible>
+                    <visible>!String.IsEmpty(Skin.String(nuvio.tab12.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab12)]</visible>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31630]</label>
+                    <icon>icons/lock.png</icon>
+                    <onclick>RunScript(special://skin/scripts/kids.py)</onclick>
+                    <property name="tab">kids</property>
+                    <visible>Skin.HasSetting(lucent.kids)</visible>
                 </item>
     </include>
 </includes>

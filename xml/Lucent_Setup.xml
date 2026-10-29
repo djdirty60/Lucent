@@ -3,6 +3,7 @@
      how it stands now (a green tick or an orange note) and buttons that set it up. -->
 <window>
     <defaultcontrol always="true">300</defaultcontrol>
+    <onload condition="Skin.HasSetting(lucent.kids)">RunScript(special://skin/scripts/kids.py,guard)</onload>
     <include>Anim_Dialog</include>
     <controls>
         <include>DialogDim</include>
@@ -45,19 +46,19 @@
                 <onup>100</onup>
                 <ondown>100</ondown>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
-                <itemlayout width="440" height="92">
+                <itemlayout width="440" height="84">
                     <control type="image">
                         <left>0</left>
                         <top>0</top>
                         <width>440</width>
-                        <height>84</height>
+                        <height>76</height>
                         <texture border="20">rr20.png</texture>
                         <colordiffuse>glass_strong</colordiffuse>
                         <visible>ListItem.Property(current)</visible>
                     </control>
                     <control type="image">
                         <left>22</left>
-                        <top>22</top>
+                        <top>18</top>
                         <width>40</width>
                         <height>40</height>
                         <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
@@ -66,7 +67,7 @@
                         <left>80</left>
                         <top>0</top>
                         <width>290</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font_label_bold</font>
                         <textcolor>text2</textcolor>
                         <aligny>center</aligny>
@@ -76,7 +77,7 @@
                         <left>370</left>
                         <top>0</top>
                         <width>50</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font13</font>
                         <align>center</align>
                         <aligny>center</aligny>
@@ -88,7 +89,7 @@
                         <left>370</left>
                         <top>0</top>
                         <width>50</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font13</font>
                         <align>center</align>
                         <aligny>center</aligny>
@@ -97,12 +98,12 @@
                         <visible>String.IsEqual(ListItem.Property(state),todo)</visible>
                     </control>
                 </itemlayout>
-                <focusedlayout width="440" height="92">
+                <focusedlayout width="440" height="84">
                     <control type="image">
                         <left>0</left>
                         <top>0</top>
                         <width>440</width>
-                        <height>84</height>
+                        <height>76</height>
                         <texture border="20">rr20.png</texture>
                         <colordiffuse>focus</colordiffuse>
                         <visible>Control.HasFocus(100)</visible>
@@ -111,14 +112,14 @@
                         <left>0</left>
                         <top>0</top>
                         <width>440</width>
-                        <height>84</height>
+                        <height>76</height>
                         <texture border="20">rr20.png</texture>
                         <colordiffuse>glass_strong</colordiffuse>
                         <visible>!Control.HasFocus(100) + ListItem.Property(current)</visible>
                     </control>
                     <control type="image">
                         <left>22</left>
-                        <top>22</top>
+                        <top>18</top>
                         <width>40</width>
                         <height>40</height>
                         <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
@@ -126,7 +127,7 @@
                     </control>
                     <control type="image">
                         <left>22</left>
-                        <top>22</top>
+                        <top>18</top>
                         <width>40</width>
                         <height>40</height>
                         <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
@@ -136,7 +137,7 @@
                         <left>80</left>
                         <top>0</top>
                         <width>290</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font_label_bold</font>
                         <textcolor>on_focus</textcolor>
                         <aligny>center</aligny>
@@ -147,7 +148,7 @@
                         <left>80</left>
                         <top>0</top>
                         <width>290</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font_label_bold</font>
                         <textcolor>text</textcolor>
                         <aligny>center</aligny>
@@ -158,7 +159,7 @@
                         <left>370</left>
                         <top>0</top>
                         <width>50</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font13</font>
                         <align>center</align>
                         <aligny>center</aligny>
@@ -170,7 +171,7 @@
                         <left>370</left>
                         <top>0</top>
                         <width>50</width>
-                        <height>84</height>
+                        <height>76</height>
                         <font>font13</font>
                         <align>center</align>
                         <aligny>center</aligny>
@@ -214,14 +215,14 @@
                     <left>0</left>
                     <top>136</top>
                     <width>1030</width>
-                    <height>300</height>
+                    <height>290</height>
                     <font>font_body</font>
                     <textcolor>text2</textcolor>
                     <label>$INFO[Window.Property(body)]</label>
                 </control>
                 <!-- how it stands now -->
                 <control type="group">
-                    <top>460</top>
+                    <top>448</top>
                     <visible>!String.IsEmpty(Window.Property(status))</visible>
                     <control type="image">
                         <left>0</left>
@@ -252,16 +253,18 @@
                     </control>
                 </control>
                 <!-- what you can do here -->
+                <!-- what you can do here: up to four buttons, two per row -->
                 <control type="grouplist" id="300">
                     <left>0</left>
-                    <top>580</top>
+                    <top>566</top>
                     <width>1050</width>
-                    <height>150</height>
+                    <height>64</height>
                     <orientation>horizontal</orientation>
                     <itemgap>14</itemgap>
                     <onleft>100</onleft>
                     <onright>noop</onright>
                     <onup>noop</onup>
+                    <ondown condition="Control.IsVisible(310)">310</ondown>
                     <ondown>400</ondown>
                     <control type="button" id="301">
                         <width>auto</width>
@@ -275,16 +278,35 @@
                         <label>$INFO[Window.Property(act2)]</label>
                         <visible>!String.IsEmpty(Window.Property(act2))</visible>
                     </control>
+                </control>
+                <control type="grouplist" id="310">
+                    <left>0</left>
+                    <top>644</top>
+                    <width>1050</width>
+                    <height>64</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>14</itemgap>
+                    <visible>!String.IsEmpty(Window.Property(act3))</visible>
+                    <onleft>100</onleft>
+                    <onright>noop</onright>
+                    <onup>300</onup>
+                    <ondown>400</ondown>
                     <control type="button" id="303">
                         <width>auto</width>
                         <height>64</height>
                         <label>$INFO[Window.Property(act3)]</label>
                         <visible>!String.IsEmpty(Window.Property(act3))</visible>
                     </control>
+                    <control type="button" id="304">
+                        <width>auto</width>
+                        <height>64</height>
+                        <label>$INFO[Window.Property(act4)]</label>
+                        <visible>!String.IsEmpty(Window.Property(act4))</visible>
+                    </control>
                 </control>
                 <control type="grouplist" id="400">
                     <left>0</left>
-                    <top>696</top>
+                    <top>736</top>
                     <width>1030</width>
                     <height>64</height>
                     <orientation>horizontal</orientation>
@@ -292,6 +314,7 @@
                     <itemgap>14</itemgap>
                     <onleft>100</onleft>
                     <onright>noop</onright>
+                    <onup condition="Control.IsVisible(310)">310</onup>
                     <onup>300</onup>
                     <ondown>noop</ondown>
                     <control type="button" id="403">

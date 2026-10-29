@@ -119,7 +119,7 @@
                         <height>72</height>
                         <label>$LOCALIZE[31619]</label>
                         <onclick>RunScript(special://skin/scripts/options.py)</onclick>
-                        <visible>!String.IsEmpty(ListItem.DBID) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,set)]</visible>
+                        <visible>!Skin.HasSetting(lucent.kids) + !String.IsEmpty(ListItem.DBID) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,set)]</visible>
                     </control>
                     <control type="button" id="6">
                         <width>auto</width>

@@ -219,6 +219,82 @@ def ac_look():
             (t("Menu and rows", "Menu en rijen"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
 
 
+def kodi_setting(key):
+    return (rpc("Settings.GetSettingValue", {"setting": key}) or {}).get("value")
+
+
+def set_kodi(key, value):
+    rpc("Settings.SetSettingValue", {"setting": key, "value": value})
+
+
+def ram_mb():
+    try:
+        return int("".join(ch for ch in xbmc.getInfoLabel("System.Memory(total)") if ch.isdigit()) or 0)
+    except ValueError:
+        return 0
+
+
+def buffer_advice():
+    """A bigger buffer than Kodi's 64 MB smooths out streams. Kodi can use up to three times this size, so it follows
+    the memory of the box: 96 MB up to 2 GB, 192 MB up to 4 GB, 384 MB above that."""
+    ram = ram_mb()
+    return 96 if 0 < ram <= 2200 else (192 if ram <= 4400 else 384)
+
+
+PASS = ("audiooutput.ac3passthrough", "audiooutput.eac3passthrough", "audiooutput.dtspassthrough",
+        "audiooutput.truehdpassthrough", "audiooutput.dtshdpassthrough")
+
+
+def st_play():
+    size, advice = kodi_setting("filecache.memorysize"), buffer_advice()
+    rate = kodi_setting("videoplayer.adjustrefreshrate")
+    passthrough = kodi_setting("audiooutput.passthrough")
+    parts = [t(f"Buffer {size} MB", f"Buffer {size} MB") + ("" if (size or 0) >= advice else t(f" (advice {advice})", f" (advies {advice})")),
+             t("frame rate follows the video", "beeldfrequentie volgt de video") if rate in (1, 2, 3) else t("frame rate fixed", "beeldfrequentie vast"),
+             t("sound to amplifier", "geluid naar versterker") if passthrough else t("Kodi decodes the sound", "Kodi zet het geluid om")]
+    return ("ok" if (size or 0) >= advice and rate in (1, 2, 3) else "todo"), "  ·  ".join(parts)
+
+
+def ac_play():
+    advice = buffer_advice()
+    rate = kodi_setting("videoplayer.adjustrefreshrate")
+    passthrough = kodi_setting("audiooutput.passthrough")
+
+    def buffer():
+        set_kodi("filecache.memorysize", advice)
+        set_kodi("filecache.readfactor", 400)                  # fill the buffer 4x faster than the video plays
+
+    def toggle_rate():
+        set_kodi("videoplayer.adjustrefreshrate", 0 if rate in (1, 2, 3) else 2)   # 2: on start and stop
+
+    def toggle_pass():
+        on = not passthrough
+        set_kodi("audiooutput.passthrough", on)
+        if on:
+            for key in PASS:
+                set_kodi(key, True)
+    out = []
+    if (kodi_setting("filecache.memorysize") or 0) < advice:
+        out.append((t(f"Buffer {advice} MB (advice)", f"Buffer {advice} MB (advies)"), buffer))
+    out.append((t("Frame rate: follows video", "Beeldfrequentie: volgt video") if rate in (1, 2, 3) else t("Frame rate: fixed", "Beeldfrequentie: vast"), toggle_rate))
+    out.append((t("Sound to amplifier: on", "Geluid naar versterker: aan") if passthrough else t("Sound to amplifier: off", "Geluid naar versterker: uit"), toggle_pass))
+    out.append((t("Player settings", "Spelerinstellingen"), lambda: run("ActivateWindow(PlayerSettings)")))
+    return out
+
+
+def st_backup():
+    import backup
+    last = backup.last_backup()
+    if last:
+        return "ok", t(f"Last backup: {last}", f"Laatste back-up: {last}")
+    return "todo", t("No backup yet", "Nog geen back-up")
+
+
+def ac_backup():
+    return [(t("Make a backup", "Back-up maken"), lambda: run("RunScript(special://skin/scripts/backup.py,backup)")),
+            (t("Restore", "Herstellen"), lambda: run("RunScript(special://skin/scripts/backup.py,restore)"))]
+
+
 STEPS = [
     ("welcome", "icons/sparkle.png", ("Welcome", "Welkom"),
      ("Welcome to Lucent. In a few steps we set up what matters most: Seren with your Trakt account, a TMDb key for "
@@ -252,6 +328,17 @@ STEPS = [
       "(EPG/XMLTV) van je aanbieder in. Heb je een Xtream-login, dan geeft je aanbieder meestal ook een M3U-link "
       "(…/get.php?username=…&password=…&type=m3u_plus).\n\nDaarna toont Lucent de tv-gids, de Sport-tab en live "
       "standen bij de zenders."), st_iptv, ac_iptv),
+    ("play", "icons/videosettings.png", ("Picture and sound", "Beeld en geluid"),
+     ("Three things that make watching smoother. A bigger buffer: Kodi loads more of the stream ahead, so it stutters less "
+      "(Lucent picks a size that suits the memory of this box). Frame rate that follows the video: films are made at 24 frames "
+      "a second; when the TV switches to 23.976/24 Hz, panning shots run without jerks. Sound to the amplifier (passthrough): "
+      "Dolby, DTS and Atmos go untouched to your soundbar or receiver - only switch it on when you have one.\n\nHDR and Dolby Vision "
+      "are passed on by themselves on CoreELEC.",
+      "Drie dingen die het kijken soepeler maken. Een grotere buffer: Kodi laadt meer van de stream vooruit, zodat het minder "
+      "hapert (Lucent kiest een grootte die past bij het geheugen van deze box). Beeldfrequentie die de video volgt: films zijn "
+      "gemaakt met 24 beelden per seconde; schakelt de tv naar 23,976/24 Hz, dan lopen pannende beelden zonder schokjes. Geluid naar "
+      "de versterker (passthrough): Dolby, DTS en Atmos gaan onbewerkt naar je soundbar of receiver - zet dit alleen aan als je die hebt."
+      "\n\nHDR en Dolby Vision geeft CoreELEC vanzelf door."), st_play, ac_play),
     ("subs", "icons/subtitles.png", ("Subtitles", "Ondertitels"),
      ("A4KSubtitles searches several subtitle sites at once. Lucent shows all results in one list, in your language "
       "first, and can put a subtitle in sync with the video.\n\nOptional: with a free Gemini key (aistudio.google.com) "
@@ -273,6 +360,15 @@ STEPS = [
       "Lichte modus houdt Lucent vlot op boxen met 2 GB geheugen of minder (minder rijen, geen postergloed) - op zulke "
       "boxen zet Lucent hem zelf aan. 'Vanavond voor jou' is een rij op het startscherm met titels die passen bij het "
       "moment van de dag.\n\nKleuren, het menu en de rijen op het startscherm pas je altijd aan in Skin-instellingen."), st_look, ac_look),
+    ("backup", "icons/cloud.png", ("Backup", "Back-up"),
+     ("Save everything you set up in one file: Lucent's settings and menu, your favourites, the keys (TMDb, Gemini), the "
+      "settings of Seren, IPTV Simple and Lucent Library, and your sources. Put it on a USB stick or a network share, and "
+      "after a new installation (or on a second box) 'Restore' puts it all back.\n\nThe file holds your logins (Trakt, IPTV): "
+      "keep it to yourself.",
+      "Bewaar alles wat je hebt ingesteld in één bestand: de instellingen en het menu van Lucent, je favorieten, de sleutels "
+      "(TMDb, Gemini), de instellingen van Seren, IPTV Simple en Lucent Bibliotheek, en je bronnen. Zet het op een USB-stick of "
+      "netwerkmap; na een nieuwe installatie (of op een tweede box) zet 'Herstellen' alles terug.\n\nIn het bestand staan je "
+      "inlogs (Trakt, IPTV): houd het voor jezelf."), st_backup, ac_backup),
 ]
 
 
@@ -326,11 +422,11 @@ class Setup(xbmcgui.WindowXMLDialog):
                     self.setProperty("status", text)
                     self.setProperty("statecolor", {"ok": GREEN, "todo": ORANGE}.get(state, GREY))
             try:
-                self.actions = STEPS[self.step][5]()[:3]
+                self.actions = STEPS[self.step][5]()[:4]
             except Exception as error:  # noqa: BLE001
                 log(f"actions: {error}")
                 self.actions = []
-            for n in range(3):
+            for n in range(4):
                 self.setProperty(f"act{n + 1}", self.actions[n][0] if n < len(self.actions) else "")
 
     def watch(self):
@@ -346,7 +442,7 @@ class Setup(xbmcgui.WindowXMLDialog):
     def onClick(self, control_id):
         if control_id == 100:
             self.show_step(self.getControl(100).getSelectedPosition())
-        elif 301 <= control_id <= 303:
+        elif 301 <= control_id <= 304:
             n = control_id - 301
             if n < len(self.actions):
                 try:

@@ -331,6 +331,18 @@ def lite_check():
         xbmc.log(f"[skin.lucent] {mb} MB memory: light mode switched on", xbmc.LOGINFO)
 
 
+def lite_build():
+    """Light mode does not build widgets 7-10 at all; Home is kept in memory, so the skin reloads once when it changes."""
+    lite = xbmc.getCondVisibility("Skin.HasSetting(lucent.lite)")
+    built = bool(xbmc.getInfoLabel("Skin.String(lucent.lite.built)"))
+    if lite == built:
+        return
+    xbmc.executebuiltin('Skin.SetString(lucent.lite.built,"1")' if lite else "Skin.Reset(lucent.lite.built)")
+    xbmc.log(f"[skin.lucent] light mode {'on' if lite else 'off'}: reloading the skin", xbmc.LOGINFO)
+    xbmc.sleep(300)
+    xbmc.executebuiltin("ReloadSkin()")
+
+
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "sync"
     {
@@ -345,5 +357,6 @@ if __name__ == "__main__":
         "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),
         "reset": reset_all,
         "litecheck": lite_check,
+        "litebuild": lite_build,
         "scanlogos": scan_logos,
     }.get(what, sync)()

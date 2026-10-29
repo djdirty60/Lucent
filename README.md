@@ -87,7 +87,19 @@ Settings: *Skin settings > Integrations > Lucent Library* (update now, update ev
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 
 ### Setup assistant
-The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple), subtitles, Lucent Library and the look – each step shows how it stands and has a button to set it up. Open it again via *Skin settings > Setup assistant* or *Settings > About > Setup assistant*.
+The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple), playback (buffer, refresh rate, surround passthrough), subtitles, Lucent Library, the look and a backup – each step shows how it stands and has a button to set it up. Open it again via *Skin settings > Setup assistant* or *Settings > About > Setup assistant*.
+
+### Sleep timer
+The player menu has a moon button: stop after this episode or film, or after 15, 30, 45, 60 or 90 minutes (the next episode does not start by itself). The time left shows under the button.
+
+### Kids mode
+*Skin settings > Kids mode*: choose a PIN and which side-menu items stay. In kids mode the Options button on the info page is gone and the settings ask for the PIN; *Kids mode off* sits at the bottom of the side menu. It locks the menu – it does not filter what Seren shows.
+
+### Backup and restore
+*Skin settings > Backup and restore*: one zip file (USB stick or network share) with Lucent's settings and menu, Kodi's favourites and sources, and the settings of Seren, IPTV Simple, Lucent Library and A4KSubtitles. Restoring puts it all back and restarts Kodi. The backup holds your logins – keep it to yourself.
+
+### Light mode
+For boxes with little memory (on by itself with 2 GB or less): Home builds only six rows – rows 7–10 are not created at all – without the colour glow and snow. The skin reloads once when you switch it.
 
 ### Options on the info page
 For titles in the Kodi library the info page has an **Options** button: edit title, edit sort title, choose art, remove from library.

@@ -4,7 +4,9 @@
     <defaultcontrol always="true">9100</defaultcontrol>
     <!-- First time: write the default menu; once per session: select the start tab -->
     <!-- boxes with 2 GB memory or less get the light mode once (Skin settings > Advanced) -->
+    <onload>ClearProperty(lucent.kids.ok,home)</onload>
     <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">RunScript(special://skin/scripts/settings.py,litecheck)</onload>
+    <onload condition="[Skin.HasSetting(lucent.lite) + String.IsEmpty(Skin.String(lucent.lite.built))] | [!Skin.HasSetting(lucent.lite) + !String.IsEmpty(Skin.String(lucent.lite.built))]">RunScript(special://skin/scripts/settings.py,litebuild)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/migrate.py)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + String.IsEmpty(Skin.String(lucent.addonw4))">RunScript(special://skin/scripts/menu.py,addons)</onload>
@@ -237,7 +239,7 @@
             <control type="group">
                 <left>160</left>
                 <top>620</top>
-                <visible>!Control.IsVisible(9991)</visible>
+                <visible>!Control.IsVisible(9991) + !String.IsEqual(Container(9000).ListItem.Property(tab),kids)</visible>
                 <animation effect="fade" start="0" end="100" time="300" delay="1500">Visible</animation>
                 <control type="label">
                     <left>0</left>

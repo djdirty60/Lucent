@@ -24,7 +24,7 @@
                 <control type="button">
                     <left>0</left><top>0</top><width>96</width><height>38</height>
                     <enable>false</enable>
-                    <texturefocus border="19" colordiffuse="FFE5534B">pill44.png</texturefocus><texturenofocus border="19" colordiffuse="FFE5534B">pill44.png</texturenofocus>
+                    <texturefocus border="19" colordiffuse="focus">pill44.png</texturefocus><texturenofocus border="19" colordiffuse="FFE5534B">pill44.png</texturenofocus>
                     <font>font_tiny</font><textcolor>FFFFFFFF</textcolor><disabledcolor>FFFFFFFF</disabledcolor><align>center</align><aligny>center</aligny><textoffsetx>0</textoffsetx>
                     <label>LIVE</label>
                     <visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible>
@@ -69,9 +69,9 @@
 </itemlayout>
             <focusedlayout width="300" height="72">
                 <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>!Control.HasFocus(11)</visible></control>
-                <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>FFFFFFFF</colordiffuse><visible>Control.HasFocus(11)</visible></control>
+                <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>focus</colordiffuse><visible>Control.HasFocus(11)</visible></control>
                 <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(11)</visible></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>FF0B1218</textcolor><selectedcolor>FF0B1218</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
+                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>on_focus</textcolor><selectedcolor>on_focus</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
             <control type="label"><left>236</left><top>0</top><width>44</width><height>64</height><font>font12_bold</font><textcolor>FFD4A83A</textcolor><align>center</align><label>★</label><visible>String.IsEqual(ListItem.Label,Skin.String(lucent.guide.group))</visible></control>
 </focusedlayout>
         </control>
@@ -117,9 +117,9 @@
                             <control type="progress" id="3"><left>12</left><top>56</top><width>32</width><height>5</height><info>ListItem.Progress</info><texturebg colordiffuse="00FFFFFF">pill6.png</texturebg><midtexture colordiffuse="FFE5534B">pill6.png</midtexture><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible></control>
             </itemlayout>
             <focusedlayout height="70" width="60">
-                <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>FFFFFFFF</colordiffuse><visible>Control.HasFocus(50)</visible></control>
+                <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>focus</colordiffuse><visible>Control.HasFocus(50)</visible></control>
                 <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>!Control.HasFocus(50)</visible></control>
-                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>FF0B1218</textcolor><selectedcolor>FF0B1218</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(50)</visible></control>
+                <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>on_focus</textcolor><selectedcolor>on_focus</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(50)</visible></control>
                 <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(50)</visible></control>
                             <control type="progress" id="3"><left>12</left><top>56</top><width>32</width><height>5</height><info>ListItem.Progress</info><texturebg colordiffuse="00FFFFFF">pill6.png</texturebg><midtexture colordiffuse="FFE5534B">pill6.png</midtexture><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible></control>
             </focusedlayout>
