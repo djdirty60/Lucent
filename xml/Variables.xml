@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <includes>
     <variable name="GuideFavLabel">
-        <value condition="String.IsEqual(Container(11).ListItem.Label,Skin.String(lucent.guide.group)) + String.StartsWith(System.Language,Dutch)">★  Niet meer favoriet</value>
-        <value condition="String.IsEqual(Container(11).ListItem.Label,Skin.String(lucent.guide.group))">★  Remove favourite</value>
-        <value condition="String.StartsWith(System.Language,Dutch)">★  Favoriete groep</value>
-        <value>★  Favourite group</value>
+        <value condition="!String.IsEmpty(Skin.String(lucent.guide.group)) + String.StartsWith(System.Language,Dutch)">★  $INFO[Skin.String(lucent.guide.group)]</value>
+        <value condition="!String.IsEmpty(Skin.String(lucent.guide.group))">★  $INFO[Skin.String(lucent.guide.group)]</value>
+        <value condition="String.StartsWith(System.Language,Dutch)">★  Favoriete groep kiezen</value>
+        <value>★  Choose favourite group</value>
     </variable>
     <!-- Title shown big: the show for episodes, otherwise the title -->
     <variable name="ItemTitle">
