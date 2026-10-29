@@ -161,6 +161,7 @@ class Sport(xbmcgui.WindowXML):
     # ------------------------------------------------------------------ window events
     def onInit(self):
         if self.ready:
+            self.restore_preview()          # back from full screen or a pop-up: the playing channel goes in the TV window
             return
         self.ready = True
         for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "previewhint", "fullhint", "stoptext", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
@@ -757,12 +758,11 @@ class Sport(xbmcgui.WindowXML):
             window.doModal()
             result = window.result
             del window
+            self.restore_preview()           # the game page may have started a channel in its TV window
             if result.startswith("play"):
                 cid = props.get(f"ch{result[4:]}cid")
                 if cid:
-                    self.closing = True
-                    self.close()
-                    epg.play(cid)
+                    self.watch_full(cid, props.get(f"ch{result[4:]}name", ""))
                 return
             if result == "full":
                 epg.fullscreen()
@@ -1070,9 +1070,25 @@ class Sport(xbmcgui.WindowXML):
             return
         cid = item.getProperty(f"ch{n}cid")
         if cid:
-            self.closing = True
-            self.close()
-            epg.play(cid)
+            self.watch_full(cid, item.getProperty(f"ch{n}name"))
+
+    def watch_full(self, cid, name=""):
+        """Watch a channel full screen while this page stays open behind it: Back in the player then makes the
+        channel small again in the TV window (fsback.py) instead of leaving Sport."""
+        epg.set_active(cid, name)
+        self.setProperty("sport.preview", str(cid))
+        self.setProperty("sport.preview.name", name or "")
+
+        def go():
+            if not epg.is_playing(cid, name):
+                self.start_preview(cid)
+                for _ in range(50):
+                    if xbmc.getCondVisibility("Player.HasVideo"):
+                        break
+                    time.sleep(0.2)
+                time.sleep(0.4)
+            epg.fullscreen()
+        threading.Thread(target=go, daemon=True).start()
 
     def toggle_team(self, who, ev=None):
         ev = ev or self.current()[0]
@@ -1292,9 +1308,7 @@ class Sport(xbmcgui.WindowXML):
         result = window.result
         del window
         if result == "watch" and chans:
-            self.closing = True
-            self.close()
-            epg.play(chans[0]["cid"])
+            self.watch_full(chans[0]["cid"], chans[0].get("name", ""))
             return True
         elif result == "remind" and card["next"]:
             self.by_id[card["next"]["id"]] = card["next"]
@@ -1351,9 +1365,7 @@ class Sport(xbmcgui.WindowXML):
         result = window.result
         del window
         if result == "watch" and chans:
-            self.closing = True
-            self.close()
-            epg.play(chans[0]["cid"])
+            self.watch_full(chans[0]["cid"], chans[0].get("name", ""))
             return True
         if result == "follow":
             self.toggle_team(who, ev)
