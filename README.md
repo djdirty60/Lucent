@@ -67,11 +67,16 @@ A **Sport** tab with games from almost 200 competitions (football worldwide, NBA
 - **Follow** – follow teams, countries or whole competitions, with their own icons and logos.
 - **Game page** – score, LIVE minute, your channels (from your IPTV guide), statistics, latest goals and the table. Formula 1 has its own page: circuit drawing, length, laps, turns, lap record, the weekend programme as cards and the top 10 of every finished session.
 - **Reminders, automatic switching and recording** – a reminder 5 minutes before, optional switching to the channel, recording for 1 to 6 hours, and *Fix channel* per game, competition or team.
+- **Goal notifications** – when a team you follow scores, a pop-up shows the score and the minute (not when you already watch that game; switch off in Settings → Live TV).
 - OK on a channel plays it in the small TV window, OK again goes full screen.
+- The Sport guide only reads the TV guide of the **sport channels** (recognised by name: Ziggo Sport, ESPN, Sky Sports, DAZN, Viaplay, beIN, Eurosport and many more) plus NPO 1, 2 and 3 – much lighter than every channel in your list.
 
 ### TV guide and live TV
 A **TV** tab with your IPTV channels: groups on the left, channels with logo and number, a timeline with the programmes, a header with the focused programme and a live preview. A *Favourite group* opens first every time. The live TV player has its own compact info bar (channel, LIVE, quality, score, now and next) and a menu with channel up/down, pause, record, subtitles, audio and recent channels.
 - **Xtream login**: enter your provider's server address, user name and password (setup assistant → Live TV, or Settings → Live TV); Lucent checks the login and sets up IPTV Simple Client (channel list, guide, replay).
+- **Hide channels** (*Settings → Live TV*): choose the groups you want to see, or type a few words (`NL, BE, SPORT`); hide adult groups or the channel you are watching. Lucent saves a shorter channel list for IPTV Simple, builds it again every night, and *Show everything again* puts the original back.
+- **Star button** in the live menu (next to the moon): add the channel you watch to Kodi's favourites, or take it out again.
+- **Replay** (catch-up): stop a programme halfway and Lucent asks next time whether to carry on where you stopped.
 
 ### Subtitles and updates
 - **Lucent Subtitles** – Lucent's own subtitle add-on (installed with the skin): asks OpenSubtitles, SubDL and Podnapisi at the same time with a time limit, puts subtitles that fit your exact video first (file hash and release name), finds season packs and saves everything as UTF-8. Needs a free OpenSubtitles account with an API key (*Profile → API consumers*) and a free SubDL API key; Podnapisi works without. Fill them in via the setup assistant or *Skin settings → Integrations → Subtitle add-on settings*.
@@ -102,8 +107,13 @@ The player menu has a moon button: stop after this episode or film, or after 15,
 ### Backup and restore
 *Skin settings > Backup and restore*: one zip file (USB stick or network share) with Lucent's settings and menu, Kodi's favourites and sources, and the settings of Seren, IPTV Simple, Lucent Library and Lucent Subtitles. Restoring puts it all back and restarts Kodi. The backup holds your logins – keep it to yourself.
 
+*Settings → About → Backup and restore* also has an **automatic weekly backup** into a folder you choose (best a USB stick); the last four are kept.
+
 ### Light mode
 For boxes with little memory (on by itself with 2 GB or less): Home builds only six rows – rows 7–10 are not created at all – Seren is asked for small artwork, and there is no colour glow and no snow. The skin reloads once when you switch it.
+
+### Self-test and safe log
+*Settings → About → Self-test* checks Seren, Lucent Library, Lucent Subtitles, IPTV Simple and the channels and says in plain words what is missing. *Safe log* makes a copy of Kodi's log with logins, passwords, tokens and your provider's address blanked out – safe to attach to a bug report.
 
 ### Options on the info page
 For titles in the Kodi library the info page has an **Options** button: edit title, edit sort title, choose art, remove from library.
