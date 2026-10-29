@@ -397,6 +397,62 @@ def open_home_card():
     xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
 
 
+# ----------------------------------------------------------------------------- goal notifications
+def _num(value):
+    try:
+        return int(str(value).strip())
+    except ValueError:
+        return None
+
+
+def _followed_game(follow, ev):
+    if ev.get("kind") != "teams":
+        return False
+    return bool(sc.is_following_team(follow, ev["home"]) or sc.is_following_team(follow, ev["away"]))
+
+
+def _watching(ev):
+    """The score bar of the channel you are watching already shows this game: no extra pop-up then."""
+    if not xbmc.getCondVisibility("Player.HasVideo") or not HOME.getProperty("live.sc.on"):
+        return False
+    return HOME.getProperty("live.sc.hname") in (ev["home"].get("short") or ev["home"]["name"], ev["away"].get("short") or ev["away"]["name"])
+
+
+def goals(state):
+    """A followed team scores: a notification with the score and the minute. Looks every 30 s, and only while a followed
+    team is playing (the scores of that competition are asked again at most every 2 minutes)."""
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.goals.off)"):
+        return
+    follow = sc.load_follow()
+    if not follow["teams"]:
+        return
+    live = [e for e in sc.all_cached() if e.get("state") == "in" and _followed_game(follow, e)]
+    if live:
+        try:
+            sc.refresh(keys=sorted({e["league"] for e in live}))
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"goals refresh: {error}")
+        live = [e for e in sc.all_cached() if e.get("state") == "in" and _followed_game(follow, e)]
+    seen = state.setdefault("goals", {})
+    for gone in [k for k in seen if k not in {e["id"] for e in live}]:
+        del seen[gone]
+    for ev in live:
+        h, a = _num(ev["home"].get("score")), _num(ev["away"].get("score"))
+        if h is None or a is None:
+            continue
+        before = seen.get(ev["id"])
+        seen[ev["id"]] = (h, a)
+        if before is None or (h <= before[0] and a <= before[1]) or _watching(ev):
+            continue
+        scorer = ev["home"] if h > before[0] else ev["away"]
+        name = scorer.get("short") or scorer["name"]
+        minute = ev.get("status") or ""
+        xbmcgui.Dialog().notification(
+            sc.t("goal") + (f"  ·  {minute}" if minute else ""),
+            f"{ev['home'].get('short') or ev['home']['name']} {h} - {a} {ev['away'].get('short') or ev['away']['name']}   ({name})",
+            scorer.get("logo") or xbmcgui.NOTIFICATION_INFO, 9000, True)
+
+
 def tick(state, monitor):
     """One round of the sport helper (every 30 seconds): refresh, reminders / switching / recording, the Home card."""
     try:
@@ -409,6 +465,7 @@ def tick(state, monitor):
                 if time.time() - epg.load().get("fetched", 0) > 6 * 3600 and not xbmc.Player().isPlaying():
                     epg.scan(abort=monitor.abortRequested)
             check()
+        goals(state)
         home_card()
     except Exception as error:  # noqa: BLE001
         sc.log(f"plan helper: {error}")

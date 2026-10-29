@@ -77,6 +77,7 @@ TX = {
     "empty_day": ("No games on this day", "Geen wedstrijden op deze dag"),
     "empty_net": ("The games could not be loaded. Check the internet connection and try again.",
                   "De wedstrijden konden niet worden geladen. Controleer de internetverbinding en probeer opnieuw."),
+    "goal": ("GOAL!", "DOELPUNT!"),
     "follow_team": ("Follow {0}", "Volg {0}"), "unfollow_team": ("Stop following {0}", "Stop met volgen: {0}"),
     "show_table": ("Show table", "Bekijk stand"),
     "m_leagues": ("Choose competitions", "Competities kiezen"), "m_teams": ("Choose teams", "Teams kiezen"),
