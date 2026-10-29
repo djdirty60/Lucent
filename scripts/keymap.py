@@ -47,7 +47,7 @@ def current():
 
 OK_PATH = DIR + "lucent-ok-page.xml"
 OK_KEYMAP = """<keymap>
-    <MyVideoNav>
+    <videos>   <!-- Kodi's keymap name for MyVideoNav.xml (the video lists); "MyVideoNav" itself is not recognised -->
         <keyboard>
             <return>RunScript(special://skin/scripts/openitem.py)</return>
             <enter>RunScript(special://skin/scripts/openitem.py)</enter>
@@ -55,7 +55,7 @@ OK_KEYMAP = """<keymap>
         <remote>
             <select>RunScript(special://skin/scripts/openitem.py)</select>
         </remote>
-    </MyVideoNav>
+    </videos>
 </keymap>
 """
 
