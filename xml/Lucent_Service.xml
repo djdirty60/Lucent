@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent: one streaming service in a pop-up (scripts/service.py). Six lists under each other (801-806), filled by
+     Lucent Library from TMDb; above them the title under the cursor. Up / down: another list, OK: the title's page. -->
+<window>
+    <defaultcontrol always="true">801</defaultcontrol>
+    <include>Anim_Dialog</include>
+    <controls>
+        <include>DialogDim</include>
+        <control type="group">
+            <left>120</left>
+            <top>60</top>
+            <include content="GlassPanel"><param name="left">0</param><param name="top">0</param><param name="width">1680</param><param name="height">960</param><param name="body">modal</param></include>
+            <!-- header: the service's own logo (transparent) or its name -->
+            <control type="image">
+                <left>48</left><top>30</top><width>420</width><height>90</height>
+                <aspectratio align="left">keep</aspectratio>
+                <texture background="true">$INFO[Window.Property(svc.logo)]</texture>
+                <visible>!String.IsEmpty(Window.Property(svc.logo))</visible>
+            </control>
+            <control type="label">
+                <left>48</left><top>30</top><width>1000</width><height>70</height>
+                <font>font45_title</font><textcolor>text</textcolor>
+                <label>$INFO[Window.Property(svc.name)]</label>
+                <visible>String.IsEmpty(Window.Property(svc.logo))</visible>
+            </control>
+            <control type="label">
+                <left>500</left><top>58</top><width>1132</width><height>36</height>
+                <font>font12</font><textcolor>text3</textcolor><align>right</align>
+                <label>$INFO[Window.Property(svc.sub)]</label>
+            </control>
+            <!-- the title under the cursor -->
+            <control type="image">
+                <left>1112</left><top>136</top><width>520</width><height>170</height>
+                <aspectratio scalediffuse="false">scale</aspectratio>
+                <texture diffuse="mask_landscape.png" background="true">$VAR[SvcFanart]</texture>
+            </control>
+            <control type="label">
+                <left>48</left><top>140</top><width>1030</width><height>52</height>
+                <font>font37_title</font><textcolor>text</textcolor>
+                <label>$VAR[SvcTitle]</label>
+            </control>
+            <control type="label">
+                <left>48</left><top>196</top><width>1030</width><height>34</height>
+                <font>font12</font><textcolor>text2</textcolor>
+                <label>$VAR[SvcMeta]</label>
+            </control>
+            <control type="textbox">
+                <left>48</left><top>236</top><width>1030</width><height>66</height>
+                <font>font12</font><textcolor>text3</textcolor>
+                <label>$VAR[SvcPlot]</label>
+            </control>
+            <!-- the lists -->
+            <control type="grouplist" id="800">
+                <left>48</left><top>326</top><width>1584</width><height>570</height>
+                <orientation>vertical</orientation><itemgap>18</itemgap><scrolltime tween="cubic" easing="out">220</scrolltime>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="group">
+                    <width>1584</width><height>292</height>
+                    <animation effect="fade" start="100" end="45" time="200" condition="!Control.HasFocus(801)">Conditional</animation>
+                    <control type="label">
+                        <left>0</left><top>0</top><width>1500</width><height>36</height>
+                        <font>font13_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(row.1.label)]</label>
+                    </control>
+                    <control type="list" id="801">
+                        <left>-8</left><top>44</top><width>1600</width><height>248</height>
+                        <orientation>horizontal</orientation>
+                        <onup>801</onup><ondown>802</ondown><onleft>noop</onleft><onright>noop</onright>
+                        <scrolltime tween="cubic" easing="out">200</scrolltime>
+                        <itemlayout width="170" height="248">
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </itemlayout>
+                        <focusedlayout width="170" height="248">
+                            <control type="image">
+                                <left>2</left><top>-2</top><width>162</width><height>237</height>
+                                <texture border="14">rr14.png</texture>
+                                <colordiffuse>FFFFFFFF</colordiffuse>
+                                <visible>Control.HasFocus(801)</visible>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </focusedlayout>
+                        <content target="videos">$INFO[Window.Property(row.1)]</content>
+                    </control>
+                </control>
+                <control type="group">
+                    <width>1584</width><height>292</height>
+                    <animation effect="fade" start="100" end="45" time="200" condition="!Control.HasFocus(802)">Conditional</animation>
+                    <control type="label">
+                        <left>0</left><top>0</top><width>1500</width><height>36</height>
+                        <font>font13_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(row.2.label)]</label>
+                    </control>
+                    <control type="list" id="802">
+                        <left>-8</left><top>44</top><width>1600</width><height>248</height>
+                        <orientation>horizontal</orientation>
+                        <onup>801</onup><ondown>803</ondown><onleft>noop</onleft><onright>noop</onright>
+                        <scrolltime tween="cubic" easing="out">200</scrolltime>
+                        <itemlayout width="170" height="248">
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </itemlayout>
+                        <focusedlayout width="170" height="248">
+                            <control type="image">
+                                <left>2</left><top>-2</top><width>162</width><height>237</height>
+                                <texture border="14">rr14.png</texture>
+                                <colordiffuse>FFFFFFFF</colordiffuse>
+                                <visible>Control.HasFocus(802)</visible>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </focusedlayout>
+                        <content target="videos">$INFO[Window.Property(row.2)]</content>
+                    </control>
+                </control>
+                <control type="group">
+                    <width>1584</width><height>292</height>
+                    <animation effect="fade" start="100" end="45" time="200" condition="!Control.HasFocus(803)">Conditional</animation>
+                    <control type="label">
+                        <left>0</left><top>0</top><width>1500</width><height>36</height>
+                        <font>font13_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(row.3.label)]</label>
+                    </control>
+                    <control type="list" id="803">
+                        <left>-8</left><top>44</top><width>1600</width><height>248</height>
+                        <orientation>horizontal</orientation>
+                        <onup>802</onup><ondown>804</ondown><onleft>noop</onleft><onright>noop</onright>
+                        <scrolltime tween="cubic" easing="out">200</scrolltime>
+                        <itemlayout width="170" height="248">
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </itemlayout>
+                        <focusedlayout width="170" height="248">
+                            <control type="image">
+                                <left>2</left><top>-2</top><width>162</width><height>237</height>
+                                <texture border="14">rr14.png</texture>
+                                <colordiffuse>FFFFFFFF</colordiffuse>
+                                <visible>Control.HasFocus(803)</visible>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </focusedlayout>
+                        <content target="videos">$INFO[Window.Property(row.3)]</content>
+                    </control>
+                </control>
+                <control type="group">
+                    <width>1584</width><height>292</height>
+                    <animation effect="fade" start="100" end="45" time="200" condition="!Control.HasFocus(804)">Conditional</animation>
+                    <control type="label">
+                        <left>0</left><top>0</top><width>1500</width><height>36</height>
+                        <font>font13_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(row.4.label)]</label>
+                    </control>
+                    <control type="list" id="804">
+                        <left>-8</left><top>44</top><width>1600</width><height>248</height>
+                        <orientation>horizontal</orientation>
+                        <onup>803</onup><ondown>805</ondown><onleft>noop</onleft><onright>noop</onright>
+                        <scrolltime tween="cubic" easing="out">200</scrolltime>
+                        <itemlayout width="170" height="248">
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </itemlayout>
+                        <focusedlayout width="170" height="248">
+                            <control type="image">
+                                <left>2</left><top>-2</top><width>162</width><height>237</height>
+                                <texture border="14">rr14.png</texture>
+                                <colordiffuse>FFFFFFFF</colordiffuse>
+                                <visible>Control.HasFocus(804)</visible>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </focusedlayout>
+                        <content target="videos">$INFO[Window.Property(row.4)]</content>
+                    </control>
+                </control>
+                <control type="group">
+                    <width>1584</width><height>292</height>
+                    <animation effect="fade" start="100" end="45" time="200" condition="!Control.HasFocus(805)">Conditional</animation>
+                    <control type="label">
+                        <left>0</left><top>0</top><width>1500</width><height>36</height>
+                        <font>font13_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(row.5.label)]</label>
+                    </control>
+                    <control type="list" id="805">
+                        <left>-8</left><top>44</top><width>1600</width><height>248</height>
+                        <orientation>horizontal</orientation>
+                        <onup>804</onup><ondown>806</ondown><onleft>noop</onleft><onright>noop</onright>
+                        <scrolltime tween="cubic" easing="out">200</scrolltime>
+                        <itemlayout width="170" height="248">
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </itemlayout>
+                        <focusedlayout width="170" height="248">
+                            <control type="image">
+                                <left>2</left><top>-2</top><width>162</width><height>237</height>
+                                <texture border="14">rr14.png</texture>
+                                <colordiffuse>FFFFFFFF</colordiffuse>
+                                <visible>Control.HasFocus(805)</visible>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </focusedlayout>
+                        <content target="videos">$INFO[Window.Property(row.5)]</content>
+                    </control>
+                </control>
+                <control type="group">
+                    <width>1584</width><height>292</height>
+                    <animation effect="fade" start="100" end="45" time="200" condition="!Control.HasFocus(806)">Conditional</animation>
+                    <control type="label">
+                        <left>0</left><top>0</top><width>1500</width><height>36</height>
+                        <font>font13_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(row.6.label)]</label>
+                    </control>
+                    <control type="list" id="806">
+                        <left>-8</left><top>44</top><width>1600</width><height>248</height>
+                        <orientation>horizontal</orientation>
+                        <onup>805</onup><ondown>806</ondown><onleft>noop</onleft><onright>noop</onright>
+                        <scrolltime tween="cubic" easing="out">200</scrolltime>
+                        <itemlayout width="170" height="248">
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </itemlayout>
+                        <focusedlayout width="170" height="248">
+                            <control type="image">
+                                <left>2</left><top>-2</top><width>162</width><height>237</height>
+                                <texture border="14">rr14.png</texture>
+                                <colordiffuse>FFFFFFFF</colordiffuse>
+                                <visible>Control.HasFocus(806)</visible>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <texture diffuse="mask_poster.png">default_poster.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>8</left><top>4</top><width>150</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+                            </control>
+                        </focusedlayout>
+                        <content target="videos">$INFO[Window.Property(row.6)]</content>
+                    </control>
+                </control>
+            </control>
+            <control type="label">
+                <left>48</left><top>906</top><width>1200</width><height>36</height>
+                <font>font10</font><textcolor>text4</textcolor>
+                <label>$INFO[Window.Property(svc.hint)]</label>
+            </control>
+        </control>
+    </controls>
+</window>

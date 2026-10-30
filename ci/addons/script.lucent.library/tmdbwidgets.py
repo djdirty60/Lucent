@@ -310,10 +310,51 @@ def providers(force=False):
             if pid and r.get("logo_path") and (pid not in found or prio < found[pid]["prio"]):
                 found[pid] = {"id": pid, "name": r.get("provider_name") or str(pid), "logo": r["logo_path"], "prio": prio}
     items = sorted(found.values(), key=lambda x: x["prio"])[:PROV_MAX]
+    old = {p.get("id"): p for p in saved.get("items") or []}
+    for p in items:                                   # the transparent logo: looked up once per service
+        p["wide"] = old.get(p["id"], {}).get("wide") if "wide" in old.get(p["id"], {}) else wide_logo(p["name"])
     if items:
         write_json(PROV_FILE, {"time": time.time(), "region": REGION, "items": items})
         return items
     return saved.get("items") or []
+
+
+PACK = "resource://resource.images.studios.white/"
+
+
+def name_variants(name):
+    """'Disney Plus' -> Disney Plus, Disney+, Disney ...: the names a logo pack or TMDb may use for a service."""
+    out = [name]
+    for a, b in ((" Plus", "+"), ("Plus", "+"), (" Amazon Channel", ""), (" Standard with Ads", ""), (" with Ads", ""),
+                 ("Amazon Prime Video", "Prime Video"), ("Amazon Prime Video", "Amazon"), ("HBO Max", "Max"), ("HBO Max", "HBO")):
+        if a in name:
+            out.append(name.replace(a, b).strip())
+    first = name.split(" ")[0]
+    if len(first) > 2:
+        out.append(first)
+    seen, res = set(), []
+    for n in out:
+        if n and n.lower() not in seen:
+            seen.add(n.lower())
+            res.append(n)
+    return res
+
+
+def wide_logo(name):
+    """A transparent logo of the service: the white logo pack first, else the company logo on TMDb. '' when none."""
+    for n in name_variants(name):
+        try:
+            if xbmcvfs.exists(f"{PACK}{n}.png"):
+                return f"{PACK}{n}.png"
+        except Exception:  # noqa: BLE001 - pack not installed
+            break
+    for n in name_variants(name)[:3]:
+        data = tmdb_get("search/company", query=n) or {}
+        hits = [r for r in data.get("results") or [] if r.get("logo_path")]
+        exact = [r for r in hits if (r.get("name") or "").strip().lower() == n.lower()]
+        if exact or hits:
+            return f"{IMG}w500{(exact or hits)[0]['logo_path']}"
+    return ""
 
 
 def fetch_provider(name):
@@ -364,13 +405,21 @@ def provider_rows(handle):
         saved = read_json(cache_file(f"prov_{p['id']}_poptv"), {}) or read_json(cache_file(f"prov_{p['id']}_popmovie"), {}) or {}
         first = (saved.get("items") or [{}])[0]
         fanart = (first.get("art") or {}).get("fanart") or ""
-        query = urllib.parse.urlencode({"action": "provider", "id": p["id"], "name": p["name"]})
-        items.append({"type": "video", "label": p["name"], "title": p["name"],
+        wide = p.get("wide") or logo
+        query = urllib.parse.urlencode({"action": "provideropen", "id": p["id"], "name": p["name"], "logo": p.get("wide") or ""})
+        items.append({"type": "video", "label": p["name"], "title": p["name"], "action": True,
                       "plot": (f"Nieuw, populair en best beoordeeld op {p['name']}" if NL else f"New, popular and top rated on {p['name']}"),
-                      "art": {"poster": logo, "thumb": logo, "icon": logo, "landscape": logo, "clearlogo": logo, "fanart": fanart},
-                      "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "directory"})
+                      "art": {"poster": logo, "thumb": logo, "icon": logo, "landscape": logo, "clearlogo": wide, "fanart": fanart},
+                      "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file", "props": {"lucent_open": "1"}})
         register(f"prov_{p['id']}_poptv", "")            # its picture for the row comes along in the background
     widget.answer(handle, items)
+
+
+def provider_open(query):
+    """A click on a service in the row: its pop-up with the six lists (the skin's service.py)."""
+    q = urllib.parse.parse_qs(query.lstrip("?"))
+    get = lambda k: urllib.parse.quote((q.get(k) or [""])[0], safe="")  # noqa: E731
+    xbmc.executebuiltin(f"RunScript(special://skin/scripts/service.py,{get('id')},{get('name')},{get('logo')})")
 
 
 def provider_page(handle, query):

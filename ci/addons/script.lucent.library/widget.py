@@ -360,6 +360,10 @@ def show(handle, query):
         import tmdbwidgets
         tmdbwidgets.provider_rows(handle)
         return
+    if query.lstrip("?").startswith("action=provideropen"):       # a click on a service: its pop-up
+        import tmdbwidgets
+        tmdbwidgets.provider_open(query)
+        return
     if query.lstrip("?").startswith("action=provider&"):          # one service: its lists
         import tmdbwidgets
         tmdbwidgets.provider_page(handle, query)

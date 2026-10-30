@@ -1194,4 +1194,37 @@
         <value condition="Control.HasFocus(2903)">on_focus</value>
         <value>text4</value>
     </variable>
+    <!-- the streaming service pop-up (Lucent_Service.xml) -->
+    <variable name="SvcTitle">
+        <value condition="Control.HasFocus(801)">$INFO[Container(801).ListItem.Label]</value>
+        <value condition="Control.HasFocus(802)">$INFO[Container(802).ListItem.Label]</value>
+        <value condition="Control.HasFocus(803)">$INFO[Container(803).ListItem.Label]</value>
+        <value condition="Control.HasFocus(804)">$INFO[Container(804).ListItem.Label]</value>
+        <value condition="Control.HasFocus(805)">$INFO[Container(805).ListItem.Label]</value>
+        <value condition="Control.HasFocus(806)">$INFO[Container(806).ListItem.Label]</value>
+    </variable>
+    <variable name="SvcMeta">
+        <value condition="Control.HasFocus(801)">$INFO[Container(801).ListItem.Year]$INFO[Container(801).ListItem.Genre,  ·  ]$INFO[Container(801).ListItem.Rating,  ·  TMDb ]</value>
+        <value condition="Control.HasFocus(802)">$INFO[Container(802).ListItem.Year]$INFO[Container(802).ListItem.Genre,  ·  ]$INFO[Container(802).ListItem.Rating,  ·  TMDb ]</value>
+        <value condition="Control.HasFocus(803)">$INFO[Container(803).ListItem.Year]$INFO[Container(803).ListItem.Genre,  ·  ]$INFO[Container(803).ListItem.Rating,  ·  TMDb ]</value>
+        <value condition="Control.HasFocus(804)">$INFO[Container(804).ListItem.Year]$INFO[Container(804).ListItem.Genre,  ·  ]$INFO[Container(804).ListItem.Rating,  ·  TMDb ]</value>
+        <value condition="Control.HasFocus(805)">$INFO[Container(805).ListItem.Year]$INFO[Container(805).ListItem.Genre,  ·  ]$INFO[Container(805).ListItem.Rating,  ·  TMDb ]</value>
+        <value condition="Control.HasFocus(806)">$INFO[Container(806).ListItem.Year]$INFO[Container(806).ListItem.Genre,  ·  ]$INFO[Container(806).ListItem.Rating,  ·  TMDb ]</value>
+    </variable>
+    <variable name="SvcPlot">
+        <value condition="Control.HasFocus(801)">$INFO[Container(801).ListItem.Plot]</value>
+        <value condition="Control.HasFocus(802)">$INFO[Container(802).ListItem.Plot]</value>
+        <value condition="Control.HasFocus(803)">$INFO[Container(803).ListItem.Plot]</value>
+        <value condition="Control.HasFocus(804)">$INFO[Container(804).ListItem.Plot]</value>
+        <value condition="Control.HasFocus(805)">$INFO[Container(805).ListItem.Plot]</value>
+        <value condition="Control.HasFocus(806)">$INFO[Container(806).ListItem.Plot]</value>
+    </variable>
+    <variable name="SvcFanart">
+        <value condition="Control.HasFocus(801)">$INFO[Container(801).ListItem.Art(fanart)]</value>
+        <value condition="Control.HasFocus(802)">$INFO[Container(802).ListItem.Art(fanart)]</value>
+        <value condition="Control.HasFocus(803)">$INFO[Container(803).ListItem.Art(fanart)]</value>
+        <value condition="Control.HasFocus(804)">$INFO[Container(804).ListItem.Art(fanart)]</value>
+        <value condition="Control.HasFocus(805)">$INFO[Container(805).ListItem.Art(fanart)]</value>
+        <value condition="Control.HasFocus(806)">$INFO[Container(806).ListItem.Art(fanart)]</value>
+    </variable>
 </includes>

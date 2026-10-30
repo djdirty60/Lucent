@@ -36,6 +36,10 @@ class H(BaseHTTPRequestHandler):
                 {"provider_id": 8, "provider_name": "Netflix", "logo_path": "/n.png", "display_priorities": {"US": 1, "NL": 1}},
                 {"provider_id": 337, "provider_name": "Disney Plus", "logo_path": "/d.png", "display_priorities": {"US": 2, "NL": 2}},
                 {"provider_id": 119, "provider_name": "Prime Video", "logo_path": "/p.png", "display_priorities": {"US": 3, "NL": 3}}]}).encode(), "application/json")
+        if "/search/company" in path:
+            q = self.path.split("query=", 1)[-1].split("&")[0]
+            hits = [{"id": 1, "name": "Netflix", "logo_path": "/nwide.png"}] if q == "Netflix" else []
+            return self.send(json.dumps({"results": hits}).encode(), "application/json")
         if "/discover/" in path:
             tv = "/tv" in path
             res = [{"id": 1000 + i, ("name" if tv else "title"): f"{'Serie' if tv else 'Film'} {i}", "overview": "plot",

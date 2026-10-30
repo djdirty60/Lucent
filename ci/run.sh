@@ -27,6 +27,7 @@ open(p,"w").write(s)
 PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
+sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
 cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/driver $K/addons/service.lucent.cidriver

@@ -68,18 +68,32 @@ def streaming_test():
         f"logo={lab('Container(8201).ListItem.Art(clearlogo)')[-12:]} fanart={lab('Container(8201).ListItem.Art(fanart)')[-14:]}")
     shot("8b-streaming-focus")
     xbmc.executebuiltin("Action(Select)")
-    mon.waitForAbort(6)
-    log(f"stream: after click window={lab('System.CurrentWindow')} path={lab('Container.FolderPath')[:80]} n={lab('Container.NumItems')} "
-        f"first={lab('Container.ListItemAbsolute(0).Label')}")
-    shot("8c-service-page")
+    mon.waitForAbort(8)
+    pop = cond("Window.IsVisible(Lucent_Service.xml)")
+    counts = [lab(f"Container({c}).NumItems") for c in range(801, 807)]
+    log(f"stream: popup={pop} rows={counts} focus={lab('System.CurrentControlID')} title={lab('Container(801).ListItem.Label')} "
+        f"logo={lab('Window(1).Property(svc.logo)')[-14:]}")
+    shot("8c-popup")
     xbmc.executebuiltin("Action(Down)")
     mon.waitForAbort(1)
-    log(f"stream: chosen={lab('Container.ListItem.Label')}")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2)
+    log(f"stream: after down down right focus={lab('System.CurrentControlID')} item={lab('Container(803).ListItem.Label')} "
+        f"pos={lab('Container(803).CurrentItem')}")
+    shot("8d-popup-moved")
     xbmc.executebuiltin("Action(Select)")
-    mon.waitForAbort(8)
-    log(f"stream: list window={lab('System.CurrentWindow')} path={lab('Container.FolderPath')[:80]} n={lab('Container.NumItems')} "
-        f"first={lab('Container.ListItemAbsolute(0).Label')}")
-    shot("8d-service-list")
+    mon.waitForAbort(10)
+    log(f"stream: after OK info={cond('Window.IsVisible(movieinformation)')} popup={cond('Window.IsVisible(Lucent_Service.xml)')} "
+        f"window={lab('System.CurrentWindow')}")
+    shot("8e-info")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(4)
+    log(f"stream: after Back info={cond('Window.IsVisible(movieinformation)')} popup={cond('Window.IsVisible(Lucent_Service.xml)')}")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    log(f"stream: after 2nd Back popup={cond('Window.IsVisible(Lucent_Service.xml)')} window={lab('System.CurrentWindow')}")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(3)
 
