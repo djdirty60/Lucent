@@ -36,7 +36,7 @@ def snap(phase):
                               cond(f"Container({cid}).IsUpdating")]
     samples.append({"t": round(time.time() - T0, 1), "phase": phase, "tab": lab("Container(9000).ListItem.Label"),
                     "window": lab("System.CurrentWindow"), "dialog": cond("System.HasVisibleModalDialog"),
-                    "refresh": HOME.getProperty("lucent.rowsrefresh"),
+                    "refresh": HOME.getProperty("lucent.rowsrefresh"), "ok": [HOME.getProperty(f"lucent.rowok.{n}") for n in range(1, 11)],
                     "wr": [HOME.getProperty(f"lucent.wr.{n}") for n in range(1, 11)], "rows": rows})
 
 
@@ -68,7 +68,7 @@ def main():
     shot("1-home")
     log("switch to Films")
     xbmc.executebuiltin("Control.SetFocus(9000,1)")
-    watch("films1", 70)
+    watch("films1", 120)
     shot("2-films")
     log("back to Home")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
