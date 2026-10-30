@@ -12,6 +12,8 @@ rsync -a --exclude .git --exclude repo --exclude ci --exclude .github --exclude 
 if [ "$VARIANT" = old ]; then
   cp ci/old/Includes_Home.xml $K/addons/skin.lucent/xml/Includes_Home.xml
   cp ci/old/helper.py $K/addons/skin.lucent/scripts/helper.py
+  cp ci/old/subs_live.py $K/addons/skin.lucent/scripts/subs_live.py
+  cp ci/old/subtitles.py $K/addons/skin.lucent/scripts/subtitles.py
 fi
 # dependencies the Home screen does not need (YouTube, studio images) are taken out of the test copy
 python3 - <<'PY'
@@ -25,13 +27,14 @@ PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
 cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/driver $K/addons/service.lucent.cidriver
+ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -t 120 -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/ci/test.mkv
 # 1st start (Estuary): Kodi registers the add-ons, then stops
 mkdir -p $K/userdata
 timeout 60 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/first.txt 2>&1
 python3 ci/profile.py enable
 python3 ci/profile.py skin
 # 2nd start with Lucent: the driver does the test and quits
-timeout 420 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/second.txt 2>&1
+timeout 600 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/second.txt 2>&1
 mkdir -p ci-results
 cp /tmp/ci/out/* ci-results/ 2>/dev/null
 grep -iE "lucent|cidriver|fakeseren|error|CDirectoryProvider|exception|traceback" $K/temp/kodi.log | tail -800 > ci-results/$VARIANT-$RUN.log

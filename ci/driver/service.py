@@ -55,6 +55,46 @@ def watch(phase, seconds, step=1.0):
         mon.waitForAbort(step)
 
 
+def psnap(phase):
+    try:
+        pos = round(xbmc.Player().getTime(), 1) if xbmc.Player().isPlayingVideo() else -1
+    except RuntimeError:
+        pos = -1
+    samples.append({"t": round(time.time() - T0, 1), "phase": phase, "pos": pos, "playing": xbmc.Player().isPlayingVideo(),
+                    "paused": cond("Player.Paused"), "list": cond("Window.IsVisible(Lucent_Subtitles.xml)"),
+                    "mark": HOME.getProperty("lucent.subs.open"), "rows": {}, "tab": "", "window": lab("System.CurrentWindow"),
+                    "dialog": False, "refresh": "", "wr": []})
+
+
+def pwatch(phase, seconds):
+    end = time.time() + seconds
+    while time.time() < end and not mon.abortRequested():
+        psnap(phase)
+        mon.waitForAbort(0.5)
+
+
+def subs_test():
+    """Automatic subtitle list: must open only once the film really plays, must not pause it, must close when the
+    video stops, and must open again by hand after that (then it does pause)."""
+    log("subs: play 1")
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    pwatch("subs-play1", 35)
+    shot("7-subs-auto")
+    log("subs: stop")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    pwatch("subs-stopped", 8)
+    log("subs: play 2 + open by hand")
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    pwatch("subs-play2", 6)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")
+    pwatch("subs-hand", 8)
+    shot("8-subs-hand")
+    xbmc.executebuiltin("Action(Back)")
+    pwatch("subs-closed", 4)
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    pwatch("subs-end", 3)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -87,6 +127,7 @@ def main():
         shot(f"5-down{step}")
     watch("idle", 60)                               # nothing touched: the rows must stay put (no jumping)
     shot("6-idle")
+    subs_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

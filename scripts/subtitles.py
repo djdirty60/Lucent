@@ -96,7 +96,7 @@ class Watcher(xbmc.Player):
         if xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):
             xbmc.executebuiltin("ActivateWindow(subtitlesearch)")
         else:
-            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")   # Lucent's live list
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")   # Lucent's live list (opens once the film really plays)
 
 
 

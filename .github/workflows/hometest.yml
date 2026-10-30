@@ -19,8 +19,8 @@ jobs:
         run: |
           mkdir -p ci-results
           {
-            sudo add-apt-repository -y ppa:team-xbmc/ppa && sudo apt-get update -q && sudo apt-get install -y -q kodi kodi-bin xvfb rsync \
-            || { echo "PPA failed - trying Ubuntu's own Kodi"; sudo add-apt-repository -y -r ppa:team-xbmc/ppa; sudo apt-get update -q; sudo apt-get install -y -q kodi xvfb rsync; }
+            sudo add-apt-repository -y ppa:team-xbmc/ppa && sudo apt-get update -q && sudo apt-get install -y -q kodi kodi-bin xvfb rsync ffmpeg \
+            || { echo "PPA failed - trying Ubuntu's own Kodi"; sudo add-apt-repository -y -r ppa:team-xbmc/ppa; sudo apt-get update -q; sudo apt-get install -y -q kodi xvfb rsync ffmpeg; }
             apt-cache policy kodi kodi-bin
             kodi --version 2>&1 | head -3
           } > ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log 2>&1

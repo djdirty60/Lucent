@@ -157,7 +157,7 @@ def run():
             return
         swap["t"] = now
         xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
-        xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")
         log("Kodi's subtitle search -> Lucent live list")
 
     lost = {"n": 0}
