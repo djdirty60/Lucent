@@ -241,8 +241,11 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         mine = r["code"] == my_code()
         return (not mine, r["code"] != "en", not r["sync"], -r["rating"], r["lang"], r["release"].lower())
 
-    def local_items(self):
-        """Above the found subtitles: switch subtitles on / off, and the subtitle streams inside the film itself."""
+    def local_items(self, fresh=False):
+        """Above the found subtitles: switch subtitles on / off, and the film's own subtitles in your languages (the
+        others behind one row). Read once and kept: asking the player again on every redraw is not needed."""
+        if not fresh and getattr(self, "_local", None) is not None:
+            return self._local
         items = []
         on = cond("VideoPlayer.SubtitlesEnabled")
         li = xbmcgui.ListItem(t("Subtitles: on", "Ondertiteling: aan") if on else t("Subtitles: off", "Ondertiteling: uit"))
@@ -257,6 +260,8 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         except Exception:  # noqa: BLE001
             props = {}
         current = (props.get("currentsubtitle") or {}).get("index", -1)
+        wanted = {NAME_TO_CODE.get(n.lower(), "") for n in self.languages} | {my_code()}
+        others = []
         for sub in props.get("subtitles") or []:
             code = (sub.get("language") or "").lower()[:3]
             code2 = {"dut": "nl", "nld": "nl", "eng": "en", "ger": "de", "deu": "de", "fre": "fr", "fra": "fr", "spa": "es",
@@ -275,7 +280,19 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             if on and sub.get("index") == current:
                 li.setProperty("badges", t("✓ showing now", "✓ staat nu aan"))
             li.setProperty("path", f"stream:{sub.get('index')}")
+            if code2 in wanted or (on and sub.get("index") == current):
+                items.append(li)
+            else:
+                others.append(li)
+        if others:
+            li = xbmcgui.ListItem(t(f"Other languages in the film ({len(others)})", f"Andere talen in de film ({len(others)})"))
+            li.setLabel2(", ".join(o.getLabel() for o in others[:6]) + ("…" if len(others) > 6 else ""))
+            li.setProperty("code", "+")
+            li.setProperty("pillcol", "33FFFFFF")
+            li.setProperty("source", t("In the film", "In de film"))
+            li.setProperty("path", "otherstreams:")
             items.append(li)
+        self._local, self._others = items, others
         return items
 
     def redraw(self):
@@ -354,7 +371,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             self.finish()
         elif cid == BTN_SYNC:
             item = self.getControl(LIST).getSelectedItem()
-            if item and not item.getProperty("path").startswith(("ai:", "cached:", "toggle:", "stream:")):
+            if item and not item.getProperty("path").startswith(("ai:", "cached:", "toggle:", "stream:", "otherstreams:")):
                 self.choose(item.getProperty("path"), force_sync=True)
         elif cid == BTN_SEARCH:
             default = xbmc.getInfoLabel("VideoPlayer.TVShowTitle") or xbmc.getInfoLabel("VideoPlayer.Title")
@@ -374,8 +391,16 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         if path == "toggle:":
             player.showSubtitles(not cond("VideoPlayer.SubtitlesEnabled"))
             xbmc.sleep(300)
+            self.local_items(fresh=True)
             self.redraw()
             return
+        if path == "otherstreams:":
+            others = getattr(self, "_others", [])
+            pick = xbmcgui.Dialog().select(t("Subtitles in the film", "Ondertitels in de film"),
+                                           [f"{o.getLabel()}  ·  {o.getLabel2()}" for o in others])
+            if pick < 0:
+                return
+            path = others[pick].getProperty("path")
         if path.startswith("stream:"):
             try:
                 rpc("Player.SetSubtitle", {"playerid": 1, "subtitle": int(path[7:]), "enable": True})
