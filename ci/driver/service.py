@@ -73,26 +73,53 @@ def pwatch(phase, seconds):
         mon.waitForAbort(0.5)
 
 
+def list_rows():
+    n = int(lab("Container(500).NumItems") or 0)
+    return [[lab(f"Container(500).ListItemAbsolute({i}).Label"), lab(f"Container(500).ListItemAbsolute({i}).Property(path)")[:40]]
+            for i in range(min(n, 8))]
+
+
 def subs_test():
-    """Automatic subtitle list: must open only once the film really plays, must not pause it, must close when the
-    video stops, and must open again by hand after that (then it does pause)."""
+    """The subtitle list: opens by itself after about 5 s without pausing; shows On/Off and the film's own subtitle
+    streams above the found ones; choosing a stream switches to it; closes when the video stops; the OSD subtitle
+    button opens it; the search button is gone."""
     log("subs: play 1")
     xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
-    pwatch("subs-play1", 35)
+    pwatch("subs-play1", 14)
+    log(f"subs: rows {list_rows()} focus={lab('Container(500).CurrentItem')}")
+    log(f"subs: before choose lang={lab('VideoPlayer.SubtitlesLanguage')} on={cond('VideoPlayer.SubtitlesEnabled')}")
     shot("7-subs-auto")
+    rows = list_rows()
+    nl = next((i for i, r in enumerate(rows) if r[1].startswith("stream:") and "Dutch" in r[0] or "Neder" in r[0]), -1)
+    if nl >= 0:
+        xbmc.executebuiltin(f"Control.SetFocus(500,{nl})")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Select)")
+    pwatch("subs-chosen", 4)
+    log(f"subs: after choose lang={lab('VideoPlayer.SubtitlesLanguage')} on={cond('VideoPlayer.SubtitlesEnabled')} "
+        f"list={cond('Window.IsVisible(Lucent_Subtitles.xml)')}")
+    shot("7b-subs-chosen")
+    log("subs: OSD button")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    log(f"subs: osd search button visible={cond('Control.IsVisible(118)')} subtitle button visible={cond('Control.IsVisible(111)')}")
+    shot("7c-osd")
+    xbmc.executebuiltin("Control.SetFocus(111)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    pwatch("subs-osd", 5)
+    log(f"subs: list from OSD={cond('Window.IsVisible(Lucent_Subtitles.xml)')} paused={cond('Player.Paused')} rows={list_rows()[:3]}")
+    shot("7d-osd-list")
+    xbmc.executebuiltin("Control.SetFocus(500,0)")
+    mon.waitForAbort(1)
+    before = cond("VideoPlayer.SubtitlesEnabled")
+    xbmc.executebuiltin("Action(Select)")
+    pwatch("subs-toggle", 3)
+    log(f"subs: toggle {before} -> {cond('VideoPlayer.SubtitlesEnabled')} list still open={cond('Window.IsVisible(Lucent_Subtitles.xml)')} row0={list_rows()[:1]}")
     log("subs: stop")
     xbmc.executebuiltin("PlayerControl(Stop)")
-    pwatch("subs-stopped", 8)
-    log("subs: play 2 + open by hand")
-    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
-    pwatch("subs-play2", 6)
-    xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")
-    pwatch("subs-hand", 8)
-    shot("8-subs-hand")
-    xbmc.executebuiltin("Action(Back)")
-    pwatch("subs-closed", 4)
-    xbmc.executebuiltin("PlayerControl(Stop)")
-    pwatch("subs-end", 3)
+    pwatch("subs-stopped", 6)
+    log(f"subs: after stop list={cond('Window.IsVisible(Lucent_Subtitles.xml)')}")
 
 
 def main():

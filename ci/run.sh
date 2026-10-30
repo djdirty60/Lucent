@@ -14,6 +14,7 @@ if [ "$VARIANT" = old ]; then
   cp ci/old/helper.py $K/addons/skin.lucent/scripts/helper.py
   cp ci/old/subs_live.py $K/addons/skin.lucent/scripts/subs_live.py
   cp ci/old/subtitles.py $K/addons/skin.lucent/scripts/subtitles.py
+  cp ci/old/VideoOSD.xml ci/old/Lucent_Subtitles.xml $K/addons/skin.lucent/xml/
 fi
 # dependencies the Home screen does not need (YouTube, studio images) are taken out of the test copy
 python3 - <<'PY'
@@ -27,7 +28,9 @@ PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
 cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/driver $K/addons/service.lucent.cidriver
-ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -t 120 -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/ci/test.mkv
+printf '1\n00:00:01,000 --> 00:01:50,000\nHallo dit is Nederlands\n' > /tmp/ci/nl.srt
+printf '1\n00:00:01,000 --> 00:01:50,000\nUkrainian forced\n' > /tmp/ci/uk.srt
+ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -i /tmp/ci/uk.srt -i /tmp/ci/nl.srt -t 120 -map 0 -map 1 -map 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:s srt -metadata:s:s:0 language=ukr -metadata:s:s:0 title="Forced" -disposition:s:0 default+forced -metadata:s:s:1 language=dut -metadata:s:s:1 title="Volledig" /tmp/ci/test.mkv
 # 1st start (Estuary): Kodi registers the add-ons, then stops
 mkdir -p $K/userdata
 timeout 60 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/first.txt 2>&1

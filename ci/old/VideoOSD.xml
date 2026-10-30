@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <defaultcontrol always="true">100</defaultcontrol>
+    <onload condition="!Player.Paused + !Pvr.IsPlayingTV">SetFocus(103)</onload>
+    <onload condition="Player.Paused + !Pvr.IsPlayingTV">SetFocus(104)</onload>
+    <onload condition="Pvr.IsPlayingTV">Skin.Reset(lucent.livesettings)</onload>
+    <onload condition="Pvr.IsPlayingTV">RunScript(special://skin/scripts/live.py,track)</onload>
+    <onload condition="!Player.Paused + Pvr.IsPlayingTV">SetFocus(203)</onload>
+    <onload condition="Player.Paused + Pvr.IsPlayingTV">SetFocus(204)</onload>
+    <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="250">WindowClose</animation>
+    <controls>
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>360</height>
+            <texture>osd_grad_top.png</texture>
+            <colordiffuse>E6000000</colordiffuse>
+        </control>
+        <control type="image">
+            <left>0</left>
+            <top>560</top>
+            <width>1920</width>
+            <height>520</height>
+            <texture>osd_grad_bottom.png</texture>
+            <colordiffuse>F2000000</colordiffuse>
+        </control>
+        <control type="group">
+            <visible>!Pvr.IsPlayingTV</visible>
+            <animation effect="slide" start="0,-40" end="0,0" time="300" tween="cubic" easing="out">WindowOpen</animation>
+        <!-- Logo / title -->
+        <control type="group">
+            <left>96</left>
+            <top>56</top>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>440</width>
+                <height>150</height>
+                <aspectratio align="left" aligny="center">keep</aspectratio>
+                <texture background="true">$VAR[PlayerLogo]</texture>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>40</top>
+                <width>1300</width>
+                <height>70</height>
+                <font>font45</font>
+                <label>$VAR[PlayerTitle]</label>
+                <visible>String.IsEmpty(Player.Art(clearlogo)) + String.IsEmpty(Player.Art(tvshow.clearlogo))</visible>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>160</top>
+                <width>1300</width>
+                <height>40</height>
+                <font>font13_bold</font>
+                <textcolor>text2</textcolor>
+                <label>$VAR[PlayerSubtitle]</label>
+            </control>
+        </control>
+
+        <control type="label">
+            <right>96</right>
+            <top>56</top>
+            <width>500</width>
+            <height>44</height>
+            <align>right</align>
+            <font>font_clock</font>
+            <label>$INFO[System.Time]</label>
+            <visible>!Skin.HasSetting(nuvio.osdstats)</visible>
+        </control>
+        <control type="label">
+            <right>96</right>
+            <top>100</top>
+            <width>500</width>
+            <height>36</height>
+            <align>right</align>
+            <font>font10</font>
+            <textcolor>text3</textcolor>
+            <label>$LOCALIZE[31047] $INFO[Player.FinishTime]</label>
+            <visible>Player.HasDuration + !Skin.HasSetting(nuvio.osdstats)</visible>
+        </control>
+        </control>
+        <control type="group">
+            <animation effect="slide" start="0,60" end="0,0" time="320" tween="cubic" easing="out">WindowOpen</animation>
+            <animation effect="slide" start="0,0" end="0,60" time="220" tween="cubic" easing="in">WindowClose</animation>
+        <control type="group">
+            <left>96</left>
+            <top>892</top>
+            <width>1728</width>
+            <visible>!Pvr.IsPlayingTV</visible>
+            <control type="label">
+                <left>0</left>
+                <top>-56</top>
+                <width>400</width>
+                <height>40</height>
+                <font>font13_bold</font>
+                <label>$INFO[Player.Time]</label>
+            </control>
+            <control type="label">
+                <right>0</right>
+                <top>-56</top>
+                <width>600</width>
+                <height>40</height>
+                <align>right</align>
+                <font>font13</font>
+                <textcolor>text3</textcolor>
+                <label>-$INFO[Player.TimeRemaining]   /   $INFO[Player.Duration]</label>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>6</height>
+                <info>Player.ProgressCache</info>
+                <texturebg border="3" colordiffuse="26FFFFFF">pill6.png</texturebg>
+                <midtexture border="3" colordiffuse="40FFFFFF">pill6.png</midtexture>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>6</height>
+                <info>Player.Progress</info>
+                <texturebg border="3" colordiffuse="transparent">pill6.png</texturebg>
+                <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
+            </control>
+            <control type="progress">
+                <left>0</left>
+                <top>-3</top>
+                <width>1728</width>
+                <height>12</height>
+                <info>Player.Progress</info>
+                <texturebg border="3" colordiffuse="transparent">pill6.png</texturebg>
+                <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
+                <visible>Control.HasFocus(87)</visible>
+            </control>
+            <control type="slider" id="87">
+                <left>0</left>
+                <top>-10</top>
+                <width>1728</width>
+                <height>26</height>
+                <action>seek</action>
+                <info>Player.Progress</info>
+                <texturesliderbar>slider_track26.png</texturesliderbar>
+                <texturesliderbardisabled>slider_track26.png</texturesliderbardisabled>
+                <textureslidernib/>
+                <textureslidernibfocus/>
+                <ondown>100</ondown>
+                <onup>noop</onup>
+                <visible>Player.SeekEnabled</visible>
+            </control>
+        </control>
+            <control type="grouplist" id="100">
+                <left>96</left>
+                <top>936</top>
+                <width>1728</width>
+                <height>104</height>
+                <orientation>horizontal</orientation>
+                <align>center</align>
+                <itemgap>22</itemgap>
+                <onup>87</onup>
+                <visible>!Pvr.IsPlayingTV</visible>
+                <usecontrolcoords>false</usecontrolcoords>
+            <control type="button" id="101">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/prev_fo.png</texturefocus>
+                <texturenofocus>buttons/prev_nf.png</texturenofocus>
+                <onclick>PlayerControl(Previous)</onclick>
+                <visible>VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)</visible>
+            </control>
+            <control type="button" id="102">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/rewind_fo.png</texturefocus>
+                <texturenofocus>buttons/rewind_nf.png</texturenofocus>
+                <onclick>Seek(-10)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="116">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stop_fo.png</texturefocus>
+                <texturenofocus>buttons/stop_nf.png</texturenofocus>
+                <onclick>PlayerControl(Stop)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="103">
+                <width>104</width>
+                <height>104</height>
+                <label></label>
+                <texturefocus>buttons/pause_fo.png</texturefocus>
+                <texturenofocus>buttons/pause_nf.png</texturenofocus>
+                <onclick>PlayerControl(Play)</onclick>
+                <visible>!Player.Paused</visible>
+            </control>
+            <control type="button" id="104">
+                <width>104</width>
+                <height>104</height>
+                <label></label>
+                <texturefocus>buttons/play_fo.png</texturefocus>
+                <texturenofocus>buttons/play_nf.png</texturenofocus>
+                <onclick>PlayerControl(Play)</onclick>
+                <visible>Player.Paused</visible>
+            </control>
+            <control type="button" id="105">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/forward_fo.png</texturefocus>
+                <texturenofocus>buttons/forward_nf.png</texturenofocus>
+                <onclick>Seek(30)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="106">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/next_fo.png</texturefocus>
+                <texturenofocus>buttons/next_nf.png</texturenofocus>
+                <onclick>PlayerControl(Next)</onclick>
+                <visible>VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)</visible>
+            </control>
+            <control type="label" id="190">
+                <width>120</width>
+                <height>84</height>
+                <label></label>
+            </control>
+            <control type="button" id="111">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="118">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick condition="!Skin.HasSetting(lucent.subs.native.off)">RunScript(special://skin/scripts/subs_live.py)</onclick>
+                <onclick condition="Skin.HasSetting(lucent.subs.native.off)">ActivateWindow(subtitlesearch)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="112">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="113">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="114">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="117">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>Skin.ToggleSetting(nuvio.osdstats)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="119">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>true</visible>
+            </control>
+            <control type="button" id="115">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>true</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            </control>
+            <!-- Focused button name -->
+            <control type="label">
+                <visible>!Pvr.IsPlayingTV</visible>
+                <left>96</left>
+                <top>1040</top>
+                <width>1728</width>
+                <height>34</height>
+                <align>center</align>
+                <font>font10</font>
+                <textcolor>text3</textcolor>
+                <label>$VAR[OSDButtonLabel]</label>
+            </control>
+        </control>
+<control type="group"><left>1130</left><top>70</top><width>690</width><height>180</height><visible>Pvr.IsPlayingTV + !String.IsEmpty(Window(Home).Property(live.sc.on))</visible><animation effect="fade" start="0" end="100" time="250">WindowOpen</animation><control type="image"><left>0</left><top>0</top><width>690</width><height>84</height><texture border="20">rr20.png</texture><colordiffuse>$INFO[Window(Home).Property(live.sc.hcol)]</colordiffuse></control><control type="image"><left>18</left><top>14</top><width>56</width><height>56</height><texture background="true">$INFO[Window(Home).Property(live.sc.hlogo)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>92</left><top>8</top><width>440</width><height>40</height><font>font13_bold</font><textcolor>FFFFFFFF</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.hname)]</label></control><control type="label"><left>92</left><top>46</top><width>300</width><height>30</height><font>font_tiny</font><textcolor>CCFFFFFF</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.hrec)]</label></control><control type="label"><left>540</left><top>0</top><width>130</width><height>84</height><font>font_hero</font><textcolor>FFFFFFFF</textcolor><align>right</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.hs)]</label></control><control type="image"><left>0</left><top>88</top><width>690</width><height>84</height><texture border="20">rr20.png</texture><colordiffuse>$INFO[Window(Home).Property(live.sc.acol)]</colordiffuse></control><control type="image"><left>18</left><top>102</top><width>56</width><height>56</height><texture background="true">$INFO[Window(Home).Property(live.sc.alogo)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>92</left><top>96</top><width>440</width><height>40</height><font>font13_bold</font><textcolor>FFFFFFFF</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.aname)]</label></control><control type="label"><left>92</left><top>134</top><width>300</width><height>30</height><font>font_tiny</font><textcolor>CCFFFFFF</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.arec)]</label></control><control type="label"><left>540</left><top>88</top><width>130</width><height>84</height><font>font_hero</font><textcolor>FFFFFFFF</textcolor><align>right</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.as)]</label></control><control type="image"><left>540</left><top>-52</top><width>150</width><height>42</height><texture border="20">pill44.png</texture><colordiffuse>B3101820</colordiffuse><visible>!String.IsEmpty(Window(Home).Property(live.sc.clock))</visible></control><control type="label"><left>540</left><top>-52</top><width>150</width><height>42</height><font>font13_bold</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.clock)]</label></control></control>
+<control type="group"><left>96</left><top>670</top><width>1728</width><height>370</height><visible>Pvr.IsPlayingTV</visible><animation effect="slide" start="0,60" end="0,0" time="300" tween="cubic" easing="out">WindowOpen</animation><animation effect="slide" start="0,0" end="0,60" time="220" tween="cubic" easing="in">WindowClose</animation><include content="GlassPanel"><param name="left">0</param><param name="top">0</param><param name="width">1728</param><param name="height">370</param></include><control type="image"><left>28</left><top>30</top><width>112</width><height>140</height><texture border="20">rr20.png</texture><colordiffuse>55000000</colordiffuse></control><control type="image"><left>34</left><top>56</top><width>100</width><height>90</height><texture background="true">$INFO[Player.Icon]</texture><aspectratio>keep</aspectratio></control><control type="grouplist"><left>170</left><top>20</top><width>1190</width><height>44</height><orientation>horizontal</orientation><itemgap>14</itemgap><scroll>false</scroll><control type="label"><width min="40" max="120">auto</width><height>40</height><font>font13_bold</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[VideoPlayer.ChannelNumberLabel]</label></control><control type="label"><width min="40" max="600">auto</width><height>40</height><font>font13</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[VideoPlayer.ChannelName]</label></control><control type="button"><width min="70" max="420">auto</width><height>40</height><enable>false</enable><texturefocus border="20" colordiffuse="red">pill44.png</texturefocus><texturenofocus border="20" colordiffuse="red">pill44.png</texturenofocus><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><disabledcolor>FFFFFFFF</disabledcolor><align>center</align><aligny>center</aligny><textoffsetx>18</textoffsetx><label>$LOCALIZE[31249]</label></control><control type="button"><width min="60" max="420">auto</width><height>40</height><enable>false</enable><texturefocus border="20" colordiffuse="33FFFFFF">pill44.png</texturefocus><texturenofocus border="20" colordiffuse="33FFFFFF">pill44.png</texturenofocus><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><disabledcolor>FFFFFFFF</disabledcolor><align>center</align><aligny>center</aligny><textoffsetx>18</textoffsetx><label>$VAR[LiveRes] · $VAR[LiveFps] FPS</label><visible>!String.IsEmpty(VideoPlayer.VideoResolution)</visible></control><control type="button"><width min="60" max="420">auto</width><height>40</height><enable>false</enable><texturefocus border="20" colordiffuse="33FFFFFF">pill44.png</texturefocus><texturenofocus border="20" colordiffuse="33FFFFFF">pill44.png</texturenofocus><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><disabledcolor>FFFFFFFF</disabledcolor><align>center</align><aligny>center</aligny><textoffsetx>18</textoffsetx><label>$VAR[LiveAudio]</label><visible>!String.IsEmpty(VideoPlayer.AudioChannels)</visible></control><control type="group"><width>250</width><height>40</height><visible>!String.IsEmpty(Window(Home).Property(live.sc.on))</visible><control type="image"><left>0</left><top>0</top><width>150</width><height>40</height><texture border="20">pill44.png</texture><colordiffuse>$INFO[Window(Home).Property(live.sc.hcol)]</colordiffuse></control><control type="image"><left>120</left><top>0</top><width>130</width><height>40</height><texture border="20">pill44.png</texture><colordiffuse>$INFO[Window(Home).Property(live.sc.acol)]</colordiffuse></control><control type="label"><left>14</left><top>0</top><width>100</width><height>40</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.h)]  $INFO[Window(Home).Property(live.sc.hs)]</label></control><control type="label"><left>134</left><top>0</top><width>70</width><height>40</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.sc.a)]  $INFO[Window(Home).Property(live.sc.as)]</label></control></control><control type="button"><width min="70" max="220">auto</width><height>40</height><enable>false</enable><visible>!String.IsEmpty(Window(Home).Property(live.sc.clock))</visible><texturefocus border="20" colordiffuse="33FFFFFF">pill44.png</texturefocus><texturenofocus border="20" colordiffuse="33FFFFFF">pill44.png</texturenofocus><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><disabledcolor>FFFFFFFF</disabledcolor><align>center</align><aligny>center</aligny><textoffsetx>18</textoffsetx><label>$INFO[Window(Home).Property(live.sc.clock)]</label></control></control><control type="label"><left>170</left><top>66</top><width>1190</width><height>56</height><font>font_heading</font><textcolor>text</textcolor><align>left</align><aligny>center</aligny><label>$INFO[VideoPlayer.Title]</label></control><control type="label"><left>170</left><top>120</top><width>1190</width><height>34</height><font>font12</font><textcolor>text3</textcolor><align>left</align><aligny>center</aligny><label>$INFO[VideoPlayer.Plot]</label></control><control type="image"><left>1388</left><top>30</top><width>2</width><height>130</height><texture>white.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="label"><left>1416</left><top>22</top><width>280</width><height>56</height><font>font_clock</font><textcolor>text</textcolor><align>left</align><aligny>center</aligny><label>$INFO[System.Time]</label></control><control type="label"><left>1416</left><top>84</top><width>280</width><height>32</height><font>font_tiny</font><textcolor>FF5BA8FF</textcolor><align>left</align><aligny>center</aligny><label>$LOCALIZE[31246] · $INFO[VideoPlayer.NextStartTime]</label><visible>!String.IsEmpty(VideoPlayer.NextTitle)</visible></control><control type="label"><left>1416</left><top>112</top><width>296</width><height>40</height><font>font12_bold</font><textcolor>text</textcolor><align>left</align><aligny>center</aligny><label>$INFO[VideoPlayer.NextTitle]</label><visible>!String.IsEmpty(VideoPlayer.NextTitle)</visible></control><control type="label"><left>270</left><top>196</top><width>100</width><height>32</height><font>font12</font><textcolor>text3</textcolor><align>left</align><aligny>center</aligny><label>$INFO[VideoPlayer.StartTime]</label></control><control type="image"><left>370</left><top>208</top><width>620</width><height>8</height><texture border="3">pill6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="progress"><left>370</left><top>208</top><width>620</width><height>8</height><info>PVR.EpgEventProgress</info><texturebg border="3" colordiffuse="transparent">pill6.png</texturebg><midtexture border="3" colordiffuse="text">pill6.png</midtexture></control><control type="label"><left>1010</left><top>196</top><width>100</width><height>32</height><font>font12</font><textcolor>text3</textcolor><align>left</align><aligny>center</aligny><label>$INFO[VideoPlayer.EndTime]</label></control><control type="label"><left>1110</left><top>196</top><width>200</width><height>32</height><font>font12</font><textcolor>text3</textcolor><align>left</align><aligny>center</aligny><label>$INFO[PVR.EpgEventRemainingTime(hh:mm)] $LOCALIZE[31247]</label></control><control type="button" id="203"><left>170</left><top>178</top><width>72</width><height>72</height><label></label><texturefocus>buttons/pause_fo.png</texturefocus><texturenofocus>buttons/pause_nf.png</texturenofocus><onclick>PlayerControl(Play)</onclick><visible>!Player.Paused</visible><onright>220</onright><onleft>203</onleft><onup>203</onup><ondown condition="Skin.HasSetting(lucent.livesettings)">400</ondown><ondown>301</ondown></control><control type="button" id="204"><left>170</left><top>178</top><width>72</width><height>72</height><label></label><texturefocus>buttons/play_fo.png</texturefocus><texturenofocus>buttons/play_nf.png</texturenofocus><onclick>PlayerControl(Play)</onclick><visible>Player.Paused</visible><onright>220</onright><onleft>204</onleft><onup>204</onup><ondown condition="Skin.HasSetting(lucent.livesettings)">400</ondown><ondown>301</ondown></control><control type="button" id="220"><left>1336</left><top>182</top><width>64</width><height>64</height><label></label><texturefocus>buttons/settings_fo.png</texturefocus><texturenofocus>buttons/settings_nf.png</texturenofocus><onclick>Skin.ToggleSetting(lucent.livesettings)</onclick><visible>true</visible><onleft condition="Player.Paused">204</onleft><onleft>203</onleft><onright>220</onright><onup>220</onup><ondown condition="Skin.HasSetting(lucent.livesettings)">400</ondown><ondown>301</ondown></control><control type="group"><top>262</top><visible>!Skin.HasSetting(lucent.livesettings)</visible><control type="label"><left>16</left><top>0</top><width>110</width><height>74</height><font>font_tiny</font><textcolor>text3</textcolor><align>center</align><aligny>center</aligny><label>$LOCALIZE[31248]</label></control><control type="group"><control type="button" id="301"><left>130</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>301</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.1.id))">302</onright><onright>301</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/tv.py)</onclick></control><control type="image"><left>186</left><top>8</top><width>52</width><height>38</height><texture>icons/tv.png</texture><aspectratio>keep</aspectratio></control><control type="label"><left>136</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$LOCALIZE[31242]</label><visible>!Control.HasFocus(301)</visible></control><control type="label"><left>136</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$LOCALIZE[31242]</label><visible>Control.HasFocus(301)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.1.id))</visible><control type="button" id="302"><left>306</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>301</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.2.id))">303</onright><onright>302</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.1.id)])</onclick></control><control type="image"><left>350</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.1.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>312</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.1.name)]</label><visible>!Control.HasFocus(302)</visible></control><control type="label"><left>312</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.1.name)]</label><visible>Control.HasFocus(302)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.2.id))</visible><control type="button" id="303"><left>482</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>302</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.3.id))">304</onright><onright>303</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.2.id)])</onclick></control><control type="image"><left>526</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.2.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>488</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.2.name)]</label><visible>!Control.HasFocus(303)</visible></control><control type="label"><left>488</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.2.name)]</label><visible>Control.HasFocus(303)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.3.id))</visible><control type="button" id="304"><left>658</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>303</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.4.id))">305</onright><onright>304</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.3.id)])</onclick></control><control type="image"><left>702</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.3.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>664</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.3.name)]</label><visible>!Control.HasFocus(304)</visible></control><control type="label"><left>664</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.3.name)]</label><visible>Control.HasFocus(304)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.4.id))</visible><control type="button" id="305"><left>834</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>304</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.5.id))">306</onright><onright>305</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.4.id)])</onclick></control><control type="image"><left>878</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.4.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>840</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.4.name)]</label><visible>!Control.HasFocus(305)</visible></control><control type="label"><left>840</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.4.name)]</label><visible>Control.HasFocus(305)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.5.id))</visible><control type="button" id="306"><left>1010</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>305</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.6.id))">307</onright><onright>306</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.5.id)])</onclick></control><control type="image"><left>1054</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.5.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>1016</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.5.name)]</label><visible>!Control.HasFocus(306)</visible></control><control type="label"><left>1016</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.5.name)]</label><visible>Control.HasFocus(306)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.6.id))</visible><control type="button" id="307"><left>1186</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>306</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.7.id))">308</onright><onright>307</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.6.id)])</onclick></control><control type="image"><left>1230</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.6.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>1192</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.6.name)]</label><visible>!Control.HasFocus(307)</visible></control><control type="label"><left>1192</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.6.name)]</label><visible>Control.HasFocus(307)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.7.id))</visible><control type="button" id="308"><left>1362</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>307</onleft><onright condition="!String.IsEmpty(Window(Home).Property(live.r.8.id))">309</onright><onright>308</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.7.id)])</onclick></control><control type="image"><left>1406</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.7.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>1368</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.7.name)]</label><visible>!Control.HasFocus(308)</visible></control><control type="label"><left>1368</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.7.name)]</label><visible>Control.HasFocus(308)</visible></control></control><control type="group"><visible>!String.IsEmpty(Window(Home).Property(live.r.8.id))</visible><control type="button" id="309"><left>1538</left><top>0</top><width>164</width><height>74</height><label></label><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus><onup condition="Player.Paused">204</onup><onup>203</onup><onleft>308</onleft><onright>309</onright><onclick>Dialog.Close(videoosd,true)</onclick><onclick>RunScript(special://skin/scripts/live.py,play,$INFO[Window(Home).Property(live.r.8.id)])</onclick></control><control type="image"><left>1582</left><top>6</top><width>76</width><height>40</height><texture background="true">$INFO[Window(Home).Property(live.r.8.icon)]</texture><aspectratio>keep</aspectratio></control><control type="label"><left>1544</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.8.name)]</label><visible>!Control.HasFocus(309)</visible></control><control type="label"><left>1544</left><top>46</top><width>152</width><height>26</height><font>font_tiny</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window(Home).Property(live.r.8.name)]</label><visible>Control.HasFocus(309)</visible></control></control></control><control type="grouplist" id="400"><left>16</left><top>258</top><width>1696</width><height>76</height><orientation>horizontal</orientation><align>center</align><itemgap>22</itemgap><usecontrolcoords>false</usecontrolcoords><visible>Skin.HasSetting(lucent.livesettings)</visible><onup condition="Player.Paused">204</onup><onup>203</onup><control type="button" id="402"><width>72</width><height>72</height><label></label><texturefocus>buttons/chdown_fo.png</texturefocus><texturenofocus>buttons/chdown_nf.png</texturenofocus><onclick>Action(ChannelDown)</onclick><visible>true</visible></control><control type="button" id="403"><width>72</width><height>72</height><label></label><texturefocus>buttons/chup_fo.png</texturefocus><texturenofocus>buttons/chup_nf.png</texturenofocus><onclick>Action(ChannelUp)</onclick><visible>true</visible></control><control type="button" id="406"><width>72</width><height>72</height><label></label><texturefocus>buttons/rewind_fo.png</texturefocus><texturenofocus>buttons/rewind_nf.png</texturenofocus><onclick>Seek(-10)</onclick><visible>Player.SeekEnabled</visible></control><control type="button" id="407"><width>72</width><height>72</height><label></label><texturefocus>buttons/forward_fo.png</texturefocus><texturenofocus>buttons/forward_nf.png</texturenofocus><onclick>Seek(30)</onclick><visible>Player.SeekEnabled</visible></control><control type="button" id="411"><width>72</width><height>72</height><label></label><texturefocus>buttons/subtitles_fo.png</texturefocus><texturenofocus>buttons/subtitles_nf.png</texturenofocus><onclick>ActivateWindow(osdsubtitlesettings)</onclick><visible>true</visible></control><control type="button" id="412"><width>72</width><height>72</height><label></label><texturefocus>buttons/audio_fo.png</texturefocus><texturenofocus>buttons/audio_nf.png</texturenofocus><onclick>ActivateWindow(osdaudiosettings)</onclick><visible>true</visible></control><control type="button" id="413"><width>72</width><height>72</height><label></label><texturefocus>buttons/videosettings_fo.png</texturefocus><texturenofocus>buttons/videosettings_nf.png</texturenofocus><onclick>ActivateWindow(osdvideosettings)</onclick><visible>true</visible></control><control type="button" id="414"><width>72</width><height>72</height><label></label><texturefocus>buttons/rec_fo.png</texturefocus><texturenofocus>buttons/rec_nf.png</texturenofocus><onclick>Action(Record)</onclick><visible>true</visible></control><control type="button" id="417"><width>72</width><height>72</height><label></label><texturefocus>buttons/stats_fo.png</texturefocus><texturenofocus>buttons/stats_nf.png</texturenofocus><onclick>Skin.ToggleSetting(nuvio.osdstats)</onclick><visible>true</visible></control><control type="button" id="418"><width>72</width><height>72</height><label></label><texturefocus>buttons/sleep_fo.png</texturefocus><texturenofocus>buttons/sleep_nf.png</texturenofocus><onclick>RunScript(special://skin/scripts/sleep.py)</onclick><visible>true</visible></control>
+<control type="button" id="419"><width>72</width><height>72</height><label></label><texturefocus>buttons/star_fo.png</texturefocus><texturenofocus>buttons/star_nf.png</texturenofocus><onclick>RunScript(special://skin/scripts/livefav.py)</onclick><visible>true</visible></control><control type="button" id="415"><width>72</width><height>72</height><label></label><texturefocus>buttons/info_fo.png</texturefocus><texturenofocus>buttons/info_nf.png</texturenofocus><onclick>Dialog.Close(videoosd,true)</onclick><visible>true</visible>
+<onclick>ActivateWindow(fullscreeninfo)</onclick></control><control type="button" id="416"><width>72</width><height>72</height><label></label><texturefocus>buttons/stop_fo.png</texturefocus><texturenofocus>buttons/stop_nf.png</texturenofocus><onclick>PlayerControl(Stop)</onclick><visible>true</visible></control></control><control type="label"><left>0</left><top>336</top><width>1728</width><height>28</height><font>font_tiny</font><textcolor>text3</textcolor><align>center</align><aligny>center</aligny><label>$VAR[OSDButtonLabel]</label><visible>Skin.HasSetting(lucent.livesettings)</visible></control></control>
+        <include>NuvioStatsPanel</include>
+    </controls>
+</window>

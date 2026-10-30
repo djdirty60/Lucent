@@ -154,7 +154,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         self.setProperty("empty", t("Searching…", "Zoeken…"))
         for n, url in enumerate(self.urls, start=1):
             self.setProperty(f"src.{n}", url)      # the hidden lists start loading now, all at once
-        self.status()
+        self.redraw()                                   # the film's own rows (on / off, built-in subtitles) at once
         threading.Thread(target=self.watch, args=(self.gen,), daemon=True).start()
         threading.Thread(target=self.guard, daemon=True).start()
 
@@ -241,6 +241,43 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         mine = r["code"] == my_code()
         return (not mine, r["code"] != "en", not r["sync"], -r["rating"], r["lang"], r["release"].lower())
 
+    def local_items(self):
+        """Above the found subtitles: switch subtitles on / off, and the subtitle streams inside the film itself."""
+        items = []
+        on = cond("VideoPlayer.SubtitlesEnabled")
+        li = xbmcgui.ListItem(t("Subtitles: on", "Ondertiteling: aan") if on else t("Subtitles: off", "Ondertiteling: uit"))
+        li.setLabel2(t("Choose to switch them off", "Kies om ze uit te zetten") if on else t("Choose to switch them on", "Kies om ze aan te zetten"))
+        li.setProperty("code", "CC")
+        li.setProperty("pillcol", "FF2E8B5E" if on else "33FFFFFF")
+        li.setProperty("source", "Kodi")
+        li.setProperty("path", "toggle:")
+        items.append(li)
+        try:
+            props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["subtitles", "currentsubtitle"]})
+        except Exception:  # noqa: BLE001
+            props = {}
+        current = (props.get("currentsubtitle") or {}).get("index", -1)
+        for sub in props.get("subtitles") or []:
+            code = (sub.get("language") or "").lower()[:3]
+            code2 = {"dut": "nl", "nld": "nl", "eng": "en", "ger": "de", "deu": "de", "fre": "fr", "fra": "fr", "spa": "es",
+                     "ita": "it", "por": "pt", "ukr": "uk", "rus": "ru", "pol": "pl", "swe": "sv", "dan": "da", "nor": "no",
+                     "fin": "fi", "tur": "tr", "ara": "ar"}.get(code, code[:2])
+            li = xbmcgui.ListItem(full_name(code2, sub.get("language") or t("Unknown", "Onbekend")))
+            flags = [sub.get("name") or ""]
+            if sub.get("isforced"):
+                flags.append(t("forced", "geforceerd"))
+            if sub.get("isimpaired"):
+                flags.append(t("hearing impaired", "slechthorend"))
+            li.setLabel2("  ·  ".join(f for f in flags if f) or t("Subtitle in the film", "Ondertitel in de film"))
+            li.setProperty("code", (code2 or "?").upper()[:3])
+            li.setProperty("pillcol", "FF2E8B5E" if code2 == my_code() else "33FFFFFF")
+            li.setProperty("source", t("In the film", "In de film"))
+            if on and sub.get("index") == current:
+                li.setProperty("badges", t("✓ showing now", "✓ staat nu aan"))
+            li.setProperty("path", f"stream:{sub.get('index')}")
+            items.append(li)
+        return items
+
     def redraw(self):
         focus_path = ""
         try:
@@ -249,6 +286,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         except RuntimeError:
             pass
         rows = sorted(self.results, key=self.sort_key)
+        local = self.local_items()
         items = []
         if self.ai_possible(rows):
             ai = xbmcgui.ListItem(t(f"Translate into {LANGS.get(my_code(), ('',''))[0] or 'your language'} with AI",
@@ -288,11 +326,14 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             li.setProperty("path", r["path"])
             li.setProperty("mine", "1" if r["code"] == my_code() else "")
             items.append(li)
+        first_found = len(local) if items else 0          # the cursor starts on the first found subtitle
+        self.setProperty("onlylocal", "" if items else "1")     # "Searching…" / "None found" under the film's own rows
+        items = local + items
         try:
             ctl = self.getControl(LIST)
             ctl.reset()
             ctl.addItems(items)
-            pos = next((i for i, li in enumerate(items) if li.getProperty("path") == focus_path), 0)
+            pos = next((i for i, li in enumerate(items) if li.getProperty("path") == focus_path), first_found)
             ctl.selectItem(pos)
             if items and not getattr(self, "moved", False) and self.getFocusId() != LIST:
                 self.setFocusId(LIST)                 # the first results: straight into the list
@@ -313,7 +354,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             self.finish()
         elif cid == BTN_SYNC:
             item = self.getControl(LIST).getSelectedItem()
-            if item and not item.getProperty("path").startswith(("ai:", "cached:")):
+            if item and not item.getProperty("path").startswith(("ai:", "cached:", "toggle:", "stream:")):
                 self.choose(item.getProperty("path"), force_sync=True)
         elif cid == BTN_SEARCH:
             default = xbmc.getInfoLabel("VideoPlayer.TVShowTitle") or xbmc.getInfoLabel("VideoPlayer.Title")
@@ -330,6 +371,18 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
 
     def choose(self, path, force_sync=False):
         player = xbmc.Player()
+        if path == "toggle:":
+            player.showSubtitles(not cond("VideoPlayer.SubtitlesEnabled"))
+            xbmc.sleep(300)
+            self.redraw()
+            return
+        if path.startswith("stream:"):
+            try:
+                rpc("Player.SetSubtitle", {"playerid": 1, "subtitle": int(path[7:]), "enable": True})
+            except Exception as error:  # noqa: BLE001
+                log(f"stream: {error}")
+            self.finish()
+            return
         if path.startswith("cached:"):
             player.setSubtitles(path[7:])
             self.finish()
@@ -489,7 +542,7 @@ def settled(monitor, player):
         if monitor.waitForAbort(1) or not player.isPlayingVideo():
             return False
         try:
-            if player.getTime() >= 15 and not cond("Player.Paused | Window.IsActive(busydialog) | Window.IsActive(busydialognocancel)"):
+            if player.getTime() >= 5 and not cond("Player.Paused | Window.IsActive(busydialog) | Window.IsActive(busydialognocancel)"):
                 return True
         except RuntimeError:
             pass
