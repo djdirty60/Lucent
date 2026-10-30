@@ -163,7 +163,6 @@ def run():
     lost = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
     libdir = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/")
-    HOME.clearProperty("lucent.rowsrefresh")
 
     def cached(path):
         """True / False: Lucent Library has a filled / no copy of this row. None: the row does not come from its copies."""
