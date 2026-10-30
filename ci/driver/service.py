@@ -80,6 +80,11 @@ def main():
     xbmc.executebuiltin("SetFocus(9100)")
     watch("films2-rows", 6)
     shot("4-films-rows")
+    for step in range(1, 6):                       # scroll down through the rows like a person with a remote
+        xbmc.executebuiltin("Action(Down)")
+        watch(f"down{step}", 6)
+        log(f"down {step}: focus={xbmc.getInfoLabel('System.CurrentControlID')} label={xbmc.getInfoLabel('Container.ListItem.Label')}")
+        shot(f"5-down{step}")
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
