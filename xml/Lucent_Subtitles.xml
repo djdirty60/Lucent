@@ -169,10 +169,10 @@
 
             <!-- empty / waiting -->
             <control type="label">
-                <left>56</left><top>420</top><width>1208</width><height>60</height>
+                <left>56</left><top>730</top><width>1208</width><height>60</height>
                 <font>font13</font><textcolor>text4</textcolor><align>center</align>
                 <label>$INFO[Window.Property(empty)]</label>
-                <visible>Integer.IsEqual(Container(500).NumItems,0)</visible>
+                <visible>!String.IsEmpty(Window.Property(onlylocal))</visible>
             </control>
 
             <!-- buttons -->
