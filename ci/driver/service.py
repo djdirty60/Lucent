@@ -85,6 +85,8 @@ def main():
         watch(f"down{step}", 6)
         log(f"down {step}: focus={xbmc.getInfoLabel('System.CurrentControlID')} label={xbmc.getInfoLabel('Container.ListItem.Label')}")
         shot(f"5-down{step}")
+    watch("idle", 60)                               # nothing touched: the rows must stay put (no jumping)
+    shot("6-idle")
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
