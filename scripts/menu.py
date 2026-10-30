@@ -242,6 +242,42 @@ WIDGETS_TRAKT = [                                 # Trakt lists, fast too (your 
 ]
 
 
+PROV_KINDS = [("newmovie", ("New movies", "Nieuwe films")), ("newtv", ("New series", "Nieuwe series")),
+              ("popmovie", ("Popular movies", "Populaire films")), ("poptv", ("Popular series", "Populaire series")),
+              ("topmovie", ("Top rated movies", "Best beoordeelde films")), ("toptv", ("Top rated series", "Best beoordeelde series"))]
+
+
+def pick_streaming():
+    """The row of streaming services (a click opens the service), or one list of one service."""
+    row = tr(G("All streaming services (a row of services)", "Alle streamingdiensten (een rij met diensten)"))
+    one = tr(G("One service: one of its lists…", "Eén dienst: een van zijn lijsten…"))
+    choice = select(tr(G("Streaming services", "Streamingdiensten")), [row, one])
+    if choice == 0:
+        return tr(G("Streaming services", "Streamingdiensten")), "plugin://script.lucent.library/?action=providers", "land"
+    if choice != 1:
+        return None
+    busy(True)
+    entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://script.lucent.library/?action=providers",
+                                             "media": "files", "properties": ["title"]}).get("files", []) or []
+    busy(False)
+    entries = [e for e in entries if e.get("file")]
+    if not entries:
+        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Lucent needs the TMDb key (Skin settings).",
+                                          "Geen diensten gevonden. Lucent heeft de TMDb-sleutel nodig (Skin-instellingen).")))
+        return None
+    pick = select(tr(G("Streaming services", "Streamingdiensten")), [clean(e.get("label") or e.get("title")) for e in entries])
+    if pick < 0:
+        return None
+    import urllib.parse
+    q = urllib.parse.parse_qs(entries[pick]["file"].split("?", 1)[1])
+    pid, pname = (q.get("id") or [""])[0], (q.get("name") or [""])[0]
+    k = select(pname, [tr(lab) for _k, lab in PROV_KINDS])
+    if k < 0 or not pid:
+        return None
+    kind, lab = PROV_KINDS[k]
+    return f"{pname} · {tr(lab)}", TMDB + f"prov_{pid}_{kind}", "poster"
+
+
 def pick_trakt_fast():
     """Fixed Trakt rows, or one of your own / liked Trakt lists (asked from Trakt at this moment)."""
     mine = tr(G("My own and liked lists…", "Mijn eigen en gelikete lijsten…"))
@@ -658,10 +694,16 @@ def pick_widget():
         label, path = picked
     elif source == 7:
         trakt_entry = tr(G("Trakt lists (fast)…", "Trakt-lijsten (snel)…"))
-        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB] + [trakt_entry])
+        stream_entry = tr(G("Streaming services…", "Streamingdiensten…"))
+        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB] + [trakt_entry, stream_entry])
         if choice < 0:
             return None
-        if choice == len(WIDGETS_TMDB):
+        if choice == len(WIDGETS_TMDB) + 1:
+            picked = pick_streaming()
+            if not picked:
+                return None
+            label, path, style = picked
+        elif choice == len(WIDGETS_TMDB):
             picked = pick_trakt_fast()
             if not picked:
                 return None

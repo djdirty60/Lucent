@@ -170,7 +170,9 @@ def run():
         if not path.startswith("plugin://") or path.startswith("plugin://script.lucent.library/?action=lib") or \
                 cond("Skin.HasSetting(lucent.wcache.off) | !System.HasAddon(script.lucent.library)"):
             return None
-        if path.startswith("plugin://script.lucent.library/?action=tmdb"):
+        if path.startswith("plugin://script.lucent.library/?action=providers"):
+            file = os.path.join(libdir, "tmdb", "providers.json")        # the streaming services row
+        elif path.startswith("plugin://script.lucent.library/?action=tmdb"):
             q = urllib.parse.parse_qs(path.split("?", 1)[1])
             name = (q.get("list") or [""])[0]
             if name == "tl":

@@ -281,11 +281,131 @@ def fetch_trakt(name, path):
     return rows or None
 
 
+# ----------------------------------------------------------------------------- streaming services (TMDb watch providers)
+REGION = "NL" if NL else "US"
+PROV_FILE = os.path.join(DIR, "providers.json")
+PROV_TTL = 7 * 86400
+PROV_MAX = 16
+PROV_KINDS = {  # kind -> (TMDb type, row type, extra discover params, English, Dutch)
+    "newmovie": ("movie", "movie", {"sort_by": "primary_release_date.desc", "vote_count.gte": 10}, "New movies", "Nieuwe films"),
+    "newtv": ("tv", "tvshow", {"sort_by": "first_air_date.desc", "vote_count.gte": 5}, "New series", "Nieuwe series"),
+    "popmovie": ("movie", "movie", {"sort_by": "popularity.desc"}, "Popular movies", "Populaire films"),
+    "poptv": ("tv", "tvshow", {"sort_by": "popularity.desc"}, "Popular series", "Populaire series"),
+    "topmovie": ("movie", "movie", {"sort_by": "vote_average.desc", "vote_count.gte": 500}, "Top rated movies", "Best beoordeelde films"),
+    "toptv": ("tv", "tvshow", {"sort_by": "vote_average.desc", "vote_count.gte": 200}, "Top rated series", "Best beoordeelde series"),
+}
+
+
+def providers(force=False):
+    """[{id, name, logo}] of the streaming services in your country, the biggest first (kept for a week)."""
+    saved = read_json(PROV_FILE, {}) or {}
+    if saved.get("items") and saved.get("region") == REGION and not force and time.time() - saved.get("time", 0) < PROV_TTL:
+        return saved["items"]
+    found = {}
+    for kind in ("movie", "tv"):
+        data = tmdb_get(f"watch/providers/{kind}", watch_region=REGION) or {}
+        for r in data.get("results") or []:
+            pid = r.get("provider_id")
+            prio = (r.get("display_priorities") or {}).get(REGION, r.get("display_priority", 999))
+            if pid and r.get("logo_path") and (pid not in found or prio < found[pid]["prio"]):
+                found[pid] = {"id": pid, "name": r.get("provider_name") or str(pid), "logo": r["logo_path"], "prio": prio}
+    items = sorted(found.values(), key=lambda x: x["prio"])[:PROV_MAX]
+    if items:
+        write_json(PROV_FILE, {"time": time.time(), "region": REGION, "items": items})
+        return items
+    return saved.get("items") or []
+
+
+def fetch_provider(name):
+    """prov_<id>_<kind>: what this service has (new, popular, top rated), from TMDb."""
+    try:
+        _p, pid, kind = name.split("_", 2)
+        ttype, rtype, extra, _en, _nl = PROV_KINDS[kind]
+    except (ValueError, KeyError):
+        return None
+    today = time.strftime("%Y-%m-%d")
+    params = {"with_watch_providers": pid, "watch_region": REGION, "with_watch_monetization_types": "flatrate", "page": 1}
+    params.update(extra)
+    if kind == "newmovie":
+        params["primary_release_date.lte"] = today
+    elif kind == "newtv":
+        params["first_air_date.lte"] = today
+    data = tmdb_get(f"discover/{ttype}", **params)
+    if data is None:
+        return None
+    rows = [entry_of(r, rtype) for r in (data.get("results") or []) if r.get("poster_path")]
+    rows = enrich(rows[:20])
+    for row in rows:
+        if row.get("votes") and "tmdb" in (row.get("ratings") or {}):
+            row["ratings"]["tmdb"]["votes"] = row["votes"]
+    return rows or None
+
+
 def fetch(name, path=""):
     """The entries of one list, or None when it cannot be had."""
     if name in LISTS:
         return fetch_tmdb(name)
+    if name.startswith("prov_"):
+        return fetch_provider(name)
     return fetch_trakt(name, path)
+
+
+def kind_label(kind):
+    k = PROV_KINDS.get(kind)
+    return (k[4] if NL else k[3]) if k else kind
+
+
+def provider_rows(handle):
+    """A row of streaming services: a click opens the service with its lists."""
+    import widget
+    items = []
+    for p in providers():
+        logo = f"{IMG}w500{p['logo']}"
+        saved = read_json(cache_file(f"prov_{p['id']}_poptv"), {}) or read_json(cache_file(f"prov_{p['id']}_popmovie"), {}) or {}
+        first = (saved.get("items") or [{}])[0]
+        fanart = (first.get("art") or {}).get("fanart") or ""
+        query = urllib.parse.urlencode({"action": "provider", "id": p["id"], "name": p["name"]})
+        items.append({"type": "video", "label": p["name"], "title": p["name"],
+                      "plot": (f"Nieuw, populair en best beoordeeld op {p['name']}" if NL else f"New, popular and top rated on {p['name']}"),
+                      "art": {"poster": logo, "thumb": logo, "icon": logo, "landscape": logo, "clearlogo": logo, "fanart": fanart},
+                      "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "directory"})
+        register(f"prov_{p['id']}_poptv", "")            # its picture for the row comes along in the background
+    widget.answer(handle, items)
+
+
+def provider_page(handle, query):
+    """The lists of one service (a folder per list)."""
+    import widget
+    q = urllib.parse.parse_qs(query.lstrip("?"))
+    pid, pname = (q.get("id") or [""])[0], (q.get("name") or [""])[0]
+    items = []
+    for kind in PROV_KINDS:
+        name = f"prov_{pid}_{kind}"
+        saved = read_json(cache_file(name), {}) or {}
+        first = (saved.get("items") or [{}])[0]
+        art = dict(first.get("art") or {})
+        label = kind_label(kind)
+        items.append({"type": "video", "label": label, "title": f"{pname} · {label}", "art": art,
+                      "file": f"plugin://{ADDON_ID}/?action=tmdbbrowse&list={name}", "filetype": "directory"})
+    widget.answer(handle, items)
+
+
+def browse(handle, query):
+    """Open one list as a folder: from the saved copy, fetched first when there is none yet."""
+    import widget
+    name = list_name("plugin://x/?" + query.lstrip("?").replace("action=tmdbbrowse", "action=tmdb"))
+    if not known(name):
+        widget.answer(handle, [])
+        return
+    saved = read_json(cache_file(name), {}) or {}
+    items = saved.get("items")
+    if not items or time.time() - saved.get("time", 0) > TTL:
+        fresh = fetch(name)
+        if fresh:
+            items = fresh
+            write_json(cache_file(name), {"time": time.time(), "v": 3, "items": items})
+    register(name, "")
+    widget.answer(handle, items or [])
 
 
 # ----------------------------------------------------------------------------- the plugin part (reads only)
@@ -300,7 +420,7 @@ def list_name(path):
 
 
 def known(name):
-    return name in LISTS or name in TRAKT_LISTS or name.startswith("tl_")
+    return name in LISTS or name in TRAKT_LISTS or name.startswith(("tl_", "prov_"))
 
 
 def register(name, row, path=""):

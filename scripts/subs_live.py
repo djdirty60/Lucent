@@ -25,6 +25,7 @@ import xbmcgui
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 LIST, BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC = 500, 9501, 9502, 9503, 9504
+AUTO_CLOSE = 20                                       # seconds an automatically opened list waits for you
 SOURCES = 8
 TIMEOUT = 30
 KEY_SETTING = "lucent.gemini.key"
@@ -199,7 +200,12 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
     def guard(self):
         """The video stopped (or another one started) while the list is open: close it, so it can be opened again."""
         monitor, gone = xbmc.Monitor(), 0
+        self.touched = time.time()
         while not self.closing and not monitor.abortRequested():
+            if getattr(self, "auto", False) and time.time() - self.touched > AUTO_CLOSE:
+                log("opened by itself and not used: closing")
+                self.finish()
+                return
             gone = gone + 1 if not xbmc.Player().isPlayingVideo() else 0
             if gone >= 4:
                 xbmc.log("[skin.lucent] subs_live: the video stopped - closing the list", xbmc.LOGINFO)
@@ -477,6 +483,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         self.close()
 
     def onAction(self, action):
+        self.touched = time.time()                    # you are using the list: it does not close by itself
         aid = action.getId()
         if aid in (9, 10, 92, 216, 247, 257, 275, 61467, 61448):
             self.finish()
@@ -538,6 +545,7 @@ def open_list(auto=False):
     languages, mine = search_languages()
     window = SubsWindow("Lucent_Subtitles.xml", skin_path(), "Default", "1080i")
     window.setup(sources, languages, mine)
+    window.auto = auto                                # opened by itself: closes after AUTO_CLOSE s when you do nothing
     after = ""
     try:
         window.doModal()

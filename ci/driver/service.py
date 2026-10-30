@@ -55,6 +55,32 @@ def watch(phase, seconds, step=1.0):
         mon.waitForAbort(step)
 
 
+def streaming_test():
+    log("stream: tab Streaming")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    watch("stream", 60)
+    shot("8-streaming")
+    last = samples[-1]["rows"]
+    log(f"stream: tab={lab('Container(9000).ListItem.Label')} 8201={last['8201']} 8102={last['8102']}")
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(2)
+    log(f"stream: focus={lab('System.CurrentControlID')} item={lab('Container(8201).ListItem.Label')} "
+        f"logo={lab('Container(8201).ListItem.Art(clearlogo)')[-12:]} fanart={lab('Container(8201).ListItem.Art(fanart)')[-14:]}")
+    shot("8b-streaming-focus")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(6)
+    log(f"stream: after click window={lab('System.CurrentWindow')} path={lab('Container.FolderPath')[:80]} n={lab('Container.NumItems')} "
+        f"first={lab('Container.ListItemAbsolute(0).Label')}")
+    shot("8c-service-page")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(8)
+    log(f"stream: list window={lab('System.CurrentWindow')} path={lab('Container.FolderPath')[:80]} n={lab('Container.NumItems')} "
+        f"first={lab('Container.ListItemAbsolute(0).Label')}")
+    shot("8d-service-list")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+
+
 def psnap(phase):
     try:
         pos = round(xbmc.Player().getTime(), 1) if xbmc.Player().isPlayingVideo() else -1
@@ -163,6 +189,7 @@ def main():
         shot(f"5-down{step}")
     watch("idle", 60)                               # nothing touched: the rows must stay put (no jumping)
     shot("6-idle")
+    streaming_test()
     subs_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

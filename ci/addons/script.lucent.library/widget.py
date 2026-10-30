@@ -356,6 +356,18 @@ def show(handle, query):
         import tmdbwidgets
         tmdbwidgets.open_title(query)
         return
+    if query.lstrip("?").startswith("action=providers"):          # a row of streaming services
+        import tmdbwidgets
+        tmdbwidgets.provider_rows(handle)
+        return
+    if query.lstrip("?").startswith("action=provider&"):          # one service: its lists
+        import tmdbwidgets
+        tmdbwidgets.provider_page(handle, query)
+        return
+    if query.lstrip("?").startswith("action=tmdbbrowse"):         # one list opened as a folder
+        import tmdbwidgets
+        tmdbwidgets.browse(handle, query)
+        return
     if query.lstrip("?").startswith("action=traktlists"):        # the menu asks: which Trakt lists does this person have?
         import tmdbwidgets
         tmdbwidgets.trakt_lists_dir(handle)
@@ -384,6 +396,10 @@ def show(handle, query):
     if path.startswith(f"plugin://{ADDON_ID}/?action=tmdb"):
         import tmdbwidgets                           # Lucent's own TMDb rows: instant, from their own saved copy
         tmdbwidgets.show(handle, path, row)
+        return
+    if path.startswith(f"plugin://{ADDON_ID}/?action=providers"):
+        import tmdbwidgets                           # the streaming services row (also when the skin wraps it)
+        tmdbwidgets.provider_rows(handle)
         return
     if path.startswith(f"plugin://{ADDON_ID}/?action=lib"):
         import libwidgets                            # a library row: instant, no need to keep a copy
