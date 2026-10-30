@@ -110,7 +110,7 @@ def subs_test():
         xbmc.executebuiltin(f"Action({key})")
         mon.waitForAbort(4)
         after = xbmc.Player().getTime()
-        log(f"seek: {key}: {before:.1f} -> {after:.1f} = {after - before - 4:+.1f} s (besides 4 s playing) focus={lab('System.CurrentControlID')}")
+        log(f"seek: {key}: {before:.1f} -> {after:.1f} = {after - before - 4:+.1f} s (besides 4 s playing) paused={cond('Player.Paused')} focus={lab('System.CurrentControlID')}")
     shot("7c-seek")
     xbmc.executebuiltin("Action(Down)")
     mon.waitForAbort(1)

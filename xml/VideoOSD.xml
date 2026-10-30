@@ -137,7 +137,7 @@
                 <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
                 <visible>Control.HasFocus(87)</visible>
             </control>
-            <!-- the progress bar: Left / Right jump back / forward (Kodi's own steps), Down goes to the buttons.
+            <!-- the progress bar: Left / Right jump 10 s back / forward, Down goes to the buttons.
                  A Kodi slider ate Left / Right without moving the film and kept Down, so this is a button now. -->
             <control type="button" id="87">
                 <left>0</left>
@@ -147,8 +147,8 @@
                 <label></label>
                 <texturefocus>slider_track26.png</texturefocus>
                 <texturenofocus>slider_track26.png</texturenofocus>
-                <onleft>PlayerControl(SmallSkipBackward)</onleft>
-                <onright>PlayerControl(SmallSkipForward)</onright>
+                <onleft>Seek(-10)</onleft>
+                <onright>Seek(10)</onright>
                 <onclick>PlayerControl(Play)</onclick>
                 <ondown>100</ondown>
                 <onup>noop</onup>
