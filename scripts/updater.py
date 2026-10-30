@@ -21,7 +21,8 @@ import xbmcvfs
 HEADING = "Lucent"
 ADDONS_XML = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addons.xml"
 ZIPS_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/"
-FAMILY = "lucent"                                    # every add-on in our repository with this in its id, when installed
+# every add-on in the Lucent repository that is installed here is kept up to date (also the ones installed from a
+# zip, which Kodi itself does not update from this repository), whatever its name
 LIBRARY_LOCK = "special://profile/addon_data/script.lucent.library/busy.lock"
 STATE_PATH = "special://profile/addon_data/skin.lucent/update_state.json"
 HOME = xbmcgui.Window(10000)
@@ -115,8 +116,6 @@ def available_updates():
     available = fetch_available()
     out = []
     for addon_id in sorted(available):
-        if FAMILY not in addon_id:
-            continue
         have = installed_version(addon_id)
         if not have:
             continue                                     # not installed here: never pushed on you

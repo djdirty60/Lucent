@@ -422,23 +422,6 @@ def provider_open(query):
     xbmc.executebuiltin(f"RunScript(special://skin/scripts/service.py,{get('id')},{get('name')},{get('logo')})")
 
 
-def provider_page(handle, query):
-    """The lists of one service (a folder per list)."""
-    import widget
-    q = urllib.parse.parse_qs(query.lstrip("?"))
-    pid, pname = (q.get("id") or [""])[0], (q.get("name") or [""])[0]
-    items = []
-    for kind in PROV_KINDS:
-        name = f"prov_{pid}_{kind}"
-        saved = read_json(cache_file(name), {}) or {}
-        first = (saved.get("items") or [{}])[0]
-        art = dict(first.get("art") or {})
-        label = kind_label(kind)
-        items.append({"type": "video", "label": label, "title": f"{pname} · {label}", "art": art,
-                      "file": f"plugin://{ADDON_ID}/?action=tmdbbrowse&list={name}", "filetype": "directory"})
-    widget.answer(handle, items)
-
-
 def browse(handle, query):
     """Open one list as a folder: from the saved copy, fetched first when there is none yet."""
     import widget

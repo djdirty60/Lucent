@@ -59,7 +59,6 @@ FOLDERS = os.path.join(DATA, "folders.json")      # {"movie:<trakt>": "<folder>"
 MISSING = os.path.join(DATA, "missing.json")      # {"movies/<folder>": first time seen missing}
 LOCK = os.path.join(DATA, "busy.lock")
 EPISODE_WAIT_HOURS = 24   # an episode comes in a day after it was on TV: before that there is often no link yet
-NEW_EP_FILE = None        # set below (needs DATA)
 NEW_EPISODE_HOURS = 1     # a NEW episode of a series in your library (from your Trakt calendar): this long after airing
 SAFE_HOURS = 3            # a title must be gone this long (two runs) before its folder is removed
 SHRINK = 0.2              # never remove more than this share of the library in one go ...

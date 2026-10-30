@@ -364,10 +364,6 @@ def show(handle, query):
         import tmdbwidgets
         tmdbwidgets.provider_open(query)
         return
-    if query.lstrip("?").startswith("action=provider&"):          # one service: its lists
-        import tmdbwidgets
-        tmdbwidgets.provider_page(handle, query)
-        return
     if query.lstrip("?").startswith("action=tmdbbrowse"):         # one list opened as a folder
         import tmdbwidgets
         tmdbwidgets.browse(handle, query)
