@@ -137,17 +137,19 @@
                 <midtexture border="3" colordiffuse="text">pill6.png</midtexture>
                 <visible>Control.HasFocus(87)</visible>
             </control>
-            <control type="slider" id="87">
+            <!-- the progress bar: Left / Right jump back / forward (Kodi's own steps), Down goes to the buttons.
+                 A Kodi slider ate Left / Right without moving the film and kept Down, so this is a button now. -->
+            <control type="button" id="87">
                 <left>0</left>
                 <top>-10</top>
                 <width>1728</width>
                 <height>26</height>
-                <action>seek</action>
-                <info>Player.Progress</info>
-                <texturesliderbar>slider_track26.png</texturesliderbar>
-                <texturesliderbardisabled>slider_track26.png</texturesliderbardisabled>
-                <textureslidernib/>
-                <textureslidernibfocus/>
+                <label></label>
+                <texturefocus>slider_track26.png</texturefocus>
+                <texturenofocus>slider_track26.png</texturenofocus>
+                <onleft>PlayerControl(SmallSkipBackward)</onleft>
+                <onright>PlayerControl(SmallSkipForward)</onright>
+                <onclick>PlayerControl(Play)</onclick>
                 <ondown>100</ondown>
                 <onup>noop</onup>
                 <visible>Player.SeekEnabled</visible>

@@ -102,6 +102,7 @@ def main():
     started = time.time()
     first_done = False
     next_run = 0.0
+    next_check = time.time() + 15 * 60               # new episodes on your calendar: looked at every hour
     runner = None
     import tools
     while not monitor.abortRequested():
@@ -120,6 +121,10 @@ def main():
                 first_done = True
                 runner = background(lib.run, False)
                 next_run = now + hours * 3600 if hours else 0
+            elif first_done and now >= next_check:
+                next_check = now + 3600
+                if lib.new_episodes_missing():         # a new episode was on TV: add it now, not at the next run
+                    runner = background(lib.run, False)
             elif first_done and hours:
                 if not next_run:
                     next_run = now + hours * 3600

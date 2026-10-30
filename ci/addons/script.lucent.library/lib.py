@@ -59,6 +59,8 @@ FOLDERS = os.path.join(DATA, "folders.json")      # {"movie:<trakt>": "<folder>"
 MISSING = os.path.join(DATA, "missing.json")      # {"movies/<folder>": first time seen missing}
 LOCK = os.path.join(DATA, "busy.lock")
 EPISODE_WAIT_HOURS = 24   # an episode comes in a day after it was on TV: before that there is often no link yet
+NEW_EP_FILE = None        # set below (needs DATA)
+NEW_EPISODE_HOURS = 1     # a NEW episode of a series in your library (from your Trakt calendar): this long after airing
 SAFE_HOURS = 3            # a title must be gone this long (two runs) before its folder is removed
 SHRINK = 0.2              # never remove more than this share of the library in one go ...
 SHRINK_MIN = 25           # ... unless it is fewer titles than this
@@ -382,6 +384,67 @@ def trakt_watched(force=False):
         return None
 
 
+# ----------------------------------------------------------------------------- new episodes from your Trakt calendar
+NEW_EP_FILE = os.path.join(DATA, "new_episodes.json")
+def new_episodes(show_ids):
+    """Episodes of series in your library that were on TV in the last two weeks (your Trakt calendar), also when they
+    are not in your Trakt collection yet: Seren only knows collected episodes, so new ones never came in.
+    [(show trakt id, season, number, episode trakt id, info)]. Switch off: Skin.SetBool(lucent.lib.newep.off)."""
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.lib.newep.off)") or not show_ids:
+        return []
+    try:
+        import quick
+        trakt = quick.Trakt()
+        if not trakt.token:
+            return []
+        start = time.strftime("%Y-%m-%d", time.gmtime(time.time() - 13 * 86400))
+        data = trakt.call(f"calendars/my/shows/{start}/14?extended=full")
+    except Exception as error:  # noqa: BLE001 - offline: only what Seren has, as before
+        log(f"new episodes: {type(error).__name__}")
+        return []
+    cutoff = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(time.time() - NEW_EPISODE_HOURS * 3600))
+    out = []
+    for item in data if isinstance(data, list) else []:
+        aired = (item.get("first_aired") or "")[:19]
+        sid = ((item.get("show") or {}).get("ids") or {}).get("trakt")
+        ep = item.get("episode") or {}
+        tid = (ep.get("ids") or {}).get("trakt")
+        if not aired or aired > cutoff or sid not in show_ids or not tid or not ep.get("season") or ep.get("number") is None:
+            continue
+        info = {"title": ep.get("title"), "plot": ep.get("overview"), "aired": aired[:10],
+                "duration": (ep.get("runtime") or 0) * 60, "rating": ep.get("rating"), "votes": ep.get("votes")}
+        out.append((int(sid), int(ep["season"]), int(ep["number"]), int(tid), info))
+    return out
+
+
+def season_ids(trakt_show_id):
+    """{season number: season trakt id} - Seren's play link carries the season's id."""
+    try:
+        import quick
+        return {s.get("number"): (s.get("ids") or {}).get("trakt") for s in quick.Trakt().call(f"shows/{trakt_show_id}/seasons") or []}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def new_episodes_missing():
+    """For the service: is there a new episode on your calendar whose file is not there yet? Then a run is due."""
+    fmap = read_json(FOLDERS, {}) or {}
+    shows = {}
+    for key, folder in fmap.items():
+        if str(key).startswith("show:"):
+            try:
+                shows[int(str(key).split(":", 1)[1])] = folder
+            except ValueError:
+                pass
+    for sid, season, number, _tid, _info in new_episodes(set(shows)):
+        folder = shows.get(sid)
+        name = f"{folder} - S{season:02d}E{number:02d}.strm"
+        if folder and not os.path.exists(os.path.join(TV_OUT, folder, f"Season {season:02d}", name)):
+            log(f"new episode on the calendar: {folder} S{season:02d}E{number:02d}")
+            return True
+    return False
+
+
 # ----------------------------------------------------------------------------- Seren's database
 def _connect():
     if not os.path.exists(SEREN_DB):
@@ -613,6 +676,27 @@ def export(con, started, manual):
 def export_shows(con, started, manual):
     import quick
     shows = read_shows(con)
+    added, seasons = 0, {}
+    kept = read_json(NEW_EP_FILE, []) or []           # earlier new episodes stay (the calendar only looks back 2 weeks)
+    fresh = new_episodes(set(shows))
+    seen = {(e[0], e[1], e[2]) for e in fresh}
+    merged = fresh + [tuple(e) for e in kept if isinstance(e, list) and len(e) == 5 and (e[0], e[1], e[2]) not in seen and e[0] in shows]
+    if fresh or kept:
+        write_json(NEW_EP_FILE, [list(e) for e in merged][-2000:])
+    for sid, season, number, tid, info in merged:
+        show = shows[sid]
+        if any(int(se) == season and int(nu) == number for _t, se, nu, _a, _w, _c in show["episodes"]):
+            continue                                   # Seren has it already (collected)
+        if sid not in seasons:
+            seasons[sid] = season_ids(sid)
+        import quick
+        args = quick.seren_args({"mediatype": "episode", "trakt_id": tid, "trakt_show_id": sid,
+                                 "trakt_season_id": seasons[sid].get(season)})
+        show["episodes"].append((tid, season, number, args, 0, None))
+        show.setdefault("new_info", {})[tid] = info
+        added += 1
+    if added:
+        log(f"new episodes from the calendar: {added}")
     tw = trakt_watched()
     if tw:
         for sid, show in shows.items():
@@ -649,7 +733,7 @@ def export_shows(con, started, manual):
                 nfo_path = os.path.join(root, sdir, f"{name}.nfo")
                 b = False
                 if own_nfo:
-                    info, art = details.get(trakt_id, ({}, {}))
+                    info, art = details.get(trakt_id) or ((show.get("new_info") or {}).get(trakt_id, {}), {})
                     b = write_if_changed(nfo_path, episode_nfo(show, trakt_id, season, number, info, art, watched, collected_at))
                 elif os.path.exists(nfo_path):
                     os.remove(nfo_path)
