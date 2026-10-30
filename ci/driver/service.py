@@ -105,18 +105,12 @@ def subs_test():
     # the progress bar: up from the buttons, then right / left must move the film
     xbmc.executebuiltin("Action(Up)")
     mon.waitForAbort(1)
-    t0 = xbmc.Player().getTime()
-    log(f"seek: focus after Up={lab('System.CurrentControlID')} time={t0:.1f}")
-    for _ in range(3):
-        xbmc.executebuiltin("Action(Right)")
-        mon.waitForAbort(1)
-    t1 = xbmc.Player().getTime()
-    log(f"seek: after 3x Right time={t1:.1f} (+{t1 - t0 - 3:.1f} s besides the 3 s that passed) focus={lab('System.CurrentControlID')}")
-    for _ in range(2):
-        xbmc.executebuiltin("Action(Left)")
-        mon.waitForAbort(1)
-    t2 = xbmc.Player().getTime()
-    log(f"seek: after 2x Left time={t2:.1f} ({t2 - t1 - 2:+.1f} s) focus={lab('System.CurrentControlID')}")
+    for key in ("Right", "Right", "Left", "Left", "Left"):
+        before = xbmc.Player().getTime()
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(4)
+        after = xbmc.Player().getTime()
+        log(f"seek: {key}: {before:.1f} -> {after:.1f} = {after - before - 4:+.1f} s (besides 4 s playing) focus={lab('System.CurrentControlID')}")
     shot("7c-seek")
     xbmc.executebuiltin("Action(Down)")
     mon.waitForAbort(1)
