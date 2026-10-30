@@ -156,6 +156,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             self.setProperty(f"src.{n}", url)      # the hidden lists start loading now, all at once
         self.status()
         threading.Thread(target=self.watch, args=(self.gen,), daemon=True).start()
+        threading.Thread(target=self.guard, daemon=True).start()
 
     def status(self):
         total = len(self.sources)
@@ -194,6 +195,18 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
                 break
         if not self.closing and gen == self.gen:
             self.status()
+
+    def guard(self):
+        """The video stopped (or another one started) while the list is open: close it, so it can be opened again."""
+        monitor, gone = xbmc.Monitor(), 0
+        while not self.closing and not monitor.abortRequested():
+            gone = gone + 1 if not xbmc.Player().isPlayingVideo() else 0
+            if gone >= 4:
+                xbmc.log("[skin.lucent] subs_live: the video stopped - closing the list", xbmc.LOGINFO)
+                self.close()
+                return
+            if monitor.waitForAbort(0.5):
+                return
 
     def read(self, n, cid, count, timed_out=False):
         aid, name = self.sources[n - 1]
@@ -429,7 +442,7 @@ def skin_path():
     return xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
 
 
-def open_list():
+def open_list(auto=False):
     player = xbmc.Player()
     if not player.isPlayingVideo():
         return
@@ -439,7 +452,9 @@ def open_list():
                                       xbmcgui.NOTIFICATION_WARNING, 4000)
         return
     paused_by_us = False
-    if not cond("Player.Paused"):
+    # opened by hand: hold the film while you choose. Not when the list opens by itself: pausing a film that has just
+    # started makes Seren think it failed, and Seren starts it all over again.
+    if not auto and not cond("Player.Paused"):
         player.pause()
         paused_by_us = True
     languages, mine = search_languages()
@@ -467,18 +482,35 @@ def enter_key():
     xbmc.executebuiltin(f"Skin.SetString({KEY_SETTING},{key})" if key else f"Skin.Reset({KEY_SETTING})")
 
 
-def open_once():
+def settled(monitor, player):
+    """Automatic opening: wait until the film really plays (Seren checks the first seconds of playback)."""
+    end = time.time() + 90
+    while time.time() < end:
+        if monitor.waitForAbort(1) or not player.isPlayingVideo():
+            return False
+        try:
+            if player.getTime() >= 15 and not cond("Player.Paused | Window.IsActive(busydialog) | Window.IsActive(busydialognocancel)"):
+                return True
+        except RuntimeError:
+            pass
+    return False
+
+
+def open_once(auto=False):
     """Only one list at a time: the automatic search and Kodi's own search can both ask for it within seconds."""
     home = xbmcgui.Window(10000)
     try:
-        if time.time() - float(home.getProperty("lucent.subs.open") or 0) < 120:
-            return
+        recent = time.time() - float(home.getProperty("lucent.subs.open") or 0) < 120
     except ValueError:
-        pass
+        recent = False
+    if recent and cond("Window.IsVisible(Lucent_Subtitles.xml)"):
+        return                                             # really open already (a stale mark no longer blocks it)
+    if auto and not settled(xbmc.Monitor(), xbmc.Player()):
+        return
     home.setProperty("lucent.subs.open", f"{time.time():.1f}")
     try:
         tidy()
-        open_list()
+        open_list(auto)
     finally:
         home.clearProperty("lucent.subs.open")
 
@@ -501,4 +533,4 @@ if __name__ == "__main__":
     if arg == "key":
         enter_key()
     else:
-        open_once()
+        open_once(auto=arg == "auto")
