@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="OpenSubtitles">
+        <setting label="Gebruik OpenSubtitles.com" type="bool" id="os_on" default="true"/>
+        <setting label="API-sleutel (opensubtitles.com > profiel > API consumers)" type="text" id="os_key" default="" enable="eq(-1,true)"/>
+        <setting label="Gebruikersnaam" type="text" id="os_user" default="" enable="eq(-2,true)"/>
+        <setting label="Wachtwoord" type="text" id="os_pass" option="hidden" default="" enable="eq(-3,true)"/>
+    </category>
+    <category label="SubDL">
+        <setting label="Gebruik SubDL" type="bool" id="subdl_on" default="true"/>
+        <setting label="API-sleutel (subdl.com > account > API)" type="text" id="subdl_key" default="" enable="eq(-1,true)"/>
+    </category>
+    <category label="Podnapisi">
+        <setting label="Gebruik Podnapisi (geen account nodig)" type="bool" id="podnapisi_on" default="true"/>
+    </category>
+    <category label="Algemeen">
+        <setting label="Maximaal wachten per bron (seconden)" type="slider" id="timeout" default="10" range="4,1,20" option="int"/>
+        <setting label="Ondertitels voor slechthorenden achteraan" type="bool" id="hi_last" default="true"/>
+    </category>
+</settings>

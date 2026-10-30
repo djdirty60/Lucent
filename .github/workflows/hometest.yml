@@ -1,0 +1,31 @@
+name: Lucent Home test
+on:
+  push:
+    branches: [ci-hometest]
+    paths: ["ci/**", "xml/**", "scripts/**", ".github/workflows/hometest.yml"]
+permissions:
+  contents: write
+jobs:
+  home:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [old, new]
+        run: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Kodi
+        run: |
+          sudo add-apt-repository -y ppa:team-xbmc/ppa
+          sudo apt-get update -q
+          sudo apt-get install -y -q kodi xvfb rsync mesa-utils libgl1-mesa-dri
+          kodi --version | head -2 || true
+      - name: Run
+        run: bash ci/run.sh ${{ matrix.variant }} ${{ matrix.run }}
+      - name: Save results
+        run: |
+          git config user.name "ci"; git config user.email "ci@example.invalid"
+          git add -f ci-results
+          git commit -m "CI results ${{ matrix.variant }}-${{ matrix.run }} [skip ci]" || exit 0
+          for i in 1 2 3 4 5 6; do git pull --rebase -q origin ci-hometest && git push -q origin HEAD:ci-hometest && break; sleep $((RANDOM % 10 + 3)); done

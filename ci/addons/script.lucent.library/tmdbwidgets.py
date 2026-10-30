@@ -1,0 +1,405 @@
+# -*- coding: utf-8 -*-
+"""Lucent's own widget rows, straight from TMDb (no other add-on involved).
+
+    plugin://script.lucent.library/?action=tmdb&list=trending_movie
+
+The row is answered at once from a saved copy (the plugin part only reads). The Lucent Library service keeps the copies
+fresh: one request to TMDb per list, every 6 hours, never while a video plays; a failed request keeps the old copy
+and is tried again later. A click on a title opens its own page in Lucent (Play there goes to Seren), the same way as the
+"Tonight for you" row. Needs the TMDb key Lucent already uses (Seren's setting, or the key in Skin settings).
+"""
+import json
+import os
+import time
+import urllib.parse
+import urllib.request
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+import xbmcvfs
+
+ADDON_ID = "script.lucent.library"
+DIR = xbmcvfs.translatePath(f"special://profile/addon_data/{ADDON_ID}/tmdb/")
+REG = os.path.join(DIR, "registry.json")
+HOME = xbmcgui.Window(10000)
+TTL = 6 * 3600
+BACKOFF = (120, 600, 1800)
+TMDB = "https://api.themoviedb.org/3/"
+IMG = "https://image.tmdb.org/t/p/"
+NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
+
+# list name -> (TMDb endpoint, kind, label en, label nl)
+LISTS = {
+    "trending_movie": ("trending/movie/week", "movie", "Trending movies", "Trending films"),
+    "trending_tv": ("trending/tv/week", "tvshow", "Trending shows", "Trending series"),
+    "popular_movie": ("movie/popular", "movie", "Popular movies", "Populaire films"),
+    "popular_tv": ("tv/popular", "tvshow", "Popular shows", "Populaire series"),
+    "toprated_movie": ("movie/top_rated", "movie", "Top rated movies", "Best beoordeelde films"),
+    "toprated_tv": ("tv/top_rated", "tvshow", "Top rated shows", "Best beoordeelde series"),
+    "nowplaying_movie": ("movie/now_playing", "movie", "In cinemas now", "Nu in de bioscoop"),
+    "upcoming_movie": ("movie/upcoming", "movie", "Coming soon (movies)", "Binnenkort (films)"),
+    "airing_tv": ("tv/on_the_air", "tvshow", "Series on air", "Series die nu lopen"),
+}
+# Trakt lists (your Seren login): name -> (Trakt endpoint, kind)
+TRAKT_LISTS = {
+    "trakt_watchlist_movie": ("sync/watchlist/movies", "movie"),
+    "trakt_watchlist_tv": ("sync/watchlist/shows", "tvshow"),
+    "trakt_recommended_movie": ("recommendations/movies", "movie"),
+    "trakt_recommended_tv": ("recommendations/shows", "tvshow"),
+    "trakt_trending_movie": ("movies/trending", "movie"),
+    "trakt_trending_tv": ("shows/trending", "tvshow"),
+    "trakt_anticipated_movie": ("movies/anticipated", "movie"),
+    "trakt_anticipated_tv": ("shows/anticipated", "tvshow"),
+}
+META = os.path.join(DIR, "meta.json")        # TMDb details per title (poster, backdrop, score): Trakt gives no pictures
+META_KEEP = 4000
+
+
+def log(text):
+    xbmc.log(f"[script.lucent.library] tmdb: {text}", xbmc.LOGINFO)
+
+
+def read_json(path, default=None):
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+    except Exception:  # noqa: BLE001
+        return default
+
+
+def write_json(path, data):
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        tmp = f"{path}.{os.getpid()}.tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(data, fh)
+        os.replace(tmp, path)
+    except Exception as error:  # noqa: BLE001
+        log(f"write {os.path.basename(path)}: {error}")
+
+
+def cache_file(name):
+    return os.path.join(DIR, f"{name}.json")
+
+
+def tmdb_key():
+    try:
+        key = (xbmcaddon.Addon("plugin.video.seren").getSetting("tmdb.apikey") or "").strip()
+    except Exception:  # noqa: BLE001 - Seren not installed
+        key = ""
+    for path in ("special://profile/addon_data/skin.lucent/tmdb_key.txt", "special://profile/addon_data/script.lucent.library/tmdb_key.txt"):
+        if key:
+            break
+        try:
+            with xbmcvfs.File(path) as fh:
+                key = (fh.read() or "").strip()
+        except Exception:  # noqa: BLE001
+            key = ""
+    return key
+
+
+# ----------------------------------------------------------------------------- TMDb -> row entries
+def entry_of(result, kind):
+    tmdb_id = result.get("id")
+    title = result.get("title") or result.get("name") or ""
+    date = result.get("release_date") or result.get("first_air_date") or ""
+    year = int(date[:4]) if date[:4].isdigit() else 0
+    poster = f"{IMG}w500{result['poster_path']}" if result.get("poster_path") else ""
+    fanart = f"{IMG}w1280{result['backdrop_path']}" if result.get("backdrop_path") else ""
+    query = urllib.parse.urlencode({"action": "tmdbopen", "type": "movie" if kind == "movie" else "tv", "tmdb": tmdb_id, "year": year or ""})
+    return {"type": kind, "label": title, "title": title, "plot": result.get("overview") or "", "year": year,
+            "rating": float(result.get("vote_average") or 0), "premiered": date,
+            "ratings": {"tmdb": {"rating": float(result.get("vote_average") or 0), "votes": int(result.get("vote_count") or 0), "default": True}},
+            "art": {"poster": poster, "thumb": poster, "fanart": fanart},
+            "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file", "action": True,
+            "props": {"tmdb_id": str(tmdb_id or ""), "lucent_open": "1"}}
+
+
+def tmdb_get(path, **params):
+    key = tmdb_key()
+    if not key:
+        return None
+    params.update(api_key=key, language="nl-NL" if NL else "en-US")
+    try:
+        req = urllib.request.Request(f"{TMDB}{path}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "Lucent/1.0", "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as error:  # noqa: BLE001
+        log(f"{path}: {type(error).__name__}")
+        return None
+
+
+def enrich(rows):
+    """Logo, genres, runtime and vote count from TMDb's detail page, kept in meta.json (a few new titles per run)."""
+    meta = read_json(META, {}) or {}
+    asked, now = 0, time.time()
+    for row in rows:
+        tid = (row.get("props") or {}).get("tmdb_id")
+        if not tid:
+            continue
+        kind = "movie" if row.get("type") == "movie" else "tv"
+        key = f"d{kind[0]}{tid}"
+        info = meta.get(key)
+        if info is None and asked < 25:
+            asked += 1
+            d = tmdb_get(f"{kind}/{tid}", append_to_response="images", include_image_language=("nl,en,null" if NL else "en,null"))
+            if d:
+                logos = ((d.get("images") or {}).get("logos")) or []
+                logos.sort(key=lambda x: (x.get("iso_639_1") not in ("nl" if NL else "en",), -(x.get("vote_average") or 0)))
+                run = d.get("runtime") or ((d.get("episode_run_time") or [0])[0])
+                info = {"logo": (logos[0].get("file_path") if logos else "") or "", "genre": [g.get("name") for g in d.get("genres") or [] if g.get("name")],
+                        "runtime": int(run or 0) * 60, "votes": int(d.get("vote_count") or 0),
+                        "studio": [c.get("name") for c in (d.get("production_companies") or [])[:2] if c.get("name")], "t": now}
+                meta[key] = info
+        if info:
+            if info.get("logo"):
+                row["art"]["clearlogo"] = f"{IMG}w500{info['logo']}"
+            if info.get("genre"):
+                row["genre"] = info["genre"]
+            if info.get("runtime"):
+                row["runtime"] = info["runtime"]
+            if info.get("votes"):
+                row["votes"] = info["votes"]
+            if info.get("studio"):
+                row["studio"] = info["studio"]
+    if asked:
+        if len(meta) > META_KEEP:
+            for k in sorted(meta, key=lambda k: meta[k].get("t", 0))[:len(meta) - META_KEEP]:
+                del meta[k]
+        write_json(META, meta)
+    return rows
+
+
+def fetch_tmdb(name):
+    endpoint, kind = LISTS[name][0], LISTS[name][1]
+    params = {"page": 1}
+    if name in ("nowplaying_movie", "upcoming_movie"):
+        params["region"] = "NL" if NL else "US"
+    data = tmdb_get(endpoint, **params)
+    if data is None:
+        return None
+    rows = [entry_of(r, kind) for r in (data.get("results") or []) if r.get("poster_path")]
+    rows = enrich(rows[:20])
+    for row in rows:                                   # the vote count of the detail page is the better one
+        if row.get("votes") and "tmdb" in (row.get("ratings") or {}):
+            row["ratings"]["tmdb"]["votes"] = row["votes"]
+    return rows or None
+
+
+def trakt_endpoint(name, path):
+    """(endpoint, kind) of a Trakt list name; your own lists carry user and list id in the row path."""
+    if name in TRAKT_LISTS:
+        return TRAKT_LISTS[name]
+    q = urllib.parse.parse_qs(urllib.parse.urlsplit(path).query)
+    user, lid = (q.get("user") or [""])[0], (q.get("id") or [""])[0]
+    if user and lid:
+        return f"users/{urllib.parse.quote(user)}/lists/{urllib.parse.quote(lid)}/items", "mixed"
+    return None
+
+
+WHY = {"text": ""}      # why the last fetch gave nothing (shown in the empty row)
+
+
+def fetch_trakt(name, path):
+    """Entries of a Trakt list: the titles from Trakt, the pictures and scores from TMDb (kept in meta.json)."""
+    WHY["text"] = ""
+    spec = trakt_endpoint(name, path)
+    if not spec:
+        WHY["text"] = "list not recognised"
+        return None
+    if not tmdb_key():
+        WHY["text"] = "no TMDb key (add it in Skin settings)"
+        return None
+    try:
+        import quick
+        trakt = quick.Trakt()
+        if not trakt.token and name.startswith(("trakt_watchlist", "trakt_recommended", "tl_")):
+            WHY["text"] = "not logged in to Trakt in Seren"
+            return None
+        data = trakt.call(f"{spec[0]}{'&' if '?' in spec[0] else '?'}extended=full&limit=40")
+    except Exception as error:  # noqa: BLE001
+        log(f"{name}: {type(error).__name__} {error}"[:200])
+        WHY["text"] = f"Trakt error: {type(error).__name__}"
+        return None
+    meta = read_json(META, {}) or {}
+    seen = set((read_json(os.path.join(os.path.dirname(DIR.rstrip("/\\")), "trakt_watched.json"), {}) or {}).get("movies") or [])
+    rows, asked = [], 0
+    for item in data if isinstance(data, list) else []:
+        obj, kind = None, spec[1]
+        for key, k in (("movie", "movie"), ("show", "tvshow")):
+            if item.get(key):
+                obj, kind = item[key], k
+        if obj is None and item.get("ids"):
+            obj = item
+        if not obj or kind == "mixed":
+            continue
+        tmdb_id = (obj.get("ids") or {}).get("tmdb")
+        if not tmdb_id:
+            continue
+        mk = f"{'m' if kind == 'movie' else 't'}{tmdb_id}"
+        info = meta.get(mk)
+        if info is None and asked < 25:
+            asked += 1
+            d = tmdb_get(f"{'movie' if kind == 'movie' else 'tv'}/{tmdb_id}")
+            if d:
+                info = {"poster": d.get("poster_path") or "", "fanart": d.get("backdrop_path") or "", "plot": d.get("overview") or "",
+                        "rating": float(d.get("vote_average") or 0), "t": time.time()}
+                meta[mk] = info
+        if not info or not info.get("poster"):
+            continue
+        date = (obj.get("released") or obj.get("first_aired") or "")[:10]
+        year = obj.get("year") or (int(date[:4]) if date[:4].isdigit() else 0)
+        title = obj.get("title") or ""
+        query = urllib.parse.urlencode({"action": "tmdbopen", "type": "movie" if kind == "movie" else "tv", "tmdb": tmdb_id, "year": year or ""})
+        rows.append({"type": kind, "label": title, "title": title, "plot": obj.get("overview") or info.get("plot") or "", "year": int(year or 0),
+                     "rating": float(obj.get("rating") or info.get("rating") or 0), "premiered": date,
+                     "trakt_rating": float(obj.get("rating") or 0), "trakt_votes": int(obj.get("votes") or 0), "tmdb_rating": float(info.get("rating") or 0),
+                     "art": {"poster": f"{IMG}w500{info['poster']}", "thumb": f"{IMG}w500{info['poster']}",
+                             "fanart": f"{IMG}w1280{info['fanart']}" if info.get("fanart") else ""},
+                     "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file", "action": True, "props": {"tmdb_id": str(tmdb_id), "lucent_open": "1"}})
+        if kind == "movie" and (obj.get("ids") or {}).get("trakt") in seen:
+            rows[-1]["playcount"] = 1                      # Trakt says you saw it (list kept by the library export)
+        if len(rows) >= 20:
+            break
+    if asked:
+        if len(meta) > META_KEEP:
+            for k in sorted(meta, key=lambda k: meta[k].get("t", 0))[:len(meta) - META_KEEP]:
+                del meta[k]
+        write_json(META, meta)
+    if not rows:
+        WHY["text"] = "list is empty or has no titles with pictures" if data else "Trakt returned nothing"
+    rows = enrich(rows)
+    for row in rows:                                   # both scores on the card; Trakt's is the main one
+        ratings, tr_r, tr_v, tm_r = {}, row.pop("trakt_rating", 0), row.pop("trakt_votes", 0), row.pop("tmdb_rating", 0)
+        if tr_r:
+            ratings["trakt"] = {"rating": tr_r, "votes": tr_v, "default": True}
+        if tm_r:
+            ratings["tmdb"] = {"rating": tm_r, "votes": row.get("votes", 0), "default": not ratings}
+        if ratings:
+            row["ratings"] = ratings
+    return rows or None
+
+
+def fetch(name, path=""):
+    """The entries of one list, or None when it cannot be had."""
+    if name in LISTS:
+        return fetch_tmdb(name)
+    return fetch_trakt(name, path)
+
+
+# ----------------------------------------------------------------------------- the plugin part (reads only)
+def list_name(path):
+    """'trending_movie', 'trakt_watchlist_tv', or for one of your own Trakt lists 'tl_<user>_<id>'."""
+    q = urllib.parse.parse_qs(urllib.parse.urlsplit(path).query)
+    name = (q.get("list") or [""])[0]
+    if name == "tl":
+        user, lid = (q.get("user") or [""])[0], (q.get("id") or [""])[0]
+        return f"tl_{user}_{lid}" if user and lid else ""
+    return name
+
+
+def known(name):
+    return name in LISTS or name in TRAKT_LISTS or name.startswith("tl_")
+
+
+def register(name, row, path=""):
+    reg = read_json(REG, {}) or {}
+    item = reg.setdefault(name, {"rows": []})
+    if (not row or row in item["rows"]) and time.time() - item.get("seen", 0) < 600 and item.get("seen") and item.get("path") == path:
+        return                                              # known and seen lately: nothing to write
+    item["path"] = path
+    if row and row not in item["rows"]:
+        item["rows"] = (item["rows"] + [row])[-4:]
+    item["seen"] = time.time()
+    write_json(REG, reg)
+
+
+def show(handle, path, row):
+    """Answer a row at once from its saved copy; an unknown list name gives an empty row."""
+    import widget
+    name = list_name(path)
+    if not known(name):
+        widget.answer(handle, [])
+        return
+    register(name, row, path)
+    saved = read_json(cache_file(name), {}) or {}
+    items = saved.get("items") or []
+    why = (read_json(REG, {}) or {}).get(name, {}).get("why")
+    if not items and why:                              # tell what is wrong instead of an empty row
+        items = [{"type": "video", "label": f"Trakt: {why}", "title": f"Trakt: {why}", "art": {}, "file": "", "filetype": "file", "action": True}]
+    widget.answer(handle, items)
+
+
+def trakt_lists_dir(handle):
+    """Folder for the menu: your own and liked Trakt lists, each pointing at its fast row."""
+    import quick
+    items = []
+    try:
+        trakt = quick.Trakt()
+        if trakt.token:
+            for source, mine in (("users/me/lists", True), ("users/likes/lists", False)):
+                for entry in trakt.call(source) or []:
+                    lst = entry.get("list") or entry
+                    ids = lst.get("ids") or {}
+                    user = ((lst.get("user") or {}).get("ids") or {}).get("slug") or "me"
+                    lid = ids.get("trakt") or ids.get("slug")
+                    if not lid or not lst.get("name"):
+                        continue
+                    query = urllib.parse.urlencode({"action": "tmdb", "list": "tl", "user": user, "id": lid})
+                    items.append({"type": "video", "label": lst["name"], "title": lst["name"], "art": {},
+                                  "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "directory",
+                                  "props": {"count": str(lst.get("item_count") or "")}})
+    except Exception as error:  # noqa: BLE001
+        log(f"trakt lists: {type(error).__name__}")
+    import widget
+    widget.answer(handle, items)
+
+
+def open_title(query):
+    """A click on a title: its own page in Lucent (Play there goes to Seren)."""
+    q = urllib.parse.parse_qs(query.lstrip("?"))
+    get = lambda k: (q.get(k) or [""])[0]  # noqa: E731
+    HOME.setProperty("nuvio.open.tmdb", get("tmdb"))
+    HOME.setProperty("nuvio.open.type", get("type") or "movie")
+    HOME.setProperty("nuvio.open.year", get("year"))
+    HOME.setProperty("nuvio.open.path", "")
+    HOME.clearProperty("nuvio.open.trakt")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
+
+
+# ----------------------------------------------------------------------------- the fetching (runs in the service)
+def tick(player_busy=False):
+    """One step: fetch one list that is missing or old. True when a request was made."""
+    if player_busy or not os.path.exists(REG):
+        return False
+    reg = read_json(REG, {}) or {}
+    now = time.time()
+    for name in sorted(reg, key=lambda n: os.path.getmtime(cache_file(n)) if os.path.exists(cache_file(n)) else 0):
+        if not known(name):
+            continue
+        item = reg[name]
+        saved = read_json(cache_file(name), {}) or {}
+        if saved.get("items") and saved.get("v") == 3 and now - saved.get("time", 0) < TTL:
+            continue
+        if now < item.get("retry", 0):
+            continue
+        items = fetch(name, item.get("path") or "")
+        if items:
+            changed = items != saved.get("items")
+            write_json(cache_file(name), {"time": now, "v": 3, "items": items})
+            item.update(fail=0, retry=0)
+            if changed:
+                for row in item.get("rows") or []:
+                    HOME.setProperty(f"lucent.wr.{row}", str(now))
+            log(f"{name}: {len(items)} titles")
+        else:
+            fail = int(item.get("fail", 0))
+            item.update(fail=fail + 1, retry=now + BACKOFF[min(fail, len(BACKOFF) - 1)], why=WHY["text"])
+            if WHY["text"]:
+                log(f"{name}: {WHY['text']}")
+                for row in item.get("rows") or []:
+                    HOME.setProperty(f"lucent.wr.{row}", str(now))
+        write_json(REG, reg)
+        return True
+    return False

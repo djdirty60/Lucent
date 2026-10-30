@@ -156,6 +156,24 @@ def run():
         log("Kodi's subtitle search -> Lucent live list")
 
     lost = {"n": 0}
+    pulse = {"sig": None, "until": 0.0}
+
+    def rows_pulse(now):
+        """A Home row that is hidden because it was empty never reads its path again (Kodi only re-reads the path of a
+        visible list). When you switch tabs, or the library has a new copy of a row, show all rows for a moment
+        (lucent.rowsrefresh) so every list reads its path again; Container.IsUpdating then keeps it on screen."""
+        if pulse["until"] and now >= pulse["until"]:
+            HOME.clearProperty("lucent.rowsrefresh")
+            pulse["until"] = 0.0
+        if not cond("Window.IsActive(home)"):
+            return
+        sig = "|".join([xbmc.getInfoLabel("Container(9000).ListItem.Label")] +
+                       [HOME.getProperty(f"lucent.wr.{n}") for n in range(1, 11)])
+        if sig != pulse["sig"]:
+            pulse["sig"] = sig
+            HOME.setProperty("lucent.rowsrefresh", "1")
+            pulse["until"] = now + 2.5
+
 
     def home_focus():
         """Home without any focus (for example OK on the Home tab while it has no rows yet, or after closing the setup
@@ -186,6 +204,10 @@ def run():
                 subtitle_window(now)
             except Exception as error:  # noqa: BLE001
                 log(f"subtitles: {error}")
+            try:
+                rows_pulse(now)
+            except Exception as error:  # noqa: BLE001
+                log(f"rows: {error}")
             try:
                 home_focus()
             except Exception as error:  # noqa: BLE001

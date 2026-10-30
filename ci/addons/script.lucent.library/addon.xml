@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.lucent.library" version="1.12.0" name="Lucent Bibliotheek" provider-name="Claude">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable video</provides>
+    </extension>
+    <extension point="xbmc.python.pluginsource" library="widget.py">
+        <provides></provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Your Seren (Trakt) movie and series collection as a Kodi library, updated at once from Lucent</summary>
+        <summary lang="nl_NL">Je Seren (Trakt) film- en seriecollectie als Kodi-bibliotheek, direct bij te werken vanuit Lucent</summary>
+        <description lang="en_GB">Reads the movies of your Trakt collection from Seren and writes a small .strm and .nfo file for each, so Kodi shows them in its own library (collections grouped, loose films between them). Playing a film starts Seren.
+
+IMPORTANT: first load your whole collection in Seren (Movies > My movies (collection) and TV shows > My shows (collection)) until everything is in. Lucent Library only takes over what Seren already knows; titles Seren has not loaded yet are added on a later run.</description>
+        <description lang="nl_NL">Leest de films van je Trakt-collectie uit Seren en maakt per film een klein .strm- en .nfo-bestand, zodat Kodi ze in zijn eigen bibliotheek toont (collecties gegroepeerd, losse films ertussen). Een film afspelen start Seren.
+
+BELANGRIJK: laad eerst je hele collectie in Seren (Films > Mijn films (collectie) en Series > Mijn series (collectie)) tot alles binnen is. Lucent Bibliotheek neemt alleen over wat Seren al kent; titels die Seren nog niet geladen heeft, komen er bij een volgende ronde bij.</description>
+        <news>1.12.0: The rows of every tab (not only the tab on screen) are fetched in the background after start, so a tab you open later is already filled. 1.11.0: No more "The Movie Database Python error ... Not Found" pop-ups: the library now writes the details Seren already has into the files instead of letting Kodi's TMDb scraper look every title up (a wrong TMDb number made the scraper fail). 1.10.1: Fast rows give the score under the names the skin reads (tmdb, trakt) so the score badges show; old saved copies are refreshed once so logos and scores appear. 1.10.0: Watched marks: the library now asks Trakt for your complete watched list itself, page by page (Trakt only gives 100 items per request since 2026, so Seren's copy can miss most of your history), and marks films and episodes as watched in the Kodi library from it; Trakt rows show the watched mark on films too. 1.9.3: Trakt rows show the Trakt score (with votes) next to the TMDb score. 1.9.2: Fast rows get clearlogo, genres, runtime, studio and vote count (TMDb details, saved), and are marked so clicking opens the Lucent page instead of Kodi's scraper. 1.9.1: An empty Trakt row now says why (no TMDb key, not logged in, Trakt error). 1.9.0: Trakt lists as fast Home rows too (watchlist, recommended, trending, anticipated, your own and liked lists), with pictures from TMDb. 1.8.0: Lucent's own Home rows straight from TMDb (trending, popular, top rated, in cinemas, coming soon, series on air): one request per list every 6 hours, saved copy shown at once, no other add-on involved. Pick them under Add row > Lucent fast lists. A click opens the title's page. 1.7.0: Home rows from add-ons (Seren and others) load reliably: the rows only show the saved copy and never start the add-on themselves; the service fetches them one at a time (rows without a copy first, refreshes later and not while you watch), gives up on a fetch that hangs after 45 seconds, keeps the good copy when a fetch fails and tries again later. Continue-watching rows refresh every 15 minutes and after you watched something, other rows every 6 hours. 1.6.5: Rows with library titles (Recently added, Continue watching ...) keep the title's library id, so OK / Info opens the info page again. 1.6.4: Take one episode or a whole season of a series out of the library (Lucent: Options > Remove from library): it stays out, also at the next update; nothing changes on Trakt, and adding the series again brings it back. 1.6.3: Setting the watched marks (and scores) now shows a progress bar at the top of the screen - "Watched marks: 150 of 1240" - and goes much faster: Kodi gets them 50 at a time instead of one by one. 1.6.2: The IMDb, Trakt and TMDB scores Seren shows now also appear for films and series in the Kodi library (also on the rows on Home and on the season page in Lucent). Kodi's TMDB scrapers only keep their own score; no new scan is needed. 1.6.1: New episodes come into the library one day after they were on TV - before that a source often has no link yet. Episodes that are already there stay. 1.6.0: Safer and lighter: a half-finished Seren sync never removes titles, a title only goes after it has been missing for 3 hours, new titles that Seren has not shown yet still get added, only the Lucent folders are scanned and cleaned, watched marks go to Trakt in one batch, and runs can no longer overlap. 1.5.4: Note added: first load your whole collection in Seren, Lucent Library only takes over what Seren already knows. 1.5.3: The message with the number of films and series after updating is back; one odd title no longer stops the whole run. 1.5.0: Add a title to Trakt and the Kodi library at once from Lucent, Home rows from the Kodi library, watched marks to Trakt, Surprise me, settings in Lucent.</news>
+        <platform>all</platform>
+        <license>GPL-2.0-or-later</license>
+        <assets>
+            <icon>resources/icon.png</icon>
+        </assets>
+    </extension>
+</addon>

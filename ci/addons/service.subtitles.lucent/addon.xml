@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="service.subtitles.lucent" version="1.0.0" name="Lucent Ondertitels" provider-name="Claude">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.subtitle.module" library="default.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Subtitles from OpenSubtitles, SubDL and Podnapisi at the same time, in-sync ones first</summary>
+        <summary lang="nl_NL">Ondertitels van OpenSubtitles, SubDL en Podnapisi tegelijk, de passende eerst</summary>
+        <description lang="en_GB">Made for the Lucent skin. Asks all sources at once with a time limit, recognises subtitles that fit your video exactly (file hash and release name), and saves them as UTF-8 so accents show correctly. Needs a free OpenSubtitles account with an API key and a free SubDL API key (add-on settings); Podnapisi works without an account.</description>
+        <description lang="nl_NL">Gemaakt voor de Lucent-skin. Vraagt alle bronnen tegelijk met een tijdslimiet, herkent ondertitels die precies bij je video passen (bestands-hash en releasenaam) en bewaart ze als UTF-8 zodat accenten goed staan. Nodig: een gratis OpenSubtitles-account met API-sleutel en een gratis SubDL-API-sleutel (instellingen van de add-on); Podnapisi werkt zonder account.</description>
+        <platform>all</platform>
+        <license>MIT</license>
+        <news>1.0.0: First version.</news>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+    </extension>
+</addon>
