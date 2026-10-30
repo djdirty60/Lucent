@@ -238,7 +238,8 @@
                 <label></label>
                 <texturefocus>buttons/subtitles_fo.png</texturefocus>
                 <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
-                <onclick>ActivateWindow(osdsubtitlesettings)</onclick>
+                <onclick condition="!Skin.HasSetting(lucent.subs.native.off)">RunScript(special://skin/scripts/subs_live.py)</onclick>
+                <onclick condition="Skin.HasSetting(lucent.subs.native.off)">ActivateWindow(osdsubtitlesettings)</onclick>
                 <visible>true</visible>
             </control>
             <control type="button" id="118">
@@ -249,7 +250,7 @@
                 <texturenofocus>buttons/search_nf.png</texturenofocus>
                 <onclick condition="!Skin.HasSetting(lucent.subs.native.off)">RunScript(special://skin/scripts/subs_live.py)</onclick>
                 <onclick condition="Skin.HasSetting(lucent.subs.native.off)">ActivateWindow(subtitlesearch)</onclick>
-                <visible>true</visible>
+                <visible>Skin.HasSetting(lucent.subs.native.off)</visible>
             </control>
             <control type="button" id="112">
                 <width>84</width>

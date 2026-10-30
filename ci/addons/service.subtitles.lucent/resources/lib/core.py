@@ -184,8 +184,9 @@ def release_match(release, video):
 # ----------------------------------------------------------------------------- OpenSubtitles hash
 def os_hash(path, timeout=4.0):
     """OpenSubtitles' movie hash (size + first and last 64 KB), also over http when the stream allows seeking."""
-    if not path or path.startswith(("plugin://", "pvr://", "rtmp")):
-        return "", 0
+    if not path or path.lower().startswith(("plugin://", "pvr://", "rtmp", "http://", "https://")):
+        return "", 0                    # never open a stream a second time: debrid / IPTV links can drop the film (one
+                                        # connection per link), which stopped playback while the subtitle list opened
     out = {}
 
     def work():

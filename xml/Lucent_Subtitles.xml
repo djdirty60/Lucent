@@ -56,7 +56,7 @@
             <control type="list" id="500">
                 <pagecontrol>60</pagecontrol>
                 <left>40</left><top>172</top><width>1240</width><height>624</height>
-                <onup>500</onup><ondown>9500</ondown><onright>9500</onright><onleft>9500</onleft>
+                <onup>500</onup><ondown>9500</ondown><onright condition="Control.IsVisible(60)">60</onright><onright>9500</onright><onleft>9500</onleft>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
                 <itemlayout height="104" width="1240">
                     <control type="group">
@@ -118,7 +118,7 @@
                         </control>
                         <control type="label">
                             <left>24</left><top>22</top><width>88</width><height>44</height>
-                            <font>font10_bold</font><textcolor>FFFFFFFF</textcolor><align>center</align><aligny>center</aligny>
+                            <font>font10_bold</font><textcolor>FF000000</textcolor><align>center</align><aligny>center</aligny>
                             <label>$INFO[ListItem.Property(code)]</label>
                         </control>
                         <control type="label">
