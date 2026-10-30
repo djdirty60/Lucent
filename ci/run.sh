@@ -35,4 +35,6 @@ timeout 420 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/s
 mkdir -p ci-results
 cp /tmp/ci/out/* ci-results/ 2>/dev/null
 grep -iE "lucent|cidriver|fakeseren|error|CDirectoryProvider|exception|traceback" $K/temp/kodi.log | tail -800 > ci-results/$VARIANT-$RUN.log
+cp /tmp/ci/first.txt ci-results/$VARIANT-$RUN-first.txt; cp /tmp/ci/second.txt ci-results/$VARIANT-$RUN-second.txt
+tail -300 $K/temp/kodi.log > ci-results/$VARIANT-$RUN-tail.log 2>/dev/null
 ls -la ci-results
