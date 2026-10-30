@@ -72,6 +72,9 @@ def streaming_test():
     log(f"stream: after click window={lab('System.CurrentWindow')} path={lab('Container.FolderPath')[:80]} n={lab('Container.NumItems')} "
         f"first={lab('Container.ListItemAbsolute(0).Label')}")
     shot("8c-service-page")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1)
+    log(f"stream: chosen={lab('Container.ListItem.Label')}")
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(8)
     log(f"stream: list window={lab('System.CurrentWindow')} path={lab('Container.FolderPath')[:80]} n={lab('Container.NumItems')} "
