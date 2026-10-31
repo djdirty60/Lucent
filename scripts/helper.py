@@ -194,6 +194,18 @@ def run():
         rowstate["memo"][file] = (stamp, ok)
         return ok
 
+    ROW_ORDER = [(8090, 9988), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
+
+    def top_row():
+        """lucent.toprow: the highest Home row on screen - Back from a row goes there (then to the menu)."""
+        top = ""
+        for cid, marker in ROW_ORDER:
+            if cond(f"Control.IsVisible({marker}) + Integer.IsGreater(Container({cid}).NumItems,0)"):
+                top = str(cid)
+                break
+        if HOME.getProperty("lucent.toprow") != top:
+            HOME.setProperty("lucent.toprow", top)
+
     def rows_state(now):
         """lucent.rowok.N: show Home row N even while its list is empty. Kodi only reads the list of a VISIBLE row, so a
         row hidden for being empty would never fill. A row from Lucent Library is shown when the library has a filled
@@ -201,6 +213,7 @@ def run():
         Kodi to read it. Nothing here pulses on a timer, so the rows do not jump."""
         if not cond("Window.IsActive(home)"):
             return
+        top_row()
         own = xbmc.getInfoLabel("Container(9000).ListItem.Property(w1.path)")
         for n in range(1, 11):
             path = xbmc.getInfoLabel(f"Container(9000).ListItem.Property(w{n}.path)") if own else \
