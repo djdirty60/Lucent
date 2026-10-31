@@ -30,12 +30,17 @@ elif kind == "empty":
     n = 0
 icon = "special://home/addons/plugin.video.fakeseren/icon.png"
 items = []
+NAMES = ["Mango", "Zebra", "Apple", "Kiwi", "Delta", "Banana", "Yankee", "Echo", "Lima", "Charlie", "Oscar", "Hotel",
+         "Golf", "Nectar", "Fig", "Juliet", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "Xray"]
 for i in range(n):
-    li = xbmcgui.ListItem(f"{kind} {i + 1}", offscreen=True)
+    title = NAMES[i] if kind == "names" else f"{kind} {i + 1}"
+    li = xbmcgui.ListItem(title, offscreen=True)
     tag = li.getVideoInfoTag()
     tag.setMediaType("movie")
-    tag.setTitle(f"{kind} {i + 1}")
-    tag.setYear(2000 + i)
+    tag.setTitle(title)
+    tag.setYear(2000 + (i * 7) % 25)
+    tag.setRating(round(1 + (i * 3) % 9 + 0.5, 1))
+    tag.setDateAdded(f"2026-01-{(i * 11) % 28 + 1:02d} 12:00:00")
     li.setArt({"poster": icon, "thumb": icon, "fanart": icon})
     li.setProperty("IsPlayable", "true")
     if kind == "folder":

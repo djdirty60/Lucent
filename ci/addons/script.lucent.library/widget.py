@@ -200,7 +200,8 @@ def listitem(entry):
             pass
     simple = (("title", tag.setTitle), ("plot", tag.setPlot), ("showtitle", tag.setTvShowTitle),
               ("mpaa", tag.setMpaa), ("tagline", tag.setTagLine), ("originaltitle", tag.setOriginalTitle),
-              ("trailer", tag.setTrailer), ("premiered", tag.setPremiered), ("firstaired", tag.setFirstAired))
+              ("trailer", tag.setTrailer), ("premiered", tag.setPremiered), ("firstaired", tag.setFirstAired),
+              ("dateadded", tag.setDateAdded))                   # dateadded: so a row can be sorted on it
     for name, setter in simple:
         if entry.get(name):
             try:

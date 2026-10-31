@@ -314,6 +314,44 @@ def sport_test():
     mon.waitForAbort(2)
 
 
+def row(cid, n=6):
+    return [f"{lab(f'Container({cid}).ListItemAbsolute({i}).Label')}/{lab(f'Container({cid}).ListItemAbsolute({i}).Year')}/"
+            f"{lab(f'Container({cid}).ListItemAbsolute({i}).Rating')}" for i in range(n)]
+
+
+def sort_test():
+    """Home row 1 (8101, poster): the widget's sort option re-orders the row."""
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(3)
+    log(f"sort: default n={lab('Container(8101).NumItems')} {row(8101)}")
+    for key in ("title", "year", "rating", "dateadded", ""):
+        for name in ("nuvio.home.w1.sort", "nuvio.tab1.w1.sort"):
+            xbmc.executebuiltin(f"Skin.SetString({name},{key})" if key else f"Skin.Reset({name})")
+        mon.waitForAbort(6)
+        log(f"sort: {key or 'source'} n={lab('Container(8101).NumItems')} {row(8101)}")
+        shot(f"12-sort-{key or 'source'}")
+    # the menu editor stores the choice (load, change, save through menu.py itself)
+    import sys
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    try:
+        import menu
+        m = menu.Menu()
+        m.tabs[0]["widgets"][0]["sort"] = "title"
+        m.save()
+        mon.waitForAbort(4)
+        log(f"sort: via menu.py tab={lab('Skin.String(nuvio.tab1.w1.sort)')!r} home={lab('Skin.String(nuvio.home.w1.sort)')!r} "
+            f"names={[n for _k, n in menu.SORTS()]} row={row(8101, 4)}")
+        m = menu.Menu()
+        log(f"sort: reloaded menu.py sort={m.tabs[0]['widgets'][0].get('sort')!r} label={m.tabs[0]['widgets'][0]['label']!r}")
+    except Exception as error:  # noqa: BLE001
+        log(f"sort: menu.py error {error!r}")
+
+
+def xbmcvfs_translate(path):
+    import xbmcvfs
+    return xbmcvfs.translatePath(path)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -325,7 +363,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    sport_test()
+    sort_test()
     nav_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
