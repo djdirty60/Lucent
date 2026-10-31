@@ -5,6 +5,116 @@
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w1.label)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w1.label)]</value>
     </variable>
+    <!-- widget 1: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW1Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.sort))">$INFO[Skin.String(nuvio.home.w1.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.sort))">$INFO[Container(9000).ListItem.Property(w1.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW1Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w1.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w1.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 2: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW2Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.sort))">$INFO[Skin.String(nuvio.home.w2.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.sort))">$INFO[Container(9000).ListItem.Property(w2.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW2Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w2.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w2.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 3: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW3Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.sort))">$INFO[Skin.String(nuvio.home.w3.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.sort))">$INFO[Container(9000).ListItem.Property(w3.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW3Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w3.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w3.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 4: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW4Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.sort))">$INFO[Skin.String(nuvio.home.w4.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.sort))">$INFO[Container(9000).ListItem.Property(w4.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW4Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w4.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w4.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 5: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW5Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.sort))">$INFO[Skin.String(nuvio.home.w5.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.sort))">$INFO[Container(9000).ListItem.Property(w5.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW5Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w5.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w5.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 6: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW6Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.sort))">$INFO[Skin.String(nuvio.home.w6.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.sort))">$INFO[Container(9000).ListItem.Property(w6.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW6Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w6.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w6.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 7: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW7Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.sort))">$INFO[Skin.String(nuvio.home.w7.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.sort))">$INFO[Container(9000).ListItem.Property(w7.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW7Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w7.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w7.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 8: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW8Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.sort))">$INFO[Skin.String(nuvio.home.w8.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.sort))">$INFO[Container(9000).ListItem.Property(w8.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW8Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w8.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w8.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 9: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW9Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.sort))">$INFO[Skin.String(nuvio.home.w9.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.sort))">$INFO[Container(9000).ListItem.Property(w9.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW9Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w9.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w9.sort))]"></value>
+        <value>descending</value>
+    </variable>
+    <!-- widget 10: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW10Sort">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.sort))">$INFO[Skin.String(nuvio.home.w10.sort)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.sort))">$INFO[Container(9000).ListItem.Property(w10.sort)]</value>
+        <value>userpreference</value>
+    </variable>
+    <variable name="NuvioW10Order">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),title)]">ascending</value>
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),userpreference)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),userpreference)] | [String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Skin.String(nuvio.home.w10.sort))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEmpty(Container(9000).ListItem.Property(w10.sort))]"></value>
+        <value>descending</value>
+    </variable>
     <variable name="NuvioW1Path">
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w1.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w1.path)]</value>
@@ -7604,7 +7714,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW1PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 1 (land) -->
@@ -7885,7 +7995,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW1PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathLand]</content>
                 </control>
             </control>
             <!-- Widget 2 (poster) -->
@@ -8205,7 +8315,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW2PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 2 (land) -->
@@ -8486,7 +8596,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW2PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathLand]</content>
                 </control>
             </control>
             <!-- Widget 3 (poster) -->
@@ -8806,7 +8916,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW3PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 3 (land) -->
@@ -9087,7 +9197,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW3PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathLand]</content>
                 </control>
             </control>
             <!-- Widget 4 (poster) -->
@@ -9407,7 +9517,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW4PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 4 (land) -->
@@ -9688,7 +9798,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW4PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathLand]</content>
                 </control>
             </control>
             <!-- Widget 5 (poster) -->
@@ -10008,7 +10118,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW5PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 5 (land) -->
@@ -10289,7 +10399,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW5PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathLand]</content>
                 </control>
             </control>
             <!-- Widget 6 (poster) -->
@@ -10609,7 +10719,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW6PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 6 (land) -->
@@ -10890,7 +11000,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW6PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathLand]</content>
                 </control>
             </control>
             <!-- Widgets 7-10: not built at all in light mode (Skin setting lucent.lite; the skin reloads when it changes) -->
@@ -11214,7 +11324,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW7PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 7 (land) -->
@@ -11495,7 +11605,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW7PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathLand]</content>
                 </control>
             </control>
             <!-- Widget 8 (poster) -->
@@ -11815,7 +11925,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW8PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 8 (land) -->
@@ -12096,7 +12206,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW8PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathLand]</content>
                 </control>
             </control>
             <!-- Widget 9 (poster) -->
@@ -12416,7 +12526,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW9PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 9 (land) -->
@@ -12697,7 +12807,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW9PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathLand]</content>
                 </control>
             </control>
             <!-- Widget 10 (poster) -->
@@ -13017,7 +13127,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW10PathPoster]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 10 (land) -->
@@ -13298,7 +13408,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="userpreference">$VAR[NuvioW10PathLand]</content>
+                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathLand]</content>
                 </control>
             </control>
     </include>
@@ -13312,33 +13422,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab1.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab1.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab1.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab1.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab1.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab1.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab1.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab1.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab1.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab1.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab1.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab1.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab1.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab1.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab1.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab1.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab1.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab1.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab1.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab1.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab1.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab1.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab1.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab1.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab1.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab1.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab1.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab1.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab1.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab1.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab1.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab1.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab1.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab1.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab1.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab1.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab1.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab1.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab1.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab1.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab1.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab1)]</visible>
                 </item>
                 <item>
@@ -13349,33 +13469,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab2.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab2.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab2.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab2.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab2.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab2.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab2.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab2.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab2.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab2.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab2.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab2.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab2.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab2.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab2.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab2.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab2.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab2.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab2.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab2.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab2.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab2.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab2.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab2.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab2.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab2.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab2.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab2.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab2.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab2.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab2.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab2.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab2.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab2.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab2.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab2.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab2.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab2.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab2.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab2.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab2.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab2)]</visible>
                 </item>
                 <item>
@@ -13386,33 +13516,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab3.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab3.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab3.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab3.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab3.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab3.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab3.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab3.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab3.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab3.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab3.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab3.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab3.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab3.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab3.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab3.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab3.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab3.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab3.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab3.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab3.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab3.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab3.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab3.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab3.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab3.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab3.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab3.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab3.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab3.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab3.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab3.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab3.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab3.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab3.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab3.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab3.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab3.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab3.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab3.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab3.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab3)]</visible>
                 </item>
                 <item>
@@ -13423,33 +13563,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab4.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab4.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab4.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab4.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab4.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab4.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab4.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab4.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab4.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab4.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab4.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab4.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab4.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab4.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab4.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab4.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab4.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab4.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab4.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab4.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab4.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab4.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab4.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab4.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab4.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab4.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab4.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab4.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab4.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab4.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab4.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab4.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab4.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab4.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab4.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab4.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab4.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab4.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab4.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab4.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab4.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab4)]</visible>
                 </item>
                 <item>
@@ -13460,33 +13610,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab5.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab5.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab5.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab5.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab5.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab5.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab5.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab5.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab5.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab5.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab5.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab5.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab5.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab5.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab5.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab5.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab5.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab5.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab5.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab5.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab5.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab5.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab5.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab5.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab5.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab5.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab5.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab5.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab5.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab5.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab5.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab5.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab5.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab5.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab5.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab5.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab5.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab5.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab5.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab5.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab5.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab5)]</visible>
                 </item>
                 <item>
@@ -13497,33 +13657,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab6.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab6.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab6.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab6.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab6.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab6.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab6.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab6.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab6.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab6.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab6.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab6.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab6.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab6.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab6.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab6.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab6.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab6.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab6.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab6.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab6.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab6.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab6.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab6.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab6.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab6.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab6.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab6.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab6.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab6.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab6.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab6.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab6.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab6.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab6.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab6.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab6.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab6.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab6.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab6.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab6.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab6)]</visible>
                 </item>
                 <item>
@@ -13534,33 +13704,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab7.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab7.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab7.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab7.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab7.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab7.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab7.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab7.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab7.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab7.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab7.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab7.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab7.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab7.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab7.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab7.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab7.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab7.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab7.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab7.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab7.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab7.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab7.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab7.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab7.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab7.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab7.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab7.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab7.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab7.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab7.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab7.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab7.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab7.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab7.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab7.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab7.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab7.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab7.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab7.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab7.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab7)]</visible>
                 </item>
                 <item>
@@ -13571,33 +13751,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab8.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab8.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab8.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab8.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab8.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab8.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab8.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab8.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab8.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab8.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab8.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab8.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab8.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab8.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab8.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab8.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab8.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab8.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab8.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab8.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab8.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab8.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab8.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab8.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab8.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab8.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab8.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab8.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab8.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab8.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab8.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab8.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab8.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab8.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab8.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab8.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab8.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab8.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab8.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab8.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab8.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab8)]</visible>
                 </item>
                 <item>
@@ -13608,33 +13798,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab9.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab9.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab9.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab9.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab9.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab9.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab9.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab9.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab9.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab9.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab9.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab9.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab9.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab9.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab9.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab9.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab9.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab9.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab9.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab9.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab9.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab9.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab9.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab9.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab9.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab9.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab9.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab9.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab9.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab9.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab9.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab9.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab9.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab9.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab9.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab9.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab9.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab9.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab9.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab9.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab9.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab9)]</visible>
                 </item>
                 <item>
@@ -13645,33 +13845,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab10.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab10.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab10.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab10.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab10.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab10.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab10.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab10.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab10.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab10.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab10.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab10.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab10.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab10.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab10.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab10.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab10.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab10.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab10.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab10.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab10.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab10.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab10.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab10.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab10.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab10.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab10.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab10.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab10.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab10.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab10.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab10.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab10.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab10.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab10.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab10.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab10.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab10.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab10.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab10.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab10.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab10)]</visible>
                 </item>
                 <item>
@@ -13682,33 +13892,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab11.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab11.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab11.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab11.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab11.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab11.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab11.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab11.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab11.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab11.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab11.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab11.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab11.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab11.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab11.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab11.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab11.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab11.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab11.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab11.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab11.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab11.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab11.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab11.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab11.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab11.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab11.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab11.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab11.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab11.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab11.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab11.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab11.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab11.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab11.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab11.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab11.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab11.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab11.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab11.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab11.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab11)]</visible>
                 </item>
                 <item>
@@ -13719,33 +13939,43 @@
                     <property name="w1.label">$INFO[Skin.String(nuvio.tab12.w1.label)]</property>
                     <property name="w1.path">$INFO[Skin.String(nuvio.tab12.w1.path)]</property>
                     <property name="w1.style">$INFO[Skin.String(nuvio.tab12.w1.style)]</property>
+                    <property name="w1.sort">$INFO[Skin.String(nuvio.tab12.w1.sort)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab12.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab12.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab12.w2.style)]</property>
+                    <property name="w2.sort">$INFO[Skin.String(nuvio.tab12.w2.sort)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab12.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab12.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab12.w3.style)]</property>
+                    <property name="w3.sort">$INFO[Skin.String(nuvio.tab12.w3.sort)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab12.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab12.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab12.w4.style)]</property>
+                    <property name="w4.sort">$INFO[Skin.String(nuvio.tab12.w4.sort)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab12.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab12.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab12.w5.style)]</property>
+                    <property name="w5.sort">$INFO[Skin.String(nuvio.tab12.w5.sort)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab12.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab12.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab12.w6.style)]</property>
+                    <property name="w6.sort">$INFO[Skin.String(nuvio.tab12.w6.sort)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab12.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab12.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab12.w7.style)]</property>
+                    <property name="w7.sort">$INFO[Skin.String(nuvio.tab12.w7.sort)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab12.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab12.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab12.w8.style)]</property>
+                    <property name="w8.sort">$INFO[Skin.String(nuvio.tab12.w8.sort)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab12.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab12.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab12.w9.style)]</property>
+                    <property name="w9.sort">$INFO[Skin.String(nuvio.tab12.w9.sort)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab12.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab12.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab12.w10.style)]</property>
+                    <property name="w10.sort">$INFO[Skin.String(nuvio.tab12.w10.sort)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab12.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab12)]</visible>
                 </item>
                 <item>

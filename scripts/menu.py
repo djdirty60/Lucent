@@ -45,6 +45,7 @@ T = {
     "max_widgets": ("A tab can have at most {0} widgets.", "Een tab kan maximaal {0} widgets hebben."),
     "add_widget": ("+ Add a widget", "+ Widget toevoegen"),
     "style": ("Style", "Stijl"),
+    "sort": ("Sort", "Sorteren"),
     "poster": ("Posters", "Posters"),
     "land": ("Landscape", "Liggend"),
     "remove_widget": ("Remove this widget", "Deze widget verwijderen"),
@@ -464,7 +465,8 @@ class Menu:
                 path = self._read(f"nuvio.tab{t}.w{w}.path")
                 if path:
                     widgets.append({"label": self._read(f"nuvio.tab{t}.w{w}.label"), "path": path,
-                                    "style": self._read(f"nuvio.tab{t}.w{w}.style") or "poster"})
+                                    "style": self._read(f"nuvio.tab{t}.w{w}.style") or "poster",
+                                    "sort": self._read(f"nuvio.tab{t}.w{w}.sort")})
             self.tabs.append({"label": label, "icon": self._read(f"nuvio.tab{t}.icon"),
                               "action": self._read(f"nuvio.tab{t}.action"), "widgets": widgets,
                               "actionlabel": self._read(f"nuvio.tab{t}.actionlabel"),
@@ -475,7 +477,7 @@ class Menu:
         for tab in self.tabs:
             if str(tab["slot"]) == start_slot:
                 self.start = tab
-        for name in [f"nuvio.home.w{w}.{p}" for w in range(1, NWIDGETS + 1) for p in ("label", "path", "style")] + ["nuvio.homepos"]:
+        for name in [f"nuvio.home.w{w}.{p}" for w in range(1, NWIDGETS + 1) for p in ("label", "path", "style", "sort")] + ["nuvio.homepos"]:
             self._read(name)
 
     def _read(self, name):
@@ -509,16 +511,16 @@ class Menu:
             wanted[f"nuvio.tab{t}.actionlabel"] = tab.get("actionlabel", "") if tab else ""
             for w in range(1, NWIDGETS + 1):
                 wd = tab["widgets"][w - 1] if tab and w <= len(tab["widgets"]) else None
-                for p in ("label", "path", "style"):
-                    wanted[f"nuvio.tab{t}.w{w}.{p}"] = wd[p] if wd else ""
+                for p in ("label", "path", "style", "sort"):
+                    wanted[f"nuvio.tab{t}.w{w}.{p}"] = wd.get(p, "") if wd else ""
         start = self.start_tab()
         start_index = self.tabs.index(start) if start else -1
         wanted["nuvio.hometab"] = str(start_index + 1) if start else ""
         wanted["nuvio.homepos"] = str(start_index) if start else ""
         for w in range(1, NWIDGETS + 1):
             wd = start["widgets"][w - 1] if start and w <= len(start["widgets"]) else None
-            for p in ("label", "path", "style"):
-                wanted[f"nuvio.home.w{w}.{p}"] = wd[p] if wd else ""
+            for p in ("label", "path", "style", "sort"):
+                wanted[f"nuvio.home.w{w}.{p}"] = wd.get(p, "") if wd else ""
         wanted["nuvio.menu.version"] = VERSION
 
         changes = [(k, v) for k, v in wanted.items() if self.snapshot.get(k, get(k)) != v]
@@ -745,21 +747,44 @@ def edit_widgets(menu, tab):
                 menu.save()
             continue
         wd = widgets[choice]
-        actions = [tr("rename"), f"{tr('style')}: {tr(wd['style'])}", tr("up"), tr("down"), tr("remove_widget")]
+        actions = [tr("rename"), f"{tr('style')}: {tr(wd['style'])}", f"{tr('sort')}: {sort_name(wd.get('sort', ''))}",
+                   tr("up"), tr("down"), tr("remove_widget")]
         act = select(wd["label"], actions)
         if act == 0:
             wd["label"] = keyboard(tr("rename"), wd["label"]) or wd["label"]
         elif act == 1:
             wd["style"] = "land" if wd["style"] == "poster" else "poster"
-        elif act == 2 and choice > 0:
+        elif act == 2:
+            pick = select(tr("sort"), [name for _key, name in SORTS()])
+            if pick < 0:
+                continue
+            wd["sort"] = SORTS()[pick][0]
+        elif act == 3 and choice > 0:
             widgets[choice - 1], widgets[choice] = widgets[choice], widgets[choice - 1]
-        elif act == 3 and choice < len(widgets) - 1:
+        elif act == 4 and choice < len(widgets) - 1:
             widgets[choice + 1], widgets[choice] = widgets[choice], widgets[choice + 1]
-        elif act == 4:
+        elif act == 5:
             widgets.pop(choice)
         else:
             continue
         menu.save()
+
+
+def SORTS():
+    """(Kodi sort method for the Home row, name). Empty = the order of the source (Seren, Trakt ...)."""
+    return [("", tr(G("As the source gives it", "Zoals de bron het geeft"))),
+            ("title", tr(G("A–Z (title)", "A–Z (titel)"))),
+            ("year", tr(G("Year (newest first)", "Jaar (nieuwste eerst)"))),
+            ("rating", tr(G("Rating (highest first)", "Beoordeling (hoogste eerst)"))),
+            ("dateadded", tr(G("Date added (newest first)", "Datum toegevoegd (nieuwste eerst)"))),
+            ("random", tr(G("Random", "Willekeurig")))]
+
+
+def sort_name(key):
+    for k, name in SORTS():
+        if k == key:
+            return name
+    return SORTS()[0][1]
 
 
 def addon_title(addon_id):
