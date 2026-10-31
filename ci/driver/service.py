@@ -98,6 +98,35 @@ def streaming_test():
     mon.waitForAbort(3)
 
 
+def nav_test():
+    """Up / down between rows (a poster row on top), wrapping at the ends, and Back: first item, top row, menu."""
+    fid = lambda: lab("System.CurrentControlID")  # noqa: E731
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(1.5)
+    out = [f"start={fid()} toprow={HOME.getProperty('lucent.toprow')}"]
+    for key in ("Down", "Down", "Down", "Up", "Up", "Up"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(1.2)
+        out.append(f"{key}->{fid()}")
+    log("nav: " + " ".join(out))
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1.2)
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1.2)
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.6)
+    out = [f"at={fid()} item={lab('Container(' + fid() + ').CurrentItem')}"]
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(1.2)
+        f = fid()
+        out.append(f"Back->{f} item={lab('Container(' + f + ').CurrentItem')}")
+    log("back: " + " ".join(out))
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(1)
+
+
 def psnap(phase):
     try:
         pos = round(xbmc.Player().getTime(), 1) if xbmc.Player().isPlayingVideo() else -1
@@ -185,6 +214,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 50)
     shot("1-home")
+    nav_test()
     log("switch to Films")
     xbmc.executebuiltin("Control.SetFocus(9000,1)")
     watch("films1", 120)

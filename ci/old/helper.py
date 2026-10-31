@@ -157,22 +157,21 @@ def run():
             return
         swap["t"] = now
         xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
-        xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py)")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")
         log("Kodi's subtitle search -> Lucent live list")
 
     lost = {"n": 0}
-    pulse = {"sig": None, "until": 0.0, "ok": {}, "memo": {}}
+    rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
     libdir = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/")
 
-    def row_ok(path):
-        """True when Lucent Library has a filled copy of this row: then the row is shown before its list is read, so the
-        list reads its path at once (Kodi only reads the path of a visible list - a row hidden because it was empty
-        would otherwise never fill)."""
-        if not path.startswith("plugin://") or cond("Skin.HasSetting(lucent.wcache.off) | !System.HasAddon(script.lucent.library)"):
-            return False
-        if path.startswith("plugin://script.lucent.library/?action=lib"):
-            return True
-        if path.startswith("plugin://script.lucent.library/?action=tmdb"):
+    def cached(path):
+        """True / False: Lucent Library has a filled / no copy of this row. None: the row does not come from its copies."""
+        if not path.startswith("plugin://") or path.startswith("plugin://script.lucent.library/?action=lib") or \
+                cond("Skin.HasSetting(lucent.wcache.off) | !System.HasAddon(script.lucent.library)"):
+            return None
+        if path.startswith("plugin://script.lucent.library/?action=providers"):
+            file = os.path.join(libdir, "tmdb", "providers.json")        # the streaming services row
+        elif path.startswith("plugin://script.lucent.library/?action=tmdb"):
             q = urllib.parse.parse_qs(path.split("?", 1)[1])
             name = (q.get("list") or [""])[0]
             if name == "tl":
@@ -184,39 +183,35 @@ def run():
             stamp = os.path.getmtime(file)
         except OSError:
             return False
-        memo = pulse["memo"].get(file)
+        memo = rowstate["memo"].get(file)
         if memo and memo[0] == stamp:
             return memo[1]
         try:
             with open(file, encoding="utf-8") as fh:
                 ok = bool(json.load(fh).get("items"))
-        except Exception:  # noqa: BLE001 - being written right now: ask again next round
-            return False
-        pulse["memo"][file] = (stamp, ok)
+        except Exception:  # noqa: BLE001 - being written right now: keep what we knew
+            return memo[1] if memo else False
+        rowstate["memo"][file] = (stamp, ok)
         return ok
 
-    def rows_pulse(now):
-        """Which Home rows to show. A row is shown when it has items, while it loads, when the library has a filled copy
-        (lucent.rowok.N), and for a moment after a tab switch or a new copy (lucent.rowsrefresh) for rows from other
-        sources, so every list reads its path again."""
-        if pulse["until"] and now >= pulse["until"]:
-            HOME.clearProperty("lucent.rowsrefresh")
-            pulse["until"] = 0.0
+    def rows_state(now):
+        """lucent.rowok.N: show Home row N even while its list is empty. Kodi only reads the list of a VISIBLE row, so a
+        row hidden for being empty would never fill. A row from Lucent Library is shown when the library has a filled
+        copy; a row from elsewhere is shown for a few seconds after its path changed (a tab switch), long enough for
+        Kodi to read it. Nothing here pulses on a timer, so the rows do not jump."""
         if not cond("Window.IsActive(home)"):
             return
-        sig = "|".join([xbmc.getInfoLabel("Container(9000).ListItem.Label")] +
-                       [HOME.getProperty(f"lucent.wr.{n}") for n in range(1, 11)])
-        if sig != pulse["sig"]:
-            pulse["sig"] = sig
-            HOME.setProperty("lucent.rowsrefresh", "1")
-            pulse["until"] = now + 2.5
         own = xbmc.getInfoLabel("Container(9000).ListItem.Property(w1.path)")
         for n in range(1, 11):
             path = xbmc.getInfoLabel(f"Container(9000).ListItem.Property(w{n}.path)") if own else \
                 xbmc.getInfoLabel(f"Skin.String(nuvio.home.w{n}.path)")
-            ok = row_ok(path) if path else False
-            if pulse["ok"].get(n) != ok:
-                pulse["ok"][n] = ok
+            if rowstate["path"].get(n) != path:
+                rowstate["path"][n] = path
+                rowstate["fresh"][n] = now + 4.0
+            have = cached(path) if path else False
+            ok = bool(have) if have is not None else (bool(path) and now < rowstate["fresh"].get(n, 0))
+            if rowstate["ok"].get(n) != ok:
+                rowstate["ok"][n] = ok
                 if ok:
                     HOME.setProperty(f"lucent.rowok.{n}", "1")
                 else:
@@ -252,7 +247,7 @@ def run():
             except Exception as error:  # noqa: BLE001
                 log(f"subtitles: {error}")
             try:
-                rows_pulse(now)
+                rows_state(now)
             except Exception as error:  # noqa: BLE001
                 log(f"rows: {error}")
             try:

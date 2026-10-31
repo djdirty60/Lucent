@@ -8,7 +8,7 @@ home = os.path.expanduser("~/.kodi")
 stage = sys.argv[1]
 W = "plugin://plugin.video.fakeseren/?list="
 tabs = {
-    1: ("Home", "", [("Snel A", W + "fast"), ("Traag B", W + "slow"), ("Lege bibliotheek", "videodb://movies/titles/"), ("Lucent bib", "plugin://script.lucent.library/?action=lib&kind=movies&list=recent")]),
+    1: ("Home", "", [("Snel A", W + "fast"), ("Traag B", W + "slow"), ("Snel X", W + "fast4"), ("Lege bibliotheek", "videodb://movies/titles/"), ("Lucent bib", "plugin://script.lucent.library/?action=lib&kind=movies&list=recent")]),
     3: ("Streaming", "", [("Streamingdiensten", "plugin://script.lucent.library/?action=providers"),
                           ("Netflix nieuw", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie")]),
     2: ("Films", "", [("Snel C", W + "fast2"), ("Traag D", W + "slow2"), ("Wisselvallig E", W + "flaky"),
@@ -24,7 +24,7 @@ if stage == "skin":
         for w, (lab, path) in enumerate(rows, 1):
             s[f"nuvio.tab{t}.w{w}.label"] = lab
             s[f"nuvio.tab{t}.w{w}.path"] = path
-            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1)) else "poster"
+            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2)) else "poster"
             if t == 1:
                 s[f"nuvio.home.w{w}.label"] = lab
                 s[f"nuvio.home.w{w}.path"] = path
