@@ -1500,6 +1500,43 @@ def probe_test():
         log(f"probe tsdb key {key}: n={len(teams)} err={d.get('error')} stadium={(teams[0].get('strStadium'), teams[0].get('strStadiumThumb') or teams[0].get('strVenueThumb'), teams[0].get('strFanart1')) if teams else None}")
 
 
+def club_test():
+    """Club page: logo behind the games, club colours, stadium photo in the TV window; All games: stadium of the home team."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    row = next((r for r in sc.standings("ned.1") if "Ajax" in (r.get("team") or "")), None)
+    log(f"club: ajax row={(row or {}).get('id')!r}")
+    if not row:
+        return
+    xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,team,ned.1,{row['id']},{row['team']})")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if lab("Window.Property(sport.view)") == "team" and lab("Window.Property(sport.stadium)"):
+            break
+    mon.waitForAbort(3)
+    W = lambda k: lab(f"Window.Property({k})")  # noqa: E731
+    log(f"club: view={W('sport.view')!r} games={lab('Container(200).NumItems')} logo={W('sport.teamlogo')[-40:]!r} bg={W('sport.bgA')!r} "
+        f"stadium={W('sport.stadium')[-60:]!r} name={W('sport.stadium.name')!r}")
+    shot("38-club")
+    xbmc.executebuiltin("SetFocus(102)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(200,1,absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Down)")
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if W("sport.stadium"):
+            break
+    log(f"club: all games on {lab('Container(200).ListItem.Property(hname)')!r} stadium={W('sport.stadium')[-60:]!r} name={W('sport.stadium.name')!r}")
+    shot("38-allgames-stadium")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1513,10 +1550,10 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    sportA_test()
-    probe_test()
     f1_test()
     tables_test()
+    club_test()
+    mine_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

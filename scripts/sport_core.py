@@ -13,9 +13,11 @@ Competitions come from CATALOG below; each has a "kind":
   event   a race weekend / a tournament / a fight card: shown with its name (Formula 1: every session is a row)
 """
 import datetime
+import json
 import re
 import time
 import unicodedata
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
@@ -142,7 +144,8 @@ TX = {
     "hint": ("OK: game info   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdinfo   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
-    "also_today": ("Also today", "Ook vandaag"), "your_week": ("Your teams this week", "Jouw teams deze week"),
+    "also_today": ("Also today", "Ook vandaag"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
+    "watch_on": ("Watch on {}", "Kijk op {}"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
     "goal_alerts": ("Goal alerts on for {}", "Doelpuntmeldingen aan voor {}"),
     "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
@@ -464,6 +467,83 @@ def circuit_white(target):
         return ""
 
 
+STADIUM_PATH = DATA + "sport_stadiums.json"
+TSDB = "https://www.thesportsdb.com/api/v1/json/123/"     # TheSportsDB's free key
+TSDB_SPORT = {"soccer": "Soccer", "basketball": "Basketball", "football": "American Football", "hockey": "Ice Hockey",
+              "baseball": "Baseball", "rugby": "Rugby"}
+
+
+def stadium_photo(name, sport=""):
+    """(photo URL, stadium name) of a team's home ground from TheSportsDB; remembered 30 days (a miss 3 days)."""
+    key = f"{norm(name)}|{sport}"
+    known = ac.read_json(STADIUM_PATH, {})
+    hit = known.get(key)
+    if hit and time.time() - hit.get("t", 0) < (30 if hit.get("img") else 3) * 86400:
+        return hit.get("img", ""), hit.get("name", "")
+    img, stadium = "", ""
+    try:
+        query = urllib.parse.quote(name)
+        data = json.loads(_tsdb_get(f"{TSDB}searchteams.php?t={query}") or "{}")
+        teams = data.get("teams") or []
+        want = TSDB_SPORT.get(sport, "")
+        teams.sort(key=lambda t: (want and t.get("strSport") != want, norm(t.get("strTeam")) != norm(name)))
+        if teams:
+            team = teams[0]
+            stadium = team.get("strStadium") or team.get("strVenue") or ""
+            if team.get("idVenue"):
+                venue = (json.loads(_tsdb_get(f"{TSDB}lookupvenue.php?id={team['idVenue']}") or "{}").get("venues") or [{}])[0]
+                img = venue.get("strThumb") or venue.get("strFanart1") or venue.get("strFanart2") or ""
+                stadium = venue.get("strVenue") or stadium
+            img = img or team.get("strStadiumThumb") or team.get("strFanart1") or team.get("strBanner") or ""
+    except Exception as error:  # noqa: BLE001 - no photo is fine
+        log(f"stadium {name}: {error}")
+    known[key] = {"img": img, "name": stadium, "t": time.time()}
+    try:
+        ac.write_json(STADIUM_PATH, known)
+    except Exception as error:  # noqa: BLE001
+        log(f"cannot save stadiums: {error}")
+    return img, stadium
+
+
+def _tsdb_get(url):
+    request = urllib.request.Request(url, headers=dict(BROWSER))
+    with urllib.request.urlopen(request, timeout=15) as response:
+        return response.read().decode("utf-8", "replace")
+
+
+def circuit_dark(cid, diagrams):
+    """ESPN's track drawing made for dark backgrounds (only offered as SVG): asked as a PNG through ESPN's image
+    service and saved locally. Returns the file path or ''."""
+    target = DATA + f"circuit_{cid}_dark.png"
+    local = xbmcvfs.translatePath(target)
+    try:
+        with open(local, "rb") as handle:
+            if handle.read(8) == b"\x89PNG\r\n\x1a\n":
+                return target
+    except OSError:
+        pass
+    for d in diagrams:
+        rel, href = d.get("rel") or [], (d.get("href") or "").replace("http://", "https://")
+        if not ("circuit-dark" in rel and href):
+            continue
+        path = href.rsplit(".", 1)[0].split("espncdn.com", 1)[-1]
+        for url in (f"https://a.espncdn.com/combiner/i?img={path}.svg&w=1000&format=png",
+                    f"https://a.espncdn.com/combiner/i?img={path}.png&w=1000", href.rsplit(".", 1)[0] + ".png"):
+            try:
+                request = urllib.request.Request(url, headers=dict(BROWSER))
+                with urllib.request.urlopen(request, timeout=20) as response:
+                    raw = response.read()
+                if raw[:8] == b"\x89PNG\r\n\x1a\n" and len(raw) > 2000:
+                    xbmcvfs.mkdirs(DATA)
+                    with open(local, "wb") as handle:
+                        handle.write(raw)
+                    log(f"circuit {cid}: dark drawing from {url}")
+                    return target
+            except Exception as error:  # noqa: BLE001 - try the next address
+                log(f"circuit dark {url}: {error}")
+    return ""
+
+
 def circuit_png(cid, diagrams):
     """Try to get the track drawing as a PNG with a see-through background; saved locally. Returns the file path or ''."""
     target = DATA + f"circuit_{cid}.png"           # Kodi shows this special:// path ...
@@ -593,14 +673,7 @@ def circuit_info(cid, league="f1"):
         if image:
             break
     png = circuit_png(cid, data.get("diagrams") or [])
-    dark = ""                                          # ESPN's drawing for dark backgrounds (a light track), when it has one
-    for d in data.get("diagrams") or []:
-        rel, href = d.get("rel") or [], d.get("href") or ""
-        if any("dark" in r for r in rel) and not any("info" in r for r in rel) and href.lower().endswith((".jpg", ".png")):
-            dark = href.replace("http://", "https://")
-            if "circuit" in rel:
-                break
-    log(f"circuit {cid} diagrams: {[(d.get('rel'), (d.get('href') or '')[-40:]) for d in data.get('diagrams') or []]}")
+    dark = circuit_dark(cid, data.get("diagrams") or [])  # ESPN's drawing for dark backgrounds (a light track)
     info_ = {"name": data.get("fullName") or "", "place": place, "png": png, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
              "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
              "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image, "dark": dark, "pv": 3}
