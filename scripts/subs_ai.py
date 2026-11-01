@@ -85,6 +85,34 @@ def parse_srt(text):
     return cues
 
 
+# hearing-impaired notes: (he sighs), [wind howling], ♪ music ♪, and speaker names like "JOHN:" or "- MAN:"
+SDH_BRACKETS = re.compile(r"\([^)]*\)|\[[^\]]*\]|\{\*?[^}]*\}|<i>\s*\([^)]*\)\s*</i>")
+SDH_SPEAKER = re.compile(r"^(\s*-?\s*)(?:<i>)?[A-Z][A-Z0-9 .'#-]{1,30}:\s*(?:</i>)?")
+SDH_MUSIC = re.compile(r"^[\s\-]*[♪♫#*]+.*$|^.*[♪♫]+[\s\-]*$")
+
+
+def clean_sdh(text):
+    """Remove what is meant for the hard of hearing; keep the spoken words. '' when nothing spoken is left."""
+    out = []
+    for line in text.split("\n"):
+        line = SDH_BRACKETS.sub("", line)
+        line = SDH_SPEAKER.sub(r"\1", line)
+        if SDH_MUSIC.match(line):
+            continue
+        line = re.sub(r"<(i|b|u)>\s*</\1>", "", line)
+        line = re.sub(r"\s{2,}", " ", line).strip()
+        if line in ("", "-", "...", "- ...") or not re.search(r"\w", line):
+            continue
+        out.append(line)
+    if len(out) == 1 and out[0].startswith("- "):
+        out[0] = out[0][2:]                               # a dialogue dash with only one speaker left
+    return "\n".join(out)
+
+
+def keep_sdh():
+    return xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.ai.keephi)")
+
+
 def write_srt(path, cues):
     out = []
     for n, c in enumerate(cues, start=1):
@@ -119,6 +147,8 @@ def has_key():
 def make_prompt(lines, target):
     return (f"Translate these film/TV subtitle lines from English into natural, spoken {target}. "
             "Keep it short like real subtitles, keep line breaks (\\n) inside a line, keep names, do not add notes. "
+            "Do not translate or add descriptions of sounds or actions such as (sighs) or [music]; give an empty string for a line "
+            "that is only such a description. "
             f"Return only a JSON array with exactly {len(lines)} strings, in the same order.\n\n"
             + json.dumps(lines, ensure_ascii=False))
 
@@ -213,7 +243,7 @@ def media_key():
 
 
 def cached_for_current(code):
-    path = os.path.join(DIR, f"{media_key()}.{code}.srt")
+    path = os.path.join(DIR, f"{media_key()}.{code}.v2.srt")
     return path if os.path.exists(path) else ""
 
 
@@ -229,6 +259,12 @@ def translate_and_load(source_path, code):
     except Exception as error:  # noqa: BLE001
         log(f"read {source_path}: {error}")
         cues = []
+    if cues and not keep_sdh():
+        before = len(cues)
+        for c in cues:
+            c["text"] = clean_sdh(c["text"])
+        cues = [c for c in cues if c["text"]]
+        log(f"hearing-impaired notes removed: {before - len(cues)} lines were only sounds")
     if not cues:
         notify(t("This subtitle cannot be read (not SRT)", "Deze ondertitel is niet te lezen (geen SRT)"), icon=xbmcgui.NOTIFICATION_WARNING)
         return
@@ -238,7 +274,7 @@ def translate_and_load(source_path, code):
     first = next((i for i, c in enumerate(cues) if c["end"] >= now - 5), 0)
     order = list(range(first, len(cues))) + list(range(0, first))      # from where you are, then the beginning
     chunks = [order[i:i + CHUNK] for i in range(0, len(order), CHUNK)]
-    final = os.path.join(DIR, f"{media_key()}.{code}.srt")
+    final = os.path.join(DIR, f"{media_key()}.{code}.v2.srt")
     notify(t("Translating… the subtitle appears in a moment", "Vertalen… de ondertitel verschijnt zo"), 5000)
     log(f"{len(cues)} lines, starting at line {first} ({int(now)} s), {len(chunks)} parts")
     shown = False

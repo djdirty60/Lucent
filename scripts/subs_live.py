@@ -436,7 +436,8 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             self.finish()
             return
         if path == "ai:":
-            english = [r for r in sorted(self.results, key=self.sort_key) if r["code"] == "en"]
+            english = sorted([r for r in sorted(self.results, key=self.sort_key) if r["code"] == "en"],
+                             key=lambda r: r.get("hi", False))          # a normal one before a hearing-impaired one
             if not english:
                 return
             self.setProperty("busy", "1")
