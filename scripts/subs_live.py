@@ -797,6 +797,13 @@ def background():
     except RuntimeError:
         return
     mine = my_code()
+    try:
+        import subtitles
+        if subtitles.audio_is_mine():
+            log("background: the sound is in your language - no subtitle")
+            return
+    except Exception as error:  # noqa: BLE001
+        log(f"same-language check: {error}")
     if use_prefetched(mine):
         return
     sources = subtitle_addons()

@@ -1158,6 +1158,16 @@ def maint_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def sameaudio_test():
+    """Sound in your language (English here): the English subtitle goes off. Russian sound: it stays on."""
+    log(f"same: kodi language={xbmc.getLanguage(xbmc.ISO_639_1)!r}")
+    for a in ("eng", "rus"):
+        xbmc.executebuiltin(f"PlayMedia(/tmp/ci/same-{a}.mkv)")
+        mon.waitForAbort(25)
+        log(f"same {a} sound: subtitle on={cond('VideoPlayer.SubtitlesEnabled')} lang={lab('VideoPlayer.SubtitlesLanguage')!r}")
+        xbmc.Player().stop()
+        mon.waitForAbort(3)
+
 
 def main():
     for _ in range(180):
@@ -1172,6 +1182,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     maint_test()
+    sameaudio_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
