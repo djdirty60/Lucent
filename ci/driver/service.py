@@ -1032,6 +1032,21 @@ def audio_test():
                                                          "params": {"playerid": 1, "properties": ["currentaudiostream", "audiostreams"]}})))
         r = res.get("result") or {}
         cur = r.get("currentaudiostream") or {}
+        if run == 2:
+            import sys
+            import xbmcvfs
+            sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))
+            import subtitles as subs
+            log(f"audio direct: lang2(eng)={subs.lang2('eng')!r} lang1={lab('Skin.String(lucent.audio.lang1)')!r}")
+            try:
+                subs.fix_audio()
+            except Exception as error:  # noqa: BLE001
+                log(f"audio direct error {error!r}")
+            mon.waitForAbort(2)
+            res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Player.GetProperties",
+                                                             "params": {"playerid": 1, "properties": ["currentaudiostream", "audiostreams"]}})))
+            r = res.get("result") or {}
+            cur = r.get("currentaudiostream") or {}
         log(f"audio run {run}: now {cur.get('language')} {cur.get('name')!r} ch={cur.get('channels')} of {[(a.get('language'), a.get('name')) for a in r.get('audiostreams') or []]}")
         xbmc.Player().stop()
         mon.waitForAbort(3)
