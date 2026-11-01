@@ -217,7 +217,7 @@ def ac_subs():
     if not cond("Skin.HasSetting(nuvio.autosubs)"):
         mode = t("off", "uit")
     elif xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background":
-        mode = t("in the background", "op de achtergrond")
+        mode = t("in the background", "op de achtergrond") + (" + AI" if cond("Skin.HasSetting(lucent.subs.bg.ai)") else "")
     else:
         mode = t("show the list", "lijst laten zien")
     out.append((t(f"Automatic search: {mode}", f"Automatisch zoeken: {mode}"),

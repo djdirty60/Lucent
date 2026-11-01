@@ -161,6 +161,30 @@ class Watcher(xbmc.Player):
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] {error}", xbmc.LOGINFO)
 
+    def next_episode_later(self):
+        """An episode: after a few minutes of watching, get the next episode's subtitle ready (subs_extra.prefetch)."""
+        if not xbmc.getInfoLabel("VideoPlayer.TVShowTitle") or xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.next.off)"):
+            return
+        try:
+            started = self.getPlayingFile()
+        except RuntimeError:
+            return
+
+        def later():
+            while not self.monitor.waitForAbort(15):
+                try:
+                    if not self.isPlayingVideo() or self.getPlayingFile() != started:
+                        return
+                    if self.getTime() >= 180:
+                        break
+                except RuntimeError:
+                    return
+            else:
+                return
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,prefetch)")
+        import threading
+        threading.Thread(target=later, daemon=True).start()
+
     def check_again(self):
         """Seren (or Kodi) can pick the film's subtitle again some seconds after the start: look once more."""
         def later():
@@ -201,6 +225,7 @@ class Watcher(xbmc.Player):
         if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not service_id():
             self.check_again()
             return
+        self.next_episode_later()
         have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
         if have & wanted_codes():
             return

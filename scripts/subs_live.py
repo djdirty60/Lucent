@@ -26,7 +26,7 @@ import xbmcaddon
 import xbmcgui
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
-LIST, BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC = 500, 9501, 9502, 9503, 9504
+LIST, BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC, BTN_TIME = 500, 9501, 9502, 9503, 9504, 9505
 AUTO_CLOSE = 20                                       # seconds an automatically opened list waits for you
 SOURCES = 8
 TIMEOUT = 30
@@ -127,6 +127,11 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
 
     # -- setup
     def setup(self, sources, languages, mine):
+        try:
+            import subs_extra
+            self.pref = subs_extra.preference()
+        except Exception:  # noqa: BLE001
+            self.pref = None
         self.sources = sources
         self.mine = mine
         self.languages = languages
@@ -187,6 +192,13 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             self.clearProperty("busy")
             if not found:
                 self.setProperty("empty", t("No subtitles found.", "Geen ondertitels gevonden."))
+            if getattr(self, "auto", False) and not any(r["code"] == my_code() for r in self.results) and not getattr(self, "wished", False):
+                self.wished = True
+                try:
+                    import subs_extra
+                    subs_extra.want(my_code())             # check again later, and say so when one turns up
+                except Exception as error:  # noqa: BLE001
+                    log(f"wish list: {error}")
         self.setProperty("status", text)
 
     # -- read the hidden lists as they fill
@@ -261,7 +273,11 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
     # -- the visible list
     def sort_key(self, r):
         mine = r["code"] == my_code()
-        return (not mine, r["code"] != "en", not r["sync"], -r["rating"], r["lang"], r["release"].lower())
+        rank = 2
+        if mine and getattr(self, "pref", None):
+            import subs_extra
+            rank = subs_extra.pref_rank(*subs_extra.split_label2(r["release"]), self.pref)
+        return (not mine, rank, r["code"] != "en", not r["sync"], -r["rating"], r["lang"], r["release"].lower())
 
     def local_items(self, fresh=False):
         """Above the found subtitles: switch subtitles on / off, and the film's own subtitles in your languages (the
@@ -377,7 +393,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             ctl.selectItem(pos)
             if items and not getattr(self, "moved", False) and self.getFocusId() != LIST:
                 self.setFocusId(LIST)                 # the first results: straight into the list
-            elif not items and self.getFocusId() not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC):
+            elif not items and self.getFocusId() not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC, BTN_TIME):
                 self.setFocusId(BTN_CLOSE)            # an empty list cannot hold the focus
         except RuntimeError:
             pass
@@ -396,6 +412,9 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             item = self.getControl(LIST).getSelectedItem()
             if item and not item.getProperty("path").startswith(("ai:", "cached:", "toggle:", "stream:", "otherstreams:")):
                 self.choose(item.getProperty("path"), force_sync=True)
+        elif cid == BTN_TIME:
+            import subs_extra
+            subs_extra.menu(my_code())
         elif cid == BTN_SEARCH:
             default = xbmc.getInfoLabel("VideoPlayer.TVShowTitle") or xbmc.getInfoLabel("VideoPlayer.Title")
             words = xbmcgui.Dialog().input(t("Search subtitles for", "Ondertitels zoeken voor"), default).strip()
@@ -461,7 +480,15 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
             local = self.synced(local, path) or local
         self.clearProperty("busy")
         code = row.get("code") or my_code()
-        threading.Thread(target=activate, args=(local, code, 20), daemon=True).start()
+        self.load_after = (local, code)            # switched on after the window closes (open_list)
+        try:
+            import subs_extra
+            if code == my_code():
+                release, source = subs_extra.split_label2(row.get("release", ""))
+                subs_extra.remember(release, source)
+                subs_extra.unwant()
+        except Exception as error:  # noqa: BLE001
+            log(f"remember: {error}")
         self.finish()
 
     def synced(self, local, path):
@@ -509,7 +536,7 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         if aid in (1, 2, 3, 4):                       # left / right / up / down
             self.moved = True
             focus = self.getFocusId()
-            if focus not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC) and not self.list_size():
+            if focus not in (BTN_CLOSE, BTN_OFF, BTN_SEARCH, BTN_SYNC, BTN_TIME) and not self.list_size():
                 self.setFocusId(BTN_CLOSE)            # nothing in the list (yet): never stuck, go to the buttons
 
     def list_size(self):
@@ -538,6 +565,11 @@ def activate(local, mine="", seconds=30):
     a stream Kodi chose before (for example a Russian 'forced' track the film marks as default) can stay selected,
     and Seren or Kodi can switch back a few seconds later. So select it ourselves and keep an eye on it for a while."""
     player, monitor = xbmc.Player(), xbmc.Monitor()
+    try:
+        import subs_extra
+        local = subs_extra.with_offset(local)            # a time you set for this video before
+    except Exception as error:  # noqa: BLE001
+        log(f"offset: {error}")
     player.setSubtitles(local)
     player.showSubtitles(True)
     stem = os.path.splitext(os.path.basename(local))[0].lower()
@@ -600,16 +632,19 @@ def open_list(auto=False):
     window = SubsWindow("Lucent_Subtitles.xml", skin_path(), "Default", "1080i")
     window.setup(sources, languages, mine)
     window.auto = auto                                # opened by itself: closes after AUTO_CLOSE s when you do nothing
-    after = ""
+    after, load_after = "", None
     try:
         window.doModal()
         after = window.after
+        load_after = getattr(window, "load_after", None)
     finally:
         window.closing = True
         del window
         if paused_by_us and cond("Player.Paused"):
             player.pause()
     xbmcgui.Window(10000).clearProperty("lucent.subs.open")     # the list is closed: it may be opened again
+    if load_after:
+        activate(load_after[0], load_after[1], 20)
     if after:
         import subs_ai
         subs_ai.translate_and_load(after, my_code())
@@ -667,11 +702,16 @@ def choose_mode():
                 t("The subtitle list opens and you choose", "De ondertitellijst gaat open en jij kiest")),
                ("background", t("Choose by itself, in the background", "Zelf kiezen, op de achtergrond"),
                 t("The best subtitle in your language is turned on without a window. Nothing found: nothing is shown",
-                  "De best passende ondertitel in jouw taal gaat aan, zonder venster. Niets gevonden: je ziet niets"))]
+                  "De best passende ondertitel in jouw taal gaat aan, zonder venster. Niets gevonden: je ziet niets")),
+               ("background_ai", t("Choose by itself, otherwise AI", "Zelf kiezen, anders AI-vertaling"),
+                t("As above; nothing in your language but an English one: AI translates it (needs an AI key)",
+                  "Zoals hierboven; niets in jouw taal maar wel Engels: de AI vertaalt hem (AI-sleutel nodig)"))]
     if not cond("Skin.HasSetting(nuvio.autosubs)"):
         now = "off"
     else:
-        now = "background" if xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background" else "list"
+        now = "list"
+        if xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background":
+            now = "background_ai" if cond("Skin.HasSetting(lucent.subs.bg.ai)") else "background"
     rows = [xbmcgui.ListItem(("✓ " if k == now else "") + label, hint) for k, label, hint in options]
     pick = xbmcgui.Dialog().select(t("Search subtitles automatically", "Automatisch ondertitels zoeken"), rows,
                                    useDetails=True, preselect=[o[0] for o in options].index(now))
@@ -679,10 +719,15 @@ def choose_mode():
         return
     key = options[pick][0]
     xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)" if key == "off" else "Skin.SetBool(nuvio.autosubs)")
-    if key == "background":
+    if key in ("background", "background_ai"):
         xbmc.executebuiltin("Skin.SetString(lucent.subs.mode,background)")
     elif key == "list":
         xbmc.executebuiltin("Skin.Reset(lucent.subs.mode)")
+    xbmc.executebuiltin("Skin.SetBool(lucent.subs.bg.ai)" if key == "background_ai" else "Skin.Reset(lucent.subs.bg.ai)")
+    if key == "background_ai" and not ai_ready():
+        if xbmcgui.Dialog().yesno(t("AI translation", "AI-vertaling"),
+                                  t("There is no AI key yet. Set one now?", "Er is nog geen AI-sleutel. Nu instellen?")):
+            enter_key()
 
 
 def lang_of(entry):
@@ -698,9 +743,28 @@ def lang_of(entry):
     return thumb[:2] if thumb[:2] in LANGS or len(thumb) == 2 else ""
 
 
+def use_prefetched(mine):
+    """The subtitle for this episode was got ready during the previous one: switch it on at once."""
+    try:
+        import subs_extra
+        entry = subs_extra.prefetched(mine)
+    except Exception as error:  # noqa: BLE001
+        log(f"prefetched: {error}")
+        return False
+    if not entry:
+        return False
+    log(f"ready from the previous episode: {entry['path']}")
+    xbmcgui.Dialog().notification("Lucent", t(f"{full_name(mine, mine.upper())} subtitle on", f"Ondertitel ({full_name(mine, mine.upper())}) staat aan"),
+                                  xbmcgui.NOTIFICATION_INFO, 3000)
+    activate(entry["path"], mine, 30)          # in this script: a thread would stop when the script ends
+    return True
+
+
 def background():
     """A video started without a subtitle in your language: ask the subtitle add-ons quietly, download the best
-    match in your language and switch it on. Nothing in your language: nothing is shown at all."""
+    match in your language and switch it on. Nothing in your language: nothing is shown at all - unless
+    'and otherwise AI' is chosen and there is an English one: then that one is translated."""
+    import subs_extra
     player, monitor = xbmc.Player(), xbmc.Monitor()
     if not settled(monitor, player):
         return
@@ -708,13 +772,16 @@ def background():
         started_with = player.getPlayingFile()
     except RuntimeError:
         return
+    mine = my_code()
+    if use_prefetched(mine):
+        return
     sources = subtitle_addons()
     if not sources:
         return
     languages, mine_name = search_languages()
-    mine = my_code()
     query = urllib.parse.urlencode({"action": "search", "languages": ",".join(languages), "preferredlanguage": mine_name})
-    best = None
+    pref = subs_extra.preference()
+    best, english = None, None
     for aid, name in sources:
         if monitor.abortRequested() or not player.isPlayingVideo():
             return
@@ -725,14 +792,13 @@ def background():
         except Exception as error:  # noqa: BLE001
             log(f"background {aid}: {error}")
             continue
-        found = [f for f in files if f.get("file") and lang_of(f) == mine]     # the add-on lists its best ones first
-        log(f"background {aid}: {len(files)} results, {len(found)} in {mine}")
-        if found:
-            best = (found[0]["file"], name)
+        pick = subs_extra.best_of(files, mine, pref)       # the add-on lists its best first; your series' group wins
+        log(f"background {aid}: {len(files)} results, {'one' if pick else 'none'} in {mine}")
+        if pick:
+            best = (pick, name)
             break
-    if not best:
-        log(f"background: nothing in {mine} - nothing shown")
-        return
+        if english is None:
+            english = next((f for f in files if f.get("file") and lang_of(f) == "en"), None)
     try:
         if not player.isPlayingVideo() or player.getPlayingFile() != started_with:
             return                                         # another video by now
@@ -743,17 +809,35 @@ def background():
         code = NAME_TO_CODE.get(current) or (xbmc.convertLanguage(current, xbmc.ISO_639_1) or "").lower() or current[:2]
         if code == mine:
             return                                         # you chose one in your language yourself meanwhile
-    local = download(best[0])
+    if not best:
+        subs_extra.want(mine)                              # check again later; say so when one turns up
+        if cond("Skin.HasSetting(lucent.subs.bg.ai)") and mine != "en" and ai_ready():
+            cached = ai_cached_path()
+            if cached:
+                log("background: AI translation from before")
+                activate(cached, mine)
+                return
+            if english:
+                local = download(english["file"])
+                if local:
+                    log("background: nothing in your language - translating the English one with AI")
+                    import subs_ai
+                    subs_ai.translate_and_load(local, mine)
+                    return
+        log(f"background: nothing in {mine} - nothing shown")
+        return
+    local = download(best[0]["file"])
     if not local:
         log("background: download failed - nothing shown")
         return
-    log(f"background: {best[0]} from {best[1]} downloaded")
+    release, source = subs_extra.split_label2(best[0].get("label2", ""))
+    log(f"background: {release or best[0]['file']} from {best[1]} downloaded")
     xbmcgui.Dialog().notification("Lucent", t(f"{full_name(mine, mine.upper())} subtitle on", f"Ondertitel ({full_name(mine, mine.upper())}) staat aan"),
                                   xbmcgui.NOTIFICATION_INFO, 3000)
+    subs_extra.remember(release, source)
+    subs_extra.unwant()
     ok = activate(local, mine)
     log(f"background: switched on {'and steady' if ok else 'but could not confirm it'}")
-    return
-
 
 def settled(monitor, player):
     """Automatic opening: wait until the film really plays (Seren checks the first seconds of playback)."""
@@ -779,6 +863,8 @@ def open_once(auto=False):
     if recent and cond("Window.IsVisible(Lucent_Subtitles.xml)"):
         return                                             # really open already (a stale mark no longer blocks it)
     if auto and not settled(xbmc.Monitor(), xbmc.Player()):
+        return
+    if auto and use_prefetched(my_code()):
         return
     home.setProperty("lucent.subs.open", f"{time.time():.1f}")
     try:
@@ -807,6 +893,17 @@ if __name__ == "__main__":
         enter_key()
     elif arg == "mode":
         choose_mode()
+    elif arg == "prefetch":
+        home = xbmcgui.Window(10000)
+        if not home.getProperty("lucent.subs.prefetch"):
+            home.setProperty("lucent.subs.prefetch", "1")
+            try:
+                import subs_extra
+                subs_extra.prefetch()
+            except Exception as error:  # noqa: BLE001
+                log(f"prefetch: {error}")
+            finally:
+                home.clearProperty("lucent.subs.prefetch")
     elif arg == "background":
         home = xbmcgui.Window(10000)
         if not home.getProperty("lucent.subs.bg"):

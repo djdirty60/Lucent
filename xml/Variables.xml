@@ -112,6 +112,7 @@
     </variable>
     <variable name="LucentAutoSubsState">
         <value condition="!Skin.HasSetting(nuvio.autosubs)">$LOCALIZE[31662]</value>
+        <value condition="String.IsEqual(Skin.String(lucent.subs.mode),background) + Skin.HasSetting(lucent.subs.bg.ai)">$LOCALIZE[31665]</value>
         <value condition="String.IsEqual(Skin.String(lucent.subs.mode),background)">$LOCALIZE[31664]</value>
         <value>$LOCALIZE[31663]</value>
     </variable>

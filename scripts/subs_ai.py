@@ -248,6 +248,17 @@ def cached_for_current(code):
 
 
 # ----------------------------------------------------------------------------- work
+def show(path, code):
+    """Switch the translation on, also when the film's own subtitle (for example a 'forced' one) is selected."""
+    try:
+        from subs_live import activate
+        activate(path, code, 8)
+    except Exception as error:  # noqa: BLE001
+        log(f"show: {error}")
+        xbmc.Player().setSubtitles(path)
+        xbmc.Player().showSubtitles(True)
+
+
 def translate_and_load(source_path, code):
     if not has_key():
         notify(t("No AI key - Skin settings > Integrations", "Geen AI-sleutel - Skin-instellingen > Integraties"))
@@ -303,8 +314,7 @@ def translate_and_load(source_path, code):
         if not shown and (n >= FIRST or n == len(chunks)):
             part = os.path.join(DIR, f"{media_key()}.{code}.part{int(time.time())}.srt")
             write_srt(part, cues)                           # translated from here on, the rest still English
-            player.setSubtitles(part)
-            player.showSubtitles(True)
+            show(part, code)
             shown = True
             notify(t("AI subtitle on - the rest follows in the background", "AI-ondertitel staat aan - de rest volgt op de achtergrond"))
     done = sum(1 for c in cues if c.get("tr"))
@@ -317,10 +327,9 @@ def translate_and_load(source_path, code):
                 except OSError:
                     pass
         if player.isPlayingVideo():
-            player.setSubtitles(final)
-            player.showSubtitles(True)
+            show(final, code)
         log(f"finished, kept as {final}")
     elif done and player.isPlayingVideo() and not shown:
         part = os.path.join(DIR, f"{media_key()}.{code}.part{int(time.time())}.srt")
         write_srt(part, cues)
-        player.setSubtitles(part)
+        show(part, code)
