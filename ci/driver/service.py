@@ -1449,7 +1449,7 @@ def f1_test():
     log(f"f1: events={len(races)} first={(races[0].get('title'), races[0].get('sub'), races[0]['id']) if races else None}")
     try:
         c = sc.circuit_info("617", "f1")
-        log(f"f1: circuit 617 dark={c.get('dark')!r} png={c.get('png')!r} white={sc.circuit_white(c.get('png'))!r}")
+        log(f"f1: circuit 617 dark={c.get('dark')!r} png={c.get('png')!r} photo={c.get('photo')!r}")
     except Exception as error:  # noqa: BLE001
         log(f"f1: circuit_info error {error!r}")
     if not races:
@@ -1461,7 +1461,7 @@ def f1_test():
             break
     mon.waitForAbort(4)
     img = lab("Window.Property(g.circimg)")
-    log(f"f1: page layout={lab('Window.Property(g.layout)')!r} circ={lab('Window.Property(g.circname)')!r} img={img.rsplit('/', 1)[-1]!r} "
+    log(f"f1: photo={lab('Window.Property(g.circphoto)')[-40:]!r} page layout={lab('Window.Property(g.layout)')!r} circ={lab('Window.Property(g.circname)')!r} img={img.rsplit('/', 1)[-1]!r} "
         f"white={lab('Window.Property(g.circpng)')!r} tiles={[lab(f'Window.Property(g.circt{n}v)') for n in range(1, 5)]}")
     local = xbmcvfs.translatePath(img) if img.startswith("special://") else ""
     if local and os.path.exists(local):
@@ -1542,6 +1542,16 @@ def club_test():
     mon.waitForAbort(2)
 
 
+def guide_test():
+    """TV guide G1 (no channels in CI: only the frame, the header and the buttons)."""
+    xbmc.executebuiltin("ActivateWindow(TVGuide)")
+    mon.waitForAbort(6)
+    log(f"guide: window={lab('System.CurrentWindow')!r} focus={lab('System.CurrentControlID')} groups={lab('Container(11).NumItems')}")
+    shot("39-guide")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1555,10 +1565,11 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    f1_test()
     tables_test()
     club_test()
+    f1_test()
     mine_test()
+    guide_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

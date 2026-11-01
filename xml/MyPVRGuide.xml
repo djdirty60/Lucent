@@ -11,101 +11,109 @@
         <control type="image"><left>0</left><top>0</top><width>1920</width><height>1080</height><texture>grad_bottom.png</texture><colordiffuse>bg_80</colordiffuse></control>
         <control type="image"><left>0</left><top>0</top><width>1920</width><height>1080</height><texture>vignette.png</texture></control>
 
-        <!-- ======== header: what the focused programme is ======== -->
+        <!-- ======== header: preview on the left, the focused programme with buttons next to it ======== -->
         <control type="group">
             <left>60</left>
             <top>40</top>
-            <control type="image"><left>0</left><top>0</top><width>1800</width><height>270</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
-            <control type="image"><left>24</left><top>24</top><width>164</width><height>222</height><aspectratio>scale</aspectratio><texture background="true">$INFO[ListItem.EpgEventIcon]</texture><visible>!String.IsEmpty(ListItem.EpgEventIcon)</visible></control>
-            <control type="image"><left>24</left><top>24</top><width>164</width><height>222</height><aspectratio>keep</aspectratio><texture background="true">$INFO[ListItem.ChannelLogo]</texture><visible>String.IsEmpty(ListItem.EpgEventIcon)</visible></control>
-            <control type="group">
-                <left>224</left>
-                <top>20</top>
-                <control type="button">
-                    <left>0</left><top>0</top><width>96</width><height>38</height>
-                    <enable>false</enable>
-                    <texturefocus border="19" colordiffuse="focus">pill44.png</texturefocus><texturenofocus border="19" colordiffuse="red">pill44.png</texturenofocus>
-                    <font>font_tiny</font><textcolor>FFFFFFFF</textcolor><disabledcolor>FFFFFFFF</disabledcolor><align>center</align><aligny>center</aligny><textoffsetx>0</textoffsetx>
-                    <label>LIVE</label>
-                    <visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible>
-                </control>
-                <control type="label"><left>0</left><top>44</top><width>1000</width><height>70</height><font>font_heading</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.EpgEventTitle]</label></control>
-                <control type="label"><left>0</left><top>116</top><width>1000</width><height>36</height><font>font12</font><textcolor>text2</textcolor><selectedcolor>text2</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.StartTime] – $INFO[ListItem.EndTime]$INFO[ListItem.EpgEventRemainingTime,  ·  ,]</label></control>
-                <control type="image"><left>0</left><top>160</top><width>520</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control>
-                <control type="progress"><left>0</left><top>160</top><width>520</width><height>6</height><info>ListItem.Progress</info><texturebg border="3" colordiffuse="transparent">pill6.png</texturebg><midtexture border="3" colordiffuse="red">pill6.png</midtexture></control>
-                <control type="textbox"><left>0</left><top>176</top><width>1000</width><height>66</height><font>font_body</font><textcolor>text3</textcolor><label>$INFO[ListItem.Plot]</label>
+            <!-- the channel that is playing, or the logo of the focused channel -->
+            <control type="image"><left>0</left><top>0</top><width>520</width><height>276</height><texture border="20">rr20.png</texture><colordiffuse>FF05080C</colordiffuse></control>
+            <control type="videowindow"><left>4</left><top>4</top><width>512</width><height>268</height><visible>Player.HasVideo</visible></control>
+            <control type="image"><left>60</left><top>40</top><width>400</width><height>196</height><aspectratio>keep</aspectratio><texture background="true">$INFO[ListItem.ChannelLogo]</texture><visible>!Player.HasVideo</visible></control>
+            <control type="group"><visible>Player.HasVideo</visible>
+                <control type="image"><left>16</left><top>16</top><width>72</width><height>32</height><texture border="15">rr14.png</texture><colordiffuse>red</colordiffuse></control>
+                <control type="label"><left>16</left><top>16</top><width>72</width><height>32</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><label>LIVE</label></control>
+                <control type="image"><left>4</left><top>196</top><width>512</width><height>76</height><texture>grad_bottom.png</texture><colordiffuse>CC000000</colordiffuse></control>
+                <control type="label"><left>18</left><top>226</top><width>480</width><height>36</height><font>font10_bold</font><textcolor>FFFFFFFF</textcolor><label>$INFO[VideoPlayer.ChannelNumberLabel, · ]$INFO[VideoPlayer.ChannelName]</label></control>
+            </control>
+            <!-- the focused programme -->
+            <control type="image"><left>560</left><top>6</top><width>72</width><height>40</height><aspectratio>keep</aspectratio><texture background="true">$INFO[ListItem.ChannelLogo]</texture></control>
+            <control type="label"><left>648</left><top>6</top><width>1100</width><height>40</height><font>font10</font><textcolor>text2</textcolor><aligny>center</aligny><label>$INFO[ListItem.StartTime]$INFO[ListItem.EndTime, – ]$INFO[ListItem.Genre,  ·  ]</label></control>
+            <control type="label"><left>560</left><top>48</top><width>1180</width><height>70</height><font>font_heading</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.EpgEventTitle]</label></control>
+            <control type="textbox"><left>560</left><top>120</top><width>1180</width><height>60</height><font>font10</font><textcolor>text3</textcolor><label>$INFO[ListItem.Plot]</label>
 <include>TextAutoScroll</include>
 </control>
+            <control type="group"><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible>
+                <control type="image"><left>560</left><top>192</top><width>360</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control>
+                <control type="progress"><left>560</left><top>192</top><width>360</width><height>6</height><info>ListItem.Progress</info><texturebg border="3" colordiffuse="transparent">pill6.png</texturebg><midtexture border="3" colordiffuse="red">pill6.png</midtexture></control>
+                <control type="label"><left>940</left><top>178</top><width>800</width><height>34</height><font>font_tiny</font><textcolor>text3</textcolor><aligny>center</aligny><label>$INFO[ListItem.EpgEventRemainingTime]$INFO[ListItem.NextTitle,  ·  $LOCALIZE[19031]: ]</label></control>
             </control>
-            <!-- preview of the channel that is playing -->
-            <control type="image"><left>1290</left><top>20</top><width>486</width><height>230</height><texture border="20">rr20.png</texture><colordiffuse>22FFFFFF</colordiffuse><visible>Player.HasVideo</visible></control>
-            <control type="videowindow"><left>1300</left><top>30</top><width>466</width><height>210</height><visible>Player.HasVideo</visible></control>
-            <control type="image"><left>1330</left><top>40</top><width>400</width><height>190</height><aspectratio>keep</aspectratio><texture background="true">$INFO[ListItem.ChannelLogo]</texture><visible>!Player.HasVideo</visible></control>
+            <control type="button" id="401">
+                <left>560</left><top>214</top><width>190</width><height>52</height>
+                <font>font10_bold</font><textoffsetx>58</textoffsetx><aligny>center</aligny><label>$LOCALIZE[208]</label>
+                <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
+                <onclick>SetFocus(50)</onclick><onclick>Action(Select)</onclick><onright>402</onright><ondown>11</ondown>
+            </control>
+            <control type="image"><left>580</left><top>228</top><width>24</width><height>24</height><aspectratio>keep</aspectratio><texture>icons/play.png</texture><colordiffuse>text</colordiffuse><visible>!Control.HasFocus(401)</visible></control>
+            <control type="image"><left>580</left><top>228</top><width>24</width><height>24</height><aspectratio>keep</aspectratio><texture>icons/play.png</texture><colordiffuse>on_focus</colordiffuse><visible>Control.HasFocus(401)</visible></control>
+            <control type="button" id="402">
+                <left>762</left><top>214</top><width>210</width><height>52</height>
+                <font>font10_bold</font><textoffsetx>58</textoffsetx><aligny>center</aligny><label>$LOCALIZE[264]</label>
+                <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
+                <onclick>SetFocus(50)</onclick><onclick>Action(Record)</onclick><onleft>401</onleft><onright>403</onright><ondown>11</ondown>
+            </control>
+            <control type="image"><left>782</left><top>228</top><width>24</width><height>24</height><aspectratio>keep</aspectratio><texture border="12">pill64.png</texture><colordiffuse>red</colordiffuse><visible>!Control.HasFocus(402) | true</visible></control>
+            <control type="image"><left>782</left><top>228</top><width>24</width><height>24</height><aspectratio>keep</aspectratio><texture>pill64.png</texture><colordiffuse>on_focus</colordiffuse><visible>Control.HasFocus(402) + false</visible></control>
+            <control type="button" id="403">
+                <left>984</left><top>214</top><width>190</width><height>52</height>
+                <font>font10_bold</font><textoffsetx>58</textoffsetx><aligny>center</aligny><label>$LOCALIZE[19047]</label>
+                <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="glass_strong">rr20.png</texturenofocus>
+                <onclick>SetFocus(50)</onclick><onclick>Action(Info)</onclick><onleft>402</onleft><ondown>11</ondown>
+            </control>
+            <control type="image"><left>1004</left><top>228</top><width>24</width><height>24</height><aspectratio>keep</aspectratio><texture>icons/info.png</texture><colordiffuse>text</colordiffuse><visible>!Control.HasFocus(403)</visible></control>
+            <control type="image"><left>1004</left><top>228</top><width>24</width><height>24</height><aspectratio>keep</aspectratio><texture>icons/info.png</texture><colordiffuse>on_focus</colordiffuse><visible>Control.HasFocus(403)</visible></control>
         </control>
 
-        <!-- ======== channel groups (left) ======== -->
+        <!-- ======== channel groups: a row of chips ======== -->
         <control type="button" id="70">
-            <left>60</left><top>340</top><width>300</width><height>56</height>
-            <animation effect="slide" start="0,0" end="-340,0" time="250" tween="cubic" easing="out" condition="!Control.HasFocus(11) + !Control.HasFocus(70)">Conditional</animation>
-            <animation effect="fade" start="100" end="0" time="200" condition="!Control.HasFocus(11) + !Control.HasFocus(70)">Conditional</animation>
+            <left>60</left><top>334</top><width>200</width><height>54</height>
             <font>font_tiny</font><align>center</align><textoffsetx>0</textoffsetx>
             <label>$VAR[GuideFavLabel]</label><textcolor>FFD4A83A</textcolor><focusedcolor>on_focus</focusedcolor>
-            <texturefocus border="28" colordiffuse="focus">pill64.png</texturefocus><texturenofocus border="28" colordiffuse="glass">pill64.png</texturenofocus>
+            <texturefocus border="27" colordiffuse="focus">pill64.png</texturefocus><texturenofocus border="27" colordiffuse="glass">pill64.png</texturenofocus>
             <onclick>RunScript(special://skin/scripts/guidefav.py)</onclick>
-            <onup>70</onup><ondown>11</ondown><onleft>70</onleft><onright>50</onright>
+            <onup>401</onup><ondown>50</ondown><onleft>70</onleft><onright>11</onright>
         </control>
         <control type="list" id="11">
-            <pagecontrol>61</pagecontrol>
-            <left>60</left><top>412</top><width>300</width><height>628</height>
-            <orientation>vertical</orientation>
+            <left>276</left><top>334</top><width>1584</width><height>54</height>
+            <orientation>horizontal</orientation>
             <scrolltime tween="cubic" easing="out">200</scrolltime>
-            <animation effect="slide" start="0,0" end="-340,0" time="250" tween="cubic" easing="out" condition="!Control.HasFocus(11) + !Control.HasFocus(70)">Conditional</animation>
-            <animation effect="fade" start="100" end="0" time="200" condition="!Control.HasFocus(11) + !Control.HasFocus(70)">Conditional</animation>
-            <onright>50</onright>
-            <onleft>11</onleft>
-            <onup>70</onup>
-            <ondown>11</ondown>
-            <itemlayout width="300" height="72">
-                <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
-            <control type="label"><left>236</left><top>0</top><width>44</width><height>64</height><font>font12_bold</font><textcolor>FFD4A83A</textcolor><align>center</align><label>★</label><visible>String.IsEqual(ListItem.Label,Skin.String(lucent.guide.group))</visible></control>
-</itemlayout>
-            <focusedlayout width="300" height="72">
-                <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse><visible>!Control.HasFocus(11)</visible></control>
-                <control type="image"><left>0</left><top>0</top><width>296</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>focus</colordiffuse><visible>Control.HasFocus(11)</visible></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(11)</visible></control>
-                <control type="label"><left>22</left><top>0</top><width>256</width><height>64</height><font>font12_bold</font><textcolor>on_focus</textcolor><selectedcolor>on_focus</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
-            <control type="label"><left>236</left><top>0</top><width>44</width><height>64</height><font>font12_bold</font><textcolor>FFD4A83A</textcolor><align>center</align><label>★</label><visible>String.IsEqual(ListItem.Label,Skin.String(lucent.guide.group))</visible></control>
-</focusedlayout>
-        </control>
-        <control type="scrollbar" id="61">
-            <left>372</left>
-            <top>412</top>
-            <height>628</height>
-            <onleft>11</onleft>
-            <onright>50</onright>
-            <visible>Control.IsVisible(11)</visible>
+            <onleft>70</onleft>
+            <onright>11</onright>
+            <onup>401</onup>
+            <ondown>50</ondown>
+            <itemlayout width="236" height="54">
+                <control type="image"><left>0</left><top>0</top><width>226</width><height>54</height><texture border="27">pill64.png</texture><colordiffuse>glass</colordiffuse></control>
+                <control type="label"><left>16</left><top>0</top><width>194</width><height>54</height><font>font10</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><align>center</align><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
+                <control type="label"><left>190</left><top>0</top><width>30</width><height>54</height><font>font10_bold</font><textcolor>FFD4A83A</textcolor><align>center</align><aligny>center</aligny><label>★</label><visible>String.IsEqual(ListItem.Label,Skin.String(lucent.guide.group))</visible></control>
+            </itemlayout>
+            <focusedlayout width="236" height="54">
+                <control type="image"><left>0</left><top>0</top><width>226</width><height>54</height><texture border="27">pill64.png</texture><colordiffuse>99E5534B</colordiffuse><visible>!Control.HasFocus(11)</visible></control>
+                <control type="image"><left>0</left><top>0</top><width>226</width><height>54</height><texture border="27">pill64.png</texture><colordiffuse>focus</colordiffuse><visible>Control.HasFocus(11)</visible></control>
+                <control type="label"><left>16</left><top>0</top><width>194</width><height>54</height><font>font10_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><align>center</align><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>!Control.HasFocus(11)</visible></control>
+                <control type="label"><left>16</left><top>0</top><width>194</width><height>54</height><font>font10_bold</font><textcolor>on_focus</textcolor><selectedcolor>on_focus</selectedcolor><align>center</align><aligny>center</aligny><scroll>true</scroll><label>$INFO[ListItem.Label]</label><visible>Control.HasFocus(11)</visible></control>
+                <control type="label"><left>190</left><top>0</top><width>30</width><height>54</height><font>font10_bold</font><textcolor>FFD4A83A</textcolor><align>center</align><aligny>center</aligny><label>★</label><visible>String.IsEqual(ListItem.Label,Skin.String(lucent.guide.group))</visible></control>
+            </focusedlayout>
         </control>
 
         <!-- ======== channels + timeline ======== -->
         <control type="epggrid" id="50">
             <left>60</left>
-            <top>340</top>
+            <top>404</top>
             <width>1800</width>
-            <height>710</height>
+            <height>650</height>
             <orientation>vertical</orientation>
             <pagecontrol>60</pagecontrol>
             <scrolltime tween="cubic" easing="out">250</scrolltime>
             <timeblocks>130</timeblocks>
             <minspertimeblock>1</minspertimeblock>
             <rulerunit>30</rulerunit>
-            <animation effect="slide" start="0,0" end="330,0" time="250" tween="cubic" easing="out" condition="Control.HasFocus(11) | Control.HasFocus(70)">Conditional</animation>
-            <animation effect="fade" start="100" end="35" time="250" condition="Control.HasFocus(11) | Control.HasFocus(70)">Conditional</animation>
-            <onleft>11</onleft>
+            <onleft>50</onleft>
             <onback>11</onback>
-            <onup>50</onup>
+            <onup>11</onup>
             <ondown>50</ondown>
-            <progresstexture border="0,0,3,0" colordiffuse="transparent">epg_now.png</progresstexture>
+            <progresstexture border="0,0,3,0" colordiffuse="CCE5534B">epg_now.png</progresstexture>
             <rulerlayout height="46" width="265">
                 <control type="label"><left>8</left><width>260</width><height>46</height><font>font10</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
             </rulerlayout>
@@ -123,7 +131,7 @@
                 <control type="label"><left>204</left><top>2</top><width>240</width><height>64</height><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><scroll>true</scroll><label>$INFO[Container(50).ListItem.ChannelName]</label></control>
             </focusedchannellayout>
             <itemlayout height="70" width="60">
-                <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
+                <control type="image" id="2"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control><control type="image"><left>0</left><top>2</top><width>56</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>1FFFFFFF</colordiffuse><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible></control>
                 <control type="label" id="1"><left>16</left><top>2</top><width>26</width><height>64</height><font>font12</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
                             <control type="progress" id="3"><left>12</left><top>56</top><width>32</width><height>5</height><info>ListItem.Progress</info><texturebg colordiffuse="transparent">pill6.png</texturebg><midtexture colordiffuse="red">pill6.png</midtexture><visible>Integer.IsGreater(ListItem.Progress,0) + Integer.IsLess(ListItem.Progress,100)</visible></control>
             </itemlayout>
