@@ -384,6 +384,60 @@ def osd_test():
     mon.waitForAbort(3)
 
 
+def key(name, hold=0.0):
+    import subprocess
+    try:
+        if hold:
+            subprocess.run(["xdotool", "keydown", name], timeout=5)
+            time.sleep(hold)
+            subprocess.run(["xdotool", "keyup", name], timeout=5)
+        else:
+            subprocess.run(["xdotool", "key", name], timeout=5)
+    except Exception as error:  # noqa: BLE001
+        log(f"xdotool error {error!r}")
+
+
+def state():
+    return (f"ctx={cond('Window.IsVisible(contextmenu)')} info={cond('Window.IsVisible(movieinformation)')} "
+            f"window={lab('System.CurrentWindow')} item={lab('ListItem.Label')!r} dbtype={lab('ListItem.DBType')}")
+
+
+def ctx_test():
+    """'OK on a film opens its page' on: a short OK opens the page, holding OK still opens the context menu."""
+    xbmc.executebuiltin("Skin.SetBool(nuvio.ok.movie.page)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/keymap.py)")
+    mon.waitForAbort(3)
+    km = xbmcvfs_translate("special://profile/keymaps/lucent-ok-page.xml")
+    log(f"ctx: keymap exists={os.path.exists(km)} longpress={'longpress' in open(km).read() if os.path.exists(km) else None}")
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=fast,return)")
+    mon.waitForAbort(5)
+    if lab("ListItem.Label") == "..":
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+    log(f"ctx: start {state()}")
+    for n in range(3):
+        key("Return", hold=1.5)
+        mon.waitForAbort(2)
+        log(f"ctx: hold OK #{n + 1}: {state()}")
+        if n == 0:
+            shot("14-ctx-hold")
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(2)
+    key("Return")
+    mon.waitForAbort(3)
+    log(f"ctx: short OK: {state()}")
+    shot("14-ctx-short")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(2)
+    key("c")
+    mon.waitForAbort(2)
+    log(f"ctx: C key: {state()}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -395,7 +449,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    osd_test()
+    ctx_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

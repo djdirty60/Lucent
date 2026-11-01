@@ -43,12 +43,16 @@ def current():
 OK_PATH = DIR + "lucent-ok-page.xml"
 OK_KEYMAP = """<keymap>
     <videos>   <!-- Kodi's keymap name for MyVideoNav.xml (the video lists); "MyVideoNav" itself is not recognised -->
+        <!-- holding OK still opens the context menu: once a key is mapped here, Kodi ignores the global long press -->
         <keyboard>
             <return>RunScript(special://skin/scripts/openitem.py)</return>
+            <return mod="longpress">ContextMenu</return>
             <enter>RunScript(special://skin/scripts/openitem.py)</enter>
+            <enter mod="longpress">ContextMenu</enter>
         </keyboard>
         <remote>
             <select>RunScript(special://skin/scripts/openitem.py)</select>
+            <select mod="longpress">ContextMenu</select>
         </remote>
     </videos>
 </keymap>

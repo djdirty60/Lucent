@@ -10,7 +10,7 @@ echo "$VARIANT-$RUN" > /tmp/ci/tag
 mkdir -p $K/addons/skin.lucent
 rsync -a --exclude .git --exclude repo --exclude ci --exclude .github --exclude screenshots --exclude "*.zip" ./ $K/addons/skin.lucent/
 if [ "$VARIANT" = old ]; then
-  cp ci/old/VideoOSD.xml ci/old/Variables.xml $K/addons/skin.lucent/xml/
+  cp ci/old/keymap.py $K/addons/skin.lucent/scripts/
 fi
 # dependencies the Home screen does not need (YouTube, studio images) are taken out of the test copy
 python3 - <<'PY'
