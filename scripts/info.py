@@ -1260,7 +1260,41 @@ def resume_show():
     if not trakt.isdigit():
         notify(tr("no_seren") if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})") else tr("no_ids"))
         return
-    xbmc.executebuiltin(f"PlayMedia({seren_play_url('tv', int(trakt))})")
+    episode = next_episode(int(trakt))
+    if episode:
+        log(f"continue {trakt}: season {episode['season']} episode {episode['number']} ({episode['why']})")
+        args = urllib.parse.quote(json.dumps({"mediatype": "episode", "trakt_id": episode["trakt_id"],
+                                              "trakt_show_id": int(trakt), "trakt_season_id": episode["trakt_season_id"]},
+                                             sort_keys=True))
+        url = f"{SEREN}?" + urllib.parse.urlencode(sorted({"action": "getSources", "action_args": args}.items()))
+        xbmc.executebuiltin(f"PlayMedia({url})")
+        return
+    xbmc.executebuiltin(f"PlayMedia({seren_play_url('tv', int(trakt))})")   # Seren's own choice when Trakt cannot tell
+
+
+def next_episode(show):
+    """The episode 'Continue' should play, from Trakt itself: the first one after the last one you watched (also a new
+    episode that just came out; Seren continues it where you stopped when you were halfway). Only when Trakt has no
+    next one: an episode you stopped halfway. Seren's own guess looked only at the last item of your history and could
+    fall back to episode 1. None when Trakt cannot be asked."""
+    try:
+        trakt = Trakt()
+        if not trakt.token:
+            return None
+        seasons = {s.get("number"): (s.get("ids") or {}).get("trakt") for s in trakt.get(f"shows/{show}/seasons") or []}
+        progress = trakt.get(f"shows/{show}/progress/watched?hidden=false&specials=false&count_specials=false") or {}
+        ep = progress.get("next_episode") or {}
+        if (ep.get("ids") or {}).get("trakt"):
+            return {"season": ep.get("season"), "number": ep.get("number"), "trakt_id": ep["ids"]["trakt"],
+                    "trakt_season_id": seasons.get(ep.get("season")), "why": "next after the last watched"}
+        for entry in trakt.get("sync/playback/episodes?limit=50") or []:          # stopped halfway, newest first
+            if ((entry.get("show") or {}).get("ids") or {}).get("trakt") == show and 2 < float(entry.get("progress") or 0) < 90:
+                ep = entry.get("episode") or {}
+                return {"season": ep.get("season"), "number": ep.get("number"), "trakt_id": (ep.get("ids") or {}).get("trakt"),
+                        "trakt_season_id": seasons.get(ep.get("season")), "why": "stopped halfway"}
+    except Exception as error:  # noqa: BLE001
+        log(f"next episode of {show}: {error}")
+    return None
 
 
 def load():

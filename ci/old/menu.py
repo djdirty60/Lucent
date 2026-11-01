@@ -771,8 +771,9 @@ def edit_widgets(menu, tab):
         act = select(wd["label"], actions)
         if services:
             if act == 0:
-                xbmc.executebuiltin("RunScript(special://skin/scripts/streamedit.py)")
-                return
+                import streamedit                   # in this script: a second script's list would clash with this one
+                streamedit.editor()
+                continue
             act -= 1
         if act == 0:
             wd["label"] = keyboard(tr("rename"), wd["label"]) or wd["label"]

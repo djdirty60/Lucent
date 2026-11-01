@@ -57,6 +57,7 @@ T = {
     "img_none": ("No picture of my own", "Geen eigen afbeelding"),
     "icon_own": ("Picture of my own…", "Eigen afbeelding…"),
     "edit_services": ("Choose the streaming services…", "Streamingdiensten kiezen…"),
+    "same_changed": ("Also changed on {0} other tab(s) with the same widget", "Ook aangepast op {0} andere tab(s) met dezelfde widget"),
     "poster": ("Posters", "Posters"),
     "land": ("Landscape", "Liggend"),
     "remove_widget": ("Remove this widget", "Deze widget verwijderen"),
@@ -799,7 +800,29 @@ def edit_widgets(menu, tab):
             widgets.pop(choice)
         else:
             continue
+        if act <= 5:                                # the same widget on other tabs gets the same change
+            same = copy_to_same(menu, tab, wd)
+            if same:
+                notify(tr("same_changed", same))
         menu.save()
+
+
+SHARED = ("label", "style", "sort", "timg", "bg", "notitle")
+
+
+def copy_to_same(menu, tab, wd):
+    """Name, style, sort and pictures of this widget also for the same widget (same address) on the other tabs.
+    Returns how many were changed."""
+    count = 0
+    for other in menu.tabs:
+        if other is tab:
+            continue
+        for w in other["widgets"]:
+            if w.get("path") == wd.get("path") and any(w.get(k, "") != wd.get(k, "") for k in SHARED):
+                for k in SHARED:
+                    w[k] = wd.get(k, "")
+                count += 1
+    return count
 
 
 def pick_image(heading, current=""):

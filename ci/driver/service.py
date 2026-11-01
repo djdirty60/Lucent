@@ -717,6 +717,33 @@ def edit_test():
     log(f"edit: row now {[a for a, _b in art_of(lib)]}")
 
 
+def same_test():
+    """A widget that is on two tabs: changing it on one tab changes it on the other too."""
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    import menu
+    m = menu.Menu()
+    wd = m.tabs[0]["widgets"][0]
+    copy = dict(wd)
+    m.tabs[1]["widgets"].append(copy)
+    m.save()
+    mon.waitForAbort(2)
+    m = menu.Menu()
+    wd = m.tabs[0]["widgets"][0]
+    wd["style"], wd["sort"], wd["label"] = "land", "title", "Renamed"
+    try:
+        n = menu.copy_to_same(m, m.tabs[0], wd)
+    except AttributeError:
+        n = "no copy_to_same"
+    m.save()
+    mon.waitForAbort(3)
+    t2 = len(m.tabs[1]["widgets"])
+    log(f"same: copied={n} tab2.w{t2}: label={lab(f'Skin.String(nuvio.tab2.w{t2}.label)')!r} style={lab(f'Skin.String(nuvio.tab2.w{t2}.style)')!r} "
+        f"sort={lab(f'Skin.String(nuvio.tab2.w{t2}.sort)')!r} tab1.w1={lab('Skin.String(nuvio.tab1.w1.label)')!r}")
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Addons.GetAddonDetails",
+                                                    "params": {"addonid": "script.lucent.library", "properties": ["extrainfo", "enabled", "version"]}})))
+    log(f"same: library addon {str(res.get('result') or res.get('error'))[:200]}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -728,7 +755,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    edit_test()
+    same_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

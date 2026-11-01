@@ -10,7 +10,7 @@ echo "$VARIANT-$RUN" > /tmp/ci/tag
 mkdir -p $K/addons/skin.lucent
 rsync -a --exclude .git --exclude repo --exclude ci --exclude .github --exclude screenshots --exclude "*.zip" ./ $K/addons/skin.lucent/
 if [ "$VARIANT" = old ]; then
-  cp ci/old/streamedit.py ci/old/menu.py $K/addons/skin.lucent/scripts/
+  cp ci/old/menu.py $K/addons/skin.lucent/scripts/
 fi
 # CI has no Trakt: every title gets Trakt id 4242
 sed -i 's/^def trakt_id_for(kind, tmdb_id):/def trakt_id_for(kind, tmdb_id):\n    return 4242/' $K/addons/skin.lucent/scripts/info.py
@@ -26,8 +26,6 @@ PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
 cp -r ci/fakerealseren $K/addons/plugin.video.seren
 cp -r ci/packs/* $K/addons/
-[ "$VARIANT" = old ] && cp ci/old/tmdbwidgets.py $K/addons/script.lucent.library/tmdbwidgets.py
-[ "$VARIANT" = old ] && cp ci/old/tmdbwidgets.py $K/addons/script.lucent.library/tmdbwidgets.py
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
