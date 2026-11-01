@@ -308,8 +308,9 @@ WANTED = [
     ("mgm", ["mgm plus", "mgm+"]),
     ("amc", ["amc plus", "amc+"]),
     ("discovery", ["discovery plus", "discovery+"]),
+    ("prime", ["amazon prime video", "prime video", "amazon video"]),
 ]
-PROV_VERSION = 3                                      # 3: logos from the packs (wrong ones were cached)
+PROV_VERSION = 4                                      # 3: logos from the packs (wrong ones were cached)
 
 
 def _provider_list(region):
@@ -408,7 +409,21 @@ PACK_NAMES = {
     "apple": ["Apple TV+", "Apple TV Plus", "Apple TV"], "hulu": ["Hulu"], "starz": ["Starz", "STARZ"],
     "paramount": ["Paramount+", "Paramount Plus"], "peacock": ["Peacock"], "mgm": ["MGM+", "MGM Plus", "Mgm"],
     "amc": ["AMC+", "AMC Plus"], "discovery": ["Discovery+", "discovery+", "Discovery Plus"],
+    "prime": ["Prime Video", "Amazon Prime Video", "Amazon"],
 }
+SKIN_ART = "special://skin/media/services/"            # Lucent's own logo + animation per service (skin 1.31.58+)
+
+
+def skin_art(key):
+    """(logo, animation) that the skin brings for this service, or ('', '')."""
+    if not key:
+        return "", ""
+    try:
+        logo = f"{SKIN_ART}{key}.png" if xbmcvfs.exists(f"{SKIN_ART}{key}.png") else ""
+        hover = f"{SKIN_ART}{key}-hover.gif" if xbmcvfs.exists(f"{SKIN_ART}{key}-hover.gif") else ""
+    except Exception:  # noqa: BLE001
+        return "", ""
+    return logo, hover
 WHITE_FIRST = ("apple", "hbo")                        # these look best in white; the others in their own colours
 
 
@@ -453,6 +468,9 @@ def wide_logo(name, key=""):
     """A transparent logo of the service: from the logo packs (white for Apple TV+ and HBO Max, coloured for the
     others), else the company logo on TMDb with exactly this name. '' when none (the row then shows the name)."""
     key = key or key_of_name(name)
+    own = skin_art(key)[0]
+    if own:                                           # the logo Lucent itself brings for this service
+        return own
     names = PACK_NAMES.get(key, []) + name_variants(name)
     order = ["white", "coloured"] if key in WHITE_FIRST else ["coloured", "white"]
     found = pack_logo(names, order)
@@ -517,10 +535,14 @@ def provider_rows(handle):
         wide = p.get("wide") or logo
         props = {"lucent_open": "1"}
         tile = logo
-        if p.get("wide") and not p.get("image"):       # the transparent logo on a darkened picture of the service
+        slogo, hover = skin_art(p.get("key") or key_of_name(p.get("name")))
+        if not p.get("image") and slogo:               # Lucent's own logo on a dark card, its animation when focused
+            props["svclogo"], props["svchover"] = slogo, hover
+            wide = slogo
+        elif p.get("wide") and not p.get("image"):     # the transparent logo on a darkened picture of the service
             props["svclogo"] = p["wide"]
             tile = fanart or "special://skin/media/default_landscape.png"
-        query = urllib.parse.urlencode({"action": "provideropen", "id": p["id"], "name": p["name"], "logo": p.get("wide") or ""})
+        query = urllib.parse.urlencode({"action": "provideropen", "id": p["id"], "name": p["name"], "logo": wide if wide != logo else ""})
         items.append({"type": "video", "label": p["name"], "title": p["name"], "action": True,
                       "plot": (f"Nieuw, populair en best beoordeeld op {p['name']}" if NL else f"New, popular and top rated on {p['name']}"),
                       "art": {"poster": logo, "thumb": logo, "icon": logo, "landscape": tile, "clearlogo": wide, "fanart": fanart},

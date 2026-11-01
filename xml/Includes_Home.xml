@@ -7994,7 +7994,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -8002,7 +8002,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -8138,7 +8147,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -8146,7 +8155,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -8155,7 +8182,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -8677,7 +8704,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -8685,7 +8712,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -8821,7 +8857,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -8829,7 +8865,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -8838,7 +8892,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -9360,7 +9414,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -9368,7 +9422,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -9504,7 +9567,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -9512,7 +9575,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -9521,7 +9602,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -10043,7 +10124,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -10051,7 +10132,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -10187,7 +10277,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -10195,7 +10285,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -10204,7 +10312,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -10726,7 +10834,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -10734,7 +10842,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -10870,7 +10987,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -10878,7 +10995,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -10887,7 +11022,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -11410,7 +11545,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -11418,7 +11553,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -11554,7 +11698,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -11562,7 +11706,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -11571,7 +11733,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -12097,7 +12259,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -12105,7 +12267,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -12241,7 +12412,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -12249,7 +12420,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -12258,7 +12447,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -12780,7 +12969,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -12788,7 +12977,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -12924,7 +13122,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -12932,7 +13130,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -12941,7 +13157,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -13463,7 +13679,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -13471,7 +13687,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -13607,7 +13832,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -13615,7 +13840,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -13624,7 +13867,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -14146,7 +14389,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -14154,7 +14397,16 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -14290,7 +14542,7 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on its own picture, made darker -->
+                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
@@ -14298,7 +14550,25 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>B3000000</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>FF07090C</colordiffuse>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>400</width>
+                    <height>225</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[ListItem.Property(svchover)]</texture>
+                    <visible>!String.IsEmpty(ListItem.Property(svchover)) + !Skin.HasSetting(lucent.lite)</visible>
                 </control>
                 <control type="image">
                     <left>56</left>
@@ -14307,7 +14577,7 @@
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">

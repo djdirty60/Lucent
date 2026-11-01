@@ -635,13 +635,16 @@ def logo_test():
     xbmc.executebuiltin("SetFocus(9100)")
     mon.waitForAbort(3)
     log(f"logos: tab={lab('Container(9000).ListItem.Label')} focus={lab('System.CurrentControlID')} n={lab('Container(8201).NumItems')} "
-        f"svclogo={lab('Container(8201).ListItem.Property(svclogo)')[-28:]!r} land={lab('Container(8201).ListItem.Art(landscape)')[-28:]!r}")
+        f"svclogo={lab('Container(8201).ListItem.Property(svclogo)')[-28:]!r} hover={lab('Container(8201).ListItem.Property(svchover)')[-28:]!r} "
+        f"labels.hide={cond('Skin.HasSetting(nuvio.posterlabels.hide)')} last={lab('Container(8201).ListItemAbsolute(11).Label')!r}")
     shot("19-logos")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1)
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(2)
     shot("19-logos-right")
+    mon.waitForAbort(1)
+    shot("19-logos-right2")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     mon.waitForAbort(2)
 
@@ -674,6 +677,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    logo_test()
     poster_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
