@@ -1199,6 +1199,33 @@ def skip_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def skipkey_test():
+    """Setup > Skip intro: a filled-in TheIntroDB API key gives an orange warning and a first button that removes it."""
+    import xbmcaddon
+    tidb = xbmcaddon.Addon("plugin.video.tidb")
+    tidb.setSetting("introdb_api_key", "wrongkey123")
+    log(f"skipkey: before key={tidb.getSetting('introdb_api_key')!r}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(100,5,absolute)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    log(f"skipkey: step {lab('Window.Property(stepno)')!r} status={lab('Window.Property(status)')!r} color={lab('Window.Property(statecolor)')!r} "
+        f"buttons {[lab(f'Window.Property(act{n})') for n in range(1, 5)]}")
+    shot("33-skipkey-before")
+    xbmc.executebuiltin("SetFocus(301)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    log(f"skipkey: after key={xbmcaddon.Addon('plugin.video.tidb').getSetting('introdb_api_key')!r} test={xbmcaddon.Addon('plugin.video.tidb').getSetting('test_api_key_now')!r} "
+        f"status={lab('Window.Property(status)')!r} buttons {[lab(f'Window.Property(act{n})') for n in range(1, 5)]}")
+    shot("33-skipkey-after")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def sportA_test():
     """Sport > All games: live games as cards (list 205) on top, then the games per competition (list 200)."""
     xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
@@ -1274,6 +1301,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    skipkey_test()
     sportA_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

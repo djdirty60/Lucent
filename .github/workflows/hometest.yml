@@ -34,4 +34,4 @@ jobs:
           git config user.name "ci"; git config user.email "ci@example.invalid"
           git add -f ci-results
           git commit -m "CI results ${{ matrix.variant }}-${{ matrix.run }} [skip ci]" || exit 0
-          for i in 1 2 3 4 5 6; do git pull --rebase -q origin ci-hometest && git push -q origin HEAD:ci-hometest && break; sleep $((RANDOM % 10 + 3)); done
+          for i in 1 2 3 4 5 6; do git pull --rebase -X theirs -q origin ci-hometest && git push -q origin HEAD:ci-hometest && break; sleep $((RANDOM % 10 + 3)); done
