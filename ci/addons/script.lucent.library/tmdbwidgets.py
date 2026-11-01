@@ -141,9 +141,12 @@ def enrich(rows):
         kind = "movie" if row.get("type") == "movie" else "tv"
         key = f"d{kind[0]}{tid}"
         info = meta.get(key)
-        if info is None and asked < 25:
+        if (info is None or (kind == "movie" and f"g{tid}" not in meta)) and asked < 25:
             asked += 1
-            d = tmdb_get(f"{kind}/{tid}", append_to_response="images", include_image_language=("nl,en,null" if NL else "en,null"))
+            d = tmdb_get(f"{kind}/{tid}", append_to_response="images,release_dates" if kind == "movie" else "images",
+                         include_image_language=("nl,en,null" if NL else "en,null"))
+            if d and kind == "movie":
+                meta[f"g{tid}"] = {"dig": digital_from(d.get("release_dates")), "t": now}
             if d:
                 logos = ((d.get("images") or {}).get("logos")) or []
                 logos.sort(key=lambda x: (x.get("iso_639_1") not in ("nl" if NL else "en",), -(x.get("vote_average") or 0)))
@@ -152,6 +155,8 @@ def enrich(rows):
                         "runtime": int(run or 0) * 60, "votes": int(d.get("vote_count") or 0),
                         "studio": [c.get("name") for c in (d.get("production_companies") or [])[:2] if c.get("name")], "t": now}
                 meta[key] = info
+        if kind == "movie" and f"g{tid}" in meta:
+            row.setdefault("props", {}).update({"digital": meta[f"g{tid}"].get("dig") or "", "dig_checked": "1"})
         if info:
             if info.get("logo"):
                 row["art"]["clearlogo"] = f"{IMG}w500{info['logo']}"
@@ -692,3 +697,98 @@ def tick(player_busy=False):
         write_json(REG, reg)
         return True
     return False
+
+
+# ----------------------------------------------------------------------------- digital release (hide films until they can be streamed)
+DIGITAL_TYPES = (4, 5)          # TMDb release types: 4 = digital, 5 = physical (DVD / Blu-ray)
+
+
+def digital_from(release_dates):
+    """The first digital (or disc) release anywhere, 'YYYY-MM-DD', or '' when TMDb knows none."""
+    dates = []
+    for country in (release_dates or {}).get("results") or []:
+        for rel in country.get("release_dates") or []:
+            if rel.get("type") in DIGITAL_TYPES and (rel.get("release_date") or "")[:10]:
+                dates.append(rel["release_date"][:10])
+    return min(dates) if dates else ""
+
+
+def hide_undigital():
+    return xbmc.getCondVisibility("Skin.HasSetting(lucent.hide.undigital)")
+
+
+def entry_tmdb(entry):
+    tid = str(((entry.get("uniqueid") or {}).get("tmdb")) or (entry.get("props") or {}).get("tmdb_id") or "")
+    return tid if tid.isdigit() and tid != "0" else ""
+
+
+def digital_for(entries, budget=25):
+    """Digital release dates for the films of a row from another source (Seren, Trakt ...): saved per film, a few new
+    ones per fetch. Only while 'hide films until their digital release' is on."""
+    if not hide_undigital():
+        return entries
+    meta = read_json(META, {}) or {}
+    asked, now = 0, time.time()
+    for entry in entries:
+        if entry.get("type") != "movie":
+            continue
+        tid = entry_tmdb(entry)
+        if not tid:
+            continue
+        rec = meta.get(f"g{tid}")
+        if rec is None or (not rec.get("dig") and now - rec.get("t", 0) > 3 * 86400):
+            if asked >= budget:
+                continue
+            asked += 1
+            d = tmdb_get(f"movie/{tid}/release_dates")
+            if d is None:
+                continue
+            rec = meta[f"g{tid}"] = {"dig": digital_from(d), "t": now}
+        entry.setdefault("props", {}).update({"digital": rec.get("dig") or "", "dig_checked": "1"})
+    if asked:
+        write_json(META, meta)
+    return entries
+
+
+def not_digital_yet(entry, today):
+    """True for a film that cannot be streamed yet: its digital release is still to come, or it only came out in
+    cinemas recently (no digital date known). Library titles are always shown."""
+    file = entry.get("file") or ""
+    if entry.get("type") != "movie" or (isinstance(entry.get("id"), int) and entry["id"] > 0) or entry.get("movieid") \
+            or ".strm" in file or file.startswith("videodb://") or not file.startswith("plugin://"):
+        return False
+    props = entry.get("props") or {}
+    dig, premiered = props.get("digital") or "", (entry.get("premiered") or "")[:10]
+    if dig:
+        return dig > today
+    if not premiered:
+        return False
+    if props.get("dig_checked"):
+        import datetime
+        recent = (datetime.date.fromisoformat(today) - datetime.timedelta(days=90)).isoformat()
+        return premiered > recent
+    return premiered > today
+
+
+def filter_undigital(entries):
+    if not hide_undigital() or not entries:
+        return entries
+    import datetime
+    today = datetime.date.today().isoformat()
+    meta = None
+    out = []
+    for entry in entries:
+        if entry.get("type") == "movie" and "dig_checked" not in (entry.get("props") or {}):
+            tid = entry_tmdb(entry)
+            if tid:
+                meta = meta if meta is not None else (read_json(META, {}) or {})
+                rec = meta.get(f"g{tid}")
+                if rec is not None:
+                    entry = dict(entry, props=dict(entry.get("props") or {}, digital=rec.get("dig") or "", dig_checked="1"))
+        try:
+            hide = not_digital_yet(entry, today)
+        except ValueError:
+            hide = False
+        if not hide:
+            out.append(entry)
+    return out

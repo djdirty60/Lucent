@@ -97,7 +97,13 @@ def fetch_retry(path):
     if not items:
         xbmc.Monitor().waitForAbort(3)
         items = fetch(path)
-    return enrich(items)
+    items = enrich(items)
+    try:
+        import tmdbwidgets
+        items = tmdbwidgets.digital_for(items)
+    except Exception as error:  # noqa: BLE001
+        log(f"digital dates: {error}")
+    return items
 
 
 # ----------------------------------------------------------------------------- what JSON-RPC leaves out, from Seren's own database
@@ -261,6 +267,11 @@ def listitem(entry):
 
 
 def answer(handle, items):
+    try:
+        import tmdbwidgets
+        items = tmdbwidgets.filter_undigital(items)   # 'hide films until their digital release'
+    except Exception as error:  # noqa: BLE001
+        log(f"digital filter: {error}")
     kinds = [e.get("type") for e in items]
     content = "movies" if kinds.count("movie") > len(kinds) / 2 else "episodes" if kinds.count("episode") > len(kinds) / 2 \
         else "tvshows" if kinds.count("tvshow") > len(kinds) / 2 else "videos"

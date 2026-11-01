@@ -906,7 +906,10 @@ def limit_test():
     """Number of titles per row: 25 by default, 50, or all."""
     xbmc.executebuiltin("ActivateWindow(home)")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
-    mon.waitForAbort(10)
+    for _ in range(60):
+        if lab("Container(8104).NumItems") not in ("", "0"):
+            break
+        mon.waitForAbort(2)
     for value in ("", "50", "0", "100", ""):
         for name in ("nuvio.tab1.w4", "nuvio.home.w4"):
             xbmc.executebuiltin(f"Skin.SetString({name}.limit,{value})" if value else f"Skin.Reset({name}.limit)")
@@ -914,6 +917,18 @@ def limit_test():
         log(f"limit {value or 'standard'}: row 8104 has {lab('Container(8104).NumItems')} titles "
             f"(var={lab('$VAR[NuvioW4Limit]')!r})")
     shot("26-limit")
+
+def digital_test():
+    """Hide films until their digital release: half of the TMDb films come out digitally in 2027."""
+    for _ in range(60):
+        if lab("Container(8106).NumItems") not in ("", "0"):
+            break
+        mon.waitForAbort(2)
+    for on in (False, True, False):
+        xbmc.executebuiltin("Skin.SetBool(lucent.hide.undigital)" if on else "Skin.Reset(lucent.hide.undigital)")
+        HOME.setProperty("lucent.wr.6", str(time.time()))
+        mon.waitForAbort(8)
+        log(f"digital {'on' if on else 'off'}: row 8106 has {lab('Container(8106).NumItems')} films")
 
 
 def main():
@@ -928,6 +943,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     limit_test()
+    digital_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

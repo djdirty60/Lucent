@@ -51,8 +51,13 @@ class H(BaseHTTPRequestHandler):
                     ("first_air_date" if tv else "release_date"): "2026-10-01", "vote_average": 7.1, "vote_count": 321,
                     "poster_path": f"/x{i}.png", "backdrop_path": f"/x{i}b.png"} for i in range(1, 21)]
             return self.send(json.dumps({"results": res}).encode(), "application/json")
+        tid = int(path.rstrip("/").split("/")[3]) if path.count("/") >= 3 and path.split("/")[3].isdigit() else 0
+        rel = {"results": [{"iso_3166_1": "US", "release_dates": [{"type": 3, "release_date": "2026-10-01T00:00:00.000Z"},
+                                                                  {"type": 4, "release_date": ("2027-01-01" if tid % 2 else "2026-10-15") + "T00:00:00.000Z"}]}]}
+        if path.endswith("/release_dates"):
+            return self.send(json.dumps(rel).encode(), "application/json")
         return self.send(json.dumps({"images": {"logos": []}, "genres": [{"name": "Drama"}], "runtime": 100, "vote_count": 321,
-                                     "production_companies": []}).encode(), "application/json")
+                                     "production_companies": [], "release_dates": rel}).encode(), "application/json")
 
 
 HTTPServer(("127.0.0.1", 8765), H).serve_forever()
