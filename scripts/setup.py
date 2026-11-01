@@ -85,11 +85,11 @@ def st_seren():
     return "ok", t(f"Linked to Trakt{' as ' + user if user else ''}", f"Gekoppeld met Trakt{' als ' + user if user else ''}")
 
 
-SEREN_REPO = "repository.nixgates"
+SEREN_REPO = "repository.seren-nixgate"   # minhgi's Seren build (scrapers in modules); comes with the skin
 
 
 def install_seren():
-    """Seren is not in Kodi's own repository: first its own repository (Nixgates, offered through the Lucent
+    """Seren is not in Kodi's own repository: first its own repository (Seren Nixgate by minhgi, installed with the skin from the Lucent
     repository), then Seren from there. Runs in the background; Kodi asks to confirm each install."""
     import threading
 
@@ -101,9 +101,9 @@ def install_seren():
                 if has(SEREN_REPO) or monitor.waitForAbort(1):
                     break
             if not has(SEREN_REPO):
-                xbmcgui.Dialog().ok("Seren", t("The Seren repository (Nixgates) could not be installed. Update the Lucent "
+                xbmcgui.Dialog().ok("Seren", t("The Seren repository (Seren Nixgate) could not be installed. Update the Lucent "
                                                "repository (Add-ons > Check for updates) and try again.",
-                                               "De repository van Seren (Nixgates) kon niet worden geïnstalleerd. Werk de "
+                                               "De repository van Seren (Seren Nixgate) kon niet worden geïnstalleerd. Werk de "
                                                "Lucent-repository bij (Add-ons > Controleren op updates) en probeer het opnieuw."))
                 return
             xbmc.executebuiltin("UpdateAddonRepos")

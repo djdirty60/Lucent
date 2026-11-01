@@ -174,7 +174,7 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Lucent**.)
 
-Kodi also installs the YouTube add-on (for trailers) and the white and coloured studio logo packs.
+Kodi also installs the YouTube add-on (for trailers), the white and coloured studio logo packs, and the **Seren Nixgate** repository (minhgi's Seren build, used with his permission), from which the setup assistant installs Seren.
 
 
 ### Automatic updates
