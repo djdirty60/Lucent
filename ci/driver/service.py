@@ -1447,6 +1447,11 @@ def f1_test():
     races = [e for e in sc.all_cached() if e["league"] == "f1" and e["state"] != "post"]
     races.sort(key=lambda e: ("race" not in (e.get("sub") or "").lower(), e["start"]))
     log(f"f1: events={len(races)} first={(races[0].get('title'), races[0].get('sub'), races[0]['id']) if races else None}")
+    try:
+        c = sc.circuit_info("617", "f1")
+        log(f"f1: circuit 617 dark={c.get('dark')!r} png={c.get('png')!r} white={sc.circuit_white(c.get('png'))!r}")
+    except Exception as error:  # noqa: BLE001
+        log(f"f1: circuit_info error {error!r}")
     if not races:
         return
     xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,game,{races[0]['id']})")
