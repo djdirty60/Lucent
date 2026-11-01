@@ -70,22 +70,43 @@ def ids_key(uniqueid):
     return ""
 
 
-def playing_item():
-    """(key, info) of the video that plays, or ("", {})."""
-    item = (rpc("Player.GetItem", {"playerid": 1, "properties": ["uniqueid", "season", "episode", "tvshowid", "showtitle",
-                                                                  "title", "file"]}) or {}).get("item") or {}
-    kind = item.get("type") or ""
-    ids = ids_key(item.get("uniqueid"))
-    if kind == "episode" or (item.get("season", -1) not in (-1, None) and item.get("episode", -1) not in (-1, None) and item.get("showtitle")):
+def tag_ids(tag):
+    out = {}
+    for name in ("tmdb", "imdb", "tvdb", "trakt"):
+        try:
+            value = tag.getUniqueID(name)
+        except Exception:  # noqa: BLE001
+            value = ""
+        if value:
+            out[name] = value
+    return out
+
+
+def playing_item(player):
+    """(key, info) of the video that plays, or ("", {}). Read from what the player plays (the list item Seren or
+    the library gave it), with Kodi's library for the series of a library episode."""
+    try:
+        tag = player.getVideoInfoTag()
+    except RuntimeError:
+        return "", {}
+    kind = tag.getMediaType() or ""
+    ids = ids_key(tag_ids(tag))
+    dbid = tag.getDbId() or -1
+    season, episode, show = tag.getSeason(), tag.getEpisode(), tag.getTVShowTitle()
+    if kind == "episode" or (season >= 0 and episode > 0 and show):
         show_ids = ""
-        if item.get("tvshowid", -1) not in (-1, None):              # a library episode: the series' own ids
-            show = rpc("VideoLibrary.GetTVShowDetails", {"tvshowid": item["tvshowid"], "properties": ["uniqueid"]}).get("tvshowdetails") or {}
-            show_ids = ids_key(show.get("uniqueid"))
-        show_ids = show_ids or ids or f"title{(item.get('showtitle') or '').lower()}"
-        key = f"ep:{show_ids}:{item.get('season')}:{item.get('episode')}"
-        return key, {"kind": "episode", "show": item.get("showtitle"), "season": item.get("season"), "episode": item.get("episode")}
+        if dbid and dbid > 0:                                           # a library episode: the series' own ids
+            ep = rpc("VideoLibrary.GetEpisodeDetails", {"episodeid": dbid, "properties": ["tvshowid"]}).get("episodedetails") or {}
+            if ep.get("tvshowid", -1) > 0:
+                tv = rpc("VideoLibrary.GetTVShowDetails", {"tvshowid": ep["tvshowid"], "properties": ["uniqueid"]}).get("tvshowdetails") or {}
+                show_ids = ids_key(tv.get("uniqueid"))
+        show_ids = show_ids or ids or f"title{(show or '').lower()}"
+        return f"ep:{show_ids}:{season}:{episode}", {"kind": "episode", "show": show, "season": season, "episode": episode}
+    if not ids and dbid and dbid > 0 and kind == "movie":
+        mv = rpc("VideoLibrary.GetMovieDetails", {"movieid": dbid, "properties": ["uniqueid"]}).get("moviedetails") or {}
+        ids = ids_key(mv.get("uniqueid"))
     if ids:
-        return f"movie:{ids}", {"kind": "movie", "title": item.get("title")}
+        return f"movie:{ids}", {"kind": "movie", "title": tag.getTitle()}
     return "", {}
 
 
@@ -101,7 +122,7 @@ class Keeper:
         self.since = 0.0
 
     def started(self):
-        self.key, self.info = playing_item()
+        self.key, self.info = playing_item(self.player)
         self.pos = self.total = 0.0
         self.checked = False
         self.since = time.time()

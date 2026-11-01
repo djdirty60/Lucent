@@ -22,12 +22,32 @@ def strm_address(path):
         return ""
 
 
+def from_tmdb(path):
+    """Seren's address of a film in a Lucent row: its TMDb number, looked up on Trakt."""
+    query = dict(urllib.parse.parse_qsl(path.split("?", 1)[1]))
+    tmdb = query.get("tmdb") or ""
+    if query.get("type") != "movie" or not tmdb.isdigit():
+        return ""
+    try:
+        import quick
+        for entry in quick.Trakt().call(f"search/tmdb/{tmdb}?type=movie") or []:
+            trakt_id = ((entry.get("movie") or {}).get("ids") or {}).get("trakt")
+            if trakt_id:
+                args = quick.seren_args({"mediatype": "movie", "trakt_id": int(trakt_id)})
+                return f"{SEREN}?action=getSources&action_args={args}"
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[script.lucent.library] context: Trakt lookup for TMDb {tmdb}: {error}", xbmc.LOGWARNING)
+    return ""
+
+
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "select"
     item = sys.listitem                              # noqa: F821 - given by Kodi to context scripts
     path = item.getPath() or xbmc.getInfoLabel("ListItem.FileNameAndPath")
     # a library file (.strm with Seren's address in it), or a Seren item itself (Seren's own menu switched off)
     address = path if path.startswith(SEREN) else strm_address(path)
+    if path.startswith("plugin://script.lucent.library/") and "action=tmdbopen" in path:
+        address = from_tmdb(path)                    # a film in a Lucent row (TMDb / Trakt lists)
     if not address.startswith(SEREN) or "action_args=" not in address:
         xbmc.log(f"[script.lucent.library] context: no Seren address in {path}", xbmc.LOGWARNING)
         return

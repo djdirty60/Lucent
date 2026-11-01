@@ -870,6 +870,35 @@ def resume_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def widgetctx_test():
+    """A film in a Lucent row on Home: its context menu has Seren's options too."""
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    found = None
+    for cid in [8100 + n for n in range(1, 11)] + [8200 + n for n in range(1, 11)]:
+        if not cond(f"Control.IsVisible({cid})") or not lab(f"Container({cid}).NumItems").isdigit():
+            continue
+        for pos in range(int(lab(f"Container({cid}).NumItems"))):
+            path = lab(f"Container({cid}).ListItemAbsolute({pos}).FileNameAndPath")
+            if "tmdbopen" in path and "type=movie" in path:
+                found = (cid, pos)
+                break
+        if found:
+            break
+    log(f"widgetctx: film found at {found}")
+    if not found:
+        return
+    xbmc.executebuiltin(f"Control.SetFocus({found[0]},{found[1]},absolute)")
+    mon.waitForAbort(2)
+    log(f"widgetctx: focus={lab('System.CurrentControlId')} item={lab('ListItem.Label')!r} path={lab('ListItem.FileNameAndPath')[:60]!r}")
+    xbmc.executebuiltin("Action(ContextMenu)")
+    mon.waitForAbort(2)
+    labels = [lab(f"Control.GetLabel({i})") for i in range(1000, 1030) if cond(f"Control.IsVisible({i})")]
+    log(f"widgetctx: open={cond('Window.IsVisible(contextmenu)')} items={labels}")
+    shot("25-widgetctx")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+
 
 def main():
     for _ in range(180):
@@ -882,6 +911,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    widgetctx_test()
+    ctxmenu_test()
     resume_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
