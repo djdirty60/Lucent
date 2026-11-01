@@ -1027,12 +1027,12 @@ def audio_test():
     mon.waitForAbort(8)                              # the helper starts its watcher
     for run in (1, 2):
         xbmc.executebuiltin("PlayMedia(/tmp/ci/audio.mkv)")
-        mon.waitForAbort(12)
+        mon.waitForAbort(25)
         res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Player.GetProperties",
                                                          "params": {"playerid": 1, "properties": ["currentaudiostream", "audiostreams"]}})))
         r = res.get("result") or {}
         cur = r.get("currentaudiostream") or {}
-        if run == 2:
+        if run == 3:
             import sys
             import xbmcvfs
             sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))
@@ -1102,6 +1102,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     audio_test()
+    navwalk_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
