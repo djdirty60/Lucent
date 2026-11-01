@@ -126,6 +126,8 @@ def fix_audio():
     props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["audiostreams", "currentaudiostream"]})
     streams = props.get("audiostreams") or []
     current = props.get("currentaudiostream") or {}
+    xbmc.log(f"[skin.lucent subtitles] sound: want {first}/{second or '-'}, now {current.get('language')}, "
+             f"{len(streams)} tracks", xbmc.LOGDEBUG)
     if len(streams) < 2:
         return
 
@@ -241,6 +243,7 @@ class Watcher(xbmc.Player):
         return any(word in text for word in ("plugin.video.youtube", "youtube.com", "googlevideo.com", "youtu.be"))
 
     def look(self):
+        xbmc.log("[skin.lucent subtitles] a video started: checking sound and subtitle", xbmc.LOGDEBUG)
         if not self.isPlayingVideo() or xbmc.getCondVisibility("VideoPlayer.Content(livetv) | Player.IsInternetStream + String.IsEmpty(VideoPlayer.Title)"):
             return
         if self.is_youtube():

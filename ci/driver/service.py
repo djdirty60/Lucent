@@ -1102,7 +1102,6 @@ def main():
     watch("home1", 40)
     shot("1-home")
     audio_test()
-    navwalk_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
