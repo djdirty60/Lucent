@@ -920,6 +920,11 @@ def limit_test():
 
 def digital_test():
     """Hide films until their digital release: half of the TMDb films come out digitally in 2027."""
+    xbmc.executebuiltin("ActivateWindow(home)")
+    xbmc.executebuiltin("Control.SetFocus(8101,0)")
+    for _ in range(5):
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Down)")
     for _ in range(150):
         if lab("Container(8106).NumItems") not in ("", "0"):
             break
