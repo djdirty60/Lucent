@@ -1089,6 +1089,22 @@ def navwalk_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def setup_test():
+    """Setup assistant: the steps Subtitles and Look show their buttons."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py)")
+    mon.waitForAbort(4)
+    for step in (5, 7):
+        xbmc.executebuiltin(f"SetFocus(100,{step},absolute)")
+        mon.waitForAbort(0.5)
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(2)
+        acts = [lab(f"Window.Property(act{n})") for n in range(1, 5)]
+        log(f"setup step {step}: {lab('Window.Property(stepno)')!r} buttons {acts}")
+        shot(f"29-setup-{step}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
 
 def main():
     for _ in range(180):
@@ -1101,8 +1117,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    setup_test()
     audio_test()
-    navwalk_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
