@@ -202,6 +202,11 @@ class Sport(xbmcgui.WindowXML):
         self.render()
         self.setFocusId(102 if self.view == "all" else 101)
         threading.Thread(target=self.background, daemon=True).start()
+        if getattr(self, "open_evid", ""):              # sport.py,game,<id>: straight to the page of that game
+            ev = next((e for e in sc.all_cached() if e["id"] == self.open_evid), None)
+            if ev:
+                self.by_id[ev["id"]] = ev
+                threading.Timer(0.8, self.open_game, args=(ev,)).start()
 
     def check_pvr(self):
         """Is there a TV guide? Asked again when the screen opens and when the guide has been read."""
@@ -867,7 +872,7 @@ class Sport(xbmcgui.WindowXML):
                 tiles = [(c.get("length", ""), sc.t("c_length")), (c.get("laps", ""), sc.t("c_laps")), (c.get("turns", ""), sc.t("c_turns")),
                          (c.get("record", ""), ("Record" + (f" {c['recyear']}" if c.get("recyear") else "")))]
                 out = {f"circt{i}{k}": v for i, (val, cap) in enumerate(tiles, 1) for k, v in (("v", val), ("c", cap if val else ""))}
-                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("png") or c.get("image", ""), "circpng": "1" if c.get("png") else "",
+                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": sc.circuit_white(c.get("png")) or c.get("png") or c.get("image", ""), "circpng": "1" if sc.circuit_white(c.get("png")) else "",
                        "circfacts": "  ·  ".join(facts),
                        "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""})
             except Exception as error:  # noqa: BLE001 - the circuit is a bonus
@@ -2254,10 +2259,11 @@ class TeamCard(xbmcgui.WindowXMLDialog):
             self.close()
 
 
-def open_window():
+def open_window(game=""):
     import xbmcaddon
     path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
     window = Sport(WINDOW_XML, path, "Default", "1080i")
+    window.open_evid = game
     try:
         window.doModal()
     finally:
@@ -2296,5 +2302,7 @@ if __name__ == "__main__":
         ensure_tab()
     elif action == "homecard":
         plan.open_home_card()
+    elif action == "game" and len(sys.argv) > 2:
+        open_window(sys.argv[2])
     else:
         open_window()

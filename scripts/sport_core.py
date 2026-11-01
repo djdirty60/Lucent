@@ -377,6 +377,93 @@ def _is_transparent_png(raw):
     return raw[25] in (4, 6) or b"tRNS" in raw[:2048]
 
 
+def png_to_white(raw):
+    """The same PNG with every visible pixel made white (the see-through parts stay see-through), so a black track drawing
+    can lie on a dark panel. Handles 8-bit grey+alpha, RGBA and palette PNGs without interlacing; None for anything else."""
+    import struct
+    import zlib
+    if raw[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    chunks, pos = [], 8
+    while pos + 8 <= len(raw):
+        size, kind = struct.unpack(">I4s", raw[pos:pos + 8])
+        chunks.append((kind, raw[pos + 8:pos + 8 + size]))
+        pos += 12 + size
+    head = dict(chunks).get(b"IHDR")
+    if not head:
+        return None
+    width, height, depth, ctype, _comp, _filt, interlace = struct.unpack(">IIBBBBB", head)
+    if interlace or depth != 8:
+        return None
+
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    if ctype == 3:                                         # palette: make every colour of the palette white
+        out = b"\x89PNG\r\n\x1a\n"
+        for kind, data in chunks:
+            if kind == b"PLTE":
+                data = b"\xff" * len(data)
+            out += chunk(kind, data)
+        return out
+    if ctype not in (4, 6):
+        return None
+    bpp = 2 if ctype == 4 else 4
+    data = zlib.decompress(b"".join(d for k, d in chunks if k == b"IDAT"))
+    stride = width * bpp
+    rows, prev, i = [], bytearray(stride), 0
+    for _ in range(height):
+        ftype, line = data[i], bytearray(data[i + 1:i + 1 + stride])
+        i += 1 + stride
+        for x in range(stride):
+            a = line[x - bpp] if x >= bpp else 0
+            b, c = prev[x], prev[x - bpp] if x >= bpp else 0
+            if ftype == 1:
+                line[x] = (line[x] + a) & 255
+            elif ftype == 2:
+                line[x] = (line[x] + b) & 255
+            elif ftype == 3:
+                line[x] = (line[x] + ((a + b) >> 1)) & 255
+            elif ftype == 4:
+                pa, pb, pc = abs(b - c), abs(a - c), abs(a + b - 2 * c)
+                line[x] = (line[x] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
+        rows.append(line)
+        prev = line
+    body = bytearray()
+    for line in rows:
+        for x in range(0, stride, bpp):
+            line[x:x + bpp - 1] = b"\xff" * (bpp - 1)
+        body += b"\x00" + line
+    out = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", head) + chunk(b"IDAT", zlib.compress(bytes(body), 9)) + chunk(b"IEND", b"")
+    return out
+
+
+def circuit_white(target):
+    """A white copy of a saved see-through track drawing (made once); '' when it cannot be made."""
+    if not target:
+        return ""
+    white = target[:-4] + "_white.png"
+    local_white = xbmcvfs.translatePath(white)
+    try:
+        with open(local_white, "rb") as handle:
+            if handle.read(8) == b"\x89PNG\r\n\x1a\n":
+                return white
+    except OSError:
+        pass
+    try:
+        with open(xbmcvfs.translatePath(target), "rb") as handle:
+            raw = handle.read()
+        out = png_to_white(raw)
+        if not out:
+            return ""
+        with open(local_white, "wb") as handle:
+            handle.write(out)
+        return white
+    except Exception as error:  # noqa: BLE001 - the dark panel is a bonus; the light tile stays
+        log(f"white circuit: {error}")
+        return ""
+
+
 def circuit_png(cid, diagrams):
     """Try to get the track drawing as a PNG with a see-through background; saved locally. Returns the file path or ''."""
     target = DATA + f"circuit_{cid}.png"           # Kodi shows this special:// path ...

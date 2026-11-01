@@ -1439,6 +1439,38 @@ def follow_test():
     mon.waitForAbort(2)
 
 
+def f1_test():
+    """F1 game page: the track drawing turns white and lies on a dark glass panel."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    races = [e for e in sc.all_cached() if e["league"] == "f1" and e["state"] != "post"]
+    races.sort(key=lambda e: ("race" not in (e.get("sub") or "").lower(), e["start"]))
+    log(f"f1: events={len(races)} first={(races[0].get('title'), races[0].get('sub'), races[0]['id']) if races else None}")
+    if not races:
+        return
+    xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,game,{races[0]['id']})")
+    for _ in range(40):
+        mon.waitForAbort(1)
+        if lab("Window.Property(g.circname)") and lab("Window.Property(g.circimg)"):
+            break
+    mon.waitForAbort(4)
+    img = lab("Window.Property(g.circimg)")
+    log(f"f1: page layout={lab('Window.Property(g.layout)')!r} circ={lab('Window.Property(g.circname)')!r} img={img.rsplit('/', 1)[-1]!r} "
+        f"white={lab('Window.Property(g.circpng)')!r} tiles={[lab(f'Window.Property(g.circt{n}v)') for n in range(1, 5)]}")
+    local = xbmcvfs.translatePath(img) if img.startswith("special://") else ""
+    if local and os.path.exists(local):
+        import struct
+        raw = open(local, "rb").read()
+        log(f"f1: white png size={len(raw)} type={raw[25]} wh={struct.unpack('>II', raw[16:24])}")
+    shot("37-f1-page")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1453,9 +1485,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     sportA_test()
-    tables_test()
-    follow_test()
-    mine_test()
+    f1_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
