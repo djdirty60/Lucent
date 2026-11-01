@@ -13,9 +13,11 @@ Competitions come from CATALOG below; each has a "kind":
   event   a race weekend / a tournament / a fight card: shown with its name (Formula 1: every session is a row)
 """
 import datetime
+import json
 import re
 import time
 import unicodedata
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
@@ -142,7 +144,8 @@ TX = {
     "hint": ("OK: game info   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdinfo   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
-    "also_today": ("Also today", "Ook vandaag"), "your_week": ("Your teams this week", "Jouw teams deze week"),
+    "also_today": ("Also today", "Ook vandaag"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
+    "watch_on": ("Watch on {}", "Kijk op {}"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
     "goal_alerts": ("Goal alerts on for {}", "Doelpuntmeldingen aan voor {}"),
     "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
@@ -377,6 +380,261 @@ def _is_transparent_png(raw):
     return raw[25] in (4, 6) or b"tRNS" in raw[:2048]
 
 
+def png_to_white(raw):
+    """The same PNG with every visible pixel made white (the see-through parts stay see-through), so a black track drawing
+    can lie on a dark panel. Handles 8-bit grey+alpha, RGBA and palette PNGs without interlacing; None for anything else."""
+    import struct
+    import zlib
+    if raw[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    chunks, pos = [], 8
+    while pos + 8 <= len(raw):
+        size, kind = struct.unpack(">I4s", raw[pos:pos + 8])
+        chunks.append((kind, raw[pos + 8:pos + 8 + size]))
+        pos += 12 + size
+    head = dict(chunks).get(b"IHDR")
+    if not head:
+        return None
+    width, height, depth, ctype, _comp, _filt, interlace = struct.unpack(">IIBBBBB", head)
+    if interlace or depth != 8:
+        return None
+
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    if ctype == 3:                                         # palette: make every colour of the palette white
+        out = b"\x89PNG\r\n\x1a\n"
+        for kind, data in chunks:
+            if kind == b"PLTE":
+                data = b"\xff" * len(data)
+            out += chunk(kind, data)
+        return out
+    if ctype not in (4, 6):
+        return None
+    bpp = 2 if ctype == 4 else 4
+    data = zlib.decompress(b"".join(d for k, d in chunks if k == b"IDAT"))
+    stride = width * bpp
+    rows, prev, i = [], bytearray(stride), 0
+    for _ in range(height):
+        ftype, line = data[i], bytearray(data[i + 1:i + 1 + stride])
+        i += 1 + stride
+        for x in range(stride):
+            a = line[x - bpp] if x >= bpp else 0
+            b, c = prev[x], prev[x - bpp] if x >= bpp else 0
+            if ftype == 1:
+                line[x] = (line[x] + a) & 255
+            elif ftype == 2:
+                line[x] = (line[x] + b) & 255
+            elif ftype == 3:
+                line[x] = (line[x] + ((a + b) >> 1)) & 255
+            elif ftype == 4:
+                pa, pb, pc = abs(b - c), abs(a - c), abs(a + b - 2 * c)
+                line[x] = (line[x] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
+        rows.append(line)
+        prev = line
+    body = bytearray()
+    for line in rows:
+        for x in range(0, stride, bpp):
+            line[x:x + bpp - 1] = b"\xff" * (bpp - 1)
+        body += b"\x00" + line
+    out = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", head) + chunk(b"IDAT", zlib.compress(bytes(body), 9)) + chunk(b"IEND", b"")
+    return out
+
+
+def circuit_white(target):
+    """A white copy of a saved see-through track drawing (made once); '' when it cannot be made."""
+    if not target:
+        return ""
+    white = target[:-4] + "_white.png"
+    local_white = xbmcvfs.translatePath(white)
+    try:
+        with open(local_white, "rb") as handle:
+            if handle.read(8) == b"\x89PNG\r\n\x1a\n":
+                return white
+    except OSError:
+        pass
+    try:
+        with open(xbmcvfs.translatePath(target), "rb") as handle:
+            raw = handle.read()
+        out = png_to_white(raw)
+        if not out:
+            return ""
+        with open(local_white, "wb") as handle:
+            handle.write(out)
+        return white
+    except Exception as error:  # noqa: BLE001 - the dark panel is a bonus; the light tile stays
+        log(f"white circuit: {error}")
+        return ""
+
+
+STADIUM_PATH = DATA + "sport_stadiums.json"
+TSDB = "https://www.thesportsdb.com/api/v1/json/123/"     # TheSportsDB's free key
+TSDB_SPORT = {"soccer": "Soccer", "basketball": "Basketball", "football": "American Football", "hockey": "Ice Hockey",
+              "baseball": "Baseball", "rugby": "Rugby"}
+
+
+def stadium_photo(name, sport=""):
+    """(photo URL, stadium name) of a team's home ground from TheSportsDB; remembered 30 days (a miss 3 days)."""
+    key = f"{norm(name)}|{sport}"
+    known = ac.read_json(STADIUM_PATH, {})
+    hit = known.get(key)
+    if hit and time.time() - hit.get("t", 0) < (30 if hit.get("img") else 3) * 86400:
+        return hit.get("img", ""), hit.get("name", "")
+    img, stadium = "", ""
+    try:
+        query = urllib.parse.quote(name)
+        data = json.loads(_tsdb_get(f"{TSDB}searchteams.php?t={query}") or "{}")
+        teams = data.get("teams") or []
+        want = TSDB_SPORT.get(sport, "")
+        teams.sort(key=lambda t: (want and t.get("strSport") != want, norm(t.get("strTeam")) != norm(name)))
+        if teams:
+            team = teams[0]
+            stadium = team.get("strStadium") or team.get("strVenue") or ""
+            if team.get("idVenue"):
+                venue = (json.loads(_tsdb_get(f"{TSDB}lookupvenue.php?id={team['idVenue']}") or "{}").get("venues") or [{}])[0]
+                img = venue.get("strThumb") or venue.get("strFanart1") or venue.get("strFanart2") or ""
+                stadium = venue.get("strVenue") or stadium
+            img = img or team.get("strStadiumThumb") or team.get("strFanart1") or team.get("strBanner") or ""
+    except Exception as error:  # noqa: BLE001 - no photo is fine
+        log(f"stadium {name}: {error}")
+    known[key] = {"img": img, "name": stadium, "t": time.time()}
+    try:
+        ac.write_json(STADIUM_PATH, known)
+    except Exception as error:  # noqa: BLE001
+        log(f"cannot save stadiums: {error}")
+    return img, stadium
+
+
+# Channel logos from tv-logo/tv-logos (CC BY-SA / BY-NC-SA, the logos belong to their owners); the index of names
+# comes with the skin (resources/tvlogos.json), the pictures are fetched from GitHub when shown and cached by Kodi.
+TVLOGO_URL = "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/{}/{}.png"
+TVLOGO_COUNTRY = {"nl": "netherlands", "be": "belgium", "uk": "united-kingdom", "gb": "united-kingdom", "en": "united-kingdom",
+                  "us": "united-states", "usa": "united-states", "de": "germany", "fr": "france", "es": "spain", "it": "italy",
+                  "pt": "portugal", "tr": "turkey", "pl": "poland", "ar": "world-middle-east", "arab": "world-middle-east",
+                  "ae": "united-arab-emirates", "ca": "canada", "au": "australia", "nz": "new-zealand", "ie": "ireland",
+                  "at": "austria", "ch": "switzerland", "gr": "greece", "ro": "romania", "ru": "russia", "in": "india",
+                  "br": "brazil", "mx": "mexico", "za": "south-africa", "se": "nordic", "no": "nordic", "dk": "nordic", "fi": "nordic"}
+_TVLOGO = {}
+_LOGO_NOISE = {"hd", "fhd", "uhd", "sd", "4k", "8k", "hevc", "h265", "h264", "50fps", "60fps", "raw", "backup", "vip", "hq", "lq",
+               "multi", "fps", "plus+", "720p", "1080p", "2160p"}
+
+
+def _tvlogo_index():
+    if "index" not in _TVLOGO:
+        try:
+            path = xbmcvfs.translatePath("special://skin/resources/tvlogos.json")
+            with open(path, encoding="utf-8") as handle:
+                folders = json.load(handle)
+        except Exception as error:  # noqa: BLE001
+            log(f"tv logos: {error}")
+            folders = {}
+        index = {}
+        for folder, stems in folders.items():
+            for stem in stems:
+                key = stem.rsplit("-", 1)[0] if "-" in stem else stem
+                index.setdefault(key, []).append((folder, stem))
+        _TVLOGO["index"] = index
+    return _TVLOGO["index"]
+
+
+def channel_logo(name):
+    """A clean logo for an IPTV channel name ('NL: Ziggo Sport 2 FHD', '[AR] beIN SPORTS 1 4K') or ''."""
+    if not name:
+        return ""
+    cache = _TVLOGO.setdefault("hits", {})
+    if name in cache:
+        return cache[name]
+    text = name.strip()
+    country = ""
+    m = re.match(r"^\s*[\[(|]?\s*([A-Za-z]{2,4})\s*[\])|:\-]+\s*(.*)$", text)
+    if m and m.group(1).lower() in TVLOGO_COUNTRY:
+        country, text = TVLOGO_COUNTRY[m.group(1).lower()], m.group(2)
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower().replace("&", " and ")
+    text = re.sub(r"\b(f?hd|uhd|4k)\s*\+", r"\1", text).replace("+", " plus ")
+    words = [w for w in re.split(r"[^a-z0-9]+", text) if w and w not in _LOGO_NOISE and not re.fullmatch(r"s\d", w)]
+    if len(words) > 1 and words[-1] in TVLOGO_COUNTRY:          # 'TNT Sports 1 UK'
+        country = country or TVLOGO_COUNTRY[words[-1]]
+        words = words[:-1]
+    slug = "-".join(words)
+    tries = [slug]
+    if slug.endswith("-1"):
+        tries.append(slug[:-2])                      # ESPN 1 -> espn
+    tries.append(re.sub(r"([a-z])-(\d)", r"\1\2", slug))   # NPO 1 -> npo1
+    tries += [t + "-hd" for t in list(tries)]
+    index = _tvlogo_index()
+    home = "netherlands" if NL else "united-kingdom"
+    order = [c for c in (country, home, "international", "world-europe") if c]
+    hit = ""
+    for t in tries:
+        found = index.get(t)
+        if not found:
+            continue
+        found = sorted(found, key=lambda fs: order.index(fs[0]) if fs[0] in order else 99)
+        hit = TVLOGO_URL.format(*found[0])
+        break
+    cache[name] = hit
+    return hit
+
+
+def venue_photo(name):
+    """A photo of a venue (a race circuit) by its name from TheSportsDB; '' when it has none."""
+    if not name:
+        return ""
+    words = [w for w in re.split(r"[\s,]+", name) if len(w) > 3]
+    tries = [name] + ([" ".join(words[-2:])] if len(words) > 2 else []) + ([words[-1]] if words else [])
+    for q in tries:
+        try:
+            data = json.loads(_tsdb_get(f"{TSDB}searchvenues.php?t={urllib.parse.quote(q)}") or "{}")
+        except Exception as error:  # noqa: BLE001
+            log(f"venue {q}: {error}")
+            continue
+        for v in data.get("venues") or []:
+            img = v.get("strThumb") or v.get("strFanart1") or v.get("strFanart2") or ""
+            if img:
+                log(f"venue photo for {name!r}: {v.get('strVenue')!r}")
+                return img
+    return ""
+
+
+def _tsdb_get(url):
+    request = urllib.request.Request(url, headers=dict(BROWSER))
+    with urllib.request.urlopen(request, timeout=15) as response:
+        return response.read().decode("utf-8", "replace")
+
+
+def circuit_dark(cid, diagrams):
+    """ESPN's track drawing made for dark backgrounds (only offered as SVG): asked as a PNG through ESPN's image
+    service and saved locally. Returns the file path or ''."""
+    target = DATA + f"circuit_{cid}_dark.png"
+    local = xbmcvfs.translatePath(target)
+    try:
+        with open(local, "rb") as handle:
+            if handle.read(8) == b"\x89PNG\r\n\x1a\n":
+                return target
+    except OSError:
+        pass
+    for d in diagrams:
+        rel, href = d.get("rel") or [], (d.get("href") or "").replace("http://", "https://")
+        if not ("circuit-dark" in rel and href):
+            continue
+        path = href.rsplit(".", 1)[0].split("espncdn.com", 1)[-1]
+        for url in (f"https://a.espncdn.com/combiner/i?img={path}.svg&w=1000&format=png",
+                    f"https://a.espncdn.com/combiner/i?img={path}.png&w=1000", href.rsplit(".", 1)[0] + ".png"):
+            try:
+                request = urllib.request.Request(url, headers=dict(BROWSER))
+                with urllib.request.urlopen(request, timeout=20) as response:
+                    raw = response.read()
+                if raw[:8] == b"\x89PNG\r\n\x1a\n" and len(raw) > 2000:
+                    xbmcvfs.mkdirs(DATA)
+                    with open(local, "wb") as handle:
+                        handle.write(raw)
+                    log(f"circuit {cid}: dark drawing from {url}")
+                    return target
+            except Exception as error:  # noqa: BLE001 - try the next address
+                log(f"circuit dark {url}: {error}")
+    return ""
+
+
 def circuit_png(cid, diagrams):
     """Try to get the track drawing as a PNG with a see-through background; saved locally. Returns the file path or ''."""
     target = DATA + f"circuit_{cid}.png"           # Kodi shows this special:// path ...
@@ -489,7 +747,7 @@ def circuit_info(cid, league="f1"):
     if not cid:
         return {}
     known = ac.read_json(CIRCUIT_PATH, {}) or {}
-    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and known[cid].get("pv") == 2:
+    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and known[cid].get("pv") == 5:
         return known[cid]                 # pv 2: the drawing was really looked for (before 1.30.115 it could never be saved)
     path = LEAGUES.get(league, {}).get("path", "racing/f1")
     sport, slug = path.split("/", 1)
@@ -506,9 +764,11 @@ def circuit_info(cid, league="f1"):
         if image:
             break
     png = circuit_png(cid, data.get("diagrams") or [])
+    dark = circuit_dark(cid, data.get("diagrams") or [])
+    photo = venue_photo(data.get("fullName") or "")  # ESPN's drawing for dark backgrounds (a light track)
     info_ = {"name": data.get("fullName") or "", "place": place, "png": png, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
              "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
-             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image, "pv": 2}
+             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image, "dark": dark, "photo": photo, "pv": 5}
     if not (info_["name"] or info_["image"]):
         return info_                      # ESPN gave nothing (busy?): do not remember the emptiness, try again next time
     known[cid] = info_

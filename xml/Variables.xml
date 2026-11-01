@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <includes>
+    <variable name="CircuitDiffuse">
+        <value condition="String.IsEmpty(Window.Property(g.circpng))">FFC2BEB6</value>
+        <value>FFFFFFFF</value>
+    </variable>
     <variable name="GuideFavLabel">
         <value condition="!String.IsEmpty(Skin.String(lucent.guide.group)) + String.StartsWith(System.Language,Dutch)">★  $INFO[Skin.String(lucent.guide.group)]</value>
         <value condition="!String.IsEmpty(Skin.String(lucent.guide.group))">★  $INFO[Skin.String(lucent.guide.group)]</value>

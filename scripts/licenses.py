@@ -12,6 +12,8 @@ DATA = [
     ("Trakt", 31514, "https://trakt.tv"),
     ("TVmaze", 31515, "https://www.tvmaze.com"),
     ("ESPN", 31516, "https://www.espn.com"),
+    ("TheSportsDB", 31673, "https://www.thesportsdb.com"),
+    ("tv-logos", 31674, "https://github.com/tv-logo/tv-logos"),
 ]
 SOFTWARE = [
     ("Seren", 31518, "https://github.com/nixgates/plugin.video.seren"),

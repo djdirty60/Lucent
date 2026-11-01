@@ -37,6 +37,7 @@ DAY_PREV, DAY_NEXT = 110, 118
 CHANNEL_BUTTONS = {311: 1, 312: 2, 313: 3, 314: 4, 341: 1, 342: 2, 343: 3, 344: 4}
 HERO_LIST = 150
 HERO_CHANNELS = (341, 342, 343, 344)
+ALSO_LIST = 160         # My sport: 'Also today' next to the big card
 SECTION_LISTS = tuple(range(211, 221))
 FOLLOW_HOME, FOLLOW_AWAY, SHOW_TABLE = 321, 322, 323
 FIX_BUTTON, REMIND_BUTTON, RECORD_BUTTON = 331, 332, 333
@@ -166,6 +167,7 @@ class Sport(xbmcgui.WindowXML):
         self.team_events = []
         self.table_token = 0
         self.club_token = 0
+        self.stadium_token = 0
         self.table_pos = -1
         self.guide_busy = False
         self.has_pvr = False
@@ -202,6 +204,14 @@ class Sport(xbmcgui.WindowXML):
         self.render()
         self.setFocusId(102 if self.view == "all" else 101)
         threading.Thread(target=self.background, daemon=True).start()
+        if getattr(self, "open_evid", ""):              # sport.py,game,<id>: straight to the page of that game
+            ev = next((e for e in sc.all_cached() if e["id"] == self.open_evid), None)
+            if ev:
+                self.by_id[ev["id"]] = ev
+                threading.Timer(0.8, self.open_game, args=(ev,)).start()
+        if getattr(self, "open_team", None):            # sport.py,team,<league>,<id>,<name>: straight to a club's page
+            key, team_id, name = self.open_team
+            threading.Timer(0.8, lambda: self.show_team_games(name, sc.team_card(key, team_id, name))).start()
 
     def check_pvr(self):
         """Is there a TV guide? Asked again when the screen opens and when the guide has been read."""
@@ -261,6 +271,9 @@ class Sport(xbmcgui.WindowXML):
             threading.Timer(0.45, self.sport_after, args=(self.table_token,)).start()
         if self.view in ("mine", "all"):
             self.tint()
+        if self.view in ("all", "team") and self.getFocusId() in (LIST, LIVE_STRIP):
+            self.stadium_token += 1
+            threading.Thread(target=self.stadium_after, args=(self.stadium_token,), daemon=True).start()
         if self.view == "follow" and self.getFocusId() in (F_SPORTS, F_COMPS):
             self.f_token += 1
             threading.Timer(0.4, self.follow_after, args=(self.f_token, self.getFocusId())).start()
@@ -322,6 +335,15 @@ class Sport(xbmcgui.WindowXML):
             self.set_recording()
         elif cid == 334:
             self.stop_preview()
+        elif cid == ALSO_LIST:
+            item = self.getControl(ALSO_LIST).getSelectedItem()
+            if item and item.getProperty("kind") == "watch":
+                self.setFocusId(HERO_LIST)
+                self.preview_channel(1)
+            elif item:
+                ev = self.by_id.get(item.getProperty("evid")) or next((e for e in sc.all_cached() if e["id"] == item.getProperty("evid")), None)
+                if ev:
+                    self.open_game(ev)
         elif cid in (350, 351):
             if epg.active()[0]:          # the TV window: OK makes the channel full screen
                 epg.fullscreen()
@@ -511,9 +533,12 @@ class Sport(xbmcgui.WindowXML):
             raw = data.get("names", {}).get(str(ev.get("cid")), "")
             return [{"cid": ev["cid"], "name": epg.clean_name(raw) or raw, "q": epg.quality_of(raw), "score": 3,
                      "tag": sc.t("sure"), "live": ev["state"] == "in", "title": ev["title"], "start": ev["start"],
-                     "icon": data.get("icons", {}).get(str(ev.get("cid")), "")}]
+                     "icon": sc.channel_logo(epg.clean_name(raw) or raw) or data.get("icons", {}).get(str(ev.get("cid")), "")}]
         found = epg.channels_for(ev, data) if data else []
-        return plan.with_fixes(ev, found, data or {})
+        chans = plan.with_fixes(ev, found, data or {})
+        for chan in chans:                       # a clean logo from tv-logos when the channel name is known there
+            chan["icon"] = sc.channel_logo(chan.get("name", "")) or chan.get("icon", "")
+        return chans
 
     def render(self, keep_focus=False):
         self.setProperty("sport.view", self.view)
@@ -559,6 +584,14 @@ class Sport(xbmcgui.WindowXML):
         if items:
             control.selectItem(min(max(position, 0), len(items) - 1))
         self.fill_days()
+        if self.view == "team" and getattr(self, "team_look", None) and self.team_look[2]:
+            self.setProperty("sport.bgA", self.team_look[2])
+            self.setProperty("sport.bgB", self.team_look[2])
+        if self.view != "team":
+            self.setProperty("sport.teamlogo", "")
+        if self.view in ("all", "team"):
+            self.stadium_token += 1
+            threading.Thread(target=self.stadium_after, args=(self.stadium_token, 0.8), daemon=True).start()
         if items:
             self.setProperty("sport.empty", "")
         else:
@@ -665,11 +698,10 @@ class Sport(xbmcgui.WindowXML):
         today = ac.today()
         big_live = {e["id"] for e in hero if e["state"] == "in"}        # already on the scoreboard
         also = [e for e in live_all + coming_all if e["id"] not in big_live and sc.local_day(e["start"]) == today]
-        if also:
-            teams = [t.get("name", "") for t in follow.get("teams", []) if t.get("name")][:3]
-            alerts = sc.t("goal_alerts", ", ".join(teams)) if teams and not xbmc.getCondVisibility("Skin.HasSetting(lucent.goals.off)") else ""
-            sections.append({"title": sc.t("also_today"), "sub": alerts or (f"{len(live_all)} live" if live_all else ""),
-                             "logo": SPORT_ICON, "events": also[:8]})
+        quiet = set(follow.get("nogoals", []))
+        teams = [t.get("name", "") for t in follow.get("teams", []) if t.get("name") and sc.team_ident(t) not in quiet][:3]
+        self.alerts = sc.t("goal_alerts", ", ".join(teams)) if teams and not xbmc.getCondVisibility("Skin.HasSetting(lucent.goals.off)") else ""
+        self.also = also[:8]
         week_end = time.time() + 7 * 86400
         week = [e for e in coming_all if e["id"] in fav and sc.local_day(e["start"]) != today and e["start"] < week_end]
         if week:
@@ -707,6 +739,7 @@ class Sport(xbmcgui.WindowXML):
                 props["when"] = "  ·  ".join(x for x in (ev.get("status"), ev.get("venue")) if x)
             items.append(listitem(label, label2, **props))
         self.fill_list(HERO_LIST, items, keep.get(HERO_LIST, 0))
+        self.fill_also(data)
         live_hero = [(n, ev) for n, ev in enumerate(hero) if ev["state"] == "in" and ev["kind"] == "teams"]
         if live_hero:
             threading.Thread(target=self.hero_goals, args=(live_hero,), daemon=True).start()
@@ -733,6 +766,33 @@ class Sport(xbmcgui.WindowXML):
         self.last_tint = None
         self.tint()
 
+    def fill_also(self, data):
+        """Next to the big card: a Watch row for its channel, then the other games of today (OK opens the game)."""
+        rows = []
+        hero = self.getControl(HERO_LIST).getSelectedItem()
+        if hero and hero.getProperty("ch1name"):
+            rows.append(listitem(sc.t("watch_on", hero.getProperty("ch1name")), "", kind="watch", icon=hero.getProperty("ch1icon")))
+        now = time.time()
+        for ev in getattr(self, "also", []):
+            chans = self.channels_of(ev, data)
+            if ev["state"] == "in":
+                when, sub = ev.get("status") or "LIVE", f"{score_text(ev)}"
+            else:
+                left = max(0, int(ev["start"] - now))
+                when = sc.local_time(ev["start"])
+                sub = sc.t("g_in_h", left // 3600, left % 3600 // 60) if left >= 3600 else sc.t("g_in_m", left // 60)
+            title = ev.get("title") if ev["kind"] == "event" else f"{ev['home'].get('name', '')} – {ev['away'].get('name', '')}"
+            rows.append(listitem(title, sub, kind="game", evid=ev["id"], when=when, live="1" if ev["state"] == "in" else "",
+                                 hlogo=ev["home"].get("logo", "") if ev["kind"] != "event" else ev.get("lg", ""),
+                                 alogo=ev["away"].get("logo", "") if ev["kind"] != "event" else "",
+                                 chan=chans[0]["name"] if chans else ""))
+        self.fill_list(ALSO_LIST, rows, 0)
+        self.setProperty("sport.alsohas", "1" if rows else "")
+        self.setProperty("sport.alerts", getattr(self, "alerts", ""))
+        self.setProperty("sport.t.also_today", sc.t("also_today").upper())
+        self.setProperty("sport.t.nothing_today", sc.t("nothing_today"))
+        self.setProperty("sport.t.goal_alerts_cap", sc.t("goal_alerts_cap"))
+
     def hero_goals(self, live_hero):
         """Who scored, per side, on the live scoreboard ('12' Leão  ·  31' Pulisic'), from ESPN's game summary."""
         for n, ev in live_hero:
@@ -756,6 +816,28 @@ class Sport(xbmcgui.WindowXML):
             if item.getProperty("evid") == ev["id"]:
                 item.setProperty("hgoals", "  ·  ".join(sides["home"]))
                 item.setProperty("agoals", "  ·  ".join(sides["away"]))
+
+    def stadium_after(self, token, wait=0.5):
+        """Photo of the stadium in the TV window while nothing plays: the home team's ground of the game you are on,
+        on a club page the club's own ground."""
+        if xbmc.Monitor().waitForAbort(wait) or token != self.stadium_token or self.closing:
+            return
+        try:
+            if self.view == "team" and getattr(self, "team_look", None):
+                name, sport = self.team_look[0], self.team_look[1]
+            else:
+                item = self.getControl(LIST).getSelectedItem()
+                ev = self.by_id.get(item.getProperty("evid")) if item else None
+                if not ev or ev["kind"] != "teams":
+                    self.setProperty("sport.stadium", "")
+                    return
+                name, sport = ev["home"].get("name", ""), sc.LEAGUES.get(ev["league"], {}).get("sport", "")
+            img, stadium = sc.stadium_photo(name, sport)
+            if token == self.stadium_token:
+                self.setProperty("sport.stadium", img)
+                self.setProperty("sport.stadium.name", stadium)
+        except Exception as error:  # noqa: BLE001
+            sc.log(f"stadium: {error}")
 
     def fill_list(self, cid, items, position=0):
         control = self.getControl(cid)
@@ -867,7 +949,7 @@ class Sport(xbmcgui.WindowXML):
                 tiles = [(c.get("length", ""), sc.t("c_length")), (c.get("laps", ""), sc.t("c_laps")), (c.get("turns", ""), sc.t("c_turns")),
                          (c.get("record", ""), ("Record" + (f" {c['recyear']}" if c.get("recyear") else "")))]
                 out = {f"circt{i}{k}": v for i, (val, cap) in enumerate(tiles, 1) for k, v in (("v", val), ("c", cap if val else ""))}
-                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": c.get("png") or c.get("image", ""), "circpng": "1" if c.get("png") else "",
+                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": sc.circuit_white(c.get("png")) or c.get("dark") or c.get("png") or c.get("image", ""), "circpng": "1" if (sc.circuit_white(c.get("png")) or c.get("dark")) else "", "circglow": "1" if sc.circuit_white(c.get("png")) else "", "circphoto": c.get("photo", ""),
                        "circfacts": "  ·  ".join(facts),
                        "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""})
             except Exception as error:  # noqa: BLE001 - the circuit is a bonus
@@ -1772,6 +1854,21 @@ class Sport(xbmcgui.WindowXML):
         return False
 
     def show_team_games(self, name, card):
+        side = {}
+        for ev in card["games"] + [e for e, _r in card["recent"]]:
+            for who in ("home", "away"):
+                if sc.norm(ev[who].get("name")) == sc.norm(name):
+                    side = ev[who]
+                    break
+            if side:
+                sport = sc.LEAGUES.get(ev["league"], {}).get("sport", "")
+                break
+        else:
+            sport = ""
+        base = sc.club_hex(side.get("color"), side.get("alt")) if side else ""
+        self.setProperty("sport.teamlogo", side.get("logo", "") or sc.flag_logo(name))
+        self.setProperty("sport.teamcol", colour(base, "55") if base else "")
+        self.team_look = (name, sport, colour(base, "66") if base else "")
         self.team_name = name
         self.team_events = card["games"] + [e for e, _r in card["recent"]]
         self.view = "team"
@@ -2254,10 +2351,12 @@ class TeamCard(xbmcgui.WindowXMLDialog):
             self.close()
 
 
-def open_window():
+def open_window(game="", team=None):
     import xbmcaddon
     path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
     window = Sport(WINDOW_XML, path, "Default", "1080i")
+    window.open_evid = game
+    window.open_team = team
     try:
         window.doModal()
     finally:
@@ -2296,5 +2395,9 @@ if __name__ == "__main__":
         ensure_tab()
     elif action == "homecard":
         plan.open_home_card()
+    elif action == "game" and len(sys.argv) > 2:
+        open_window(sys.argv[2])
+    elif action == "team" and len(sys.argv) > 4:
+        open_window(team=(sys.argv[2], sys.argv[3], ",".join(sys.argv[4:])))
     else:
         open_window()
