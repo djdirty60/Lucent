@@ -1156,12 +1156,5 @@
         <value condition="Control.HasFocus(806)">$INFO[Container(806).ListItem.Art(fanart)]</value>
     </variable>
     <!-- player menu: the play / pause button shows play while paused -->
-    <variable name="OSDPlayPauseFo">
-        <value condition="Player.Paused | Player.Forwarding | Player.Rewinding">buttons/play_fo.png</value>
-        <value>buttons/pause_fo.png</value>
-    </variable>
-    <variable name="OSDPlayPauseNf">
-        <value condition="Player.Paused | Player.Forwarding | Player.Rewinding">buttons/play_nf.png</value>
-        <value>buttons/pause_nf.png</value>
-    </variable>
+    <expression name="OSDShowPlay">Player.Paused | Player.Forwarding | Player.Rewinding</expression>
 </includes>
