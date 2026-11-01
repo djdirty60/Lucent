@@ -32,18 +32,26 @@ def main():
         return
     query = dict(urllib.parse.parse_qsl(address.split("?", 1)[1]))
     args = query.get("action_args", "")
+    try:
+        ids = json.loads(urllib.parse.unquote(args))
+    except ValueError:
+        ids = {}
     if what == "select":
         xbmc.executebuiltin(f"PlayMedia({address}&source_select=true)")
     elif what == "rescrape":
         xbmc.executebuiltin(f"PlayMedia({address}&seren_reload=true)")
+    elif what == "rescrape_select":
+        xbmc.executebuiltin(f"PlayMedia({address}&seren_reload=true&source_select=true)")
+    elif what == "similar":
+        movie = ids.get("mediatype") == "movie"
+        tid = ids.get("trakt_id") if movie else ids.get("trakt_show_id")
+        if tid:
+            action = "moviesRelated" if movie else "showsRelated"
+            xbmc.executebuiltin(f'ActivateWindow(Videos,"{SEREN}?action={action}&action_args={tid}",return)')
     elif what == "trakt":
         url = SEREN + "?" + urllib.parse.urlencode({"action": "traktManager", "action_args": args})
         xbmc.executebuiltin(f"RunPlugin({url})")
     elif what == "show":
-        try:
-            ids = json.loads(urllib.parse.unquote(args))
-        except ValueError:
-            ids = {}
         show = ids.get("trakt_show_id")
         if show:
             show_args = urllib.parse.quote(json.dumps({"mediatype": "tvshow", "trakt_id": int(show)}, sort_keys=True))

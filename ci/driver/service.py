@@ -795,6 +795,29 @@ def settings_test():
     mon.waitForAbort(2)
 
 
+def ctxmenu_test():
+    """A Lucent Library film: its context menu has Seren's options."""
+    xbmc.executebuiltin('ActivateWindow(Videos,"special://profile/addon_data/script.lucent.library/movies/Test Film (2020)/",return)')
+    mon.waitForAbort(4)
+    for _ in range(4):
+        if lab("ListItem.Label").endswith(".strm") or "Test Film" in lab("ListItem.Label"):
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+    log(f"ctxmenu: item={lab('ListItem.Label')!r} path={lab('ListItem.FileNameAndPath')[-50:]!r} dbtype={lab('ListItem.DBType')!r}")
+    xbmc.executebuiltin("Action(ContextMenu)")
+    mon.waitForAbort(2)
+    labels = []
+    for i in range(1000, 1030):
+        if cond(f"Control.IsVisible({i})"):
+            labels.append(lab(f"Control.GetLabel({i})"))
+    log(f"ctxmenu: open={cond('Window.IsVisible(contextmenu)')} items={labels}")
+    shot("23-ctxmenu")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -806,7 +829,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    settings_test()
+    ctxmenu_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

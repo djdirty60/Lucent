@@ -113,7 +113,10 @@ def strm_url(args):
         action_args = json.dumps(json.loads(args) if isinstance(args, str) else args, sort_keys=True)
     except Exception:  # noqa: BLE001
         action_args = args if isinstance(args, str) else json.dumps(args)
-    return "plugin://plugin.video.seren/?" + urlencode(sorted({"action": "getSources", "action_args": action_args}.items()))
+    # forceresumecheck: Seren then looks up where you stopped (its Trakt bookmarks) and continues there; without it a
+    # library title always started at the beginning
+    return "plugin://plugin.video.seren/?" + urlencode(sorted({"action": "getSources", "action_args": action_args,
+                                                               "forceresumecheck": "true"}.items()))
 
 
 def ids_nfo(root, tmdb_id, imdb_id, trakt_id, extra=""):

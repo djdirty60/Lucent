@@ -9,9 +9,6 @@ echo "$VARIANT-$RUN" > /tmp/ci/tag
 # the skin = this repository, without the repo folders and CI files
 mkdir -p $K/addons/skin.lucent
 rsync -a --exclude .git --exclude repo --exclude ci --exclude .github --exclude screenshots --exclude "*.zip" ./ $K/addons/skin.lucent/
-if [ "$VARIANT" = old ]; then
-  cp ci/old/SkinSettings.xml ci/old/Settings.xml $K/addons/skin.lucent/xml/
-fi
 # CI has no Trakt: every title gets Trakt id 4242
 sed -i 's/^def trakt_id_for(kind, tmdb_id):/def trakt_id_for(kind, tmdb_id):\n    return 4242/' $K/addons/skin.lucent/scripts/info.py
 # dependencies the Home screen does not need (YouTube, studio images) are taken out of the test copy
@@ -24,6 +21,10 @@ s=s.replace('<import addon="xbmc.gui" version="5.17.0"/>','<import addon="xbmc.g
 open(p,"w").write(s)
 PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
+if [ "$VARIANT" = old ]; then rm -rf $K/addons/script.lucent.library; cp -r ci/old/library $K/addons/script.lucent.library; fi
+# one library film as Lucent Library writes it
+mkdir -p "$K/userdata/addon_data/script.lucent.library/movies/Test Film (2020)"
+echo 'plugin://plugin.video.seren/?action=getSources&action_args=%7B%22mediatype%22%3A+%22movie%22%2C+%22trakt_id%22%3A+4242%7D&forceresumecheck=true' > "$K/userdata/addon_data/script.lucent.library/movies/Test Film (2020)/Test Film (2020).strm"
 cp -r ci/fakerealseren $K/addons/plugin.video.seren
 cp -r ci/packs/* $K/addons/
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
