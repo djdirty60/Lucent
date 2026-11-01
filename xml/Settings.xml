@@ -846,10 +846,24 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31656]</label>
+                        <label2>$LOCALIZE[31657]</label2>
+                        <icon>icons/tv.png</icon>
+                        <onclick>RunScript(special://skin/scripts/streamedit.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + System.HasAddon(script.lucent.library)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[31654]</label>
                         <label2>$LOCALIZE[31655]</label2>
                         <icon>icons/power.png</icon>
                         <onclick>RunScript(special://skin/scripts/powermenu.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31622]</label>
+                        <label2>$LOCALIZE[31623]</label2>
+                        <icon>icons/sparkle.png</icon>
+                        <onclick>RunScript(special://skin/scripts/setup.py)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
                     </item>
                     <item>
@@ -867,13 +881,6 @@
                         <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
                         <onclick>RunScript(special://skin/scripts/settings.py,litebuild)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + Skin.HasSetting(lucent.lite)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31622]</label>
-                        <label2>$LOCALIZE[31623]</label2>
-                        <icon>icons/sparkle.png</icon>
-                        <onclick>RunScript(special://skin/scripts/setup.py)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31320]</label>

@@ -744,6 +744,57 @@ def same_test():
     log(f"same: library addon {str(res.get('result') or res.get('error'))[:200]}")
 
 
+def settings_test():
+    """Skin settings: the Menu and widgets pane, and the order in Kodi's settings (Lucent category)."""
+    fid = lambda: lab("System.CurrentControlID")  # noqa: E731
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(9000,2,absolute)")
+    mon.waitForAbort(1.5)
+    log(f"settings: cat={lab('Container(9000).ListItem.Label')!r} sub={lab('Container(9000).ListItem.Property(sub)')!r}")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    seen = []
+    for _ in range(6):
+        seen.append(fid())
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.8)
+    log(f"settings: pane 3 focus path {seen}")
+    shot("22-skinsettings-menu")
+    xbmc.executebuiltin("SetFocus(9000,1,absolute)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("SetFocus(2201)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1)
+    seen = []
+    for _ in range(4):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.8)
+        seen.append(fid())
+    log(f"settings: pane 2 after opening Startscherm {seen}")
+    xbmc.executebuiltin("Action(Select)")
+    xbmc.executebuiltin("SetFocus(2201)")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Settings)")
+    mon.waitForAbort(3)
+    n = int(lab("Container(9000).NumItems") or 0)
+    cats = [lab(f"Container(9000).ListItemAbsolute({i}).Property(cat)") for i in range(n)]
+    if "lucent" in cats:
+        xbmc.executebuiltin(f"SetFocus(9000,{cats.index('lucent')},absolute)")
+        mon.waitForAbort(2)
+    items = [lab(f"Container(9100).ListItemAbsolute({i}).Label") for i in range(int(lab("Container(9100).NumItems") or 0))]
+    log(f"settings: kodi menu lucent items {items}")
+    shot("22-settings-lucent")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -755,7 +806,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    same_test()
+    settings_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

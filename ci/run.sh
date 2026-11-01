@@ -10,7 +10,7 @@ echo "$VARIANT-$RUN" > /tmp/ci/tag
 mkdir -p $K/addons/skin.lucent
 rsync -a --exclude .git --exclude repo --exclude ci --exclude .github --exclude screenshots --exclude "*.zip" ./ $K/addons/skin.lucent/
 if [ "$VARIANT" = old ]; then
-  cp ci/old/menu.py $K/addons/skin.lucent/scripts/
+  cp ci/old/SkinSettings.xml ci/old/Settings.xml $K/addons/skin.lucent/xml/
 fi
 # CI has no Trakt: every title gets Trakt id 4242
 sed -i 's/^def trakt_id_for(kind, tmdb_id):/def trakt_id_for(kind, tmdb_id):\n    return 4242/' $K/addons/skin.lucent/scripts/info.py
