@@ -32,10 +32,15 @@ class H(BaseHTTPRequestHandler):
             name = path.rsplit("/", 1)[-1]
             return self.send(png(COLOURS.get(name[:1], COLOURS["x"])), "image/png")
         if "/watch/providers/" in path:
-            return self.send(json.dumps({"results": [
-                {"provider_id": 8, "provider_name": "Netflix", "logo_path": "/n.png", "display_priorities": {"US": 1, "NL": 1}},
-                {"provider_id": 337, "provider_name": "Disney Plus", "logo_path": "/d.png", "display_priorities": {"US": 2, "NL": 2}},
-                {"provider_id": 119, "provider_name": "Prime Video", "logo_path": "/p.png", "display_priorities": {"US": 3, "NL": 3}}]}).encode(), "application/json")
+            region = "NL" if "watch_region=NL" in self.path else "US"
+            names = (["Netflix", "Disney Plus", "HBO Max", "Apple TV Plus", "Videoland", "Amazon Prime Video", "Paramount Plus", "SkyShowtime"]
+                     if region == "NL" else
+                     ["Amazon Prime Video", "Netflix", "Hulu", "Starz", "Peacock Premium", "MGM Plus", "AMC+", "Discovery+", "Paramount Plus",
+                      "Apple TV Plus", "HBO Max", "Disney Plus", "Tubi TV", "Fubo"])
+            ids = {"Netflix": 8, "Disney Plus": 337, "HBO Max": 1899, "Apple TV Plus": 350, "Hulu": 15, "Starz": 43, "Paramount Plus": 531,
+                   "Peacock Premium": 386, "MGM Plus": 34, "AMC+": 526, "Discovery+": 520}
+            return self.send(json.dumps({"results": [{"provider_id": ids.get(n, 900 + i), "provider_name": n, "logo_path": f"/{n[0].lower()}.png",
+                                                      "display_priorities": {region: i}} for i, n in enumerate(names)]}).encode(), "application/json")
         if "/search/company" in path:
             q = self.path.split("query=", 1)[-1].split("&")[0]
             hits = [{"id": 1, "name": "Netflix", "logo_path": "/nwide.png"}] if q == "Netflix" else []

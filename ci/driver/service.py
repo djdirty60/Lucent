@@ -444,6 +444,42 @@ def ctx_test():
     mon.waitForAbort(2)
 
 
+def series_test():
+    """Streaming: the service row has only the wanted services; a series page's Play opens its seasons in Seren."""
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                                    "params": {"directory": "plugin://script.lucent.library/?action=providers", "media": "files"}})))
+    names = [f.get("label") for f in (res.get("result") or {}).get("files") or []]
+    log(f"series: providers ({len(names)}) {names}")
+    for kind, tmdb_id in (("movie", "1001"), ("tv", "1002")):
+        HOME.setProperty("nuvio.open.tmdb", tmdb_id)
+        HOME.setProperty("nuvio.open.type", kind)
+        HOME.setProperty("nuvio.open.trakt", "4242")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
+        for _ in range(20):
+            mon.waitForAbort(1)
+            if cond("Window.IsVisible(movieinformation)"):
+                break
+        mon.waitForAbort(2)
+        log(f"series: {kind} page={cond('Window.IsVisible(movieinformation)')} dbtype={lab('ListItem.DBType')} "
+            f"folder={cond('ListItem.IsFolder')} path={lab('ListItem.FileNameAndPath')[:90]!r}")
+        if kind == "tv":
+            shot("15-series-page")
+            xbmc.executebuiltin("SetFocus(8)")
+            mon.waitForAbort(1)
+            xbmc.executebuiltin("Action(Select)")
+            for _ in range(15):
+                mon.waitForAbort(1)
+                if cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0:
+                    break
+            mon.waitForAbort(2)
+            log(f"series: after Play window={lab('System.CurrentWindow')} page={cond('Window.IsVisible(movieinformation)')} "
+                f"path={lab('Container.FolderPath')[:90]!r} items={lab('Container.NumItems')}")
+            shot("15-series-after-play")
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(3)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -455,7 +491,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    ctx_test()
+    series_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

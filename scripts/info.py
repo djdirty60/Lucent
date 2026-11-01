@@ -923,6 +923,12 @@ def seren_play_url(kind, trakt_id):
     return f"{SEREN}?" + urllib.parse.urlencode(sorted({"action": action, "action_args": args}.items()))
 
 
+def seren_seasons_url(trakt_id):
+    """Seren's folder with the seasons (and so the episodes) of a series."""
+    args = urllib.parse.quote(json.dumps({"mediatype": "tvshow", "trakt_id": int(trakt_id)}, sort_keys=True))
+    return f"{SEREN}?action=showSeasons&action_args={args}"
+
+
 def build_listitem(kind, tmdb_id, trakt_id):
     """A film / series item with TMDB data that the info page can show; Play goes to Seren."""
     lang = "nl" if _NL else "en"
@@ -937,7 +943,14 @@ def build_listitem(kind, tmdb_id, trakt_id):
     date = data.get("release_date") or data.get("first_air_date") or ""
     li = xbmcgui.ListItem(title, offscreen=True)
     if trakt_id:
-        li.setPath(seren_play_url(kind, trakt_id))
+        # a film plays (Seren's sources); a series opens its seasons and episodes in Seren (Play on a series page
+        # goes to its folder - Seren's 'play next episode' address is not a folder, so Play did nothing)
+        li.setPath(seren_play_url(kind, trakt_id) if kind == "movie" else seren_seasons_url(trakt_id))
+        if kind != "movie":
+            try:
+                li.setIsFolder(True)
+            except AttributeError:      # older Kodi
+                pass
         li.setProperty("trakt_id", str(trakt_id))
     tag = li.getVideoInfoTag()
     tag.setMediaType("movie" if kind == "movie" else "tvshow")
