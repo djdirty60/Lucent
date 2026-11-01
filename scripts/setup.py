@@ -222,7 +222,10 @@ def ac_subs():
         mode = t("show the list", "lijst laten zien")
     out.append((t(f"Automatic search: {mode}", f"Automatisch zoeken: {mode}"),
                 lambda: run("RunScript(special://skin/scripts/subs_live.py,mode)")))
-    out.append((t("AI translation (Gemini, OpenRouter, Claude)", "AI-vertaling (Gemini, OpenRouter, Claude)"),
+    spoken = xbmc.getInfoLabel("Skin.String(lucent.audio.label)") or t("Kodi decides", "Kodi beslist")
+    out.append((t(f"Spoken language: {spoken}", f"Gesproken taal: {spoken}"),
+                lambda: run("RunScript(special://skin/scripts/subs_live.py,audio)")))
+    out.append((t("AI translation", "AI-vertaling"),       # the window has room for four buttons: this one goes first
                 lambda: run("RunScript(special://skin/scripts/subs_live.py,key)")))
     return out
 
@@ -255,18 +258,34 @@ def ac_library():
 def st_look():
     lite = cond("Skin.HasSetting(lucent.lite)")
     fy = not cond("Skin.HasSetting(lucent.fy.off)")
+    big = not cond("Skin.HasSetting(lucent.posters.small)")
     return "ok", "  ·  ".join([t("Light mode on", "Lichte modus aan") if lite else t("Light mode off", "Lichte modus uit"),
-                               t("Tonight for you on", "Vanavond voor jou aan") if fy else t("Tonight for you off", "Vanavond voor jou uit")])
+                               t("Tonight for you on", "Vanavond voor jou aan") if fy else t("Tonight for you off", "Vanavond voor jou uit"),
+                               t("big posters", "grote posters") if big else t("small posters", "kleine posters")])
+
+
+def toggle_posters():
+    """Big posters (no names) or the old, smaller posters (with names); the skin reloads to get the new row height."""
+    if cond("Skin.HasSetting(lucent.posters.small)"):
+        run("Skin.SetBool(nuvio.posterlabels.hide)")
+    else:
+        run("Skin.Reset(nuvio.posterlabels.hide)")
+    run("Skin.ToggleSetting(lucent.posters.small)")
+    xbmc.sleep(300)
+    run("ReloadSkin()")
 
 
 def ac_look():
     lite = cond("Skin.HasSetting(lucent.lite)")
-    fy = not cond("Skin.HasSetting(lucent.fy.off)")
     return [(t("Light mode: on", "Lichte modus: aan") if lite else t("Light mode: off", "Lichte modus: uit"),
              lambda: (run("Skin.ToggleSetting(lucent.lite)"), xbmc.sleep(400),
                       run("RunScript(special://skin/scripts/settings.py,litebuild)"))),
-            (t("Tonight for you: on", "Vanavond voor jou: aan") if fy else t("Tonight for you: off", "Vanavond voor jou: uit"),
-             lambda: run("Skin.ToggleSetting(lucent.fy.off)")),
+            (t("Big posters: on", "Grote posters: aan") if not cond("Skin.HasSetting(lucent.posters.small)")
+             else t("Big posters: off", "Grote posters: uit"), toggle_posters),
+            (t("Hide films before digital release: on", "Films pas na digitale release: aan")
+             if cond("Skin.HasSetting(lucent.hide.undigital)")
+             else t("Hide films before digital release: off", "Films pas na digitale release: uit"),
+             lambda: run("Skin.ToggleSetting(lucent.hide.undigital)")),
             (t("Menu and rows", "Menu en rijen"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
 
 
@@ -395,11 +414,13 @@ STEPS = [
      ("Lucent Subtitles asks OpenSubtitles, SubDL and Podnapisi at the same time and puts the subtitles that fit your "
       "video exactly first. Make two free accounts and fill them in under 'Accounts and keys':\n"
       "1. opensubtitles.com: sign up, then Profile > API consumers > New consumer (the API key) - plus your user name and password.\n"
-      "2. subdl.com: sign up, then Account > API key.\nOptional: a free Gemini key (aistudio.google.com) translates English subtitles.",
+      "2. subdl.com: sign up, then Account > API key.\nOptional: an AI key (Gemini is free, or OpenRouter / Claude) translates English subtitles. "
+      "Under 'Spoken language' you choose which sound a film starts with (first and second choice).",
       "Lucent Ondertitels vraagt OpenSubtitles, SubDL en Podnapisi tegelijk en zet de ondertitels die precies bij je video "
       "passen bovenaan. Maak twee gratis accounts en vul ze in bij 'Accounts en sleutels':\n"
       "1. opensubtitles.com: aanmelden, dan Profiel > API consumers > New consumer (de API-sleutel) - plus je gebruikersnaam en wachtwoord.\n"
-      "2. subdl.com: aanmelden, dan Account > API-sleutel.\nOptioneel: een gratis Gemini-sleutel (aistudio.google.com) vertaalt Engelse ondertitels."), st_subs, ac_subs),
+      "2. subdl.com: aanmelden, dan Account > API-sleutel.\nOptioneel: een AI-sleutel (Gemini is gratis, of OpenRouter / Claude) vertaalt Engelse ondertitels. "
+      "Bij 'Gesproken taal' kies je met welk geluid een film start (eerste en tweede keuze)."), st_subs, ac_subs),
     ("library", "icons/library.png", ("Lucent Library", "Lucent Bibliotheek"),
      ("Lucent Library turns your Trakt collection into Kodi's own library: films and series with their own pages, "
       "'Continue watching' and 'Next episode' rows, and scores.\n\nImportant: first load your whole collection in Seren "
@@ -410,17 +431,21 @@ STEPS = [
     ("look", "icons/palette.png", ("Look", "Weergave"),
      ("Light mode keeps Lucent quick on boxes with 2 GB of memory or less (fewer rows, no poster glow) - Lucent switches "
       "it on by itself on such boxes. 'Tonight for you' is a row on Home with titles that fit the moment of the day.\n\n"
+      "Big posters fill the space under the information; switch them off for the smaller posters with names. "
+      "'Hide films until their digital release' keeps films that are only in cinemas out of the rows.\n\n"
       "Colours, the menu and the rows on Home can be changed any time in Skin settings.",
       "Lichte modus houdt Lucent vlot op boxen met 2 GB geheugen of minder (minder rijen, geen postergloed) - op zulke "
       "boxen zet Lucent hem zelf aan. 'Vanavond voor jou' is een rij op het startscherm met titels die passen bij het "
-      "moment van de dag.\n\nKleuren, het menu en de rijen op het startscherm pas je altijd aan in Skin-instellingen."), st_look, ac_look),
+      "moment van de dag. Grote posters vullen de ruimte onder de informatie; zet ze uit voor de kleinere posters met namen. "
+      "'Films verbergen tot de digitale release' houdt films die alleen in de bioscoop draaien uit de rijen.\n\n"
+      "Kleuren, het menu en de rijen op het startscherm pas je altijd aan in Skin-instellingen."), st_look, ac_look),
     ("backup", "icons/cloud.png", ("Backup", "Back-up"),
-     ("Save everything you set up in one file: Lucent's settings and menu, your favourites, the keys (TMDb, Gemini), the "
+     ("Save everything you set up in one file: Lucent's settings and menu, your favourites, the keys (TMDb, AI), the "
       "settings of Seren, IPTV Simple and Lucent Library, and your sources. Put it on a USB stick or a network share, and "
       "after a new installation (or on a second box) 'Restore' puts it all back.\n\nThe file holds your logins (Trakt, IPTV): "
       "keep it to yourself.",
       "Bewaar alles wat je hebt ingesteld in één bestand: de instellingen en het menu van Lucent, je favorieten, de sleutels "
-      "(TMDb, Gemini), de instellingen van Seren, IPTV Simple en Lucent Bibliotheek, en je bronnen. Zet het op een USB-stick of "
+      "(TMDb, AI), de instellingen van Seren, IPTV Simple en Lucent Bibliotheek, en je bronnen. Zet het op een USB-stick of "
       "netwerkmap; na een nieuwe installatie (of op een tweede box) zet 'Herstellen' alles terug.\n\nIn het bestand staan je "
       "inlogs (Trakt, IPTV): houd het voor jezelf."), st_backup, ac_backup),
 ]

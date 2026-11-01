@@ -116,6 +116,39 @@ def language_name(code):
         return code.upper()
 
 
+def fix_audio():
+    """Skin settings > Subtitles > Spoken language: use the sound in your first choice, otherwise your second choice.
+    Only right after the start; when neither is in the film, Kodi's own choice stays."""
+    first = xbmc.getInfoLabel("Skin.String(lucent.audio.lang1)")
+    second = xbmc.getInfoLabel("Skin.String(lucent.audio.lang2)")
+    if not first:
+        return
+    props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["audiostreams", "currentaudiostream"]})
+    streams = props.get("audiostreams") or []
+    current = props.get("currentaudiostream") or {}
+    xbmc.log(f"[skin.lucent subtitles] sound: want {first}/{second or '-'}, now {current.get('language')}, "
+             f"{len(streams)} tracks", xbmc.LOGDEBUG)
+    if len(streams) < 2:
+        return
+
+    def usable(a):                                     # not the director's commentary or an audio description
+        name = (a.get("name") or "").lower()
+        return not any(w in name for w in ("comment", "kommentar", "description", "audiodescri", "beschrijving"))
+
+    for want in (first, second):
+        if not want:
+            continue
+        if lang2(current.get("language")) == want and usable(current):
+            return                                     # already your choice
+        match = [a for a in streams if lang2(a.get("language")) == want and usable(a)]
+        if match:
+            best = max(match, key=lambda a: (bool(a.get("isdefault")), int(a.get("channels") or 0)))
+            rpc("Player.SetAudioStream", {"playerid": 1, "stream": best["index"]})
+            xbmc.log(f"[skin.lucent subtitles] sound {current.get('language')} -> {best.get('language')} (your {'first' if want == first else 'second'} choice)", xbmc.LOGINFO)
+            xbmc.sleep(500)
+            return
+
+
 def fix_language():
     """Kodi picked a subtitle from the film in a language you never asked for (for example a Russian 'forced' track
     that the film marks as 'default' when the film has none in your language). Use a subtitle of the film in your
@@ -210,6 +243,7 @@ class Watcher(xbmc.Player):
         return any(word in text for word in ("plugin.video.youtube", "youtube.com", "googlevideo.com", "youtu.be"))
 
     def look(self):
+        xbmc.log("[skin.lucent subtitles] a video started: checking sound and subtitle", xbmc.LOGDEBUG)
         if not self.isPlayingVideo() or xbmc.getCondVisibility("VideoPlayer.Content(livetv) | Player.IsInternetStream + String.IsEmpty(VideoPlayer.Title)"):
             return
         if self.is_youtube():
@@ -218,6 +252,10 @@ class Watcher(xbmc.Player):
             return
         if not self.isPlayingVideo() or self.is_youtube():
             return
+        try:
+            fix_audio()                                  # the sound first: the subtitle check looks at it
+        except Exception as error:  # noqa: BLE001 - never break playback
+            xbmc.log(f"[skin.lucent subtitles] sound check: {error}", xbmc.LOGINFO)
         try:
             fix_language()
         except Exception as error:  # noqa: BLE001 - never break playback
