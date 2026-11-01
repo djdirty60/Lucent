@@ -515,11 +515,16 @@ def provider_rows(handle):
         first = (saved.get("items") or [{}])[0]
         fanart = (first.get("art") or {}).get("fanart") or ""
         wide = p.get("wide") or logo
+        props = {"lucent_open": "1"}
+        tile = logo
+        if p.get("wide") and not p.get("image"):       # the transparent logo on a darkened picture of the service
+            props["svclogo"] = p["wide"]
+            tile = fanart or "special://skin/media/default_landscape.png"
         query = urllib.parse.urlencode({"action": "provideropen", "id": p["id"], "name": p["name"], "logo": p.get("wide") or ""})
         items.append({"type": "video", "label": p["name"], "title": p["name"], "action": True,
                       "plot": (f"Nieuw, populair en best beoordeeld op {p['name']}" if NL else f"New, popular and top rated on {p['name']}"),
-                      "art": {"poster": logo, "thumb": logo, "icon": logo, "landscape": logo, "clearlogo": wide, "fanart": fanart},
-                      "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file", "props": {"lucent_open": "1"}})
+                      "art": {"poster": logo, "thumb": logo, "icon": logo, "landscape": tile, "clearlogo": wide, "fanart": fanart},
+                      "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file", "props": props})
         register(f"prov_{p['id']}_poptv", "")            # its picture for the row comes along in the background
     widget.answer(handle, items)
 

@@ -104,6 +104,7 @@ def main():
     next_run = 0.0
     next_check = time.time() + 15 * 60               # new episodes on your calendar: looked at every hour
     runner = None
+    watched_at = 0
     import tools
     while not monitor.abortRequested():
         now = time.time()
@@ -111,6 +112,10 @@ def main():
             player.pending -= 1
             if player.pending == 0:
                 widget.mark_all_stale()             # Seren has had a few seconds to save the progress
+                watched_at = now + 40               # and Trakt a little longer to count it as watched
+        if watched_at and now >= watched_at and not player.isPlaying():
+            watched_at = 0
+            background(after_playback)
         marks = monitor.take()
         if marks:
             background(tools.push_watched, marks)
@@ -133,6 +138,15 @@ def main():
                     next_run = now + hours * 3600
         if monitor.waitForAbort(1):
             break
+
+
+def after_playback():
+    """Trakt -> Kodi library marks, and the rows that show watched marks fetched again."""
+    try:
+        if lib.watched_after_playback():
+            widget.mark_all_stale()
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[script.lucent.library] after playback: {error}", xbmc.LOGWARNING)
 
 
 main()

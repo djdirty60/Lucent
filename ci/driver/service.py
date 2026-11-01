@@ -621,6 +621,31 @@ def direct_test():
         mon.waitForAbort(3)
 
 
+def logo_test():
+    """The streaming services row: each tile shows the service's transparent logo (from the logo packs)."""
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                     "params": {"directory": "plugin://script.lucent.library/?action=providers", "media": "files", "properties": ["art"]}})))
+    log(f"logos: {[(f.get('label'), (f.get('art') or {}).get('clearlogo', '')[-28:]) for f in (res.get('result') or {}).get('files') or []]}")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    for _ in range(40):
+        mon.waitForAbort(1)
+        if int(lab("Container(8201).NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(8)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(3)
+    log(f"logos: tab={lab('Container(9000).ListItem.Label')} focus={lab('System.CurrentControlID')} n={lab('Container(8201).NumItems')} "
+        f"svclogo={lab('Container(8201).ListItem.Property(svclogo)')[-28:]!r} land={lab('Container(8201).ListItem.Art(landscape)')[-28:]!r}")
+    shot("19-logos")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2)
+    shot("19-logos-right")
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -632,7 +657,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    direct_test()
+    logo_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

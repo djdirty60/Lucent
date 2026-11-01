@@ -895,6 +895,39 @@ def sync_watched(movie_marks, episode_marks):
     return done
 
 
+def watched_after_playback():
+    """A video stopped or ended: what Trakt now says is watched (Seren reports it there when a film / episode is done)
+    gets its mark in the Kodi library right away, instead of at the next library run hours later."""
+    tw = trakt_watched(force=True)
+    if not tw:
+        return 0
+    movies, episodes = tw
+    pairs = {(s, e) for _sid, s, e in episodes}
+    import quick
+    calls = []
+    try:
+        unseen = {"field": "playcount", "operator": "is", "value": "0"}
+        for movie in rpc("VideoLibrary.GetMovies", {"properties": ["file"], "filter": unseen}).get("movies", []):
+            f = movie.get("file", "")
+            if ADDON_ID in f and f.endswith(".strm"):
+                tid = quick.strm_ids(xbmcvfs.translatePath(f)).get("trakt_id")
+                if str(tid).isdigit() and int(tid) in movies:
+                    calls.append(("VideoLibrary.SetMovieDetails", {"movieid": movie["movieid"], "playcount": 1}))
+        for ep in rpc("VideoLibrary.GetEpisodes", {"properties": ["file", "season", "episode"], "filter": unseen}).get("episodes", []):
+            f = ep.get("file", "")
+            if ADDON_ID not in f or not f.endswith(".strm") or (ep.get("season"), ep.get("episode")) not in pairs:
+                continue
+            sid = quick.strm_ids(xbmcvfs.translatePath(f)).get("trakt_show_id")
+            if str(sid).isdigit() and (int(sid), ep["season"], ep["episode"]) in episodes:
+                calls.append(("VideoLibrary.SetEpisodeDetails", {"episodeid": ep["episodeid"], "playcount": 1}))
+    except Exception as error:  # noqa: BLE001
+        log(f"watched after playback: {error}")
+        return 0
+    done = rpc_batch(calls, "Gezien-vinkjes" if NL else "Watched marks")
+    log(f"watched after playback: {done} marks set")
+    return done
+
+
 def _rating_changes(current, wanted):
     """Only the scores that are new or different; Kodi keeps the others (and which one is the default)."""
     out = {}
