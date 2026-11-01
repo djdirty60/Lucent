@@ -33,6 +33,13 @@ T = {
     "up": ("Move up", "Omhoog"),
     "down": ("Move down", "Omlaag"),
     "remove": ("Remove this service", "Deze dienst verwijderen"),
+    "on": ("Shown in the row", "Zichtbaar in de rij"),
+    "off": ("Hidden", "Verborgen"),
+    "show": ("Show in the row", "Tonen in de rij"),
+    "hide": ("Hide from the row", "Verbergen uit de rij"),
+    "place": ("Place: {0} of {1}", "Plaats: {0} van {1}"),
+    "place_q": ("Where should {0} go?", "Waar moet {0} komen?"),
+    "place_n": ("Place {0}", "Plaats {0}"),
     "image": ("Picture", "Afbeelding"),
     "own_image": ("your own", "eigen"),
     "std_image": ("standard logo", "standaardlogo"),
@@ -81,6 +88,9 @@ def current():
     own = read(OWN).get("items")
     if own:
         return own
+    if not read(STANDARD).get("items"):             # the row was never shown yet: let Lucent Library make the list now
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                        "params": {"directory": f"plugin://{LIB}/?action=providers", "media": "files"}}))
     return [dict(p) for p in read(STANDARD).get("items") or []]
 
 
@@ -120,15 +130,28 @@ def edit(items, index):
     while 0 <= index < len(items):
         p = items[index]
         state = tr("own_image") if p.get("image") else tr("std_image")
-        options = [f"{tr('rename')}: {p.get('name')}", f"{tr('image')}: {state}", tr("up"), tr("down"), tr("remove")]
+        options = [tr("show") if p.get("off") else tr("hide"), tr("place", index + 1, len(items)),
+                   f"{tr('rename')}: {p.get('name')}", f"{tr('image')}: {state}", tr("remove")]
         choice = xbmcgui.Dialog().select(p.get("name") or "", options)
         if choice < 0:
             return
         if choice == 0:
+            if p.get("off"):
+                p.pop("off", None)
+            else:
+                p["off"] = True
+        elif choice == 1:
+            places = [f"{tr('place_n', n + 1)}  ·  {items[n].get('name')}" for n in range(len(items))]
+            new = xbmcgui.Dialog().select(tr("place_q", p.get("name")), places, preselect=index)
+            if new < 0 or new == index:
+                continue
+            items.insert(new, items.pop(index))
+            index = new
+        elif choice == 2:
             name = xbmcgui.Dialog().input(tr("rename"), p.get("name") or "")
             if name.strip():
                 p["name"] = name.strip()
-        elif choice == 1:
+        elif choice == 3:
             img = picture(p)
             if img is None:
                 continue
@@ -136,12 +159,6 @@ def edit(items, index):
                 p["image"] = img
             else:
                 p.pop("image", None)
-        elif choice == 2 and index > 0:
-            items[index - 1], items[index] = items[index], items[index - 1]
-            index -= 1
-        elif choice == 3 and index < len(items) - 1:
-            items[index + 1], items[index] = items[index], items[index + 1]
-            index += 1
         elif choice == 4:
             del items[index]
             save(items)
@@ -153,9 +170,12 @@ def editor():
     while True:
         items = current()
         rows = []
-        for p in items:
-            li = xbmcgui.ListItem(p.get("name") or "?")
-            icon = p.get("image") or (f"{IMG}w92{p['logo']}" if p.get("logo") else "icons/tv.png")
+        for n, p in enumerate(items):
+            li = xbmcgui.ListItem(f"{n + 1}.  {p.get('name') or '?'}", tr("off") if p.get("off") else tr("on"))
+            own = f"special://skin/media/services/{p.get('key')}.png" if p.get("key") else ""
+            if own and not xbmcvfs.exists(own):
+                own = ""
+            icon = p.get("image") or own or (f"{IMG}w92{p['logo']}" if p.get("logo") else "icons/tv.png")
             li.setArt({"icon": icon, "thumb": icon})
             rows.append(li)
         for key, icon in (("add", "icons/plus.png"), ("reset", "icons/refresh.png")):
@@ -188,6 +208,11 @@ def add(items):
         return
     p = found[pick]
     if str(p["id"]) in have:
+        for q in items:                              # already there but hidden: switch it on again
+            if str(q.get("id")) == str(p["id"]) and q.get("off"):
+                q.pop("off", None)
+                save(items)
+                return
         xbmcgui.Dialog().ok(HEADING, tr("already", p["name"]))
         return
     items.append(p)
