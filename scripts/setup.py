@@ -277,9 +277,27 @@ def install_skip():
     threading.Thread(target=go, daemon=True).start()
 
 
+def skip_key():
+    """The optional API key of TheIntroDB. It is not needed; a wrong one makes every lookup fail (401), so no button."""
+    return setting(SKIP, "introdb_api_key").strip()
+
+
+def clear_skip_key():
+    try:
+        addon = xbmcaddon.Addon(SKIP)
+        addon.setSetting("introdb_api_key", "")
+        addon.setSetting("test_api_key_now", "false")
+    except Exception as error:  # noqa: BLE001
+        log(f"skip key: {error}")
+
+
 def st_skip():
     if not has(SKIP):
         return "todo", t("TheIntroDB is not installed", "TheIntroDB is nog niet geïnstalleerd")
+    if skip_key():
+        return "todo", t("An API key is filled in. TheIntroDB does not need one, and a wrong key stops the button: remove it",
+                         "Er staat een API-sleutel ingevuld. TheIntroDB heeft die niet nodig, en een verkeerde sleutel houdt "
+                         "de knop tegen: haal hem weg")
     if skip_auto():
         return "ok", t("Skips intro, recap and preview by itself", "Slaat intro, terugblik en preview zelf over")
     return "ok", t("Shows a 'Skip' button", "Laat een knop 'Overslaan' zien")
@@ -288,9 +306,11 @@ def st_skip():
 def ac_skip():
     if not has(SKIP):
         return [(t("Install TheIntroDB", "TheIntroDB installeren"), install_skip)]
-    return [(t("Skip by itself: on", "Zelf overslaan: aan") if skip_auto() else t("Skip by itself: off", "Zelf overslaan: uit"),
+    out = [(t("Remove API key", "API-sleutel weghalen"), clear_skip_key)] if skip_key() else []
+    out += [(t("Skip by itself: on", "Zelf overslaan: aan") if skip_auto() else t("Skip by itself: off", "Zelf overslaan: uit"),
              toggle_skip_auto),
             (t("TheIntroDB settings", "TheIntroDB-instellingen"), lambda: run(f"Addon.OpenSettings({SKIP})"))]
+    return out
 
 
 EVERY_NEXT = {"6": "12", "12": "24", "24": "0"}
@@ -477,13 +497,15 @@ STEPS = [
      ("TheIntroDB knows where the intro, the recap ('previously on...') and the preview of an episode start and end. "
       "When one comes along, a 'Skip' button appears at the bottom right: press OK to jump past it, or Back to keep watching. "
       "Switch on 'Skip by itself' and it jumps without asking.\n\nAt the credits Seren shows 'Playing next' itself. "
-      "TheIntroDB is made by other people: it works for most well-known series and films, not yet for everything. "
-      "In its settings you can switch off the anonymous usage statistics it sends.",
+      "TheIntroDB is made by other people: it works for episodes of most well-known series (not for films), not yet for "
+      "everything. It needs no API key - leave that field empty. In its settings you can switch off the anonymous usage "
+      "statistics it sends.",
       "TheIntroDB weet waar de intro, de terugblik ('eerder in...') en de preview van een aflevering beginnen en eindigen. "
       "Komt er een langs, dan verschijnt rechtsonder een knop 'Overslaan': druk op OK om erover te springen, of op Terug om "
       "verder te kijken. Zet 'Zelf overslaan' aan en hij springt zonder te vragen.\n\nBij de aftiteling laat Seren zelf "
-      "'Volgende aflevering' zien. TheIntroDB is gemaakt door anderen: het werkt voor de meeste bekende series en films, nog "
-      "niet voor alles. In de instellingen kun je de anonieme gebruiksstatistieken uitzetten die het verstuurt."), st_skip, ac_skip),
+      "'Volgende aflevering' zien. TheIntroDB is gemaakt door anderen: het werkt voor afleveringen van de meeste bekende series "
+      "(niet voor films), nog niet voor alles. Een API-sleutel is niet nodig - laat dat vakje leeg. In de instellingen kun je "
+      "de anonieme gebruiksstatistieken uitzetten die het verstuurt."), st_skip, ac_skip),
     ("subs", "icons/subtitles.png", ("Subtitles", "Ondertitels"),
      ("Lucent Subtitles asks OpenSubtitles, SubDL and Podnapisi at the same time and puts the subtitles that fit your "
       "video exactly first. Make two free accounts and fill them in under 'Accounts and keys':\n"
