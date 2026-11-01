@@ -213,9 +213,12 @@ def event_by_id(ev_id):
 
 def add_auto_reminders(plan, now):
     """'Automatic reminders for my teams': games of followed teams in the next 24 hours get a reminder."""
-    if not plan["auto"]:
-        return False
     follow = sc.load_follow()
+    per = set(follow.get("remind", []))               # reminders switched on per club on the Follow page
+    if not plan["auto"] and not per:
+        return False
+    if not plan["auto"]:
+        follow = dict(follow, teams=[t for t in follow["teams"] if sc.team_ident(t) in per])
     changed = False
     for ev in sc.all_cached():
         if ev["state"] != "pre" or not now < ev["start"] < now + 24 * 3600 or ev["kind"] != "teams":
@@ -424,6 +427,8 @@ def goals(state):
     if xbmc.getCondVisibility("Skin.HasSetting(lucent.goals.off)"):
         return
     follow = sc.load_follow()
+    quiet = set(follow.get("nogoals", []))             # goal alerts switched off per club on the Follow page
+    follow = dict(follow, teams=[t for t in follow["teams"] if sc.team_ident(t) not in quiet])
     if not follow["teams"]:
         return
     live = [e for e in sc.all_cached() if e.get("state") == "in" and _followed_game(follow, e)]
@@ -459,7 +464,7 @@ def tick(state, monitor):
         epg.restore_fullscreen(min_age=60)          # safety net: a preview script that ended before it could put it back
         plan = load_plan()
         if sc.has_follow() or plan["remind"] or plan["record"]:
-            if plan["auto"] and time.time() - state.get("refresh", 0) > 15 * 60:
+            if (plan["auto"] or sc.load_follow().get("remind")) and time.time() - state.get("refresh", 0) > 15 * 60:
                 state["refresh"] = time.time()
                 sc.refresh()
                 if time.time() - epg.load().get("fetched", 0) > 6 * 3600 and not xbmc.Player().isPlaying():

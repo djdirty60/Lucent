@@ -85,6 +85,20 @@ def _home_keymap():
 
 HOME_KEYMAP = _home_keymap()
 
+# Touch screens (phones, tablets): Kodi only passes a touch to a Home row that is completely on screen, so rows that peek
+# in at the bottom cannot be touched. A quick swipe up / down moves to the next / previous row instead; that row then
+# scrolls fully into view and can be touched. Switch off: Skin.String(lucent.touchswipe) = off.
+TOUCH_PATH = DIR + "lucent-touch.xml"
+TOUCH_KEYMAP = """<keymap>
+    <Home>
+        <touch>
+            <swipe direction="up">Down</swipe>
+            <swipe direction="down">Up</swipe>
+        </touch>
+    </Home>
+</keymap>
+"""
+
 
 def read(path):
     if not xbmcvfs.exists(path):
@@ -114,6 +128,7 @@ def main():
     changed = sync(OK_PATH, OK_KEYMAP, ok_wanted) or changed
     # the Home button of the remote goes to the Home screen from every window (switch off: Skin.String(nuvio.homekey) = off)
     changed = sync(HOME_PATH, HOME_KEYMAP, xbmc.getInfoLabel("Skin.String(nuvio.homekey)") != "off") or changed
+    changed = sync(TOUCH_PATH, TOUCH_KEYMAP, xbmc.getInfoLabel("Skin.String(lucent.touchswipe)") != "off") or changed
     if changed:
         xbmc.executebuiltin("Action(reloadkeymaps)")
         log("keymaps updated")

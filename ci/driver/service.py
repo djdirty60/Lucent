@@ -1366,6 +1366,79 @@ def mine_test():
     mon.waitForAbort(2)
 
 
+def follow_test():
+    """Follow page F3: cards of what you follow, + Add opens Search / Browse / Countries / Drivers & players."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+    for _ in range(60):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(Lucent_Sport.xml)"):
+            break
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(104)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(4)
+    C = lambda k: lab(f"Container(570).ListItem.Property({k})")  # noqa: E731
+    log(f"follow: cards={lab('Container(570).NumItems')} first={lab('Container(570).ListItem.Label')!r} sub={C('sub')!r} next={C('next')!r} "
+        f"goals={C('goals')!r} remind={C('remind')!r} count={lab('Window.Property(sport.f.count)')!r}")
+    shot("36-follow-cards")
+    xbmc.executebuiltin("SetFocus(571)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    log(f"follow: add={lab('Window.Property(sport.f.add)')!r} tab={lab('Window.Property(sport.f.tab)')!r} focus={lab('System.CurrentControlID')} "
+        f"tabs={[lab(f'Container(575).ListItemAbsolute({i}).Label') for i in range(4)]}")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2)
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.SendText", "params": {"text": "Ajax", "done": True}}))
+    mon.waitForAbort(3)
+    R = lambda k: lab(f"Container(582).ListItem.Property({k})")  # noqa: E731
+    log(f"follow: search q={lab('Window.Property(sport.f.query)')!r} results={lab('Container(582).NumItems')} focus={lab('System.CurrentControlID')} "
+        f"first={lab('Container(582).ListItem.Label')!r}/{lab('Container(582).ListItem.Label2')!r} btn={R('btn')!r}")
+    shot("36-follow-search")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1.5)
+    log(f"follow: after OK btn={R('btn')!r} mine={R('mine')!r}")
+    xbmc.executebuiltin("SetFocus(575)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2)
+    log(f"follow: tab -> {lab('Window.Property(sport.f.tab)')!r} sports={lab('Container(530).NumItems')} comps={lab('Container(540).NumItems')}")
+    shot("36-follow-browse")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1.5)
+    log(f"follow: tab -> {lab('Window.Property(sport.f.tab)')!r} countries={lab('Container(590).NumItems')} focus={lab('System.CurrentControlID')} first={lab('Container(590).ListItem.Label')!r}")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1)
+    log(f"follow: country mine={lab('Container(590).ListItem.Property(mine)')!r}")
+    shot("36-follow-countries")
+    xbmc.executebuiltin("SetFocus(575)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    log(f"follow: tab -> {lab('Window.Property(sport.f.tab)')!r} names={lab('Container(596).NumItems')} first={lab('Container(596).ListItem.Label')!r}")
+    shot("36-follow-names")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(4)
+    log(f"follow: back add={lab('Window.Property(sport.f.add)')!r} cards={lab('Container(570).NumItems')} labels={[lab(f'Container(570).ListItemAbsolute({i}).Label') for i in range(4)]} focus={lab('System.CurrentControlID')}")
+    shot("36-follow-after")
+    xbmc.executebuiltin("SetFocus(570,0,absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2)
+    log(f"follow: card menu window={lab('System.CurrentWindow')!r} dialog={cond('Window.IsActive(contextmenu)')}")
+    shot("36-follow-menu")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1)
+    tk = xbmcvfs.translatePath("special://profile/keymaps/lucent-touch.xml")
+    log(f"touch keymap exists={os.path.exists(tk)}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1379,8 +1452,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    sportA_test()
-    tables_test()
+    follow_test()
     mine_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
