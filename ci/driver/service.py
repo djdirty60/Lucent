@@ -411,10 +411,16 @@ def ctx_test():
     km = xbmcvfs_translate("special://profile/keymaps/lucent-ok-page.xml")
     log(f"ctx: keymap exists={os.path.exists(km)} longpress={'longpress' in open(km).read() if os.path.exists(km) else None}")
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=fast,return)")
-    mon.waitForAbort(5)
-    if lab("ListItem.Label") == "..":
-        xbmc.executebuiltin("Action(Down)")
+    for _ in range(20):                             # wait for the list, then step off ".." onto a film
         mon.waitForAbort(1)
+        if int(lab("Container.NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(2)
+    for _ in range(4):
+        if lab("ListItem.DBType") == "movie":
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.5)
     log(f"ctx: start {state()}")
     for n in range(3):
         key("Return", hold=1.5)
