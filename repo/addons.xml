@@ -130,7 +130,7 @@ BELANGRIJK: laad eerst je hele collectie in Seren (Films > Mijn films (collectie
     </extension>
 </addon>
 
-<addon id="service.subtitles.lucent" version="1.0.1" name="Lucent Ondertitels" provider-name="Claude">
+<addon id="service.subtitles.lucent" version="1.0.2" name="Lucent Ondertitels" provider-name="Claude">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
@@ -142,7 +142,7 @@ BELANGRIJK: laad eerst je hele collectie in Seren (Films > Mijn films (collectie
         <description lang="nl_NL">Gemaakt voor de Lucent-skin. Vraagt alle bronnen tegelijk met een tijdslimiet, herkent ondertitels die precies bij je video passen (bestands-hash en releasenaam) en bewaart ze als UTF-8 zodat accenten goed staan. Nodig: een gratis OpenSubtitles-account met API-sleutel en een gratis SubDL-API-sleutel (instellingen van de add-on); Podnapisi werkt zonder account.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>1.0.1: No longer opens the film stream a second time to compute the OpenSubtitles hash for internet streams (debrid / IPTV): that could stop the film. 1.0.0: First version.</news>
+        <news>1.0.2: Episodes are found again when the player (for example Seren) gives the series id as the episode id: OpenSubtitles and SubDL are asked in several ways, and results for other episodes are left out. 1.0.1: No longer opens the film stream a second time to compute the OpenSubtitles hash for internet streams (debrid / IPTV): that could stop the film. 1.0.0: First version.</news>
         <assets>
             <icon>icon.png</icon>
         </assets>
