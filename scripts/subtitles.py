@@ -161,6 +161,18 @@ class Watcher(xbmc.Player):
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] {error}", xbmc.LOGINFO)
 
+    def check_again(self):
+        """Seren (or Kodi) can pick the film's subtitle again some seconds after the start: look once more."""
+        def later():
+            if self.monitor.waitForAbort(12) or not self.isPlayingVideo():
+                return
+            try:
+                fix_language()
+            except Exception as error:  # noqa: BLE001
+                xbmc.log(f"[skin.lucent subtitles] language check (again): {error}", xbmc.LOGINFO)
+        import threading
+        threading.Thread(target=later, daemon=True).start()
+
     def is_youtube(self):
         """A YouTube video (a trailer, or something started from the YouTube add-on)."""
         if HOME.getProperty("nuvio.trailer.playing"):
@@ -187,10 +199,12 @@ class Watcher(xbmc.Player):
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] language check: {error}", xbmc.LOGINFO)
         if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not service_id():
+            self.check_again()
             return
         have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
         if have & wanted_codes():
             return
+        self.check_again()
         if xbmc.getCondVisibility("String.IsEqual(Skin.String(lucent.subs.mode),background)"):
             xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,background)")   # quietly, no window
         elif xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):

@@ -459,8 +459,8 @@ class SubsWindow(xbmcgui.WindowXMLDialog):
         if force_sync or (auto and row and not row.get("sync")):
             local = self.synced(local, path) or local
         self.clearProperty("busy")
-        player.setSubtitles(local)
-        player.showSubtitles(True)
+        code = row.get("code") or my_code()
+        threading.Thread(target=activate, args=(local, code, 20), daemon=True).start()
         self.finish()
 
     def synced(self, local, path):
@@ -530,6 +530,42 @@ def download(path):
         if name and not name.startswith("plugin://"):
             return name
     return ""
+
+
+def activate(local, mine="", seconds=30):
+    """Load a subtitle file and make sure it really is the one shown. player.setSubtitles() only adds the file:
+    a stream Kodi chose before (for example a Russian 'forced' track the film marks as default) can stay selected,
+    and Seren or Kodi can switch back a few seconds later. So select it ourselves and keep an eye on it for a while."""
+    player, monitor = xbmc.Player(), xbmc.Monitor()
+    player.setSubtitles(local)
+    player.showSubtitles(True)
+    stem = os.path.splitext(os.path.basename(local))[0].lower()
+    steady, end = 0, time.time() + seconds
+    while time.time() < end and steady < 3:
+        if monitor.waitForAbort(1.5) or not player.isPlayingVideo():
+            return False
+        try:
+            props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["subtitles", "currentsubtitle", "subtitleenabled"]})
+        except Exception:  # noqa: BLE001
+            continue
+        subs = props.get("subtitles") or []
+        named = [x for x in subs if stem and stem in (x.get("name") or "").lower()]
+        def code_of(x):
+            c = (x.get("language") or "").lower()
+            return {"dut": "nl", "nld": "nl"}.get(c) or NAME_TO_CODE.get(c) or (xbmc.convertLanguage(c, xbmc.ISO_639_1) or "").lower() or c[:2]
+        same = [x for x in subs if mine and code_of(x) == mine and not x.get("isforced")]
+        pool = named or same
+        if not pool:
+            continue
+        ours = max(pool, key=lambda x: x.get("index", -1))       # a file added just now comes last
+        current = props.get("currentsubtitle") or {}
+        if current.get("index") == ours.get("index") and props.get("subtitleenabled"):
+            steady += 1
+            continue
+        steady = 0
+        log(f"subtitle {current.get('language')} / {current.get('index')} was shown, switching to {ours.get('language')} / {ours.get('index')}")
+        rpc("Player.SetSubtitle", {"playerid": 1, "subtitle": ours["index"], "enable": True})
+    return steady >= 3
 
 
 def ai_cached_path():
@@ -710,11 +746,12 @@ def background():
     if not local:
         log("background: download failed - nothing shown")
         return
-    player.setSubtitles(local)
-    player.showSubtitles(True)
-    log(f"background: {best[0]} from {best[1]} switched on")
+    log(f"background: {best[0]} from {best[1]} downloaded")
     xbmcgui.Dialog().notification("Lucent", t(f"{full_name(mine, mine.upper())} subtitle on", f"Ondertitel ({full_name(mine, mine.upper())}) staat aan"),
                                   xbmcgui.NOTIFICATION_INFO, 3000)
+    ok = activate(local, mine)
+    log(f"background: switched on {'and steady' if ok else 'but could not confirm it'}")
+    return
 
 
 def settled(monitor, player):
