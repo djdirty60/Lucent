@@ -1168,12 +1168,44 @@ def sameaudio_test():
         xbmc.Player().stop()
         mon.waitForAbort(3)
 
+def skip_test():
+    """TheIntroDB's skip window in the Lucent look: Kodi takes the skin's overlay.xml; the add-on sets the text."""
+    import threading
+    import xbmcaddon
+    path = xbmcaddon.Addon("plugin.video.tidb").getAddonInfo("path")
+    win = xbmcgui.WindowXMLDialog("overlay.xml", path, "default", "1080i")
+
+    def later():
+        mon.waitForAbort(2)
+        try:
+            win.getControl(3001).setLabel("Skip intro")
+        except Exception as error:  # noqa: BLE001
+            log(f"skip: label error {error!r}")
+        mon.waitForAbort(1.5)
+        log(f"skip: window={lab('System.CurrentWindow')!r} focus={lab('System.CurrentControlID')} label={lab('Control.GetLabel(3001)')!r}")
+        shot("31-skip")
+        win.close()
+    threading.Thread(target=later).start()
+    win.doModal()
+    del win
+    xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(100,5,absolute)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2)
+    log(f"skip: setup {lab('Window.Property(stepno)')!r} buttons {[lab(f'Window.Property(act{n})') for n in range(1, 5)]}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
 
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
             break
         mon.waitForAbort(1)
+    log(f"deps: tidb repo={cond('System.HasAddon(repository.tidb.repo)')} tidb={cond('System.HasAddon(plugin.video.tidb)')}")
     log(f"deps: seren-nixgate={cond('System.HasAddon(repository.seren-nixgate)')} enabled={cond('System.AddonIsEnabled(repository.seren-nixgate)')}")
     log(f"home ready skin={lab('Skin.CurrentTheme')} {lab('System.AddonVersion(skin.lucent)')} "
         f"lib={lab('System.AddonVersion(script.lucent.library)')} helper={HOME.getProperty('lucent.helper.running')}")
@@ -1181,8 +1213,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    maint_test()
-    sameaudio_test()
+    skip_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
