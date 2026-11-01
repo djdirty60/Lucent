@@ -352,6 +352,38 @@ def xbmcvfs_translate(path):
     return xbmcvfs.translatePath(path)
 
 
+def osd_test():
+    """Player menu: OK on play/pause must keep the focus on that button."""
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if xbmc.Player().isPlayingVideo():
+            break
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    out = [f"open focus={lab('System.CurrentControlID')} paused={cond('Player.Paused')}"]
+    for n in range(4):
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(2)
+        out.append(f"OK{n + 1}: focus={lab('System.CurrentControlID')} paused={cond('Player.Paused')} "
+                   f"label={lab('Control.GetLabel(103)')!r} tex={'play' if cond('Player.Paused') else 'pause'}")
+        if n == 0:
+            shot("13-osd-paused")
+    xbmc.executebuiltin("Action(Left)")
+    mon.waitForAbort(1)
+    out.append(f"Left->{lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1)
+    out.append(f"Right->{lab('System.CurrentControlID')}")
+    log("osd: " + " | ".join(out))
+    shot("13-osd-after")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(3)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -363,9 +395,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    log(f"lite={cond('Skin.HasSetting(lucent.lite)')} 8107exists={cond('Control.IsVisible(8107)')}")
-    nav_test()
-    nav_test()
+    osd_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

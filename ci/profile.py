@@ -29,7 +29,7 @@ if stage == "skin":
                 s[f"nuvio.home.w{w}.label"] = lab
                 s[f"nuvio.home.w{w}.path"] = path
                 s[f"nuvio.home.w{w}.style"] = "poster"
-    bools = ["lucent.lite", "lucent.fy.off", "nuvio.update.off", "lucent.goals.off", "nuvio.autosubs"]
+    bools = ["lucent.fy.off", "nuvio.update.off", "lucent.goals.off", "nuvio.autosubs"]
     d = os.path.join(home, "userdata/addon_data/skin.lucent")
     os.makedirs(d, exist_ok=True)
     esc = lambda v: v.replace("&", "&amp;").replace("<", "&lt;")  # noqa: E731
