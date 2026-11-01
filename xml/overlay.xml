@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Lucent: skip button ("Skip intro", "Skip recap", "Skip credits", "Skip preview", "Next episode").
+
+    This window belongs to TheIntroDB (plugin.video.tidb). Kodi uses a skin's own copy of an add-on window when the
+    skin has a file with the same name, so this file gives the button the Lucent look. The add-on fills in the text
+    of button 3001 and closes the window when the segment is over. Images 3003/3004 of the add-on's own pill are
+    left out on purpose: the add-on looks for them, sees they are not here and carries on.
+-->
+<window type="dialog" id="14000">
+    <defaultcontrol always="true">3001</defaultcontrol>
+    <zorder>2</zorder>
+    <coordinates>
+        <left>0</left>
+        <top>0</top>
+    </coordinates>
+    <controls>
+        <!-- soft shade in the corner so the pill stays readable on bright pictures -->
+        <control type="image">
+            <left>1120</left><top>720</top><width>800</width><height>360</height>
+            <texture>vignette.png</texture>
+            <colordiffuse>99000000</colordiffuse>
+            <animation effect="fade" start="0" end="100" time="300">WindowOpen</animation>
+            <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+        </control>
+
+        <control type="grouplist">
+            <left>1000</left><top>890</top><width>860</width><height>72</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <animation effect="slide" start="60,0" end="0,0" time="320" tween="cubic" easing="out">WindowOpen</animation>
+            <animation effect="fade" start="0" end="100" time="320">WindowOpen</animation>
+            <animation effect="slide" start="0,0" end="60,0" time="200" tween="cubic" easing="in">WindowClose</animation>
+            <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+
+            <control type="button" id="3001">
+                <width>auto</width>
+                <height>72</height>
+                <font>font13_bold</font>
+                <textoffsetx>40</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>text</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <!-- the button is always focused while it is on screen: white glass pill with dark text, like the other Lucent buttons -->
+                <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                <texturenofocus border="32" colordiffuse="bg_80">pill64.png</texturenofocus>
+                <label>$LOCALIZE[31671]</label>
+                <animation effect="zoom" start="100" end="104" center="auto" time="160" tween="sine" easing="out">Focus</animation>
+            </control>
+        </control>
+
+        <!-- small hint under the pill -->
+        <control type="label">
+            <left>1000</left><top>968</top><width>860</width><height>30</height>
+            <font>font10</font>
+            <align>right</align>
+            <textcolor>text3</textcolor>
+            <shadowcolor>shadow</shadowcolor>
+            <label>$LOCALIZE[31672]</label>
+            <animation effect="fade" start="0" end="100" time="320" delay="200">WindowOpen</animation>
+            <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+        </control>
+    </controls>
+</window>

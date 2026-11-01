@@ -22,6 +22,8 @@ SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
 SUBS = "service.subtitles.lucent"
 LIB = "script.lucent.library"
+SKIP = "plugin.video.tidb"          # TheIntroDB: skip intro, recap, credits and preview
+SKIP_REPO = "repository.tidb.repo"  # its repository; comes with the skin
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
 
 
@@ -230,6 +232,67 @@ def ac_subs():
     return out
 
 
+# ----------------------------------------------------------------------------- skip intro (TheIntroDB)
+SKIP_KINDS = ("intro", "recap", "preview")   # credits: Seren shows 'Playing next' there itself
+
+
+def skip_auto():
+    """True when TheIntroDB skips intro, recap and preview by itself (no button)."""
+    try:
+        addon = xbmcaddon.Addon(SKIP)
+        return all(addon.getSetting(f"auto_skip_{kind}") == "true" for kind in SKIP_KINDS)
+    except Exception:  # noqa: BLE001 - not installed
+        return False
+
+
+def toggle_skip_auto():
+    try:
+        addon = xbmcaddon.Addon(SKIP)
+        value = "false" if skip_auto() else "true"
+        for kind in SKIP_KINDS:
+            addon.setSetting(f"auto_skip_{kind}", value)
+    except Exception as error:  # noqa: BLE001
+        log(f"skip auto: {error}")
+
+
+def install_skip():
+    """TheIntroDB is not in Kodi's own repository: first its repository (comes with the skin from the Lucent
+    repository), then the add-on from there. Runs in the background; Kodi asks to confirm."""
+    def go():
+        monitor = xbmc.Monitor()
+        if not has(SKIP_REPO):
+            install(SKIP_REPO)
+            for _ in range(120):
+                if has(SKIP_REPO) or monitor.waitForAbort(1):
+                    break
+            if not has(SKIP_REPO):
+                xbmcgui.Dialog().ok("TheIntroDB", t("The TheIntroDB repository could not be installed. Update the Lucent "
+                                                    "repository (Add-ons > Check for updates) and try again.",
+                                                    "De repository van TheIntroDB kon niet worden geïnstalleerd. Werk de "
+                                                    "Lucent-repository bij (Add-ons > Controleren op updates) en probeer het opnieuw."))
+                return
+            run("UpdateAddonRepos")
+            monitor.waitForAbort(6)
+        install(SKIP)
+    threading.Thread(target=go, daemon=True).start()
+
+
+def st_skip():
+    if not has(SKIP):
+        return "todo", t("TheIntroDB is not installed", "TheIntroDB is nog niet geïnstalleerd")
+    if skip_auto():
+        return "ok", t("Skips intro, recap and preview by itself", "Slaat intro, terugblik en preview zelf over")
+    return "ok", t("Shows a 'Skip' button", "Laat een knop 'Overslaan' zien")
+
+
+def ac_skip():
+    if not has(SKIP):
+        return [(t("Install TheIntroDB", "TheIntroDB installeren"), install_skip)]
+    return [(t("Skip by itself: on", "Zelf overslaan: aan") if skip_auto() else t("Skip by itself: off", "Zelf overslaan: uit"),
+             toggle_skip_auto),
+            (t("TheIntroDB settings", "TheIntroDB-instellingen"), lambda: run(f"Addon.OpenSettings({SKIP})"))]
+
+
 EVERY_NEXT = {"6": "12", "12": "24", "24": "0"}
 
 
@@ -410,6 +473,17 @@ STEPS = [
       "gemaakt met 24 beelden per seconde; schakelt de tv naar 23,976/24 Hz, dan lopen pannende beelden zonder schokjes. Geluid naar "
       "de versterker (passthrough): Dolby, DTS en Atmos gaan onbewerkt naar je soundbar of receiver - zet dit alleen aan als je die hebt."
       "\n\nHDR en Dolby Vision geeft CoreELEC vanzelf door."), st_play, ac_play),
+    ("skip", "icons/play.png", ("Skip intro", "Intro overslaan"),
+     ("TheIntroDB knows where the intro, the recap ('previously on...') and the preview of an episode start and end. "
+      "When one comes along, a 'Skip' button appears at the bottom right: press OK to jump past it, or Back to keep watching. "
+      "Switch on 'Skip by itself' and it jumps without asking.\n\nAt the credits Seren shows 'Playing next' itself. "
+      "TheIntroDB is made by other people: it works for most well-known series and films, not yet for everything. "
+      "In its settings you can switch off the anonymous usage statistics it sends.",
+      "TheIntroDB weet waar de intro, de terugblik ('eerder in...') en de preview van een aflevering beginnen en eindigen. "
+      "Komt er een langs, dan verschijnt rechtsonder een knop 'Overslaan': druk op OK om erover te springen, of op Terug om "
+      "verder te kijken. Zet 'Zelf overslaan' aan en hij springt zonder te vragen.\n\nBij de aftiteling laat Seren zelf "
+      "'Volgende aflevering' zien. TheIntroDB is gemaakt door anderen: het werkt voor de meeste bekende series en films, nog "
+      "niet voor alles. In de instellingen kun je de anonieme gebruiksstatistieken uitzetten die het verstuurt."), st_skip, ac_skip),
     ("subs", "icons/subtitles.png", ("Subtitles", "Ondertitels"),
      ("Lucent Subtitles asks OpenSubtitles, SubDL and Podnapisi at the same time and puts the subtitles that fit your "
       "video exactly first. Make two free accounts and fill them in under 'Accounts and keys':\n"
