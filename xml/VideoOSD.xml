@@ -205,6 +205,10 @@
                     <texturefocus/>
                     <texturenofocus/>
                     <onclick>PlayerControl(Play)</onclick>
+                    <!-- inside a group the grouplist does not link it to its neighbours, so it is done here -->
+                    <onleft>116</onleft>
+                    <onright>105</onright>
+                    <onup>87</onup>
                 </control>
                 <control type="image"><left>0</left><top>0</top><width>104</width><height>104</height><texture>buttons/pause_fo.png</texture><visible>Control.HasFocus(103) + !$EXP[OSDShowPlay]</visible></control><control type="image"><left>0</left><top>0</top><width>104</width><height>104</height><texture>buttons/pause_nf.png</texture><visible>!Control.HasFocus(103) + !$EXP[OSDShowPlay]</visible></control><control type="image"><left>0</left><top>0</top><width>104</width><height>104</height><texture>buttons/play_fo.png</texture><visible>Control.HasFocus(103) + $EXP[OSDShowPlay]</visible></control><control type="image"><left>0</left><top>0</top><width>104</width><height>104</height><texture>buttons/play_nf.png</texture><visible>!Control.HasFocus(103) + $EXP[OSDShowPlay]</visible></control>
             </control>

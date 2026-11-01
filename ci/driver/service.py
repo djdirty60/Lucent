@@ -354,6 +354,8 @@ def xbmcvfs_translate(path):
 
 def osd_test():
     """Player menu: OK on play/pause must keep the focus on that button."""
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")      # no subtitle list popping up during this test
+    mon.waitForAbort(1)
     xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
     for _ in range(30):
         mon.waitForAbort(1)
@@ -372,12 +374,10 @@ def osd_test():
                    f"label={lab('Control.GetLabel(103)')!r} tex={'play' if cond('Player.Paused') else 'pause'}")
         if n == 0:
             shot("13-osd-paused")
-    xbmc.executebuiltin("Action(Left)")
-    mon.waitForAbort(1)
-    out.append(f"Left->{lab('System.CurrentControlID')}")
-    xbmc.executebuiltin("Action(Right)")
-    mon.waitForAbort(1)
-    out.append(f"Right->{lab('System.CurrentControlID')}")
+    for key in ("Left", "Right", "Right", "Left", "Up", "Down"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(1)
+        out.append(f"{key}->{lab('System.CurrentControlID')}")
     log("osd: " + " | ".join(out))
     shot("13-osd-after")
     xbmc.executebuiltin("PlayerControl(Stop)")
