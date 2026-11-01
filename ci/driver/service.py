@@ -1020,6 +1020,24 @@ def trailer_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def audio_test():
+    """Spoken language: first choice Dutch (not in the film), second English: the English 5.1, not the commentary."""
+    xbmc.executebuiltin("Skin.SetString(lucent.audio.lang1,nl)")
+    xbmc.executebuiltin("Skin.SetString(lucent.audio.lang2,en)")
+    mon.waitForAbort(8)                              # the helper starts its watcher
+    for run in (1, 2):
+        xbmc.executebuiltin("PlayMedia(/tmp/ci/audio.mkv)")
+        mon.waitForAbort(12)
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Player.GetProperties",
+                                                         "params": {"playerid": 1, "properties": ["currentaudiostream", "audiostreams"]}})))
+        r = res.get("result") or {}
+        cur = r.get("currentaudiostream") or {}
+        log(f"audio run {run}: now {cur.get('language')} {cur.get('name')!r} ch={cur.get('channels')} of {[(a.get('language'), a.get('name')) for a in r.get('audiostreams') or []]}")
+        xbmc.Player().stop()
+        mon.waitForAbort(3)
+    xbmc.executebuiltin("Skin.Reset(lucent.audio.lang1)")
+    xbmc.executebuiltin("Skin.Reset(lucent.audio.lang2)")
+
 
 def main():
     for _ in range(180):
@@ -1032,8 +1050,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    trailer_test()
-    libsplit_test()
+    audio_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

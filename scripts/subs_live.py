@@ -695,6 +695,30 @@ def enter_key():
         xbmc.executebuiltin(f"Skin.SetString({model_setting},{model})" if model else f"Skin.Reset({model_setting})")
 
 
+def choose_audio():
+    """Skin settings > Subtitles > Spoken language: a first and a second choice for the sound (subtitles.fix_audio)."""
+    order = ["nl", "en"] + sorted((k for k in LANGS if k not in ("nl", "en", "pb")), key=lambda k: full_name(k, k))
+    picks = []
+    for n, head in enumerate((t("Spoken language: first choice", "Gesproken taal: eerste keuze"),
+                              t("Spoken language: second choice", "Gesproken taal: tweede keuze"))):
+        none = t("No preference (Kodi decides)", "Geen voorkeur (Kodi beslist)") if n == 0 else t("No second choice", "Geen tweede keuze")
+        options = [k for k in order if k not in picks]
+        current = xbmc.getInfoLabel(f"Skin.String(lucent.audio.lang{n + 1})")
+        rows = [none] + [full_name(k, k.upper()) for k in options]
+        pre = options.index(current) + 1 if current in options else 0
+        i = xbmcgui.Dialog().select(head, rows, preselect=pre)
+        if i < 0:
+            return
+        if i == 0:
+            break
+        picks.append(options[i - 1])
+    for n in (1, 2):
+        value = picks[n - 1] if len(picks) >= n else ""
+        xbmc.executebuiltin(f"Skin.SetString(lucent.audio.lang{n},{value})" if value else f"Skin.Reset(lucent.audio.lang{n})")
+    text = " / ".join(full_name(k, k.upper()) for k in picks)   # no comma: Skin.SetString would split on it
+    xbmc.executebuiltin(f"Skin.SetString(lucent.audio.label,{text})" if text else "Skin.Reset(lucent.audio.label)")
+
+
 def choose_mode():
     """Skin settings > Subtitles > Search automatically: off / show the list / pick it myself in the background."""
     options = [("off", t("Off", "Uit"), t("Nothing happens when a video starts", "Er gebeurt niets als een video start")),
@@ -893,6 +917,8 @@ if __name__ == "__main__":
         enter_key()
     elif arg == "mode":
         choose_mode()
+    elif arg == "audio":
+        choose_audio()
     elif arg == "prefetch":
         home = xbmcgui.Window(10000)
         if not home.getProperty("lucent.subs.prefetch"):
