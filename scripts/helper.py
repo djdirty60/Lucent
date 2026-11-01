@@ -112,7 +112,9 @@ def run():
         subs["catchup"].tick()
 
     def subtitles():
-        if cond("Skin.HasSetting(nuvio.autosubs)"):
+        # the watcher also switches off a film's subtitle in a language you did not ask for (subtitles.py), so it
+        # runs when that is wanted too, not only for the automatic search
+        if cond("Skin.HasSetting(nuvio.autosubs) | !Skin.HasSetting(lucent.subs.langfix.off)"):
             if subs["watcher"] is None:
                 import subtitles as s
                 subs["watcher"] = s.Watcher()       # a Kodi player listener: looks when a video starts
