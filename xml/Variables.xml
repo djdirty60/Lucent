@@ -1157,4 +1157,17 @@
     </variable>
     <!-- player menu: the play / pause button shows play while paused -->
     <expression name="OSDShowPlay">Player.Paused | Player.Forwarding | Player.Rewinding</expression>
+    <!-- side menu: Lucent's own icons take the text colour, a picture of your own keeps its colours -->
+    <variable name="MenuIconText3">
+        <value condition="String.StartsWith(ListItem.Icon,icons/)">text3</value>
+        <value>FFFFFFFF</value>
+    </variable>
+    <variable name="MenuIconOnFocus">
+        <value condition="String.StartsWith(ListItem.Icon,icons/)">on_focus</value>
+        <value>FFFFFFFF</value>
+    </variable>
+    <variable name="MenuIconText">
+        <value condition="String.StartsWith(ListItem.Icon,icons/)">text</value>
+        <value>FFFFFFFF</value>
+    </variable>
 </includes>

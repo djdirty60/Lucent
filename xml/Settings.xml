@@ -853,6 +853,13 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31656]</label>
+                        <label2>$LOCALIZE[31657]</label2>
+                        <icon>icons/tv.png</icon>
+                        <onclick>RunScript(special://skin/scripts/streamedit.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + System.HasAddon(script.lucent.library)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[31648]</label>
                         <label2>$LOCALIZE[31650]</label2>
                         <icon>icons/view.png</icon>

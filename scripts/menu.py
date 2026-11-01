@@ -46,6 +46,17 @@ T = {
     "add_widget": ("+ Add a widget", "+ Widget toevoegen"),
     "style": ("Style", "Stijl"),
     "sort": ("Sort", "Sorteren"),
+    "title_img": ("Title picture (instead of the name)", "Titelafbeelding (in plaats van de naam)"),
+    "bg_img": ("Background while in this row", "Achtergrond in deze rij"),
+    "title_hide": ("Hide the title of this row", "Titel van deze rij verbergen"),
+    "title_show": ("Show the title of this row again", "Titel van deze rij weer tonen"),
+    "own_set": ("your own", "eigen"),
+    "own_none": ("none", "geen"),
+    "img_file": ("Choose a picture…", "Kies een afbeelding…"),
+    "img_url": ("Type an address (http… or a path)…", "Adres typen (http… of een pad)…"),
+    "img_none": ("No picture of my own", "Geen eigen afbeelding"),
+    "icon_own": ("Picture of my own…", "Eigen afbeelding…"),
+    "edit_services": ("Choose the streaming services…", "Streamingdiensten kiezen…"),
     "poster": ("Posters", "Posters"),
     "land": ("Landscape", "Liggend"),
     "remove_widget": ("Remove this widget", "Deze widget verwijderen"),
@@ -466,7 +477,9 @@ class Menu:
                 if path:
                     widgets.append({"label": self._read(f"nuvio.tab{t}.w{w}.label"), "path": path,
                                     "style": self._read(f"nuvio.tab{t}.w{w}.style") or "poster",
-                                    "sort": self._read(f"nuvio.tab{t}.w{w}.sort")})
+                                    "sort": self._read(f"nuvio.tab{t}.w{w}.sort"),
+                                    "timg": self._read(f"nuvio.tab{t}.w{w}.timg"), "bg": self._read(f"nuvio.tab{t}.w{w}.bg"),
+                                    "notitle": self._read(f"nuvio.tab{t}.w{w}.notitle")})
             self.tabs.append({"label": label, "icon": self._read(f"nuvio.tab{t}.icon"),
                               "action": self._read(f"nuvio.tab{t}.action"), "widgets": widgets,
                               "actionlabel": self._read(f"nuvio.tab{t}.actionlabel"),
@@ -477,7 +490,7 @@ class Menu:
         for tab in self.tabs:
             if str(tab["slot"]) == start_slot:
                 self.start = tab
-        for name in [f"nuvio.home.w{w}.{p}" for w in range(1, NWIDGETS + 1) for p in ("label", "path", "style", "sort")] + ["nuvio.homepos"]:
+        for name in [f"nuvio.home.w{w}.{p}" for w in range(1, NWIDGETS + 1) for p in ("label", "path", "style", "sort", "timg", "bg", "notitle")] + ["nuvio.homepos"]:
             self._read(name)
 
     def _read(self, name):
@@ -511,7 +524,7 @@ class Menu:
             wanted[f"nuvio.tab{t}.actionlabel"] = tab.get("actionlabel", "") if tab else ""
             for w in range(1, NWIDGETS + 1):
                 wd = tab["widgets"][w - 1] if tab and w <= len(tab["widgets"]) else None
-                for p in ("label", "path", "style", "sort"):
+                for p in ("label", "path", "style", "sort", "timg", "bg", "notitle"):
                     wanted[f"nuvio.tab{t}.w{w}.{p}"] = wd.get(p, "") if wd else ""
         start = self.start_tab()
         start_index = self.tabs.index(start) if start else -1
@@ -519,7 +532,7 @@ class Menu:
         wanted["nuvio.homepos"] = str(start_index) if start else ""
         for w in range(1, NWIDGETS + 1):
             wd = start["widgets"][w - 1] if start and w <= len(start["widgets"]) else None
-            for p in ("label", "path", "style", "sort"):
+            for p in ("label", "path", "style", "sort", "timg", "bg", "notitle"):
                 wanted[f"nuvio.home.w{w}.{p}"] = wd.get(p, "") if wd else ""
         wanted["nuvio.menu.version"] = VERSION
 
@@ -747,9 +760,20 @@ def edit_widgets(menu, tab):
                 menu.save()
             continue
         wd = widgets[choice]
+        own = lambda key: tr("own_set") if wd.get(key) else tr("own_none")  # noqa: E731
         actions = [tr("rename"), f"{tr('style')}: {tr(wd['style'])}", f"{tr('sort')}: {sort_name(wd.get('sort', ''))}",
+                   f"{tr('title_img')}: {own('timg')}", f"{tr('bg_img')}: {own('bg')}",
+                   tr("title_show") if wd.get("notitle") else tr("title_hide"),
                    tr("up"), tr("down"), tr("remove_widget")]
+        if "action=providers" in wd.get("path", ""):
+            actions.insert(0, tr("edit_services"))
+        services = actions[0] == tr("edit_services")
         act = select(wd["label"], actions)
+        if services:
+            if act == 0:
+                xbmc.executebuiltin("RunScript(special://skin/scripts/streamedit.py)")
+                return
+            act -= 1
         if act == 0:
             wd["label"] = keyboard(tr("rename"), wd["label"]) or wd["label"]
         elif act == 1:
@@ -759,15 +783,37 @@ def edit_widgets(menu, tab):
             if pick < 0:
                 continue
             wd["sort"] = SORTS()[pick][0]
-        elif act == 3 and choice > 0:
-            widgets[choice - 1], widgets[choice] = widgets[choice], widgets[choice - 1]
-        elif act == 4 and choice < len(widgets) - 1:
-            widgets[choice + 1], widgets[choice] = widgets[choice], widgets[choice + 1]
+        elif act in (3, 4):
+            img = pick_image(tr("title_img") if act == 3 else tr("bg_img"), wd.get("timg" if act == 3 else "bg", ""))
+            if img is None:
+                continue
+            wd["timg" if act == 3 else "bg"] = img
         elif act == 5:
+            wd["notitle"] = "" if wd.get("notitle") else "1"
+        elif act == 6 and choice > 0:
+            widgets[choice - 1], widgets[choice] = widgets[choice], widgets[choice - 1]
+        elif act == 7 and choice < len(widgets) - 1:
+            widgets[choice + 1], widgets[choice] = widgets[choice], widgets[choice + 1]
+        elif act == 8:
             widgets.pop(choice)
         else:
             continue
         menu.save()
+
+
+def pick_image(heading, current=""):
+    """A picture of your own: a file (also on the network), an address, or none. None = cancelled, '' = none."""
+    options = [tr("img_file"), tr("img_url")] + ([tr("img_none")] if current else [])
+    choice = select(heading, options)
+    if choice == 0:
+        path = xbmcgui.Dialog().browseSingle(2, heading, "files", ".png|.jpg|.jpeg|.webp|.gif", True)
+        return path or None
+    if choice == 1:
+        text = keyboard(heading, current)
+        return text or None
+    if choice == 2:
+        return ""
+    return None
 
 
 def SORTS():
@@ -861,9 +907,12 @@ def pick_action():
 
 
 def pick_icon(current):
-    labels = [name for name in ICONS]
-    icons = [f"icons/{name}.png" for name in ICONS]
+    labels = [name for name in ICONS] + [tr("icon_own")]
+    icons = [f"icons/{name}.png" for name in ICONS] + ["icons/pictures.png"]
     choice = select(tr("icon"), labels, True, icons)
+    if choice == len(ICONS):                         # a picture of your own (shown in its own colours)
+        img = pick_image(tr("icon"), "" if current.startswith("icons/") else current)
+        return img if img else current
     return icons[choice] if choice >= 0 else current
 
 
