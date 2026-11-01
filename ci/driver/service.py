@@ -920,7 +920,7 @@ def limit_test():
 
 def digital_test():
     """Hide films until their digital release: half of the TMDb films come out digitally in 2027."""
-    for _ in range(60):
+    for _ in range(150):
         if lab("Container(8106).NumItems") not in ("", "0"):
             break
         mon.waitForAbort(2)
@@ -929,6 +929,29 @@ def digital_test():
         HOME.setProperty("lucent.wr.6", str(time.time()))
         mon.waitForAbort(8)
         log(f"digital {'on' if on else 'off'}: row 8106 has {lab('Container(8106).NumItems')} films")
+
+def watched_test():
+    """No pop-up for an episode you already saw: Seren's Trakt copy says watched."""
+    import sqlite3
+    import sys
+    import xbmcvfs
+    sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))
+    path = xbmcvfs.translatePath("special://profile/addon_data/plugin.video.seren/traktSync.db")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    con = sqlite3.connect(path)
+    con.execute("CREATE TABLE IF NOT EXISTS shows (trakt_id INTEGER, tmdb_id INTEGER)")
+    con.execute("CREATE TABLE IF NOT EXISTS episodes (trakt_show_id INTEGER, season INTEGER, number INTEGER, watched INTEGER)")
+    con.execute("CREATE TABLE IF NOT EXISTS movies (tmdb_id INTEGER, watched INTEGER)")
+    con.execute("INSERT INTO shows VALUES (77, 5555)")
+    con.execute("INSERT INTO episodes VALUES (77, 2, 3, 1)")
+    con.execute("INSERT INTO episodes VALUES (77, 2, 4, 0)")
+    con.execute("INSERT INTO movies VALUES (6666, 1)")
+    con.commit()
+    con.close()
+    import agenda_core
+    for ev in ({"kind": "tv", "tmdb": 5555, "season": 2, "episode": 3}, {"kind": "tv", "tmdb": 5555, "season": 2, "episode": 4},
+               {"kind": "tv", "tmdb": 9, "season": 1, "episode": 1}, {"kind": "movie", "tmdb": 6666, "season": 0, "episode": 0}):
+        log(f"watchedcheck {ev['kind']} {ev['tmdb']} S{ev['season']}E{ev['episode']}: {agenda_core.already_watched(ev)}")
 
 
 def main():
@@ -942,8 +965,9 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    limit_test()
+    watched_test()
     digital_test()
+    limit_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
