@@ -700,7 +700,10 @@ class Sport(xbmcgui.WindowXML):
             label, label2, props = self.event_props(ev, data)
             props["heroof"] = f"{n} / {len(hero)}"
             if ev["state"] == "in" and ev["kind"] == "teams":       # your team plays now: the card is a live scoreboard
-                props["prog"] = str(self.progress(ev))
+                if sc.LEAGUES.get(ev["league"], {}).get("sport") == "soccer":
+                    props["prog"] = str(self.progress(ev))
+                else:
+                    props["prog"] = "0"                         # no minute bar for other sports, but still the scoreboard
                 props["when"] = "  ·  ".join(x for x in (ev.get("status"), ev.get("venue")) if x)
             items.append(listitem(label, label2, **props))
         self.fill_list(HERO_LIST, items, keep.get(HERO_LIST, 0))
@@ -1025,8 +1028,16 @@ class Sport(xbmcgui.WindowXML):
         what = entries[pick][1]
         if what == "goals":
             quiet = follow.setdefault("nogoals", [])
-            quiet.remove(ident) if ident in quiet else quiet.append(ident)
+            if xbmc.getCondVisibility("Skin.HasSetting(lucent.goals.off)"):
+                # goal alerts were off for everyone: on for this club only
+                xbmc.executebuiltin("Skin.Reset(lucent.goals.off)")
+                follow["nogoals"] = [sc.team_ident(t) for t in follow["teams"] if sc.team_ident(t) != ident]
+            elif ident in quiet:
+                quiet.remove(ident)
+            else:
+                quiet.append(ident)
             sc.save_follow(follow)
+            xbmc.sleep(200)
         elif what == "remind":
             per = follow.setdefault("remind", [])
             the_plan = plan.load_plan()
