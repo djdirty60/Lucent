@@ -330,7 +330,7 @@ def providers(force=False):
     A service your country has is read for your country; one it does not have (Hulu, Peacock ... outside the US) for the US."""
     own = (read_json(SERVICES_FILE, {}) or {}).get("items")
     if own:                                           # chosen in Lucent (Menu and widgets > Streaming services)
-        return own_services(own)
+        return [p for p in own_services(own) if not p.get("off")]      # 'off': switched off in the editor
     saved = read_json(PROV_FILE, {}) or {}
     if (saved.get("items") and saved.get("region") == REGION and saved.get("v") == PROV_VERSION and not force
             and time.time() - saved.get("time", 0) < PROV_TTL):

@@ -666,6 +666,57 @@ def poster_test():
     xbmc.executebuiltin("Skin.Reset(nuvio.posterlabels.hide)")
 
 
+def sel_items():
+    for cid in (6, 3):
+        n = int(lab(f"Container({cid}).NumItems") or 0)
+        if n and cond(f"Control.IsVisible({cid})"):
+            return cid, [lab(f"Container({cid}).ListItemAbsolute({i}).Label") + "|" + lab(f"Container({cid}).ListItemAbsolute({i}).Label2") for i in range(n)]
+    return 0, []
+
+
+def pick(index):
+    cid, _items = sel_items()
+    xbmc.executebuiltin(f"SetFocus({cid},{index},absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2)
+
+
+def edit_test():
+    """Streaming services editor: switch a service off, move one to another place (run as menu.py runs it)."""
+    import threading
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    lib = "plugin://script.lucent.library/?action=providers"
+    import streamedit
+    th = threading.Thread(target=streamedit.editor)
+    th.start()
+    mon.waitForAbort(4)
+    cid, items = sel_items()
+    log(f"edit: open={cond('Window.IsVisible(selectdialog)')} {items[:4]} ... {len(items)}")
+    pick(1)                                            # Disney
+    cid, opts = sel_items()
+    log(f"edit: options {opts}")
+    pick(0)                                            # hide / switch off
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    cid, items = sel_items()
+    log(f"edit: after off {items[:3]}")
+    pick(0)                                            # Netflix
+    pick(1)                                            # place
+    cid, places = sel_items()
+    log(f"edit: places {places[:4]}")
+    pick(3)                                            # to place 4
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    cid, items = sel_items()
+    log(f"edit: after move {items[:5]}")
+    shot("21-editor")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    th.join(5)
+    log(f"edit: row now {[a for a, _b in art_of(lib)]}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -677,8 +728,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    logo_test()
-    poster_test()
+    edit_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
