@@ -8,7 +8,7 @@ home = os.path.expanduser("~/.kodi")
 stage = sys.argv[1]
 W = "plugin://plugin.video.fakeseren/?list="
 tabs = {
-    1: ("Home", "", [("Namen A", W + "names"), ("Traag B", W + "slow"), ("Snel X", W + "fast4"), ("Lege bibliotheek", "videodb://movies/titles/"), ("Lucent bib", "plugin://script.lucent.library/?action=lib&kind=movies&list=recent")]),
+    1: ("Home", "", [("Namen A", W + "names"), ("Traag B", W + "slow"), ("Snel X", W + "fast4"), ("Lege bibliotheek", "videodb://movies/titles/"), ("Lucent bib", "plugin://script.lucent.library/?action=lib&kind=movies&list=recent"), ("TMDb films", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie")]),
     3: ("Streaming", "", [("Streamingdiensten", "plugin://script.lucent.library/?action=providers"),
                           ("Netflix nieuw", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie")]),
     2: ("Films", "", [("Snel C", W + "fast2"), ("Traag D", W + "slow2"), ("Wisselvallig E", W + "flaky"),
