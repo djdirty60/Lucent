@@ -878,6 +878,8 @@ def widgetctx_test():
     for cid in [8100 + n for n in range(1, 11)] + [8200 + n for n in range(1, 11)]:
         if not cond(f"Control.IsVisible({cid})") or not lab(f"Container({cid}).NumItems").isdigit():
             continue
+        log(f"widgetctx: row {cid} first={lab(f'Container({cid}).ListItemAbsolute(0).FileNameAndPath')[:90]!r} "
+            f"type={lab(f'Container({cid}).ListItemAbsolute(0).DBType')!r}")
         for pos in range(int(lab(f"Container({cid}).NumItems"))):
             path = lab(f"Container({cid}).ListItemAbsolute({pos}).FileNameAndPath")
             if "tmdbopen" in path and "type=movie" in path:
