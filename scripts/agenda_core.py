@@ -645,6 +645,54 @@ def announce(ev):
                                autoclose=60000)   # no answer within a minute counts as "later"
 
 
+SEREN_DB = "special://profile/addon_data/plugin.video.seren/traktSync.db"
+
+
+def already_watched(ev):
+    """True when you already saw this episode / film: in Seren's Trakt copy or in the Kodi library. Then there is no
+    pop-up for it (you may have watched it elsewhere, or right after it came out)."""
+    tmdb, season, number = ev.get("tmdb"), ev.get("season") or 0, ev.get("episode") or 0
+    if not tmdb:
+        return False
+    movie = ev["kind"] == "movie"
+    try:
+        import sqlite3
+        path = xbmcvfs.translatePath(SEREN_DB)
+        if xbmcvfs.exists(path):
+            con = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=5)
+            try:
+                if movie:
+                    row = con.execute("SELECT watched FROM movies WHERE tmdb_id=?", (int(tmdb),)).fetchone()
+                else:
+                    row = con.execute("SELECT e.watched FROM episodes e JOIN shows s ON s.trakt_id = e.trakt_show_id "
+                                      "WHERE s.tmdb_id=? AND e.season=? AND e.number=?",
+                                      (int(tmdb), int(season), int(number))).fetchone()
+            finally:
+                con.close()
+            if row and (row[0] or 0) > 0:
+                return True
+    except Exception as error:  # noqa: BLE001
+        log(f"watched (Seren): {error}")
+    try:
+        def rpc(method, params):
+            res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
+            return res.get("result") or {}
+        if movie:
+            for m in rpc("VideoLibrary.GetMovies", {"properties": ["uniqueid", "playcount"]}).get("movies") or []:
+                if str((m.get("uniqueid") or {}).get("tmdb")) == str(tmdb) and (m.get("playcount") or 0) > 0:
+                    return True
+            return False
+        for show in rpc("VideoLibrary.GetTVShows", {"properties": ["uniqueid"]}).get("tvshows") or []:
+            if str((show.get("uniqueid") or {}).get("tmdb")) == str(tmdb):
+                eps = rpc("VideoLibrary.GetEpisodes", {"tvshowid": show["tvshowid"], "season": int(season),
+                                                       "properties": ["episode", "playcount"]}).get("episodes") or []
+                if any(e.get("episode") == int(number) and (e.get("playcount") or 0) > 0 for e in eps):
+                    return True
+    except Exception as error:  # noqa: BLE001
+        log(f"watched (library): {error}")
+    return False
+
+
 def check_notifications():
     """One round of the background helper. Returns the number of pop-ups shown."""
     if not notifications_enabled():
@@ -660,7 +708,14 @@ def check_notifications():
         refresh(limit=5)
     store = load_follow()
     shown = 0
-    for ev in due_events(datetime.datetime.now(), store, all_events())[:3]:
+    due = []
+    for ev in due_events(datetime.datetime.now(), store, all_events()):
+        if already_watched(ev):                     # seen already: no pop-up, now or later
+            store["notified"][ev["key"]] = "done"
+            write_json(FOLLOW_PATH, store)
+            continue
+        due.append(ev)
+    for ev in due[:3]:
         if busy_now():
             break
         shown += 1

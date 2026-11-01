@@ -46,6 +46,7 @@ T = {
     "add_widget": ("+ Add a widget", "+ Widget toevoegen"),
     "style": ("Style", "Stijl"),
     "sort": ("Sort", "Sorteren"),
+    "limit": ("Number of titles", "Aantal titels"),
     "title_img": ("Title picture (instead of the name)", "Titelafbeelding (in plaats van de naam)"),
     "bg_img": ("Background while in this row", "Achtergrond in deze rij"),
     "title_hide": ("Hide the title of this row", "Titel van deze rij verbergen"),
@@ -479,6 +480,7 @@ class Menu:
                     widgets.append({"label": self._read(f"nuvio.tab{t}.w{w}.label"), "path": path,
                                     "style": self._read(f"nuvio.tab{t}.w{w}.style") or "poster",
                                     "sort": self._read(f"nuvio.tab{t}.w{w}.sort"),
+                                    "limit": self._read(f"nuvio.tab{t}.w{w}.limit"),
                                     "timg": self._read(f"nuvio.tab{t}.w{w}.timg"), "bg": self._read(f"nuvio.tab{t}.w{w}.bg"),
                                     "notitle": self._read(f"nuvio.tab{t}.w{w}.notitle")})
             self.tabs.append({"label": label, "icon": self._read(f"nuvio.tab{t}.icon"),
@@ -491,7 +493,7 @@ class Menu:
         for tab in self.tabs:
             if str(tab["slot"]) == start_slot:
                 self.start = tab
-        for name in [f"nuvio.home.w{w}.{p}" for w in range(1, NWIDGETS + 1) for p in ("label", "path", "style", "sort", "timg", "bg", "notitle")] + ["nuvio.homepos"]:
+        for name in [f"nuvio.home.w{w}.{p}" for w in range(1, NWIDGETS + 1) for p in ("label", "path", "style", "sort", "limit", "timg", "bg", "notitle")] + ["nuvio.homepos"]:
             self._read(name)
 
     def _read(self, name):
@@ -525,7 +527,7 @@ class Menu:
             wanted[f"nuvio.tab{t}.actionlabel"] = tab.get("actionlabel", "") if tab else ""
             for w in range(1, NWIDGETS + 1):
                 wd = tab["widgets"][w - 1] if tab and w <= len(tab["widgets"]) else None
-                for p in ("label", "path", "style", "sort", "timg", "bg", "notitle"):
+                for p in ("label", "path", "style", "sort", "limit", "timg", "bg", "notitle"):
                     wanted[f"nuvio.tab{t}.w{w}.{p}"] = wd.get(p, "") if wd else ""
         start = self.start_tab()
         start_index = self.tabs.index(start) if start else -1
@@ -533,7 +535,7 @@ class Menu:
         wanted["nuvio.homepos"] = str(start_index) if start else ""
         for w in range(1, NWIDGETS + 1):
             wd = start["widgets"][w - 1] if start and w <= len(start["widgets"]) else None
-            for p in ("label", "path", "style", "sort", "timg", "bg", "notitle"):
+            for p in ("label", "path", "style", "sort", "limit", "timg", "bg", "notitle"):
                 wanted[f"nuvio.home.w{w}.{p}"] = wd.get(p, "") if wd else ""
         wanted["nuvio.menu.version"] = VERSION
 
@@ -763,6 +765,7 @@ def edit_widgets(menu, tab):
         wd = widgets[choice]
         own = lambda key: tr("own_set") if wd.get(key) else tr("own_none")  # noqa: E731
         actions = [tr("rename"), f"{tr('style')}: {tr(wd['style'])}", f"{tr('sort')}: {sort_name(wd.get('sort', ''))}",
+                   f"{tr('limit')}: {limit_name(wd.get('limit', ''))}",
                    f"{tr('title_img')}: {own('timg')}", f"{tr('bg_img')}: {own('bg')}",
                    tr("title_show") if wd.get("notitle") else tr("title_hide"),
                    tr("up"), tr("down"), tr("remove_widget")]
@@ -785,29 +788,34 @@ def edit_widgets(menu, tab):
             if pick < 0:
                 continue
             wd["sort"] = SORTS()[pick][0]
-        elif act in (3, 4):
-            img = pick_image(tr("title_img") if act == 3 else tr("bg_img"), wd.get("timg" if act == 3 else "bg", ""))
+        elif act == 3:
+            pick = select(tr("limit"), [name for _key, name in LIMITS()])
+            if pick < 0:
+                continue
+            wd["limit"] = LIMITS()[pick][0]
+        elif act in (4, 5):
+            img = pick_image(tr("title_img") if act == 4 else tr("bg_img"), wd.get("timg" if act == 4 else "bg", ""))
             if img is None:
                 continue
-            wd["timg" if act == 3 else "bg"] = img
-        elif act == 5:
+            wd["timg" if act == 4 else "bg"] = img
+        elif act == 6:
             wd["notitle"] = "" if wd.get("notitle") else "1"
-        elif act == 6 and choice > 0:
+        elif act == 7 and choice > 0:
             widgets[choice - 1], widgets[choice] = widgets[choice], widgets[choice - 1]
-        elif act == 7 and choice < len(widgets) - 1:
+        elif act == 8 and choice < len(widgets) - 1:
             widgets[choice + 1], widgets[choice] = widgets[choice], widgets[choice + 1]
-        elif act == 8:
+        elif act == 9:
             widgets.pop(choice)
         else:
             continue
-        if act <= 5:                                # the same widget on other tabs gets the same change
+        if act <= 6:                                # the same widget on other tabs gets the same change
             same = copy_to_same(menu, tab, wd)
             if same:
                 notify(tr("same_changed", same))
         menu.save()
 
 
-SHARED = ("label", "style", "sort", "timg", "bg", "notitle")
+SHARED = ("label", "style", "sort", "limit", "timg", "bg", "notitle")
 
 
 def copy_to_same(menu, tab, wd):
@@ -848,6 +856,19 @@ def SORTS():
             ("rating", tr(G("Rating (highest first)", "Beoordeling (hoogste eerst)"))),
             ("dateadded", tr(G("Date added (newest first)", "Datum toegevoegd (nieuwste eerst)"))),
             ("random", tr(G("Random", "Willekeurig")))]
+
+
+def LIMITS():
+    """How many titles a Home row shows. Empty = 25 (fast, also on small boxes); 0 = all the source gives."""
+    return [("", tr(G("25 (standard)", "25 (standaard)"))), ("50", "50"), ("100", "100"),
+            ("0", tr(G("All (can make Home slower)", "Alle (kan Home trager maken)")))]
+
+
+def limit_name(key):
+    for k, name in LIMITS():
+        if k == key:
+            return name
+    return LIMITS()[0][1]
 
 
 def sort_name(key):

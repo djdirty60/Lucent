@@ -6,6 +6,56 @@
         <value>$INFO[Container(9000).ListItem.Property(w1.label)]</value>
     </variable>
     <!-- widget 1: sort chosen in Menu and widgets (empty = as the source gives it) -->
+    <variable name="NuvioW1Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.limit))">$INFO[Skin.String(nuvio.home.w1.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.limit))">$INFO[Container(9000).ListItem.Property(w1.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW2Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.limit))">$INFO[Skin.String(nuvio.home.w2.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.limit))">$INFO[Container(9000).ListItem.Property(w2.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW3Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.limit))">$INFO[Skin.String(nuvio.home.w3.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.limit))">$INFO[Container(9000).ListItem.Property(w3.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW4Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.limit))">$INFO[Skin.String(nuvio.home.w4.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.limit))">$INFO[Container(9000).ListItem.Property(w4.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW5Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.limit))">$INFO[Skin.String(nuvio.home.w5.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.limit))">$INFO[Container(9000).ListItem.Property(w5.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW6Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.limit))">$INFO[Skin.String(nuvio.home.w6.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.limit))">$INFO[Container(9000).ListItem.Property(w6.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW7Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.limit))">$INFO[Skin.String(nuvio.home.w7.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.limit))">$INFO[Container(9000).ListItem.Property(w7.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW8Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.limit))">$INFO[Skin.String(nuvio.home.w8.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.limit))">$INFO[Container(9000).ListItem.Property(w8.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW9Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.limit))">$INFO[Skin.String(nuvio.home.w9.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.limit))">$INFO[Container(9000).ListItem.Property(w9.limit)]</value>
+        <value>25</value>
+    </variable>
+    <variable name="NuvioW10Limit">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.limit))">$INFO[Skin.String(nuvio.home.w10.limit)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.limit))">$INFO[Container(9000).ListItem.Property(w10.limit)]</value>
+        <value>25</value>
+    </variable>
     <variable name="NuvioW1Sort">
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.sort))">$INFO[Skin.String(nuvio.home.w1.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.sort))">$INFO[Container(9000).ListItem.Property(w1.sort)]</value>
@@ -7909,7 +7959,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW1Limit]" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 1 (land) -->
@@ -8276,7 +8326,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW1Limit]" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathLand]</content>
                 </control>
             </control>
             <!-- Widget 2 (poster) -->
@@ -8619,7 +8669,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW2Limit]" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 2 (land) -->
@@ -8986,7 +9036,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW2Limit]" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathLand]</content>
                 </control>
             </control>
             <!-- Widget 3 (poster) -->
@@ -9329,7 +9379,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW3Limit]" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 3 (land) -->
@@ -9696,7 +9746,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW3Limit]" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathLand]</content>
                 </control>
             </control>
             <!-- Widget 4 (poster) -->
@@ -10039,7 +10089,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW4Limit]" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 4 (land) -->
@@ -10406,7 +10456,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW4Limit]" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathLand]</content>
                 </control>
             </control>
             <!-- Widget 5 (poster) -->
@@ -10749,7 +10799,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW5Limit]" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 5 (land) -->
@@ -11116,7 +11166,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW5Limit]" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathLand]</content>
                 </control>
             </control>
             <!-- Widget 6 (poster) -->
@@ -11459,7 +11509,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW6Limit]" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 6 (land) -->
@@ -11827,7 +11877,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW6Limit]" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathLand]</content>
                 </control>
             </control>
             <!-- Widgets 7-10: not built at all in light mode (Skin setting lucent.lite; the skin reloads when it changes) -->
@@ -12174,7 +12224,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW7Limit]" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 7 (land) -->
@@ -12541,7 +12591,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW7Limit]" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathLand]</content>
                 </control>
             </control>
             <!-- Widget 8 (poster) -->
@@ -12884,7 +12934,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW8Limit]" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 8 (land) -->
@@ -13251,7 +13301,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW8Limit]" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathLand]</content>
                 </control>
             </control>
             <!-- Widget 9 (poster) -->
@@ -13594,7 +13644,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW9Limit]" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 9 (land) -->
@@ -13961,7 +14011,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW9Limit]" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathLand]</content>
                 </control>
             </control>
             <!-- Widget 10 (poster) -->
@@ -14304,7 +14354,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathPoster]</content>
+                    <content target="videos" limit="$VAR[NuvioW10Limit]" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathPoster]</content>
                 </control>
             </control>
             <!-- Widget 10 (land) -->
@@ -14671,7 +14721,7 @@
             </control>
                         </control>
                     </focusedlayout>
-                    <content target="videos" limit="25" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathLand]</content>
+                    <content target="videos" limit="$VAR[NuvioW10Limit]" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathLand]</content>
                 </control>
             </control>
     </include>
@@ -14689,6 +14739,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab1.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab1.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab1.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab1.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab1.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab1.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab1.w2.style)]</property>
@@ -14696,6 +14747,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab1.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab1.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab1.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab1.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab1.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab1.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab1.w3.style)]</property>
@@ -14703,6 +14755,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab1.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab1.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab1.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab1.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab1.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab1.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab1.w4.style)]</property>
@@ -14710,6 +14763,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab1.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab1.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab1.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab1.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab1.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab1.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab1.w5.style)]</property>
@@ -14717,6 +14771,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab1.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab1.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab1.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab1.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab1.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab1.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab1.w6.style)]</property>
@@ -14724,6 +14779,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab1.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab1.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab1.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab1.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab1.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab1.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab1.w7.style)]</property>
@@ -14731,6 +14787,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab1.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab1.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab1.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab1.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab1.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab1.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab1.w8.style)]</property>
@@ -14738,6 +14795,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab1.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab1.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab1.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab1.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab1.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab1.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab1.w9.style)]</property>
@@ -14745,6 +14803,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab1.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab1.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab1.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab1.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab1.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab1.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab1.w10.style)]</property>
@@ -14752,6 +14811,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab1.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab1.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab1.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab1.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab1.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab1)]</visible>
                 </item>
                 <item>
@@ -14766,6 +14826,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab2.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab2.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab2.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab2.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab2.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab2.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab2.w2.style)]</property>
@@ -14773,6 +14834,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab2.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab2.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab2.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab2.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab2.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab2.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab2.w3.style)]</property>
@@ -14780,6 +14842,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab2.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab2.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab2.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab2.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab2.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab2.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab2.w4.style)]</property>
@@ -14787,6 +14850,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab2.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab2.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab2.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab2.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab2.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab2.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab2.w5.style)]</property>
@@ -14794,6 +14858,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab2.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab2.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab2.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab2.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab2.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab2.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab2.w6.style)]</property>
@@ -14801,6 +14866,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab2.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab2.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab2.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab2.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab2.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab2.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab2.w7.style)]</property>
@@ -14808,6 +14874,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab2.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab2.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab2.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab2.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab2.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab2.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab2.w8.style)]</property>
@@ -14815,6 +14882,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab2.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab2.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab2.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab2.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab2.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab2.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab2.w9.style)]</property>
@@ -14822,6 +14890,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab2.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab2.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab2.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab2.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab2.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab2.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab2.w10.style)]</property>
@@ -14829,6 +14898,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab2.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab2.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab2.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab2.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab2.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab2)]</visible>
                 </item>
                 <item>
@@ -14843,6 +14913,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab3.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab3.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab3.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab3.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab3.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab3.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab3.w2.style)]</property>
@@ -14850,6 +14921,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab3.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab3.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab3.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab3.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab3.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab3.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab3.w3.style)]</property>
@@ -14857,6 +14929,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab3.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab3.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab3.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab3.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab3.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab3.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab3.w4.style)]</property>
@@ -14864,6 +14937,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab3.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab3.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab3.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab3.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab3.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab3.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab3.w5.style)]</property>
@@ -14871,6 +14945,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab3.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab3.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab3.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab3.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab3.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab3.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab3.w6.style)]</property>
@@ -14878,6 +14953,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab3.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab3.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab3.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab3.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab3.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab3.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab3.w7.style)]</property>
@@ -14885,6 +14961,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab3.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab3.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab3.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab3.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab3.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab3.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab3.w8.style)]</property>
@@ -14892,6 +14969,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab3.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab3.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab3.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab3.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab3.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab3.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab3.w9.style)]</property>
@@ -14899,6 +14977,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab3.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab3.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab3.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab3.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab3.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab3.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab3.w10.style)]</property>
@@ -14906,6 +14985,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab3.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab3.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab3.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab3.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab3.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab3)]</visible>
                 </item>
                 <item>
@@ -14920,6 +15000,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab4.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab4.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab4.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab4.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab4.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab4.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab4.w2.style)]</property>
@@ -14927,6 +15008,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab4.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab4.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab4.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab4.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab4.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab4.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab4.w3.style)]</property>
@@ -14934,6 +15016,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab4.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab4.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab4.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab4.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab4.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab4.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab4.w4.style)]</property>
@@ -14941,6 +15024,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab4.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab4.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab4.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab4.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab4.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab4.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab4.w5.style)]</property>
@@ -14948,6 +15032,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab4.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab4.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab4.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab4.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab4.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab4.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab4.w6.style)]</property>
@@ -14955,6 +15040,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab4.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab4.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab4.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab4.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab4.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab4.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab4.w7.style)]</property>
@@ -14962,6 +15048,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab4.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab4.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab4.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab4.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab4.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab4.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab4.w8.style)]</property>
@@ -14969,6 +15056,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab4.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab4.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab4.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab4.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab4.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab4.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab4.w9.style)]</property>
@@ -14976,6 +15064,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab4.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab4.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab4.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab4.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab4.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab4.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab4.w10.style)]</property>
@@ -14983,6 +15072,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab4.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab4.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab4.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab4.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab4.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab4)]</visible>
                 </item>
                 <item>
@@ -14997,6 +15087,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab5.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab5.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab5.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab5.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab5.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab5.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab5.w2.style)]</property>
@@ -15004,6 +15095,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab5.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab5.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab5.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab5.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab5.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab5.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab5.w3.style)]</property>
@@ -15011,6 +15103,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab5.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab5.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab5.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab5.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab5.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab5.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab5.w4.style)]</property>
@@ -15018,6 +15111,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab5.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab5.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab5.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab5.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab5.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab5.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab5.w5.style)]</property>
@@ -15025,6 +15119,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab5.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab5.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab5.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab5.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab5.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab5.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab5.w6.style)]</property>
@@ -15032,6 +15127,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab5.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab5.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab5.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab5.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab5.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab5.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab5.w7.style)]</property>
@@ -15039,6 +15135,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab5.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab5.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab5.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab5.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab5.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab5.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab5.w8.style)]</property>
@@ -15046,6 +15143,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab5.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab5.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab5.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab5.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab5.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab5.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab5.w9.style)]</property>
@@ -15053,6 +15151,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab5.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab5.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab5.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab5.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab5.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab5.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab5.w10.style)]</property>
@@ -15060,6 +15159,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab5.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab5.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab5.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab5.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab5.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab5)]</visible>
                 </item>
                 <item>
@@ -15074,6 +15174,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab6.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab6.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab6.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab6.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab6.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab6.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab6.w2.style)]</property>
@@ -15081,6 +15182,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab6.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab6.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab6.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab6.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab6.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab6.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab6.w3.style)]</property>
@@ -15088,6 +15190,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab6.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab6.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab6.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab6.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab6.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab6.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab6.w4.style)]</property>
@@ -15095,6 +15198,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab6.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab6.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab6.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab6.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab6.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab6.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab6.w5.style)]</property>
@@ -15102,6 +15206,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab6.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab6.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab6.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab6.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab6.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab6.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab6.w6.style)]</property>
@@ -15109,6 +15214,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab6.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab6.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab6.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab6.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab6.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab6.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab6.w7.style)]</property>
@@ -15116,6 +15222,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab6.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab6.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab6.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab6.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab6.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab6.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab6.w8.style)]</property>
@@ -15123,6 +15230,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab6.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab6.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab6.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab6.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab6.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab6.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab6.w9.style)]</property>
@@ -15130,6 +15238,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab6.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab6.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab6.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab6.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab6.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab6.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab6.w10.style)]</property>
@@ -15137,6 +15246,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab6.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab6.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab6.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab6.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab6.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab6)]</visible>
                 </item>
                 <item>
@@ -15151,6 +15261,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab7.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab7.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab7.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab7.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab7.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab7.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab7.w2.style)]</property>
@@ -15158,6 +15269,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab7.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab7.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab7.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab7.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab7.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab7.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab7.w3.style)]</property>
@@ -15165,6 +15277,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab7.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab7.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab7.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab7.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab7.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab7.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab7.w4.style)]</property>
@@ -15172,6 +15285,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab7.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab7.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab7.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab7.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab7.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab7.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab7.w5.style)]</property>
@@ -15179,6 +15293,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab7.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab7.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab7.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab7.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab7.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab7.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab7.w6.style)]</property>
@@ -15186,6 +15301,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab7.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab7.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab7.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab7.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab7.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab7.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab7.w7.style)]</property>
@@ -15193,6 +15309,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab7.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab7.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab7.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab7.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab7.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab7.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab7.w8.style)]</property>
@@ -15200,6 +15317,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab7.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab7.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab7.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab7.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab7.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab7.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab7.w9.style)]</property>
@@ -15207,6 +15325,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab7.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab7.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab7.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab7.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab7.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab7.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab7.w10.style)]</property>
@@ -15214,6 +15333,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab7.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab7.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab7.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab7.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab7.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab7)]</visible>
                 </item>
                 <item>
@@ -15228,6 +15348,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab8.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab8.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab8.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab8.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab8.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab8.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab8.w2.style)]</property>
@@ -15235,6 +15356,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab8.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab8.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab8.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab8.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab8.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab8.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab8.w3.style)]</property>
@@ -15242,6 +15364,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab8.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab8.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab8.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab8.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab8.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab8.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab8.w4.style)]</property>
@@ -15249,6 +15372,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab8.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab8.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab8.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab8.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab8.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab8.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab8.w5.style)]</property>
@@ -15256,6 +15380,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab8.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab8.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab8.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab8.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab8.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab8.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab8.w6.style)]</property>
@@ -15263,6 +15388,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab8.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab8.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab8.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab8.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab8.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab8.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab8.w7.style)]</property>
@@ -15270,6 +15396,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab8.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab8.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab8.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab8.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab8.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab8.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab8.w8.style)]</property>
@@ -15277,6 +15404,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab8.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab8.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab8.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab8.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab8.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab8.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab8.w9.style)]</property>
@@ -15284,6 +15412,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab8.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab8.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab8.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab8.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab8.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab8.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab8.w10.style)]</property>
@@ -15291,6 +15420,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab8.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab8.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab8.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab8.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab8.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab8)]</visible>
                 </item>
                 <item>
@@ -15305,6 +15435,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab9.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab9.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab9.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab9.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab9.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab9.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab9.w2.style)]</property>
@@ -15312,6 +15443,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab9.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab9.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab9.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab9.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab9.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab9.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab9.w3.style)]</property>
@@ -15319,6 +15451,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab9.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab9.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab9.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab9.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab9.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab9.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab9.w4.style)]</property>
@@ -15326,6 +15459,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab9.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab9.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab9.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab9.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab9.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab9.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab9.w5.style)]</property>
@@ -15333,6 +15467,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab9.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab9.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab9.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab9.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab9.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab9.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab9.w6.style)]</property>
@@ -15340,6 +15475,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab9.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab9.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab9.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab9.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab9.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab9.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab9.w7.style)]</property>
@@ -15347,6 +15483,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab9.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab9.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab9.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab9.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab9.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab9.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab9.w8.style)]</property>
@@ -15354,6 +15491,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab9.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab9.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab9.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab9.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab9.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab9.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab9.w9.style)]</property>
@@ -15361,6 +15499,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab9.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab9.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab9.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab9.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab9.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab9.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab9.w10.style)]</property>
@@ -15368,6 +15507,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab9.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab9.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab9.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab9.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab9.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab9)]</visible>
                 </item>
                 <item>
@@ -15382,6 +15522,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab10.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab10.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab10.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab10.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab10.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab10.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab10.w2.style)]</property>
@@ -15389,6 +15530,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab10.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab10.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab10.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab10.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab10.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab10.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab10.w3.style)]</property>
@@ -15396,6 +15538,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab10.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab10.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab10.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab10.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab10.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab10.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab10.w4.style)]</property>
@@ -15403,6 +15546,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab10.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab10.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab10.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab10.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab10.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab10.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab10.w5.style)]</property>
@@ -15410,6 +15554,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab10.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab10.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab10.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab10.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab10.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab10.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab10.w6.style)]</property>
@@ -15417,6 +15562,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab10.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab10.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab10.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab10.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab10.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab10.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab10.w7.style)]</property>
@@ -15424,6 +15570,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab10.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab10.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab10.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab10.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab10.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab10.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab10.w8.style)]</property>
@@ -15431,6 +15578,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab10.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab10.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab10.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab10.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab10.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab10.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab10.w9.style)]</property>
@@ -15438,6 +15586,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab10.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab10.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab10.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab10.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab10.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab10.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab10.w10.style)]</property>
@@ -15445,6 +15594,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab10.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab10.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab10.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab10.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab10.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab10)]</visible>
                 </item>
                 <item>
@@ -15459,6 +15609,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab11.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab11.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab11.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab11.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab11.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab11.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab11.w2.style)]</property>
@@ -15466,6 +15617,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab11.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab11.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab11.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab11.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab11.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab11.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab11.w3.style)]</property>
@@ -15473,6 +15625,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab11.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab11.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab11.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab11.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab11.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab11.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab11.w4.style)]</property>
@@ -15480,6 +15633,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab11.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab11.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab11.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab11.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab11.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab11.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab11.w5.style)]</property>
@@ -15487,6 +15641,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab11.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab11.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab11.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab11.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab11.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab11.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab11.w6.style)]</property>
@@ -15494,6 +15649,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab11.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab11.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab11.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab11.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab11.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab11.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab11.w7.style)]</property>
@@ -15501,6 +15657,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab11.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab11.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab11.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab11.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab11.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab11.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab11.w8.style)]</property>
@@ -15508,6 +15665,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab11.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab11.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab11.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab11.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab11.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab11.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab11.w9.style)]</property>
@@ -15515,6 +15673,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab11.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab11.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab11.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab11.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab11.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab11.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab11.w10.style)]</property>
@@ -15522,6 +15681,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab11.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab11.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab11.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab11.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab11.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab11)]</visible>
                 </item>
                 <item>
@@ -15536,6 +15696,7 @@
                     <property name="w1.timg">$INFO[Skin.String(nuvio.tab12.w1.timg)]</property>
                     <property name="w1.bg">$INFO[Skin.String(nuvio.tab12.w1.bg)]</property>
                     <property name="w1.notitle">$INFO[Skin.String(nuvio.tab12.w1.notitle)]</property>
+                    <property name="w1.limit">$INFO[Skin.String(nuvio.tab12.w1.limit)]</property>
                     <property name="w2.label">$INFO[Skin.String(nuvio.tab12.w2.label)]</property>
                     <property name="w2.path">$INFO[Skin.String(nuvio.tab12.w2.path)]</property>
                     <property name="w2.style">$INFO[Skin.String(nuvio.tab12.w2.style)]</property>
@@ -15543,6 +15704,7 @@
                     <property name="w2.timg">$INFO[Skin.String(nuvio.tab12.w2.timg)]</property>
                     <property name="w2.bg">$INFO[Skin.String(nuvio.tab12.w2.bg)]</property>
                     <property name="w2.notitle">$INFO[Skin.String(nuvio.tab12.w2.notitle)]</property>
+                    <property name="w2.limit">$INFO[Skin.String(nuvio.tab12.w2.limit)]</property>
                     <property name="w3.label">$INFO[Skin.String(nuvio.tab12.w3.label)]</property>
                     <property name="w3.path">$INFO[Skin.String(nuvio.tab12.w3.path)]</property>
                     <property name="w3.style">$INFO[Skin.String(nuvio.tab12.w3.style)]</property>
@@ -15550,6 +15712,7 @@
                     <property name="w3.timg">$INFO[Skin.String(nuvio.tab12.w3.timg)]</property>
                     <property name="w3.bg">$INFO[Skin.String(nuvio.tab12.w3.bg)]</property>
                     <property name="w3.notitle">$INFO[Skin.String(nuvio.tab12.w3.notitle)]</property>
+                    <property name="w3.limit">$INFO[Skin.String(nuvio.tab12.w3.limit)]</property>
                     <property name="w4.label">$INFO[Skin.String(nuvio.tab12.w4.label)]</property>
                     <property name="w4.path">$INFO[Skin.String(nuvio.tab12.w4.path)]</property>
                     <property name="w4.style">$INFO[Skin.String(nuvio.tab12.w4.style)]</property>
@@ -15557,6 +15720,7 @@
                     <property name="w4.timg">$INFO[Skin.String(nuvio.tab12.w4.timg)]</property>
                     <property name="w4.bg">$INFO[Skin.String(nuvio.tab12.w4.bg)]</property>
                     <property name="w4.notitle">$INFO[Skin.String(nuvio.tab12.w4.notitle)]</property>
+                    <property name="w4.limit">$INFO[Skin.String(nuvio.tab12.w4.limit)]</property>
                     <property name="w5.label">$INFO[Skin.String(nuvio.tab12.w5.label)]</property>
                     <property name="w5.path">$INFO[Skin.String(nuvio.tab12.w5.path)]</property>
                     <property name="w5.style">$INFO[Skin.String(nuvio.tab12.w5.style)]</property>
@@ -15564,6 +15728,7 @@
                     <property name="w5.timg">$INFO[Skin.String(nuvio.tab12.w5.timg)]</property>
                     <property name="w5.bg">$INFO[Skin.String(nuvio.tab12.w5.bg)]</property>
                     <property name="w5.notitle">$INFO[Skin.String(nuvio.tab12.w5.notitle)]</property>
+                    <property name="w5.limit">$INFO[Skin.String(nuvio.tab12.w5.limit)]</property>
                     <property name="w6.label">$INFO[Skin.String(nuvio.tab12.w6.label)]</property>
                     <property name="w6.path">$INFO[Skin.String(nuvio.tab12.w6.path)]</property>
                     <property name="w6.style">$INFO[Skin.String(nuvio.tab12.w6.style)]</property>
@@ -15571,6 +15736,7 @@
                     <property name="w6.timg">$INFO[Skin.String(nuvio.tab12.w6.timg)]</property>
                     <property name="w6.bg">$INFO[Skin.String(nuvio.tab12.w6.bg)]</property>
                     <property name="w6.notitle">$INFO[Skin.String(nuvio.tab12.w6.notitle)]</property>
+                    <property name="w6.limit">$INFO[Skin.String(nuvio.tab12.w6.limit)]</property>
                     <property name="w7.label">$INFO[Skin.String(nuvio.tab12.w7.label)]</property>
                     <property name="w7.path">$INFO[Skin.String(nuvio.tab12.w7.path)]</property>
                     <property name="w7.style">$INFO[Skin.String(nuvio.tab12.w7.style)]</property>
@@ -15578,6 +15744,7 @@
                     <property name="w7.timg">$INFO[Skin.String(nuvio.tab12.w7.timg)]</property>
                     <property name="w7.bg">$INFO[Skin.String(nuvio.tab12.w7.bg)]</property>
                     <property name="w7.notitle">$INFO[Skin.String(nuvio.tab12.w7.notitle)]</property>
+                    <property name="w7.limit">$INFO[Skin.String(nuvio.tab12.w7.limit)]</property>
                     <property name="w8.label">$INFO[Skin.String(nuvio.tab12.w8.label)]</property>
                     <property name="w8.path">$INFO[Skin.String(nuvio.tab12.w8.path)]</property>
                     <property name="w8.style">$INFO[Skin.String(nuvio.tab12.w8.style)]</property>
@@ -15585,6 +15752,7 @@
                     <property name="w8.timg">$INFO[Skin.String(nuvio.tab12.w8.timg)]</property>
                     <property name="w8.bg">$INFO[Skin.String(nuvio.tab12.w8.bg)]</property>
                     <property name="w8.notitle">$INFO[Skin.String(nuvio.tab12.w8.notitle)]</property>
+                    <property name="w8.limit">$INFO[Skin.String(nuvio.tab12.w8.limit)]</property>
                     <property name="w9.label">$INFO[Skin.String(nuvio.tab12.w9.label)]</property>
                     <property name="w9.path">$INFO[Skin.String(nuvio.tab12.w9.path)]</property>
                     <property name="w9.style">$INFO[Skin.String(nuvio.tab12.w9.style)]</property>
@@ -15592,6 +15760,7 @@
                     <property name="w9.timg">$INFO[Skin.String(nuvio.tab12.w9.timg)]</property>
                     <property name="w9.bg">$INFO[Skin.String(nuvio.tab12.w9.bg)]</property>
                     <property name="w9.notitle">$INFO[Skin.String(nuvio.tab12.w9.notitle)]</property>
+                    <property name="w9.limit">$INFO[Skin.String(nuvio.tab12.w9.limit)]</property>
                     <property name="w10.label">$INFO[Skin.String(nuvio.tab12.w10.label)]</property>
                     <property name="w10.path">$INFO[Skin.String(nuvio.tab12.w10.path)]</property>
                     <property name="w10.style">$INFO[Skin.String(nuvio.tab12.w10.style)]</property>
@@ -15599,6 +15768,7 @@
                     <property name="w10.timg">$INFO[Skin.String(nuvio.tab12.w10.timg)]</property>
                     <property name="w10.bg">$INFO[Skin.String(nuvio.tab12.w10.bg)]</property>
                     <property name="w10.notitle">$INFO[Skin.String(nuvio.tab12.w10.notitle)]</property>
+                    <property name="w10.limit">$INFO[Skin.String(nuvio.tab12.w10.limit)]</property>
                     <visible>!String.IsEmpty(Skin.String(nuvio.tab12.label)) + [!Skin.HasSetting(lucent.kids) | Skin.HasSetting(lucent.kids.tab12)]</visible>
                 </item>
                 <item>
