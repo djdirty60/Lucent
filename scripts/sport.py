@@ -29,6 +29,7 @@ F_CHIPS, F_SEARCH, F_ORDER, F_MORE, F_SPORTS, F_COMPS, F_BTN, F_TEAMS = 520, 521
 SPORT_ORDER = ("soccer", "basketball", "football", "hockey", "baseball", "rugby", "racing", "golf", "tennis", "mma", "aussie")
 FOLLOW_BUTTON = 104
 LIST = 200
+LIVE_STRIP = 205        # All games: the games that are on now, as cards above the list
 DAY_BUTTONS = range(111, 118)
 DAY_PREV, DAY_NEXT = 110, 118
 CHANNEL_BUTTONS = {311: 1, 312: 2, 313: 3, 314: 4, 341: 1, 342: 2, 343: 3, 344: 4}
@@ -141,7 +142,6 @@ class Sport(xbmcgui.WindowXML):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.view = "mine"
-        self.strip_ids, self.strip_sel, self.strip_keys, self.strip_data = [], 0, [], {}
         self.anchor = ac.today()
         self.day = ac.today()
         self.events = []             # what the list shows (dicts)
@@ -226,11 +226,8 @@ class Sport(xbmcgui.WindowXML):
                 epg.stop()
             self.close()
             return
-        if aid in (ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT) and self.view == "all" and self.getFocusId() == LIST:
-            item = self.getControl(LIST).getSelectedItem()
-            if item and item.getProperty("isstrip"):
-                self.strip_move(1 if aid == ACTION_MOVE_RIGHT else -1)
-                return
+        if self.getFocusId() == LIVE_STRIP:
+            self.follow_strip()
         if aid == ACTION_STOP and epg.active()[0]:
             self.stop_preview()
             return
@@ -306,6 +303,11 @@ class Sport(xbmcgui.WindowXML):
         elif cid == HERO_LIST or cid in SECTION_LISTS:
             ev, item = self.current()
             if ev and item:
+                self.open_game(ev)
+        elif cid == LIVE_STRIP:
+            item = self.getControl(LIVE_STRIP).getSelectedItem()
+            ev = self.by_id.get(item.getProperty("evid")) if item else None
+            if ev:
                 self.open_game(ev)
         elif cid == LIST:
             ev, item = self.current()
@@ -495,6 +497,7 @@ class Sport(xbmcgui.WindowXML):
             items = [self.event_item(ev, data) for ev in self.team_events]
         elif self.view == "mine":
             self.fill_mine(data, keep_focus)
+            self.fill_strip([], data)
             self.getControl(LIST).reset()
             self.fill_days()
             if self.hero_events or self.sections_shown:
@@ -509,6 +512,7 @@ class Sport(xbmcgui.WindowXML):
             self.setProperty("sport.listtitle", nice_day(self.day).upper() if abs((self.day - ac.today()).days) <= 1 else ac.day_long(self.day).upper())
             self.setProperty("sport.listcount", sc.t("list_n", len(events)) if events else "")
         self.setProperty("sport.hashero", "1" if self.hero_events else "")
+        self.fill_strip(events if self.view == "all" else [], data, keep_focus)
         control = self.getControl(LIST)
         position = control.getSelectedPosition() if keep_focus else 0
         control.reset()
@@ -523,82 +527,63 @@ class Sport(xbmcgui.WindowXML):
 
     # ------------------------------------------------------------------ All games: live first, per competition
     def all_items(self, events, data):
-        """The live games as a strip of cards on top (one row; Left / Right choose a card), then every game grouped
-        per competition (in the order of their first game), the name of the competition above its first game."""
-        items = []
-        self.strip_data = data
-        live = [e for e in events if e["state"] == "in" and e["kind"] != "event"]
-        keep = self.strip_ids[self.strip_sel] if self.strip_ids and self.strip_sel < len(self.strip_ids) else None
-        self.strip_ids = [e["id"] for e in live]
-        self.strip_sel = self.strip_ids.index(keep) if keep in self.strip_ids else 0
-        if live:
-            items.append(self.strip_item(data))
+        """Every game grouped per competition (in the order of their first game); the first game of a competition
+        carries its name, shown above the row."""
         groups, order = {}, []
         for ev in events:
             if ev["league"] not in groups:
                 groups[ev["league"]] = []
                 order.append(ev["league"])
             groups[ev["league"]].append(ev)
+        items = []
         for league in order:
             evs = groups[league]
             for n, ev in enumerate(evs):
-                item = self.event_item(ev, data, header=league_name(league) if n == 0 else "",
-                                       headersub=sc.t("list_n", len(evs)) if n == 0 else "")
-                if ev["state"] == "post":
-                    item.setProperty("done", "1")
-                items.append(item)
+                items.append(self.event_item(ev, data, header=league_name(league).upper() if n == 0 else "",
+                                             headersub=sc.t("list_n", len(evs)) if n == 0 else ""))
         return items
 
-    def strip_props(self, data):
-        """Properties of the live strip: the selected game's own (so the panel on the right and OK follow it) plus
-        up to three cards around it."""
-        live = [self.by_id[i] for i in self.strip_ids if i in self.by_id]
-        sel = live[self.strip_sel]
-        label, label2, props = self.event_props(sel, data)
-        start = max(0, min(self.strip_sel - 1, len(live) - 3))
-        for k in range(1, 4):
-            ev = live[start + k - 1] if start + k - 1 < len(live) else None
-            chans = self.channels_of(ev, data) if ev else []
-            props.update({
-                f"l{k}hname": ev["home"].get("short") or ev["home"].get("name", "") if ev else "",
-                f"l{k}aname": ev["away"].get("short") or ev["away"].get("name", "") if ev else "",
-                f"l{k}hlogo": ev["home"].get("logo", "") if ev else "",
-                f"l{k}alogo": ev["away"].get("logo", "") if ev else "",
-                f"l{k}score": score_text(ev) if ev else "",
-                f"l{k}min": ev["status"] if ev else "",
-                f"l{k}chan": chans[0]["name"] if chans else "",
-                f"l{k}prog": live_progress(ev) if ev else "",
-            })
-        props["isstrip"] = "1"
-        props["lsel"] = str(self.strip_sel - start + 1)
-        props["striptitle"] = f"{sc.t('livenow').upper()}  ·  {len(live)}"
-        return label, label2, props
+    def fill_strip(self, events, data, keep_focus=False):
+        """The games that are on now as cards above the list (OK opens the game, the panel on the right follows the
+        card). Without live games the list takes the whole height again."""
+        live = [e for e in events if e["state"] == "in" and e["kind"] != "event"]
+        strip = self.getControl(LIVE_STRIP)
+        keep = strip.getSelectedPosition() if keep_focus else 0
+        strip.reset()
+        cards = []
+        for ev in live:
+            chans = self.channels_of(ev, data)
+            cards.append(listitem(ev["title"] if ev.get("title") else "", "",
+                                  hname=ev["home"].get("short") or ev["home"].get("name", ""),
+                                  aname=ev["away"].get("short") or ev["away"].get("name", ""),
+                                  hlogo=ev["home"].get("logo", ""), alogo=ev["away"].get("logo", ""),
+                                  score=score_text(ev), min=ev["status"], chan=chans[0]["name"] if chans else "",
+                                  prog=live_progress(ev), evid=ev["id"]))
+        if cards:
+            strip.addItems(cards)
+            strip.selectItem(min(max(keep, 0), len(cards) - 1))
+        self.setProperty("sport.live", f"{sc.t('livenow').upper()}  ·  {len(cards)}" if cards else "")
+        # the list sits under the cards (and is that much shorter), or in its own place
+        lst = self.getControl(LIST)
+        if cards:
+            lst.setPosition(150, 520)
+            lst.setHeight(500)
+        else:
+            lst.setPosition(150, 270)
+            lst.setHeight(750)
 
-    def strip_item(self, data):
-        label, label2, props = self.strip_props(data)
-        return listitem(label, label2, **props)
-
-    def strip_move(self, step):
-        """Left / Right on the live strip: the next card. Past the last card: on to the panel on the right."""
-        new = self.strip_sel + step
-        if new < 0:
+    def follow_strip(self):
+        """A card in the live row has the focus: select the same game in the list, so the panel shows it."""
+        item = self.getControl(LIVE_STRIP).getSelectedItem()
+        if not item:
             return
-        if new >= len(self.strip_ids):
-            self.setFocusId(9300 if xbmc.getCondVisibility("Control.IsVisible(9300)") else 9310)
-            return
-        self.strip_sel = new
-        item = self.getControl(LIST).getSelectedItem()
-        if not item or not item.getProperty("isstrip"):
-            return
-        label, label2, props = self.strip_props(self.strip_data)
-        old = set(self.strip_keys or [])
-        for key, value in props.items():
-            item.setProperty(key, "" if value is None else str(value))
-        for key in old - set(props):
-            item.setProperty(key, "")
-        self.strip_keys = list(props)
-        item.setLabel(label)
-        item.setLabel2(label2)
+        evid = item.getProperty("evid")
+        lst = self.getControl(LIST)
+        for n in range(lst.size()):
+            if lst.getListItem(n).getProperty("evid") == evid:
+                if lst.getSelectedPosition() != n:
+                    lst.selectItem(n)
+                break
         self.tint()
 
     def mine_data(self, data):
