@@ -92,6 +92,10 @@ def run():
             import xtream
             xtream.refresh_file()
 
+    def maintenance():
+        import maintenance as m
+        m.auto()
+
     def auto_backup():
         if cond("!String.IsEmpty(Skin.String(lucent.backup.auto.dir))"):
             import backup
@@ -132,6 +136,7 @@ def run():
         Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)
+        Job("maintenance", 6 * 3600, 1500, maintenance, lambda: cond("Skin.HasSetting(lucent.maint.auto)")),   # once a month
         Job("xtream list", 24 * 3600, 300, xtream_list),             # the channel list Lucent builds itself: once a day
         Job("channel filter", 24 * 3600, 420, channel_filter),       # then the shortened list again, with your choices
     ]

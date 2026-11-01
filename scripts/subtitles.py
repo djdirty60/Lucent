@@ -149,6 +149,29 @@ def fix_audio():
             return
 
 
+def audio_is_mine():
+    """True when the sound being played is in your own language (Settings > Player > Language / Kodi's language)."""
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.sameaudio.keep)"):
+        return False
+    props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["currentaudiostream"]})
+    audio = lang2((props.get("currentaudiostream") or {}).get("language"))
+    return bool(audio) and audio in my_languages()
+
+
+def quiet_if_same_language():
+    """The sound is already in your language: no subtitle needed. A full subtitle that is on goes off; a 'forced'
+    one stays (it only translates signs and bits in another language). Returns True when the sound is yours."""
+    if not audio_is_mine():
+        return False
+    props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["currentsubtitle", "subtitleenabled"]})
+    current = props.get("currentsubtitle") or {}
+    keep = current.get("isforced") and lang2(current.get("language")) in my_languages()   # forced, in your language
+    if props.get("subtitleenabled") and current and not keep:
+        xbmc.Player().showSubtitles(False)
+        xbmc.log(f"[skin.lucent subtitles] sound is in your language: subtitle {current.get('language')} switched off", xbmc.LOGINFO)
+    return True
+
+
 def fix_language():
     """Kodi picked a subtitle from the film in a language you never asked for (for example a Russian 'forced' track
     that the film marks as 'default' when the film has none in your language). Use a subtitle of the film in your
@@ -224,7 +247,8 @@ class Watcher(xbmc.Player):
             if self.monitor.waitForAbort(12) or not self.isPlayingVideo():
                 return
             try:
-                fix_language()
+                if not quiet_if_same_language():
+                    fix_language()
             except Exception as error:  # noqa: BLE001
                 xbmc.log(f"[skin.lucent subtitles] language check (again): {error}", xbmc.LOGINFO)
         import threading
@@ -256,6 +280,12 @@ class Watcher(xbmc.Player):
             fix_audio()                                  # the sound first: the subtitle check looks at it
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] sound check: {error}", xbmc.LOGINFO)
+        try:
+            if quiet_if_same_language():
+                self.check_again()                       # Seren may switch one on a little later
+                return                                   # sound in your language: no subtitle, no search
+        except Exception as error:  # noqa: BLE001 - never break playback
+            xbmc.log(f"[skin.lucent subtitles] same-language check: {error}", xbmc.LOGINFO)
         try:
             fix_language()
         except Exception as error:  # noqa: BLE001 - never break playback
