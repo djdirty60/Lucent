@@ -169,8 +169,8 @@
     <variable name="OSDButtonLabel">
         <value condition="Control.HasFocus(101)">$LOCALIZE[31055]</value>
         <value condition="Control.HasFocus(102)">$LOCALIZE[31097]</value>
-        <value condition="Control.HasFocus(103)">$LOCALIZE[31076]</value>
-        <value condition="Control.HasFocus(104)">$LOCALIZE[208]</value>
+        <value condition="Control.HasFocus(103) + !Player.Paused">$LOCALIZE[31076]</value>
+        <value condition="Control.HasFocus(103) + Player.Paused">$LOCALIZE[208]</value>
         <value condition="Control.HasFocus(105)">$LOCALIZE[31098]</value>
         <value condition="Control.HasFocus(106)">$LOCALIZE[31054]</value>
         <value condition="Control.HasFocus(111)">$LOCALIZE[31048]</value>
@@ -1155,4 +1155,6 @@
         <value condition="Control.HasFocus(805)">$INFO[Container(805).ListItem.Art(fanart)]</value>
         <value condition="Control.HasFocus(806)">$INFO[Container(806).ListItem.Art(fanart)]</value>
     </variable>
+    <!-- player menu: the play / pause button shows play while paused -->
+    <expression name="OSDShowPlay">Player.Paused | Player.Forwarding | Player.Rewinding</expression>
 </includes>
