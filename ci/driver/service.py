@@ -1047,11 +1047,47 @@ def audio_test():
                                                              "params": {"playerid": 1, "properties": ["currentaudiostream", "audiostreams"]}})))
             r = res.get("result") or {}
             cur = r.get("currentaudiostream") or {}
+        log(f"audio state: play.start={HOME.getProperty('lucent.play.start')!r} now={time.time():.1f} trailer={HOME.getProperty('nuvio.trailer.playing')!r} title={lab('VideoPlayer.Title')!r} inet={cond('Player.IsInternetStream')}")
         log(f"audio run {run}: now {cur.get('language')} {cur.get('name')!r} ch={cur.get('channels')} of {[(a.get('language'), a.get('name')) for a in r.get('audiostreams') or []]}")
         xbmc.Player().stop()
         mon.waitForAbort(3)
     xbmc.executebuiltin("Skin.Reset(lucent.audio.lang1)")
     xbmc.executebuiltin("Skin.Reset(lucent.audio.lang2)")
+
+def navwalk_test():
+    """Every pane of the skin settings, all folds open: Down and Up through every row; report where focus sticks."""
+    import re
+    import xbmcvfs
+    xml = open(xbmcvfs.translatePath("special://skin/xml/SkinSettings.xml"), encoding="utf-8").read()
+    folds = sorted(set(re.findall(r"lucent\.ss\.open\.(\d+)", xml)))
+    for f in folds:
+        xbmc.executebuiltin(f"Skin.SetBool(lucent.ss.open.{f})")
+    fid = lambda: lab("System.CurrentControlID")  # noqa: E731
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(3)
+    n = int(lab("Container(9000).NumItems") or 0)
+    for c in range(n):
+        xbmc.executebuiltin(f"SetFocus(9000,{c},absolute)")
+        mon.waitForAbort(1.2)
+        name = lab("Container(9000).ListItem.Label")
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.8)
+        for direction in ("Down", "Up"):
+            path = [fid()]
+            for _ in range(45):
+                xbmc.executebuiltin(f"Action({direction})")
+                mon.waitForAbort(0.35)
+                path.append(fid())
+                if path[-1] == path[0] and len(path) > 2:
+                    break
+            stuck = [path[i] for i in range(1, len(path)) if path[i] == path[i - 1]]
+            log(f"navwalk {c} {name!r} {direction}: {len(set(path))} rows, stuck at {sorted(set(stuck))}, path {path}")
+        xbmc.executebuiltin("SetFocus(9000)")
+        mon.waitForAbort(0.5)
+    for f in folds:
+        xbmc.executebuiltin(f"Skin.Reset(lucent.ss.open.{f})")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
 
 
 def main():
@@ -1066,6 +1102,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     audio_test()
+    navwalk_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
