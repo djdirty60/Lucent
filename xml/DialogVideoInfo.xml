@@ -9,6 +9,8 @@
     <onload>ClearProperty(nuvio.info.vid.count,home)</onload>
     <onload>ClearProperty(nuvio.info.cast.count,home)</onload>
     <onload>ClearProperty(nuvio.info.prov.count,home)</onload>
+    <onload>SetProperty(lucent.page.dbid,$INFO[ListItem.DBID],home)</onload>
+    <onload>SetProperty(lucent.page.dbtype,$INFO[ListItem.DBType],home)</onload>
     <onload>RunScript(special://skin/scripts/info.py,load)</onload>
     <onload>RunScript(special://skin/scripts/agenda.py,state)</onload>
     <controls>

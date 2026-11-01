@@ -768,51 +768,68 @@ def edit_widgets(menu, tab):
             continue
         wd = widgets[choice]
         own = lambda key: tr("own_set") if wd.get(key) else tr("own_none")  # noqa: E731
-        actions = [tr("rename"), f"{tr('style')}: {tr(wd['style'])}", f"{tr('sort')}: {sort_name(wd.get('sort', ''))}",
-                   f"{tr('limit')}: {limit_name(wd.get('limit', ''))}",
-                   f"{tr('title_img')}: {own('timg')}", f"{tr('bg_img')}: {own('bg')}",
-                   tr("title_show") if wd.get("notitle") else tr("title_hide"),
-                   tr("up"), tr("down"), tr("remove_widget")]
+        options = []                                # (key, text): what the action is, not where it is in the list
         if "action=providers" in wd.get("path", ""):
-            actions.insert(0, tr("edit_services"))
-        services = actions[0] == tr("edit_services")
-        act = select(wd["label"], actions)
-        if services:
-            if act == 0:
-                import streamedit                   # in this script: a second script's list would clash with this one
-                streamedit.editor()
-                continue
-            act -= 1
-        if act == 0:
+            options.append(("services", tr("edit_services")))
+        options += [("rename", tr("rename")),
+                    ("change", tr(G("Change to another widget…", "Wijzigen naar een andere widget…"))),
+                    ("style", f"{tr('style')}: {tr(wd['style'])}"),
+                    ("sort", f"{tr('sort')}: {sort_name(wd.get('sort', ''))}"),
+                    ("limit", f"{tr('limit')}: {limit_name(wd.get('limit', ''))}"),
+                    ("timg", f"{tr('title_img')}: {own('timg')}"),
+                    ("bg", f"{tr('bg_img')}: {own('bg')}"),
+                    ("notitle", tr("title_show") if wd.get("notitle") else tr("title_hide")),
+                    ("place", tr(G("Place: {0} of {1}", "Plaats: {0} van {1}"), choice + 1, len(widgets))),
+                    ("remove", tr("remove_widget"))]
+        pick_act = select(wd["label"], [text for _key, text in options])
+        if pick_act < 0:
+            continue
+        act = options[pick_act][0]
+        shared = True                               # the same widget on other tabs gets the same change
+        if act == "services":
+            import streamedit                       # in this script: a second script's list would clash with this one
+            streamedit.editor()
+            continue
+        if act == "rename":
             wd["label"] = keyboard(tr("rename"), wd["label"]) or wd["label"]
-        elif act == 1:
+        elif act == "change":
+            new = pick_widget()
+            if not new:
+                continue
+            wd["path"], wd["label"], wd["style"] = new["path"], new["label"], new.get("style") or wd["style"]
+            wd["timg"] = ""                         # the title picture belonged to the old widget
+            shared = False                          # a new widget: the others with the old address stay as they are
+        elif act == "style":
             wd["style"] = "land" if wd["style"] == "poster" else "poster"
-        elif act == 2:
+        elif act == "sort":
             pick = select(tr("sort"), [name for _key, name in SORTS()])
             if pick < 0:
                 continue
             wd["sort"] = SORTS()[pick][0]
-        elif act == 3:
+        elif act == "limit":
             pick = select(tr("limit"), [name for _key, name in LIMITS()])
             if pick < 0:
                 continue
             wd["limit"] = LIMITS()[pick][0]
-        elif act in (4, 5):
-            img = pick_image(tr("title_img") if act == 4 else tr("bg_img"), wd.get("timg" if act == 4 else "bg", ""))
+        elif act in ("timg", "bg"):
+            img = pick_image(tr("title_img") if act == "timg" else tr("bg_img"), wd.get(act, ""))
             if img is None:
                 continue
-            wd["timg" if act == 4 else "bg"] = img
-        elif act == 6:
+            wd[act] = img
+        elif act == "notitle":
             wd["notitle"] = "" if wd.get("notitle") else "1"
-        elif act == 7 and choice > 0:
-            widgets[choice - 1], widgets[choice] = widgets[choice], widgets[choice - 1]
-        elif act == 8 and choice < len(widgets) - 1:
-            widgets[choice + 1], widgets[choice] = widgets[choice], widgets[choice + 1]
-        elif act == 9:
+        elif act == "place":
+            places = [tr(G("Place {0}", "Plaats {0}"), n + 1) + (f"  ·  {w['label']}" if n != choice else "  ·  " + tr(G("(here now)", "(nu hier)")))
+                      for n, w in enumerate(widgets)]
+            to = select(tr(G("Where should '{0}' go?", "Waar moet '{0}' komen?"), wd["label"]), places)
+            if to < 0 or to == choice:
+                continue
+            widgets.insert(to, widgets.pop(choice))
+            shared = False
+        elif act == "remove":
             widgets.pop(choice)
-        else:
-            continue
-        if act <= 6:                                # the same widget on other tabs gets the same change
+            shared = False
+        if shared:
             same = copy_to_same(menu, tab, wd)
             if same:
                 notify(tr("same_changed", same))
