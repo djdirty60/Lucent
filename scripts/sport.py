@@ -872,7 +872,7 @@ class Sport(xbmcgui.WindowXML):
                 tiles = [(c.get("length", ""), sc.t("c_length")), (c.get("laps", ""), sc.t("c_laps")), (c.get("turns", ""), sc.t("c_turns")),
                          (c.get("record", ""), ("Record" + (f" {c['recyear']}" if c.get("recyear") else "")))]
                 out = {f"circt{i}{k}": v for i, (val, cap) in enumerate(tiles, 1) for k, v in (("v", val), ("c", cap if val else ""))}
-                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": sc.circuit_white(c.get("png")) or c.get("png") or c.get("image", ""), "circpng": "1" if sc.circuit_white(c.get("png")) else "",
+                out.update({"circname": c.get("name") or ev.get("circname", ""), "circplace": c.get("place", ""), "circimg": sc.circuit_white(c.get("png")) or c.get("dark") or c.get("png") or c.get("image", ""), "circpng": "1" if (sc.circuit_white(c.get("png")) or c.get("dark")) else "",
                        "circfacts": "  ·  ".join(facts),
                        "circrec": f"{sc.t('circ_record')}  {c['record']}" + (f"  ({c['recyear']})" if c.get("recyear") else "") if c.get("record") else ""})
             except Exception as error:  # noqa: BLE001 - the circuit is a bonus

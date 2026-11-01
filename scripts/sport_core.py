@@ -576,7 +576,7 @@ def circuit_info(cid, league="f1"):
     if not cid:
         return {}
     known = ac.read_json(CIRCUIT_PATH, {}) or {}
-    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and known[cid].get("pv") == 2:
+    if (known.get(cid, {}).get("name") or known.get(cid, {}).get("image")) and known[cid].get("pv") == 3:
         return known[cid]                 # pv 2: the drawing was really looked for (before 1.30.115 it could never be saved)
     path = LEAGUES.get(league, {}).get("path", "racing/f1")
     sport, slug = path.split("/", 1)
@@ -593,9 +593,17 @@ def circuit_info(cid, league="f1"):
         if image:
             break
     png = circuit_png(cid, data.get("diagrams") or [])
+    dark = ""                                          # ESPN's drawing for dark backgrounds (a light track), when it has one
+    for d in data.get("diagrams") or []:
+        rel, href = d.get("rel") or [], d.get("href") or ""
+        if any("dark" in r for r in rel) and not any("info" in r for r in rel) and href.lower().endswith((".jpg", ".png")):
+            dark = href.replace("http://", "https://")
+            if "circuit" in rel:
+                break
+    log(f"circuit {cid} diagrams: {[(d.get('rel'), (d.get('href') or '')[-40:]) for d in data.get('diagrams') or []]}")
     info_ = {"name": data.get("fullName") or "", "place": place, "png": png, "length": str(data.get("length") or ""), "laps": str(data.get("laps") or ""),
              "turns": str(data.get("turns") or ""), "direction": str(data.get("direction") or ""),
-             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image, "pv": 2}
+             "record": str(data.get("fastestLapTime") or ""), "recyear": str(data.get("fastestLapYear") or ""), "image": image, "dark": dark, "pv": 3}
     if not (info_["name"] or info_["image"]):
         return info_                      # ESPN gave nothing (busy?): do not remember the emptiness, try again next time
     known[cid] = info_

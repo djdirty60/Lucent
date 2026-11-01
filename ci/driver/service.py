@@ -1471,6 +1471,35 @@ def f1_test():
     mon.waitForAbort(2)
 
 
+def probe_test():
+    """Where can a stadium photo come from? ESPN game summary, ESPN team page, TheSportsDB."""
+    import sys as _sys
+    import urllib.request
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+
+    def get(url):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            return json.loads(urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "replace"))
+        except Exception as error:  # noqa: BLE001
+            return {"error": repr(error)}
+    games = [e for e in sc.all_cached() if e["league"] in ("ned.1", "eng.1", "nba", "nfl") and e["kind"] == "teams"][:4]
+    for ev in games:
+        eid = ev["id"].split(":", 1)[-1]
+        d = get(f"{sc.ESPN}{sc.LEAGUES[ev['league']]['path']}/summary?event={eid}")
+        venue = (d.get("gameInfo") or {}).get("venue") or {}
+        log(f"probe summary {ev['league']} {ev['home'].get('name')}: venue={venue.get('fullName')!r} images={[i.get('href') for i in venue.get('images') or []][:3]} err={d.get('error')}")
+        t = get(f"{sc.ESPN}{sc.LEAGUES[ev['league']]['path']}/teams/{ev['home'].get('id')}")
+        team = t.get("team") or {}
+        fv = (team.get("franchise") or {}).get("venue") or team.get("venue") or {}
+        log(f"probe team {ev['home'].get('name')}: keys={sorted(team)[:25]} venue={fv.get('fullName')!r} images={[i.get('href') for i in fv.get('images') or []][:3]}")
+    for key in ("3", "123"):
+        d = get(f"https://www.thesportsdb.com/api/v1/json/{key}/searchteams.php?t=Ajax")
+        teams = d.get("teams") or []
+        log(f"probe tsdb key {key}: n={len(teams)} err={d.get('error')} stadium={(teams[0].get('strStadium'), teams[0].get('strStadiumThumb') or teams[0].get('strVenueThumb'), teams[0].get('strFanart1')) if teams else None}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1485,7 +1514,9 @@ def main():
     watch("home1", 40)
     shot("1-home")
     sportA_test()
+    probe_test()
     f1_test()
+    tables_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
