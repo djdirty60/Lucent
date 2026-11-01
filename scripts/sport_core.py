@@ -505,6 +505,77 @@ def stadium_photo(name, sport=""):
     return img, stadium
 
 
+# Channel logos from tv-logo/tv-logos (CC BY-SA / BY-NC-SA, the logos belong to their owners); the index of names
+# comes with the skin (resources/tvlogos.json), the pictures are fetched from GitHub when shown and cached by Kodi.
+TVLOGO_URL = "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/{}/{}.png"
+TVLOGO_COUNTRY = {"nl": "netherlands", "be": "belgium", "uk": "united-kingdom", "gb": "united-kingdom", "en": "united-kingdom",
+                  "us": "united-states", "usa": "united-states", "de": "germany", "fr": "france", "es": "spain", "it": "italy",
+                  "pt": "portugal", "tr": "turkey", "pl": "poland", "ar": "world-middle-east", "arab": "world-middle-east",
+                  "ae": "united-arab-emirates", "ca": "canada", "au": "australia", "nz": "new-zealand", "ie": "ireland",
+                  "at": "austria", "ch": "switzerland", "gr": "greece", "ro": "romania", "ru": "russia", "in": "india",
+                  "br": "brazil", "mx": "mexico", "za": "south-africa", "se": "nordic", "no": "nordic", "dk": "nordic", "fi": "nordic"}
+_TVLOGO = {}
+_LOGO_NOISE = {"hd", "fhd", "uhd", "sd", "4k", "8k", "hevc", "h265", "h264", "50fps", "60fps", "raw", "backup", "vip", "hq", "lq",
+               "multi", "fps", "plus+", "720p", "1080p", "2160p"}
+
+
+def _tvlogo_index():
+    if "index" not in _TVLOGO:
+        try:
+            path = xbmcvfs.translatePath("special://skin/resources/tvlogos.json")
+            with open(path, encoding="utf-8") as handle:
+                folders = json.load(handle)
+        except Exception as error:  # noqa: BLE001
+            log(f"tv logos: {error}")
+            folders = {}
+        index = {}
+        for folder, stems in folders.items():
+            for stem in stems:
+                key = stem.rsplit("-", 1)[0] if "-" in stem else stem
+                index.setdefault(key, []).append((folder, stem))
+        _TVLOGO["index"] = index
+    return _TVLOGO["index"]
+
+
+def channel_logo(name):
+    """A clean logo for an IPTV channel name ('NL: Ziggo Sport 2 FHD', '[AR] beIN SPORTS 1 4K') or ''."""
+    if not name:
+        return ""
+    cache = _TVLOGO.setdefault("hits", {})
+    if name in cache:
+        return cache[name]
+    text = name.strip()
+    country = ""
+    m = re.match(r"^\s*[\[(|]?\s*([A-Za-z]{2,4})\s*[\])|:\-]+\s*(.*)$", text)
+    if m and m.group(1).lower() in TVLOGO_COUNTRY:
+        country, text = TVLOGO_COUNTRY[m.group(1).lower()], m.group(2)
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower().replace("&", " and ")
+    text = re.sub(r"\b(f?hd|uhd|4k)\s*\+", r"\1", text).replace("+", " plus ")
+    words = [w for w in re.split(r"[^a-z0-9]+", text) if w and w not in _LOGO_NOISE and not re.fullmatch(r"s\d", w)]
+    if len(words) > 1 and words[-1] in TVLOGO_COUNTRY:          # 'TNT Sports 1 UK'
+        country = country or TVLOGO_COUNTRY[words[-1]]
+        words = words[:-1]
+    slug = "-".join(words)
+    tries = [slug]
+    if slug.endswith("-1"):
+        tries.append(slug[:-2])                      # ESPN 1 -> espn
+    tries.append(re.sub(r"([a-z])-(\d)", r"\1\2", slug))   # NPO 1 -> npo1
+    tries += [t + "-hd" for t in list(tries)]
+    index = _tvlogo_index()
+    home = "netherlands" if NL else "united-kingdom"
+    order = [c for c in (country, home, "international", "world-europe") if c]
+    hit = ""
+    for t in tries:
+        found = index.get(t)
+        if not found:
+            continue
+        found = sorted(found, key=lambda fs: order.index(fs[0]) if fs[0] in order else 99)
+        hit = TVLOGO_URL.format(*found[0])
+        break
+    cache[name] = hit
+    return hit
+
+
 def venue_photo(name):
     """A photo of a venue (a race circuit) by its name from TheSportsDB; '' when it has none."""
     if not name:

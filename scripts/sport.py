@@ -533,9 +533,12 @@ class Sport(xbmcgui.WindowXML):
             raw = data.get("names", {}).get(str(ev.get("cid")), "")
             return [{"cid": ev["cid"], "name": epg.clean_name(raw) or raw, "q": epg.quality_of(raw), "score": 3,
                      "tag": sc.t("sure"), "live": ev["state"] == "in", "title": ev["title"], "start": ev["start"],
-                     "icon": data.get("icons", {}).get(str(ev.get("cid")), "")}]
+                     "icon": sc.channel_logo(epg.clean_name(raw) or raw) or data.get("icons", {}).get(str(ev.get("cid")), "")}]
         found = epg.channels_for(ev, data) if data else []
-        return plan.with_fixes(ev, found, data or {})
+        chans = plan.with_fixes(ev, found, data or {})
+        for chan in chans:                       # a clean logo from tv-logos when the channel name is known there
+            chan["icon"] = sc.channel_logo(chan.get("name", "")) or chan.get("icon", "")
+        return chans
 
     def render(self, keep_focus=False):
         self.setProperty("sport.view", self.view)
