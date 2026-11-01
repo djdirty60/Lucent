@@ -27,6 +27,7 @@ def t(en, nl):
 class Service(xbmcgui.WindowXMLDialog):
     def setup(self, pid, name, logo):
         self.pid, self.name, self.logo = pid, name, logo
+        self.closed = False
 
     def onInit(self):
         self.setProperty("svc.name", self.name)
@@ -38,6 +39,9 @@ class Service(xbmcgui.WindowXMLDialog):
             self.setProperty(f"row.{n}.label", t(en, nl))
             self.setProperty(f"row.{n}", f"plugin://script.lucent.library/?action=tmdbbrowse&list=prov_{self.pid}_{kind}")
         self.setFocusId(801)
+        if not getattr(self, "watching", False):
+            self.watching = True
+            threading.Thread(target=self.watch, daemon=True).start()
 
     def onClick(self, cid):
         if not 801 <= cid <= 806:
@@ -53,36 +57,38 @@ class Service(xbmcgui.WindowXMLDialog):
         HOME.setProperty("nuvio.open.path", "")
         HOME.clearProperty("nuvio.open.trakt")
         xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
-        threading.Thread(target=self.follow, daemon=True).start()
 
-    def follow(self):
-        """When Play on the title page opens the series (Seren's seasons) or starts a film, this pop-up must go away:
-        it sits above everything, so the seasons opened behind it and it looked as if Play did nothing."""
+    def watch(self):
+        """While the pop-up is open: when a title page opened from it is left with Play, the pop-up goes away.
+        It sits above everything, so the seasons of a series opened behind it and it looked as if Play did nothing.
+        (A title in the lists opens its page through Lucent Library, so this watches instead of hooking the click.)"""
         mon = xbmc.Monitor()
-        for _ in range(40):                       # wait for the page
-            if xbmc.getCondVisibility("Window.IsVisible(movieinformation)") or mon.waitForAbort(0.25):
-                break
-        while not mon.abortRequested():              # pages can follow each other (similar titles, a person ...)
-            while xbmc.getCondVisibility("Window.IsVisible(movieinformation)"):
-                if mon.waitForAbort(0.25):
+        page = False
+        while not self.closed and not mon.abortRequested():
+            if xbmc.getCondVisibility("Window.IsVisible(movieinformation) | Window.IsVisible(1180)"):
+                page = True
+            elif page:
+                if mon.waitForAbort(1.5):            # a next page (similar title, a person ...) may come up
                     return
-            if mon.waitForAbort(1.5):
+                if xbmc.getCondVisibility("Window.IsVisible(movieinformation) | Window.IsVisible(1180)"):
+                    continue
+                page = False
+                leave = HOME.getProperty("nuvio.open.leave")
+                folder = HOME.getProperty("nuvio.open.folder")
+                xbmc.log(f"[skin.lucent] service.py: page closed, leave={leave!r} folder={bool(folder)}", xbmc.LOGINFO)
+                if leave or xbmc.getCondVisibility("Player.HasVideo"):
+                    self.close()
+                    # Play on a series page: Kodi cannot open the seasons under this pop-up, so it is done here
+                    if folder and not xbmc.getCondVisibility("Player.HasVideo"):
+                        mon.waitForAbort(0.3)
+                        xbmc.executebuiltin(f'ActivateWindow(Videos,"{folder}",return)')
+                    return
+            if mon.waitForAbort(0.3):
                 return
-            if not xbmc.getCondVisibility("Window.IsVisible(movieinformation) | Window.IsVisible(1180)"):
-                break
-            while xbmc.getCondVisibility("Window.IsVisible(1180)"):     # a person / studio page on top
-                if mon.waitForAbort(0.25):
-                    return
-        leave = HOME.getProperty("nuvio.open.leave")
-        folder = HOME.getProperty("nuvio.open.folder")
-        xbmc.log(f"[skin.lucent] service.py: page closed, leave={leave!r} folder={bool(folder)}", xbmc.LOGINFO)
-        if not leave and not xbmc.getCondVisibility("Window.IsActive(videos) | Player.HasVideo"):
-            return                                   # closed with Back: stay in the pop-up
-        self.close()
-        # Play on a series page: Kodi cannot open the seasons while this pop-up is on screen, so it is done here
-        if folder and not xbmc.getCondVisibility("Player.HasVideo"):
-            mon.waitForAbort(0.3)
-            xbmc.executebuiltin(f'ActivateWindow(Videos,"{folder}",return)')
+
+    def close(self):
+        self.closed = True
+        super().close()
 
     def onAction(self, action):
         if action.getId() in CLOSE:
@@ -98,6 +104,7 @@ def main():
     window = Service("Lucent_Service.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
     window.setup(args[0], name, logo)
     window.doModal()
+    window.closed = True
     del window
 
 
