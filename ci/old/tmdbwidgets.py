@@ -285,7 +285,6 @@ def fetch_trakt(name, path):
 REGION = "NL" if NL else "US"
 PROV_FILE = os.path.join(DIR, "providers.json")
 PROV_TTL = 7 * 86400
-PROV_MAX = 16
 PROV_KINDS = {  # kind -> (TMDb type, row type, extra discover params, English, Dutch)
     "newmovie": ("movie", "movie", {"sort_by": "primary_release_date.desc", "vote_count.gte": 10}, "New movies", "Nieuwe films"),
     "newtv": ("tv", "tvshow", {"sort_by": "first_air_date.desc", "vote_count.gte": 5}, "New series", "Nieuwe series"),
@@ -296,27 +295,74 @@ PROV_KINDS = {  # kind -> (TMDb type, row type, extra discover params, English, 
 }
 
 
-def providers(force=False):
-    """[{id, name, logo}] of the streaming services in your country, the biggest first (kept for a week)."""
-    saved = read_json(PROV_FILE, {}) or {}
-    if saved.get("items") and saved.get("region") == REGION and not force and time.time() - saved.get("time", 0) < PROV_TTL:
-        return saved["items"]
+# the services Lucent shows, in this order: (key, names TMDb uses for it). Others are left out.
+WANTED = [
+    ("netflix", ["netflix"]),
+    ("disney", ["disney plus", "disney+"]),
+    ("hbo", ["hbo max", "max", "hbo"]),
+    ("apple", ["apple tv plus", "apple tv+", "apple tv"]),
+    ("hulu", ["hulu"]),
+    ("starz", ["starz"]),
+    ("paramount", ["paramount plus", "paramount+", "paramount plus premium", "paramount+ premium", "paramount plus essential"]),
+    ("peacock", ["peacock premium", "peacock", "peacock premium plus"]),
+    ("mgm", ["mgm plus", "mgm+"]),
+    ("amc", ["amc plus", "amc+"]),
+    ("discovery", ["discovery plus", "discovery+"]),
+]
+PROV_VERSION = 2
+
+
+def _provider_list(region):
+    """{normalised name: provider} of one country, from TMDb (films and series together)."""
     found = {}
     for kind in ("movie", "tv"):
-        data = tmdb_get(f"watch/providers/{kind}", watch_region=REGION) or {}
+        data = tmdb_get(f"watch/providers/{kind}", watch_region=region) or {}
         for r in data.get("results") or []:
-            pid = r.get("provider_id")
-            prio = (r.get("display_priorities") or {}).get(REGION, r.get("display_priority", 999))
-            if pid and r.get("logo_path") and (pid not in found or prio < found[pid]["prio"]):
-                found[pid] = {"id": pid, "name": r.get("provider_name") or str(pid), "logo": r["logo_path"], "prio": prio}
-    items = sorted(found.values(), key=lambda x: x["prio"])[:PROV_MAX]
+            name = (r.get("provider_name") or "").strip()
+            if r.get("provider_id") and r.get("logo_path") and name:
+                found.setdefault(name.lower(), r)
+    return found
+
+
+def providers(force=False):
+    """[{id, name, logo, region}] of the wanted services (WANTED), in that order (kept for a week).
+    A service your country has is read for your country; one it does not have (Hulu, Peacock ... outside the US) for the US."""
+    saved = read_json(PROV_FILE, {}) or {}
+    if (saved.get("items") and saved.get("region") == REGION and saved.get("v") == PROV_VERSION and not force
+            and time.time() - saved.get("time", 0) < PROV_TTL):
+        return saved["items"]
+    lists = {REGION: _provider_list(REGION)}
+    if REGION != "US":
+        lists["US"] = _provider_list("US")
+    items = []
+    for key, names in WANTED:
+        hit = None
+        for region in ([REGION, "US"] if REGION != "US" else ["US"]):
+            for n in names:
+                r = lists.get(region, {}).get(n)
+                if r:
+                    hit = (r, region)
+                    break
+            if hit:
+                break
+        if hit:
+            r, region = hit
+            items.append({"id": r["provider_id"], "name": r["provider_name"], "logo": r["logo_path"], "region": region, "key": key})
     old = {p.get("id"): p for p in saved.get("items") or []}
     for p in items:                                   # the transparent logo: looked up once per service
         p["wide"] = old.get(p["id"], {}).get("wide") if "wide" in old.get(p["id"], {}) else wide_logo(p["name"])
     if items:
-        write_json(PROV_FILE, {"time": time.time(), "region": REGION, "items": items})
+        write_json(PROV_FILE, {"time": time.time(), "region": REGION, "v": PROV_VERSION, "items": items})
         return items
     return saved.get("items") or []
+
+
+def provider_region(pid):
+    """The country a service's lists are read for (see providers)."""
+    for p in (read_json(PROV_FILE, {}) or {}).get("items") or []:
+        if str(p.get("id")) == str(pid):
+            return p.get("region") or REGION
+    return REGION
 
 
 PACK = "resource://resource.images.studios.white/"
@@ -365,7 +411,7 @@ def fetch_provider(name):
     except (ValueError, KeyError):
         return None
     today = time.strftime("%Y-%m-%d")
-    params = {"with_watch_providers": pid, "watch_region": REGION, "with_watch_monetization_types": "flatrate", "page": 1}
+    params = {"with_watch_providers": pid, "watch_region": provider_region(pid), "with_watch_monetization_types": "flatrate", "page": 1}
     params.update(extra)
     if kind == "newmovie":
         params["primary_release_date.lte"] = today

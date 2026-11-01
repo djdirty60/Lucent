@@ -327,6 +327,9 @@ def _provider_list(region):
 def providers(force=False):
     """[{id, name, logo, region}] of the wanted services (WANTED), in that order (kept for a week).
     A service your country has is read for your country; one it does not have (Hulu, Peacock ... outside the US) for the US."""
+    own = (read_json(SERVICES_FILE, {}) or {}).get("items")
+    if own:                                           # chosen in Lucent (Menu and widgets > Streaming services)
+        return own_services(own)
     saved = read_json(PROV_FILE, {}) or {}
     if (saved.get("items") and saved.get("region") == REGION and saved.get("v") == PROV_VERSION and not force
             and time.time() - saved.get("time", 0) < PROV_TTL):
@@ -357,9 +360,42 @@ def providers(force=False):
     return saved.get("items") or []
 
 
+SERVICES_FILE = os.path.join(DIR, "services.json")
+
+
+def own_services(own):
+    """Your own list of services: the transparent logo is looked up once (and kept in services.json)."""
+    changed = False
+    for p in own:
+        if "wide" not in p:
+            p["wide"] = wide_logo(p.get("name") or "")
+            changed = True
+    if changed:
+        write_json(SERVICES_FILE, {"items": own})
+    return own
+
+
+def catalog(handle):
+    """Every service TMDb knows for your country (and the US), for the editor: label = name, the rest in the address."""
+    import widget
+    seen, items = set(), []
+    for region in ([REGION, "US"] if REGION != "US" else ["US"]):
+        for name, r in sorted(_provider_list(region).items(), key=lambda kv: kv[1].get("display_priority", 999)):
+            if r["provider_id"] in seen:
+                continue
+            seen.add(r["provider_id"])
+            logo = f"{IMG}w500{r['logo_path']}"
+            query = urllib.parse.urlencode({"action": "provcatalog", "id": r["provider_id"], "name": r["provider_name"],
+                                            "logo": r["logo_path"], "region": region})
+            items.append({"type": "video", "label": r["provider_name"], "title": r["provider_name"],
+                          "label2": region, "art": {"thumb": logo, "icon": logo, "poster": logo},
+                          "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file"})
+    widget.answer(handle, items)
+
+
 def provider_region(pid):
     """The country a service's lists are read for (see providers)."""
-    for p in (read_json(PROV_FILE, {}) or {}).get("items") or []:
+    for p in ((read_json(SERVICES_FILE, {}) or {}).get("items") or []) + ((read_json(PROV_FILE, {}) or {}).get("items") or []):
         if str(p.get("id")) == str(pid):
             return p.get("region") or REGION
     return REGION
@@ -447,7 +483,7 @@ def provider_rows(handle):
     import widget
     items = []
     for p in providers():
-        logo = f"{IMG}w500{p['logo']}"
+        logo = p.get("image") or f"{IMG}w500{p['logo']}"     # your own picture, else TMDb's logo
         saved = read_json(cache_file(f"prov_{p['id']}_poptv"), {}) or read_json(cache_file(f"prov_{p['id']}_popmovie"), {}) or {}
         first = (saved.get("items") or [{}])[0]
         fanart = (first.get("art") or {}).get("fanart") or ""

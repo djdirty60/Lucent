@@ -318,7 +318,7 @@
                         <top>24</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="text3">$INFO[ListItem.Icon]</texture>
+                        <aspectratio>keep</aspectratio><texture colordiffuse="$VAR[MenuIconText3]">$INFO[ListItem.Icon]</texture>
                         <visible>Control.HasFocus(9000) | !Skin.HasSetting(nuvio.sideicons.hide)</visible>
                     </control>
                     <control type="label">
@@ -356,7 +356,7 @@
                         <top>24</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="on_focus">$INFO[ListItem.Icon]</texture>
+                        <aspectratio>keep</aspectratio><texture colordiffuse="$VAR[MenuIconOnFocus]">$INFO[ListItem.Icon]</texture>
                         <visible>Control.HasFocus(9000)</visible>
                     </control>
                     <control type="image">
@@ -364,7 +364,7 @@
                         <top>24</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="text">$INFO[ListItem.Icon]</texture>
+                        <aspectratio>keep</aspectratio><texture colordiffuse="$VAR[MenuIconText]">$INFO[ListItem.Icon]</texture>
                         <visible>!Control.HasFocus(9000) + [Control.HasFocus(9000) | !Skin.HasSetting(nuvio.sideicons.hide)]</visible>
                     </control>
                     <control type="label">

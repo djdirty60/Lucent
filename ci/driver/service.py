@@ -480,6 +480,65 @@ def series_test():
         mon.waitForAbort(3)
 
 
+def art_of(directory):
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                                    "params": {"directory": directory, "media": "files", "properties": ["art"]}})))
+    return [(f.get("label"), (f.get("art") or {}).get("thumb", "")[-28:]) for f in (res.get("result") or {}).get("files") or []]
+
+
+def custom_test():
+    """Own title picture / background / hidden title per widget, own tab icon, own streaming services list."""
+    star = "special://skin/media/icons/star.png"
+    bgimg = "special://home/addons/plugin.video.fakeseren/icon.png"
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(2)
+    log(f"custom: before fanart={lab('$VAR[LucentHomeFanart]')[-30:]!r} w1label={lab('$VAR[NuvioW1Label]')!r}")
+    shot("16-before")
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    try:
+        import menu
+        m = menu.Menu()
+        wd = m.tabs[0]["widgets"][0]
+        wd["timg"], wd["bg"] = star, bgimg
+        wd2 = m.tabs[0]["widgets"][1]
+        wd2["notitle"] = "1"
+        m.tabs[0]["icon"] = bgimg
+        m.save()
+        mon.waitForAbort(4)
+        log(f"custom: saved timg={lab('Skin.String(nuvio.home.w1.timg)')[-20:]!r} tab={lab('Skin.String(nuvio.tab1.w1.timg)')[-20:]!r} "
+            f"bg={lab('Skin.String(nuvio.home.w1.bg)')[-20:]!r} notitle2={lab('Skin.String(nuvio.home.w2.notitle)')!r} icon={lab('Skin.String(nuvio.tab1.icon)')[-20:]!r}")
+        log(f"custom: vars timg={lab('$VAR[NuvioW1TitleImg]')[-20:]!r} bg={lab('$VAR[NuvioW1Bg]')[-20:]!r} "
+            f"fanart={lab('$VAR[LucentHomeFanart]')[-30:]!r} row={HOME.getProperty('nuvio.row')}")
+        shot("16-after")
+        m = menu.Menu()
+        log(f"custom: reloaded {m.tabs[0]['widgets'][0].get('timg', '')[-20:]!r} {m.tabs[0]['widgets'][1].get('notitle')!r}")
+    except Exception as error:  # noqa: BLE001
+        log(f"custom: menu error {error!r}")
+    # streaming services: the standard list, then your own list with your own picture
+    lib = "plugin://script.lucent.library/?action=providers"
+    log(f"custom: services standard {[a for a, _b in art_of(lib)]}")
+    cat = art_of("plugin://script.lucent.library/?action=provcatalog")
+    log(f"custom: catalog ({len(cat)}) {[a for a, _b in cat][:20]}")
+    d = xbmcvfs_translate("special://profile/addon_data/script.lucent.library/tmdb/")
+    os.makedirs(d, exist_ok=True)
+    json.dump({"items": [{"id": 1899, "name": "HBO Max", "logo": "/h.png", "region": "US"},
+                         {"id": 8, "name": "Netflix", "logo": "/n.png", "region": "US", "image": bgimg},
+                         {"id": 900, "name": "Fubo", "logo": "/f.png", "region": "US"}]}, open(d + "services.json", "w"))
+    log(f"custom: services own {art_of(lib)}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/streamedit.py,reset)")
+    mon.waitForAbort(3)
+    log(f"custom: services after reset {[a for a, _b in art_of(lib)]} file={os.path.exists(d + 'services.json')}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/streamedit.py)")
+    mon.waitForAbort(4)
+    labels = [lab(f"Container(3).ListItemAbsolute({i}).Label") for i in range(int(lab("Container(3).NumItems") or 0))]
+    log(f"custom: editor open={cond('Window.IsVisible(selectdialog)')} items={labels}")
+    shot("16-editor")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -491,7 +550,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    series_test()
+    custom_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

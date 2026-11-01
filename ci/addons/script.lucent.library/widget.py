@@ -361,6 +361,10 @@ def show(handle, query):
         import tmdbwidgets
         tmdbwidgets.provider_rows(handle)
         return
+    if query.lstrip("?").startswith("action=provcatalog"):       # the skin's editor: every service there is
+        import tmdbwidgets
+        tmdbwidgets.catalog(handle)
+        return
     if query.lstrip("?").startswith("action=provideropen"):       # a click on a service: its pop-up
         import tmdbwidgets
         tmdbwidgets.provider_open(query)
