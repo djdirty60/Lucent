@@ -874,6 +874,8 @@ def widgetctx_test():
     """A film in a Lucent row on Home: its context menu has Seren's options too."""
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")    # tab Streaming: a TMDb row with films
+    mon.waitForAbort(12)
     found = None
     for cid in [8100 + n for n in range(1, 11)] + [8200 + n for n in range(1, 11)]:
         if not cond(f"Control.IsVisible({cid})") or not lab(f"Container({cid}).NumItems").isdigit():
