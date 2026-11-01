@@ -64,7 +64,15 @@ class Service(xbmcgui.WindowXMLDialog):
         (A title in the lists opens its page through Lucent Library, so this watches instead of hooking the click.)"""
         mon = xbmc.Monitor()
         page = False
+        HOME.clearProperty("lucent.svc.folder")
         while not self.closed and not mon.abortRequested():
+            folder = HOME.getProperty("lucent.svc.folder")
+            if folder:                                  # a series was clicked: its seasons open (info.py seasons)
+                HOME.clearProperty("lucent.svc.folder")
+                self.close()
+                mon.waitForAbort(0.3)
+                xbmc.executebuiltin(f'ActivateWindow(Videos,"{folder}",return)')
+                return
             if xbmc.getCondVisibility("Window.IsVisible(movieinformation) | Window.IsVisible(1180)"):
                 page = True
             elif page:

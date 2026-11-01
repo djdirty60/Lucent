@@ -626,7 +626,8 @@ def open_title(query):
     HOME.setProperty("nuvio.open.year", get("year"))
     HOME.setProperty("nuvio.open.path", "")
     HOME.clearProperty("nuvio.open.trakt")
-    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
+    # 'series': a series opens straight on its seasons (Lucent 1.31.55+; older skins ignore it and open the page)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path,series)")
 
 
 # ----------------------------------------------------------------------------- the fetching (runs in the service)

@@ -593,6 +593,34 @@ def popup_test():
     mon.waitForAbort(2)
 
 
+def direct_test():
+    """A series in the streaming pop-up (and in a TMDb row on Home) opens straight on its seasons; a film on its page."""
+    for row, label in ((802, "series"), (801, "film")):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/service.py,8,Netflix,)")
+        for _ in range(20):
+            mon.waitForAbort(1)
+            if cond("Window.IsVisible(Lucent_Service.xml)") and int(lab(f"Container({row}).NumItems") or 0) > 0:
+                break
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({row})")
+        mon.waitForAbort(1.5)
+        item = lab(f"Container({row}).ListItem.Label")
+        xbmc.executebuiltin("Action(Select)")
+        for _ in range(15):
+            mon.waitForAbort(1)
+            if cond("Window.IsActive(videos) | Window.IsVisible(movieinformation)") and not cond("Window.IsVisible(Lucent_Service.xml)"):
+                break
+            if cond("Window.IsVisible(movieinformation)"):
+                break
+        mon.waitForAbort(2)
+        log(f"direct: {label} {item!r}: popup={cond('Window.IsVisible(Lucent_Service.xml)')} page={cond('Window.IsVisible(movieinformation)')} "
+            f"videos={cond('Window.IsActive(videos)')} path={lab('Container.FolderPath')[:60]!r} items={lab('Container.NumItems')}")
+        shot(f"18-direct-{label}")
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(3)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -604,7 +632,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    popup_test()
+    direct_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

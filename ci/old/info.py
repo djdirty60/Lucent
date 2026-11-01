@@ -1057,6 +1057,8 @@ def _show_title(kind, tmdb_id, trakt_id):
         raise RuntimeError("no Trakt id")
     li = build_listitem(kind, tmdb_id, trakt)
     HOME.setProperty("nuvio.open.current", json.dumps([kind, str(tmdb_id)]))
+    # what Play opens for a series: the streaming pop-up (service.py) opens it itself after closing (see there)
+    HOME.setProperty("nuvio.open.folder", seren_seasons_url(trakt) if kind != "movie" else "")
     xbmc.executebuiltin("Dialog.Close(1180,true)")
     xbmc.executebuiltin("Dialog.Close(movieinformation,true)")
     xbmc.Monitor().waitForAbort(0.4)
