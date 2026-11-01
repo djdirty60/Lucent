@@ -5,6 +5,7 @@ import time
 
 import xbmc
 import xbmcgui
+import xbmcvfs
 
 OUT = "/tmp/ci/out"
 TAG = open("/tmp/ci/tag").read().strip() if os.path.exists("/tmp/ci/tag") else "run"
@@ -1288,6 +1289,83 @@ def sportA_test():
     mon.waitForAbort(2)
 
 
+def tables_test():
+    """Sport > Tables (T1+T2): competitions as tabs, table with W/D/L, club panel that follows the selected row."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+    for _ in range(60):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(Lucent_Sport.xml)"):
+            break
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(103)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(40):
+        mon.waitForAbort(1)
+        if int(lab("Container(410).NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(4)
+    W = lambda k: lab(f"Window(Lucent_Sport.xml).Property(sport.tc.{k})") or lab(f"Window.Property(sport.tc.{k})")  # noqa: E731
+    R = lambda k: lab(f"Container(410).ListItem.Property({k})")  # noqa: E731
+    log(f"tables: league={lab('Container(400).ListItem.Label')!r} n={lab('Container(410).NumItems')} focus={lab('System.CurrentControlID')} "
+        f"row={lab('Container(410).ListItem.Label')!r} gp/w/d/l/gd/pts={[R(k) for k in ('gp', 'w', 'd', 'l', 'gd', 'pts')]} "
+        f"legend={[lab(f'Window.Property(sport.leg{n}.text)') for n in range(1, 5)]}")
+    log(f"tables: panel on={W('on')!r} name={W('name')!r} sub={W('sub')!r} form={[W(f'f{n}') for n in range(1, 6)]} "
+        f"r1={W('r1')!r} {W('r1s')!r} home={W('home')!r} away={W('away')!r} next={W('next')!r} chan={W('nextchan')!r}")
+    shot("34-tables-top")
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.5)
+    log(f"tables: after 3x down row={lab('Container(410).ListItem.Label')!r} panel={W('name')!r} sub={W('sub')!r} r1={W('r1')!r}")
+    shot("34-tables-down")
+    xbmc.executebuiltin("Action(Up)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("SetFocus(400)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(4)
+    log(f"tables: league right -> {lab('Container(400).ListItem.Label')!r} n={lab('Container(410).NumItems')} row={lab('Container(410).ListItem.Label')!r} panel={W('name')!r}")
+    shot("34-tables-league2")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def mine_test():
+    """My sport M3: follow the home team of a live football game, then My sport shows it as a live scoreboard."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    live = [e for e in sc.all_cached() if e["state"] == "in" and e["kind"] == "teams"]
+    soccer = [e for e in live if sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"] or live
+    log(f"mine: live games={len(live)} football={len(soccer)}")
+    if not soccer:
+        return
+    ev = soccer[0]
+    sc.toggle_team(ev["league"], ev["home"])
+    log(f"mine: following {ev['home'].get('name')!r} ({ev['league']}) {ev.get('status')!r}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+    for _ in range(60):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(Lucent_Sport.xml)"):
+            break
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(101)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(12)
+    H = lambda k: lab(f"Container(150).ListItem.Property({k})")  # noqa: E731
+    WP = lambda k: lab(f"Window.Property({k})")  # noqa: E731
+    log(f"mine: hero n={lab('Container(150).NumItems')} {H('hname')}-{H('aname')} mid={H('mid')!r} when={H('when')!r} prog={H('prog')!r} "
+        f"hgoals={H('hgoals')!r} agoals={H('agoals')!r}")
+    log(f"mine: sections {[(WP(f'sport.sec{n}.title'), WP(f'sport.sec{n}.sub'), WP(f'sport.sec{n}.count')) for n in range(1, 4)]}")
+    shot("35-mine-live")
+    sc.toggle_team(ev["league"], ev["home"])
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1301,8 +1379,9 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    skipkey_test()
     sportA_test()
+    tables_test()
+    mine_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
