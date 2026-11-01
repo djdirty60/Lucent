@@ -9,6 +9,9 @@
     <onload condition="[Skin.HasSetting(lucent.lite) + String.IsEmpty(Skin.String(lucent.lite.built))] | [!Skin.HasSetting(lucent.lite) + !String.IsEmpty(Skin.String(lucent.lite.built))]">RunScript(special://skin/scripts/settings.py,litebuild)</onload>
     <onload condition="!String.IsEqual(Skin.String(lucent.subs.switched),2) + System.HasAddon(service.subtitles.lucent)">RunScript(special://skin/scripts/subtitles.py,switch)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/migrate.py)</onload>
+    <!-- 1.31.58: bigger posters without the names under them (once; switch back in Skin settings) -->
+    <onload condition="String.IsEmpty(Skin.String(lucent.posters.big))">Skin.SetBool(nuvio.posterlabels.hide)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.posters.big))">Skin.SetString(lucent.posters.big,1)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + String.IsEmpty(Skin.String(lucent.addonw4))">RunScript(special://skin/scripts/menu.py,addons)</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
