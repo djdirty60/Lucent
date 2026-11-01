@@ -21,6 +21,7 @@ s=s.replace('<import addon="xbmc.gui" version="5.17.0"/>','<import addon="xbmc.g
 open(p,"w").write(s)
 PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
+cp -r ci/addons/repository.seren-nixgate $K/addons/
 if [ "$VARIANT" = old ]; then rm -rf $K/addons/script.lucent.library; cp -r ci/old/library $K/addons/script.lucent.library; fi
 # one library film as Lucent Library writes it
 mkdir -p "$K/userdata/addon_data/script.lucent.library/movies/Test Film (2020)"

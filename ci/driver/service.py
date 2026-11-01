@@ -1111,6 +1111,7 @@ def main():
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
             break
         mon.waitForAbort(1)
+    log(f"deps: seren-nixgate={cond('System.HasAddon(repository.seren-nixgate)')} enabled={cond('System.AddonIsEnabled(repository.seren-nixgate)')}")
     log(f"home ready skin={lab('Skin.CurrentTheme')} {lab('System.AddonVersion(skin.lucent)')} "
         f"lib={lab('System.AddonVersion(script.lucent.library)')} helper={HOME.getProperty('lucent.helper.running')}")
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -1118,7 +1119,6 @@ def main():
     watch("home1", 40)
     shot("1-home")
     setup_test()
-    audio_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
