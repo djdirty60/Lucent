@@ -88,6 +88,9 @@ def current():
     own = read(OWN).get("items")
     if own:
         return own
+    if not read(STANDARD).get("items"):             # the row was never shown yet: let Lucent Library make the list now
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                        "params": {"directory": f"plugin://{LIB}/?action=providers", "media": "files"}}))
     return [dict(p) for p in read(STANDARD).get("items") or []]
 
 
