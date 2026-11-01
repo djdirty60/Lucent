@@ -17,6 +17,7 @@ import xbmc
 import xbmcgui
 
 import lib
+import resume
 import widget
 
 HOME = xbmcgui.Window(10000)
@@ -29,17 +30,26 @@ class Player(xbmc.Player):
         super().__init__()
         self.pending = 0
         self.stopped = 0.0
+        self.keeper = resume.Keeper(self)        # remembers where you stopped, on this device
 
     def onPlayBackStarted(self):  # noqa: N802 - Kodi callback name
         self.stopped = time.time()
 
+    def onAVStarted(self):  # noqa: N802
+        try:
+            self.keeper.started()
+        except Exception as error:  # noqa: BLE001
+            xbmc.log(f"[script.lucent.library] resume start: {error}", xbmc.LOGWARNING)
+
     def onPlayBackStopped(self):  # noqa: N802
         self.pending = 8
         self.stopped = time.time()
+        self.keeper.stopped()
 
     def onPlayBackEnded(self):  # noqa: N802
         self.pending = 8
         self.stopped = time.time()
+        self.keeper.stopped()
 
 
 class Monitor(xbmc.Monitor):
@@ -108,6 +118,10 @@ def main():
     import tools
     while not monitor.abortRequested():
         now = time.time()
+        try:
+            player.keeper.tick()
+        except Exception as error:  # noqa: BLE001
+            xbmc.log(f"[script.lucent.library] resume tick: {error}", xbmc.LOGWARNING)
         if player.pending:
             player.pending -= 1
             if player.pending == 0:
