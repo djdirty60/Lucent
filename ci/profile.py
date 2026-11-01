@@ -16,7 +16,7 @@ tabs = {
 }
 if stage == "skin":
     s = {"lucent.setup.done": "1", "nuvio.migrated": "1", "nuvio.menu.version": "1", "lucent.addonw4": "1",
-         "lucent.lite.checked": "1", "lucent.subs.switched": "2", "nuvio.homepos": "0"}
+         "lucent.lite.checked": "1", "lucent.lite.built": "1", "lucent.subs.switched": "2", "nuvio.homepos": "0"}
     for t, (label, action, rows) in tabs.items():
         s[f"nuvio.tab{t}.label"] = label
         s[f"nuvio.tab{t}.icon"] = "icons/movies.png"
@@ -29,7 +29,7 @@ if stage == "skin":
                 s[f"nuvio.home.w{w}.label"] = lab
                 s[f"nuvio.home.w{w}.path"] = path
                 s[f"nuvio.home.w{w}.style"] = "poster"
-    bools = ["lucent.fy.off", "nuvio.update.off", "lucent.goals.off", "nuvio.autosubs"]
+    bools = ["lucent.lite", "lucent.fy.off", "nuvio.update.off", "lucent.goals.off", "nuvio.autosubs"]
     d = os.path.join(home, "userdata/addon_data/skin.lucent")
     os.makedirs(d, exist_ok=True)
     esc = lambda v: v.replace("&", "&amp;").replace("<", "&lt;")  # noqa: E731

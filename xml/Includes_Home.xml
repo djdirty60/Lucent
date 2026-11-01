@@ -7026,6 +7026,7 @@
                     <onback condition="!Integer.IsGreater(Container(8090).CurrentItem,1) + !String.IsEmpty(Window(home).Property(lucent.toprow)) + !String.IsEqual(Window(home).Property(lucent.toprow),8090)">SetFocus($INFO[Window(home).Property(lucent.toprow)])</onback>
                     <onback condition="!Integer.IsGreater(Container(8090).CurrentItem,1) + [String.IsEmpty(Window(home).Property(lucent.toprow)) | String.IsEqual(Window(home).Property(lucent.toprow),8090)]">SetFocus(9000)</onback>
                     <ondown>8091</ondown>
+                    <onup condition="Skin.HasSetting(lucent.lite)">8206</onup>
                     <onup>8210</onup>
                     <onfocus>SetProperty(nuvio.row,8090,home)</onfocus>
                     <itemlayout width="820" height="250">
@@ -10755,6 +10756,7 @@
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
                     <onleft>9000</onleft>
                     <onup>8106</onup>
+                    <ondown condition="Skin.HasSetting(lucent.lite)">8090</ondown>
                     <ondown>8107</ondown>
                     <onback condition="Integer.IsGreater(Container(8206).CurrentItem,1)">SetFocus(8206,0,absolute)</onback>
                     <onback condition="!Integer.IsGreater(Container(8206).CurrentItem,1) + !String.IsEmpty(Window(home).Property(lucent.toprow)) + !String.IsEqual(Window(home).Property(lucent.toprow),8206)">SetFocus($INFO[Window(home).Property(lucent.toprow)])</onback>
