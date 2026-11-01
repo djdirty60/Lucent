@@ -103,8 +103,17 @@
         <value>0</value>
     </variable>
     <variable name="LucentGeminiState">
-        <value condition="!String.IsEmpty(Skin.String(lucent.gemini.key))">$LOCALIZE[31603]</value>
+        <value condition="String.IsEqual(Skin.String(lucent.ai.provider),openrouter) + !String.IsEmpty(Skin.String(lucent.openrouter.key))">OpenRouter</value>
+        <value condition="String.IsEqual(Skin.String(lucent.ai.provider),claude) + !String.IsEmpty(Skin.String(lucent.claude.key))">Claude</value>
+        <value condition="!String.IsEmpty(Skin.String(lucent.gemini.key))">Gemini</value>
+        <value condition="!String.IsEmpty(Skin.String(lucent.openrouter.key))">OpenRouter</value>
+        <value condition="!String.IsEmpty(Skin.String(lucent.claude.key))">Claude</value>
         <value>$LOCALIZE[31604]</value>
+    </variable>
+    <variable name="LucentAutoSubsState">
+        <value condition="!Skin.HasSetting(nuvio.autosubs)">$LOCALIZE[31662]</value>
+        <value condition="String.IsEqual(Skin.String(lucent.subs.mode),background)">$LOCALIZE[31664]</value>
+        <value>$LOCALIZE[31663]</value>
     </variable>
     <variable name="LucentEpThumb">
         <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Lucent: AI subtitles - Google Gemini translates an English subtitle into your language.
+"""Lucent: AI subtitles - an AI service translates an English subtitle into your language.
 
 Started from the live subtitle list (subs_live.py). It works from where you are watching: the next few minutes are
 translated first and shown at once, the rest follows in the background and the subtitle is reloaded when it is done.
 The finished translation is kept (addon_data/skin.lucent/subs_ai/), so the next time it opens at once.
 
-Needs your own free Gemini key (Skin settings > Integrations > Subtitles > AI translation). The subtitle text is sent to
-Google for the translation.
+Needs your own key for one of the services (Skin settings > Integrations > Subtitles > AI translation):
+Google Gemini (free key), OpenRouter (one key for many models) or Anthropic Claude. The subtitle text is sent to that
+service for the translation.
 """
 import hashlib
 import json
@@ -22,6 +23,13 @@ import xbmcvfs
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 KEY_SETTING = "lucent.gemini.key"
+PROVIDER_SETTING = "lucent.ai.provider"
+# service -> (name shown, key setting, model setting, default model)
+PROVIDERS = {
+    "gemini": ("Google Gemini", "lucent.gemini.key", "", ""),
+    "openrouter": ("OpenRouter", "lucent.openrouter.key", "lucent.openrouter.model", "openrouter/auto"),
+    "claude": ("Claude", "lucent.claude.key", "lucent.claude.model", "claude-haiku-5-5"),
+}
 MODELS = ("gemini-flash-latest", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-2.5-flash")
 CHUNK = 60                   # subtitle lines per request
 FIRST = 2                    # chunks translated before the subtitle is shown
@@ -85,13 +93,87 @@ def write_srt(path, cues):
         fh.write("\n".join(out))
 
 
+# ----------------------------------------------------------------------------- services
+def skin_string(name):
+    return xbmc.getInfoLabel(f"Skin.String({name})").strip() if name else ""
+
+
+def provider():
+    """The chosen AI service; when it has no key but another one has, that one is used."""
+    chosen = skin_string(PROVIDER_SETTING) or "gemini"
+    if chosen not in PROVIDERS:
+        chosen = "gemini"
+    if skin_string(PROVIDERS[chosen][1]):
+        return chosen
+    return next((p for p, v in PROVIDERS.items() if skin_string(v[1])), chosen)
+
+
+def provider_name(p=None):
+    return PROVIDERS[p or provider()][0]
+
+
+def has_key():
+    return bool(skin_string(PROVIDERS[provider()][1]))
+
+
+def make_prompt(lines, target):
+    return (f"Translate these film/TV subtitle lines from English into natural, spoken {target}. "
+            "Keep it short like real subtitles, keep line breaks (\\n) inside a line, keep names, do not add notes. "
+            f"Return only a JSON array with exactly {len(lines)} strings, in the same order.\n\n"
+            + json.dumps(lines, ensure_ascii=False))
+
+
+def json_list(text, count):
+    """The JSON array in an answer (models sometimes wrap it in ``` or add a sentence)."""
+    text = (text or "").strip()
+    start, end = text.find("["), text.rfind("]")
+    if start < 0 or end < start:
+        raise ValueError("no JSON array in the answer")
+    out = json.loads(text[start:end + 1])
+    if not isinstance(out, list) or len(out) != count:
+        raise ValueError(f"got {len(out) if isinstance(out, list) else '?'} lines for {count}")
+    return [str(x) for x in out]
+
+
+def post(url, body, headers):
+    req = urllib.request.Request(url, data=json.dumps(body).encode("utf-8"), method="POST",
+                                 headers={"Content-Type": "application/json", **headers})
+    with urllib.request.urlopen(req, timeout=90) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def openrouter(key, lines, target):
+    model = skin_string(PROVIDERS["openrouter"][2]) or PROVIDERS["openrouter"][3]
+    data = post("https://openrouter.ai/api/v1/chat/completions",
+                {"model": model, "temperature": 0.2, "messages": [{"role": "user", "content": make_prompt(lines, target)}]},
+                {"Authorization": f"Bearer {key}", "HTTP-Referer": "https://github.com/djdirty60/Lucent", "X-Title": "Lucent"})
+    text = (((data.get("choices") or [{}])[0].get("message") or {}).get("content")) or ""
+    return json_list(text, len(lines))
+
+
+def claude(key, lines, target):
+    model = skin_string(PROVIDERS["claude"][2]) or PROVIDERS["claude"][3]
+    data = post("https://api.anthropic.com/v1/messages",
+                {"model": model, "max_tokens": 8000, "messages": [{"role": "user", "content": make_prompt(lines, target)}]},
+                {"x-api-key": key, "anthropic-version": "2023-06-01"})
+    text = "".join(b.get("text", "") for b in data.get("content") or [] if b.get("type") == "text")
+    return json_list(text, len(lines))
+
+
+def translate(lines, target):
+    p = provider()
+    key = skin_string(PROVIDERS[p][1])
+    if p == "openrouter":
+        return openrouter(key, lines, target)
+    if p == "claude":
+        return claude(key, lines, target)
+    return gemini(key, lines, target)
+
+
 # ----------------------------------------------------------------------------- Gemini
 def gemini(key, lines, target):
     """Translate a list of subtitle lines; returns a list of the same length."""
-    prompt = (f"Translate these film/TV subtitle lines from English into natural, spoken {target}. "
-              "Keep it short like real subtitles, keep line breaks (\\n) inside a line, keep names, do not add notes. "
-              f"Return a JSON array with exactly {len(lines)} strings, in the same order.\n\n"
-              + json.dumps(lines, ensure_ascii=False))
+    prompt = make_prompt(lines, target)
     body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
             "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json",
                                  "responseSchema": {"type": "ARRAY", "items": {"type": "STRING"}}}}
@@ -137,11 +219,11 @@ def cached_for_current(code):
 
 # ----------------------------------------------------------------------------- work
 def translate_and_load(source_path, code):
-    key = xbmc.getInfoLabel(f"Skin.String({KEY_SETTING})")
-    if not key:
-        notify(t("No Gemini key - Skin settings > Integrations", "Geen Gemini-sleutel - Skin-instellingen > Integraties"))
+    if not has_key():
+        notify(t("No AI key - Skin settings > Integrations", "Geen AI-sleutel - Skin-instellingen > Integraties"))
         return
-    target = LANG_NAMES.get(code, xbmc.getLanguage(xbmc.ENGLISH_NAME))
+    name = provider_name()
+    target = LANG_NAMES.get(code) or xbmc.convertLanguage(code, xbmc.ENGLISH_NAME) or xbmc.getLanguage(xbmc.ENGLISH_NAME)
     try:
         cues = parse_srt(read_text(source_path))
     except Exception as error:  # noqa: BLE001
@@ -166,12 +248,16 @@ def translate_and_load(source_path, code):
             log("stopped: playback ended")
             break
         try:
-            out = gemini(key, [cues[i]["text"] for i in chunk], target)
+            out = translate([cues[i]["text"] for i in chunk], target)
         except urllib.error.HTTPError as error:
-            log(f"Gemini HTTP {error.code}: {error.read()[:200]!r}")
-            reason = {400: t("the key is not valid", "de sleutel klopt niet"), 403: t("the key is not allowed", "de sleutel mag dit niet"),
-                      429: t("daily limit reached, try again later", "daglimiet bereikt, probeer het later")}.get(error.code, f"HTTP {error.code}")
-            notify(t("Gemini: ", "Gemini: ") + reason, 6000, xbmcgui.NOTIFICATION_WARNING)
+            log(f"{name} HTTP {error.code}: {error.read()[:200]!r}")
+            if error.code >= 500:
+                continue                                    # the service is busy: try the next part
+            reason = {400: t("the request or model is not accepted", "het verzoek of model wordt niet geaccepteerd"),
+                      401: t("the key is not valid", "de sleutel klopt niet"), 402: t("no credit left", "geen tegoed meer"),
+                      403: t("the key is not allowed", "de sleutel mag dit niet"), 404: t("model not found", "model niet gevonden"),
+                      429: t("limit reached, try again later", "limiet bereikt, probeer het later")}.get(error.code, f"HTTP {error.code}")
+            notify(f"{name}: {reason}", 6000, xbmcgui.NOTIFICATION_WARNING)
             break
         except Exception as error:  # noqa: BLE001
             log(f"part {n}: {error}")

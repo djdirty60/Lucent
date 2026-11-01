@@ -157,6 +157,13 @@ def run():
             return
         if cond("Skin.HasSetting(lucent.subs.native.off)") or not cond("Player.HasVideo"):
             return
+        if cond("String.IsEqual(Skin.String(lucent.subs.mode),background)") and now - float(HOME.getProperty("lucent.play.start") or 0) < 90:
+            # another add-on's automatic search right after the start: Lucent picks one quietly instead
+            swap["t"] = now
+            xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,background)")
+            log("Kodi's subtitle search -> Lucent background pick")
+            return
         swap["t"] = now
         xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
         xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")

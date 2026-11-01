@@ -8,6 +8,7 @@ The "Search subtitles" button in the player menu opens Kodi's own subtitle searc
 """
 import json
 import sys
+import time
 
 import xbmc
 import xbmcgui
@@ -154,6 +155,7 @@ class Watcher(xbmc.Player):
         self.monitor = xbmc.Monitor()
 
     def onAVStarted(self):  # noqa: N802 - Kodi callback name
+        HOME.setProperty("lucent.play.start", f"{time.time():.1f}")   # helper.py: a search right after the start
         try:
             self.look()
         except Exception as error:  # noqa: BLE001 - never break playback
@@ -189,7 +191,9 @@ class Watcher(xbmc.Player):
         have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
         if have & wanted_codes():
             return
-        if xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):
+        if xbmc.getCondVisibility("String.IsEqual(Skin.String(lucent.subs.mode),background)"):
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,background)")   # quietly, no window
+        elif xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):
             xbmc.executebuiltin("ActivateWindow(subtitlesearch)")
         else:
             xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")   # Lucent's live list (opens once the film really plays)
