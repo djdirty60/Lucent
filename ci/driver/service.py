@@ -646,6 +646,23 @@ def logo_test():
     mon.waitForAbort(2)
 
 
+def poster_test():
+    """Poster rows: a picture with and without the names under the posters (preview)."""
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(25)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(3)
+    log(f"poster: focus={lab('System.CurrentControlID')} n={lab('Container(8101).NumItems')} {lab('Container(8102).NumItems')}")
+    shot("20-posters-labels")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.posterlabels.hide)")
+    mon.waitForAbort(3)
+    shot("20-posters-nolabels")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(3)
+    shot("20-posters-nolabels-down")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterlabels.hide)")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -657,7 +674,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    logo_test()
+    poster_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
