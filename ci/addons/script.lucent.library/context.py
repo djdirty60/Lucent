@@ -26,7 +26,8 @@ def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "select"
     item = sys.listitem                              # noqa: F821 - given by Kodi to context scripts
     path = item.getPath() or xbmc.getInfoLabel("ListItem.FileNameAndPath")
-    address = strm_address(path)
+    # a library file (.strm with Seren's address in it), or a Seren item itself (Seren's own menu switched off)
+    address = path if path.startswith(SEREN) else strm_address(path)
     if not address.startswith(SEREN) or "action_args=" not in address:
         xbmc.log(f"[script.lucent.library] context: no Seren address in {path}", xbmc.LOGWARNING)
         return

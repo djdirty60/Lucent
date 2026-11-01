@@ -14,27 +14,27 @@
         <menu id="kodi.core.main">
             <item library="context.py" args="rescrape">
                 <label>32003</label>
-                <visible>[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)</visible>
+                <visible>[[[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)] | [String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/?action=getSources) + System.HasAddon(plugin.video.seren) + [!System.HasAddon(context.seren) | !String.IsEmpty(Window(home).Property(context.seren.rescrape))]]]</visible>
             </item>
             <item library="context.py" args="rescrape_select">
                 <label>32007</label>
-                <visible>[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)</visible>
+                <visible>[[[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)] | [String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/?action=getSources) + System.HasAddon(plugin.video.seren) + [!System.HasAddon(context.seren) | !String.IsEmpty(Window(home).Property(context.seren.rescrape))]]]</visible>
             </item>
             <item library="context.py" args="select">
                 <label>32002</label>
-                <visible>[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)</visible>
+                <visible>[[[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)] | [String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/?action=getSources) + System.HasAddon(plugin.video.seren) + [!System.HasAddon(context.seren) | !String.IsEmpty(Window(home).Property(context.seren.rescrape))]]]</visible>
             </item>
             <item library="context.py" args="similar">
                 <label>32008</label>
-                <visible>[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)</visible>
+                <visible>[[[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)] | [String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/?action=getSources) + System.HasAddon(plugin.video.seren) + [!System.HasAddon(context.seren) | !String.IsEmpty(Window(home).Property(context.seren.rescrape))]]]</visible>
             </item>
             <item library="context.py" args="show">
                 <label>32005</label>
-                <visible>[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren) + String.IsEqual(ListItem.DBType,episode)</visible>
+                <visible>[[[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)] | [String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/?action=getSources) + System.HasAddon(plugin.video.seren) + [!System.HasAddon(context.seren) | !String.IsEmpty(Window(home).Property(context.seren.rescrape))]]] + String.IsEqual(ListItem.DBType,episode)</visible>
             </item>
             <item library="context.py" args="trakt">
                 <label>32004</label>
-                <visible>[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)</visible>
+                <visible>[[[String.Contains(ListItem.FileNameAndPath,script.lucent.library) | String.Contains(ListItem.Path,script.lucent.library)] + String.Contains(ListItem.FileNameAndPath,.strm) + System.HasAddon(plugin.video.seren)] | [String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/?action=getSources) + System.HasAddon(plugin.video.seren) + [!System.HasAddon(context.seren) | !String.IsEmpty(Window(home).Property(context.seren.rescrape))]]]</visible>
             </item>
         </menu>
     </extension>
