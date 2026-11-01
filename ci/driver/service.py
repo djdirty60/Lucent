@@ -817,6 +817,59 @@ def ctxmenu_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def resume_test():
+    """Stop a film / episode half way: saved locally, and starting it again jumps back there."""
+    import xbmcvfs
+    rfile = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/resume.json")
+    player = xbmc.Player()
+    for kind, uid in (("movie", {"tmdb": "123", "imdb": "tt0000123"}), ("episode", {"tmdb": "999"})):
+        def item():
+            li = xbmcgui.ListItem("Resume " + kind)
+            tag = li.getVideoInfoTag()
+            tag.setMediaType(kind)
+            tag.setTitle("Resume " + kind)
+            if kind == "episode":
+                tag.setTvShowTitle("Resume Show")
+                tag.setSeason(1)
+                tag.setEpisode(2)
+            tag.setUniqueIDs(uid)
+            return li
+        player.play("/tmp/ci/test.mkv", item())
+        for _ in range(20):
+            if player.isPlayingVideo() and player.getTotalTime() > 0:
+                break
+            mon.waitForAbort(0.5)
+        mon.waitForAbort(6)
+        player.seekTime(70)
+        mon.waitForAbort(4)
+        at = player.getTime()
+        player.stop()
+        mon.waitForAbort(3)
+        try:
+            saved = json.load(open(rfile))
+        except Exception as error:  # noqa: BLE001
+            saved = {"error": repr(error)}
+        log(f"resume {kind}: stopped at {int(at)} saved={ {k: v.get('pos') for k, v in saved.items() if isinstance(v, dict)} }")
+        player.play("/tmp/ci/test.mkv", item())
+        for _ in range(20):
+            if player.isPlayingVideo() and player.getTotalTime() > 0:
+                break
+            mon.waitForAbort(0.5)
+        mon.waitForAbort(8)
+        log(f"resume {kind}: started again, now at {int(player.getTime())}")
+        shot(f"24-resume-{kind}")
+        player.seekTime(115)
+        mon.waitForAbort(3)
+        player.stop()
+        mon.waitForAbort(3)
+        try:
+            saved = json.load(open(rfile))
+        except Exception:  # noqa: BLE001
+            saved = {}
+        log(f"resume {kind}: after watching to the end keys={list(saved)}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
 
 def main():
     for _ in range(180):
@@ -829,7 +882,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    ctxmenu_test()
+    resume_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
