@@ -902,6 +902,23 @@ def widgetctx_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)
 
+def limit_test():
+    """Number of titles per row: 25 by default, 50, or all."""
+    xbmc.executebuiltin("ActivateWindow(home)")
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    path = "plugin://plugin.video.fakeseren/?list=many"
+    for name in ("nuvio.tab1.w4", "nuvio.home.w4"):
+        xbmc.executebuiltin(f'Skin.SetString({name}.label,Veel)')
+        xbmc.executebuiltin(f'Skin.SetString({name}.path,"{path}")')
+        xbmc.executebuiltin(f'Skin.SetString({name}.style,poster)')
+    for value in ("", "50", "0", "100", ""):
+        for name in ("nuvio.tab1.w4", "nuvio.home.w4"):
+            xbmc.executebuiltin(f"Skin.SetString({name}.limit,{value})" if value else f"Skin.Reset({name}.limit)")
+        mon.waitForAbort(12)
+        log(f"limit {value or 'standard'}: row 8104 has {lab('Container(8104).NumItems')} titles "
+            f"(var={lab('$VAR[NuvioW4Limit]')!r})")
+    shot("26-limit")
+
 
 def main():
     for _ in range(180):
@@ -914,9 +931,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    widgetctx_test()
-    ctxmenu_test()
-    resume_test()
+    limit_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

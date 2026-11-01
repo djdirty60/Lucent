@@ -19,7 +19,7 @@ except Exception:
 calls[kind] = calls.get(kind, 0) + 1
 os.makedirs("/tmp/ci", exist_ok=True)
 json.dump(calls, open(STATE, "w"))
-n = 25
+n = 60 if kind == "many" else 25
 if kind.startswith("slow"):
     time.sleep(12)
 elif kind.startswith("slower"):
