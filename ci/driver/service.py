@@ -906,11 +906,7 @@ def limit_test():
     """Number of titles per row: 25 by default, 50, or all."""
     xbmc.executebuiltin("ActivateWindow(home)")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
-    path = "plugin://plugin.video.fakeseren/?list=many"
-    for name in ("nuvio.tab1.w4", "nuvio.home.w4"):
-        xbmc.executebuiltin(f'Skin.SetString({name}.label,Veel)')
-        xbmc.executebuiltin(f'Skin.SetString({name}.path,"{path}")')
-        xbmc.executebuiltin(f'Skin.SetString({name}.style,poster)')
+    mon.waitForAbort(10)
     for value in ("", "50", "0", "100", ""):
         for name in ("nuvio.tab1.w4", "nuvio.home.w4"):
             xbmc.executebuiltin(f"Skin.SetString({name}.limit,{value})" if value else f"Skin.Reset({name}.limit)")
