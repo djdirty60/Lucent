@@ -252,7 +252,8 @@ def power_test():
     # the editor opens (it imports menu.py) and shows its list
     xbmc.executebuiltin("RunScript(special://skin/scripts/powermenu.py)")
     mon.waitForAbort(4)
-    labels = [lab(f"Container(3).ListItemAbsolute({i}).Label") for i in range(int(lab("Container(3).NumItems") or 0))]
+    cid = 6 if int(lab("Container(6).NumItems") or 0) else 3
+    labels = [lab(f"Container({cid}).ListItemAbsolute({i}).Label") for i in range(int(lab(f"Container({cid}).NumItems") or 0))]
     log(f"power: editor open={cond('Window.IsVisible(selectdialog)')} items={labels}")
     shot("10a-editor")
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -501,7 +502,7 @@ def custom_test():
         import menu
         m = menu.Menu()
         wd = m.tabs[0]["widgets"][0]
-        wd["timg"], wd["bg"] = star, bgimg
+        wd["timg"], wd["bg"] = star, "special://skin/media/icons/tv.png"
         wd2 = m.tabs[0]["widgets"][1]
         wd2["notitle"] = "1"
         m.tabs[0]["icon"] = bgimg
@@ -532,7 +533,8 @@ def custom_test():
     log(f"custom: services after reset {[a for a, _b in art_of(lib)]} file={os.path.exists(d + 'services.json')}")
     xbmc.executebuiltin("RunScript(special://skin/scripts/streamedit.py)")
     mon.waitForAbort(4)
-    labels = [lab(f"Container(3).ListItemAbsolute({i}).Label") for i in range(int(lab("Container(3).NumItems") or 0))]
+    cid = 6 if int(lab("Container(6).NumItems") or 0) else 3
+    labels = [lab(f"Container({cid}).ListItemAbsolute({i}).Label") for i in range(int(lab(f"Container({cid}).NumItems") or 0))]
     log(f"custom: editor open={cond('Window.IsVisible(selectdialog)')} items={labels}")
     shot("16-editor")
     xbmc.executebuiltin("Dialog.Close(all,true)")
