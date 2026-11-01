@@ -974,6 +974,19 @@ def postersize_test():
         log(f"postersize {tag}: focus={lab('System.CurrentControlId')} labelshidden={cond('Skin.HasSetting(nuvio.posterlabels.hide)')}")
         shot(f"27-posters-{tag}-row2")
 
+def libsplit_test():
+    """Library rows with only films / only series: Kodi opens them without errors."""
+    base = "plugin://script.lucent.library/?action=lib&kind="
+    for kind in ("continue", "continue&only=movie", "continue&only=tv", "newin&only=movie", "newin&only=tv"):
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                                         "params": {"directory": base + kind, "media": "video"}})))
+        log(f"libsplit {kind}: {'error ' + str(res['error']) if 'error' in res else str(len((res.get('result') or {}).get('files') or [])) + ' items'}")
+    import sys
+    import xbmcvfs
+    sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    log(f"libsplit menu: {[menu.tr(k) for k, p, _s in menu.WIDGETS_LIBRARY if 'only=' in p]}")
+
 
 def main():
     for _ in range(180):
@@ -986,7 +999,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    postersize_test()
+    libsplit_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

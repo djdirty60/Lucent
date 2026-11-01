@@ -4,6 +4,7 @@
     plugin://script.lucent.library/?action=lib&kind=nextup     the next episode of every series you watch
     plugin://script.lucent.library/?action=lib&kind=newepisodes series you watch that got episodes you have not seen
     plugin://script.lucent.library/?action=lib&kind=newin      new in your collection (films and series together)
+    ...&only=movie / &only=tv                                    continue / newin with only films or only series
 
 Every item carries its library number (DBID), so the info page, watched marks and Play work as in Kodi's own lists.
 """
@@ -36,18 +37,18 @@ def episodes(params):
 
 
 # ----------------------------------------------------------------------------- the rows
-def continue_watching():
+def continue_watching(only=""):
     flt = {"field": "inprogress", "operator": "true", "value": ""}
     sort = {"method": "lastplayed", "order": "descending"}
-    films = rpc("VideoLibrary.GetMovies", {"properties": M_PROPS, "filter": flt, "sort": sort,
-                                           "limits": {"end": LIMIT}}).get("movies", [])
-    eps = episodes({"properties": E_PROPS, "filter": flt, "sort": sort, "limits": {"end": LIMIT}})
+    films = [] if only == "tv" else rpc("VideoLibrary.GetMovies", {"properties": M_PROPS, "filter": flt, "sort": sort,
+                                                                   "limits": {"end": LIMIT}}).get("movies", [])
+    eps = [] if only == "movie" else episodes({"properties": E_PROPS, "filter": flt, "sort": sort, "limits": {"end": LIMIT}})
     items = [("movie", m) for m in films] + [("episode", e) for e in eps]
     items.sort(key=lambda x: x[1].get("lastplayed") or "", reverse=True)
     return items[:LIMIT]
 
 
-def next_up():
+def next_up(only=""):
     """Per series you have started (newest watched first): the episode after the last one you saw."""
     shows = rpc("VideoLibrary.GetTVShows", {
         "properties": ["title", "lastplayed", "watchedepisodes", "episode", "art"],
@@ -82,7 +83,7 @@ def next_up():
     return out
 
 
-def new_episodes():
+def new_episodes(only=""):
     """Series you watch (at least one episode seen) that got episodes in the last two weeks you have not seen."""
     rules = [{"field": "playcount", "operator": "is", "value": "0"},
              {"field": "dateadded", "operator": "inthelast", "value": "14 days"}]
@@ -104,10 +105,10 @@ def new_episodes():
     return out
 
 
-def new_in_collection():
+def new_in_collection(only=""):
     sort = {"method": "dateadded", "order": "descending"}
-    films = rpc("VideoLibrary.GetMovies", {"properties": M_PROPS, "sort": sort, "limits": {"end": LIMIT}}).get("movies", [])
-    shows = rpc("VideoLibrary.GetTVShows", {"properties": S_PROPS, "sort": sort, "limits": {"end": LIMIT}}).get("tvshows", [])
+    films = [] if only == "tv" else rpc("VideoLibrary.GetMovies", {"properties": M_PROPS, "sort": sort, "limits": {"end": LIMIT}}).get("movies", [])
+    shows = [] if only == "movie" else rpc("VideoLibrary.GetTVShows", {"properties": S_PROPS, "sort": sort, "limits": {"end": LIMIT}}).get("tvshows", [])
     items = [("movie", m) for m in films] + [("tvshow", s) for s in shows]
     items.sort(key=lambda x: x[1].get("dateadded") or "", reverse=True)
     return items[:LIMIT]
@@ -217,7 +218,8 @@ def show(handle, query):
         elif q.get("kind") in FILTERS:
             items = FILTERS[q["kind"]]("movie" if q.get("type", "movie") == "movie" else "tvshow")
         else:
-            items = row() if row else []
+            only = q.get("only", "")                # only=movie / only=tv: films or series of a mixed row
+            items = row(only if only in ("movie", "tv") else "") if row else []
     except Exception as error:  # noqa: BLE001
         xbmc.log(f"[script.lucent.library] lib row {q.get('kind')}: {error}", xbmc.LOGINFO)
     kinds = [k for k, _ in items]
