@@ -541,6 +541,58 @@ def custom_test():
     mon.waitForAbort(2)
 
 
+def popup_test():
+    """Streaming pop-up: OK on a series opens its page; Play there opens the seasons and the pop-up goes away."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/service.py,8,Netflix,)")
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(Lucent_Service.xml)") and int(lab("Container(802).NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(802)")
+    mon.waitForAbort(1.5)
+    log(f"popup: open={cond('Window.IsVisible(Lucent_Service.xml)')} focus={lab('System.CurrentControlID')} "
+        f"item={lab('Container(802).ListItem.Label')!r} dbtype={lab('Container(802).ListItem.DBType')}")
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(movieinformation)"):
+            break
+    mon.waitForAbort(2)
+    log(f"popup: page={cond('Window.IsVisible(movieinformation)')} dbtype={lab('ListItem.DBType')} path={lab('ListItem.FileNameAndPath')[:70]!r}")
+    xbmc.executebuiltin("SetFocus(8)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if not cond("Window.IsVisible(Lucent_Service.xml)") and cond("Window.IsActive(videos)"):
+            break
+    mon.waitForAbort(2)
+    log(f"popup: after Play popup={cond('Window.IsVisible(Lucent_Service.xml)')} window={lab('System.CurrentWindow')} "
+        f"videos={cond('Window.IsActive(videos)')} path={lab('Container.FolderPath')[:70]!r} items={lab('Container.NumItems')}")
+    shot("17-popup-play")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    # Back from a page keeps the pop-up (only Play closes it)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/service.py,8,Netflix,)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("SetFocus(802)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(movieinformation)"):
+            break
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(4)
+    log(f"popup: after Back page={cond('Window.IsVisible(movieinformation)')} popup={cond('Window.IsVisible(Lucent_Service.xml)')}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -552,7 +604,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    custom_test()
+    popup_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

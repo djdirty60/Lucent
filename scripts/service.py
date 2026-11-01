@@ -5,6 +5,7 @@
 The lists come from Lucent Library (TMDb, saved copies). OK on a title opens its page, Back closes the pop-up.
 """
 import sys
+import threading
 import urllib.parse
 
 import xbmc
@@ -52,6 +53,29 @@ class Service(xbmcgui.WindowXMLDialog):
         HOME.setProperty("nuvio.open.path", "")
         HOME.clearProperty("nuvio.open.trakt")
         xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
+        threading.Thread(target=self.follow, daemon=True).start()
+
+    def follow(self):
+        """When Play on the title page opens the series (Seren's seasons) or starts a film, this pop-up must go away:
+        it sits above everything, so the seasons opened behind it and it looked as if Play did nothing."""
+        mon = xbmc.Monitor()
+        for _ in range(40):                       # wait for the page
+            if xbmc.getCondVisibility("Window.IsVisible(movieinformation)") or mon.waitForAbort(0.25):
+                break
+        while not mon.abortRequested():              # pages can follow each other (similar titles, a person ...)
+            while xbmc.getCondVisibility("Window.IsVisible(movieinformation)"):
+                if mon.waitForAbort(0.25):
+                    return
+            if mon.waitForAbort(1.5):
+                return
+            if not xbmc.getCondVisibility("Window.IsVisible(movieinformation) | Window.IsVisible(1180)"):
+                break
+            while xbmc.getCondVisibility("Window.IsVisible(1180)"):     # a person / studio page on top
+                if mon.waitForAbort(0.25):
+                    return
+        if HOME.getProperty("nuvio.open.leave") or xbmc.getCondVisibility(
+                "Window.IsActive(videos) | Player.HasVideo | Window.IsActive(busydialog) | Window.IsActive(busydialognocancel)"):
+            self.close()
 
     def onAction(self, action):
         if action.getId() in CLOSE:

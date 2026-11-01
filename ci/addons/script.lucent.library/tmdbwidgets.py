@@ -309,7 +309,7 @@ WANTED = [
     ("amc", ["amc plus", "amc+"]),
     ("discovery", ["discovery plus", "discovery+"]),
 ]
-PROV_VERSION = 2
+PROV_VERSION = 3                                      # 3: logos from the packs (wrong ones were cached)
 
 
 def _provider_list(region):
@@ -351,9 +351,9 @@ def providers(force=False):
         if hit:
             r, region = hit
             items.append({"id": r["provider_id"], "name": r["provider_name"], "logo": r["logo_path"], "region": region, "key": key})
-    old = {p.get("id"): p for p in saved.get("items") or []}
+    old = {p.get("id"): p for p in saved.get("items") or []} if saved.get("v") == PROV_VERSION else {}
     for p in items:                                   # the transparent logo: looked up once per service
-        p["wide"] = old.get(p["id"], {}).get("wide") if "wide" in old.get(p["id"], {}) else wide_logo(p["name"])
+        p["wide"] = old.get(p["id"], {}).get("wide") if "wide" in old.get(p["id"], {}) else wide_logo(p["name"], p.get("key", ""))
     if items:
         write_json(PROV_FILE, {"time": time.time(), "region": REGION, "v": PROV_VERSION, "items": items})
         return items
@@ -367,8 +367,8 @@ def own_services(own):
     """Your own list of services: the transparent logo is looked up once (and kept in services.json)."""
     changed = False
     for p in own:
-        if "wide" not in p:
-            p["wide"] = wide_logo(p.get("name") or "")
+        if p.get("wv") != PROV_VERSION:                   # (again) after a better way to find logos came along
+            p["wide"], p["wv"] = wide_logo(p.get("name") or ""), PROV_VERSION
             changed = True
     if changed:
         write_json(SERVICES_FILE, {"items": own})
@@ -401,19 +401,24 @@ def provider_region(pid):
     return REGION
 
 
-PACK = "resource://resource.images.studios.white/"
+PACKS = {"white": "resource.images.studios.white", "coloured": "resource.images.studios.coloured"}
+# the names the logo packs use for a service (tried in this order, also in lower case)
+PACK_NAMES = {
+    "netflix": ["Netflix"], "disney": ["Disney+", "Disney Plus"], "hbo": ["HBO Max", "Max", "HBO"],
+    "apple": ["Apple TV+", "Apple TV Plus", "Apple TV"], "hulu": ["Hulu"], "starz": ["Starz", "STARZ"],
+    "paramount": ["Paramount+", "Paramount Plus"], "peacock": ["Peacock"], "mgm": ["MGM+", "MGM Plus", "Mgm"],
+    "amc": ["AMC+", "AMC Plus"], "discovery": ["Discovery+", "discovery+", "Discovery Plus"],
+}
+WHITE_FIRST = ("apple", "hbo")                        # these look best in white; the others in their own colours
 
 
 def name_variants(name):
-    """'Disney Plus' -> Disney Plus, Disney+, Disney ...: the names a logo pack or TMDb may use for a service."""
+    """'Disney Plus' -> Disney Plus, Disney+ ...: the names a logo pack or TMDb may use for a service."""
     out = [name]
     for a, b in ((" Plus", "+"), ("Plus", "+"), (" Amazon Channel", ""), (" Standard with Ads", ""), (" with Ads", ""),
-                 ("Amazon Prime Video", "Prime Video"), ("Amazon Prime Video", "Amazon"), ("HBO Max", "Max"), ("HBO Max", "HBO")):
+                 (" Premium", ""), ("Amazon Prime Video", "Prime Video"), ("HBO Max", "Max"), ("HBO Max", "HBO")):
         if a in name:
             out.append(name.replace(a, b).strip())
-    first = name.split(" ")[0]
-    if len(first) > 2:
-        out.append(first)
     seen, res = set(), []
     for n in out:
         if n and n.lower() not in seen:
@@ -422,20 +427,42 @@ def name_variants(name):
     return res
 
 
-def wide_logo(name):
-    """A transparent logo of the service: the white logo pack first, else the company logo on TMDb. '' when none."""
-    for n in name_variants(name):
-        try:
-            if xbmcvfs.exists(f"{PACK}{n}.png"):
-                return f"{PACK}{n}.png"
-        except Exception:  # noqa: BLE001 - pack not installed
-            break
+def key_of_name(name):
+    low = (name or "").lower().replace("+", " plus")
+    for key, names in WANTED:
+        if any(low == n.replace("+", " plus") for n in names):
+            return key
+    return ""
+
+
+def pack_logo(names, order):
+    """The first of these names found in the installed logo packs (white / coloured), as a resource:// address."""
+    for pack in order:
+        folder = f"special://home/addons/{PACKS[pack]}/resources/"
+        for n in names:
+            for variant in dict.fromkeys((n, n.lower())):
+                try:
+                    if xbmcvfs.exists(f"{folder}{variant}.png"):
+                        return f"resource://{PACKS[pack]}/{variant}.png"
+                except Exception:  # noqa: BLE001
+                    pass
+    return ""
+
+
+def wide_logo(name, key=""):
+    """A transparent logo of the service: from the logo packs (white for Apple TV+ and HBO Max, coloured for the
+    others), else the company logo on TMDb with exactly this name. '' when none (the row then shows the name)."""
+    key = key or key_of_name(name)
+    names = PACK_NAMES.get(key, []) + name_variants(name)
+    order = ["white", "coloured"] if key in WHITE_FIRST else ["coloured", "white"]
+    found = pack_logo(names, order)
+    if found:
+        return found
     for n in name_variants(name)[:3]:
         data = tmdb_get("search/company", query=n) or {}
-        hits = [r for r in data.get("results") or [] if r.get("logo_path")]
-        exact = [r for r in hits if (r.get("name") or "").strip().lower() == n.lower()]
-        if exact or hits:
-            return f"{IMG}w500{(exact or hits)[0]['logo_path']}"
+        exact = [r for r in data.get("results") or [] if r.get("logo_path") and (r.get("name") or "").strip().lower() == n.lower()]
+        if exact:                                     # only an exact name: a near miss gave 'Disney Jr.' for Disney+
+            return f"{IMG}w500{exact[0]['logo_path']}"
     return ""
 
 
