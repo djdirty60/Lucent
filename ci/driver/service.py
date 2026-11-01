@@ -958,6 +958,22 @@ def watched_test():
                {"kind": "tv", "tmdb": 9, "season": 1, "episode": 1}, {"kind": "movie", "tmdb": 6666, "season": 0, "episode": 0}):
         log(f"watchedcheck {ev['kind']} {ev['tmdb']} S{ev['season']}E{ev['episode']}: {agenda_core.already_watched(ev)}")
 
+def postersize_test():
+    """Big posters (default) and small posters: the row title stays under the hero, small rows peek."""
+    for small in (False, True, False):
+        xbmc.executebuiltin("Skin.SetBool(lucent.posters.small)" if small else "Skin.Reset(lucent.posters.small)")
+        xbmc.executebuiltin("ReloadSkin()")
+        mon.waitForAbort(8)
+        xbmc.executebuiltin("ActivateWindow(home)")
+        xbmc.executebuiltin("Control.SetFocus(8101,0)")
+        mon.waitForAbort(6)
+        tag = "small" if small else "big"
+        shot(f"27-posters-{tag}-row1")
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(3)
+        log(f"postersize {tag}: focus={lab('System.CurrentControlId')} labelshidden={cond('Skin.HasSetting(nuvio.posterlabels.hide)')}")
+        shot(f"27-posters-{tag}-row2")
+
 
 def main():
     for _ in range(180):
@@ -970,9 +986,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    watched_test()
-    digital_test()
-    limit_test()
+    postersize_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
