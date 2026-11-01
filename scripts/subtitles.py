@@ -8,6 +8,7 @@ The "Search subtitles" button in the player menu opens Kodi's own subtitle searc
 """
 import json
 import sys
+import time
 
 import xbmc
 import xbmcgui
@@ -56,16 +57,145 @@ def wanted_codes():
     return {c for c in codes if c}
 
 
+# ISO 639-2 codes that Kodi's own conversion may not know (B and T forms both occur in films)
+ALIASES = {"dut": "nl", "nld": "nl", "ger": "de", "deu": "de", "fre": "fr", "fra": "fr", "chi": "zh", "zho": "zh",
+           "cze": "cs", "ces": "cs", "gre": "el", "ell": "el", "per": "fa", "fas": "fa", "rum": "ro", "ron": "ro",
+           "slo": "sk", "slk": "sk", "alb": "sq", "sqi": "sq", "arm": "hy", "hye": "hy", "geo": "ka", "kat": "ka",
+           "ice": "is", "isl": "is", "mac": "mk", "mkd": "mk", "may": "ms", "msa": "ms", "bur": "my", "mya": "my",
+           "baq": "eu", "eus": "eu", "wel": "cy", "cym": "cy", "tib": "bo", "bod": "bo", "pob": "pt", "spa": "es"}
+
+
+def lang2(value):
+    """Any language code or English language name -> two-letter code ('' when unknown)."""
+    value = (value or "").strip().lower()
+    if not value or value in ("und", "unk", "unknown", "mis", "mul", "zxx"):
+        return ""
+    value = value.split("-")[0].split("_")[0] if len(value) > 3 and value[2:3] in "-_" else value
+    if value in ALIASES:
+        return ALIASES[value]
+    if len(value) == 2:
+        return value
+    try:
+        code = (xbmc.convertLanguage(value, xbmc.ISO_639_1) or "").lower()
+    except Exception:  # noqa: BLE001
+        code = ""
+    return code if len(code) == 2 else ""
+
+
+def setting(name):
+    query = {"jsonrpc": "2.0", "id": 1, "method": "Settings.GetSettingValue", "params": {"setting": name}}
+    try:
+        return json.loads(xbmc.executeJSONRPC(json.dumps(query))).get("result", {}).get("value")
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def my_languages(audio=""):
+    """The subtitle languages you asked for: Kodi's 'Preferred subtitle language' (Settings > Player > Language)
+    and the language of the Kodi interface. Works for every language, not only Dutch."""
+    langs = {lang2(xbmc.getLanguage(xbmc.ISO_639_1))}
+    pref = setting("locale.subtitlelanguage")
+    if isinstance(pref, str):
+        if pref == "original":
+            langs.add(lang2(audio))
+        elif pref not in ("default", "none", "forced_only"):
+            langs.add(lang2(pref))
+    return {c for c in langs if c}
+
+
+def rpc(method, params):
+    query = {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
+    return json.loads(xbmc.executeJSONRPC(json.dumps(query))).get("result") or {}
+
+
+def language_name(code):
+    try:
+        from subs_live import full_name
+        return full_name(code, code.upper())
+    except Exception:  # noqa: BLE001
+        return code.upper()
+
+
+def fix_language():
+    """Kodi picked a subtitle from the film in a language you never asked for (for example a Russian 'forced' track
+    that the film marks as 'default' when the film has none in your language). Use a subtitle of the film in your
+    own language instead, or switch the subtitles off. A 'forced' track in the language you hear is kept: it only
+    translates signs and foreign speech. Only right after the start: what you choose yourself is never changed."""
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.langfix.off)") or not xbmc.getCondVisibility("VideoPlayer.SubtitlesEnabled"):
+        return
+    props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["subtitles", "currentsubtitle", "currentaudiostream"]})
+    current = props.get("currentsubtitle") or {}
+    if not current or current.get("index") is None:
+        return
+    if str(current.get("name") or "").lower().endswith((".srt", ".ass", ".ssa", ".sub", ".vtt", ".smi")):
+        return                                           # a subtitle file that was loaded on purpose
+    audio = lang2((props.get("currentaudiostream") or {}).get("language"))
+    mine = my_languages(audio)
+    code = lang2(current.get("language"))
+    if not mine or not code or code in mine:
+        return                                           # your language, or a language Kodi does not know: leave it
+    if current.get("isforced") and audio and code == audio:
+        return
+    better = [s for s in props.get("subtitles") or [] if lang2(s.get("language")) in mine]
+    better.sort(key=lambda s: (bool(s.get("isforced")), bool(s.get("isimpaired"))))   # full ones first
+    name = language_name(code)
+    if better:
+        rpc("Player.SetSubtitle", {"playerid": 1, "subtitle": better[0]["index"], "enable": True})
+        xbmc.log(f"[skin.lucent subtitles] {code} subtitle -> {better[0].get('language')} (your language)", xbmc.LOGINFO)
+        return
+    xbmc.Player().showSubtitles(False)
+    xbmc.log(f"[skin.lucent subtitles] {code} subtitle switched off: not one of your languages {sorted(mine)}", xbmc.LOGINFO)
+    xbmcgui.Dialog().notification("Lucent", f"{name} subtitles switched off" if not NL else f"Ondertitel ({name}) uitgezet",
+                                  xbmcgui.NOTIFICATION_INFO, 4000)
+
+
 class Watcher(xbmc.Player):
     def __init__(self):
         super().__init__()
         self.monitor = xbmc.Monitor()
 
     def onAVStarted(self):  # noqa: N802 - Kodi callback name
+        HOME.setProperty("lucent.play.start", f"{time.time():.1f}")   # helper.py: a search right after the start
         try:
             self.look()
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] {error}", xbmc.LOGINFO)
+
+    def next_episode_later(self):
+        """An episode: after a few minutes of watching, get the next episode's subtitle ready (subs_extra.prefetch)."""
+        if not xbmc.getInfoLabel("VideoPlayer.TVShowTitle") or xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.next.off)"):
+            return
+        try:
+            started = self.getPlayingFile()
+        except RuntimeError:
+            return
+
+        def later():
+            while not self.monitor.waitForAbort(15):
+                try:
+                    if not self.isPlayingVideo() or self.getPlayingFile() != started:
+                        return
+                    if self.getTime() >= 180:
+                        break
+                except RuntimeError:
+                    return
+            else:
+                return
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,prefetch)")
+        import threading
+        threading.Thread(target=later, daemon=True).start()
+
+    def check_again(self):
+        """Seren (or Kodi) can pick the film's subtitle again some seconds after the start: look once more."""
+        def later():
+            if self.monitor.waitForAbort(12) or not self.isPlayingVideo():
+                return
+            try:
+                fix_language()
+            except Exception as error:  # noqa: BLE001
+                xbmc.log(f"[skin.lucent subtitles] language check (again): {error}", xbmc.LOGINFO)
+        import threading
+        threading.Thread(target=later, daemon=True).start()
 
     def is_youtube(self):
         """A YouTube video (a trailer, or something started from the YouTube add-on)."""
@@ -80,8 +210,6 @@ class Watcher(xbmc.Player):
         return any(word in text for word in ("plugin.video.youtube", "youtube.com", "googlevideo.com", "youtu.be"))
 
     def look(self):
-        if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not service_id():
-            return
         if not self.isPlayingVideo() or xbmc.getCondVisibility("VideoPlayer.Content(livetv) | Player.IsInternetStream + String.IsEmpty(VideoPlayer.Title)"):
             return
         if self.is_youtube():
@@ -90,10 +218,21 @@ class Watcher(xbmc.Player):
             return
         if not self.isPlayingVideo() or self.is_youtube():
             return
+        try:
+            fix_language()
+        except Exception as error:  # noqa: BLE001 - never break playback
+            xbmc.log(f"[skin.lucent subtitles] language check: {error}", xbmc.LOGINFO)
+        if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not service_id():
+            self.check_again()
+            return
+        self.next_episode_later()
         have = {s.lower() for s in (self.getAvailableSubtitleStreams() or [])}
         if have & wanted_codes():
             return
-        if xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):
+        self.check_again()
+        if xbmc.getCondVisibility("String.IsEqual(Skin.String(lucent.subs.mode),background)"):
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,background)")   # quietly, no window
+        elif xbmc.getCondVisibility("Skin.HasSetting(lucent.subs.native.off)"):
             xbmc.executebuiltin("ActivateWindow(subtitlesearch)")
         else:
             xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")   # Lucent's live list (opens once the film really plays)

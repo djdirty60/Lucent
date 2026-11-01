@@ -199,8 +199,12 @@ def st_subs():
              else t("Lucent Subtitles is not the default yet", "Lucent Ondertitels is nog niet de standaard"),
              "OpenSubtitles ✓" if os_ok else t("OpenSubtitles: no account", "OpenSubtitles: geen account"),
              "SubDL ✓" if subdl_ok else t("SubDL: no key", "SubDL: geen sleutel")]
-    parts.append(t("searching automatically", "zoekt automatisch") if cond("Skin.HasSetting(nuvio.autosubs)")
-                 else t("not searching automatically", "zoekt niet automatisch"))
+    if not cond("Skin.HasSetting(nuvio.autosubs)"):
+        parts.append(t("not searching automatically", "zoekt niet automatisch"))
+    elif xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background":
+        parts.append(t("picks one by itself", "kiest er zelf een"))
+    else:
+        parts.append(t("searching automatically", "zoekt automatisch"))
     return ("ok" if subs_default() and (os_ok or subdl_ok) else "todo"), "  ·  ".join(parts)
 
 
@@ -210,10 +214,16 @@ def ac_subs():
     out = [(t("Accounts and keys", "Accounts en sleutels"), lambda: run(f"Addon.OpenSettings({SUBS})"))]
     if not subs_default():
         out.append((t("Make it the default", "Als standaard instellen"), lambda: run("RunScript(special://skin/scripts/subtitles.py,default)")))
-    auto = cond("Skin.HasSetting(nuvio.autosubs)")
-    out.append((t("Automatic search: on", "Automatisch zoeken: aan") if auto else t("Automatic search: off", "Automatisch zoeken: uit"),
-                lambda: run("Skin.ToggleSetting(nuvio.autosubs)")))
-    out.append((t("Gemini key (AI)", "Gemini-sleutel (AI)"), lambda: run("RunScript(special://skin/scripts/subs_live.py,key)")))
+    if not cond("Skin.HasSetting(nuvio.autosubs)"):
+        mode = t("off", "uit")
+    elif xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background":
+        mode = t("in the background", "op de achtergrond") + (" + AI" if cond("Skin.HasSetting(lucent.subs.bg.ai)") else "")
+    else:
+        mode = t("show the list", "lijst laten zien")
+    out.append((t(f"Automatic search: {mode}", f"Automatisch zoeken: {mode}"),
+                lambda: run("RunScript(special://skin/scripts/subs_live.py,mode)")))
+    out.append((t("AI translation (Gemini, OpenRouter, Claude)", "AI-vertaling (Gemini, OpenRouter, Claude)"),
+                lambda: run("RunScript(special://skin/scripts/subs_live.py,key)")))
     return out
 
 

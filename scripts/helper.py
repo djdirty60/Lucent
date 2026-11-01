@@ -111,8 +111,14 @@ def run():
             subs["catchup"] = catchup.Watcher()            # a Kodi player listener, like the subtitle one
         subs["catchup"].tick()
 
+    def subtitle_wishes():
+        import subs_extra
+        subs_extra.check_wanted()                   # every hour; each video on the list at most every 6 hours
+
     def subtitles():
-        if cond("Skin.HasSetting(nuvio.autosubs)"):
+        # the watcher also switches off a film's subtitle in a language you did not ask for (subtitles.py), so it
+        # runs when that is wanted too, not only for the automatic search
+        if cond("Skin.HasSetting(nuvio.autosubs) | !Skin.HasSetting(lucent.subs.langfix.off)"):
             if subs["watcher"] is None:
                 import subtitles as s
                 subs["watcher"] = s.Watcher()       # a Kodi player listener: looks when a video starts
@@ -123,6 +129,7 @@ def run():
         Job("sport", 30, 15, sport, lambda: cond("Pvr.HasTVChannels")),
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
         Job("calendar", 120, 60, calendar),
+        Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)
         Job("xtream list", 24 * 3600, 300, xtream_list),             # the channel list Lucent builds itself: once a day
@@ -154,6 +161,13 @@ def run():
         if now - swap["t"] < 8 or not cond("Window.IsActive(subtitlesearch)"):
             return
         if cond("Skin.HasSetting(lucent.subs.native.off)") or not cond("Player.HasVideo"):
+            return
+        if cond("String.IsEqual(Skin.String(lucent.subs.mode),background)") and now - float(HOME.getProperty("lucent.play.start") or 0) < 90:
+            # another add-on's automatic search right after the start: Lucent picks one quietly instead
+            swap["t"] = now
+            xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
+            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,background)")
+            log("Kodi's subtitle search -> Lucent background pick")
             return
         swap["t"] = now
         xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")

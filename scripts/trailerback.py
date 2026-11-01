@@ -21,21 +21,20 @@ def main():
     player = xbmc.Player()
     waited = 0.0
     while not player.isPlayingVideo():
-        if monitor.waitForAbort(0.25):
+        if monitor.waitForAbort(0.1):
             return
-        waited += 0.25
+        waited += 0.1
         if waited > START_WAIT:
             log("the trailer did not start, nothing to come back to")
             return
-    # the trailer started: it must be full screen. When Kodi leaves it windowed behind the page / Home, press Full screen
-    shown = False
-    for attempt in range(8):
+    # the trailer started: it must be full screen at once. Kodi does not switch to full screen while the page (a
+    # dialog) is open, so the video would play behind it: close the page and show the video (the page comes back after)
+    for attempt in range(6):
         if xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)"):
-            shown = True
             break
-        if attempt in (3, 6):
-            log("trailer is playing behind the page: switching to full screen")
-            xbmc.executebuiltin("Action(FullScreen)")
+        log("trailer is playing behind the page: closing the page, full screen")
+        xbmc.executebuiltin("Dialog.Close(movieinformation,true)")
+        xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
         if monitor.waitForAbort(0.5):
             return
     while player.isPlayingVideo():

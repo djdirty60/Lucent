@@ -7225,6 +7225,16 @@
          title of the next row peeking in. Read when Home loads (the setting reloads the skin). -->
     <include name="LucentPosterRowBig"><height>494</height></include>
     <include name="LucentPosterRowSmall"><height>450</height></include>
+    <!-- landscape rows get the same height as poster rows, so the row above never peeks into the plot text.
+         The cards are zoomed to fill it: 140% with big posters, 125% with small posters. -->
+    <include name="LucentLandRow">
+        <include condition="Skin.HasSetting(lucent.posters.small)">LucentPosterRowSmall</include>
+        <include condition="!Skin.HasSetting(lucent.posters.small)">LucentPosterRowBig</include>
+    </include>
+    <include name="LucentLandZoom">
+        <animation effect="zoom" start="140" end="140" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+        <animation effect="zoom" start="125" end="125" center="0,40" time="0" condition="Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+    </include>
     <include name="HomeRows">
             <!-- Sport today: a game of a team you follow (sport_plan.home_card); OK watches the channel -->
             <control type="group">
@@ -7970,7 +7980,7 @@
             <!-- Widget 1 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9911)</visible>
                 <control type="label">
                     <left>0</left>
@@ -8015,6 +8025,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -8681,7 +8692,7 @@
             <!-- Widget 2 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9912)</visible>
                 <control type="label">
                     <left>0</left>
@@ -8726,6 +8737,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -9392,7 +9404,7 @@
             <!-- Widget 3 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9913)</visible>
                 <control type="label">
                     <left>0</left>
@@ -9437,6 +9449,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -10103,7 +10116,7 @@
             <!-- Widget 4 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9914)</visible>
                 <control type="label">
                     <left>0</left>
@@ -10148,6 +10161,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -10814,7 +10828,7 @@
             <!-- Widget 5 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9915)</visible>
                 <control type="label">
                     <left>0</left>
@@ -10859,6 +10873,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -11525,7 +11540,7 @@
             <!-- Widget 6 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9916)</visible>
                 <control type="label">
                     <left>0</left>
@@ -11570,6 +11585,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -12241,7 +12257,7 @@
             <!-- Widget 7 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9917)</visible>
                 <control type="label">
                     <left>0</left>
@@ -12286,6 +12302,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -12952,7 +12969,7 @@
             <!-- Widget 8 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9918)</visible>
                 <control type="label">
                     <left>0</left>
@@ -12997,6 +13014,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -13663,7 +13681,7 @@
             <!-- Widget 9 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9919)</visible>
                 <control type="label">
                     <left>0</left>
@@ -13708,6 +13726,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
@@ -14374,7 +14393,7 @@
             <!-- Widget 10 (land) -->
             <control type="group">
                 <width>1760</width>
-                <height>369</height>
+                <include>LucentLandRow</include>
                 <visible>Control.IsVisible(9920)</visible>
                 <control type="label">
                     <left>0</left>
@@ -14419,6 +14438,7 @@
                     <top>40</top>
                     <width>1800</width>
                     <height>313</height>
+                    <include>LucentLandZoom</include>
                     <orientation>horizontal</orientation>
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>

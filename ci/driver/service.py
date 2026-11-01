@@ -988,6 +988,38 @@ def libsplit_test():
     import menu
     log(f"libsplit menu: {[menu.tr(k) for k, p, _s in menu.WIDGETS_LIBRARY if 'only=' in p]}")
 
+def trailer_test():
+    """A trailer from the page: full screen at once (not behind the page), and the page comes back afterwards."""
+    xbmc.executebuiltin('ActivateWindow(Videos,"videodb://movies/titles/",return)')
+    mon.waitForAbort(4)
+    for _ in range(4):
+        if lab("ListItem.Label") == "Lib Film":
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Info)")
+    mon.waitForAbort(4)
+    log(f"trailer: page open={cond('Window.IsActive(movieinformation)')} item={lab('ListItem.Label')!r}")
+    t0 = time.time()
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    xbmc.executebuiltin("SetProperty(nuvio.open.leave,1,home)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/trailerback.py)")
+    seen = []
+    while time.time() - t0 < 8:
+        state = (xbmc.Player().isPlayingVideo(), cond("Window.IsActive(fullscreenvideo)"), cond("Window.IsActive(movieinformation)"))
+        if not seen or seen[-1][1:] != state:
+            seen.append((round(time.time() - t0, 1),) + state)
+        mon.waitForAbort(0.1)
+    log(f"trailer: (time, playing, fullscreen, page) {seen}")
+    shot("28-trailer-playing")
+    xbmc.Player().stop()
+    mon.waitForAbort(5)
+    log(f"trailer: after stop page open={cond('Window.IsActive(movieinformation)')} window={lab('System.CurrentWindow')!r}")
+    shot("28-trailer-after")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
 
 def main():
     for _ in range(180):
@@ -1000,7 +1032,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    libsplit_test()
+    trailer_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
