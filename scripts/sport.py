@@ -29,6 +29,7 @@ F_CHIPS, F_SEARCH, F_ORDER, F_MORE, F_SPORTS, F_COMPS, F_BTN, F_TEAMS = 520, 521
 SPORT_ORDER = ("soccer", "basketball", "football", "hockey", "baseball", "rugby", "racing", "golf", "tennis", "mma", "aussie")
 FOLLOW_BUTTON = 104
 LIST = 200
+LIVE_STRIP = 205        # All games: the games that are on now, as cards above the list
 DAY_BUTTONS = range(111, 118)
 DAY_PREV, DAY_NEXT = 110, 118
 CHANNEL_BUTTONS = {311: 1, 312: 2, 313: 3, 314: 4, 341: 1, 342: 2, 343: 3, 344: 4}
@@ -117,6 +118,24 @@ def colour(hex_value, alpha="FF"):
     return alpha + hex_value.upper()
 
 
+def live_progress(ev):
+    """1..10: how far a football game is (the minute out of 90; half time = 5); '' for other sports."""
+    status = (ev.get("status") or "").strip()
+    if status.upper() in ("HT", "HALFTIME", "RUST"):
+        return "5"
+    m = re.match(r"(\d+)(?:\+\d+)?'", status)
+    if not m:
+        return ""
+    return str(min(10, max(1, round(int(m.group(1)) / 9))))
+
+
+def ordinal(n):
+    n = int(n) if str(n).isdigit() else n
+    if not isinstance(n, int):
+        return str(n)
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
 def listitem(label, label2="", icon="", **props):
     item = xbmcgui.ListItem(label, label2)
     if icon:
@@ -144,6 +163,7 @@ class Sport(xbmcgui.WindowXML):
         self.team_name = ""
         self.team_events = []
         self.table_token = 0
+        self.club_token = 0
         self.table_pos = -1
         self.guide_busy = False
         self.has_pvr = False
@@ -164,6 +184,8 @@ class Sport(xbmcgui.WindowXML):
             self.restore_preview()          # back from full screen or a pop-up: the playing channel goes in the TV window
             return
         self.ready = True
+        for key in ("col_w", "col_d", "col_l", "col_club", "tc_last5", "c_home", "c_away", "c_next1"):
+            self.setProperty(f"sport.t.{key}", sc.t(key))
         for key in ("title", "mine", "all", "tables", "follow", "watch", "gp", "gd", "pts", "powered", "notable", "hint", "hint_all", "previewhint", "fullhint", "stoptext", "f_search", "f_order", "f_more", "f_hint", "f_noteams"):
             self.setProperty(f"sport.t.{key}", sc.t(key))
         xbmcgui.Window(10000).setProperty("lucent.sport.wid", str(xbmcgui.getCurrentWindowId()))
@@ -214,9 +236,14 @@ class Sport(xbmcgui.WindowXML):
                 epg.stop()
             self.close()
             return
+        if self.getFocusId() == LIVE_STRIP:
+            self.follow_strip()
         if aid == ACTION_STOP and epg.active()[0]:
             self.stop_preview()
             return
+        if self.getFocusId() == TABLE_LIST:
+            self.club_token += 1
+            threading.Thread(target=self.club_after, args=(self.club_token, 0.3), daemon=True).start()
         if self.getFocusId() == LEAGUE_LIST:
             self.table_token += 1
             token = self.table_token
@@ -289,6 +316,11 @@ class Sport(xbmcgui.WindowXML):
         elif cid == HERO_LIST or cid in SECTION_LISTS:
             ev, item = self.current()
             if ev and item:
+                self.open_game(ev)
+        elif cid == LIVE_STRIP:
+            item = self.getControl(LIVE_STRIP).getSelectedItem()
+            ev = self.by_id.get(item.getProperty("evid")) if item else None
+            if ev:
                 self.open_game(ev)
         elif cid == LIST:
             ev, item = self.current()
@@ -478,6 +510,7 @@ class Sport(xbmcgui.WindowXML):
             items = [self.event_item(ev, data) for ev in self.team_events]
         elif self.view == "mine":
             self.fill_mine(data, keep_focus)
+            self.fill_strip([], data)
             self.getControl(LIST).reset()
             self.fill_days()
             if self.hero_events or self.sections_shown:
@@ -488,10 +521,11 @@ class Sport(xbmcgui.WindowXML):
         else:
             self.events = events
             self.by_id = {e["id"]: e for e in events}
-            items = [self.event_item(ev, data) for ev in events]
+            items = self.all_items(events, data)
             self.setProperty("sport.listtitle", nice_day(self.day).upper() if abs((self.day - ac.today()).days) <= 1 else ac.day_long(self.day).upper())
             self.setProperty("sport.listcount", sc.t("list_n", len(events)) if events else "")
         self.setProperty("sport.hashero", "1" if self.hero_events else "")
+        self.fill_strip(events if self.view == "all" else [], data, keep_focus)
         control = self.getControl(LIST)
         position = control.getSelectedPosition() if keep_focus else 0
         control.reset()
@@ -503,6 +537,67 @@ class Sport(xbmcgui.WindowXML):
             self.setProperty("sport.empty", "")
         else:
             self.empty_state()
+
+    # ------------------------------------------------------------------ All games: live first, per competition
+    def all_items(self, events, data):
+        """Every game grouped per competition (in the order of their first game); the first game of a competition
+        carries its name, shown above the row."""
+        groups, order = {}, []
+        for ev in events:
+            if ev["league"] not in groups:
+                groups[ev["league"]] = []
+                order.append(ev["league"])
+            groups[ev["league"]].append(ev)
+        items = []
+        for league in order:
+            evs = groups[league]
+            for n, ev in enumerate(evs):
+                items.append(self.event_item(ev, data, header=league_name(league).upper() if n == 0 else "",
+                                             headersub=sc.t("list_n", len(evs)) if n == 0 else ""))
+        return items
+
+    def fill_strip(self, events, data, keep_focus=False):
+        """The games that are on now as cards above the list (OK opens the game, the panel on the right follows the
+        card). Without live games the list takes the whole height again."""
+        live = [e for e in events if e["state"] == "in" and e["kind"] != "event"]
+        strip = self.getControl(LIVE_STRIP)
+        keep = strip.getSelectedPosition() if keep_focus else 0
+        strip.reset()
+        cards = []
+        for ev in live:
+            chans = self.channels_of(ev, data)
+            cards.append(listitem(ev["title"] if ev.get("title") else "", "",
+                                  hname=ev["home"].get("short") or ev["home"].get("name", ""),
+                                  aname=ev["away"].get("short") or ev["away"].get("name", ""),
+                                  hlogo=ev["home"].get("logo", ""), alogo=ev["away"].get("logo", ""),
+                                  score=score_text(ev), min=ev["status"], chan=chans[0]["name"] if chans else "",
+                                  prog=live_progress(ev), evid=ev["id"]))
+        if cards:
+            strip.addItems(cards)
+            strip.selectItem(min(max(keep, 0), len(cards) - 1))
+        self.setProperty("sport.live", f"{sc.t('livenow').upper()}  ·  {len(cards)}" if cards else "")
+        # the list sits under the cards (and is that much shorter), or in its own place
+        lst = self.getControl(LIST)
+        if cards:
+            lst.setPosition(150, 520)
+            lst.setHeight(500)
+        else:
+            lst.setPosition(150, 270)
+            lst.setHeight(750)
+
+    def follow_strip(self):
+        """A card in the live row has the focus: select the same game in the list, so the panel shows it."""
+        item = self.getControl(LIVE_STRIP).getSelectedItem()
+        if not item:
+            return
+        evid = item.getProperty("evid")
+        lst = self.getControl(LIST)
+        for n in range(lst.size()):
+            if lst.getListItem(n).getProperty("evid") == evid:
+                if lst.getSelectedPosition() != n:
+                    lst.selectItem(n)
+                break
+        self.tint()
 
     def mine_data(self, data):
         """Hero games and one block per team / competition / name you follow (your order): ([events], [section dicts])."""
@@ -541,9 +636,18 @@ class Sport(xbmcgui.WindowXML):
         pool = [e for e in live_all + coming_all if e["id"] in fav]
         hero = pool[:HERO_MAX]
         sections = []
-        if live_all or coming_all:
-            sections.append({"title": sc.t("liveup"), "sub": f"{len(live_all)} live" if live_all else "", "logo": SPORT_ICON,
-                             "events": (live_all + coming_all)[:8]})
+        today = ac.today()
+        big_live = {e["id"] for e in hero if e["state"] == "in"}        # already on the scoreboard
+        also = [e for e in live_all + coming_all if e["id"] not in big_live and sc.local_day(e["start"]) == today]
+        if also:
+            teams = [t.get("name", "") for t in follow.get("teams", []) if t.get("name")][:3]
+            alerts = sc.t("goal_alerts", ", ".join(teams)) if teams and not xbmc.getCondVisibility("Skin.HasSetting(lucent.goals.off)") else ""
+            sections.append({"title": sc.t("also_today"), "sub": alerts or (f"{len(live_all)} live" if live_all else ""),
+                             "logo": SPORT_ICON, "events": also[:8]})
+        week_end = time.time() + 7 * 86400
+        week = [e for e in coming_all if e["id"] in fav and sc.local_day(e["start"]) != today and e["start"] < week_end]
+        if week:
+            sections.append({"title": sc.t("your_week"), "sub": "", "logo": SPORT_ICON, "events": week[:8]})
         sections += rows                      # followed teams show up even without games (and without IPTV)
         for sec in sections:
             for e in sec["events"]:
@@ -569,8 +673,14 @@ class Sport(xbmcgui.WindowXML):
         for n, ev in enumerate(hero, 1):
             label, label2, props = self.event_props(ev, data)
             props["heroof"] = f"{n} / {len(hero)}"
+            if ev["state"] == "in" and ev["kind"] == "teams":       # your team plays now: the card is a live scoreboard
+                props["prog"] = str(self.progress(ev))
+                props["when"] = "  ·  ".join(x for x in (ev.get("status"), ev.get("venue")) if x)
             items.append(listitem(label, label2, **props))
         self.fill_list(HERO_LIST, items, keep.get(HERO_LIST, 0))
+        live_hero = [(n, ev) for n, ev in enumerate(hero) if ev["state"] == "in" and ev["kind"] == "teams"]
+        if live_hero:
+            threading.Thread(target=self.hero_goals, args=(live_hero,), daemon=True).start()
         self.sections_shown = min(len(sections), len(SECTION_LISTS))
         for k, cid in enumerate(SECTION_LISTS):
             if k < len(sections):
@@ -593,6 +703,30 @@ class Sport(xbmcgui.WindowXML):
                 self.fill_list(cid, [], 0)
         self.last_tint = None
         self.tint()
+
+    def hero_goals(self, live_hero):
+        """Who scored, per side, on the live scoreboard ('12' Leão  ·  31' Pulisic'), from ESPN's game summary."""
+        for n, ev in live_hero:
+            detail = self.game_detail(ev)
+            sides = {"home": [], "away": []}
+            habbr = ev["home"].get("abbr") or ev["home"].get("name", "")
+            for i in range(5, 0, -1):                             # the summary lists the newest goal first
+                minute = detail.get(f"sc{i}m")
+                if not minute:
+                    continue
+                who = detail.get(f"sc{i}x", "")
+                who = who.replace(" Own Goal", " (og)" if not sc.NL else " (e.d.)").replace(" Penalty - Scored", " (p)")
+                for word in (" Goal", "Goal - ", "Goal! "):
+                    who = who.replace(word, "")
+                side = "home" if detail.get(f"sc{i}t") == habbr else "away"
+                sides[side].append(f"{minute} {who.strip()}".strip())
+            try:
+                item = self.getControl(HERO_LIST).getListItem(n)
+            except Exception:  # noqa: BLE001 - the page moved on
+                return
+            if item.getProperty("evid") == ev["id"]:
+                item.setProperty("hgoals", "  ·  ".join(sides["home"]))
+                item.setProperty("agoals", "  ·  ".join(sides["away"]))
 
     def fill_list(self, cid, items, position=0):
         control = self.getControl(cid)
@@ -1271,6 +1405,7 @@ class Sport(xbmcgui.WindowXML):
                 items.append(listitem(row["header"], header=row["header"]))
                 continue
             props = {"rank": row.get("rank", ""), "gp": row.get("gp", ""), "gd": row.get("gd", ""), "pts": row.get("pts", ""),
+                     "w": row.get("w", ""), "d": row.get("d", ""), "l": row.get("l", ""),
                      "teamid": row.get("id", ""), "edge": row.get("edge", ""), "mine": "1" if row.get("mine") else "",
                      "ring": ("66" + row["teamcol"][2:]) if row.get("teamcol") else ""}
             chg = row.get("chg", 0)
@@ -1289,6 +1424,56 @@ class Sport(xbmcgui.WindowXML):
         for n in range(len(sc.legend(rows)) + 1, 5):
             self.setProperty(f"sport.leg{n}.col", "")
             self.setProperty(f"sport.leg{n}.text", "")
+        self.club_token += 1
+        threading.Thread(target=self.club_after, args=(self.club_token,), daemon=True).start()
+
+    def club_after(self, token, wait=0.0):
+        if wait and xbmc.Monitor().waitForAbort(wait):
+            return
+        if token == self.club_token and not self.closing:
+            try:
+                self.fill_club()
+            except Exception as error:  # noqa: BLE001 - the panel is extra, the table must stay
+                sc.log(f"club panel: {error}")
+
+    def fill_club(self):
+        """The panel next to the table: the club of the selected row with its form, last 5, home / away and next game."""
+        item = self.getControl(TABLE_LIST).getSelectedItem()
+        if not item or item.getProperty("header") or not item.getProperty("teamid"):
+            self.setProperty("sport.tc.on", "")
+            return
+        key, team_id, name = self.table_key, item.getProperty("teamid"), item.getLabel()
+        card = sc.team_card(key, team_id, name)
+        row = card["row"]
+        rank = row.get("rank", item.getProperty("rank"))
+        place = (f"{rank}e" if sc.NL else ordinal(rank)) if rank not in ("", None) else ""
+        p = {"name": name, "logo": item.getArt("icon") if hasattr(item, "getArt") else "",
+             "col": item.getProperty("ring")[2:] if item.getProperty("ring") else "",
+             "sub": sc.t("tc_sub", place, row.get("pts", item.getProperty("pts")), row.get("gp", item.getProperty("gp"))) if place else ""}
+        p["col"] = ("CC" + p["col"]) if p["col"] else "CC3A4A5C"
+        for n in range(5):
+            if n < len(card["recent"]):
+                ev, (letter, score, _opp, _home) = card["recent"][n]
+                p[f"f{n + 1}"], p[f"f{n + 1}c"] = LETTERS.get(letter, letter), sc.FORM_COLOURS.get(letter, "")
+                p[f"r{n + 1}"] = f"{ev['home'].get('name', '')} – {ev['away'].get('name', '')}"
+                p[f"r{n + 1}s"] = score
+            else:
+                p[f"f{n + 1}"] = p[f"f{n + 1}c"] = p[f"r{n + 1}"] = p[f"r{n + 1}s"] = ""
+        p["home"], p["away"] = card["home"], card["away"]
+        nxt = card["next"]
+        if nxt:
+            data = epg.load() if self.has_pvr else {}
+            chans = self.channels_of(nxt, data)
+            p["next"] = f"{short_when(nxt)}  ·  {nxt['home'].get('name', '')} – {nxt['away'].get('name', '')}"
+            p["nextchan"] = chans[0]["name"] if chans else ""
+        else:
+            p["next"], p["nextchan"] = sc.t("c_nonext"), ""
+        if self.getControl(TABLE_LIST).getSelectedItem() is not item and \
+                self.getControl(TABLE_LIST).getSelectedItem().getProperty("teamid") != team_id:
+            return                                     # moved on while we were busy
+        for k, v in p.items():
+            self.setProperty(f"sport.tc.{k}", str(v))
+        self.setProperty("sport.tc.on", "1")
 
     def open_team_card(self):
         item = self.getControl(TABLE_LIST).getSelectedItem()
