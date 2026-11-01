@@ -73,9 +73,16 @@ class Service(xbmcgui.WindowXMLDialog):
             while xbmc.getCondVisibility("Window.IsVisible(1180)"):     # a person / studio page on top
                 if mon.waitForAbort(0.25):
                     return
-        if HOME.getProperty("nuvio.open.leave") or xbmc.getCondVisibility(
-                "Window.IsActive(videos) | Player.HasVideo | Window.IsActive(busydialog) | Window.IsActive(busydialognocancel)"):
-            self.close()
+        leave = HOME.getProperty("nuvio.open.leave")
+        folder = HOME.getProperty("nuvio.open.folder")
+        xbmc.log(f"[skin.lucent] service.py: page closed, leave={leave!r} folder={bool(folder)}", xbmc.LOGINFO)
+        if not leave and not xbmc.getCondVisibility("Window.IsActive(videos) | Player.HasVideo"):
+            return                                   # closed with Back: stay in the pop-up
+        self.close()
+        # Play on a series page: Kodi cannot open the seasons while this pop-up is on screen, so it is done here
+        if folder and not xbmc.getCondVisibility("Player.HasVideo"):
+            mon.waitForAbort(0.3)
+            xbmc.executebuiltin(f'ActivateWindow(Videos,"{folder}",return)')
 
     def onAction(self, action):
         if action.getId() in CLOSE:
