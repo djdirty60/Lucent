@@ -1552,6 +1552,26 @@ def guide_test():
     mon.waitForAbort(2)
 
 
+def browse_test():
+    """Issue #3: the file browser that add-ons open (Dialog().browse) must list the files, not only '..'."""
+    import threading
+    for typ, mask, start in ((1, "", "special://skin/xml/"), (1, ".xml", "special://skin/xml/"), (2, "", "special://skin/media/"),
+                             (1, "", "special://skin/")):
+        def later(typ=typ, mask=mask):
+            mon.waitForAbort(4)
+            n = lab("Container(450).NumItems")
+            log(f"browse: type={typ} mask={mask!r} window={lab('System.CurrentWindow')!r} focus={lab('System.CurrentControlID')} "
+                f"items450={n} items451={lab('Container(451).NumItems')} first={[lab(f'Container(450).ListItemAbsolute({i}).Label') for i in range(4)]} "
+                f"vis450={cond('Control.IsVisible(450)')} vis451={cond('Control.IsVisible(451)')}")
+            shot(f"40-browse-{typ}-{mask.strip('.') or 'all'}")
+            xbmc.executebuiltin("Action(Back)")
+        t = threading.Thread(target=later)
+        t.start()
+        xbmcgui.Dialog().browse(typ, "Test", "files", mask, False, False, start)
+        t.join()
+        mon.waitForAbort(1)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1565,12 +1585,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    sportA_test()
-    tables_test()
-    club_test()
-    f1_test()
-    follow_test()
-    mine_test()
+    browse_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
