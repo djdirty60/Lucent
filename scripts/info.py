@@ -1165,6 +1165,9 @@ def open_title():
     tmdb_id = HOME.getProperty("nuvio.open.tmdb")
     trakt_id = HOME.getProperty("nuvio.open.trakt")
     mode = sys.argv[2] if len(sys.argv) > 2 else "path"
+    if kind == "tv" and len(sys.argv) > 3 and sys.argv[3] == "series" and not Skin_series_page():
+        open_seasons()                                   # a series in a TMDb row: straight to its seasons
+        return
     fallback = f"RunScript(special://skin/scripts/openpage.py,{mode})"
     if not tmdb_id.isdigit() or not tmdb_key():
         xbmc.executebuiltin(fallback)
@@ -1204,6 +1207,31 @@ def open_title():
         xbmc.executebuiltin(fallback)
         return
     watch_back(gen)
+
+
+def Skin_series_page():
+    """Skin setting: a series in a TMDb row opens its page first (instead of its seasons)."""
+    return xbmc.getCondVisibility("Skin.HasSetting(lucent.series.page)")
+
+
+def open_seasons():
+    """A series in a TMDb row (streaming services ...): straight to its seasons and episodes in Seren, like a series
+    in the library. When Trakt does not know it (or Seren is missing) its page opens instead."""
+    tmdb_id = HOME.getProperty("nuvio.open.tmdb")
+    trakt = HOME.getProperty("nuvio.open.trakt")
+    if not trakt.isdigit() and tmdb_id.isdigit() and xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})"):
+        trakt = str(trakt_id_for("tv", tmdb_id) or "")
+    if not trakt.isdigit():
+        if len(sys.argv) > 3:
+            sys.argv[3] = ""                             # no endless loop: open its page
+        open_title()
+        return
+    folder = seren_seasons_url(trakt)
+    log(f"seasons of {tmdb_id} (trakt {trakt})")
+    if xbmc.getCondVisibility("Window.IsVisible(Lucent_Service.xml)"):
+        HOME.setProperty("lucent.svc.folder", folder)        # the pop-up closes and opens it (it is on top of everything)
+    else:
+        xbmc.executebuiltin(f'ActivateWindow(Videos,"{folder}",return)')
 
 
 LOGO_DIR = "special://profile/addon_data/skin.lucent/logos/"
@@ -1261,6 +1289,8 @@ if __name__ == "__main__":
         show_studio(HOME.getProperty("nuvio.open.studio"))
     elif action == "open":
         open_title()
+    elif action == "seasons":
+        open_seasons()
     elif action == "resumeshow":
         resume_show()
     elif action == "tmdbkey":
