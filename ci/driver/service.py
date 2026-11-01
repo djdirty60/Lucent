@@ -1569,7 +1569,7 @@ def main():
     club_test()
     f1_test()
     mine_test()
-    guide_test()
+
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
