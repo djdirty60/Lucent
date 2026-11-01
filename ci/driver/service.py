@@ -1200,7 +1200,7 @@ def skip_test():
     mon.waitForAbort(2)
 
 def sportA_test():
-    """Sport > All games: live games as a strip of cards on top, then the games per competition."""
+    """Sport > All games: live games as cards (list 205) on top, then the games per competition (list 200)."""
     xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
     for _ in range(60):
         mon.waitForAbort(1)
@@ -1215,30 +1215,47 @@ def sportA_test():
         if int(lab("Container(200).NumItems") or 0) > 0:
             break
     mon.waitForAbort(4)
-    xbmc.executebuiltin("SetFocus(200,0,absolute)")
-    mon.waitForAbort(2)
     P = lambda k: lab(f"Container(200).ListItem.Property({k})")  # noqa: E731
+    C = lambda k: lab(f"Container(205).ListItem.Property({k})")  # noqa: E731
     n = int(lab("Container(200).NumItems") or 0)
-    heads = [lab(f"Container(200).ListItemAbsolute({i}).Property(header)") for i in range(n)]
-    log(f"sportA: items={n} first strip={P('isstrip')!r} title={P('striptitle')!r} cards={[P(f'l{k}hname') + '-' + P(f'l{k}aname') + ' ' + P(f'l{k}score') + ' ' + P(f'l{k}min') + ' p' + P(f'l{k}prog') for k in (1, 2, 3)]}")
-    log(f"sportA: competitions in order {[h for h in heads if h]}")
+    heads = [lab(f"Container(200).ListItemAbsolute({i}).Property(header)") + "/" + lab(f"Container(200).ListItemAbsolute({i}).Property(headersub)") for i in range(n)]
+    ncards = int(lab("Container(205).NumItems") or 0)
+    log(f"sportA: items={n} cards={ncards} live={lab('Window(Lucent_Sport.xml).Property(sport.live)') or lab('Window.Property(sport.live)')!r} strip visible={cond('Control.IsVisible(205)')}")
+    log(f"sportA: competitions in order {[h for h in heads if h != '/']}")
+    xbmc.executebuiltin("SetFocus(114)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1.5)
+    log(f"sportA: day strip Down -> focus={lab('System.CurrentControlID')}")
     shot("32-sportA-top")
-    if P("isstrip"):
-        for step in range(3):
-            before = (P("lsel"), P("hname"))
+    if ncards:
+        for step in range(min(3, ncards)):
+            log(f"sportA: card {step}: {C('hname')}-{C('aname')} {C('score')!r} min={C('min')!r} chan={C('chan')!r} prog={C('prog')!r} "
+                f"panel={P('hname')}-{P('aname')} same={C('evid') == P('evid')} focus={lab('System.CurrentControlID')}")
             xbmc.executebuiltin("Action(Right)")
             mon.waitForAbort(1.5)
-            log(f"sportA: right {step}: lsel {before[0]}->{P('lsel')} panel {before[1]!r}->{P('hname')!r} focus={lab('System.CurrentControlID')}")
-            if lab("System.CurrentControlID") != "200":
-                break
         shot("32-sportA-right")
-        xbmc.executebuiltin("SetFocus(200)")
-        mon.waitForAbort(1)
-    for _ in range(3):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.5)
+        log(f"sportA: cards Down -> focus={lab('System.CurrentControlID')}")
+        xbmc.executebuiltin("SetFocus(200,0,absolute)")
+        mon.waitForAbort(1.5)
+        xbmc.executebuiltin("Action(Up)")
+        mon.waitForAbort(1.5)
+        log(f"sportA: list top Up -> focus={lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("SetFocus(200,0,absolute)")
+    mon.waitForAbort(1.5)
+    for _ in range(4):
         xbmc.executebuiltin("Action(Down)")
         mon.waitForAbort(1.2)
-    log(f"sportA: after 3x down: {P('hname')!r} header={P('header')!r} focus={lab('System.CurrentControlID')}")
+    log(f"sportA: after 4x down: {P('hname')!r} header={P('header')!r} focus={lab('System.CurrentControlID')}")
     shot("32-sportA-list")
+    xbmc.executebuiltin("SetFocus(101)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(5)
+    log(f"sportA: mine view strip visible={cond('Control.IsVisible(205)')} view={lab('Window.Property(sport.view)')!r}")
+    shot("32-sportA-mine")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
