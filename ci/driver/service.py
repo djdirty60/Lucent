@@ -980,7 +980,8 @@ def libsplit_test():
     for kind in ("continue", "continue&only=movie", "continue&only=tv", "newin&only=movie", "newin&only=tv"):
         res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
                                                          "params": {"directory": base + kind, "media": "video"}})))
-        log(f"libsplit {kind}: {'error ' + str(res['error']) if 'error' in res else str(len((res.get('result') or {}).get('files') or [])) + ' items'}")
+        files = (res.get('result') or {}).get('files') or []
+        log(f"libsplit {kind}: {'error ' + str(res['error']) if 'error' in res else [f.get('label') for f in files]}")
     import sys
     import xbmcvfs
     sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))

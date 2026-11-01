@@ -27,6 +27,9 @@ S_PROPS = ["title", "ratings", "art", "plot", "year", "genre", "rating", "playco
 def rpc(method, params):
     request = {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
     answer = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
+    if "error" in answer and "status" in (params.get("properties") or []):   # Kodi 20 has no series status yet
+        params = dict(params, properties=[p for p in params["properties"] if p != "status"])
+        return rpc(method, params)
     if "error" in answer:
         xbmc.log(f"[script.lucent.library] lib rows {method}: {answer['error']}", xbmc.LOGINFO)
     return answer.get("result", {})

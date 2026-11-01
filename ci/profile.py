@@ -58,3 +58,24 @@ elif stage == "enable":
         con.execute("UPDATE installed SET enabled=1, disabledReason=0 WHERE addonID=?", (i,))
     con.commit()
     print({r[0]: r[1] for r in con.execute("SELECT addonID, enabled FROM installed WHERE addonID IN (%s)" % ",".join("?" * len(ids)), ids)})
+    # a small video library: one film and one series with one episode, both stopped halfway
+    vdbs = sorted(glob.glob(os.path.join(home, "userdata/Database/MyVideos*.db")))
+    if vdbs:
+        v = sqlite3.connect(vdbs[-1])
+        try:
+            v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (901, '/tmp/ci/lib/movies/', 'movies', 'metadata.local')")
+            v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (902, '/tmp/ci/lib/shows/Show/', '', '')")
+            v.execute("INSERT INTO files (idFile, idPath, strFilename, lastPlayed, dateAdded) VALUES (901, 901, 'film.mkv', '2026-10-30 20:00:00', '2026-10-30 10:00:00')")
+            v.execute("INSERT INTO files (idFile, idPath, strFilename, lastPlayed, dateAdded) VALUES (902, 902, 's01e01.mkv', '2026-10-31 20:00:00', '2026-10-31 10:00:00')")
+            v.execute("INSERT INTO movie (idMovie, idFile, c00, premiered) VALUES (901, 901, 'Lib Film', '2020-01-01')")
+            v.execute("INSERT INTO tvshow (idShow, c00) VALUES (901, 'Lib Show')")
+            v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (901, 902)")
+            v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (901, 901, 1)")
+            v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (901, 902, 'Pilot', '1', '1', 901, 901)")
+            for f in (901, 902):
+                v.execute("INSERT INTO bookmark (idFile, timeInSeconds, totalTimeInSeconds, thumbNailImage, player, playerState, type) VALUES (?, 600, 3000, '', 'VideoPlayer', '', 1)", (f,))
+            v.commit()
+            print("video library: 1 film, 1 series")
+        except Exception as error:  # noqa: BLE001
+            print("video library:", error)
+
