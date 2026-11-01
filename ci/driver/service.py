@@ -1199,6 +1199,50 @@ def skip_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def sportA_test():
+    """Sport > All games: live games as a strip of cards on top, then the games per competition."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+    for _ in range(60):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(Lucent_Sport.xml)"):
+            break
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(102)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(60):
+        mon.waitForAbort(1)
+        if int(lab("Container(200).NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(200,0,absolute)")
+    mon.waitForAbort(2)
+    P = lambda k: lab(f"Container(200).ListItem.Property({k})")  # noqa: E731
+    n = int(lab("Container(200).NumItems") or 0)
+    heads = [lab(f"Container(200).ListItemAbsolute({i}).Property(header)") for i in range(n)]
+    log(f"sportA: items={n} first strip={P('isstrip')!r} title={P('striptitle')!r} cards={[P(f'l{k}hname') + '-' + P(f'l{k}aname') + ' ' + P(f'l{k}score') + ' ' + P(f'l{k}min') + ' p' + P(f'l{k}prog') for k in (1, 2, 3)]}")
+    log(f"sportA: competitions in order {[h for h in heads if h]}")
+    shot("32-sportA-top")
+    if P("isstrip"):
+        for step in range(3):
+            before = (P("lsel"), P("hname"))
+            xbmc.executebuiltin("Action(Right)")
+            mon.waitForAbort(1.5)
+            log(f"sportA: right {step}: lsel {before[0]}->{P('lsel')} panel {before[1]!r}->{P('hname')!r} focus={lab('System.CurrentControlID')}")
+            if lab("System.CurrentControlID") != "200":
+                break
+        shot("32-sportA-right")
+        xbmc.executebuiltin("SetFocus(200)")
+        mon.waitForAbort(1)
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.2)
+    log(f"sportA: after 3x down: {P('hname')!r} header={P('header')!r} focus={lab('System.CurrentControlID')}")
+    shot("32-sportA-list")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
 
 def main():
     for _ in range(180):
@@ -1213,7 +1257,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    skip_test()
+    sportA_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
