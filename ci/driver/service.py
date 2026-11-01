@@ -1105,6 +1105,59 @@ def setup_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def maint_test():
+    """Maintenance: zip files, old temp files and the old log go; two cached pictures are removed the proper way."""
+    import sys
+    import xbmcvfs
+    sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))
+    import maintenance as m
+    pk = xbmcvfs.translatePath("special://home/addons/packages/")
+    os.makedirs(pk, exist_ok=True)
+    open(os.path.join(pk, "old.addon-1.0.zip"), "wb").write(b"x" * 300000)
+    tmp = os.path.join(xbmcvfs.translatePath("special://temp/"), "lucent-ci-old.tmp")
+    open(tmp, "wb").write(b"y" * 1000)
+    os.utime(tmp, (time.time() - 5 * 86400, time.time() - 5 * 86400))
+    fresh = os.path.join(xbmcvfs.translatePath("special://temp/"), "lucent-ci-new.tmp")
+    open(fresh, "wb").write(b"z")
+    pics = m.old_pictures(-1)                       # every picture counts as old
+    log(f"maint: found pkgs={len(m.packages())} temp={[os.path.basename(f) for f in m.temp_files()]} pictures={len(pics)}")
+    two = [p for p in pics if p[1] and os.path.exists(p[1])][:2]
+    freed = m.delete(m.packages()) + m.delete(m.temp_files()) + m.remove_pictures(two)
+    left = [os.path.exists(p[1]) for p in two]
+    still = {p[0] for p in m.old_pictures(-1)}
+    log(f"maint: freed {m.size_text(freed)}; packages left {len(m.packages())}; old tmp gone {not os.path.exists(tmp)}; "
+        f"new tmp kept {os.path.exists(fresh)}; picture files left {left}; picture ids left {[p[0] in still for p in two]}")
+    xbmc.executebuiltin("Skin.SetBool(lucent.maint.auto)")
+    xbmc.executebuiltin("Skin.Reset(lucent.maint.last)")
+    mon.waitForAbort(1)
+    m.auto()
+    log(f"maint: auto ran, last={lab('Skin.String(lucent.maint.last)')!r}")
+    xbmc.executebuiltin("Skin.Reset(lucent.maint.auto)")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(2)
+    n = int(lab("Container(9000).NumItems") or 0)
+    labels = [lab(f"Container(9000).ListItemAbsolute({i}).Label") for i in range(n)]
+    if "Advanced" in labels:
+        xbmc.executebuiltin(f"SetFocus(9000,{labels.index('Advanced')},absolute)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.5)
+        path = [lab("System.CurrentControlID")]
+        for _ in range(10):
+            xbmc.executebuiltin("Action(Down)")
+            mon.waitForAbort(0.35)
+            path.append(lab("System.CurrentControlID"))
+        log(f"maint: advanced pane path {path}")
+        xbmc.executebuiltin("SetFocus(1809)")
+        mon.waitForAbort(0.5)
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(3)
+        log(f"maint: menu open={cond('Window.IsVisible(selectdialog)')} heading={lab('Control.GetLabel(1)')!r}")
+        shot("30-maintenance")
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
 
 def main():
     for _ in range(180):
@@ -1118,7 +1171,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    setup_test()
+    maint_test()
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")
