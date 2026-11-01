@@ -875,18 +875,19 @@ def widgetctx_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
     found = None
-    for cid in [8100 + n for n in range(1, 11)] + [8200 + n for n in range(1, 11)]:
-        if not cond(f"Control.IsVisible({cid})") or not lab(f"Container({cid}).NumItems").isdigit():
-            continue
-        log(f"widgetctx: row {cid} first={lab(f'Container({cid}).ListItemAbsolute(0).FileNameAndPath')[:90]!r} "
-            f"type={lab(f'Container({cid}).ListItemAbsolute(0).DBType')!r}")
-        for pos in range(int(lab(f"Container({cid}).NumItems"))):
-            path = lab(f"Container({cid}).ListItemAbsolute({pos}).FileNameAndPath")
-            if "tmdbopen" in path and "type=movie" in path:
-                found = (cid, pos)
+    for _try in range(30):
+        for cid in [8100 + n for n in range(1, 11)] + [8200 + n for n in range(1, 11)]:
+            num = lab(f"Container({cid}).NumItems")
+            for pos in range(int(num) if num.isdigit() else 0):
+                path = lab(f"Container({cid}).ListItemAbsolute({pos}).FileNameAndPath")
+                if "tmdbopen" in path and "type=movie" in path:
+                    found = (cid, pos)
+                    break
+            if found:
                 break
         if found:
             break
+        mon.waitForAbort(3)
     log(f"widgetctx: film found at {found}")
     if not found:
         return
