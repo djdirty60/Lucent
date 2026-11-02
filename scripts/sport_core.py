@@ -131,6 +131,10 @@ TX = {
     "g_fulltable": ("Full table  ›", "Volledige stand  ›"), "g_sessions": ("SCHEDULE", "PROGRAMMA"), "res_pre": ("Not held yet", "Nog niet gereden"), "res_none": ("No results available", "Geen uitslag beschikbaar"),
     "res_loading": ("Loading results…", "Uitslag laden…"), "res_live": ("In progress - provisional", "Bezig - voorlopig"), "res_title": ("Results", "Uitslag"), "g_home": ("Home", "Thuis"), "g_away": ("Away", "Uit"),
     "g_teamstats": ("TEAM STATS", "TEAMSTATISTIEKEN"), "g_top": ("TOP PERFORMERS", "TOPSPELERS"), "g_scoring": ("LATEST SCORING", "LAATSTE DOELPUNTEN"),
+    "g_fg": ("Field goals", "Velddoelpunten"), "g_3pt": ("3-pointers", "Driepunters"), "g_reb": ("Rebounds", "Rebounds"),
+    "g_to": ("Turnovers", "Balverlies"), "g_ppg": ("Power-play goals", "Powerplay-goals"), "g_hits": ("Hits", "Hits"),
+    "g_faceoff": ("Face-offs won", "Face-offs gewonnen"), "g_yards": ("Total yards", "Totaal yards"), "g_firstdowns": ("First downs", "First downs"),
+    "g_top_time": ("Time of possession", "Balbezit (tijd)"), "g_topplayers": ("TOP PLAYERS", "TOPSPELERS"),
     "g_possession": ("Possession", "Balbezit"), "g_shots": ("Shots", "Schoten"), "g_ontarget": ("On goal", "Op doel"), "g_corners": ("Corner kicks", "Hoekschoppen"),
     "g_nodata": ("No match statistics yet", "Nog geen wedstrijdstatistieken"), "g_showing": ("SHOWING IT", "ZENDT HET UIT"),
     "g_standings": ("{} STANDINGS", "{} STAND"), "g_over": ("Finished", "Afgelopen"),
@@ -999,7 +1003,12 @@ def match_detail(ev):
         if not who:
             who = "home" if str((tm.get("team") or {}).get("id")) == ev["home"].get("id") else "away"
         by_side[who] = {s.get("name"): s.get("displayValue") for s in (tm.get("statistics") or [])}
-    wanted = (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners"))
+    sport = LEAGUES[key].get("sport", "")
+    wanted = {
+        "basketball": (("fieldGoalPct", "g_fg"), ("threePointFieldGoalPct", "g_3pt"), ("totalRebounds", "g_reb"), ("turnovers", "g_to")),
+        "hockey": (("shotsTotal", "g_shots"), ("powerPlayGoals", "g_ppg"), ("hits", "g_hits"), ("faceoffPercent", "g_faceoff")),
+        "football": (("totalYards", "g_yards"), ("firstDowns", "g_firstdowns"), ("turnovers", "g_to"), ("possessionTime", "g_top_time")),
+    }.get(sport, (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners")))
     n = 0
     for name, label in wanted:
         hv, av = by_side.get("home", {}).get(name), by_side.get("away", {}).get(name)
@@ -1007,11 +1016,22 @@ def match_detail(ev):
             continue
         n += 1
         h, a = _num(hv), _num(av)
-        if name == "possessionPct":
+        if name in ("possessionPct", "fieldGoalPct", "threePointFieldGoalPct", "faceoffPercent"):
             hv, av = f"{round(h)}%", f"{round(a)}%"
         out[f"st{n}l"] = t(label)
         out[f"st{n}h"], out[f"st{n}a"] = str(hv if hv not in (None, "") else 0), str(av if av not in (None, "") else 0)
         out[f"st{n}k"] = str(int(round(10 * h / (h + a)))) if h + a else "5"
+    # points per period (quarters, periods, innings): q{side}{n}
+    comp = ((data.get("header") or {}).get("competitions") or [{}])[0]
+    periods = 0
+    for c in comp.get("competitors") or []:
+        side = "h" if c.get("homeAway") == "home" else "a"
+        scores = [x.get("displayValue", "") for x in c.get("linescores") or []]
+        periods = max(periods, len(scores))
+        for i, v in enumerate(scores[:8], 1):
+            out[f"q{side}{i}"] = v
+    if periods and sport != "soccer":
+        out["qn"] = str(min(periods, 8))
     k = 0
     for block in data.get("leaders") or []:
         abbr = (block.get("team") or {}).get("abbreviation", "")

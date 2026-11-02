@@ -969,6 +969,13 @@ class Sport(xbmcgui.WindowXML):
                 props["topline"] = when_line(ev)
                 props["bigmid"], props["bigsub"] = sc.local_time(ev["start"]), self.countdown(ev)
             props["hname"], props["aname"] = ev["home"].get("name", ""), ev["away"].get("name", "")
+            sport = sc.LEAGUES.get(ev["league"], {}).get("sport", "")
+            props["soccer"] = "1" if sport == "soccer" else ""
+            props["habbr"] = ev["home"].get("abbr") or ev["home"].get("short") or ""
+            props["aabbr"] = ev["away"].get("abbr") or ev["away"].get("short") or ""
+            letter = {"basketball": "Q", "football": "Q", "hockey": "P", "baseball": ""}.get(sport, "")
+            for i in range(1, 9):
+                props[f"qlabel{i}"] = f"{letter}{i}"
         else:
             props["info1"] = ev.get("venue", "")
             props["info2"] = ev.get("round", "")
@@ -2213,7 +2220,7 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         self.setProperty("g.preview", cid)
         self.setProperty("g.preview.name", name)
         for key, text in (("watchcap", sc.t("watch").upper()), ("statscap", sc.t("g_teamstats").upper()),
-                          ("timelinecap", sc.t("g_timeline")), ("notimeline", sc.t("g_notimeline"))):
+                          ("timelinecap", sc.t("g_timeline")), ("notimeline", sc.t("g_notimeline")), ("topcap", sc.t("g_topplayers"))):
             self.setProperty(f"g.t.{key}", text)
         if self.props.get("layout") == "teams":
             focus_first(self, (1311, 1332, 1321))

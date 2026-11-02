@@ -1608,6 +1608,33 @@ def w1_test():
     mon.waitForAbort(2)
 
 
+def w3_test():
+    """Game page for basketball (W3): points per quarter, top players, team stats."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    games = [e for e in sc.all_cached() if e["kind"] == "teams" and e["league"] == "nba"]
+    games.sort(key=lambda e: ({"in": 0, "post": 1, "pre": 2}[e["state"]], -e["start"] if e["state"] == "post" else e["start"]))
+    log(f"w3: games={len(games)} first={(games[0]['home'].get('name'), games[0]['state']) if games else None}")
+    if not games:
+        return
+    xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,game,{games[0]['id']})")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if lab("Window.Property(g.layout)") == "teams" and lab("Window.Property(g.tp1n)"):
+            break
+    mon.waitForAbort(3)
+    W = lambda k: lab(f"Window.Property(g.{k})")  # noqa: E731
+    log(f"w3: mid={W('bigmid')!r} qn={W('qn')!r} q={[W(f'qh{i}') + '/' + W(f'qa{i}') for i in range(1, 5)]} "
+        f"stats={[W(f'st{n}l') + ':' + W(f'st{n}h') + '-' + W(f'st{n}a') for n in range(1, 5)]} top={[W(f'tp{n}n') + ' ' + W(f'tp{n}v') for n in range(1, 5)]}")
+    shot("42-w3")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1621,12 +1648,9 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    sportA_test()
-    tables_test()
     club_test()
     w1_test()
-    follow_test()
-    mine_test()
+    w3_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
