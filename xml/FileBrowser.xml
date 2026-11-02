@@ -152,20 +152,28 @@
                     </control>
                 </focusedlayout>
             </control>
+            <!-- thumbnails: Kodi switches to this view when an add-on asks for pictures (fanart, icons ...) -->
             <control type="panel" id="451">
-                <visible>false</visible>
                 <left>56</left>
                 <top>140</top>
-                <width>10</width>
-                <height>10</height>
-                <itemlayout width="10" height="10"/>
-                <focusedlayout width="10" height="10"/>
+                <width>1270</width>
+                <height>640</height>
+                <onleft>451</onleft>
+                <onright>60</onright>
+                <onup>451</onup>
+                <ondown>9000</ondown>
+                <orientation>vertical</orientation>
+                <pagecontrol>60</pagecontrol>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <itemlayout width="316" height="320"><control type="group"><left>0</left><top>0</top><control type="image"><left>0</left><top>0</top><width>300</width><height>300</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control><control type="image"><left>14</left><top>14</top><width>272</width><height>200</height><aspectratio>keep</aspectratio><fadetime>150</fadetime><texture background="true">$INFO[ListItem.Art(thumb)]</texture><visible>!String.IsEmpty(ListItem.Art(thumb))</visible></control><control type="image"><left>110</left><top>74</top><width>80</width><height>80</height><aspectratio>keep</aspectratio><texture colordiffuse="text3">$VAR[FileIcon]</texture><visible>String.IsEmpty(ListItem.Art(thumb))</visible></control><control type="label"><left>14</left><top>226</top><width>272</width><height>40</height><font>font10_bold</font><align>center</align><textcolor>text2</textcolor><selectedcolor>text2</selectedcolor><label>$INFO[ListItem.Label]</label></control><control type="label"><left>14</left><top>262</top><width>272</width><height>28</height><font>font_tiny</font><align>center</align><textcolor>text4</textcolor><selectedcolor>text4</selectedcolor><label>$INFO[ListItem.Label2]</label></control><control type="image"><left>256</left><top>12</top><width>32</width><height>32</height><texture>buttons/check_fo.png</texture><visible>ListItem.IsSelected</visible></control></control></itemlayout>
+                <focusedlayout width="316" height="320"><control type="group"><left>0</left><top>0</top><control type="image"><left>0</left><top>0</top><width>300</width><height>300</height><texture border="20">rr20.png</texture><colordiffuse>$VAR[FileThumbFocusBg]</colordiffuse></control><control type="image"><left>14</left><top>14</top><width>272</width><height>200</height><aspectratio>keep</aspectratio><fadetime>150</fadetime><texture background="true">$INFO[ListItem.Art(thumb)]</texture><visible>!String.IsEmpty(ListItem.Art(thumb))</visible></control><control type="image"><left>110</left><top>74</top><width>80</width><height>80</height><aspectratio>keep</aspectratio><texture colordiffuse="$VAR[FileThumbFocusText]">$VAR[FileIcon]</texture><visible>String.IsEmpty(ListItem.Art(thumb))</visible></control><control type="label"><left>14</left><top>226</top><width>272</width><height>40</height><font>font10_bold</font><align>center</align><textcolor>$VAR[FileThumbFocusText]</textcolor><selectedcolor>$VAR[FileThumbFocusText]</selectedcolor><label>$INFO[ListItem.Label]</label><scroll>true</scroll></control><control type="label"><left>14</left><top>262</top><width>272</width><height>28</height><font>font_tiny</font><align>center</align><textcolor>$VAR[FileThumbFocusText]</textcolor><selectedcolor>text4</selectedcolor><label>$INFO[ListItem.Label2]</label></control><control type="image"><left>256</left><top>12</top><width>32</width><height>32</height><texture>buttons/check_fo.png</texture><visible>ListItem.IsSelected</visible></control></control></focusedlayout>
             </control>
             <control type="scrollbar" id="60">
                 <onright>9000</onright>
                 <left>1336</left>
                 <top>140</top>
                 <height>640</height>
+                <onleft condition="Control.IsVisible(451)">451</onleft>
                 <onleft>450</onleft>
             </control>
             <control type="grouplist" id="9000">
@@ -176,6 +184,7 @@
                 <orientation>horizontal</orientation>
                 <align>right</align>
                 <itemgap>14</itemgap>
+                <onup condition="Control.IsVisible(451)">451</onup>
                 <onup>450</onup>
                 <control type="button" id="415">
                     <width>auto</width>

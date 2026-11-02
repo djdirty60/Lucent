@@ -16,6 +16,9 @@
 - **Maintenance** (*Skin settings → Advanced*) – clears old cached pictures, add-on zips, old temporary files and the previous log; optionally once a month by itself.
 - **Seren Nixgate** repository comes with the skin; the setup assistant installs Seren from it.
 - **Touch screens** – a quick swipe up or down on Home moves to the next or previous row.
+- **Tabs with their own screen** – Calendar (what is coming up), TV (what is on your channels now), Sport (today's games), Add-ons, Settings (six big buttons) and Power (a clock with the power buttons) no longer borrow the rows of the start tab.
+- **Number of titles** – 50, 100 or All now also works for Lucent's own TMDb / Trakt rows and for Seren rows (Lucent raises Seren's page limit when you ask).
+- **File browser** – a thumbnail view, so add-ons that ask for a picture or a backup zip show their files.
 
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
@@ -40,7 +43,7 @@
 - Rows are **widgets** that you choose yourself, see *Customising the menu and widgets* below. Empty rows hide themselves.
 
 ### Sidebar
-A slim icon rail that opens when you press left. Out of the box it has Search, Home, Movies, TV shows, Library, Add-ons, Favourites, Settings and Power, but **every tab can be changed**: its name, icon, what it opens when you click it, and its own widgets. When you move through the tabs, the home screen shows the widgets of that tab.
+A slim icon rail that opens when you press left. Out of the box it has Search, Home, Movies, TV shows, Library, Add-ons, Favourites, Settings and Power, but **every tab can be changed**: its name, icon, what it opens when you click it, and its own widgets. When you move through the tabs, the home screen shows the widgets of that tab. Calendar, TV, Sport, Add-ons, Settings and Power show a screen of their own when you have not given them widgets.
 
 ![Sidebar](screenshots/sidebar.jpg)
 
@@ -155,6 +158,9 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **List view (Seren menu)**
 ![List](screenshots/list.jpg)
 
+**Showcase**
+![Showcase](screenshots/showcase.jpg)
+
 **Info page**
 ![Info page](screenshots/info.jpg)
 ![Info page, scrolled down](screenshots/info-more.jpg)
@@ -175,6 +181,15 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Calendar**
 ![Calendar](screenshots/calendar.jpg)
 
+**Tabs with their own screen** – Calendar, Sport, Settings and Power on Home
+![Calendar tab](screenshots/tab-calendar.jpg)
+![Sport tab](screenshots/tab-sport.jpg)
+![Settings tab](screenshots/tab-settings.jpg)
+![Power tab](screenshots/tab-power.jpg)
+
+**File browser with thumbnails** (when an add-on asks for a picture)
+![File browser](screenshots/file-browser.jpg)
+
 **Sport – My sport**
 ![My sport](screenshots/sport-mysport.jpg)
 
@@ -194,7 +209,7 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Sport – Game page**
 ![Game page](screenshots/sport-game.jpg)
 
-> The Sport screenshots are taken in a real Kodi with real ESPN data.
+> All screenshots are taken in a real Kodi. The titles, pictures and clubs are placeholders; the Sport window screenshots use real ESPN data.
 
 ---
 
