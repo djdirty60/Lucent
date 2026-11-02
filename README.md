@@ -18,6 +18,7 @@
 - **Touch screens** – a quick swipe up or down on Home moves to the next or previous row.
 - **Tabs with their own screen** – Calendar (what is coming up), TV (what is on your channels now), Sport (today's games), Add-ons, Settings (six big buttons) and Power (a clock with the power buttons) no longer borrow the rows of the start tab.
 - **Number of titles** – 50, 100 or All now also works for Lucent's own TMDb / Trakt rows and for Seren rows (Lucent raises Seren's page limit when you ask).
+- **TV player** – the next programmes of the channel as cards, the channels above and below, and Watch now, Record, Remind me (Lucent asks to switch when it starts) and Full guide.
 - **File browser** – a thumbnail view, so add-ons that ask for a picture or a backup zip show their files.
 
 
@@ -169,6 +170,10 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Player**
 ![Player](screenshots/player.jpg)
 
+**TV player and TV guide** (test channels in a real Kodi)
+![TV player](screenshots/tv-player.jpg)
+![TV guide](screenshots/tv-guide.jpg)
+
 **Settings**
 ![Settings](screenshots/settings.jpg)
 
@@ -181,8 +186,9 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Calendar**
 ![Calendar](screenshots/calendar.jpg)
 
-**Tabs with their own screen** – Calendar, Sport, Settings and Power on Home
+**Tabs with their own screen** – Calendar, TV, Sport, Settings and Power on Home
 ![Calendar tab](screenshots/tab-calendar.jpg)
+![TV tab](screenshots/tab-tv.jpg)
 ![Sport tab](screenshots/tab-sport.jpg)
 ![Settings tab](screenshots/tab-settings.jpg)
 ![Power tab](screenshots/tab-power.jpg)

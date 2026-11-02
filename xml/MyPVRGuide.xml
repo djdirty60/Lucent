@@ -23,7 +23,7 @@
                 <control type="image"><left>16</left><top>16</top><width>72</width><height>32</height><texture border="15">rr14.png</texture><colordiffuse>red</colordiffuse></control>
                 <control type="label"><left>16</left><top>16</top><width>72</width><height>32</height><font>font_tiny</font><textcolor>FFFFFFFF</textcolor><align>center</align><label>LIVE</label></control>
                 <control type="image"><left>4</left><top>196</top><width>512</width><height>76</height><texture>grad_bottom.png</texture><colordiffuse>CC000000</colordiffuse></control>
-                <control type="label"><left>18</left><top>226</top><width>480</width><height>36</height><font>font10_bold</font><textcolor>FFFFFFFF</textcolor><label>$INFO[VideoPlayer.ChannelNumberLabel, · ]$INFO[VideoPlayer.ChannelName]</label></control>
+                <control type="label"><left>18</left><top>226</top><width>480</width><height>36</height><font>font10_bold</font><textcolor>FFFFFFFF</textcolor><label>$INFO[VideoPlayer.ChannelNumberLabel,, · ]$INFO[VideoPlayer.ChannelName]</label></control>
             </control>
             <!-- the focused programme -->
             <control type="image"><left>560</left><top>6</top><width>72</width><height>40</height><aspectratio>keep</aspectratio><texture background="true">$INFO[ListItem.ChannelLogo]</texture></control>
@@ -106,16 +106,15 @@
             <orientation>vertical</orientation>
             <pagecontrol>60</pagecontrol>
             <scrolltime tween="cubic" easing="out">250</scrolltime>
-            <timeblocks>130</timeblocks>
-            <minspertimeblock>1</minspertimeblock>
-            <rulerunit>30</rulerunit>
+            <timeblocks>26</timeblocks>   <!-- 26 x 5 minutes (Kodi's default block) = 2 hours 10 on screen, also on Kodi 20 / 21 -->
+            <rulerunit>6</rulerunit>   <!-- a time label every 30 minutes -->
             <onleft>50</onleft>
             <onback>11</onback>
             <onup>11</onup>
             <ondown>50</ondown>
             <progresstexture border="0,0,3,0" colordiffuse="CCE5534B">epg_now.png</progresstexture>
-            <rulerlayout height="46" width="265">
-                <control type="label"><left>8</left><width>260</width><height>46</height><font>font10</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
+            <rulerlayout height="46" width="300">
+                <control type="label"><left>8</left><width>290</width><height>46</height><font>font10</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor><aligny>center</aligny><label>$INFO[ListItem.Label]</label></control>
             </rulerlayout>
             <channellayout height="70" width="500">
                 <control type="image"><left>0</left><top>2</top><width>490</width><height>64</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control>
