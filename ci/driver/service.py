@@ -2034,6 +2034,10 @@ def chanrows_test():
     import sport_core as sc
     names = ["┃NL┃ ZIGGO SPORT 2 ┃", "|NL| ZIGGO SPORT", "┃PT┃ SPORT TV 1", "[RO] DIGI SPORT 1", "NL: Ziggo Sport 2 FHD"]
     log(f"chan: clean={[(sc.display_channel(n), sc.channel_country(n)) for n in names]}")
+    try:
+        sc.refresh(keys=["eng.1", "ned.1", "esp.1", "ita.1"])
+    except Exception as error:  # noqa: BLE001
+        log(f"chan: refresh {error!r}")
     games = [e for e in sc.all_cached() if e["kind"] == "teams" and sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"]
     games.sort(key=lambda e: ({"in": 0, "post": 1, "pre": 2}[e["state"]], -e["start"] if e["state"] == "post" else e["start"]))
     if not games:
@@ -2173,6 +2177,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     sportosd_test()
+    chanrows_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
