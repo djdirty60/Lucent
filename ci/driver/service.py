@@ -2104,6 +2104,15 @@ def chanrows_test():
     mon.waitForAbort(1.5)
     log(f"chan: focus={lab('System.CurrentControlId')} vis1311={cond('Control.IsVisible(1311)')} name1={lab('Window.Property(g.ch1name)')!r}")
     shot("c-rows-3")
+    steps = []
+    xbmc.executebuiltin("SetFocus(1332)")
+    mon.waitForAbort(1)
+    steps.append(lab("System.CurrentControlId"))
+    for key in ("Up", "Up", "Up", "Up", "Down", "Down", "Down", "Down"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(0.8)
+        steps.append(f"{key}:{lab('System.CurrentControlId')}")
+    log(f"chan: nav {steps}")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)
     xbmc.executebuiltin("ActivateWindow(home)")
