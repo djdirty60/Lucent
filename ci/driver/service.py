@@ -1926,7 +1926,8 @@ def pvr_test():
     import tabpanels
     m = menu.Menu()
     if not any("tv.py" in t["action"] for t in m.tabs):
-        m.tabs.append({"label": "TV", "icon": "icons/tv.png", "action": "RunScript(special://skin/scripts/tv.py)", "widgets": [], "actionlabel": ""})
+        m.tabs.append({"label": "TV", "icon": "icons/tv.png", "action": "RunScript(special://skin/scripts/tv.py)",
+                       "widgets": [{"label": "TV channels", "path": "pvr://channels/tv/", "style": "land"}], "actionlabel": ""})
         m.save()
     tabpanels.update()
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -1937,7 +1938,7 @@ def pvr_test():
     mon.waitForAbort(4)
     xbmc.executebuiltin("SetFocus(9320)")
     mon.waitForAbort(4)
-    log(f"pvr: tvtab path={HOME.getProperty('lucent.ptv.path')!r} items={lab('Container(9320).NumItems')} focus={lab('System.CurrentControlId')} "
+    log(f"pvr: tvtab rows9100={cond('Control.IsVisible(9100)')} w1={lab('Container(9000).ListItem.Property(w1.path)')!r} path={HOME.getProperty('lucent.ptv.path')!r} items={lab('Container(9320).NumItems')} focus={lab('System.CurrentControlId')} "
         f"now={lab('Container(9320).ListItem.EpgEventTitle')!r}")
     shot("p-tvtab")
     # TV guide

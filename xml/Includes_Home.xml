@@ -15827,9 +15827,10 @@
     </include>
 
 
+
     <!-- ==== Home: own screens for tabs without rows (tabpanels.py) ==== -->
     <expression name="LucentPCal">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),agenda.py)</expression>
-    <expression name="LucentPTv">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
+    <expression name="LucentPTv">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) | [String.StartsWith(Container(9000).ListItem.Property(w1.path),pvr://channels/tv) + String.IsEmpty(Container(9000).ListItem.Property(w2.path))]] + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
     <expression name="LucentPSport">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),scripts/sport.py)</expression>
     <expression name="LucentPAdd">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),AddonBrowser)</expression>
     <expression name="LucentPSet">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),Settings) + !String.Contains(Container(9000).ListItem.Property(act),SkinSettings) + !String.Contains(Container(9000).ListItem.Property(act),OpenSettings) + !String.Contains(Container(9000).ListItem.Property(act),.py)</expression>
