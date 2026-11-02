@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Lucent: what the Calendar and Sport tabs show on Home when they have no rows of their own.
 
-The helper calls update() every minute. It writes Window(home).Property(lucent.pc.N.*) (Calendar: this week) and
+The helper calls update() every minute. It writes Window(home).Property(lucent.pc.N.*) (Calendar: coming up) and
 lucent.ps.N.* (Sport: today), N = 1..8; Home.xml shows them as cards with the first (or focused) one big above them.
     RunScript(special://skin/scripts/tabpanels.py,open,cal,N)     OK on a calendar card: open it in Seren
 """
@@ -49,7 +49,7 @@ KEYS = {
 def calendar_rows():
     import agenda_core as ac
     today = ac.today()
-    last = today + datetime.timedelta(days=7)
+    last = today + datetime.timedelta(days=90)            # the next ones, also when nothing airs this week
     now = datetime.datetime.now().strftime("%H:%M")
     rows = []
     for ev in ac.all_events():
