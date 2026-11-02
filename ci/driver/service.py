@@ -1904,6 +1904,65 @@ def filebrowser_test():
         mon.waitForAbort(2)
 
 
+def pvr_test():
+    """Live TV with IPTV Simple: TV tab, TV guide, a channel playing with its OSD."""
+    def rpc(method, params=None):
+        return json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}}))).get("result") or {}
+    for _ in range(90):
+        if cond("Pvr.HasTVChannels"):
+            break
+        mon.waitForAbort(1)
+    chans = (rpc("PVR.GetChannels", {"channelgroupid": "alltv"}) or {}).get("channels") or []
+    log(f"pvr: has={cond('Pvr.HasTVChannels')} channels={[c.get('label') for c in chans]}")
+    if not chans:
+        return
+    mon.waitForAbort(8)                     # the guide is read a bit later
+    bc = rpc("PVR.GetBroadcasts", {"channelid": chans[0]["channelid"], "properties": ["title", "starttime", "endtime"]}).get("broadcasts") or []
+    log(f"pvr: broadcasts ch1={len(bc)} first={[b.get('title') for b in bc[:3]]}")
+    # TV tab on Home
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    import tabpanels
+    m = menu.Menu()
+    if not any("tv.py" in t["action"] for t in m.tabs):
+        m.tabs.append({"label": "TV", "icon": "icons/tv.png", "action": "RunScript(special://skin/scripts/tv.py)", "widgets": [], "actionlabel": ""})
+        m.save()
+    tabpanels.update()
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    m = menu.Menu()
+    idx = next(i for i, t in enumerate(m.tabs) if "tv.py" in t["action"])
+    xbmc.executebuiltin(f"Control.SetFocus(9000,{idx})")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(9320)")
+    mon.waitForAbort(4)
+    log(f"pvr: tvtab path={HOME.getProperty('lucent.ptv.path')!r} items={lab('Container(9320).NumItems')} focus={lab('System.CurrentControlId')} "
+        f"now={lab('Container(9320).ListItem.EpgEventTitle')!r}")
+    shot("p-tvtab")
+    # TV guide
+    xbmc.executebuiltin("ActivateWindow(TVGuide)")
+    mon.waitForAbort(8)
+    shot("p-guide")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    # play a channel and open the OSD
+    rpc("Player.Open", {"item": {"channelid": chans[2]["channelid"]}})
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Pvr.IsPlayingTv"):
+            break
+    mon.waitForAbort(4)
+    log(f"pvr: playing={cond('Pvr.IsPlayingTv')} title={lab('VideoPlayer.Title')!r} channel={lab('VideoPlayer.ChannelName')!r}")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(4)
+    log(f"pvr: osd={cond('Window.IsActive(videoosd)')} focus={lab('System.CurrentControlId')}")
+    shot("p-osd")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(3)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1917,8 +1976,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    filebrowser_test()
-    readme_test()
+    pvr_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

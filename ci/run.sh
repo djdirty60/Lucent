@@ -40,6 +40,8 @@ ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -i /tmp/ci/uk.srt -i /
 ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -f lavfi -i sine=f=300 -f lavfi -i sine=f=500 -f lavfi -i "sine=f=700" -t 60 -map 0 -map 1 -map 2 -map 3 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -ac:a:2 6 -metadata:s:a:0 language=rus -disposition:a:0 default -metadata:s:a:1 language=eng -metadata:s:a:1 title="Director commentary" -disposition:a:1 0 -metadata:s:a:2 language=eng -metadata:s:a:2 title="English 5.1" -disposition:a:2 0 /tmp/ci/audio.mkv
 printf '1\n00:00:01,000 --> 00:01:50,000\nEnglish subtitle\n' > /tmp/ci/en.srt
 for a in eng rus; do ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -f lavfi -i sine=f=400 -i /tmp/ci/en.srt -t 60 -map 0 -map 1 -map 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -c:s srt -metadata:s:a:0 language=$a -metadata:s:s:0 language=eng -disposition:s:0 default /tmp/ci/same-$a.mkv; done
+# live TV: IPTV Simple with six channels (the test video) and a guide around the current time
+python3 ci/pvr.py
 # 1st start (Estuary): Kodi registers the add-ons, then stops
 mkdir -p $K/userdata
 timeout 60 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/first.txt 2>&1
