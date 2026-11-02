@@ -149,7 +149,7 @@ TX = {
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
     "also_today": ("Also today", "Ook vandaag"), "g_timeline": ("TIMELINE", "TIJDLIJN"), "g_notimeline": ("Goals, cards and substitutions show here during the game", "Doelpunten, kaarten en wissels komen hier tijdens de wedstrijd"), "game_page": ("Game page", "Wedstrijdpagina"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
-    "watch_on": ("Watch on {}", "Kijk op {}"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
+    "watch_on": ("Watch on {}", "Kijk op {}"), "g_fouls": ("Fouls", "Overtredingen"), "g_yellow": ("Yellow cards", "Gele kaarten"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
     "goal_alerts": ("Goal alerts on for {}", "Doelpuntmeldingen aan voor {}"),
     "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
@@ -539,6 +539,28 @@ def _tvlogo_index():
                 index.setdefault(key, []).append((folder, stem))
         _TVLOGO["index"] = index
     return _TVLOGO["index"]
+
+
+def display_channel(name):
+    """A channel name without the provider's marks: '┃NL┃ ZIGGO SPORT 2 ┃' / 'NL: Ziggo Sport 2' / '[NL] Ziggo Sport 2'
+    -> 'ZIGGO SPORT 2' / 'Ziggo Sport 2'."""
+    text = (name or "").strip()
+    bars = "|┃│¦║▎▍"
+    for _ in range(3):
+        m = re.match(r"^\s*[%s\[(]*\s*[A-Za-z]{2,4}\s*[%s\])]+\s*(.+)$" % (bars, bars), text) or \
+            re.match(r"^\s*[A-Za-z]{2,4}\s*[:\-]\s+(.+)$", text)
+        if not m:
+            break
+        text = m.group(1)
+    text = re.sub(r"[\s%s]+$" % bars, "", text)
+    return text.strip(" " + bars) or (name or "").strip()
+
+
+def channel_country(name):
+    """'┃NL┃ ZIGGO SPORT 2' -> 'NL' (the provider's country mark), else ''."""
+    m = re.match(r"^\s*[|┃│¦║▎▍\[(]*\s*([A-Za-z]{2,4})\s*[|┃│¦║▎▍\])]+", name or "") or \
+        re.match(r"^\s*([A-Za-z]{2,4})\s*[:\-]\s+", name or "")
+    return m.group(1).upper() if m else ""
 
 
 def channel_logo(name):
@@ -1008,7 +1030,8 @@ def match_detail(ev):
         "basketball": (("fieldGoalPct", "g_fg"), ("threePointFieldGoalPct", "g_3pt"), ("totalRebounds", "g_reb"), ("turnovers", "g_to")),
         "hockey": (("shotsTotal", "g_shots"), ("powerPlayGoals", "g_ppg"), ("hits", "g_hits"), ("faceoffPercent", "g_faceoff")),
         "football": (("totalYards", "g_yards"), ("firstDowns", "g_firstdowns"), ("turnovers", "g_to"), ("possessionTime", "g_top_time")),
-    }.get(sport, (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners")))
+    }.get(sport, (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners"),
+                  ("foulsCommitted", "g_fouls"), ("yellowCards", "g_yellow")))
     n = 0
     for name, label in wanted:
         hv, av = by_side.get("home", {}).get(name), by_side.get("away", {}).get(name)

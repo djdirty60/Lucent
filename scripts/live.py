@@ -135,10 +135,11 @@ def track():
         guide(here)
     except Exception as error:  # noqa: BLE001
         xbmc.log(f"[lucent.live] guide: {error}", xbmc.LOGWARNING)
-    clear_score()
-    if here:
+    # the score of a game on this channel is kept by sportlive.py (the helper); asked at once when it has none yet
+    if here and not HOME.getProperty("live.sc.on"):
         try:
-            score(here["id"])
+            import sportlive
+            sportlive.tick(force=True)
         except Exception as error:  # noqa: BLE001
             xbmc.log(f"[lucent.live] score: {error}", xbmc.LOGWARNING)
 
@@ -195,14 +196,24 @@ def guide(here):
         ids = [c.get("channelid") for c in chans]
         if here["id"] in ids and len(chans) > 1:
             i = ids.index(here["id"])
-            up = chans[(i - 1) % len(chans)].get("label", "")
-            down = chans[(i + 1) % len(chans)].get("label", "")
+            up = clean(chans[(i - 1) % len(chans)].get("label", ""))
+            down = clean(chans[(i + 1) % len(chans)].get("label", ""))
+    HOME.setProperty("live.g.chname", clean(xbmc.getInfoLabel("VideoPlayer.ChannelName")))
     HOME.setProperty("live.g.up", up)
     HOME.setProperty("live.g.down", down)
     # the player menu opened before the guide was filled: the programme on now gets the focus
-    if rows and xbmc.getCondVisibility("Window.IsActive(videoosd) + !Control.HasFocus(460) + !ControlGroup(400).HasFocus + "
+    if rows and xbmc.getCondVisibility("String.IsEmpty(Window(Home).Property(live.sc.on)) + Window.IsActive(videoosd) + !Control.HasFocus(460) + !ControlGroup(400).HasFocus + "
                                        "[Control.HasFocus(471) | !ControlGroup(470).HasFocus]"):
         xbmc.executebuiltin("SetFocus(460,0)")
+
+
+def clean(name):
+    """The channel name without the provider's marks ('┃NL┃ ZIGGO SPORT 2 4K' -> 'ZIGGO SPORT 2 4K')."""
+    try:
+        import sport_core as sc
+        return sc.display_channel(name)
+    except Exception:  # noqa: BLE001
+        return name
 
 
 def record(bid):
