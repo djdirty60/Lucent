@@ -199,6 +199,9 @@ def guide(here):
             down = chans[(i + 1) % len(chans)].get("label", "")
     HOME.setProperty("live.g.up", up)
     HOME.setProperty("live.g.down", down)
+    # the player menu opened before the guide was filled: the programme on now gets the focus
+    if rows and xbmc.getCondVisibility("Window.IsActive(videoosd) + !Control.HasFocus(460) + !ControlGroup(470).HasFocus + !ControlGroup(400).HasFocus"):
+        xbmc.executebuiltin("SetFocus(460,0)")
 
 
 def record(bid):

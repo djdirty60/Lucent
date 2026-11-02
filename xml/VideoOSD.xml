@@ -5,6 +5,7 @@
     <onload condition="Pvr.IsPlayingTV">Skin.Reset(lucent.livesettings)</onload>
     <onload condition="Pvr.IsPlayingTV">RunScript(special://skin/scripts/live.py,track)</onload>
     <onload condition="Pvr.IsPlayingTV">SetFocus(460)</onload>
+    <onload condition="Pvr.IsPlayingTV + !Control.HasFocus(460)">SetFocus(471)</onload>
     <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
     <animation effect="fade" start="100" end="0" time="250">WindowClose</animation>
     <controls>
