@@ -1684,7 +1684,7 @@ def panels_test():
     art = "special://home/addons/plugin.video.fakeseren/icon.png"
     today = _dt.date.today()
     evs = []
-    for n, (name, days, at) in enumerate((("The Northern Line", 0, "21:00"), ("Harbor Lights", 1, "20:00"), ("Kitchen Wars", 2, ""), ("Silent Peak", 4, ""))):
+    for n, (name, days, at) in enumerate((("The Northern Line", 20, "21:00"), ("Harbor Lights", 21, "20:00"), ("Kitchen Wars", 30, ""), ("Silent Peak", 40, ""))):
         evs.append({"kind": "tv" if n < 3 else "movie", "key": f"k{n}", "name": name, "title": "De laatste halte" if n == 0 else "",
                     "season": 3, "episode": 5 + n, "date": (today + _dt.timedelta(days=days)).isoformat(), "time": at,
                     "still": art, "backdrop": art, "network": "HBO Max" if n == 0 else "", "plot": "Mara ontdekt wie er achter de verdwenen trein zit.",
@@ -1770,7 +1770,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    updater_test()
+    panels_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

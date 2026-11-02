@@ -271,9 +271,28 @@ def run():
             xbmc.executebuiltin("SetFocus(9000)")
             log("Home had no focus - back to the menu")
 
+    import xbmcaddon
+    started_as = {"v": xbmcaddon.Addon("skin.lucent").getAddonInfo("version"), "t": time.time()}
+
+    def updated():
+        """Kodi updated the skin by itself (not through Lucent's own update button): start the new helper code."""
+        if time.time() - started_as["t"] < 30:
+            return False
+        started_as["t"] = time.time()
+        try:
+            now_v = xbmcaddon.Addon("skin.lucent").getAddonInfo("version")
+        except Exception:  # noqa: BLE001
+            return False
+        if now_v and now_v != started_as["v"]:
+            log(f"skin updated by Kodi ({started_as['v']} -> {now_v}) - starting the new helper")
+            HOME.setProperty(STOP, "1")
+            xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+            return True
+        return False
+
     try:
         while not monitor.abortRequested():
-            if HOME.getProperty(STOP):
+            if HOME.getProperty(STOP) or updated():
                 log("skin updated - making way for the new helper")
                 break
             now = time.time()
