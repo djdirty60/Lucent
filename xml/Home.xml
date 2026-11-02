@@ -21,6 +21,7 @@
     <!-- once per Kodi start, one Python start: key maps, rating logos, Calendar / Sport tabs, then the background helper
          (calendar, sport, updates, Tonight for you, poster colour, subtitles). After a skin update nuvio.started is cleared so it runs again. -->
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/startup.py)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.limitcheck)) + !String.IsEmpty(Skin.String(lucent.setup.done))">RunScript(special://skin/scripts/menu.py,limitcheck)</onload>
     <!-- poster trailers are switched off for now (set the skin setting nuvio.trailers.menu to bring them back) -->
     <onload condition="Skin.HasSetting(nuvio.trailers.menu)">RunScript(special://skin/scripts/trailers.py)</onload>
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.posterfocus)</onload>
@@ -209,6 +210,7 @@
             <texture>grad_bottom.png</texture>
             <colordiffuse>bg_90</colordiffuse>
         </control>
+        <include>LucentPanelBg</include>
 
         <include>PosterTint</include>
         <include>SeasonDecor</include>
@@ -218,6 +220,7 @@
             <animation effect="fade" start="100" end="45" time="300" condition="Control.HasFocus(9000) + !System.HasVisibleModalDialog">Conditional</animation>
 
             <control type="group">
+                <visible>!$EXP[LucentPanel]</visible>
                 <include>Anim_SlideLeft</include>
                 <include>HomeHeroes</include>
             </control>
@@ -234,14 +237,18 @@
                 <onleft>9000</onleft>
                 <onup>9100</onup>
                 <ondown>9100</ondown>
+                <visible>!$EXP[LucentPanel]</visible>
                 <include>HomeRows</include>
             </control>
+
+            <!-- Calendar / TV / Sport / Add-ons / Settings / Power tab without rows of its own: its own screen -->
+            <include>LucentTabPanels</include>
 
             <!-- Shown when the tab has no widgets (or none of them has content) -->
             <control type="group">
                 <left>160</left>
                 <top>620</top>
-                <visible>!Control.IsVisible(9991) + !String.IsEqual(Container(9000).ListItem.Property(tab),kids)</visible>
+                <visible>!Control.IsVisible(9991) + !String.IsEqual(Container(9000).ListItem.Property(tab),kids) + !$EXP[LucentPanel]</visible>
                 <animation effect="fade" start="0" end="100" time="300" delay="1500">Visible</animation>
                 <control type="label">
                     <left>0</left>
@@ -314,7 +321,13 @@
                 <height>870</height>
                 <orientation>vertical</orientation>
                 <scrolltime tween="cubic" easing="out">200</scrolltime>
-                <onright condition="Control.IsVisible(9991)">9100</onright>
+                <onright condition="$EXP[LucentPCal]">9310</onright>
+                <onright condition="$EXP[LucentPTv]">9320</onright>
+                <onright condition="$EXP[LucentPSport] + !String.IsEmpty(Window(home).Property(lucent.ps.1.id))">9330</onright>
+                <onright condition="$EXP[LucentPAdd]">9340</onright>
+                <onright condition="$EXP[LucentPSet]">9350</onright>
+                <onright condition="$EXP[LucentPPow]">9360</onright>
+                <onright condition="Control.IsVisible(9991) + !$EXP[LucentPanel]">9100</onright>
                 <onback condition="Control.IsVisible(9991)">9100</onback>
                 <itemlayout width="360" height="84">
                     <control type="image">
