@@ -1757,6 +1757,127 @@ def updater_test():
         log(f"upd: error {error!r}")
 
 
+def readme_test():
+    """Screenshots for the README: Home, side menu, the tab screens, the views, calendar, settings, keyboard."""
+    import sys as _sys
+    import datetime as _dt
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    import tabpanels
+    import agenda_core
+    FS = "plugin://plugin.video.fakeseren/?list="
+    ART = "special://home/addons/plugin.video.fakeseren/art/"
+
+    def w(label, kind, style):
+        return {"label": label, "path": FS + kind, "style": style}
+    home = [w("Continue watching · Shows", "se", "land"), w("Trending movies", "sm", "poster"), w("Popular shows", "ss", "poster")]
+    tab = lambda label, icon, action, widgets=None: {"label": label, "icon": f"icons/{icon}.png", "action": action,  # noqa: E731
+                                                     "widgets": widgets or [], "actionlabel": ""}
+    m = menu.Menu()
+    m.tabs = [tab("Search", "search", "ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)"),
+              tab("Home", "home", menu.SHOW_WIDGETS, home),
+              tab("Movies", "movies", "ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)", [w("Trending movies", "sm", "poster"), w("Continue watching · Shows", "se", "land")]),
+              tab("Shows", "tv", "ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=ss,return)", [w("Popular shows", "ss", "poster")]),
+              tab("Calendar", "calendar", "RunScript(special://skin/scripts/agenda.py)"),
+              tab("TV", "tv", "RunScript(special://skin/scripts/tv.py)"),
+              tab("Sport", "sport", "RunScript(special://skin/scripts/sport.py)"),
+              tab("Add-ons", "addons", "ActivateWindow(AddonBrowser)"),
+              tab("Settings", "settings", "ActivateWindow(Settings)"),
+              tab("Power", "power", "ActivateWindow(ShutdownMenu)")]
+    m.start = m.tabs[1]
+    m.save()
+    # calendar data
+    data = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    os.makedirs(data, exist_ok=True)
+    today = _dt.date.today()
+    names = [("Glasswork", 0, "21:00"), ("Red Harbour", 1, "20:00"), ("Lumen", 2, "22:00"), ("Night Ferry", 3, ""), ("Northbound", 5, ""), ("Copper Sky", 6, "")]
+    evs = []
+    for n, (name, days, at) in enumerate(names):
+        evs.append({"kind": "tv" if n != 4 else "movie", "key": f"k{n}", "show": f"tv:{n}", "name": name, "title": f"Chapter {5 + n}" if n != 4 else "",
+                    "season": 2, "episode": 7 + n, "date": (today + _dt.timedelta(days=days)).isoformat(), "time": at,
+                    "still": f"{ART}f{n}.jpg", "backdrop": f"{ART}f{n}.jpg", "poster": f"{ART}p{n}.jpg", "network": ["HBO Max", "Netflix", "Apple TV+", "Disney+", "", "Prime Video"][n],
+                    "plot": "A fictional placeholder synopsis used for this screenshot. The real text comes from TMDB.",
+                    "tmdb": 100 + n, "logo": "", "digital": True, "rating": 8.1, "genre": "Drama", "runtime": 52})
+    json.dump({"shows": {"tv:1": {"name": "x", "kind": "tv", "tmdb": 1, "notify": True}}, "synced": time.time()}, open(data + "agenda_follow.json", "w"))
+    json.dump({"v": agenda_core.CACHE_VERSION, "shows": {"tv:1": {"events": evs, "fetched": time.time()}}}, open(data + "agenda_cache.json", "w"))
+    rows = [("1", "Ajax", "PSV", "2", "1", "LIVE 67'", "1", "D2122E", "ED1C24", 0, 1), ("2", "Feyenoord", "AZ", "", "", "18:45", "", "E30613", "C8102E", 2, 3),
+            ("3", "Real Madrid", "Barcelona", "", "", "21:00", "", "1C3C8C", "A50044", 4, 5)]
+
+    def set_sport():
+        for n, (i, hn, an, hs, as_, when, live, hc, ac, hl, al) in enumerate(rows, 1):
+            for k, v in {"id": i, "hname": hn, "aname": an, "hs": hs, "as": as_, "when": when, "live": live, "hcol": hc, "acol": ac,
+                         "hlogo": f"{ART}c{hl}.png", "alogo": f"{ART}c{al}.png", "league": "Eredivisie" if n < 3 else "LaLiga",
+                         "kick": ("LIVE · EREDIVISIE · 67'" if live else f"{when} · {'EREDIVISIE' if n < 3 else 'LALIGA'}"),
+                         "big": f"{hs} – {as_}" if hs else when}.items():
+                HOME.setProperty(f"lucent.ps.{n}.{k}", v)
+    xbmc.executebuiltin("ReloadSkin()")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    # Home
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(14)
+    log(f"readme: home rows {lab('Container(8101).NumItems')} {lab('Container(8201).NumItems')} focus={lab('System.CurrentControlId')}")
+    shot("r-home")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(8)
+    shot("r-sidebar")
+    # the tab screens
+    for idx, name, cid in ((4, "calendar", 9310), (6, "sport", 9330), (8, "settings", 9350), (9, "power", 9360), (7, "addons", 9340)):
+        tabpanels.update()
+        set_sport()
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{idx})")
+        mon.waitForAbort(3)
+        set_sport()
+        xbmc.executebuiltin(f"SetFocus({cid})")
+        mon.waitForAbort(3)
+        log(f"readme: {name} focus={lab('System.CurrentControlId')} items={lab(f'Container({cid}).NumItems')}")
+        shot(f"r-tab-{name}")
+    # views
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    for view, name in ((51, "posters"), (52, "poster-wall"), (50, "list"), (57, "showcase")):
+        xbmc.executebuiltin(f"Container.SetViewMode({view})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({view})")
+        mon.waitForAbort(4)
+        log(f"readme: view {name} visible={cond(f'Control.IsVisible({view})')} items={lab('Container.NumItems')}")
+        shot(f"r-view-{name}")
+    xbmc.executebuiltin("Container.Update(plugin://plugin.video.fakeseren/?list=se,replace)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Container.SetViewMode(55)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(55)")
+    mon.waitForAbort(4)
+    log(f"readme: episodes visible={cond('Control.IsVisible(55)')}")
+    shot("r-view-episodes")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    # calendar window
+    xbmc.executebuiltin("RunScript(special://skin/scripts/agenda.py)")
+    mon.waitForAbort(8)
+    shot("r-calendar")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    # settings, skin settings, keyboard
+    xbmc.executebuiltin("ActivateWindow(Settings)")
+    mon.waitForAbort(4)
+    shot("r-settings")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(5)
+    shot("r-skin-settings")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Skin.SetString(ci.keyboard)")
+    mon.waitForAbort(4)
+    shot("r-keyboard")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1770,7 +1891,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    panels_test()
+    readme_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
