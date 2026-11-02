@@ -200,7 +200,8 @@ def guide(here):
     HOME.setProperty("live.g.up", up)
     HOME.setProperty("live.g.down", down)
     # the player menu opened before the guide was filled: the programme on now gets the focus
-    if rows and xbmc.getCondVisibility("Window.IsActive(videoosd) + !Control.HasFocus(460) + !ControlGroup(470).HasFocus + !ControlGroup(400).HasFocus"):
+    if rows and xbmc.getCondVisibility("Window.IsActive(videoosd) + !Control.HasFocus(460) + !ControlGroup(400).HasFocus + "
+                                       "[Control.HasFocus(471) | !ControlGroup(470).HasFocus]"):
         xbmc.executebuiltin("SetFocus(460,0)")
 
 
@@ -276,6 +277,11 @@ def _ask(due):
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "play" and len(sys.argv) > 2 and sys.argv[2].isdigit():
         play(sys.argv[2])
+    elif len(sys.argv) > 1 and sys.argv[1] in ("more", "less"):
+        # the extra buttons of the TV player (more) or back to the big buttons (less); the row has to be shown first
+        xbmc.executebuiltin("Skin.SetBool(lucent.livesettings)" if sys.argv[1] == "more" else "Skin.Reset(lucent.livesettings)")
+        xbmc.sleep(250)
+        xbmc.executebuiltin("SetFocus(401)" if sys.argv[1] == "more" else "SetFocus(477)")
     elif len(sys.argv) > 2 and sys.argv[1] == "record":
         record(sys.argv[2])
     elif len(sys.argv) > 2 and sys.argv[1] == "remind":
