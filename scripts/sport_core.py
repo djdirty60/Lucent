@@ -144,7 +144,7 @@ TX = {
     "hint": ("OK: game info   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdinfo   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
-    "also_today": ("Also today", "Ook vandaag"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
+    "also_today": ("Also today", "Ook vandaag"), "game_page": ("Game page", "Wedstrijdpagina"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
     "watch_on": ("Watch on {}", "Kijk op {}"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
     "goal_alerts": ("Goal alerts on for {}", "Doelpuntmeldingen aan voor {}"),
     "m_countries": ("Choose countries", "Landen kiezen"),

@@ -1359,7 +1359,11 @@ def mine_test():
     log(f"mine: hero n={lab('Container(150).NumItems')} {H('hname')}-{H('aname')} mid={H('mid')!r} when={H('when')!r} prog={H('prog')!r} "
         f"hgoals={H('hgoals')!r} agoals={H('agoals')!r}")
     log(f"mine: sections {[(WP(f'sport.sec{n}.title'), WP(f'sport.sec{n}.sub'), WP(f'sport.sec{n}.count')) for n in range(1, 4)]}")
+    log(f"mine: top={H('topline')!r} watch={H('watchlabel')!r} cols={H('hfull')!r}/{H('afull')!r} week={lab('Container(209).NumItems')} also={lab('Container(160).NumItems')}")
     shot("35-mine-live")
+    xbmc.executebuiltin("SetFocus(209)")
+    mon.waitForAbort(1.5)
+    shot("35-mine-week")
     sc.toggle_team(ev["league"], ev["home"])
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -1585,7 +1589,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    browse_test()
+    club_test()
+    mine_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
