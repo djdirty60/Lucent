@@ -1621,8 +1621,11 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    sportA_test()
+    tables_test()
     club_test()
     w1_test()
+    follow_test()
     mine_test()
 
     os.makedirs(OUT, exist_ok=True)
