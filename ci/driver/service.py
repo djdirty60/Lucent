@@ -1599,6 +1599,7 @@ def w1_test():
     log(f"w1: top={W('topline')!r} mid={W('bigmid')!r} sub={W('bigsub')!r} lines={W('hline')!r}/{W('aline')!r} goals={W('hgoals')!r}/{W('agoals')!r} "
         f"stats={[W(f'st{n}l') + ':' + W(f'st{n}h') + '-' + W(f'st{n}a') + '/' + W(f'st{n}k') for n in range(1, 5)]} "
         f"timeline={[W(f'tl{n}m') + ' ' + W(f'tl{n}k') + ' ' + W(f'tl{n}x') for n in range(1, 4)]} table={W('tabletitle')!r} focus={lab('System.CurrentControlID')}")
+    log(f"w1: remind={W('remindtext')!r} rec={W('rectext')!r} vis1330={cond('Control.IsVisible(1330)')} vis1332={cond('Control.IsVisible(1332)')} table={W('table')!r}")
     shot("41-w1")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)

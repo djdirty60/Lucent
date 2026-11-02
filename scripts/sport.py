@@ -711,7 +711,7 @@ class Sport(xbmcgui.WindowXML):
         hero = pool[:HERO_MAX]
         sections = []
         today = ac.today()
-        big_live = {e["id"] for e in hero if e["state"] == "in"}        # already on the scoreboard
+        big_live = {e["id"] for e in hero if e["state"] == "in"} | ({hero[0]["id"]} if hero else set())   # already on the big card
         also = [e for e in live_all + coming_all if e["id"] not in big_live and sc.local_day(e["start"]) == today]
         quiet = set(follow.get("nogoals", []))
         teams = [t.get("name", "") for t in follow.get("teams", []) if t.get("name") and sc.team_ident(t) not in quiet][:3]
