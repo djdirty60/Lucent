@@ -1635,6 +1635,36 @@ def w3_test():
     mon.waitForAbort(2)
 
 
+def pagelimit_test():
+    """Number of titles: choosing 100 for a Seren row offers to raise Seren's page limit (20) and does it."""
+    import sys as _sys
+    import threading
+    import xbmcaddon
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    ser = xbmcaddon.Addon("plugin.video.seren")
+    log(f"limit: before={ser.getSetting('item.limit')!r}")
+    t = threading.Thread(target=menu.source_page, args=({"limit": "100", "path": "plugin://plugin.video.seren/?action=x"},), daemon=True)
+    t.start()
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if cond("Window.IsActive(yesnodialog)"):
+            break
+    log(f"limit: dialog={cond('Window.IsActive(yesnodialog)')} text={lab('Control.GetLabel(9)')!r}")
+    shot("50-limit-ask")
+    xbmc.executebuiltin("SendClick(11)")
+    t.join(10)
+    mon.waitForAbort(1)
+    log(f"limit: after={xbmcaddon.Addon('plugin.video.seren').getSetting('item.limit')!r}")
+    shot("51-limit-done")
+    # a non-Seren add-on: only a notification, no question
+    menu.source_page({"limit": "50", "path": "plugin://plugin.video.youtube/"})
+    mon.waitForAbort(1)
+    log(f"limit: other dialog={cond('Window.IsActive(yesnodialog)')}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1648,9 +1678,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    club_test()
-    w1_test()
-    w3_test()
+    limit_test()
+    pagelimit_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

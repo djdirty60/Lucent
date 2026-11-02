@@ -811,6 +811,7 @@ def edit_widgets(menu, tab):
             if pick < 0:
                 continue
             wd["limit"] = LIMITS()[pick][0]
+            source_page(wd)
         elif act in ("timg", "bg"):
             img = pick_image(tr("title_img") if act == "timg" else tr("bg_img"), wd.get(act, ""))
             if img is None:
@@ -883,6 +884,35 @@ def LIMITS():
     """How many titles a Home row shows. Empty = 25 (fast, also on small boxes); 0 = all the source gives."""
     return [("", tr(G("25 (standard)", "25 (standaard)"))), ("50", "50"), ("100", "100"),
             ("0", tr(G("All (can make Home slower)", "Alle (kan Home trager maken)")))]
+
+
+def source_page(wd):
+    """The skin can only show what the source gives. Seren gives one page of 'Page Item Limit' titles (20 by
+    default), so a row of 50 or 100 stays at 20 unless Seren gives more: offer to raise it. Other add-ons decide
+    their own page size; say so."""
+    want = {"": 25, "0": 100}.get(wd.get("limit", ""))
+    try:
+        want = want or int(wd.get("limit"))
+    except (TypeError, ValueError):
+        return
+    path = wd.get("path", "")
+    if path.startswith(SEREN[:-1]):
+        try:
+            import xbmcaddon
+            ser = xbmcaddon.Addon("plugin.video.seren")
+            have = int(ser.getSetting("item.limit") or 20)
+        except Exception:  # noqa: BLE001 - Seren not installed
+            return
+        want = min(want, 100)
+        if want > have and xbmcgui.Dialog().yesno(HEADING, tr(G(
+                "Seren gives {0} titles per list. Raise Seren's 'Page Item Limit' to {1}?[CR](This counts for all Seren lists.)",
+                "Seren geeft {0} titels per lijst. Seren's 'Page Item Limit' verhogen naar {1}?[CR](Dit geldt voor alle Seren-lijsten.)"),
+                have, want)):
+            ser.setSetting("item.limit", str(want))
+            notify(tr(G("Seren now gives {0} titles per list", "Seren geeft nu {0} titels per lijst"), want))
+    elif path.startswith("plugin://") and want > 25:
+        notify(tr(G("The add-on decides how many titles it gives per page",
+                    "De add-on bepaalt zelf hoeveel titels hij per pagina geeft")))
 
 
 def limit_name(key):
