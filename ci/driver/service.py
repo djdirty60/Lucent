@@ -2050,7 +2050,28 @@ def chanrows_test():
     games = [e for e in sc.all_cached() if e["kind"] == "teams" and sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"]
     games.sort(key=lambda e: ({"in": 0, "post": 1, "pre": 2}[e["state"]], -e["start"] if e["state"] == "post" else e["start"]))
     if not games:
-        log("chan: no games")
+        # no games in the test: the game page on its own, with made-up properties
+        import xbmcaddon
+        win = xbmcgui.WindowXMLDialog("Lucent_SportGame.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
+        for k, v in {"layout": "teams", "hname": "Ajax", "aname": "AZ", "bigmid": "2 – 1", "topline": "Eredivisie", "remindtext": "Remind me",
+                     "rectext": "Record", "t.watchcap": "WATCH ON YOUR CHANNELS"}.items():
+            win.setProperty(f"g.{k}", v)
+        rows = [("ZIGGO SPORT 2", "NL  ·  Live now  ·  Broadcasting  ·  4K"), ("ZIGGO SPORT", "NL  ·  Live now  ·  Broadcasting"),
+                ("SPORT TV 1", "PT  ·  Broadcasting  ·  4K"), ("DIGI SPORT 1", "RO  ·  Live now  ·  Broadcasting")]
+        for n, (name, sub) in enumerate(rows, 1):
+            win.setProperty(f"g.ch{n}name", name)
+            win.setProperty(f"g.ch{n}sub", sub)
+        win.show()
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("SetFocus(1311)")
+        mon.waitForAbort(1.5)
+        shot("c-rows-1")
+        xbmc.executebuiltin("SetFocus(1313)")
+        mon.waitForAbort(1.5)
+        log(f"chan: page focus={lab('System.CurrentControlId')} vis1311={cond('Control.IsVisible(1311)')}")
+        shot("c-rows-3")
+        win.close()
+        del win
         return
     xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,game,{games[0]['id']})")
     for _ in range(30):
