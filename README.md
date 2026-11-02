@@ -1,8 +1,21 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (Beta 1)
+# Lucent – Kodi skin (Beta 2)
 
-> **Beta:** this is the first public beta. Everything is in place, but expect small bugs – please report them.
+> **Beta 2:** the second public beta. Everything is in place, but expect small bugs – please report them on the [issues page](https://github.com/djdirty60/Lucent/issues).
+
+## New in Beta 2
+
+- **Sport, redone** – *My sport* turns into a big live scoreboard when your team plays (both club colours, the minute, who scored), with *Also today* next to it and *Your teams this week* below. *All games* starts with the live games as cards and groups the rest per competition. *Tables* fill the screen with W/D/L columns, a legend and a panel for the club you are on (form, last 5, home/away, next game). *Follow* shows what you follow as cards (goal alerts and reminders per club) with an add screen: Search, Browse, Countries, Drivers & players.
+- **Club pages** – the club's logo behind its games, its colours and a photo of its stadium (all sports). *All games* shows the stadium of the home team.
+- **Game page** – a full-width scoreboard in both club colours, your channels, statistics as bars, a timeline with goals, cards and substitutions, and the table.
+- **Channel logos** from [tv-logos](https://github.com/tv-logo/tv-logos) on the Sport pages.
+- **TV guide** – the playing channel on the left of the header, the programme with Watch, Record and Info next to it, the groups as a row of buttons and a thin line at the current time.
+- **Skip intro, recap and preview** (TheIntroDB, for series episodes) with a Lucent-style *Skip* button; the setup assistant installs it.
+- **Spoken language** – a first and second choice for the sound; subtitles stay off when the sound is already in your language.
+- **Maintenance** (*Skin settings → Advanced*) – clears old cached pictures, add-on zips, old temporary files and the previous log; optionally once a month by itself.
+- **Seren Nixgate** repository comes with the skin; the setup assistant installs Seren from it.
+- **Touch screens** – a quick swipe up or down on Home moves to the next or previous row.
 
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
@@ -62,17 +75,19 @@ A **Calendar** tab (Week, List and Month) for the series and films of your Trakt
 ### Sport (needs IPTV channels)
 A **Sport** tab with games from almost 200 competitions (football worldwide, NBA, NFL, NHL, MLB, rugby, Formula 1, IndyCar, NASCAR, golf, tennis, UFC and more), fetched from ESPN. It only appears when Kodi has TV channels.
 
-- **My sport** – a big card with your next game in the two club colours, a small live TV window and a row of cards for every team, country or competition you follow.
-- **All games** and **Tables** – every game with its channel, and league tables with form, place changes and Champions League / relegation colours.
-- **Follow** – follow teams, countries or whole competitions, with their own icons and logos.
-- **Game page** – score, LIVE minute, your channels (from your IPTV guide), statistics, latest goals and the table. Formula 1 has its own page: circuit drawing, length, laps, turns, lap record, the weekend programme as cards and the top 10 of every finished session.
+- **My sport** – a big card for your team's next game in both club colours; when the game is on it becomes a live scoreboard with the minute bar and the scorers, with *Watch on …* and *Game page*. Next to it *Also today* and your goal alerts, below it *Your teams this week* and a row for every team, country or competition you follow.
+- **All games** – the games that are on now as cards at the top (score, minute, channel), then every game grouped per competition.
+- **Tables** – full width, with W/D/L columns, coloured zones with a legend, your team in gold and a panel for the club you are on: form, last 5 results, home and away, next game.
+- **Club page** – the club's games with its logo large in the background, its colours and a photo of its stadium.
+- **Follow** – your teams, countries, competitions and names as cards in your own order; per club goal alerts and reminders on or off. *+ Add* opens Search, Browse (sport → competition → clubs), Countries and Drivers & players.
+- **Game page** – a scoreboard across the screen in both club colours, your channels (from your IPTV guide), statistics as bars, a timeline with goals, cards and substitutions, and the table. Formula 1 has its own page: circuit drawing, length, laps, turns, lap record, the weekend programme as cards and the top 10 of every finished session.
 - **Reminders, automatic switching and recording** – a reminder 5 minutes before, optional switching to the channel, recording for 1 to 6 hours, and *Fix channel* per game, competition or team.
 - **Goal notifications** – when a team you follow scores, a pop-up shows the score and the minute (not when you already watch that game; switch off in Settings → Live TV).
 - OK on a channel plays it in the small TV window, OK again goes full screen.
 - The Sport guide only reads the TV guide of the **sport channels** (recognised by name: Ziggo Sport, ESPN, Sky Sports, DAZN, Viaplay, beIN, Eurosport and many more) plus NPO 1, 2 and 3 – much lighter than every channel in your list.
 
 ### TV guide and live TV
-A **TV** tab with your IPTV channels: groups on the left, channels with logo and number, a timeline with the programmes, a header with the focused programme and a live preview. A *Favourite group* opens first every time. The live TV player has its own compact info bar (channel, LIVE, quality, score, now and next) and a menu with channel up/down, pause, record, subtitles, audio and recent channels.
+A **TV** tab with your IPTV channels: the playing channel on the left of the header with the focused programme next to it (Watch, Record, Info), the groups as a row of buttons, channels with logo and number and a timeline with the programmes and a line at the current time. A *Favourite group* opens first every time. The live TV player has its own compact info bar (channel, LIVE, quality, score, now and next) and a menu with channel up/down, pause, record, subtitles, audio and recent channels.
 - **Xtream login**: enter your provider's server address, user name and password (setup assistant → Live TV, or Settings → Live TV); Lucent checks the login and sets up IPTV Simple Client (channel list, guide, replay).
 - **Hide channels** (*Settings → Live TV*): choose the groups you want to see, or type a few words (`NL, BE, SPORT`); hide adult groups or the channel you are watching. Lucent saves a shorter channel list for IPTV Simple, builds it again every night, and *Show everything again* puts the original back.
 - **Star button** in the live menu (next to the moon): add the channel you watch to Kodi's favourites, or take it out again.
@@ -160,8 +175,26 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Calendar**
 ![Calendar](screenshots/calendar.jpg)
 
-**Sport**
-![Sport](screenshots/sport.jpg)
+**Sport – My sport**
+![My sport](screenshots/sport-mysport.jpg)
+
+**Sport – All games**
+![All games](screenshots/sport-allgames.jpg)
+
+**Sport – Tables**
+![Tables](screenshots/sport-tables.jpg)
+
+**Sport – Club page**
+![Club page](screenshots/sport-club.jpg)
+
+**Sport – Follow**
+![Follow](screenshots/sport-follow.jpg)
+![Follow – add](screenshots/sport-follow-add.jpg)
+
+**Sport – Game page**
+![Game page](screenshots/sport-game.jpg)
+
+> The Sport screenshots are taken in a real Kodi with real ESPN data.
 
 ---
 
@@ -258,6 +291,6 @@ screenshots/         images for this README
 
 - Inspired by the design of [Nuvio Arc](https://github.com/ysosrs123/NuvioTV-Fork). This skin is not affiliated with it.
 - Home rows use [Seren](https://github.com/nixgates/plugin.video.seren) by Nixgates (also works with forks of it).
-- Sport data comes from ESPN. This skin is not affiliated with Seren either.
+- Sport data comes from ESPN; stadium photos from [TheSportsDB](https://www.thesportsdb.com); channel logos from [tv-logos](https://github.com/tv-logo/tv-logos) (CC BY-SA / BY-NC-SA, the logos belong to their owners). This skin is not affiliated with Seren either.
 - Font: [Inter](https://github.com/rsms/inter) by Rasmus Andersson, SIL Open Font License 1.1 (see `fonts/Inter-LICENSE.txt`).
 - Icons and badges are original designs. The badges are not official Dolby or DTS logos.
