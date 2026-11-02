@@ -1739,6 +1739,24 @@ def panels_test():
     log(f"panels: back start rows9100={cond('Control.IsVisible(9100)')} panel={cond('Control.IsVisible(9310)')}")
 
 
+def updater_test():
+    """The update check reads the newest list (cache-busting address) and the new zip can be downloaded."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import updater
+    try:
+        found = updater.fetch_available()
+        log(f"upd: skin={found.get('skin.lucent', ('?',))[0]} library={found.get('script.lucent.library', ('?',))[0]}")
+        ups = updater.available_updates()
+        log(f"upd: updates={[(u['id'], u['have'], u['version']) for u in ups]}")
+        skin = next((u for u in ups if u["id"] == "skin.lucent"), None)
+        if skin:
+            path = updater.download_zip(skin)
+            log(f"upd: zip {os.path.getsize(path)} bytes")
+    except Exception as error:  # noqa: BLE001
+        log(f"upd: error {error!r}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1752,8 +1770,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    pagelimit_test()
-    panels_test()
+    updater_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

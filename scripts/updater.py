@@ -90,7 +90,9 @@ def installed_version(addon_id):
 
 def fetch_available():
     """{addon id: (version, news)} from the repository."""
-    request = urllib.request.Request(ADDONS_XML, headers={"User-Agent": "skin.lucent (Kodi)"})
+    # a new address every time: GitHub's cache could otherwise give the list of a few minutes ago
+    request = urllib.request.Request(f"{ADDONS_XML}?t={int(time.time())}",
+                                     headers={"User-Agent": "skin.lucent (Kodi)", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(request, timeout=20) as response:
         xml = response.read().decode("utf-8")
     found = {}
@@ -153,7 +155,7 @@ def download_zip(update):
     """Download the new version to a temporary file and return its path."""
     url = f"{ZIPS_URL}{update['id']}/{update['id']}-{update['version']}.zip"
     target = xbmcvfs.translatePath(f"special://temp/{update['id']}-{update['version']}.zip")
-    request = urllib.request.Request(url, headers={"User-Agent": "skin.lucent (Kodi)"})
+    request = urllib.request.Request(f"{url}?t={int(time.time())}", headers={"User-Agent": "skin.lucent (Kodi)", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(request, timeout=60) as response, open(target, "wb") as out:
         import shutil
         shutil.copyfileobj(response, out)
