@@ -1579,6 +1579,34 @@ def browse_test():
         mon.waitForAbort(1)
 
 
+def w1_test():
+    """Game page W1: a football game (a finished one has statistics and a timeline)."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    games = [e for e in sc.all_cached() if e["kind"] == "teams" and sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"]
+    games.sort(key=lambda e: ({"in": 0, "post": 1, "pre": 2}[e["state"]], -e["start"] if e["state"] == "post" else e["start"]))
+    log(f"w1: games={len(games)} first={(games[0]['home'].get('name'), games[0]['away'].get('name'), games[0]['state']) if games else None}")
+    if not games:
+        return
+    xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,game,{games[0]['id']})")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if lab("Window.Property(g.layout)") == "teams" and lab("Window.Property(g.st1l)"):
+            break
+    mon.waitForAbort(4)
+    W = lambda k: lab(f"Window.Property(g.{k})")  # noqa: E731
+    log(f"w1: top={W('topline')!r} mid={W('bigmid')!r} sub={W('bigsub')!r} lines={W('hline')!r}/{W('aline')!r} goals={W('hgoals')!r}/{W('agoals')!r} "
+        f"stats={[W(f'st{n}l') + ':' + W(f'st{n}h') + '-' + W(f'st{n}a') + '/' + W(f'st{n}k') for n in range(1, 5)]} "
+        f"timeline={[W(f'tl{n}m') + ' ' + W(f'tl{n}k') + ' ' + W(f'tl{n}x') for n in range(1, 4)]} table={W('tabletitle')!r} focus={lab('System.CurrentControlID')}")
+    shot("41-w1")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1593,6 +1621,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     club_test()
+    w1_test()
     mine_test()
 
     os.makedirs(OUT, exist_ok=True)

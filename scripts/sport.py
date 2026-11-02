@@ -952,6 +952,23 @@ class Sport(xbmcgui.WindowXML):
             props["info2"] = ev.get("round", "")
             props["prog"] = str(self.progress(ev))
             props["score"] = (f"{props['hscore']} – {props['ascore']}" if props.get("hscore") != "" and props.get("ascore") != "" and ev["state"] in ("in", "post") else "")
+            # the scoreboard of the page: both club colours, the line on top, the big middle
+            hx = sc.club_hex(ev["home"].get("color"), ev["home"].get("alt"))
+            ax = sc.club_hex(ev["away"].get("color"), ev["away"].get("alt"))
+            props["hfull"], props["afull"] = colour(hx or "B3122E", "E6"), colour(ax or hx or "1E3A8A", "E6")
+            props["hbarcol"], props["abarcol"] = colour(hx or "C8102E"), colour(ax or "1E4BA0")
+            crumbs = [x for x in (props["league"], ev.get("venue"), ev.get("round")) if x]
+            props["crumb"] = f"‹ {sc.t('title')}     " + "  ·  ".join(crumbs)
+            if ev["state"] == "in":
+                props["topline"] = f"[B][COLOR FFE5534B]LIVE[/COLOR][/B]    {ev.get('status', '')}"
+                props["bigmid"], props["bigsub"] = props["score"], ""
+            elif ev["state"] == "post":
+                props["topline"] = sc.t("g_over")
+                props["bigmid"], props["bigsub"] = props["score"], ""
+            else:
+                props["topline"] = when_line(ev)
+                props["bigmid"], props["bigsub"] = sc.local_time(ev["start"]), self.countdown(ev)
+            props["hname"], props["aname"] = ev["home"].get("name", ""), ev["away"].get("name", "")
         else:
             props["info1"] = ev.get("venue", "")
             props["info2"] = ev.get("round", "")
@@ -2169,6 +2186,7 @@ class GameInfo(xbmcgui.WindowXMLDialog):
     """The page of one game; its layout depends on the kind of game (teams / race / event)."""
     CLICKS = {311: "play1", 312: "play2", 313: "play3", 314: "play4", 332: "remind", 333: "record", 321: "home", 322: "away",
               331: "fix", 323: "table"}
+    NEW_IDS = {1311: 311, 1312: 312, 1313: 313, 1314: 314, 1332: 332, 1333: 333, 1323: 323, 1321: 321, 1322: 322}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -2194,7 +2212,13 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         cid, name = epg.active()
         self.setProperty("g.preview", cid)
         self.setProperty("g.preview.name", name)
-        focus_first(self, (311, 332, 321, 322, 323, 331))
+        for key, text in (("watchcap", sc.t("watch").upper()), ("statscap", sc.t("g_teamstats").upper()),
+                          ("timelinecap", sc.t("g_timeline")), ("notimeline", sc.t("g_notimeline"))):
+            self.setProperty(f"g.t.{key}", text)
+        if self.props.get("layout") == "teams":
+            focus_first(self, (1311, 1332, 1321))
+        else:
+            focus_first(self, (311, 332, 321, 322, 323, 331))
         threading.Thread(target=self.extra, daemon=True).start()
 
     def onFocus(self, cid):
@@ -2235,10 +2259,20 @@ class GameInfo(xbmcgui.WindowXMLDialog):
             if not self.alive:
                 return
             self.setProperty(f"g.{key}", value)
-        for key, value in self.parent.game_detail(self.ev).items():
+        extra = {}
+        for key in ("hplace", "aplace") + tuple(f"{side}f{n}" for side in "ha" for n in range(1, 6)):
+            extra[key] = self.getProperty(f"g.{key}")
+        for side in "ha":
+            form = "".join(extra[f"{side}f{n}"] for n in range(1, 6))
+            self.setProperty(f"g.{side}line", "  ·  ".join(x for x in (extra[f"{side}place"], form) if x))
+        detail = self.parent.game_detail(self.ev)
+        for key, value in detail.items():
             if not self.alive:
                 return
             self.setProperty(f"g.{key}", value)
+        sides = goal_sides(self.ev, detail)
+        self.setProperty("g.hgoals", "  ·  ".join(sides["home"]))
+        self.setProperty("g.agoals", "  ·  ".join(sides["away"]))
 
     def preview(self, n):
         """OK on a channel: watch it in the TV window of this page; OK on the same channel again: full screen."""
@@ -2258,6 +2292,12 @@ class GameInfo(xbmcgui.WindowXMLDialog):
         threading.Thread(target=self.parent.start_preview, args=(cid,), daemon=True).start()
 
     def onClick(self, cid):
+        if cid in (1311, 1312, 1313, 1314):          # the football page has no TV window: a channel goes full screen
+            self.result = f"play{cid - 1310}"
+            self.alive = False
+            self.close()
+            return
+        cid = self.NEW_IDS.get(cid, cid)
         if cid in (311, 312, 313, 314):
             self.preview(cid - 310)
             return
@@ -2292,6 +2332,22 @@ class GameInfo(xbmcgui.WindowXMLDialog):
             epg.stop()
             self.setProperty("g.preview", "")
             self.setProperty("g.preview.name", "")
+
+
+def goal_sides(ev, detail):
+    """Who scored, per side, oldest first: {'home': ["12' Leão", ...], 'away': [...]}, from ESPN's game summary."""
+    sides = {"home": [], "away": []}
+    habbr = ev["home"].get("abbr") or ev["home"].get("name", "")
+    for i in range(5, 0, -1):
+        minute = detail.get(f"sc{i}m")
+        if not minute:
+            continue
+        who = detail.get(f"sc{i}x", "")
+        who = who.replace(" Own Goal", " (og)" if not sc.NL else " (e.d.)").replace(" Penalty - Scored", " (p)")
+        for word in (" Goal", "Goal - ", "Goal! "):
+            who = who.replace(word, "")
+        sides["home" if detail.get(f"sc{i}t") == habbr else "away"].append(f"{minute} {who.strip()}".strip())
+    return sides
 
 
 def colour_of(side):

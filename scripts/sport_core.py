@@ -144,7 +144,7 @@ TX = {
     "hint": ("OK: game info   ◄ ►: browse the row   ▲ ▼: next team", "OK: wedstrijdinfo   ◄ ►: door de rij   ▲ ▼: volgend team"),
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
-    "also_today": ("Also today", "Ook vandaag"), "game_page": ("Game page", "Wedstrijdpagina"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
+    "also_today": ("Also today", "Ook vandaag"), "g_timeline": ("TIMELINE", "TIJDLIJN"), "g_notimeline": ("Goals, cards and substitutions show here during the game", "Doelpunten, kaarten en wissels komen hier tijdens de wedstrijd"), "game_page": ("Game page", "Wedstrijdpagina"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
     "watch_on": ("Watch on {}", "Kijk op {}"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
     "goal_alerts": ("Goal alerts on for {}", "Doelpuntmeldingen aan voor {}"),
     "m_countries": ("Choose countries", "Landen kiezen"),
@@ -1042,6 +1042,31 @@ def match_detail(ev):
         if parts:
             who = (parts[0].get("athlete") or {}).get("displayName", "")
         out[f"sc{i}x"] = (p.get("shortText") or p.get("text") or who or "").split(".")[0][:60]
+    # timeline: goals, cards and substitutions, newest first
+    names = {str(ev["home"].get("id")): ev["home"].get("short") or ev["home"].get("name", ""),
+             str(ev["away"].get("id")): ev["away"].get("short") or ev["away"].get("name", "")}
+    key_events = []
+    for p in data.get("keyEvents") or []:
+        kind = ((p.get("type") or {}).get("text") or "").lower()
+        if "goal" in kind or "penalty - scored" in kind:
+            k = "goal"
+        elif "yellow" in kind:
+            k = "yellow"
+        elif "red" in kind:
+            k = "red"
+        elif "substitution" in kind:
+            k = "sub"
+        else:
+            continue
+        people = [(x.get("athlete") or {}).get("displayName", "") for x in p.get("participants") or []]
+        people = [x for x in people if x]
+        who = " / ".join(people[:2]) if k == "sub" else (people[0] if people else "")
+        if k == "goal" and len(people) > 1:
+            who = f"{people[0]} ({people[1]})"
+        team = names.get(str((p.get("team") or {}).get("id", "")), "")
+        key_events.append(((p.get("clock") or {}).get("displayValue", ""), k, f"{team}: {who}" if team and who else (who or team)))
+    for i, (minute, k, text) in enumerate(reversed(key_events[-6:]), 1):
+        out[f"tl{i}m"], out[f"tl{i}k"], out[f"tl{i}x"] = minute, k, text[:60]
     return out
 
 
