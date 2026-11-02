@@ -1990,6 +1990,38 @@ def pvr_test():
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(1.5)
     log(f"pvr: back focus={lab('System.CurrentControlId')} settings={cond('Skin.HasSetting(lucent.livesettings)')}")
+    # clean channel logos (tv-logos) in the list Lucent writes for IPTV Simple
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(3)
+    import channels
+    import xtream
+    cfg = channels.load()
+    path = channels.pick_instance(cfg)
+    ok = bool(path) and channels.remember_original(cfg, path)
+    cfg["logos"] = True
+    res = channels.build_file(cfg) if ok else None
+    if res:
+        channels.point_to_file(cfg)
+        channels.save(cfg)
+
+        class Busy:
+            def update(self, *a):
+                pass
+
+            def iscanceled(self):
+                return False
+        state = xtream.restart_addon(Busy())
+    else:
+        state = "-"
+    mon.waitForAbort(5)
+    chans = (rpc("PVR.GetChannels", {"channelgroupid": "alltv", "properties": ["icon", "thumbnail"]}) or {}).get("channels") or []
+    log(f"pvr: logos instance={bool(path)} built={res} restart={state} icons={[(c.get('label'), (c.get('icon') or c.get('thumbnail') or '')[-30:]) for c in chans]}")
+    xbmc.executebuiltin("ActivateWindow(TVGuide)")
+    mon.waitForAbort(8)
+    shot("p-guide-logos")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("PlayerControl(Stop)")
     mon.waitForAbort(3)
