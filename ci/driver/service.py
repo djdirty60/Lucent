@@ -2121,6 +2121,7 @@ def sportosd_test():
     put("live.d.", det)
     put("live.t.", tab)
     mon.waitForAbort(2)
+    log(f"sosd: vis9700={cond('Control.IsVisible(9700)')} ")
     log(f"sosd: board win={lab('System.CurrentWindow')!r} full={cond('Window.IsActive(fullscreenvideo)')} cond={cond('Pvr.IsPlayingTV + !String.IsEmpty(Window(Home).Property(live.sc.on)) + String.IsEmpty(Window(Home).Property(live.sc.race))')} on={HOME.getProperty('live.sc.on')!r}")
     shot("s-board")
     xbmc.executebuiltin("ActivateWindow(videoosd)")
