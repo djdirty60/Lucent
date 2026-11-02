@@ -348,11 +348,12 @@ def refresh(key, row):                        # RunScript(script.lucent.library,
     want(key)
 
 
-def mark_all_stale():
-    """A video stopped: the 'continue watching' kind of rows are fetched again (by the service, one at a time)."""
+def mark_all_stale(every=False):
+    """A video stopped: the 'continue watching' kind of rows are fetched again (by the service, one at a time).
+    every=True: all rows (Seren now gives more titles per list)."""
     for name in list_dir(REG):
         reg = read_json(os.path.join(REG, name), {}) or {}
-        if reg.get("path") and ttl_of(reg["path"]) == TTL_FAST:
+        if reg.get("path") and (every or ttl_of(reg["path"]) == TTL_FAST):
             want(name[:-5])
 
 

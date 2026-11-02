@@ -24,6 +24,9 @@ DIR = xbmcvfs.translatePath(f"special://profile/addon_data/{ADDON_ID}/tmdb/")
 REG = os.path.join(DIR, "registry.json")
 HOME = xbmcgui.Window(10000)
 TTL = 6 * 3600
+PAGES = 3                   # TMDb pages per list (20 each)
+MAX_ROWS = 100              # titles per list at most (the skin's 'Number of titles' cuts it down)
+CACHE_V = 4                 # 4: lists with more than 20 titles (older copies are fetched again)
 BACKOFF = (120, 600, 1800)
 TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
@@ -181,11 +184,18 @@ def fetch_tmdb(name):
     params = {"page": 1}
     if name in ("nowplaying_movie", "upcoming_movie"):
         params["region"] = "NL" if NL else "US"
-    data = tmdb_get(endpoint, **params)
-    if data is None:
-        return None
-    rows = [entry_of(r, kind) for r in (data.get("results") or []) if r.get("poster_path")]
-    rows = enrich(rows[:20])
+    rows = []
+    for page in range(1, PAGES + 1):                     # 20 titles per page: up to 60, so 'Number of titles' 50 works
+        params["page"] = page
+        data = tmdb_get(endpoint, **params)
+        if data is None:
+            if page == 1:
+                return None
+            break
+        rows += [entry_of(r, kind) for r in (data.get("results") or []) if r.get("poster_path")]
+        if page >= int(data.get("total_pages") or 1):
+            break
+    rows = enrich(rows[:MAX_ROWS])
     for row in rows:                                   # the vote count of the detail page is the better one
         if row.get("votes") and "tmdb" in (row.get("ratings") or {}):
             row["ratings"]["tmdb"]["votes"] = row["votes"]
@@ -222,7 +232,7 @@ def fetch_trakt(name, path):
         if not trakt.token and name.startswith(("trakt_watchlist", "trakt_recommended", "tl_")):
             WHY["text"] = "not logged in to Trakt in Seren"
             return None
-        data = trakt.call(f"{spec[0]}{'&' if '?' in spec[0] else '?'}extended=full&limit=40")
+        data = trakt.call(f"{spec[0]}{'&' if '?' in spec[0] else '?'}extended=full&limit={MAX_ROWS}")
     except Exception as error:  # noqa: BLE001
         log(f"{name}: {type(error).__name__} {error}"[:200])
         WHY["text"] = f"Trakt error: {type(error).__name__}"
@@ -244,7 +254,7 @@ def fetch_trakt(name, path):
             continue
         mk = f"{'m' if kind == 'movie' else 't'}{tmdb_id}"
         info = meta.get(mk)
-        if info is None and asked < 25:
+        if info is None and asked < 60:
             asked += 1
             d = tmdb_get(f"{'movie' if kind == 'movie' else 'tv'}/{tmdb_id}")
             if d:
@@ -265,7 +275,7 @@ def fetch_trakt(name, path):
                      "file": f"plugin://{ADDON_ID}/?{query}", "filetype": "file", "action": True, "props": {"tmdb_id": str(tmdb_id), "lucent_open": "1"}})
         if kind == "movie" and (obj.get("ids") or {}).get("trakt") in seen:
             rows[-1]["playcount"] = 1                      # Trakt says you saw it (list kept by the library export)
-        if len(rows) >= 20:
+        if len(rows) >= MAX_ROWS:
             break
     if asked:
         if len(meta) > META_KEEP:
@@ -576,7 +586,7 @@ def browse(handle, query):
         fresh = fetch(name)
         if fresh:
             items = fresh
-            write_json(cache_file(name), {"time": time.time(), "v": 3, "items": items})
+            write_json(cache_file(name), {"time": time.time(), "v": CACHE_V, "items": items})
     register(name, "")
     widget.answer(handle, items or [])
 
@@ -674,14 +684,14 @@ def tick(player_busy=False):
             continue
         item = reg[name]
         saved = read_json(cache_file(name), {}) or {}
-        if saved.get("items") and saved.get("v") == 3 and now - saved.get("time", 0) < TTL:
+        if saved.get("items") and saved.get("v") == CACHE_V and now - saved.get("time", 0) < TTL:
             continue
         if now < item.get("retry", 0):
             continue
         items = fetch(name, item.get("path") or "")
         if items:
             changed = items != saved.get("items")
-            write_json(cache_file(name), {"time": now, "v": 3, "items": items})
+            write_json(cache_file(name), {"time": now, "v": CACHE_V, "items": items})
             item.update(fail=0, retry=0)
             if changed:
                 for row in item.get("rows") or []:

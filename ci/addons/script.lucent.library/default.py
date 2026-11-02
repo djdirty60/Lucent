@@ -3,6 +3,9 @@ import sys
 if len(sys.argv) > 1 and sys.argv[1] == "widget_refresh":
     import widget
     widget.refresh(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "0")
+elif len(sys.argv) > 1 and sys.argv[1] == "widgets_stale":
+    import widget                      # every cached row is fetched again: RunScript(script.lucent.library,widgets_stale)
+    widget.mark_all_stale(every=True)
 elif len(sys.argv) > 3 and sys.argv[1] in ("add", "remove"):
     import quick                       # add / remove one title at once: RunScript(script.lucent.library,add,movie,123[,trakt])
     quick.run(sys.argv[1], sys.argv[2], sys.argv[3], len(sys.argv) > 4 and sys.argv[4] == "trakt")
