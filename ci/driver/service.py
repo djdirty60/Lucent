@@ -1836,13 +1836,15 @@ def readme_test():
         mon.waitForAbort(3)
         log(f"readme: {name} focus={lab('System.CurrentControlId')} items={lab(f'Container({cid}).NumItems')}")
         shot(f"r-tab-{name}")
-    # views
+    # views (without the '..' item, focus on the second title)
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
     mon.waitForAbort(6)
     for view, name in ((51, "posters"), (52, "poster-wall"), (50, "list"), (57, "showcase")):
         xbmc.executebuiltin(f"Container.SetViewMode({view})")
         mon.waitForAbort(2)
-        xbmc.executebuiltin(f"SetFocus({view})")
+        xbmc.executebuiltin(f"SetFocus({view},1)")
         mon.waitForAbort(4)
         log(f"readme: view {name} visible={cond(f'Control.IsVisible({view})')} items={lab('Container.NumItems')}")
         shot(f"r-view-{name}")
@@ -1850,7 +1852,7 @@ def readme_test():
     mon.waitForAbort(6)
     xbmc.executebuiltin("Container.SetViewMode(55)")
     mon.waitForAbort(2)
-    xbmc.executebuiltin("SetFocus(55)")
+    xbmc.executebuiltin("SetFocus(55,0)")
     mon.waitForAbort(4)
     log(f"readme: episodes visible={cond('Control.IsVisible(55)')}")
     shot("r-view-episodes")
@@ -1878,6 +1880,30 @@ def readme_test():
     mon.waitForAbort(2)
 
 
+def filebrowser_test():
+    """Issue #3: an add-on asks for pictures (thumbnails view 451) or zip files: the files must be visible."""
+    import threading
+    folder = "special://home/addons/plugin.video.fakeseren/art/"
+    for name, args in (("images", (2, "Choose a picture", "files", ".jpg|.png", True, False, folder)),
+                       ("zips", (1, "Choose a backup", "files", ".zip", True, False, "special://temp/zips/"))):
+        if name == "zips":
+            os.makedirs(xbmcvfs.translatePath("special://temp/zips/"), exist_ok=True)
+            for i in range(6):
+                open(xbmcvfs.translatePath(f"special://temp/zips/build{i}.zip"), "wb").write(b"PK\x05\x06" + b"\x00" * 18)
+        t = threading.Thread(target=lambda: xbmcgui.Dialog().browse(*args), daemon=True)
+        t.start()
+        for _ in range(15):
+            mon.waitForAbort(1)
+            if cond("Window.IsActive(filebrowser)"):
+                break
+        mon.waitForAbort(3)
+        log(f"fb: {name} active={cond('Window.IsActive(filebrowser)')} list450={cond('Control.IsVisible(450)')} n450={lab('Container(450).NumItems')} "
+            f"thumbs451={cond('Control.IsVisible(451)')} n451={lab('Container(451).NumItems')} focus={lab('System.CurrentControlId')}")
+        shot(f"r-fb-{name}")
+        xbmc.executebuiltin("Dialog.Close(filebrowser,true)")
+        mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1891,6 +1917,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    filebrowser_test()
     readme_test()
 
     os.makedirs(OUT, exist_ok=True)

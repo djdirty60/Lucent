@@ -174,6 +174,14 @@
         <value condition="!String.IsEmpty(Player.Art(clearlogo))">$INFO[Player.Art(clearlogo)]</value>
         <value condition="!String.IsEmpty(Player.Art(tvshow.clearlogo))">$INFO[Player.Art(tvshow.clearlogo)]</value>
     </variable>
+    <variable name="FileThumbFocusBg">
+        <value condition="Control.HasFocus(451)">focus</value>
+        <value>glass_strong</value>
+    </variable>
+    <variable name="FileThumbFocusText">
+        <value condition="Control.HasFocus(451)">on_focus</value>
+        <value>text</value>
+    </variable>
     <variable name="FileIcon">
         <value condition="ListItem.IsParentFolder">DefaultFolderBack.png</value>
         <value condition="!String.IsEmpty(ListItem.Icon)">$INFO[ListItem.Icon]</value>
