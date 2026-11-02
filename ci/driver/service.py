@@ -1752,6 +1752,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    pagelimit_test()
     panels_test()
 
     os.makedirs(OUT, exist_ok=True)
