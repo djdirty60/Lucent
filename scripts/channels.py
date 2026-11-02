@@ -3,6 +3,10 @@
 
     RunScript(special://skin/scripts/channels.py)           menu
     RunScript(special://skin/scripts/channels.py,refresh)   from the helper once a day: build the filtered list again
+    RunScript(special://skin/scripts/channels.py,logos)     switch the clean channel logos (tv-logos) on or off
+
+With the clean logos on, the list Lucent writes gets the logo of tv-logo/tv-logos for every channel it knows
+('NL: RTL 4 FHD' -> rtl-4), so the guide, the TV tab and the player show those instead of the provider's logos.
 
 A big IPTV list holds hundreds of channels in languages you do not watch. This makes IPTV Simple read a shorter list:
 Lucent fetches the channel list (the link or file IPTV Simple used), leaves out the groups and channels you chose, saves
@@ -111,9 +115,29 @@ def filtered(header, entries, cfg):
     hide_n = {norm(n) for n in cfg.get("hide_names") or []}
     keep = [e for e in entries if e[0] not in hide_g and norm(e[1]) not in hide_n]
     lines = list(header) or ["#EXTM3U"]
-    for _g, _n, ls in keep:
+    logo_of = clean_logo if cfg.get("logos") else None
+    for _g, name, ls in keep:
+        if logo_of:
+            ls = [relogo(ls[0], logo_of(name))] + ls[1:]
         lines.extend(ls)
     return "\n".join(lines) + "\n", len(keep)
+
+
+def clean_logo(name):
+    try:
+        import sport_core as sc
+        return sc.channel_logo(name)
+    except Exception:  # noqa: BLE001
+        return ""
+
+
+def relogo(line, logo):
+    """The #EXTINF line with tvg-logo set to the clean logo (unchanged when there is none)."""
+    if not logo:
+        return line
+    if 'tvg-logo="' in line:
+        return re.sub(r'tvg-logo="[^"]*"', f'tvg-logo="{logo}"', line, count=1)
+    return line.replace("#EXTINF:-1 ", f'#EXTINF:-1 tvg-logo="{logo}" ', 1)
 
 
 # ----------------------------------------------------------------------------- IPTV Simple's instance
@@ -154,6 +178,8 @@ def remember_original(cfg, path):
 def point_to_file(cfg):
     values = xtream.read_settings(cfg["instance"])
     values.update({"m3uPathType": "0", "m3uPath": OUT, "m3uCache": "true", "m3uRefreshMode": "2", "m3uRefreshHour": "4"})
+    if cfg.get("logos"):
+        values["logoFromEpg"] = "1"                          # the logos of the list (ours) before the guide's
     values.pop("m3uUrl", None)
     if cfg.get("agent"):
         values["defaultUserAgent"] = cfg["agent"]            # the streams are still asked the way the panel accepts
@@ -308,6 +334,7 @@ def menu():
     options.append(("adult", t("Hide adult groups (xxx, adult, 18+ …)", "Verberg volwassen-groepen (xxx, adult, 18+ …)")))
     if here and here.get("name"):
         options.append(("now", t(f"Hide the channel I am watching: {here['name']}", f"Verberg de zender die ik kijk: {here['name']}")))
+    options.append(("logos", t("Clean channel logos (tv-logos): ", "Nette zenderlogo's (tv-logos): ") + (t("on", "aan") if cfg.get("logos") else t("off", "uit"))))
     if hidden_n:
         options.append(("all", t("Show everything again", "Alles weer tonen")))
     pick = xbmcgui.Dialog().select(t("Channels", "Zenders") + t(f"  ·  {len(entries)} in the list", f"  ·  {len(entries)} in de lijst"), [o[1] for o in options])
@@ -336,8 +363,19 @@ def menu():
         cfg["hide_groups"] = sorted(set(cfg.get("hide_groups") or []) | set(found))
     elif kind == "now":
         cfg["hide_names"] = sorted(set(cfg.get("hide_names") or []) | {here["name"]})
+    elif kind == "logos":
+        cfg["logos"] = not cfg.get("logos")
+        if not cfg["logos"] and not (cfg.get("hide_groups") or cfg.get("hide_names")):
+            point_back(cfg)
+            save(cfg)
+            restart(t("Loading the channels…", "Zenders laden…"))
+            xbmcgui.Dialog().ok(t("Channels", "Zenders"), t("The logos of your provider are back.", "De logo's van je aanbieder zijn terug."))
+            return
     elif kind == "all":
         cfg["hide_groups"], cfg["hide_names"] = [], []
+        if cfg.get("logos"):
+            apply_and_restart(cfg, text)
+            return
         point_back(cfg)
         save(cfg)
         restart(t("Loading all channels…", "Alle zenders laden…"))
@@ -349,14 +387,42 @@ def menu():
 def refresh():
     """Helper, once a day: the provider adds and removes channels; build the filtered list again with the same choices."""
     cfg = load()
-    if not cfg.get("source") or not (cfg.get("hide_groups") or cfg.get("hide_names")):
+    if not cfg.get("source") or not (cfg.get("hide_groups") or cfg.get("hide_names") or cfg.get("logos")):
         return
     result = build_file(cfg)
     log(f"refresh: {result}")
 
 
+def ask_logos():
+    """Once after the update: offer the clean channel logos."""
+    xbmc.executebuiltin('Skin.SetString(lucent.logoask,"1")')
+    cfg = load()
+    if "logos" in cfg or not xbmc.getCondVisibility(f"System.HasAddon({xtream.IPTV})"):
+        return
+    if not xbmcgui.Dialog().yesno(t("Channels", "Zenders"), t(
+            "Use clean channel logos (tv-logos) in the TV guide, the TV tab and the player instead of your provider's logos?",
+            "Nette zenderlogo's (tv-logos) gebruiken in de tv-gids, de TV-tab en de speler, in plaats van de logo's van je aanbieder?")):
+        cfg["logos"] = False
+        save(cfg)
+        return
+    path = pick_instance(cfg)
+    if not path or not remember_original(cfg, path):
+        return
+    cfg["logos"] = True
+    busy = xbmcgui.DialogProgress()
+    busy.create(t("Channels", "Zenders"), t("Reading the channel list…", "Zenderlijst lezen…"))
+    text = read_source(cfg)
+    busy.close()
+    if not text:
+        xbmcgui.Dialog().ok(t("Channels", "Zenders"), t("Could not read the channel list. Is the provider reachable?", "De zenderlijst is niet te lezen. Is de aanbieder bereikbaar?"))
+        return
+    apply_and_restart(cfg, text)
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "refresh":
         refresh()
+    elif len(sys.argv) > 1 and sys.argv[1] == "asklogos":
+        ask_logos()
     else:
         menu()

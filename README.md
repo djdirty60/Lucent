@@ -9,7 +9,7 @@
 - **Sport, redone** – *My sport* turns into a big live scoreboard when your team plays (both club colours, the minute, who scored), with *Also today* next to it and *Your teams this week* below. *All games* starts with the live games as cards and groups the rest per competition. *Tables* fill the screen with W/D/L columns, a legend and a panel for the club you are on (form, last 5, home/away, next game). *Follow* shows what you follow as cards (goal alerts and reminders per club) with an add screen: Search, Browse, Countries, Drivers & players.
 - **Club pages** – the club's logo behind its games, its colours and a photo of its stadium (all sports). *All games* shows the stadium of the home team.
 - **Game page** – a full-width scoreboard in both club colours, your channels, statistics as bars, a timeline with goals, cards and substitutions, and the table.
-- **Channel logos** from [tv-logos](https://github.com/tv-logo/tv-logos) on the Sport pages.
+- **Channel logos** from [tv-logos](https://github.com/tv-logo/tv-logos) on the Sport pages, and (asked once) in the TV guide, the TV tab and the TV player.
 - **TV guide** – the playing channel on the left of the header, the programme with Watch, Record and Info next to it, the groups as a row of buttons and a thin line at the current time.
 - **Skip intro, recap and preview** (TheIntroDB, for series episodes) with a Lucent-style *Skip* button; the setup assistant installs it.
 - **Spoken language** – a first and second choice for the sound; subtitles stay off when the sound is already in your language.
