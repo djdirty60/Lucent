@@ -86,6 +86,10 @@ def run():
     def calendar():
         agenda_core.check_notifications()
 
+    def tab_panels():
+        import tabpanels
+        tabpanels.update()
+
     def xtream_list():
         import xbmcvfs
         if xbmcvfs.exists("special://profile/addon_data/skin.lucent/xtream.json"):
@@ -133,6 +137,7 @@ def run():
         Job("sport", 30, 15, sport, lambda: cond("Pvr.HasTVChannels")),
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
         Job("calendar", 120, 60, calendar),
+        Job("tab panels", 60, 6, tab_panels),               # Calendar / Sport / TV tabs on Home without rows of their own
         Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)

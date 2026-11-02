@@ -1665,6 +1665,76 @@ def pagelimit_test():
     mon.waitForAbort(1)
 
 
+def panels_test():
+    """Tabs without rows of their own (Calendar, TV, Sport, Add-ons, Settings, Power) show their own screen."""
+    import sys as _sys
+    import datetime as _dt
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    import tabpanels
+    m = menu.Menu()
+    for label, action in (("TV", "RunScript(special://skin/scripts/tv.py)"), ("Sport", "RunScript(special://skin/scripts/sport.py)")):
+        if not any(t["action"] == action for t in m.tabs) and len(m.tabs) < menu.NTABS:
+            m.tabs.insert(len(m.tabs) - 2, {"label": label, "icon": "icons/tv.png", "action": action, "widgets": [], "actionlabel": ""})
+    m.save()
+    # a week of calendar items
+    data = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    os.makedirs(data, exist_ok=True)
+    art = "special://home/addons/plugin.video.fakeseren/icon.png"
+    today = _dt.date.today()
+    evs = []
+    for n, (name, days, at) in enumerate((("The Northern Line", 0, "21:00"), ("Harbor Lights", 1, "20:00"), ("Kitchen Wars", 2, ""), ("Silent Peak", 4, ""))):
+        evs.append({"kind": "tv" if n < 3 else "movie", "key": f"k{n}", "name": name, "title": "De laatste halte" if n == 0 else "",
+                    "season": 3, "episode": 5 + n, "date": (today + _dt.timedelta(days=days)).isoformat(), "time": at,
+                    "still": art, "backdrop": art, "network": "HBO Max" if n == 0 else "", "plot": "Mara ontdekt wie er achter de verdwenen trein zit.",
+                    "tmdb": 100 + n, "logo": "", "digital": True})
+    json.dump({"shows": {"tv:1": {"name": "x", "kind": "tv", "tmdb": 1, "notify": True}}, "synced": time.time()}, open(data + "agenda_follow.json", "w"))
+    json.dump({"shows": {"tv:1": {"events": evs, "fetched": time.time()}}}, open(data + "agenda_cache.json", "w"))
+    tabpanels.update()
+    rows = [("1", "Ajax", "PSV", "2", "1", "LIVE 67'", "1", "D2122E", "ED1C24"), ("2", "Feyenoord", "AZ", "", "", "18:45", "", "E30613", "C8102E"),
+            ("3", "Real Madrid", "Barcelona", "", "", "21:00", "", "1C3C8C", "A50044")]
+    def set_sport():
+      for n, (i, hn, an, hs, as_, when, live, hc, ac) in enumerate(rows, 1):
+        for k, v in {"id": i, "hname": hn, "aname": an, "hs": hs, "as": as_, "when": when, "live": live, "hcol": hc, "acol": ac,
+                     "hlogo": art, "alogo": art, "league": "Eredivisie", "kick": ("LIVE · EREDIVISIE · 67'" if live else f"{when} · EREDIVISIE"),
+                     "big": f"{hs} – {as_}" if hs else when}.items():
+            HOME.setProperty(f"lucent.ps.{n}.{k}", v)
+    set_sport()
+    log(f"panels: cal1={HOME.getProperty('lucent.pc.1.title')!r} day={HOME.getProperty('lucent.pc.1.day')!r} cal4={HOME.getProperty('lucent.pc.4.title')!r} sub4={HOME.getProperty('lucent.pc.4.sub')!r}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    wanted = [("cal", "agenda.py", 9310), ("tv", "scripts/tv.py", 9320), ("sport", "scripts/sport.py", 9330),
+              ("addons", "AddonBrowser", 9340), ("settings", "ActivateWindow(Settings)", 9350), ("power", "ShutdownMenu", 9360)]
+    count = int(lab("Container(9000).NumItems") or 0)
+    acts = []
+    for i in range(count):
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{i})")
+        mon.waitForAbort(0.4)
+        acts.append(lab("Container(9000).ListItem.Property(act)"))
+    log(f"panels: tabs={[a[-30:] for a in acts]}")
+    for name, needle, cid in wanted:
+        idx = next((i for i, a in enumerate(acts) if needle in a), None)
+        if idx is None:
+            log(f"panels: {name} tab missing")
+            continue
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{idx})")
+        tabpanels.update()                  # the helper may have cleared the test values
+        set_sport()
+        mon.waitForAbort(2)
+        log(f"panels: {name} panel={cond('Control.IsVisible(' + str(cid) + ')')} rows9100={cond('Control.IsVisible(9100)')} items={lab(f'Container({cid}).NumItems')}")
+        shot(f"6{wanted.index((name, needle, cid))}-{name}-menu")
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(2)
+        log(f"panels: {name} right focus={xbmc.getInfoLabel('System.CurrentControlId')} has={cond(f'Control.HasFocus({cid})')} label={lab(f'Container({cid}).ListItem.Label')!r}")
+        shot(f"6{wanted.index((name, needle, cid))}-{name}-in")
+        xbmc.executebuiltin("Action(Left)")
+        mon.waitForAbort(1)
+    # back to the start tab: its rows again
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(3)
+    log(f"panels: back start rows9100={cond('Control.IsVisible(9100)')} panel={cond('Control.IsVisible(9310)')}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -1678,8 +1748,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    limit_test()
-    pagelimit_test()
+    panels_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
