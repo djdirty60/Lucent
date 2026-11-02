@@ -2034,8 +2034,16 @@ def chanrows_test():
     import sport_core as sc
     names = ["┃NL┃ ZIGGO SPORT 2 ┃", "|NL| ZIGGO SPORT", "┃PT┃ SPORT TV 1", "[RO] DIGI SPORT 1", "NL: Ziggo Sport 2 FHD"]
     log(f"chan: clean={[(sc.display_channel(n), sc.channel_country(n)) for n in names]}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+    for _ in range(40):
+        mon.waitForAbort(1)
+        if [e for e in sc.all_cached() if e["kind"] == "teams"]:
+            break
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
     try:
-        sc.refresh(keys=["eng.1", "ned.1", "esp.1", "ita.1"])
+        pass
     except Exception as error:  # noqa: BLE001
         import traceback
         log(f"chan: refresh {error!r} {traceback.format_exc()[-600:]}")
@@ -2113,7 +2121,7 @@ def sportosd_test():
     put("live.d.", det)
     put("live.t.", tab)
     mon.waitForAbort(2)
-    log(f"sosd: board={cond('Control.IsVisible(480)')} on={HOME.getProperty('live.sc.on')!r}")
+    log(f"sosd: board win={lab('System.CurrentWindow')!r} full={cond('Window.IsActive(fullscreenvideo)')} cond={cond('Pvr.IsPlayingTV + !String.IsEmpty(Window(Home).Property(live.sc.on)) + String.IsEmpty(Window(Home).Property(live.sc.race))')} on={HOME.getProperty('live.sc.on')!r}")
     shot("s-board")
     xbmc.executebuiltin("ActivateWindow(videoosd)")
     mon.waitForAbort(3)
