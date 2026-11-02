@@ -2067,6 +2067,98 @@ def chanrows_test():
     mon.waitForAbort(2)
 
 
+def sportosd_test():
+    """The sport layer of the TV player (P1-P5) with a game made up in the window properties."""
+    def rpc(method, params=None):
+        return json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}}))).get("result") or {}
+    for _ in range(90):
+        if cond("Pvr.HasTVChannels"):
+            break
+        mon.waitForAbort(1)
+    chans = (rpc("PVR.GetChannels", {"channelgroupid": "alltv"}) or {}).get("channels") or []
+    if not chans:
+        log("sosd: no channels")
+        return
+    rpc("Player.Open", {"item": {"channelid": chans[2]["channelid"]}})
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Pvr.IsPlayingTv"):
+            break
+    mon.waitForAbort(26)                      # the helper's first round for this channel has run
+    art = "special://home/addons/plugin.video.fakeseren/art/"
+    base = {"on": "1", "h": "AJA", "a": "AZ", "hs": "2", "as": "1", "clock": "67'", "hname": "Ajax", "aname": "AZ", "hlogo": art + "c0.png", "alogo": art + "c4.png",
+            "hcol": "FFD2122E", "acol": "FF1C3C8C", "sport": "soccer", "league": "Eredivisie", "id": "x", "title": "Ajax – AZ", "race": ""}
+    det = {"hgoals": "12' Brobbey  ·  58' Taylor", "agoals": "44' Pavlidis"}
+    for n, (l, h, a, k) in enumerate((("Possession", "58%", "42%", 6), ("Shots", "14", "7", 7), ("On target", "6", "3", 7), ("Corners", "5", "2", 7),
+                                      ("Fouls", "9", "12", 4), ("Yellow cards", "1", "2", 3)), 1):
+        det.update({f"st{n}l": l, f"st{n}h": h, f"st{n}a": a, f"st{n}k": str(k)})
+    for n, (m, t, x) in enumerate((("58'", "AJA", "Taylor"), ("44'", "AZ", "Pavlidis"), ("12'", "AJA", "Brobbey")), 1):
+        det.update({f"sc{n}m": m, f"sc{n}t": t, f"sc{n}x": x})
+    for n, (m, k, x) in enumerate((("58'", "goal", "Goal Taylor (Ajax)"), ("51'", "yellow", "Yellow card Mijnans (AZ)"), ("44'", "goal", "Goal Pavlidis (AZ)"),
+                                   ("12'", "goal", "Goal Brobbey (Ajax)")), 1):
+        det.update({f"tl{n}m": m, f"tl{n}k": k, f"tl{n}x": x})
+    tab = {}
+    for n, (r, t, gp, gd, pts, mine) in enumerate(((1, "PSV", 12, "+24", 31, ""), (2, "Ajax", 12, "+15", 27, "1"), (3, "AZ", 12, "+10", 24, "1"), (4, "Feyenoord", 12, "+9", 22, "")), 1):
+        tab.update({f"{n}rank": str(r), f"{n}team": t, f"{n}gp": str(gp), f"{n}gd": gd, f"{n}pts": str(pts), f"{n}mine": mine})
+
+    def put(prefix, d):
+        for k, v in d.items():
+            HOME.setProperty(prefix + k, v)
+    put("live.sc.", base)
+    put("live.d.", det)
+    put("live.t.", tab)
+    mon.waitForAbort(2)
+    log(f"sosd: board={cond('Control.IsVisible(480)')} on={HOME.getProperty('live.sc.on')!r}")
+    shot("s-board")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(3)
+    put("live.sc.", base)
+    log(f"sosd: osd focus={lab('System.CurrentControlId')} vis480={cond('Control.IsVisible(480)')} vis460={cond('Control.IsVisible(460)')}")
+    shot("s-osd-soccer")
+    xbmc.executebuiltin("SetFocus(482)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")          # Statistics -> the panel
+    mon.waitForAbort(4)
+    log(f"sosd: panel dialog={lab('System.CurrentWindow')!r} focus={lab('System.CurrentControlId')} tab={HOME.getProperty('live.p.tab')!r}")
+    shot("s-panel-stats")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    shot("s-panel-timeline")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    log(f"sosd: tab={HOME.getProperty('live.p.tab')!r} focus={lab('System.CurrentControlId')}")
+    shot("s-panel-table")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    # Also live
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sportlive.py,also)")
+    mon.waitForAbort(3)
+    for n, (lg, cl, hn, an, hs, as_, ch, hc, ac) in enumerate((("NBA", "Q4 7:49", "Magic", "Celtics", "83", "87", "ESPN 1", "0077C0", "007A33"),
+                                                                ("Serie A", "58'", "Milan", "Inter", "3", "1", "Ziggo Sport 2", "FB090B", "010E80"),
+                                                                ("Premier League", "72'", "Arsenal", "Chelsea", "1", "1", "ESPN 2", "EF0107", "034694")), 1):
+        put(f"live.a.{n}.", {"hname": hn, "aname": an, "hs": hs, "as": as_, "league": lg, "clock": cl, "chan": ch, "cid": "1", "hcol": hc, "acol": ac,
+                             "chicon": art + f"c{n}.png"})
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(300)")
+    mon.waitForAbort(1)
+    log(f"sosd: also items={lab('Container(300).NumItems')} focus={lab('System.CurrentControlId')}")
+    shot("s-also")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    # basketball
+    put("live.sc.", {"sport": "basketball", "h": "ORL", "a": "BOS", "hs": "83", "as": "87", "clock": "Q4 · 7:49", "title": "Magic – Celtics", "league": "NBA",
+                     "hcol": "FF0077C0", "acol": "FF007A33"})
+    put("live.d.", {"qn": "4", "qh1": "24", "qh2": "22", "qh3": "25", "qh4": "12", "qa1": "20", "qa2": "27", "qa3": "22", "qa4": "18",
+                    "tp1n": "Banchero", "tp1v": "28 · 9 · 4", "tp2n": "Tatum", "tp2v": "31 · 8 · 5", "tp3n": "Wagner", "tp3v": "19 · 3 · 6"})
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(3)
+    log(f"sosd: basket focus={lab('System.CurrentControlId')}")
+    shot("s-osd-basket")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2080,7 +2172,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    chanrows_test()
+    sportosd_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

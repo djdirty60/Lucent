@@ -149,7 +149,7 @@ TX = {
     "hint_all": ("OK: game info", "OK: wedstrijdinfo"),
     "tvguide": ("TV guide", "TV-gids"), "liveup": ("Live & upcoming", "Live & binnenkort"),
     "also_today": ("Also today", "Ook vandaag"), "g_timeline": ("TIMELINE", "TIJDLIJN"), "g_notimeline": ("Goals, cards and substitutions show here during the game", "Doelpunten, kaarten en wissels komen hier tijdens de wedstrijd"), "game_page": ("Game page", "Wedstrijdpagina"), "nothing_today": ("No other games today", "Vandaag geen andere wedstrijden"),
-    "watch_on": ("Watch on {}", "Kijk op {}"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
+    "watch_on": ("Watch on {}", "Kijk op {}"), "g_fouls": ("Fouls", "Overtredingen"), "g_yellow": ("Yellow cards", "Gele kaarten"), "goal_alerts_cap": ("GOAL ALERTS", "DOELPUNTMELDINGEN"), "your_week": ("Your teams this week", "Jouw teams deze week"),
     "goal_alerts": ("Goal alerts on for {}", "Doelpuntmeldingen aan voor {}"),
     "m_countries": ("Choose countries", "Landen kiezen"),
     "m_search": ("Search team, country or competition", "Zoeken: team, land of competitie"),
@@ -1030,7 +1030,8 @@ def match_detail(ev):
         "basketball": (("fieldGoalPct", "g_fg"), ("threePointFieldGoalPct", "g_3pt"), ("totalRebounds", "g_reb"), ("turnovers", "g_to")),
         "hockey": (("shotsTotal", "g_shots"), ("powerPlayGoals", "g_ppg"), ("hits", "g_hits"), ("faceoffPercent", "g_faceoff")),
         "football": (("totalYards", "g_yards"), ("firstDowns", "g_firstdowns"), ("turnovers", "g_to"), ("possessionTime", "g_top_time")),
-    }.get(sport, (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners")))
+    }.get(sport, (("possessionPct", "g_possession"), ("totalShots", "g_shots"), ("shotsOnTarget", "g_ontarget"), ("wonCorners", "g_corners"),
+                  ("foulsCommitted", "g_fouls"), ("yellowCards", "g_yellow")))
     n = 0
     for name, label in wanted:
         hv, av = by_side.get("home", {}).get(name), by_side.get("away", {}).get(name)
