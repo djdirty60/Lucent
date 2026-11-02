@@ -475,7 +475,7 @@ class Sport(xbmcgui.WindowXML):
     def event_props(self, ev, data, header="", headersub=""):
         kind_event = ev["kind"] == "event"
         chans = self.channels_of(ev, data)
-        best = chans[0]["name"] if chans else ""
+        best = sc.display_channel(chans[0]["name"]) if chans else ""
         live = ev["state"] == "in"
         label = ev["title"] if kind_event else f"{ev['home'].get('name', '')} – {ev['away'].get('name', '')}"
         status = ev["status"] if ev["state"] != "pre" else ""
@@ -502,11 +502,13 @@ class Sport(xbmcgui.WindowXML):
         guessed = [] if chans or ev["state"] == "post" or not data or kind_event else epg.guess_channels(ev, data)
         for n, chan in enumerate(chans or guessed, 1):
             bits = [chan["tag"]]
+            if sc.channel_country(chan["name"]):
+                bits.insert(0, sc.channel_country(chan["name"]))
             if chan["q"]:
                 bits.append(chan["q"])
             if chan["live"]:
                 bits.insert(0, sc.t("livenow"))
-            props[f"ch{n}name"] = chan["name"]
+            props[f"ch{n}name"] = sc.display_channel(chan["name"])
             props[f"ch{n}sub"] = "  ·  ".join(bits)
             props[f"ch{n}cid"] = chan["cid"]
             props[f"ch{n}icon"] = chan.get("icon") or ""
@@ -644,7 +646,7 @@ class Sport(xbmcgui.WindowXML):
                                   hname=ev["home"].get("short") or ev["home"].get("name", ""),
                                   aname=ev["away"].get("short") or ev["away"].get("name", ""),
                                   hlogo=ev["home"].get("logo", ""), alogo=ev["away"].get("logo", ""),
-                                  score=score_text(ev), min=ev["status"], chan=chans[0]["name"] if chans else "",
+                                  score=score_text(ev), min=ev["status"], chan=sc.display_channel(chans[0]["name"]) if chans else "",
                                   prog=live_progress(ev), evid=ev["id"]))
         if cards:
             strip.addItems(cards)
@@ -823,7 +825,7 @@ class Sport(xbmcgui.WindowXML):
             rows.append(listitem(title, sub, kind="game", evid=ev["id"], when=when, live="1" if ev["state"] == "in" else "",
                                  hlogo=ev["home"].get("logo", "") if ev["kind"] != "event" else ev.get("lg", ""),
                                  alogo=ev["away"].get("logo", "") if ev["kind"] != "event" else "",
-                                 chan=chans[0]["name"] if chans else ""))
+                                 chan=sc.display_channel(chans[0]["name"]) if chans else ""))
         self.fill_list(ALSO_LIST, rows, 0)
         self.setProperty("sport.alsohas", "1" if rows else "")
         self.setProperty("sport.alerts", getattr(self, "alerts", ""))
@@ -1873,7 +1875,7 @@ class Sport(xbmcgui.WindowXML):
             data = epg.load() if self.has_pvr else {}
             chans = self.channels_of(nxt, data)
             p["next"] = f"{short_when(nxt)}  ·  {nxt['home'].get('name', '')} – {nxt['away'].get('name', '')}"
-            p["nextchan"] = chans[0]["name"] if chans else ""
+            p["nextchan"] = sc.display_channel(chans[0]["name"]) if chans else ""
         else:
             p["next"], p["nextchan"] = sc.t("c_nonext"), ""
         if self.getControl(TABLE_LIST).getSelectedItem() is not item and \
@@ -1961,7 +1963,7 @@ class Sport(xbmcgui.WindowXML):
                 "nowscore": f"{live['home'].get('score', '')}–{live['away'].get('score', '')}" if live else "",
                 "last": "", "lastscore": "", "lastc": "", "lastl": "",
                 "next": f"{vs(nxt)}  ·  {when_line(nxt)}" if nxt else sc.t("c_nonext"),
-                "nextchan": f"{chans[0]['name']}  ·  {chans[0]['tag']}" if chans else "",
+                "nextchan": f"{sc.display_channel(chans[0]['name'])}  ·  {chans[0]['tag']}" if chans else "",
                 "canwatch": "1" if chans else ""}
         if card["recent"]:
             last, (letter, score, _opp, _home) = card["recent"][0]
@@ -2430,7 +2432,7 @@ class TeamCard(xbmcgui.WindowXMLDialog):
         nxt = card["next"]
         self.setProperty("card.next", f"{when_line(nxt)}   {nxt['home'].get('name', '')} – {nxt['away'].get('name', '')}" if nxt else sc.t("c_nonext"))
         chans = i["chans"]
-        self.setProperty("card.nextchan", f"{chans[0]['name']}  ·  {chans[0]['tag']}" if chans else "")
+        self.setProperty("card.nextchan", f"{sc.display_channel(chans[0]['name'])}  ·  {chans[0]['tag']}" if chans else "")
         self.setProperty("card.canwatch", "1" if chans else "")
         self.setProperty("card.canremind", "1" if nxt else "")
         self.setProperty("card.followtext", sc.t("unfollow_team" if i["followed"] else "follow_team", i["name"]))

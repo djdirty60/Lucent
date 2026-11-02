@@ -541,6 +541,28 @@ def _tvlogo_index():
     return _TVLOGO["index"]
 
 
+def display_channel(name):
+    """A channel name without the provider's marks: '┃NL┃ ZIGGO SPORT 2 ┃' / 'NL: Ziggo Sport 2' / '[NL] Ziggo Sport 2'
+    -> 'ZIGGO SPORT 2' / 'Ziggo Sport 2'."""
+    text = (name or "").strip()
+    bars = "|┃│¦║▎▍"
+    for _ in range(3):
+        m = re.match(r"^\s*[%s\[(]*\s*[A-Za-z]{2,4}\s*[%s\])]+\s*(.+)$" % (bars, bars), text) or \
+            re.match(r"^\s*[A-Za-z]{2,4}\s*[:\-]\s+(.+)$", text)
+        if not m:
+            break
+        text = m.group(1)
+    text = re.sub(r"[\s%s]+$" % bars, "", text)
+    return text.strip(" " + bars) or (name or "").strip()
+
+
+def channel_country(name):
+    """'┃NL┃ ZIGGO SPORT 2' -> 'NL' (the provider's country mark), else ''."""
+    m = re.match(r"^\s*[|┃│¦║▎▍\[(]*\s*([A-Za-z]{2,4})\s*[|┃│¦║▎▍\])]+", name or "") or \
+        re.match(r"^\s*([A-Za-z]{2,4})\s*[:\-]\s+", name or "")
+    return m.group(1).upper() if m else ""
+
+
 def channel_logo(name):
     """A clean logo for an IPTV channel name ('NL: Ziggo Sport 2 FHD', '[AR] beIN SPORTS 1 4K') or ''."""
     if not name:

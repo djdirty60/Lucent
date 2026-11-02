@@ -2027,6 +2027,46 @@ def pvr_test():
     mon.waitForAbort(3)
 
 
+def chanrows_test():
+    """Game page channel rows: the first row readable when not focused, names without the provider's marks."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    names = ["┃NL┃ ZIGGO SPORT 2 ┃", "|NL| ZIGGO SPORT", "┃PT┃ SPORT TV 1", "[RO] DIGI SPORT 1", "NL: Ziggo Sport 2 FHD"]
+    log(f"chan: clean={[(sc.display_channel(n), sc.channel_country(n)) for n in names]}")
+    games = [e for e in sc.all_cached() if e["kind"] == "teams" and sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"]
+    games.sort(key=lambda e: ({"in": 0, "post": 1, "pre": 2}[e["state"]], -e["start"] if e["state"] == "post" else e["start"]))
+    if not games:
+        log("chan: no games")
+        return
+    xbmc.executebuiltin(f"RunScript(special://skin/scripts/sport.py,game,{games[0]['id']})")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if lab("Window.Property(g.layout)") == "teams":
+            break
+    mon.waitForAbort(3)
+    win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    rows = [("ZIGGO SPORT 2", "NL  ·  Live now  ·  Broadcasting  ·  4K"), ("ZIGGO SPORT", "NL  ·  Live now  ·  Broadcasting"),
+            ("SPORT TV 1", "PT  ·  Broadcasting  ·  4K"), ("DIGI SPORT 1", "RO  ·  Live now  ·  Broadcasting")]
+    for n, (name, sub) in enumerate(rows, 1):
+        win.setProperty(f"g.ch{n}name", name)
+        win.setProperty(f"g.ch{n}sub", sub)
+    if not win.getProperty("g.remindtext"):
+        win.setProperty("g.remindtext", "Remind me")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("SetFocus(1311)")
+    mon.waitForAbort(1.5)
+    shot("c-rows-1")
+    xbmc.executebuiltin("SetFocus(1313)")
+    mon.waitForAbort(1.5)
+    log(f"chan: focus={lab('System.CurrentControlId')} vis1311={cond('Control.IsVisible(1311)')} name1={lab('Window.Property(g.ch1name)')!r}")
+    shot("c-rows-3")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2040,7 +2080,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    pvr_test()
+    chanrows_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
