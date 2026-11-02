@@ -1956,8 +1956,39 @@ def pvr_test():
     log(f"pvr: playing={cond('Pvr.IsPlayingTv')} title={lab('VideoPlayer.Title')!r} channel={lab('VideoPlayer.ChannelName')!r}")
     xbmc.executebuiltin("ActivateWindow(videoosd)")
     mon.waitForAbort(4)
-    log(f"pvr: osd={cond('Window.IsActive(videoosd)')} focus={lab('System.CurrentControlId')}")
+    for _ in range(10):
+        mon.waitForAbort(1)
+        if HOME.getProperty("live.g.1.title"):
+            break
+    mon.waitForAbort(1)
+    log(f"pvr: osd={cond('Window.IsActive(videoosd)')} focus={lab('System.CurrentControlId')} guide={[HOME.getProperty(f'live.g.{n}.title') for n in range(1, 7)]} "
+        f"now1={HOME.getProperty('live.g.1.now')!r} up={HOME.getProperty('live.g.up')!r} down={HOME.getProperty('live.g.down')!r} items={lab('Container(460).NumItems')}")
     shot("p-osd")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    log(f"pvr: right focus={lab('System.CurrentControlId')} item={lab('Container(460).ListItem.Label')!r} n={lab('Container(460).ListItem.Property(n)')!r}")
+    shot("p-osd-next")
+    xbmc.executebuiltin("Action(Select)")                  # remind me for the next programme
+    mon.waitForAbort(2)
+    try:
+        rem = json.load(open(xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/live_reminders.json")))
+    except Exception as error:  # noqa: BLE001
+        rem = repr(error)
+    log(f"pvr: reminders={rem}")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1.5)
+    log(f"pvr: down focus={lab('System.CurrentControlId')}")
+    shot("p-osd-buttons")
+    xbmc.executebuiltin("SetFocus(477)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1.5)
+    log(f"pvr: more focus={lab('System.CurrentControlId')} settings={cond('Skin.HasSetting(lucent.livesettings)')}")
+    shot("p-osd-more")
+    xbmc.executebuiltin("SetFocus(401)")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1.5)
+    log(f"pvr: back focus={lab('System.CurrentControlId')} settings={cond('Skin.HasSetting(lucent.livesettings)')}")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("PlayerControl(Stop)")
     mon.waitForAbort(3)

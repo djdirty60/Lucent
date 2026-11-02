@@ -15826,6 +15826,7 @@
                 </item>
     </include>
 
+
     <!-- ==== Home: own screens for tabs without rows (tabpanels.py) ==== -->
     <expression name="LucentPCal">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),agenda.py)</expression>
     <expression name="LucentPTv">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
@@ -15956,7 +15957,7 @@
                         <control type="textbox"><left>0</left><top>44</top><width>1060</width><height>150</height><font>font60</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[Container(9320).ListItem.EpgEventTitle]</label></control>
                         <control type="image"><left>0</left><top>214</top><width>420</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>33FFFFFF</colordiffuse></control>
                         <control type="progress"><left>0</left><top>214</top><width>420</width><height>6</height><info>Container(9320).ListItem.Progress</info><texturebg border="3" colordiffuse="transparent">pill6.png</texturebg><midtexture border="3" colordiffuse="red">pill6.png</midtexture></control>
-                        <control type="label"><left>0</left><top>248</top><width>1060</width><height>40</height><font>font13</font><textcolor>text2</textcolor><label>$INFO[Container(9320).ListItem.NextTitle,[COLOR text3]$LOCALIZE[31679][/COLOR]   $INFO[Container(9320).ListItem.NextStartTime,, ]  ,]</label></control>
+                        <control type="label"><left>0</left><top>248</top><width>1060</width><height>40</height><font>font13</font><textcolor>text2</textcolor><label>[COLOR text3]$LOCALIZE[31679][/COLOR]   $INFO[Container(9320).ListItem.NextStartTime,,   ]$INFO[Container(9320).ListItem.NextTitle]</label><visible>!String.IsEmpty(Container(9320).ListItem.NextTitle)</visible></control>
                     </control>
                 </control>
                 <control type="group">
