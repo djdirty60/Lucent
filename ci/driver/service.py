@@ -1673,9 +1673,10 @@ def panels_test():
     import menu
     import tabpanels
     m = menu.Menu()
-    for label, action in (("TV", "RunScript(special://skin/scripts/tv.py)"), ("Sport", "RunScript(special://skin/scripts/sport.py)")):
+    for label, action in (("TV", "RunScript(special://skin/scripts/tv.py)"), ("Sport", "RunScript(special://skin/scripts/sport.py)"),
+                          ("Add-ons", "ActivateWindow(AddonBrowser)"), ("Settings", "ActivateWindow(Settings)"), ("Power", "ActivateWindow(ShutdownMenu)")):
         if not any(t["action"] == action for t in m.tabs) and len(m.tabs) < menu.NTABS:
-            m.tabs.insert(len(m.tabs) - 2, {"label": label, "icon": "icons/tv.png", "action": action, "widgets": [], "actionlabel": ""})
+            m.tabs.append({"label": label, "icon": "icons/tv.png", "action": action, "widgets": [], "actionlabel": ""})
     m.save()
     # a week of calendar items
     data = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
@@ -1689,7 +1690,8 @@ def panels_test():
                     "still": art, "backdrop": art, "network": "HBO Max" if n == 0 else "", "plot": "Mara ontdekt wie er achter de verdwenen trein zit.",
                     "tmdb": 100 + n, "logo": "", "digital": True})
     json.dump({"shows": {"tv:1": {"name": "x", "kind": "tv", "tmdb": 1, "notify": True}}, "synced": time.time()}, open(data + "agenda_follow.json", "w"))
-    json.dump({"shows": {"tv:1": {"events": evs, "fetched": time.time()}}}, open(data + "agenda_cache.json", "w"))
+    import agenda_core
+    json.dump({"v": agenda_core.CACHE_VERSION, "shows": {"tv:1": {"events": evs, "fetched": time.time()}}}, open(data + "agenda_cache.json", "w"))
     tabpanels.update()
     rows = [("1", "Ajax", "PSV", "2", "1", "LIVE 67'", "1", "D2122E", "ED1C24"), ("2", "Feyenoord", "AZ", "", "", "18:45", "", "E30613", "C8102E"),
             ("3", "Real Madrid", "Barcelona", "", "", "21:00", "", "1C3C8C", "A50044")]
@@ -1721,7 +1723,9 @@ def panels_test():
         tabpanels.update()                  # the helper may have cleared the test values
         set_sport()
         mon.waitForAbort(2)
-        log(f"panels: {name} panel={cond('Control.IsVisible(' + str(cid) + ')')} rows9100={cond('Control.IsVisible(9100)')} items={lab(f'Container({cid}).NumItems')}")
+        set_sport()
+        mon.waitForAbort(1)
+        log(f"panels: {name} ps1={HOME.getProperty('lucent.ps.1.id')!r} pc1={HOME.getProperty('lucent.pc.1.title')!r} panel={cond('Control.IsVisible(' + str(cid) + ')')} rows9100={cond('Control.IsVisible(9100)')} items={lab(f'Container({cid}).NumItems')}")
         shot(f"6{wanted.index((name, needle, cid))}-{name}-menu")
         xbmc.executebuiltin("Action(Right)")
         mon.waitForAbort(2)

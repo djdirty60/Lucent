@@ -910,9 +910,28 @@ def source_page(wd):
                 have, want)):
             ser.setSetting("item.limit", str(want))
             notify(tr(G("Seren now gives {0} titles per list", "Seren geeft nu {0} titels per lijst"), want))
+            if xbmc.getCondVisibility("System.HasAddon(script.lucent.library)"):
+                xbmc.executebuiltin("RunScript(script.lucent.library,widgets_stale)")   # the saved copies of 20: again
+    elif path.startswith("plugin://script.lucent.library/"):
+        return                                      # Lucent's own rows give up to 60 (TMDb) or 100 (Trakt) titles
     elif path.startswith("plugin://") and want > 25:
         notify(tr(G("The add-on decides how many titles it gives per page",
                     "De add-on bepaalt zelf hoeveel titels hij per pagina geeft")))
+
+
+def limit_check():
+    """Once after the update to 1.32.4: rows set to 50 / 100 / All before, while Seren still gives 20 per list."""
+    if get("lucent.limitcheck"):
+        return
+    put("lucent.limitcheck", "1")
+    best = 0
+    for t in range(1, NTABS + 1):
+        for w in range(1, NWIDGETS + 1):
+            if get(f"nuvio.tab{t}.w{w}.path").startswith(SEREN[:-1]):
+                value = get(f"nuvio.tab{t}.w{w}.limit")
+                best = max(best, 100 if value == "0" else int(value) if value.isdigit() else 0)
+    if best > 25:
+        source_page({"limit": str(best), "path": SEREN})
 
 
 def limit_name(key):
@@ -1139,6 +1158,8 @@ if __name__ == "__main__":
         init()
     elif arg == "addons":
         addons_once()
+    elif arg == "limitcheck":
+        limit_check()
     elif arg == "reset":
         if xbmcgui.Dialog().yesno(HEADING, tr("reset_q")):
             m = Menu()
