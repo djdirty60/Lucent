@@ -2037,7 +2037,8 @@ def chanrows_test():
     try:
         sc.refresh(keys=["eng.1", "ned.1", "esp.1", "ita.1"])
     except Exception as error:  # noqa: BLE001
-        log(f"chan: refresh {error!r}")
+        import traceback
+        log(f"chan: refresh {error!r} {traceback.format_exc()[-600:]}")
     games = [e for e in sc.all_cached() if e["kind"] == "teams" and sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"]
     games.sort(key=lambda e: ({"in": 0, "post": 1, "pre": 2}[e["state"]], -e["start"] if e["state"] == "post" else e["start"]))
     if not games:
