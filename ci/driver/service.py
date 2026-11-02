@@ -1340,6 +1340,9 @@ def mine_test():
     soccer = [e for e in live if sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"] or live
     log(f"mine: live games={len(live)} football={len(soccer)}")
     if not soccer:
+        soccer = sorted((e for e in sc.all_cached() if e["state"] == "pre" and e["kind"] == "teams"
+                         and sc.LEAGUES.get(e["league"], {}).get("sport") == "soccer"), key=lambda e: e["start"])[:1]
+    if not soccer:
         return
     ev = soccer[0]
     sc.toggle_team(ev["league"], ev["home"])
