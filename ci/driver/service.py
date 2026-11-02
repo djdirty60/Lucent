@@ -2070,6 +2070,15 @@ def chanrows_test():
         mon.waitForAbort(1.5)
         log(f"chan: page focus={lab('System.CurrentControlId')} vis1311={cond('Control.IsVisible(1311)')}")
         shot("c-rows-3")
+        steps = []
+        xbmc.executebuiltin("SetFocus(1332)")
+        mon.waitForAbort(1)
+        steps.append(lab("System.CurrentControlId"))
+        for key in ("Up", "Up", "Up", "Up", "Down", "Down", "Down", "Down"):
+            xbmc.executebuiltin(f"Action({key})")
+            mon.waitForAbort(0.8)
+            steps.append(f"{key}:{lab('System.CurrentControlId')}")
+        log(f"chan: nav {steps}")
         win.close()
         del win
         return
@@ -2207,7 +2216,6 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    sportosd_test()
     chanrows_test()
 
     os.makedirs(OUT, exist_ok=True)
