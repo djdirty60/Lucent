@@ -58,6 +58,13 @@
         <value condition="!String.IsEmpty(ListItem.EpgEventTitle)">$INFO[ListItem.EpgEventTitle]</value>
         <value>$INFO[ListItem.Title]</value>
     </variable>
+    <variable name="LucentShowInfoPath">
+        <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID)">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
+    </variable>
+    <variable name="LucentS56Bell">
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.s56.bell)) + String.IsEqual(Window(home).Property(lucent.s56.bell),$INFO[Container(56).ListItem.TVShowTitle])">✓  $LOCALIZE[31228]</value>
+        <value>$LOCALIZE[31227]</value>
+    </variable>
     <variable name="LucentShowScoresPath">
         <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID) + String.IsEmpty(Container(56).ListItem.Rating(imdb)) + String.IsEmpty(Container(56).ListItem.Rating(trakt))">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
     </variable>

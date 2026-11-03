@@ -2660,6 +2660,7 @@
                         <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
                         <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
                         <label>▶  $LOCALIZE[31565]</label>
+                        <onfocus>RunScript(special://skin/scripts/agenda.py,state56)</onfocus>
                         <onclick>RunScript(special://skin/scripts/info.py,resumeshow)</onclick>
                     </control>
                     <control type="button" id="5612">
@@ -2673,6 +2674,21 @@
                         <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
                         <label>+  $LOCALIZE[31114]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,lists,56)</onclick>
+                    </control>
+                    <!-- calendar notification: only for series that still get new seasons (not ended or cancelled) -->
+                    <control type="button" id="5614">
+                        <width>auto</width>
+                        <height>64</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <textoffsetx>30</textoffsetx>
+                        <texturefocus border="32" colordiffuse="focus">pill64.png</texturefocus>
+                        <texturenofocus border="32" colordiffuse="glass_strong">pill64.png</texturenofocus>
+                        <label>$VAR[LucentS56Bell]</label>
+                        <onfocus>RunScript(special://skin/scripts/agenda.py,state56)</onfocus>
+                        <onclick>RunScript(special://skin/scripts/agenda.py,follow56)</onclick>
+                        <visible>!String.Contains(Container(5698).ListItem.Status,ended) + !String.Contains(Container(5698).ListItem.Status,cancel) + !String.Contains(Container(56).ListItem.Status,ended) + !String.Contains(Container(56).ListItem.Status,cancel) + !String.IsEmpty(Container(56).ListItem.TVShowTitle)</visible>
                     </control>
                     <control type="button" id="5613">
                         <width>auto</width>
@@ -2735,6 +2751,16 @@
                 </focusedlayout>
             </control>
             <!-- a season from the Kodi library has no scores of its own: this hidden list fetches its series (Lucent Bibliotheek) -->
+            <!-- the series itself (Lucent Bibliotheek): its status decides whether the calendar bell shows -->
+            <control type="list" id="5698">
+                <left>-3000</left>
+                <top>0</top>
+                <width>10</width>
+                <height>10</height>
+                <itemlayout width="10" height="10"/>
+                <focusedlayout width="10" height="10"/>
+                <content target="videos" browse="never">$VAR[LucentShowInfoPath]</content>
+            </control>
             <control type="list" id="5699">
                 <left>-3000</left>
                 <top>0</top>

@@ -2876,11 +2876,8 @@ def settings2_test():
         log(f"set2: {c[:400]}")
     xbmc.executebuiltin("SetFocus(9000,4,absolute)")
     mon.waitForAbort(0.8)
-    xbmc.executebuiltin("Action(Right)")
-    mon.waitForAbort(0.8)
-    for _ in range(20):
-        xbmc.executebuiltin("Action(Down)")
-        mon.waitForAbort(0.15)
+    xbmc.executebuiltin("SetFocus(9100,13,absolute)")
+    mon.waitForAbort(1)
     log(f"set2: system last={lab('Container(9100).ListItem.Label')!r}")
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(2)
@@ -2915,6 +2912,40 @@ def settings2_test():
     mon.waitForAbort(2)
 
 
+def bell56_test():
+    """Library series page: the calendar bell for series that still get new seasons."""
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShows",
+                                                    "params": {"properties": ["title", "uniqueid"]}})))
+    shows = (res.get("result") or {}).get("tvshows") or []
+    log(f"bell56: library shows {[(s_.get('tvshowid'), s_.get('title'), s_.get('uniqueid')) for s_ in shows][:5]}")
+    if not shows:
+        return
+    sid = shows[0]["tvshowid"]
+    xbmc.executebuiltin("Skin.SetString(lucent.flattenset,1)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue", "params": {"setting": "videolibrary.flattentvshows", "value": 0}}))
+    xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/,return)")
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if cond("Control.IsVisible(56)"):
+            break
+    mon.waitForAbort(3)
+    log(f"bell56: view56={cond('Control.IsVisible(56)')} dbid={lab('Container(56).ListItem.TvShowDBID')!r} status5698={lab('Container(5698).ListItem.Status')!r} "
+        f"status56={lab('Container(56).ListItem.Status')!r} bell={cond('Control.IsVisible(5614)')} label={lab('Control.GetLabel(5614)')!r}")
+    xbmc.executebuiltin("SetFocus(5614)")
+    mon.waitForAbort(2)
+    log(f"bell56: focus={lab('System.CurrentControlId')} label={lab('Control.GetLabel(5614)')!r}")
+    shot("bell56-1")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(6)
+    log(f"bell56: after click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
+    shot("bell56-2")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(4)
+    log(f"bell56: after 2nd click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2929,6 +2960,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     settings2_test()
+    bell56_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

@@ -434,6 +434,10 @@ if __name__ == "__main__":
         core.follow_button()
     elif action == "state":
         core.state()
+    elif action == "follow56":                  # the bell on Lucent's season page (series that still get new seasons)
+        core.season_follow()
+    elif action == "state56":
+        core.season_state()
     elif action == "ensure_tab":
         ensure_tab()
     else:
