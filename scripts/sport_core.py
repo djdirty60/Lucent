@@ -487,8 +487,8 @@ def _name_tries(name, short=""):
     plain = unicodedata.normalize("NFKD", plain).encode("ascii", "ignore").decode("ascii")
     bare = re.sub(r"\b(FC|FK|SC|AFC|CF|SK|AC|AS|SV|VfB|VfL|TSG|RC|CD|UD|SD|IF|BK|AIK)\b\.?", "", plain).strip(" .-")
     slash = re.sub(r"\s*/\s*", " ", plain)
-    first = plain.split("/")[0].split()[0] if plain.split() else ""
-    for q in (name, plain, bare, short, slash, first if len(first) >= 5 else ""):
+    first = plain.split("/")[0].strip() if "/" in plain else ""          # Bodo/Glimt -> Bodo
+    for q in (name, plain, bare, short, slash, first):
         q = (q or "").strip()
         if q and q not in out:
             out.append(q)
@@ -510,8 +510,9 @@ def stadium_photo(name, sport="", venue="", short=""):
         for q in _name_tries(name, short):
             data = json.loads(_tsdb_get(f"{TSDB}searchteams.php?t={urllib.parse.quote(q)}") or "{}")
             teams = [t for t in data.get("teams") or [] if not want or t.get("strSport") == want]
-            if q == first and q != name:                 # only the first word: the club must really start with it
-                teams = [t for t in teams if norm(t.get("strTeam")).startswith(norm(q))]
+            if "/" in name and "/" not in q and " " not in q:     # only the part before '/' (Bodo): the rest must be in the name too
+                rest = norm(name.split("/")[-1])
+                teams = [t for t in teams if rest and rest in norm(t.get("strTeam"))]
             if teams:
                 teams.sort(key=lambda t: norm(t.get("strTeam")) not in (norm(q), norm(name)))
                 team = teams[0]

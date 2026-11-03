@@ -270,7 +270,7 @@ def tick():
     along = ACODEC.get(acodec, acodec.upper())
     if atmos and "Atmos" not in along:
         along += " Atmos"
-    rate = num(info("Player.Process(audiosamplerate)"))
+    rate = float(re.sub(r"\D", "", info("Player.Process(audiosamplerate)") or "") or 0)   # '44,100' / '48.000': thousands marks
     bits = info("Player.Process(audiobitspersample)")
 
     # badges
@@ -401,7 +401,8 @@ def tick():
     bits_track = [t(f"{idx} of {len(streams)}", f"{idx} van {len(streams)}") if idx and len(streams) > 1 else "",
                   lang_name(cur.get("language") or info("VideoPlayer.AudioLanguage")), cur.get("name") or aname_stream]
     put("r.atrack", " · ".join(x for x in bits_track if x))
-    ch_word = t(f"{chn} channels ({chs})", f"{chn} kanalen ({chs})") if chn else ""
+    ch_word = (t(f"{chn} channel ({chs})", f"{chn} kanaal ({chs})") if chn == 1 else
+               t(f"{chn} channels ({chs})", f"{chn} kanalen ({chs})")) if chn else ""
     put("r.afmt", " · ".join(x for x in (along, ch_word) if x))
     put("r.aq", " · ".join(x for x in (khz, f"{bits} bit" if bits and bits != "0" else "") if x))
     adec = info("Player.Process(audiodecoder)")
