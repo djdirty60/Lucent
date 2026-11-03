@@ -2659,6 +2659,8 @@ def main():
     pinfo2_test()
     svcreset_test()
     settiles_test()
+    svc_test()
+    sportosd_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
