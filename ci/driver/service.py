@@ -2344,13 +2344,20 @@ def serentheme_test():
     show("configure_provider_package.xml", "provider-settings", {"seren.fanart": ART + "f4.jpg", "package.name": "aiostreams", "hassettings": "true"}, fill_pack)
 
     # 7 + 8 over a playing video: Playing next, Skip intro
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")      # no subtitle list popping up
     xbmc.Player().play("/tmp/ci/test.mkv")
     for _ in range(20):
         if cond("Player.HasVideo"):
             break
         mon.waitForAbort(1)
-    xbmc.executebuiltin("Dialog.Close(all,true)")
-    mon.waitForAbort(3)
+    mon.waitForAbort(6)
+    for _ in range(6):
+        if not cond("System.HasVisibleModalDialog"):
+            break
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(1.5)
+    log(f"theme video: dialog={cond('System.HasVisibleModalDialog')} window={lab('System.CurrentWindow')}")
     nxt = dict(ep, **{"item.info.title": "Thin Ice", "item.info.episode": "8", "item.info.duration.minutes": "49", "item.art.thumb": ART + "f7.jpg",
                       "item.info.plot": "With the pass behind them, the crew reaches the old weather station and finds it is not as empty as it looked."})
     show("playing_next.xml", "playing-next", nxt, focus=3001, wait=5)
