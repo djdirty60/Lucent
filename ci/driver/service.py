@@ -2704,7 +2704,23 @@ def tvfav_test():
     reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
                                                         "params": {"directory": "pvr://channels/tv/", "media": "files"}})))
     files = (reply.get("result") or {}).get("files") or []
-    log(f"tvfav: groups {[(f.get('label'), f.get('file')) for f in files][:10]}")
+    log(f"tvfav: groups {[(f.get('label'), f.get('file')) for f in files][:10]} raw={str(reply)[:300]}")
+    def rpc(method, params):
+        return json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
+    log(f"tvfav: GetChannelGroups {str(rpc('PVR.GetChannelGroups', {'channeltype': 'tv'}))[:400]}")
+    for d in ("pvr://channels/tv/", "pvr://channels/tv/Favorieten/", "pvr://channels/tv/*/"):
+        r = rpc("Files.GetDirectory", {"directory": d, "media": "video"})
+        log(f"tvfav: dir {d} -> {[(f.get('label'), f.get('file')) for f in (r.get('result') or {}).get('files') or []][:6]} err={r.get('error')}")
+    xbmc.executebuiltin("ActivateWindow(TVGuide)")
+    mon.waitForAbort(6)
+    n = int(lab("Container(11).NumItems") or 0)
+    log(f"tvfav: guide groups {[(lab(f'Container(11).ListItemAbsolute({i}).Label'), lab(f'Container(11).ListItemAbsolute({i}).FolderPath'), lab(f'Container(11).ListItemAbsolute({i}).FileNameAndPath')) for i in range(n)]}")
+    xbmc.executebuiltin("ActivateWindow(TVChannels)")
+    mon.waitForAbort(4)
+    log(f"tvfav: channels window path={lab('Container.FolderPath')!r} group={lab('Control.GetLabel(28)')!r}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    files = files or [{"label": "Favorieten", "file": "x"}]
     for want in ([f.get("label") for f in files if f.get("label")][-1:] or ["x"]) + ["Bestaat niet"]:
         xbmc.executebuiltin(f'Skin.SetString(lucent.guide.group,"{want}")')
         mon.waitForAbort(0.5)
