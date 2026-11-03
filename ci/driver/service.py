@@ -2416,12 +2416,12 @@ def svc_test():
     shot("svc-btn")
     xbmc.executebuiltin("Action(Down)")
     mon.waitForAbort(1)
-    for key in ("Up", "Up", "Right", "Select"):
+    for key in ("Up", "Up", "Right", "Right", "Right", "Select", "Left", "Left", "Right"):
         xbmc.executebuiltin(f"Action({key})")
         mon.waitForAbort(1.2)
         steps.append(f"{key}:{lab('System.CurrentControlId')}")
     mon.waitForAbort(5)
-    steps.append(f"kind={lab('Window.Property(svc.kind)')} row={lab('Window.Property(svc.rowlabel)')} items={lab('Container(801).NumItems')}")
+    steps.append(f"cat={lab('Window.Property(svc.cat)')} kind={lab('Window.Property(svc.kind)')} row={lab('Window.Property(svc.rowlabel)')} items={lab('Container(801).NumItems')}")
     log(f"svc: nav {steps}")
     shot("svc-3")
     for key in ("Down", "Down"):
@@ -2518,10 +2518,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    libfix_test()
-    pinfo_test()
     svc_test()
-    sportnav_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

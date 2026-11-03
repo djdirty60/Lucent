@@ -16,8 +16,9 @@
             <texture background="true">$INFO[Window.Property(svc.logo)]</texture><visible>!String.IsEmpty(Window.Property(svc.logo))</visible></control>
         <control type="label"><left>90</left><top>56</top><width>800</width><height>54</height><font>font45_title</font><textcolor>FFFFFFFF</textcolor>
             <label>$INFO[Window.Property(svc.name)]</label><visible>String.IsEmpty(Window.Property(svc.logo))</visible></control>
-        <control type="grouplist" id="700"><left>930</left><top>65</top><width>900</width><height>36</height><orientation>horizontal</orientation><align>right</align><itemgap>20</itemgap>
-            <ondown>900</ondown><onup>noop</onup>
+        <!-- Films / Series and New / Popular / Top: two grouplists (a spacer inside one broke Right after Series) -->
+        <control type="grouplist" id="700"><left>930</left><top>65</top><width>573</width><height>36</height><orientation>horizontal</orientation><align>right</align><itemgap>20</itemgap>
+            <ondown>900</ondown><onup>noop</onup><onright>710</onright><onleft>noop</onleft>
             <control type="button" id="701"><width>auto</width><height>36</height><font>font_svc_pill</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny>
                 <textcolor>$VAR[SvcPillText701]</textcolor><focusedcolor>FF111111</focusedcolor>
                 <texturenofocus border="18" colordiffuse="$VAR[SvcPillBg701]">svc/pill36.png</texturenofocus>
@@ -30,7 +31,9 @@
                 <texturefocus border="18" colordiffuse="FFFFFFFF">svc/pill36.png</texturefocus>
                 <animation effect="zoom" start="100" end="108" center="auto" time="150" reversible="true">Focus</animation>
                 <label>$INFO[Window.Property(svc.t.series)]</label></control>
-            <control type="image"><width>0</width><height>36</height><texture></texture></control>
+        </control>
+        <control type="grouplist" id="710"><left>1523</left><top>65</top><width>307</width><height>36</height><orientation>horizontal</orientation><align>right</align><itemgap>20</itemgap>
+            <ondown>900</ondown><onup>noop</onup><onleft>700</onleft><onright>noop</onright>
             <control type="button" id="711"><width>auto</width><height>36</height><font>font_svc_pill</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny>
                 <textcolor>$VAR[SvcPillText711]</textcolor><focusedcolor>FF111111</focusedcolor>
                 <texturenofocus border="18" colordiffuse="$VAR[SvcPillBg711]">svc/pill36.png</texturenofocus>
