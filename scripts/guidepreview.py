@@ -44,6 +44,9 @@ def open_favourite_group():
     count = int(xbmc.getInfoLabel("Container(11).NumItems") or 0)
     for index in range(count):
         if xbmc.getInfoLabel(f"Container(11).ListItemAbsolute({index}).Label").strip() == want:
+            path = xbmc.getInfoLabel(f"Container(11).ListItemAbsolute({index}).FolderPath")
+            if path.startswith("pvr://") and path != xbmc.getInfoLabel("Skin.String(lucent.guide.grouppath)"):
+                xbmc.executebuiltin(f'Skin.SetString(lucent.guide.grouppath,"{path}")', True)   # for the TV tab on Home
             if index != int(xbmc.getInfoLabel("Container(11).CurrentItem") or 1) - 1:
                 xbmc.executebuiltin(f"SetFocus(11,{index},absolute)")
                 xbmc.sleep(400)

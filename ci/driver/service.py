@@ -2781,6 +2781,41 @@ def wn_test():
     log(f"wn: back win={lab('System.CurrentWindow')!r}")
 
 
+def tvfav2_test():
+    """TV tab on Home lists the guide's favourite group (its own folder, kept when chosen in the guide)."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    import tabpanels
+    import guidefav
+    for _ in range(90):
+        if cond("Pvr.HasTVChannels"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("ActivateWindow(TVGuide)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin('Skin.SetString(lucent.guide.group,"Favorieten")')
+    guidefav.remember_path("Favorieten")
+    mon.waitForAbort(1)
+    log(f"tvfav2: saved={lab('Skin.String(lucent.guide.grouppath)')!r}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    m = menu.Menu()
+    if not any("tv.py" in t["action"] for t in m.tabs):
+        m.tabs.append({"label": "TV", "icon": "icons/tv.png", "action": "RunScript(special://skin/scripts/tv.py)",
+                       "widgets": [{"label": "TV channels", "path": "pvr://channels/tv/", "style": "land"}], "actionlabel": ""})
+        m.save()
+    tabpanels.update()
+    m = menu.Menu()
+    idx = next(i for i, t in enumerate(m.tabs) if "tv.py" in t["action"])
+    xbmc.executebuiltin(f"Control.SetFocus(9000,{idx})")
+    mon.waitForAbort(5)
+    log(f"tvfav2: path={HOME.getProperty('lucent.ptv.path')!r} title={HOME.getProperty('lucent.ptv.title')!r} items={lab('Container(9320).NumItems')} "
+        f"first={lab('Container(9320).ListItemAbsolute(0).Label')!r}")
+    shot("tvfav2")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2794,8 +2829,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    wn_test()
-    misc133_test()
+    tvfav2_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

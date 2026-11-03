@@ -145,7 +145,10 @@ def tv_path():
     want = xbmc.getInfoLabel("Skin.String(lucent.guide.group)")
     want_key = norm(want)
     path = "pvr://channels/tv/*/"
-    if want:
+    saved = xbmc.getInfoLabel("Skin.String(lucent.guide.grouppath)")
+    if want and saved.startswith("pvr://"):
+        path = saved                            # the guide's own folder of the group (kept when you chose it)
+    elif want:
         import json
         import urllib.parse
         try:                                    # the guide's groups are 'pvr://channels/tv/<name>/'
