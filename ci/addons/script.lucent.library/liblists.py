@@ -1,6 +1,6 @@
 """Lucent Bibliotheek: your own Trakt lists as a source for the library, next to the Trakt collection.
 
-    RunScript(script.lucent.library,chooselists)     choose the list for films and the list for series
+    RunScript(script.lucent.library,chooselists)     tick the lists that belong to the library
 
 Trakt's collection can be capped; your own lists are not. Films and series in the chosen lists are written to the
 Kodi library just like the collected ones (lib.export / lib.export_shows add them to what Seren gives).
@@ -15,7 +15,7 @@ import xbmcgui
 
 import lib
 
-CHOICE = os.path.join(lib.DATA, "lists.json")         # {"movie": {"id": 123, "name": "Movie collection"}, "show": {...}}
+CHOICE = os.path.join(lib.DATA, "lists.json")         # {"lists": [{"id", "name"}], "movie": <where new films go>, "show": ...}
 CACHE = os.path.join(lib.DATA, "listcache.json")      # the last copy of the lists and the episodes of their series
 NL = lib.NL
 REFRESH_RUNNING = 20 * 3600       # episodes of a running series are asked again after 20 hours
@@ -33,9 +33,20 @@ def log(text):
     lib.log(f"lists: {text}")
 
 
-def chosen():
+def _read():
     data = lib.read_json(CHOICE, {}) or {}
-    return {k: v for k, v in data.items() if k in ("movie", "show") and isinstance(v, dict) and v.get("id")}
+    return data if isinstance(data, dict) else {}
+
+
+def chosen():
+    """[{'id', 'name'}] of the lists that make up the library (besides the collection)."""
+    data = _read()
+    out, seen = [], set()
+    for entry in (data.get("lists") or []) + [data.get("movie"), data.get("show")]:   # older files had only movie / show
+        if isinstance(entry, dict) and entry.get("id") and entry["id"] not in seen:
+            seen.add(entry["id"])
+            out.append({"id": entry["id"], "name": entry.get("name", "")})
+    return out
 
 
 def _trakt():
@@ -45,7 +56,7 @@ def _trakt():
 
 # ----------------------------------------------------------------------------- choosing
 def choose():
-    """Two questions: the list for films and the list for series (or none: only the collection)."""
+    """Tick the lists that belong to the library (as many as you like, or none: only the collection)."""
     try:
         trakt = _trakt()
         lists = trakt.call("users/me/lists") or []
@@ -55,40 +66,59 @@ def choose():
                             t("Your Trakt lists could not be loaded. Check the Trakt login in Seren.",
                               "Je Trakt-lijsten konden niet geladen worden. Kijk of Trakt in Seren is ingelogd."))
         return
-    choice = chosen()
-    none = t("None – only the Trakt collection", "Geen – alleen de Trakt-collectie")
-    for kind, heading in (("movie", t("List for films", "Lijst voor films")), ("show", t("List for series", "Lijst voor series"))):
-        labels = [none] + [f"{lst.get('name', '')}  ·  {lst.get('item_count', 0)}" for lst in lists]
-        current = (choice.get(kind) or {}).get("id")
-        pre = next((n + 1 for n, lst in enumerate(lists) if (lst.get("ids") or {}).get("trakt") == current), 0)
-        pick = xbmcgui.Dialog().select(heading, labels, preselect=pre)
-        if pick < 0:
-            return
-        if pick == 0:
-            choice.pop(kind, None)
-        else:
-            lst = lists[pick - 1]
-            choice[kind] = {"id": (lst.get("ids") or {}).get("trakt"), "name": lst.get("name", "")}
+    if not lists:
+        xbmcgui.Dialog().ok(t("Lucent Library", "Lucent Bibliotheek"),
+                            t("You have no lists of your own on Trakt yet.", "Je hebt nog geen eigen lijsten op Trakt."))
+        return
+    current = {c["id"] for c in chosen()}
+    labels = [f"{lst.get('name', '')}  ·  {lst.get('item_count', 0)}" for lst in lists]
+    pre = [n for n, lst in enumerate(lists) if (lst.get("ids") or {}).get("trakt") in current]
+    picks = xbmcgui.Dialog().multiselect(t("Lists for the library (none = only the Trakt collection)",
+                                           "Lijsten voor de bibliotheek (geen = alleen de Trakt-collectie)"), labels, preselect=pre)
+    if picks is None:
+        return
+    picked = [{"id": (lists[n].get("ids") or {}).get("trakt"), "name": lists[n].get("name", "")} for n in picks]
+    choice = {"lists": picked}
+    choice.update(_targets(trakt, picked))
     lib.write_json(CHOICE, choice)
-    label(choice)
+    label()
     log(f"chosen: {choice}")
-    if choice and xbmcgui.Dialog().yesno(t("Lucent Library", "Lucent Bibliotheek"),
+    if picked and xbmcgui.Dialog().yesno(t("Lucent Library", "Lucent Bibliotheek"),
                                          t("Update the library now with these lists?",
                                            "De bibliotheek nu bijwerken met deze lijsten?")):
         xbmc.executebuiltin("RunScript(script.lucent.library)")
 
 
-def label(choice=None):
+def _targets(trakt, picked):
+    """Where a new film / series goes (the Library row on the info page): the chosen list with the most of that kind."""
+    if not picked:
+        return {}
+    counts = {}
+    for lst in picked:
+        for kind in ("movie", "show"):
+            try:
+                data = trakt.call(f"users/me/lists/{lst['id']}/items/{kind}?page=1&limit=100") or []
+            except Exception as error:  # noqa: BLE001
+                log(f"count {lst['name']} {kind}s: {error}")
+                data = []
+            counts[(lst["id"], kind)] = len(data) if isinstance(data, list) else 0
+    out = {}
+    for kind in ("movie", "show"):
+        best = max(picked, key=lambda lst: counts.get((lst["id"], kind), 0))
+        out[kind] = best if counts.get((best["id"], kind), 0) or len(picked) == 1 else picked[0]
+    return out
+
+
+def label():
     """The skin shows the chosen lists under the button (Skin.String lucent.lib.lists)."""
-    choice = chosen() if choice is None else choice
-    text = " · ".join(v.get("name", "") for k, v in sorted(choice.items(), key=lambda kv: kv[0] != "movie"))
+    text = " · ".join(c["name"] for c in chosen())
     xbmc.executebuiltin(f"Skin.SetString(lucent.lib.lists,{text.replace(',', ' ')})" if text else "Skin.Reset(lucent.lib.lists)")
 
 
 # ----------------------------------------------------------------------------- reading the lists
 def _items(trakt, cache, kind):
     """Films or series of the chosen lists ({trakt id: full Trakt record}); the last copy when Trakt fails."""
-    lists = {v["id"] for v in chosen().values()}      # both lists: a film on the series list counts too
+    lists = {c["id"] for c in chosen()}               # every chosen list: a film on a series list counts too
     if not lists:
         return None
     out, ok = {}, True

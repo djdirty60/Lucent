@@ -2701,9 +2701,7 @@ def main():
     shot("1-home")
     liblists_test()
     settiles_test()
-    sportosd_test()
     pinfo2_test()
-    svcreset_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

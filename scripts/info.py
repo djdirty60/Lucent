@@ -383,17 +383,18 @@ def choose_lists(container=""):
         rows = []  # (label, in_list, add_path, remove_paths, library row)
         collection = trakt.get_all(f"sync/collection/{kind}")
         in_coll = any(item.matches(e) for e in collection)
-        own = library_list(item.kind)              # Lucent Library uses one of your lists as the library
-        if own:
+        own, lib_ids = library_lists(item.kind)    # Lucent Library uses your own lists as the library
+        holding = []                               # the chosen lists this title is on
+        for lid in lib_ids:
             try:
-                entries = trakt.get_all(f"users/me/lists/{own['id']}/items/{item.kind}")
-                in_own = any(item.matches(e) for e in entries)
+                if any(item.matches(e) for e in trakt.get_all(f"users/me/lists/{lid}/items/{item.kind}")):
+                    holding.append(lid)
             except Exception as error:  # noqa: BLE001
-                log(f"library list: {error}")
-                own, in_own = None, False
+                log(f"library list {lid}: {error}")
         if own:
-            rows.append((tr("library_list", own.get("name", "")), in_coll or in_own, f"users/me/lists/{own['id']}/items",
-                         [f"users/me/lists/{own['id']}/items/remove"] + (["sync/collection/remove"] if in_coll else []), True))
+            rows.append((tr("library_list", own.get("name", "")), in_coll or bool(holding), f"users/me/lists/{own['id']}/items",
+                         [f"users/me/lists/{lid}/items/remove" for lid in holding] + (["sync/collection/remove"] if in_coll else []),
+                         True))
         else:
             rows.append((tr("library"), in_coll, "sync/collection", ["sync/collection/remove"], True))
         progress.update(30)
@@ -407,8 +408,8 @@ def choose_lists(container=""):
                 progress.close()
                 return
             slug = lst.get("ids", {}).get("trakt")
-            if own and slug == own.get("id"):
-                continue                           # already the library row
+            if slug in lib_ids:
+                continue                           # part of the library row
             try:
                 entries = trakt.get_all(f"users/me/lists/{slug}/items/{item.kind}")
             except Exception as error:  # noqa: BLE001 - skip this one list, show the rest
@@ -453,15 +454,24 @@ def choose_lists(container=""):
         notify(tr("nothing"))
 
 
-def library_list(kind):
-    """{'id', 'name'} of the Trakt list Lucent Library uses for films ('movie') or series ('show'), or None."""
+def library_lists(kind):
+    """(the list a new film ('movie') / series ('show') goes to, ids of every list Lucent Library uses) or (None, [])."""
     try:
         path = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/lists.json")
         with open(path, encoding="utf-8") as fh:
-            entry = (json.load(fh) or {}).get(kind)
-        return entry if isinstance(entry, dict) and entry.get("id") else None
-    except (OSError, ValueError, AttributeError):
-        return None
+            data = json.load(fh) or {}
+    except (OSError, ValueError):
+        return None, []
+    if not isinstance(data, dict):
+        return None, []
+    ids = []
+    for entry in (data.get("lists") or []) + [data.get("movie"), data.get("show")]:
+        if isinstance(entry, dict) and entry.get("id") and entry["id"] not in ids:
+            ids.append(entry["id"])
+    target = data.get(kind)
+    if not (isinstance(target, dict) and target.get("id")):
+        target = next((e for e in (data.get("lists") or []) if isinstance(e, dict) and e.get("id")), None)
+    return target, ids
 
 
 def to_kodi_library(item, trakt, action):
