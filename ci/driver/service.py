@@ -2825,7 +2825,9 @@ def solis_test():
     if not any("script.solis.dashboard" in t["action"] for t in m.tabs):
         m.tabs.append({"label": "Solis Dashboard", "icon": "icons/sparkle.png", "action": "RunAddon(script.solis.dashboard)", "widgets": [], "actionlabel": ""})
         m.save()
-    log(f"solis: addon={cond('System.HasAddon(script.solis.dashboard)')}")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Addons.SetAddonEnabled", "params": {"addonid": "script.solis.dashboard", "enabled": True}}))
+    mon.waitForAbort(3)
+    log(f"solis: addon={cond('System.HasAddon(script.solis.dashboard)')} enabled={cond('System.AddonIsEnabled(script.solis.dashboard)')}")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(3)
     m = menu.Menu()

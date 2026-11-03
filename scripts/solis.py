@@ -38,7 +38,7 @@ def put(name, value):
 
 def wanted():
     """Only while Home shows a tab that starts the Solis add-on."""
-    return (xbmc.getCondVisibility(f"System.HasAddon({ADDON}) + Window.IsVisible(home)")
+    return (xbmc.getCondVisibility(f"System.AddonIsEnabled({ADDON}) + Window.IsVisible(home)")
             and ADDON in xbmc.getInfoLabel("Container(9000).ListItem.Property(act)"))
 
 
