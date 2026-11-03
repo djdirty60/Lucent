@@ -17,6 +17,8 @@ import json
 import re
 import time
 import unicodedata
+import threading
+import urllib.error
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -484,7 +486,9 @@ def _name_tries(name, short=""):
     plain = name.replace("ø", "o").replace("Ø", "O").replace("æ", "ae").replace("ß", "ss")
     plain = unicodedata.normalize("NFKD", plain).encode("ascii", "ignore").decode("ascii")
     bare = re.sub(r"\b(FC|FK|SC|AFC|CF|SK|AC|AS|SV|VfB|VfL|TSG|RC|CD|UD|SD|IF|BK|AIK)\b\.?", "", plain).strip(" .-")
-    for q in (name, plain, bare, short):
+    slash = re.sub(r"\s*/\s*", " ", plain)
+    first = plain.split("/")[0].split()[0] if plain.split() else ""
+    for q in (name, plain, bare, short, slash, first if len(first) >= 5 else ""):
         q = (q or "").strip()
         if q and q not in out:
             out.append(q)
@@ -506,6 +510,8 @@ def stadium_photo(name, sport="", venue="", short=""):
         for q in _name_tries(name, short):
             data = json.loads(_tsdb_get(f"{TSDB}searchteams.php?t={urllib.parse.quote(q)}") or "{}")
             teams = [t for t in data.get("teams") or [] if not want or t.get("strSport") == want]
+            if q == first and q != name:                 # only the first word: the club must really start with it
+                teams = [t for t in teams if norm(t.get("strTeam")).startswith(norm(q))]
             if teams:
                 teams.sort(key=lambda t: norm(t.get("strTeam")) not in (norm(q), norm(name)))
                 team = teams[0]
@@ -528,6 +534,8 @@ def stadium_photo(name, sport="", venue="", short=""):
         img = img or spare
     except Exception as error:  # noqa: BLE001 - no photo is fine
         log(f"stadium {name}: {error}")
+        if not img:
+            return "", stadium                   # TheSportsDB busy or offline: ask again next time, do not remember a miss
     known[key] = {"img": img, "name": stadium, "t": time.time()}
     try:
         ac.write_json(STADIUM_PATH, known)
@@ -650,10 +658,27 @@ def venue_photo(name, strict=False):
     return ""
 
 
+_TSDB_LOCK = threading.Lock()
+_TSDB_LAST = [0.0]
+
+
 def _tsdb_get(url):
-    request = urllib.request.Request(url, headers=dict(BROWSER))
-    with urllib.request.urlopen(request, timeout=15) as response:
-        return response.read().decode("utf-8", "replace")
+    """TheSportsDB's free key allows about 30 asks a minute: at most one every 2 s, and one retry after 'too many'."""
+    for attempt in range(2):
+        with _TSDB_LOCK:
+            wait = _TSDB_LAST[0] + 2.0 - time.time()
+            if wait > 0:
+                time.sleep(wait)
+            _TSDB_LAST[0] = time.time()
+        try:
+            request = urllib.request.Request(url, headers=dict(BROWSER))
+            with urllib.request.urlopen(request, timeout=15) as response:
+                return response.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as error:
+            if error.code != 429 or attempt:
+                raise
+            time.sleep(6)
+    return ""
 
 
 def circuit_dark(cid, diagrams):

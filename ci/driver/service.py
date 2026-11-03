@@ -2369,7 +2369,9 @@ def serentheme_test():
 def pinfo_test():
     """Speler-info (example 3) over a playing video."""
     xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
-    xbmc.Player().play("/tmp/ci/test.mkv")
+    rpcs = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.GetSettingValue", "params": {"setting": "videolibrary.flattentvshows"}})))
+    log(f"pinfo: flattentvshows={rpcs.get('result')} mark={lab('Skin.String(lucent.flattenset)')}")
+    xbmc.Player().play("/tmp/ci/audio.mkv")
     for _ in range(20):
         if cond("Player.HasVideo"):
             break
@@ -2381,6 +2383,7 @@ def pinfo_test():
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(1.5)
     xbmc.executebuiltin("Skin.SetBool(nuvio.osdstats)")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
     mon.waitForAbort(6)
     keys = ["title", "time", "b.res", "b.vc", "b.ac", "b.ch", "b.sub", "t1.big", "t1.sub", "t3.big", "t4.big", "t4.sub", "spark", "t5.big", "t5.bar",
             "t6.big", "t6.sub", "r.file", "r.loc", "r.cont", "r.rate", "r.res", "r.hdr", "r.fmt", "r.vdec", "r.disp", "r.vq", "r.atrack",
@@ -2389,6 +2392,7 @@ def pinfo_test():
     shot("pinfo-1")
     mon.waitForAbort(3)
     shot("pinfo-2")
+    xbmc.executebuiltin("Dialog.Close(videoosd,true)")
     xbmc.executebuiltin("Skin.Reset(nuvio.osdstats)")
     xbmc.Player().stop()
     mon.waitForAbort(3)
@@ -2407,6 +2411,11 @@ def svc_test():
     mon.waitForAbort(2)
     shot("svc-2")
     steps = []
+    xbmc.executebuiltin("Action(Up)")
+    mon.waitForAbort(1.2)
+    shot("svc-btn")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1)
     for key in ("Up", "Up", "Right", "Select"):
         xbmc.executebuiltin(f"Action({key})")
         mon.waitForAbort(1.2)
@@ -2436,6 +2445,7 @@ def sportnav_test():
         except Exception as error:  # noqa: BLE001
             img, st = repr(error), ""
         log(f"stadium: {name!r} -> {st!r} {img[:90]!r}")
+        mon.waitForAbort(4)
     xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
     for _ in range(40):
         mon.waitForAbort(1)

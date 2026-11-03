@@ -30,7 +30,8 @@ def t(en, nl):
 
 
 def info(name):
-    return xbmc.getInfoLabel(name)
+    value = xbmc.getInfoLabel(name)
+    return "" if value == name else value              # Kodi gives the name back for a label it does not know
 
 
 def put(key, value):
@@ -402,8 +403,9 @@ def tick():
     put("r.atrack", " · ".join(x for x in bits_track if x))
     ch_word = t(f"{chn} channels ({chs})", f"{chn} kanalen ({chs})") if chn else ""
     put("r.afmt", " · ".join(x for x in (along, ch_word) if x))
-    put("r.aq", " · ".join(x for x in (khz, f"{bits} bit" if bits else "") if x))
+    put("r.aq", " · ".join(x for x in (khz, f"{bits} bit" if bits and bits != "0" else "") if x))
     adec = info("Player.Process(audiodecoder)")
+    adec = "" if adec.lower() in ("unknown", "none") else adec
     if adec.lower().startswith("pt-"):
         adec += t(" · passthrough to receiver", " · passthrough naar receiver")
     put("r.adec", adec)
