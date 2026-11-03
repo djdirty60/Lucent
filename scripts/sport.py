@@ -863,6 +863,7 @@ class Sport(xbmcgui.WindowXML):
         if xbmc.Monitor().waitForAbort(wait) or token != self.stadium_token or self.closing:
             return
         try:
+            venue, short = "", ""
             if self.view == "team" and getattr(self, "team_look", None):
                 name, sport = self.team_look[0], self.team_look[1]
             else:
@@ -872,7 +873,8 @@ class Sport(xbmcgui.WindowXML):
                     self.setProperty("sport.stadium", "")
                     return
                 name, sport = ev["home"].get("name", ""), sc.LEAGUES.get(ev["league"], {}).get("sport", "")
-            img, stadium = sc.stadium_photo(name, sport)
+                venue, short = ev.get("venue", ""), ev["home"].get("short", "")
+            img, stadium = sc.stadium_photo(name, sport, venue, short)
             if token == self.stadium_token:
                 self.setProperty("sport.stadium", img)
                 self.setProperty("sport.stadium.name", stadium)

@@ -22,7 +22,24 @@ def step(name, func):
         log(f"{name}: {error}")
 
 
+def season_page():
+    """Kodi skips the seasons of a series with only one season ('Flatten TV show seasons: if only one season'), so
+    such a series opened as a bare episode list instead of Lucent's series page with the season tabs. Set it once
+    to 'Never' (you can change it back in Kodi's settings; Lucent does not ask again)."""
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.seasontabs.off) | !String.IsEmpty(Skin.String(lucent.flattenset))"):
+        return
+    import json
+    req = {"jsonrpc": "2.0", "id": 1, "method": "Settings.GetSettingValue", "params": {"setting": "videolibrary.flattentvshows"}}
+    value = (json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}).get("value")
+    if value not in (None, 0):
+        req = {"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+               "params": {"setting": "videolibrary.flattentvshows", "value": 0}}
+        log(f"flatten seasons {value} -> 0: {xbmc.executeJSONRPC(json.dumps(req))}")
+    xbmc.executebuiltin("Skin.SetString(lucent.flattenset,1)")
+
+
 def run():
+    step("season page", season_page)
     import keymap
     step("keymap", keymap.main)
     import settings

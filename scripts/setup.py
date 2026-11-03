@@ -365,9 +365,9 @@ def ac_look():
                       run("RunScript(special://skin/scripts/settings.py,litebuild)"))),
             (t("Big posters: on", "Grote posters: aan") if not cond("Skin.HasSetting(lucent.posters.small)")
              else t("Big posters: off", "Grote posters: uit"), toggle_posters),
-            (t("Hide films before digital release: on", "Films pas na digitale release: aan")
+            (t("Films and series only once you can watch them: on", "Films en series pas als je ze kunt kijken: aan")
              if cond("Skin.HasSetting(lucent.hide.undigital)")
-             else t("Hide films before digital release: off", "Films pas na digitale release: uit"),
+             else t("Films and series only once you can watch them: off", "Films en series pas als je ze kunt kijken: uit"),
              lambda: run("Skin.ToggleSetting(lucent.hide.undigital)")),
             (t("Menu and rows", "Menu en rijen"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
 

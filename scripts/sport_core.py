@@ -17,6 +17,8 @@ import json
 import re
 import time
 import unicodedata
+import threading
+import urllib.error
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -477,30 +479,64 @@ TSDB_SPORT = {"soccer": "Soccer", "basketball": "Basketball", "football": "Ameri
               "baseball": "Baseball", "rugby": "Rugby"}
 
 
-def stadium_photo(name, sport=""):
-    """(photo URL, stadium name) of a team's home ground from TheSportsDB; remembered 30 days (a miss 3 days)."""
-    key = f"{norm(name)}|{sport}"
+def _name_tries(name, short=""):
+    """Ways to write a club name that TheSportsDB may know: as given, without accents (Bodø -> Bodo),
+    without FC / FK / SC ..., the short name."""
+    out = []
+    plain = name.replace("ø", "o").replace("Ø", "O").replace("æ", "ae").replace("ß", "ss")
+    plain = unicodedata.normalize("NFKD", plain).encode("ascii", "ignore").decode("ascii")
+    bare = re.sub(r"\b(FC|FK|SC|AFC|CF|SK|AC|AS|SV|VfB|VfL|TSG|RC|CD|UD|SD|IF|BK|AIK)\b\.?", "", plain).strip(" .-")
+    slash = re.sub(r"\s*/\s*", " ", plain)
+    first = plain.split("/")[0].strip() if "/" in plain else ""          # Bodo/Glimt -> Bodo
+    for q in (name, plain, bare, short, slash, first):
+        q = (q or "").strip()
+        if q and q not in out:
+            out.append(q)
+    return out
+
+
+def stadium_photo(name, sport="", venue="", short=""):
+    """(photo URL, stadium name) of a team's home ground from TheSportsDB; remembered 30 days (a miss 3 days).
+    Tries other spellings of the club name, then the venue of the game itself, before giving up."""
+    key = f"v2|{norm(name)}|{sport}|{norm(venue)}"
     known = ac.read_json(STADIUM_PATH, {})
     hit = known.get(key)
     if hit and time.time() - hit.get("t", 0) < (30 if hit.get("img") else 3) * 86400:
         return hit.get("img", ""), hit.get("name", "")
-    img, stadium = "", ""
+    img, stadium, spare = "", "", ""
+    want = TSDB_SPORT.get(sport, "")
     try:
-        query = urllib.parse.quote(name)
-        data = json.loads(_tsdb_get(f"{TSDB}searchteams.php?t={query}") or "{}")
-        teams = data.get("teams") or []
-        want = TSDB_SPORT.get(sport, "")
-        teams.sort(key=lambda t: (want and t.get("strSport") != want, norm(t.get("strTeam")) != norm(name)))
-        if teams:
-            team = teams[0]
+        team = None
+        for q in _name_tries(name, short):
+            data = json.loads(_tsdb_get(f"{TSDB}searchteams.php?t={urllib.parse.quote(q)}") or "{}")
+            teams = [t for t in data.get("teams") or [] if not want or t.get("strSport") == want]
+            if "/" in name and "/" not in q and " " not in q:     # only the part before '/' (Bodo): the rest must be in the name too
+                rest = norm(name.split("/")[-1])
+                teams = [t for t in teams if rest and rest in norm(t.get("strTeam"))]
+            if teams:
+                teams.sort(key=lambda t: norm(t.get("strTeam")) not in (norm(q), norm(name)))
+                team = teams[0]
+                break
+        if team:
             stadium = team.get("strStadium") or team.get("strVenue") or ""
             if team.get("idVenue"):
-                venue = (json.loads(_tsdb_get(f"{TSDB}lookupvenue.php?id={team['idVenue']}") or "{}").get("venues") or [{}])[0]
-                img = venue.get("strThumb") or venue.get("strFanart1") or venue.get("strFanart2") or ""
-                stadium = venue.get("strVenue") or stadium
-            img = img or team.get("strStadiumThumb") or team.get("strFanart1") or team.get("strBanner") or ""
+                v = (json.loads(_tsdb_get(f"{TSDB}lookupvenue.php?id={team['idVenue']}") or "{}").get("venues") or [{}])[0]
+                img = v.get("strThumb") or v.get("strFanart1") or v.get("strFanart2") or ""
+                stadium = v.get("strVenue") or stadium
+            img = img or team.get("strStadiumThumb") or ""
+            spare = team.get("strFanart1") or team.get("strBanner") or ""
+        if not img:
+            for place in (venue.split(",")[0].strip() if venue else "", stadium):
+                if place:
+                    img = venue_photo(place, strict=True)
+                    if img:
+                        stadium = stadium or place
+                        break
+        img = img or spare
     except Exception as error:  # noqa: BLE001 - no photo is fine
         log(f"stadium {name}: {error}")
+        if not img:
+            return "", stadium                   # TheSportsDB busy or offline: ask again next time, do not remember a miss
     known[key] = {"img": img, "name": stadium, "t": time.time()}
     try:
         ac.write_json(STADIUM_PATH, known)
@@ -602,12 +638,13 @@ def channel_logo(name):
     return hit
 
 
-def venue_photo(name):
-    """A photo of a venue (a race circuit) by its name from TheSportsDB; '' when it has none."""
+def venue_photo(name, strict=False):
+    """A photo of a venue (a race circuit) by its name from TheSportsDB; '' when it has none.
+    strict: only the whole name (a stadium: 'Stadion' alone would find any stadium)."""
     if not name:
         return ""
     words = [w for w in re.split(r"[\s,]+", name) if len(w) > 3]
-    tries = [name] + ([" ".join(words[-2:])] if len(words) > 2 else []) + ([words[-1]] if words else [])
+    tries = [name] if strict else [name] + ([" ".join(words[-2:])] if len(words) > 2 else []) + ([words[-1]] if words else [])
     for q in tries:
         try:
             data = json.loads(_tsdb_get(f"{TSDB}searchvenues.php?t={urllib.parse.quote(q)}") or "{}")
@@ -622,10 +659,27 @@ def venue_photo(name):
     return ""
 
 
+_TSDB_LOCK = threading.Lock()
+_TSDB_LAST = [0.0]
+
+
 def _tsdb_get(url):
-    request = urllib.request.Request(url, headers=dict(BROWSER))
-    with urllib.request.urlopen(request, timeout=15) as response:
-        return response.read().decode("utf-8", "replace")
+    """TheSportsDB's free key allows about 30 asks a minute: at most one every 2 s, and one retry after 'too many'."""
+    for attempt in range(2):
+        with _TSDB_LOCK:
+            wait = _TSDB_LAST[0] + 2.0 - time.time()
+            if wait > 0:
+                time.sleep(wait)
+            _TSDB_LAST[0] = time.time()
+        try:
+            request = urllib.request.Request(url, headers=dict(BROWSER))
+            with urllib.request.urlopen(request, timeout=15) as response:
+                return response.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as error:
+            if error.code != 429 or attempt:
+                raise
+            time.sleep(6)
+    return ""
 
 
 def circuit_dark(cid, diagrams):
