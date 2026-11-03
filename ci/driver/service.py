@@ -2696,6 +2696,11 @@ def tvfav_test():
     import sys as _sys
     _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
     import tabpanels
+    for _ in range(90):
+        if cond("Pvr.HasTVChannels"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(3)
     reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
                                                         "params": {"directory": "pvr://channels/tv/", "media": "files"}})))
     files = (reply.get("result") or {}).get("files") or []
@@ -2722,8 +2727,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    tvfav_test()
     pinfo2_test()
+    tvfav_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
