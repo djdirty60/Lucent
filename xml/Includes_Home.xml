@@ -15836,6 +15836,7 @@
 
 
 
+
     <!-- ==== Home: own screens for tabs without rows (tabpanels.py) ==== -->
     <expression name="LucentPCal">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),agenda.py)</expression>
     <expression name="LucentPTv">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) | [String.StartsWith(Container(9000).ListItem.Property(w1.path),pvr://channels/tv) + String.IsEmpty(Container(9000).ListItem.Property(w2.path))]] + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
@@ -16124,9 +16125,11 @@
                 <visible>$EXP[LucentPSolis]</visible>
                 <animation effect="fade" start="0" end="100" time="300">Visible</animation>
                 <control type="group">
-                    <left>770</left><top>170</top>
+                    <left>840</left><top>150</top>
                     <visible>!String.IsEmpty(Window(home).Property(lucent.sol.img))</visible>
-                    <control type="image"><left>0</left><top>0</top><width>820</width><height>287</height><aspectratio>stretch</aspectratio><fadetime>300</fadetime><texture background="true" diffuse="sol_mask.png">$INFO[Window(home).Property(lucent.sol.img)]</texture><colordiffuse>F2FFFFFF</colordiffuse></control>
+                    <control type="image"><left>-24</left><top>-14</top><width>1108</width><height>419</height><texture border="44">rr20_glow.png</texture><colordiffuse>66000000</colordiffuse></control>
+                    <control type="image"><left>0</left><top>0</top><width>1060</width><height>371</height><aspectratio>stretch</aspectratio><fadetime>300</fadetime><texture background="true" diffuse="sol_card_mask.png">$INFO[Window(home).Property(lucent.sol.img)]</texture></control>
+                    <control type="image"><left>0</left><top>0</top><width>1060</width><height>371</height><texture>sol_card_edge.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="group">
                     <left>160</left><top>150</top>

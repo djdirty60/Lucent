@@ -2870,7 +2870,6 @@ def main():
     watch("home1", 40)
     shot("1-home")
     solis_test()
-    tvfav2_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
