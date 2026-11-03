@@ -2816,6 +2816,44 @@ def tvfav2_test():
     shot("tvfav2")
 
 
+def solis_test():
+    """Solis Dashboard tab on Home (example C): numbers from the stand-in Homey."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    m = menu.Menu()
+    if not any("script.solis.dashboard" in t["action"] for t in m.tabs):
+        m.tabs.append({"label": "Solis Dashboard", "icon": "icons/sparkle.png", "action": "RunAddon(script.solis.dashboard)", "widgets": [], "actionlabel": ""})
+        m.save()
+    log(f"solis: addon={cond('System.HasAddon(script.solis.dashboard)')}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    m = menu.Menu()
+    idx = next(i for i, t in enumerate(m.tabs) if "script.solis.dashboard" in t["action"])
+    xbmc.executebuiltin(f"Control.SetFocus(9000,{idx})")
+    for _ in range(20):
+        if HOME.getProperty("lucent.sol.1.t"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(3)
+    keys = ["big", "p1", "p2", "p3", "advice", "img", "hint", "err"] + [f"{n}.{k}" for n in range(1, 7) for k in ("t", "v", "s")]
+    log("solis: " + json.dumps({k: HOME.getProperty("lucent.sol." + k) for k in keys}, ensure_ascii=False))
+    log(f"solis: panel={cond('Control.IsVisible(9370)')} rows9100={cond('Control.IsVisible(9100)')} items={lab('Container(9370).NumItems')}")
+    shot("solis-1")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    log(f"solis: right focus={lab('System.CurrentControlId')} label={lab('Container(9370).ListItem.Label')!r}")
+    shot("solis-2")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(5)
+    log(f"solis: ok window={lab('System.CurrentWindow')!r}")
+    shot("solis-3")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2829,6 +2867,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    solis_test()
     tvfav2_test()
 
     os.makedirs(OUT, exist_ok=True)

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.solis.dashboard" name="Solis Dashboard" version="2.2.0" provider-name="Wilfried van der Voort">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+  </requires>
+  <extension point="xbmc.python.script" library="default.py">
+    <provides>executable</provides>
+  </extension>
+  <extension point="xbmc.service" library="service.py" start="login"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="nl_NL">Zonnepanelen-dashboard voor Solis voor Homey</summary>
+    <summary lang="en_GB">Solar dashboard for Solis voor Homey</summary>
+    <description lang="nl_NL">Toont de gegevens van je Solis-omvormer in Kodi: opwek, verbruik, uurprijzen, slimme tips, plan en instellingen. Standaard tekent de Solis-app op je Homey het dashboard als beeld, in dezelfde stijl als op de Mac (Solis voor Homey 3.35.0 of nieuwer). Geen computer nodig. Andere opties: beeld van de Solis beeldserver of de ingebouwde pagina's. Wissel van pagina met links en rechts. Nieuw: meldingen op de tv (bijvoorbeeld "wasmachine klaar" of "negatieve stroomprijs"), te zetten bij de instellingen. Voor het dashboard als schermbeveiliging installeer je ook "Solis Dashboard Schermbeveiliging".</description>
+    <description lang="en_GB">Shows your Solis inverter data in Kodi: generation, usage, hourly prices, smart tips, plan and settings. By default the Solis app on your Homey draws the dashboard as an image, in the same style as on the Mac (Solis voor Homey 3.35.0 or newer). No computer needed. Other options: image from the Solis image server or the built-in pages. Use left and right to switch pages. New: notifications on the TV (for example "washing machine done" or "negative electricity price"), configurable in the settings. For the dashboard as a screensaver also install "Solis Dashboard Screensaver".</description>
+    <platform>all</platform>
+    <license>MIT</license>
+    <assets>
+      <icon>icon.png</icon>
+      <fanart>fanart.jpg</fanart>
+    </assets>
+  </extension>
+</addon>

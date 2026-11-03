@@ -94,6 +94,10 @@ def run():
         import tabpanels
         tabpanels.update()
 
+    def solis_tab():
+        import solis                                # the Solis Dashboard tab on Home: the numbers of now
+        solis.tick()
+
     def xtream_list():
         import xbmcvfs
         if xbmcvfs.exists("special://profile/addon_data/skin.lucent/xtream.json"):
@@ -142,6 +146,7 @@ def run():
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
         Job("calendar", 120, 60, calendar),
         Job("tab panels", 60, 6, tab_panels),
+        Job("solis", 3, 4, solis_tab, lambda: cond("System.HasAddon(script.solis.dashboard) + Window.IsVisible(home)")),
         Job("live sport", 20, 8, live_sport, lambda: cond("Pvr.IsPlayingTV") or bool(HOME.getProperty("live.sc.on"))),   # the score in the TV player               # Calendar / Sport / TV tabs on Home without rows of their own
         Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),

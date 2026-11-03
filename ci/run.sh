@@ -33,6 +33,11 @@ cp -r ci/packs/* $K/addons/
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
+# Solis Dashboard with a stand-in Homey (the example of the Solis handover)
+cp -r ci/addons/script.solis.dashboard $K/addons/
+mkdir -p $K/userdata/addon_data/script.solis.dashboard
+printf '<settings version="2">\n    <setting id="host">127.0.0.1</setting>\n    <setting id="port">8791</setting>\n    <setting id="notify_enabled">false</setting>\n</settings>\n' > $K/userdata/addon_data/script.solis.dashboard/settings.xml
+python3 ci/fakesolis.py > /tmp/ci/fakesolis.txt 2>&1 &
 cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/driver $K/addons/service.lucent.cidriver
 printf '1\n00:00:01,000 --> 00:01:50,000\nHallo dit is Nederlands\n' > /tmp/ci/nl.srt
