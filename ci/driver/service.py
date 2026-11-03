@@ -2559,6 +2559,11 @@ def pinfo2_test():
     mon.waitForAbort(2.5)
     log(f"pinfo2: after right tab={HOME.getProperty('lucent.pi.tab')} focus={lab('System.CurrentControlId')} time={lab('Player.Time')}")
     shot("pi2-2")
+    try:
+        xbmc.Player().setAudioStream(2)                 # the 5.1 track: more meters on the audio tab
+    except Exception as error:  # noqa: BLE001
+        log(f"pinfo2: audio stream {error}")
+    mon.waitForAbort(2)
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(2.5)
     log(f"pinfo2: after right tab={HOME.getProperty('lucent.pi.tab')} focus={lab('System.CurrentControlId')}")
@@ -2686,6 +2691,24 @@ def liblists_test():
     mon.waitForAbort(2)
 
 
+def tvfav_test():
+    """The TV tab row shows the favourite guide group."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import tabpanels
+    reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                                        "params": {"directory": "pvr://channels/tv/", "media": "files"}})))
+    files = (reply.get("result") or {}).get("files") or []
+    log(f"tvfav: groups {[(f.get('label'), f.get('file')) for f in files][:10]}")
+    for want in ([f.get("label") for f in files if f.get("label")][-1:] or ["x"]) + ["Bestaat niet"]:
+        xbmc.executebuiltin(f'Skin.SetString(lucent.guide.group,"{want}")')
+        mon.waitForAbort(0.5)
+        tabpanels.tv_path()
+        log(f"tvfav: want={want!r} path={HOME.getProperty('lucent.ptv.path')!r} title={HOME.getProperty('lucent.ptv.title')!r}")
+    xbmc.executebuiltin("Skin.Reset(lucent.guide.group)")
+    tabpanels.tv_path()
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2699,8 +2722,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    liblists_test()
-    settiles_test()
+    tvfav_test()
     pinfo2_test()
 
     os.makedirs(OUT, exist_ok=True)

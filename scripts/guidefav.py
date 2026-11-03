@@ -43,6 +43,11 @@ def run():
         xbmc.executebuiltin(f'Skin.SetString({KEY},"{label.replace(chr(34), chr(39))}")', True)
         text = f"{label} opent voortaan als eerste" if NL else f"{label} now opens first"
         open_group(label)
+    try:
+        import tabpanels                    # the TV tab on Home shows the same group
+        tabpanels.tv_path()
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[Lucent] guidefav: tv tab {error}", xbmc.LOGINFO)
     xbmcgui.Dialog().notification("TV", text, "special://skin/resources/icon.png", 3500, False)
 
 

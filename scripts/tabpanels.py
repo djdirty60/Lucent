@@ -143,20 +143,38 @@ def tv_path():
         put("lucent.ptv.path", "")
         return
     want = xbmc.getInfoLabel("Skin.String(lucent.guide.group)")
+    want_key = norm(want)
     path = "pvr://channels/tv/*/"
     if want:
         import json
         try:
             reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
                                                                 "params": {"directory": "pvr://channels/tv/", "media": "files"}})))
-            for f in (reply.get("result") or {}).get("files") or []:
-                if f.get("label") == want and f.get("file"):
+            files = (reply.get("result") or {}).get("files") or []
+            for f in files:
+                if f.get("file") and want_key in (norm(f.get("label")), norm(group_of(f["file"]))):
                     path = f["file"]
                     break
+            else:
+                log(f"tv group {want!r} not found in {[f.get('label') for f in files][:30]}")
         except Exception as error:  # noqa: BLE001
             log(f"tv group: {error}")
+    found = path != "pvr://channels/tv/*/"
     put("lucent.ptv.path", path)
-    put("lucent.ptv.title", tr("On your channels now", "Nu op je zenders") if want else tr("On TV now", "Nu op tv"))
+    put("lucent.ptv.title", tr("Your favourite channels now", "Nu op je favoriete zenders") if found else tr("On TV now", "Nu op tv"))
+
+
+def norm(text):
+    """Compare group names without colour tags, spaces at the ends or case."""
+    import re
+    return re.sub(r"\[/?(?:COLOR[^\]]*|B|I)\]", "", str(text or "")).strip().casefold()
+
+
+def group_of(path):
+    """'pvr://channels/tv/NL%20Sport@1/' -> 'NL Sport'."""
+    import urllib.parse
+    last = path.rstrip("/").rsplit("/", 1)[-1]
+    return urllib.parse.unquote(last).rsplit("@", 1)[0]
 
 
 def open_calendar(n):
