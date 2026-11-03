@@ -1,4 +1,4 @@
-"""Skin settings > About > Licences and credits: show them in a pop-up."""
+"""Settings > Help and info > Licences and credits: show them in a pop-up."""
 import xbmc
 import xbmcgui
 

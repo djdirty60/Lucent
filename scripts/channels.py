@@ -304,7 +304,7 @@ def adult_groups(entries):
     return out
 
 
-def menu():
+def menu(preset=None):
     if not xbmc.getCondVisibility(f"System.HasAddon({xtream.IPTV})"):
         xbmcgui.Dialog().ok(t("Channels", "Zenders"), t("IPTV Simple is not installed.", "IPTV Simple staat er niet op."))
         return
@@ -337,10 +337,13 @@ def menu():
     options.append(("logos", t("Clean channel logos (tv-logos): ", "Nette zenderlogo's (tv-logos): ") + (t("on", "aan") if cfg.get("logos") else t("off", "uit"))))
     if hidden_n:
         options.append(("all", t("Show everything again", "Alles weer tonen")))
-    pick = xbmcgui.Dialog().select(t("Channels", "Zenders") + t(f"  ·  {len(entries)} in the list", f"  ·  {len(entries)} in de lijst"), [o[1] for o in options])
-    if pick < 0:
-        return
-    kind = options[pick][0]
+    if preset:                                   # straight from Settings > Live TV (for example the logos on / off)
+        kind = preset
+    else:
+        pick = xbmcgui.Dialog().select(t("Channels", "Zenders") + t(f"  ·  {len(entries)} in the list", f"  ·  {len(entries)} in de lijst"), [o[1] for o in options])
+        if pick < 0:
+            return
+        kind = options[pick][0]
     if kind == "groups":
         new = choose_groups(cfg, entries)
         if new is None:
@@ -364,6 +367,10 @@ def menu():
     elif kind == "now":
         cfg["hide_names"] = sorted(set(cfg.get("hide_names") or []) | {here["name"]})
     elif kind == "logos":
+        if preset and not xbmcgui.Dialog().yesno(t("Channels", "Zenders"), t(
+                "Clean channel logos (tv-logos) are now %s. Switch them %s?" % (("on", "off") if cfg.get("logos") else ("off", "on")),
+                "Nette zenderlogo's (tv-logos) staan nu %s. %s?" % (("aan", "Uitzetten") if cfg.get("logos") else ("uit", "Aanzetten")))):
+            return
         cfg["logos"] = not cfg.get("logos")
         if not cfg["logos"] and not (cfg.get("hide_groups") or cfg.get("hide_names")):
             point_back(cfg)
@@ -424,5 +431,7 @@ if __name__ == "__main__":
         refresh()
     elif len(sys.argv) > 1 and sys.argv[1] == "asklogos":
         ask_logos()
+    elif len(sys.argv) > 1 and sys.argv[1] == "logos":
+        menu("logos")
     else:
         menu()

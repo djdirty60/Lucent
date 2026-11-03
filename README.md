@@ -132,7 +132,10 @@ Settings: *Skin settings > Integrations > Lucent Library* (update now, update ev
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 
 ### Setup assistant
-The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple), playback (buffer, refresh rate, surround passthrough), subtitles, Lucent Library, the look and a backup – each step shows how it stands and has a button to set it up. Open it again via *Skin settings > Setup assistant* or *Settings > About > Setup assistant*.
+The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple, favourite channel group and clean channel logos), playback (buffer, refresh rate, surround passthrough), skip intro, subtitles, Lucent Library (also your own lists as library), a Solis Dashboard tab (when you have that add-on), the look and a backup – each step shows how it stands and has a button to set it up. Open it again via *Skin settings > Setup assistant* or *Settings > Lucent > Setup assistant*.
+
+### Settings
+Lucent's settings are grouped in eight categories: **Lucent** (look, menu, streaming services, kids mode, setup assistant), **Watching** (playback, subtitles, spoken language, skip intro), **Seren and library**, **Live TV**, **System**, **Add-ons**, **Files and profiles** and **Help and info** (what's new, updates, self-test, safe log). Kodi pages you rarely need (music, discs, pictures, AirPlay, UPnP …) are under *System → More Kodi settings*.
 
 ### Player info
 Player menu → *Statistics* opens a window with three tabs (Left / Right switches, Back closes):
@@ -153,13 +156,13 @@ The player menu has a moon button: stop after this episode or film, or after 15,
 ### Backup and restore
 *Skin settings > Backup and restore*: one zip file (USB stick or network share) with Lucent's settings and menu, Kodi's favourites and sources, and the settings of Seren, IPTV Simple, Lucent Library and Lucent Subtitles. Restoring puts it all back and restarts Kodi. The backup holds your logins – keep it to yourself.
 
-*Settings → About → Backup and restore* also has an **automatic weekly backup** into a folder you choose (best a USB stick); the last four are kept.
+*Settings → Files and profiles → Backup and restore* also has an **automatic weekly backup** into a folder you choose (best a USB stick); the last four are kept.
 
 ### Light mode
 For boxes with little memory (on by itself with 2 GB or less): Home builds only six rows – rows 7–10 are not created at all – Seren is asked for small artwork, and there is no colour glow and no snow. The skin reloads once when you switch it.
 
 ### Self-test and safe log
-*Settings → About → Self-test* checks Seren, Lucent Library, Lucent Subtitles, IPTV Simple and the channels and says in plain words what is missing. *Safe log* makes a copy of Kodi's log with logins, passwords, tokens and your provider's address blanked out – safe to attach to a bug report.
+*Settings → Help and info → Self-test* checks Seren, Lucent Library, Lucent Subtitles, IPTV Simple and the channels and says in plain words what is missing. *Safe log* makes a copy of Kodi's log with logins, passwords, tokens and your provider's address blanked out – safe to attach to a bug report.
 
 ### Options on the info page
 For titles in the Kodi library the info page has an **Options** button: edit title, edit sort title, choose art, remove from library.
@@ -279,7 +282,7 @@ From then on new versions arrive automatically (Kodi's default: **Settings → S
 
 ### Skin settings
 
-**Settings → Skin settings** is laid out with categories on the left, options on the right.
+**Settings → Lucent → Skin settings** is laid out with categories on the left, options on the right.
 
 - **Appearance** – colour theme (Glass, White, Crimson, Emerald, Ocean, Violet, Amber, Gold, Rose, Rose Gold, Copper, Jade, Arctic Blue, Graphite), AMOLED mode (pure black), interface scale, font and language, clock, and the screensaver (dim when idle, timeout, dim strength).
 - **Layout** – menu and widgets, what OK does on a film or episode (open its page first, or start the stream at once), poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
@@ -289,7 +292,7 @@ From then on new versions arrive automatically (Kodi's default: **Settings → S
 
 ### Customising the menu and widgets
 
-1. Go to **Settings → Skin settings → Customise menu and widgets**.
+1. Go to **Settings → Lucent → Menu and widgets**.
 2. You see a list of your tabs. Choose a tab to change it:
    - **Widgets on this tab** – add, rename, move or remove widgets. A widget can be:
      - a Seren list (continue watching, trending, popular, anticipated, watchlist, …),
@@ -310,7 +313,7 @@ A tab without widgets shows the widgets of the start tab.
 
 ### Back to the default skin
 
-**Settings → Interface → Skin → Estuary.**
+**Settings → System → Skin → Estuary** (in Kodi's own skin: Settings → Interface → Skin).
 
 ---
 

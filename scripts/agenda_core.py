@@ -533,6 +533,45 @@ def state():
         HOME.clearProperty("nuvio.agenda.followed")
 
 
+def season_page_ref():
+    """The series of Lucent's season page (view 56): from the Kodi library (its ids) or from the Seren item itself."""
+    dbid = next((v for v in (xbmc.getInfoLabel(f"Container(56).{n}.TvShowDBID") for n in ("ListItem", "ListItemAbsolute(1)", "ListItemAbsolute(0)"))
+                 if v.isdigit()), "")                  # the cursor may be on '..' (no series of its own)
+    if dbid.isdigit():
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShowDetails",
+                                                         "params": {"tvshowid": int(dbid), "properties": ["uniqueid", "title"]}})))
+        show = (res.get("result") or {}).get("tvshowdetails") or {}
+        ids = show.get("uniqueid") or {}
+        tmdb = str(ids.get("tmdb") or "")
+        if not tmdb.isdigit():
+            tmdb = tmdb_from_imdb(str(ids.get("imdb") or ""), "tv")
+        if tmdb:
+            return {"kind": "tv", "tmdb": int(tmdb), "name": show.get("title") or xbmc.getInfoLabel("Container.ShowTitle")}
+        return None
+    return current_ref()
+
+
+def season_state():
+    """Window(home) lucent.s56.bell = 1 when the bell of this series is on (the button on the season page reads it;
+    the season page sets it again whenever it gets the focus, so another series never shows an old state)."""
+    ref = season_page_ref()
+    if ref and is_following(show_key(ref["kind"], ref["tmdb"])):
+        HOME.setProperty("lucent.s56.bell", "1")
+    else:
+        HOME.clearProperty("lucent.s56.bell")
+
+
+def season_follow():
+    ref = season_page_ref()
+    if not ref:
+        xbmcgui.Dialog().notification(HEADING, tr("no_id"), xbmcgui.NOTIFICATION_WARNING, 3000)
+        return
+    now_following = toggle_follow(ref)
+    season_state()
+    xbmcgui.Dialog().notification(HEADING, tr("following" if now_following else "unfollowed", ref["name"]),
+                                  xbmcgui.NOTIFICATION_INFO, 4000)
+
+
 def follow_button():
     ref = current_ref()
     if not ref:

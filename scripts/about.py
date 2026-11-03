@@ -14,6 +14,6 @@ lines = [
     ("Code, nieuws en hulp: " if nl else "Code, news and help: ") + "https://github.com/djdirty60/Lucent",
     "",
     xbmc.getLocalizedString(31501),
-    ("Licenties en naamsvermelding vind je onder Over > Licenties." if nl else "Licences and credits are under About > Licences."),
+    ("Licenties en naamsvermelding vind je onder Hulp en info > Licenties." if nl else "Licences and credits are under Help and info > Licences."),
 ]
 xbmcgui.Dialog().textviewer(HEADING, "\n".join(lines))
