@@ -35,6 +35,7 @@ HOME = xbmcgui.Window(10000)
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 T = {
     "library": ("Seren library (Trakt collection)", "Seren-bibliotheek (Trakt-collectie)"),
+    "library_list": ("Library (Trakt · {0})", "Bibliotheek (Trakt · {0})"),
     "watchlist": ("Trakt · Watchlist", "Trakt · Kijklijst"),
     "list": ("Trakt · {0}", "Trakt · {0}"),
     "pick": ("{0} – choose the lists for this title", "{0} – kies in welke lijsten deze titel staat"),
@@ -223,6 +224,18 @@ class Trakt:
     def get(self, path):
         return self._call(path)
 
+    def get_all(self, path, cap=40):
+        """Every page: Trakt gives only 100 items without page / limit."""
+        out = []
+        for page in range(1, cap + 1):
+            data = self.get(f"{path}{'&' if '?' in path else '?'}page={page}&limit=250")
+            if not isinstance(data, list) or not data or (out and data[0] == out[0]):
+                break                              # empty, or Trakt ignores pages and gave everything again
+            out += data
+            if len(data) < 100:
+                break                              # less than the smallest page Trakt gives: this was the last
+        return out
+
     def post(self, path, data):
         return self._call(path, data)
 
@@ -367,14 +380,26 @@ def choose_lists(container=""):
     progress = xbmcgui.DialogProgress()
     progress.create(HEADING, tr("loading"))
     try:
-        rows = []  # (label, in_list, add_path, remove_path)
-        collection = trakt.get(f"sync/collection/{kind}")
-        rows.append((tr("library"), any(item.matches(e) for e in collection),
-                     "sync/collection", "sync/collection/remove"))
+        rows = []  # (label, in_list, add_path, remove_paths, library row)
+        collection = trakt.get_all(f"sync/collection/{kind}")
+        in_coll = any(item.matches(e) for e in collection)
+        own = library_list(item.kind)              # Lucent Library uses one of your lists as the library
+        if own:
+            try:
+                entries = trakt.get_all(f"users/me/lists/{own['id']}/items/{item.kind}")
+                in_own = any(item.matches(e) for e in entries)
+            except Exception as error:  # noqa: BLE001
+                log(f"library list: {error}")
+                own, in_own = None, False
+        if own:
+            rows.append((tr("library_list", own.get("name", "")), in_coll or in_own, f"users/me/lists/{own['id']}/items",
+                         [f"users/me/lists/{own['id']}/items/remove"] + (["sync/collection/remove"] if in_coll else []), True))
+        else:
+            rows.append((tr("library"), in_coll, "sync/collection", ["sync/collection/remove"], True))
         progress.update(30)
-        watchlist = trakt.get(f"sync/watchlist/{kind}")
+        watchlist = trakt.get_all(f"sync/watchlist/{kind}")
         rows.append((tr("watchlist"), any(item.matches(e) for e in watchlist),
-                     "sync/watchlist", "sync/watchlist/remove"))
+                     "sync/watchlist", ["sync/watchlist/remove"], False))
         progress.update(50)
         lists = trakt.get("users/me/lists") or []
         for n, lst in enumerate(lists[:25]):
@@ -382,13 +407,15 @@ def choose_lists(container=""):
                 progress.close()
                 return
             slug = lst.get("ids", {}).get("trakt")
+            if own and slug == own.get("id"):
+                continue                           # already the library row
             try:
-                entries = trakt.get(f"users/me/lists/{slug}/items/{item.kind}")
+                entries = trakt.get_all(f"users/me/lists/{slug}/items/{item.kind}")
             except Exception as error:  # noqa: BLE001 - skip this one list, show the rest
                 log(f"Trakt list {lst.get('name')}: {error}")
                 continue
             rows.append((tr("list", lst.get("name", "")), any(item.matches(e) for e in entries),
-                         f"users/me/lists/{slug}/items", f"users/me/lists/{slug}/items/remove"))
+                         f"users/me/lists/{slug}/items", [f"users/me/lists/{slug}/items/remove"], False))
             progress.update(50 + int(50 * (n + 1) / max(1, len(lists[:25]))))
     except Exception as error:  # noqa: BLE001 - show a friendly message instead of a traceback
         progress.close()
@@ -397,32 +424,44 @@ def choose_lists(container=""):
     progress.close()
 
     items = []
-    for label, _in_list, _a, _r in rows:
+    for label, _in_list, _a, _r, is_library in rows:
         li = xbmcgui.ListItem(label)
-        li.setArt({"icon": "icons/trakt.png" if "Trakt" in label else "icons/library.png"})
+        li.setArt({"icon": "icons/library.png" if is_library or "Trakt" not in label else "icons/trakt.png"})
         items.append(li)
     preselect = [n for n, row in enumerate(rows) if row[1]]
     chosen = xbmcgui.Dialog().multiselect(tr("pick", item.title), items, preselect=preselect)
     if chosen is None:
         return
     changes = 0
-    for n, (label, in_list, add_path, remove_path) in enumerate(rows):
+    for n, (label, in_list, add_path, remove_paths, is_library) in enumerate(rows):
         wanted = n in chosen
         if wanted == in_list:
             continue
         try:
-            trakt.post(add_path if wanted else remove_path, item.payload())
+            for path in ([add_path] if wanted else remove_paths):
+                trakt.post(path, item.payload())
         except Exception as error:  # noqa: BLE001 - say which one failed, go on with the others
             explain_error(error, label)
             continue
         changes += 1
-        if add_path == "sync/collection":
+        if is_library:
             to_kodi_library(item, trakt, "add" if wanted else "remove")
     if changes:
         notify(tr("saved"))
         after_trakt_change()
     else:
         notify(tr("nothing"))
+
+
+def library_list(kind):
+    """{'id', 'name'} of the Trakt list Lucent Library uses for films ('movie') or series ('show'), or None."""
+    try:
+        path = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/lists.json")
+        with open(path, encoding="utf-8") as fh:
+            entry = (json.load(fh) or {}).get(kind)
+        return entry if isinstance(entry, dict) and entry.get("id") else None
+    except (OSError, ValueError, AttributeError):
+        return None
 
 
 def to_kodi_library(item, trakt, action):

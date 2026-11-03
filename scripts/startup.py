@@ -39,6 +39,7 @@ def season_page():
 
 
 def run():
+    xbmc.executebuiltin("Skin.Reset(nuvio.osdstats)")      # the old player-info overlay: now its own window (playerinfo.py)
     step("season page", season_page)
     import keymap
     step("keymap", keymap.main)

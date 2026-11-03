@@ -1,10 +1,23 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (Beta 2)
+# Lucent – Kodi skin (Beta 3)
 
-> **Beta 2:** the second public beta. Everything is in place, but expect small bugs – please report them on the [issues page](https://github.com/djdirty60/Lucent/issues).
+> **Beta 3:** the third public beta. Everything is in place, but expect small bugs – please report them on the [issues page](https://github.com/djdirty60/Lucent/issues).
 
-## New in Beta 2
+## New in Beta 3
+
+- **Player info, redone** (player menu → *Statistics*) – its own window with three tabs, *Overview*, *Video* and *Audio*. Overview has the badges (4K, Dolby Vision, HDR, Atmos …), tiles for resolution, HDR, bitrate, the buffer and your box, and every detail of the source, video, audio, subtitles and network. Video shows the resolution as a picture, HDR brightness, colour space, the way from file to screen and a live bitrate graph. Audio shows the sound chain, your output (device, speaker setup, volume), a room with the speakers that are in use, a moving bar per channel and all audio tracks. Back closes it – it no longer comes back when you open the player again.
+- **Streaming service pop-up** – click a service in the *Streaming services* row: the chosen title as a big landscape picture with its info and *Watch*, *Trailer* and *My list*, then Films / Series and New / Popular / Top. Top shows big numbers; each list starts at its first title.
+- **Sport in the TV player** – while you watch a game: a scoreboard top centre with the score and the minute, the scorers, and *Statistics*, *Also live*, *Table*, *Guide* and *Record*.
+- **Settings tab** – two new tiles next to *Player*: *What's new* and *Check for updates*.
+- **Series wait for their first broadcast** – just like films wait for their digital release, a new series only shows up once its first episode has aired.
+- **Your own Trakt lists as library** – Lucent Library can use one of your Trakt lists for films and one for series, next to the Trakt collection and without its limit (*Skin settings → Integrations → Lucent Library → Use my lists as library*). The *Library* row in the lists window then puts a title on that list.
+- **Lucent Library fills in series and films by itself** – artwork and info come in right after adding a title; no more manual refresh.
+- **Series with one season** open the same series page as series with more seasons.
+- **Stadium photos** for many more clubs, and Up / Down on the sport channel list goes through every channel again.
+
+<details>
+<summary><b>New in Beta 2</b></summary>
 
 - **Sport, redone** – *My sport* turns into a big live scoreboard when your team plays (both club colours, the minute, who scored), with *Also today* next to it and *Your teams this week* below. *All games* starts with the live games as cards and groups the rest per competition. *Tables* fill the screen with W/D/L columns, a legend and a panel for the club you are on (form, last 5, home/away, next game). *Follow* shows what you follow as cards (goal alerts and reminders per club) with an add screen: Search, Browse, Countries, Drivers & players.
 - **Club pages** – the club's logo behind its games, its colours and a photo of its stadium (all sports). *All games* shows the stadium of the home team.
@@ -21,6 +34,7 @@
 - **TV player** – the next programmes of the channel as cards, the channels above and below, and Watch now, Record, Remind me (Lucent asks to switch when it starts) and Full guide.
 - **File browser** – a thumbnail view, so add-ons that ask for a picture or a backup zip show their files.
 
+</details>
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font. Built around **Seren** and **Trakt**, with home rows for continue watching, trending titles, your library and your own Trakt lists.
 
@@ -87,6 +101,7 @@ A **Sport** tab with games from almost 200 competitions (football worldwide, NBA
 - **Game page** – a scoreboard across the screen in both club colours, your channels (from your IPTV guide), statistics as bars, a timeline with goals, cards and substitutions, and the table. Formula 1 has its own page: circuit drawing, length, laps, turns, lap record, the weekend programme as cards and the top 10 of every finished session.
 - **Reminders, automatic switching and recording** – a reminder 5 minutes before, optional switching to the channel, recording for 1 to 6 hours, and *Fix channel* per game, competition or team.
 - **Goal notifications** – when a team you follow scores, a pop-up shows the score and the minute (not when you already watch that game; switch off in Settings → Live TV).
+- **In the TV player** – when the channel shows a game: a scoreboard top centre (score and minute), the scorers, and *Statistics*, *Also live*, *Table*, *Guide* and *Record* in the player menu.
 - OK on a channel plays it in the small TV window, OK again goes full screen.
 - The Sport guide only reads the TV guide of the **sport channels** (recognised by name: Ziggo Sport, ESPN, Sky Sports, DAZN, Viaplay, beIN, Eurosport and many more) plus NPO 1, 2 and 3 – much lighter than every channel in your list.
 
@@ -109,13 +124,25 @@ A **TV** tab with your IPTV channels: the playing channel on the left of the hea
 
 New episodes are added **one day after they aired** (before that a source often has no link yet). Films and series in the library get the same **IMDb, Trakt and TMDB scores** as in Seren.
 
-Settings: *Skin settings > Integrations > Lucent Library* (update now, update every 6/12/24 hours, watched marks to Trakt, Surprise me).
+**Your own lists as library:** Trakt can cap the collection; your own lists are not capped. In *Use my lists as library* choose a list for films and a list for series (for example *Movie collection* and *Series collection*). Their titles come into the Kodi library next to the collection, and the *Library* row in the lists window on the info page then adds a title to that list instead of the collection. A big list fills in over a few runs (episodes of about 60 series per run); if Trakt does not answer, the last copy is used, so nothing disappears.
+
+Settings: *Skin settings > Integrations > Lucent Library* (update now, update every 6/12/24 hours, watched marks to Trakt, Surprise me, use my lists as library).
 
 ### Also in the home menu
 The **Add-ons** item shows rows of your favourites and your video, program and music add-ons. The **Profiles** screen has icons for each profile.
 
 ### Setup assistant
 The first time Lucent opens, a short assistant walks through Seren and Trakt, the TMDb key, live TV (IPTV Simple), playback (buffer, refresh rate, surround passthrough), subtitles, Lucent Library, the look and a backup – each step shows how it stands and has a button to set it up. Open it again via *Skin settings > Setup assistant* or *Settings > About > Setup assistant*.
+
+### Player info
+Player menu → *Statistics* opens a window with three tabs (Left / Right switches, Back closes):
+
+- **Overview** – badges, tiles for resolution, HDR, bitrate, buffer and your box, and the details of source, video, audio, subtitles and network, with the load of every CPU core.
+- **Video** – the resolution as a picture, HDR brightness, colour space (BT.2020 or BT.709), the way from file to decoder to screen, and a bitrate graph.
+- **Audio** – the sound chain from track to speakers, your output (device, speaker setup, volume and delay), a room with the speakers in use, a moving bar per channel and every audio track.
+
+### Streaming services
+The *Streaming services* row (Lucent Library, TMDb) opens a pop-up per service: the title under the cursor as a big landscape picture with year, genre, rating and plot, *Watch*, *Trailer* and *My list*, and New, Popular and Top lists for films and series. Top shows big numbers.
 
 ### Sleep timer
 The player menu has a moon button: stop after this episode or film, or after 15, 30, 45, 60 or 90 minutes (the next episode does not start by itself). The time left shows under the button.
@@ -170,6 +197,20 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Player**
 ![Player](screenshots/player.jpg)
 
+**Player info** – Overview, Video and Audio
+![Player info](screenshots/player-info.jpg)
+![Player info – Video](screenshots/player-info-video.jpg)
+![Player info – Audio](screenshots/player-info-audio.jpg)
+
+**Streaming service pop-up**
+![Streaming service](screenshots/streaming-service.jpg)
+
+**Sport in the TV player**
+![Sport in the TV player](screenshots/sport-player.jpg)
+
+**Lucent Library – your own lists as library**
+![Use my lists as library](screenshots/library-lists.jpg)
+
 **TV player and TV guide** (test channels in a real Kodi)
 ![TV player](screenshots/tv-player.jpg)
 ![TV guide](screenshots/tv-guide.jpg)
@@ -186,7 +227,7 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 **Calendar**
 ![Calendar](screenshots/calendar.jpg)
 
-**Tabs with their own screen** – Calendar, TV, Sport, Settings and Power on Home
+**Tabs with their own screen** – Calendar, TV, Sport, Settings (with *What's new* and *Check for updates*) and Power on Home
 ![Calendar tab](screenshots/tab-calendar.jpg)
 ![TV tab](screenshots/tab-tv.jpg)
 ![Sport tab](screenshots/tab-sport.jpg)
