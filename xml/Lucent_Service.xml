@@ -113,7 +113,7 @@
         <control type="list" id="801"><left>90</left><top>640</top><width>1830</width><height>290</height><orientation>horizontal</orientation>
             <onup>900</onup><ondown>noop</ondown><onleft>noop</onleft><onright>noop</onright>
             <scrolltime tween="cubic" easing="out">220</scrolltime>
-            <itemlayout width="282" height="290">
+            <itemlayout width="282" height="290" condition="String.IsEqual(Window.Property(svc.cat),top)">
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n1.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,1)</visible></control>
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n2.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,2)</visible></control>
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n3.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,3)</visible></control>
@@ -137,7 +137,7 @@
                 <control type="group"><left>112</left><top>14</top>
 <control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><texture diffuse="mask_poster.png">default_poster.png</texture></control><control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><aspectratio scalediffuse="false">scale</aspectratio><texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture></control></control>
             </itemlayout>
-            <focusedlayout width="282" height="290">
+            <focusedlayout width="282" height="290" condition="String.IsEqual(Window.Property(svc.cat),top)">
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n1.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,1)</visible></control>
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n2.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,2)</visible></control>
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n3.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,3)</visible></control>
@@ -159,6 +159,14 @@
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n19.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,19)</visible></control>
                 <control type="image"><left>0</left><top>101</top><width>140</width><height>168</height><aspectratio align="right" aligny="bottom">keep</aspectratio><texture>svc/n20.png</texture><visible>Integer.IsEqual(ListItem.CurrentItem,20)</visible></control>
                 <control type="group"><left>112</left><top>14</top><animation effect="zoom" start="100" end="106" center="85,127" time="180" tween="cubic" easing="out">Focus</animation><animation effect="zoom" start="106" end="100" center="85,127" time="150">Unfocus</animation><control type="image"><left>-24</left><top>-24</top><width>218</width><height>303</height><texture border="44">rr14_glow.png</texture><colordiffuse>59FFFFFF</colordiffuse><visible>Control.HasFocus(801)</visible></control><control type="image"><left>-4</left><top>-4</top><width>178</width><height>263</height><texture border="14">svc/rr14.png</texture><colordiffuse>FFFFFFFF</colordiffuse><visible>Control.HasFocus(801)</visible></control>
+<control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><texture diffuse="mask_poster.png">default_poster.png</texture></control><control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><aspectratio scalediffuse="false">scale</aspectratio><texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture></control></control>
+            </focusedlayout>
+            <itemlayout width="188" height="290" condition="!String.IsEqual(Window.Property(svc.cat),top)">
+                <control type="group"><left>0</left><top>14</top>
+<control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><texture diffuse="mask_poster.png">default_poster.png</texture></control><control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><aspectratio scalediffuse="false">scale</aspectratio><texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture></control></control>
+            </itemlayout>
+            <focusedlayout width="188" height="290" condition="!String.IsEqual(Window.Property(svc.cat),top)">
+                <control type="group"><left>0</left><top>14</top><animation effect="zoom" start="100" end="106" center="85,127" time="180" tween="cubic" easing="out">Focus</animation><animation effect="zoom" start="106" end="100" center="85,127" time="150">Unfocus</animation><control type="image"><left>-24</left><top>-24</top><width>218</width><height>303</height><texture border="44">rr14_glow.png</texture><colordiffuse>59FFFFFF</colordiffuse><visible>Control.HasFocus(801)</visible></control><control type="image"><left>-4</left><top>-4</top><width>178</width><height>263</height><texture border="14">svc/rr14.png</texture><colordiffuse>FFFFFFFF</colordiffuse><visible>Control.HasFocus(801)</visible></control>
 <control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><texture diffuse="mask_poster.png">default_poster.png</texture></control><control type="image"><left>0</left><top>0</top><width>170</width><height>255</height><aspectratio scalediffuse="false">scale</aspectratio><texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture></control></control>
             </focusedlayout>
             <content target="videos">$INFO[Window.Property(row)]</content>

@@ -2424,6 +2424,14 @@ def svc_test():
     steps.append(f"cat={lab('Window.Property(svc.cat)')} kind={lab('Window.Property(svc.kind)')} row={lab('Window.Property(svc.rowlabel)')} items={lab('Container(801).NumItems')}")
     log(f"svc: nav {steps}")
     shot("svc-3")
+    xbmc.executebuiltin("SetFocus(713)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(5)
+    log(f"svc: top cat={lab('Window.Property(svc.cat)')} items={lab('Container(801).NumItems')}")
+    xbmc.executebuiltin("SetFocus(801)")
+    mon.waitForAbort(1.5)
+    shot("svc-top")
     for key in ("Down", "Down"):
         xbmc.executebuiltin(f"Action({key})")
         mon.waitForAbort(1)
@@ -2505,6 +2513,22 @@ def libfix_test():
         log(f"libfix: error {error!r} {traceback.format_exc()[-500:]}")
 
 
+def stats_test():
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    for _ in range(20):
+        if cond("Player.HasVideo"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Skin.SetBool(nuvio.osdstats)")
+    mon.waitForAbort(1)
+    before = cond("Skin.HasSetting(nuvio.osdstats)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    log(f"stats: before={before} after_leaving={cond('Skin.HasSetting(nuvio.osdstats)')} window={lab('System.CurrentWindow')}")
+    xbmc.Player().stop()
+    mon.waitForAbort(2)
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2519,6 +2543,8 @@ def main():
     watch("home1", 40)
     shot("1-home")
     svc_test()
+    stats_test()
+    sportosd_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
