@@ -138,7 +138,7 @@ def update():
 
 
 def tv_path():
-    """The channels the TV tab shows: your favourite guide group, else all channels (Kodi wants 'name@client')."""
+    """The channels the TV tab shows: your favourite guide group, else all channels."""
     if not xbmc.getCondVisibility("Pvr.HasTVChannels"):
         put("lucent.ptv.path", "")
         return
@@ -147,16 +147,16 @@ def tv_path():
     path = "pvr://channels/tv/*/"
     if want:
         import json
-        try:
-            reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                                                                "params": {"directory": "pvr://channels/tv/", "media": "files"}})))
-            files = (reply.get("result") or {}).get("files") or []
-            for f in files:
-                if f.get("file") and want_key in (norm(f.get("label")), norm(group_of(f["file"]))):
-                    path = f["file"]
-                    break
+        import urllib.parse
+        try:                                    # the guide's groups are 'pvr://channels/tv/<name>/'
+            reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups",
+                                                                "params": {"channeltype": "tv"}})))
+            groups = [g.get("label") or "" for g in (reply.get("result") or {}).get("channelgroups") or []]
+            match = next((g for g in groups if norm(g) == want_key), None)
+            if match:
+                path = f"pvr://channels/tv/{urllib.parse.quote(match)}/"
             else:
-                log(f"tv group {want!r} not found in {[f.get('label') for f in files][:30]}")
+                log(f"tv group {want!r} not found in {groups[:30]}")
         except Exception as error:  # noqa: BLE001
             log(f"tv group: {error}")
     found = path != "pvr://channels/tv/*/"
@@ -170,11 +170,7 @@ def norm(text):
     return re.sub(r"\[/?(?:COLOR[^\]]*|B|I)\]", "", str(text or "")).strip().casefold()
 
 
-def group_of(path):
-    """'pvr://channels/tv/NL%20Sport@1/' -> 'NL Sport'."""
-    import urllib.parse
-    last = path.rstrip("/").rsplit("/", 1)[-1]
-    return urllib.parse.unquote(last).rsplit("@", 1)[0]
+
 
 
 def open_calendar(n):

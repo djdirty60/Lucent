@@ -596,18 +596,25 @@ def notify(text):
     xbmcgui.Dialog().notification(HEADING, text, xbmcgui.NOTIFICATION_INFO, 2500)
 
 
-def video_addons():
+def video_addons(kinds=("xbmc.addon.video",)):
+    """[(name, id, icon)] of the enabled add-ons of these kinds (video, and program add-ons where asked)."""
     busy(True)
-    result = jsonrpc("Addons.GetAddons", {"type": "xbmc.addon.video", "enabled": True,
-                                          "properties": ["name", "thumbnail"]})
+    found = {}
+    for kind in kinds:
+        result = jsonrpc("Addons.GetAddons", {"type": kind, "enabled": True, "properties": ["name", "thumbnail"]})
+        for a in result.get("addons", []) or []:
+            found.setdefault(a.get("addonid"), a)
     busy(False)
-    addons = sorted(result.get("addons", []) or [], key=lambda a: a.get("name", "").lower())
+    addons = sorted(found.values(), key=lambda a: a.get("name", "").lower())
     return [(clean(a.get("name")), a.get("addonid"), a.get("thumbnail")) for a in addons]
+
+
+ALL_ADDONS = ("xbmc.addon.video", "xbmc.addon.executable")    # video and program add-ons (e.g. a dashboard)
 
 
 def browse(heading):
     """Walk through add-on folders and return (label, path) of the chosen folder, or None."""
-    addons = video_addons()
+    addons = video_addons(ALL_ADDONS)
     if not addons:
         return None
     choice = select(heading, [a[0] for a in addons], True, [a[2] for a in addons])
@@ -991,7 +998,7 @@ def pick_action():
         if picked:
             return videos(picked[1]), (picked[0], "icons/folder.png")
     if choice == 3:
-        addons = video_addons()
+        addons = video_addons(ALL_ADDONS)
         pick = select(tr("act_addon"), [a[0] for a in addons], True, [a[2] for a in addons])
         if pick >= 0:
             name, addonid, _thumb = addons[pick]
