@@ -11,6 +11,7 @@ import xbmcgui
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 KEY = "lucent.guide.group"
+PATH_KEY = "lucent.guide.grouppath"     # Kodi's own folder of that group, for the TV tab on Home
 
 
 def groups():
@@ -37,10 +38,12 @@ def run():
         return
     if pick == 0:
         xbmc.executebuiltin(f"Skin.Reset({KEY})", True)
+        xbmc.executebuiltin(f"Skin.Reset({PATH_KEY})", True)
         text = "Geen favoriete groep meer" if NL else "No favourite group any more"
     else:
         label = names[pick - 1]
         xbmc.executebuiltin(f'Skin.SetString({KEY},"{label.replace(chr(34), chr(39))}")', True)
+        remember_path(label)
         text = f"{label} opent voortaan als eerste" if NL else f"{label} now opens first"
         open_group(label)
     try:
@@ -49,6 +52,16 @@ def run():
     except Exception as error:  # noqa: BLE001
         xbmc.log(f"[Lucent] guidefav: tv tab {error}", xbmc.LOGINFO)
     xbmcgui.Dialog().notification("TV", text, "special://skin/resources/icon.png", 3500, False)
+
+
+def remember_path(label):
+    """Keep the guide's own path of the group: the TV tab on Home lists exactly that folder."""
+    for index in range(int(xbmc.getInfoLabel("Container(11).NumItems") or 0)):
+        if xbmc.getInfoLabel(f"Container(11).ListItemAbsolute({index}).Label").strip() == label:
+            path = xbmc.getInfoLabel(f"Container(11).ListItemAbsolute({index}).FolderPath")
+            if path.startswith("pvr://"):
+                xbmc.executebuiltin(f'Skin.SetString({PATH_KEY},"{path}")', True)
+            return
 
 
 def open_group(label):

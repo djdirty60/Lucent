@@ -15833,6 +15833,9 @@
 
 
 
+
+
+
     <!-- ==== Home: own screens for tabs without rows (tabpanels.py) ==== -->
     <expression name="LucentPCal">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),agenda.py)</expression>
     <expression name="LucentPTv">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) | [String.StartsWith(Container(9000).ListItem.Property(w1.path),pvr://channels/tv) + String.IsEmpty(Container(9000).ListItem.Property(w2.path))]] + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
@@ -15840,7 +15843,8 @@
     <expression name="LucentPAdd">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),AddonBrowser)</expression>
     <expression name="LucentPSet">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),Settings) + !String.Contains(Container(9000).ListItem.Property(act),SkinSettings) + !String.Contains(Container(9000).ListItem.Property(act),OpenSettings) + !String.Contains(Container(9000).ListItem.Property(act),.py)</expression>
     <expression name="LucentPPow">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + [String.Contains(Container(9000).ListItem.Property(act),ShutdownMenu) | String.Contains(Container(9000).ListItem.Property(act),powermenu.py)]</expression>
-    <expression name="LucentPanel">$EXP[LucentPCal] | $EXP[LucentPTv] | $EXP[LucentPSport] | $EXP[LucentPAdd] | $EXP[LucentPSet] | $EXP[LucentPPow]</expression>
+    <expression name="LucentPSolis">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),script.solis.dashboard)</expression>
+    <expression name="LucentPanel">$EXP[LucentPCal] | $EXP[LucentPTv] | $EXP[LucentPSport] | $EXP[LucentPAdd] | $EXP[LucentPSet] | $EXP[LucentPPow] | $EXP[LucentPSolis]</expression>
     <variable name="LucentDayBadge">
         <value condition="!String.IsEmpty(ListItem.Property(today))">red</value>
         <value>B3000000</value>
@@ -15867,6 +15871,7 @@
         <value condition="$EXP[LucentPCal]">332A6A9A</value>
         <value condition="$EXP[LucentPSet]">33607090</value>
         <value condition="$EXP[LucentPPow]">33705A90</value>
+        <value condition="$EXP[LucentPSolis]">33FF9F1C</value>
         <value>00000000</value>
     </variable>
     <variable name="LucentAddonName">
@@ -16111,6 +16116,48 @@
 <item><label>$LOCALIZE[31696]</label><icon>icons/bell.png</icon><onclick>RunScript(special://skin/scripts/sleep.py)</onclick></item>
 <item><label>$LOCALIZE[31697]</label><icon>icons/user.png</icon><onclick>System.LogOff</onclick><visible>System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)</visible></item>
                     </content>
+                </control>
+            </control>
+
+            <!-- ==== Solis Dashboard: the numbers of now (scripts/solis.py fills lucent.sol.*) ==== -->
+            <control type="group">
+                <visible>$EXP[LucentPSolis]</visible>
+                <animation effect="fade" start="0" end="100" time="300">Visible</animation>
+                <control type="group">
+                    <left>770</left><top>170</top>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.sol.img))</visible>
+                    <control type="image"><left>0</left><top>0</top><width>820</width><height>287</height><aspectratio>stretch</aspectratio><fadetime>300</fadetime><texture background="true" diffuse="sol_mask.png">$INFO[Window(home).Property(lucent.sol.img)]</texture><colordiffuse>F2FFFFFF</colordiffuse></control>
+                </control>
+                <control type="group">
+                    <left>160</left><top>150</top>
+                    <control type="label"><left>0</left><top>0</top><width>600</width><height>24</height><font>font_sol_kick</font><textcolor>text3</textcolor><label>$LOCALIZE[31762]</label></control>
+                    <control type="label"><left>0</left><top>24</top><width>640</width><height>96</height><font>font_hero</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[Window(home).Property(lucent.sol.big)]</label></control>
+                    <control type="grouplist"><left>0</left><top>128</top><width>620</width><height>40</height><orientation>horizontal</orientation><itemgap>12</itemgap><usecontrolcoords>true</usecontrolcoords>
+                        <control type="button"><width>auto</width><height>38</height><font>font_sol_pill</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><textcolor>text</textcolor><disabledcolor>text</disabledcolor><texturenofocus border="19" colordiffuse="1AFFFFFF">pill44.png</texturenofocus><texturefocus border="19" colordiffuse="1AFFFFFF">pill44.png</texturefocus><enable>false</enable><label>$INFO[Window(home).Property(lucent.sol.p1)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.sol.p1))</visible></control><control type="button"><width>auto</width><height>38</height><font>font_sol_pill</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><textcolor>text</textcolor><disabledcolor>text</disabledcolor><texturenofocus border="19" colordiffuse="1AFFFFFF">pill44.png</texturenofocus><texturefocus border="19" colordiffuse="1AFFFFFF">pill44.png</texturefocus><enable>false</enable><label>$INFO[Window(home).Property(lucent.sol.p2)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.sol.p2))</visible></control><control type="button"><width>auto</width><height>38</height><font>font_sol_pill</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><textcolor>text</textcolor><disabledcolor>text</disabledcolor><texturenofocus border="19" colordiffuse="1AFFFFFF">pill44.png</texturenofocus><texturefocus border="19" colordiffuse="1AFFFFFF">pill44.png</texturefocus><enable>false</enable><label>$INFO[Window(home).Property(lucent.sol.p3)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.sol.p3))</visible></control>
+                    </control>
+                    <control type="textbox"><left>0</left><top>196</top><width>600</width><height>110</height><font>font_body</font><textcolor>text2</textcolor><label>$INFO[Window(home).Property(lucent.sol.advice)]</label></control>
+                </control>
+                <control type="group">
+                    <left>160</left><top>620</top>
+                    <control type="label"><left>0</left><top>0</top><width>1200</width><height>44</height><font>font_sol_row</font><textcolor>text</textcolor><label>$LOCALIZE[31763]</label></control>
+                    <control type="label"><left>0</left><top>60</top><width>1300</width><height>120</height><font>font_body</font><textcolor>text3</textcolor><wrapmultiline>true</wrapmultiline><label>$INFO[Window(home).Property(lucent.sol.err)]</label><visible>String.IsEmpty(Window(home).Property(lucent.sol.1.t))</visible></control>
+                    <control type="list" id="9370">
+                        <left>0</left><top>40</top><width>1760</width><height>260</height>
+                        <orientation>horizontal</orientation>
+                        <scrolltime tween="cubic" easing="out">220</scrolltime>
+                        <onleft>9000</onleft><onback>9000</onback><onup>9000</onup>
+                        <itemlayout width="300" height="250"><control type="group"><left>0</left><top>18</top><control type="image"><left>0</left><top>0</top><width>280</width><height>200</height><texture border="20">rr20.png</texture><colordiffuse>glass</colordiffuse></control><control type="image"><left>24</left><top>22</top><width>40</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>$INFO[ListItem.Property(c)]</colordiffuse></control><control type="label"><left>24</left><top>44</top><width>236</width><height>30</height><font>font_sol_ct</font><textcolor>text3</textcolor><label>$INFO[ListItem.Label]</label></control><control type="label"><left>24</left><top>76</top><width>240</width><height>56</height><font>font_sol_val</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.Property(v)]</label></control><control type="label"><left>24</left><top>134</top><width>236</width><height>28</height><font>font_sol_sub</font><textcolor>text3</textcolor><label>$INFO[ListItem.Property(s)]</label></control></control></itemlayout>
+                        <focusedlayout width="300" height="250"><control type="group"><left>0</left><top>18</top><animation effect="zoom" start="100" end="104" center="auto" time="200" tween="cubic" easing="out">Focus</animation><control type="image"><left>-24</left><top>-24</top><width>328</width><height>248</height><texture border="44">rr20_glow.png</texture><colordiffuse>glow</colordiffuse><visible>Control.HasFocus(9370)</visible></control><control type="image"><left>0</left><top>0</top><width>280</width><height>200</height><texture border="20">rr20_edge.png</texture><colordiffuse>focus</colordiffuse><visible>Control.HasFocus(9370)</visible></control><control type="image"><left>0</left><top>0</top><width>280</width><height>200</height><texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse></control><control type="image"><left>24</left><top>22</top><width>40</width><height>6</height><texture border="3">pill6.png</texture><colordiffuse>$INFO[ListItem.Property(c)]</colordiffuse></control><control type="label"><left>24</left><top>44</top><width>236</width><height>30</height><font>font_sol_ct</font><textcolor>text3</textcolor><label>$INFO[ListItem.Label]</label></control><control type="label"><left>24</left><top>76</top><width>240</width><height>56</height><font>font_sol_val</font><textcolor>text</textcolor><aligny>center</aligny><label>$INFO[ListItem.Property(v)]</label></control><control type="label"><left>24</left><top>134</top><width>236</width><height>28</height><font>font_sol_sub</font><textcolor>text3</textcolor><label>$INFO[ListItem.Property(s)]</label></control></control></focusedlayout>
+                        <content>
+<item><label>$INFO[Window(home).Property(lucent.sol.1.t)]</label><property name="v">$INFO[Window(home).Property(lucent.sol.1.v)]</property><property name="s">$INFO[Window(home).Property(lucent.sol.1.s)]</property><property name="c">$INFO[Window(home).Property(lucent.sol.1.c)]</property><onclick>RunAddon(script.solis.dashboard)</onclick><visible>!String.IsEmpty(Window(home).Property(lucent.sol.1.t))</visible></item>
+<item><label>$INFO[Window(home).Property(lucent.sol.2.t)]</label><property name="v">$INFO[Window(home).Property(lucent.sol.2.v)]</property><property name="s">$INFO[Window(home).Property(lucent.sol.2.s)]</property><property name="c">$INFO[Window(home).Property(lucent.sol.2.c)]</property><onclick>RunAddon(script.solis.dashboard)</onclick><visible>!String.IsEmpty(Window(home).Property(lucent.sol.2.t))</visible></item>
+<item><label>$INFO[Window(home).Property(lucent.sol.3.t)]</label><property name="v">$INFO[Window(home).Property(lucent.sol.3.v)]</property><property name="s">$INFO[Window(home).Property(lucent.sol.3.s)]</property><property name="c">$INFO[Window(home).Property(lucent.sol.3.c)]</property><onclick>RunAddon(script.solis.dashboard)</onclick><visible>!String.IsEmpty(Window(home).Property(lucent.sol.3.t))</visible></item>
+<item><label>$INFO[Window(home).Property(lucent.sol.4.t)]</label><property name="v">$INFO[Window(home).Property(lucent.sol.4.v)]</property><property name="s">$INFO[Window(home).Property(lucent.sol.4.s)]</property><property name="c">$INFO[Window(home).Property(lucent.sol.4.c)]</property><onclick>RunAddon(script.solis.dashboard)</onclick><visible>!String.IsEmpty(Window(home).Property(lucent.sol.4.t))</visible></item>
+<item><label>$INFO[Window(home).Property(lucent.sol.5.t)]</label><property name="v">$INFO[Window(home).Property(lucent.sol.5.v)]</property><property name="s">$INFO[Window(home).Property(lucent.sol.5.s)]</property><property name="c">$INFO[Window(home).Property(lucent.sol.5.c)]</property><onclick>RunAddon(script.solis.dashboard)</onclick><visible>!String.IsEmpty(Window(home).Property(lucent.sol.5.t))</visible></item>
+<item><label>$INFO[Window(home).Property(lucent.sol.6.t)]</label><property name="v">$INFO[Window(home).Property(lucent.sol.6.v)]</property><property name="s">$INFO[Window(home).Property(lucent.sol.6.s)]</property><property name="c">$INFO[Window(home).Property(lucent.sol.6.c)]</property><onclick>RunAddon(script.solis.dashboard)</onclick><visible>!String.IsEmpty(Window(home).Property(lucent.sol.6.t))</visible></item>
+                        </content>
+                    </control>
+                    <control type="label"><left>0</left><top>310</top><width>1300</width><height>28</height><font>font_sol_sub</font><textcolor>text4</textcolor><label>$INFO[Window(home).Property(lucent.sol.hint)]</label></control>
                 </control>
             </control>
 
