@@ -2688,7 +2688,7 @@
                         <label>$VAR[LucentS56Bell]</label>
                         <onfocus>RunScript(special://skin/scripts/agenda.py,state56)</onfocus>
                         <onclick>RunScript(special://skin/scripts/agenda.py,follow56)</onclick>
-                        <visible>!String.Contains(Container(5698).ListItem.Status,ended) + !String.Contains(Container(5698).ListItem.Status,cancel) + !String.Contains(Container(56).ListItem.Status,ended) + !String.Contains(Container(56).ListItem.Status,cancel) + !String.IsEmpty(Container(56).ListItem.TVShowTitle)</visible>
+                        <visible>!String.Contains(Container(5698).ListItem.Status,ended) + !String.Contains(Container(5698).ListItem.Status,cancel) + !String.Contains(Container(56).ListItem.Status,ended) + !String.Contains(Container(56).ListItem.Status,cancel) + !String.IsEmpty(Container.ShowTitle)</visible>
                     </control>
                     <control type="button" id="5613">
                         <width>auto</width>

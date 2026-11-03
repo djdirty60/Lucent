@@ -2921,6 +2921,8 @@ def bell56_test():
     if not shows:
         return
     sid = shows[0]["tvshowid"]
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetTVShowDetails",
+                                    "params": {"tvshowid": sid, "uniqueid": {"tmdb": "1002"}}}))
     xbmc.executebuiltin("Skin.SetString(lucent.flattenset,1)")
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue", "params": {"setting": "videolibrary.flattentvshows", "value": 0}}))
     xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/,return)")
@@ -2930,7 +2932,7 @@ def bell56_test():
             break
     mon.waitForAbort(3)
     log(f"bell56: view56={cond('Control.IsVisible(56)')} dbid={lab('Container(56).ListItem.TvShowDBID')!r} status5698={lab('Container(5698).ListItem.Status')!r} "
-        f"status56={lab('Container(56).ListItem.Status')!r} bell={cond('Control.IsVisible(5614)')} label={lab('Control.GetLabel(5614)')!r}")
+        f"status56={lab('Container(56).ListItem.Status')!r} show={lab('Container.ShowTitle')!r} dbid1={lab('Container(56).ListItemAbsolute(1).TvShowDBID')!r} bell={cond('Control.IsVisible(5614)')} label={lab('Control.GetLabel(5614)')!r}")
     xbmc.executebuiltin("SetFocus(5614)")
     mon.waitForAbort(2)
     log(f"bell56: focus={lab('System.CurrentControlId')} label={lab('Control.GetLabel(5614)')!r}")
