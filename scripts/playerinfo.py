@@ -21,7 +21,7 @@ import xbmcvfs
 HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 P = "lucent.pi."
-_STATE = {"hist": [], "path": None, "size": "", "rpc": 0.0, "tracks": {}, "maxclk": 0.0, "spark": 0, "open": False}
+_STATE = {"hist": [], "vhist": [], "peak": 0.0, "set": {}, "sett": 0.0, "path": None, "size": "", "rpc": 0.0, "tracks": {}, "maxclk": 0.0, "spark": 0, "open": False}
 SPARK_DIR = "special://temp/lucent_pi/"
 
 
@@ -161,9 +161,8 @@ def _png(width, height, rows):
             + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b""))
 
 
-def spark(values):
-    """Area and line of the last values, 760 x 60 (shown at 380 x 30), colour #7CC4FF."""
-    W, H = 760, 60
+def spark(values, W=760, H=60, tag="spark"):
+    """Area and line of the last values (shown at half size), colour #7CC4FF."""
     vals = values[-40:]
     if len(vals) < 2:
         return ""
@@ -194,11 +193,11 @@ def spark(values):
     folder = xbmcvfs.translatePath(SPARK_DIR)
     os.makedirs(folder, exist_ok=True)
     _STATE["spark"] += 1
-    name = f"spark_{int(time.time())}_{_STATE['spark']}.png"
+    name = f"{tag}_{int(time.time())}_{_STATE['spark']}.png"
     with open(os.path.join(folder, name), "wb") as handle:
         handle.write(_png(W, H, rows))
     for old in os.listdir(folder):
-        if old != name and old.startswith("spark_"):
+        if old != name and old.startswith(tag + "_"):
             try:
                 if time.time() - os.path.getmtime(os.path.join(folder, old)) > 4:
                     os.remove(os.path.join(folder, old))
@@ -209,19 +208,19 @@ def spark(values):
 
 # ----------------------------------------------------------------------------- one update
 def visible():
-    return xbmc.getCondVisibility("Skin.HasSetting(nuvio.osdstats) + Player.HasVideo")
+    return bool(HOME.getProperty(P + "open")) and xbmc.getCondVisibility("Player.HasVideo")
 
 
 def tick():
     if not visible():
         if _STATE["open"]:
-            _STATE.update(open=False, hist=[])
+            _STATE.update(open=False, hist=[], vhist=[], peak=0.0)
         return
     _STATE["open"] = True
     now = time.time()
     path = info("Player.Filenameandpath")
     if path != _STATE["path"]:
-        _STATE.update(path=path, hist=[], size=local_size(path), rpc=0.0)
+        _STATE.update(path=path, hist=[], vhist=[], peak=0.0, size=local_size(path), rpc=0.0)
 
     # header
     show = info("VideoPlayer.TVShowTitle")
@@ -426,3 +425,239 @@ def tick():
     put("r.buf", " · ".join(x for x in (f"{cache:.0f}%", ahead) if x))
     put("r.buf.dot", "low" if cache <= 20 else "ok")
     put("r.type", t("Stream · internet", "Stream · internet") if stream else t("Local file", "Lokaal bestand"))
+
+    # ======================================================================== tab 2: video
+    try:
+        video_tab(locals())
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[skin.lucent] playerinfo video: {error}", xbmc.LOGINFO)
+    try:
+        audio_tab(locals())
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[skin.lucent] playerinfo audio: {error}", xbmc.LOGINFO)
+
+
+def kodi_settings(now):
+    """Kodi's audio output settings (every 10 s)."""
+    if now - _STATE["sett"] < 10 and _STATE["set"]:
+        return _STATE["set"]
+    _STATE["sett"] = now
+    out = {}
+    for key in ("audiooutput.audiodevice", "audiooutput.passthroughdevice", "audiooutput.config", "audiooutput.channels", "audiooutput.passthrough"):
+        try:
+            req = {"jsonrpc": "2.0", "id": 1, "method": "Settings.GetSettingValue", "params": {"setting": key}}
+            out[key] = (json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}).get("value")
+        except Exception:  # noqa: BLE001
+            out[key] = None
+    _STATE["set"] = out
+    return out
+
+
+def device_name(raw):
+    """'ALSA:hdmi:CARD=PCH,DEV=0|HDA Intel PCH, HDMI 0' -> 'HDA Intel PCH, HDMI 0'; 'AudioTrack (RAW)' stays."""
+    raw = str(raw or "")
+    if "|" in raw:
+        raw = raw.split("|", 1)[1]
+    elif ":" in raw:
+        raw = raw.split(":", 1)[1]
+    return raw.strip() or ""
+
+
+SPEAKER_CONFIG = {0: "2.0", 1: "2.1", 2: "3.0", 3: "3.1", 4: "4.0", 5: "4.1", 6: "5.0", 7: "5.1", 8: "7.0", 9: "7.1", 10: "7.1"}
+
+
+def video_tab(v):
+    w, h, fps, hdr = v["w"], v["h"], v["fps"], v["hdr"]
+    res_badge, prof, layer, pix, ten, vname = v["res_badge"], v["prof"], v["layer"], v["pix"], v["ten"], v["vname"]
+    try:
+        width = int(w or 0)
+    except ValueError:
+        width = 0
+    box = "4k" if width >= 3000 else "1080" if width >= 1200 else "sd"
+    put("v.resbox", box)
+    put("v.reslabel", f"{res_badge} · {w}×{h}" if w and h else res_badge)
+    put("v.resshort", res_badge)
+    put("v.resnote", {"4k": t("4× the pixels of Full HD", "4× zoveel beeldpunten als Full HD"),
+                      "1080": t("Full HD" if width >= 1900 else "HD", "Full HD" if width >= 1900 else "HD"),
+                      "sd": t("standard definition", "standaard beeld")}[box])
+    dar = info("Player.Process(videodar)")
+    try:
+        ratio = float(dar.replace(",", "."))
+        named = "16:9" if abs(ratio - 1.78) < 0.02 else "4:3" if abs(ratio - 1.33) < 0.02 else "21:9" if 2.3 < ratio < 2.45 else ""
+    except ValueError:
+        named = ""
+    put("v.dar", f"{dar}:1" + (f" ({named})" if named else "") if dar else "–")
+    put("v.fps", f"{fps} fps" if fps else "–")
+    put("v.scan", v["scan_word"] or "–")
+    deint = info("Player.Process(deintmethod)")
+    put("v.deint", deint if deint and deint.lower() not in ("none", "") else t("not needed", "niet nodig"))
+    bar = {"dolbyvision": "dv", "hdr10": "hdr10", "hdr10plus": "hdr10", "hlg": "hdr10"}.get(hdr, "sdr")
+    put("v.hdrbar", bar)
+    put("v.hb.dv", "DOLBY VISION" if hdr == "dolbyvision" else "")
+    put("v.hb.hdr", {"hdr10": "HDR10", "hdr10plus": "HDR10+", "hlg": "HLG"}.get(hdr, ""))
+    put("v.hb.sdr", "SDR" if bar == "sdr" else "")
+    put("v.hb2", (t("PROFILE ", "PROFIEL ") + prof.group(1) + (f" {layer}" if layer else "")) if hdr == "dolbyvision" and prof else "")
+    wide = bar != "sdr"
+    put("v.gamut", "2020" if wide else "709")
+    put("v.c1", t("Colours: ", "Kleuren: ") + ("[COLOR FFFFFFFF][B]BT.2020[/B][/COLOR]" if wide else "[COLOR FFFFFFFF][B]BT.709[/B][/COLOR]"))
+    transfer = {"dolbyvision": "PQ", "hdr10": "PQ", "hdr10plus": "PQ", "hlg": "HLG"}.get(hdr, "SDR (gamma)")
+    put("v.c2", t("Transfer: ", "Overdracht: ") + f"[COLOR FFFFFFFF][B]{transfer}[/B][/COLOR]")
+    put("v.c3", ("[COLOR FFFFFFFF][B]10-bit[/B][/COLOR] · " + t("1 billion colours", "1 miljard kleuren")) if ten
+        else ("[COLOR FFFFFFFF][B]8-bit[/B][/COLOR] · " + t("16.7 million colours", "16,7 miljoen kleuren")))
+    put("v.p1k", t("File", "Bestand"))
+    put("v.p1", f"{vname} 10-bit" if vname and ten else vname or "–")
+    put("v.p1s", pix)
+    put("v.p2k", "Decoder")
+    put("v.p2", info("Player.Process(videodecoder)") or "–")
+    hw = xbmc.getCondVisibility("Player.Process(videohwdecoder)")
+    put("v.p2s", t("hardware ✓", "hardware ✓") if hw else "software")
+    rfps = num(info("System.FPS"))
+    put("v.p3k", t("Picture", "Beeld"))
+    put("v.p3", f"{rfps:.2f} fps" if rfps else "–")
+    put("v.p3s", t("drawn per second", "getekend per seconde"))
+    disp = info("System.ScreenResolution")
+    m = re.search(r"(\d+)\s*x\s*(\d+)", disp)
+    hz = num(re.search(r"@\s*([\d.,]+)", disp).group(1)) if re.search(r"@\s*([\d.,]+)", disp) else 0.0
+    put("v.p4k", "Tv")
+    put("v.p4", f"{m.group(1)}×{m.group(2)}" if m else disp)
+    vfps = num(fps)
+    match = hz and vfps and any(abs(hz - vfps * k) < 0.05 for k in (1, 2))
+    put("v.p4s", f"@ {hz:.2f} Hz" + (" ✓" if match else "") if hz else "")
+    vbr = v["vbr"]
+    if vbr:
+        _STATE["vhist"] = (_STATE["vhist"] + [vbr])[-40:]
+        _STATE["peak"] = max(_STATE["peak"], vbr)
+    put("v.br", f"{vbr:.1f} Mb/s" if vbr else "–")
+    put("v.peak", t(f"peak {_STATE['peak']:.1f}", f"piek {_STATE['peak']:.1f}") if _STATE["peak"] else "")
+    if len(_STATE["vhist"]) >= 2:
+        put("v.spark", spark(_STATE["vhist"], 940, 120, "vspark"))
+
+
+LAYOUT = {1: ["c"], 2: ["l", "r"], 3: ["l", "r", "lfe"], 4: ["l", "r", "sl", "sr"], 5: ["l", "r", "c", "sl", "sr"],
+          6: ["l", "r", "c", "lfe", "sl", "sr"], 7: ["l", "r", "c", "lfe", "sl", "sr", "sbl"], 8: ["l", "r", "c", "lfe", "sl", "sr", "sbl", "sbr"]}
+
+
+def audio_tab(v):
+    acodec, chn, chs, atmos, dtsx, along = v["acodec"], v["chn"], v["chs"], v["atmos"], v["dtsx"], v["along"]
+    rate, bits, khz, adec, aq = v["rate"], v["bits"], v["khz"], v["adec"], v["aq"]
+    sett = kodi_settings(v["now"])
+    passthrough = adec.lower().startswith("pt-") if adec else False
+    long_name = {"truehd_atmos": "Dolby TrueHD", "truehd": "Dolby TrueHD", "eac3_ddp_atmos": "Dolby Digital+", "eac3": "Dolby Digital+",
+                 "ac3": "Dolby Digital", "dtshd_ma_x_imax": "DTS:X", "dtshd_ma_x": "DTS:X", "dtshd_ma": "DTS-HD MA", "dtshd_hra": "DTS-HD HRA",
+                 "dts": "DTS"}.get(acodec, v["along"].replace(" Atmos", ""))
+    lossless = acodec.startswith(("truehd", "dtshd_ma", "flac", "pcm"))
+    # the way of the sound
+    put("a.c1k", t("File", "Bestand"))
+    put("a.c1", f"{ABADGE.get(acodec, acodec.upper())}" + (" Atmos" if atmos else ""))
+    put("a.c1s", (f"{chs} + " + t("objects", "objecten")) if (atmos or dtsx) and chs else (t(f"{chn} channels", f"{chn} kanalen") if chn else ""))
+    put("a.c2k", "Kodi")
+    put("a.c2", "passthrough" if passthrough else t("decodes itself", "decodeert zelf"))
+    put("a.c2s", t("untouched ✓", "niet aangeraakt ✓") if passthrough else (adec or ""))
+    put("a.c3k", "HDMI" if passthrough else t("Out", "Uit"))
+    put("a.c3", "bitstream" if passthrough else "PCM")
+    put("a.c3s", " · ".join(x for x in (khz, f"{bits} bit" if bits and bits != "0" else "") if x))
+    dev = device_name(sett.get("audiooutput.passthroughdevice") if passthrough else sett.get("audiooutput.audiodevice"))
+    put("a.c4k", t("Receiver", "Receiver") if passthrough else t("Device", "Apparaat"))
+    put("a.c4", dev or "–")
+    put("a.c4s", (t("decodes Atmos", "decodeert Atmos") if atmos else t("decodes DTS:X", "decodeert DTS:X") if dtsx else t("decodes", "decodeert"))
+        if passthrough else t("plays", "speelt af"))
+    cfg_ch = SPEAKER_CONFIG.get(sett.get("audiooutput.channels") if isinstance(sett.get("audiooutput.channels"), int) else -1, "")
+    put("a.c5k", t("Speakers", "Luidsprekers"))
+    put("a.c5", (chs or cfg_ch) + (" + Atmos" if atmos else " + DTS:X" if dtsx else ""))
+    put("a.c5s", t(f"{chn} channels", f"{chn} kanalen") + (t(" + height", " + hoogte") if (atmos or dtsx) else "") if chn else "")
+    # what you hear
+    put("a.h1", long_name)
+    put("a.h2", "Atmos" if atmos else "")
+    put("a.hs", " · ".join(x for x in ((chs + t(" + height", " + hoogte")) if (atmos or dtsx) and chs else chs, khz,
+                                       f"{bits} bit" if bits and bits != "0" else "", "lossless" if lossless else "") if x))
+    # output
+    cfg = {1: t("Fixed", "Vast"), 2: t("Best match", "Beste match"), 3: t("Optimized", "Geoptimaliseerd")}.get(sett.get("audiooutput.config"), "")
+    put("a.dev", ("HDMI · " if passthrough and dev and "hdmi" not in dev.lower() else "") + (dev or "–"))
+    put("a.cfg", " · ".join(x for x in (cfg, cfg_ch) if x) or "–")
+    vol = info("Player.Volume")
+    delay = info("Player.AudioDelay")
+    muted = xbmc.getCondVisibility("Player.Muted")
+    put("a.vol", " · ".join(x for x in ((t("muted", "gedempt") if muted else vol), (t("delay ", "vertraging ") + delay) if delay else "") if x) or "–")
+    put("r.aqueue2", f"{aq:.0f}%")
+    put("r.aqueue2.bar", step(aq))
+    # speakers and bars: the channels this track has
+    have = set(LAYOUT.get(chn, LAYOUT[8] if chn > 8 else []))
+    if atmos or dtsx:
+        have |= {"tfl", "tfr", "trl", "trr"}
+    for nm in ("l", "c", "r", "sl", "sr", "sbl", "sbr", "lfe", "tfl", "tfr", "trl", "trr"):
+        put(f"sp.{nm}", "1" if nm in have else "")
+    room = chs + (" + Atmos" if atmos else " + DTS:X" if dtsx else "")
+    put("a.roomlabel", t("Your room", "Je kamer") + (f" · {room}" if room else ""))
+    put("a.chlabel", t("Channels", "Kanalen") + (f" · {chs}" if chs else "") + (t(" + 4 height", " + 4 hoogte") if (atmos or dtsx) else ""))
+    # tracks
+    tr = v["tr"]
+    streams = tr.get("audiostreams") or []
+    cur = (tr.get("currentaudiostream") or {}).get("index")
+    put("a.tlabel", t("Audio tracks", "Audiosporen") + f" · {len(streams)}")
+    for n in range(1, 5):
+        s = streams[n - 1] if n <= len(streams) else None
+        if not s:
+            for k in ("lang", "codec", "sub", "on"):
+                put(f"a.t{n}.{k}", "")
+            continue
+        codec = (s.get("codec") or "").lower()
+        ch = CHANNELS.get(s.get("channels") or 0, "")
+        put(f"a.t{n}.lang", lang_name(s.get("language")) or t("Unknown", "Onbekend"))
+        put(f"a.t{n}.codec", ACODEC.get(codec, codec.upper()) or "–")
+        put(f"a.t{n}.sub", " · ".join(x for x in (ch, s.get("name") or "") if x))
+        put(f"a.t{n}.on", "1" if s.get("index") == cur else "")
+
+
+class Info(xbmcgui.WindowXMLDialog):
+    def onInit(self):
+        self.closing = False
+        HOME.setProperty(P + "tab", "1")
+        try:
+            self.setFocusId(101)
+        except Exception:  # noqa: BLE001
+            pass
+        import threading
+        threading.Thread(target=self.loop, daemon=True).start()
+
+    def loop(self):
+        mon = xbmc.Monitor()
+        while not self.closing and not mon.abortRequested():
+            try:
+                tick()
+            except Exception as error:  # noqa: BLE001
+                xbmc.log(f"[skin.lucent] playerinfo: {error}", xbmc.LOGINFO)
+            if not xbmc.getCondVisibility("Player.HasVideo"):
+                self.close()
+                break
+            if mon.waitForAbort(1):
+                break
+
+    def onAction(self, action):
+        if action.getId() in (9, 10, 92, 216, 247, 257, 275, 61467, 61448, 11):     # back, close, info
+            self.close()
+
+    def close(self):
+        self.closing = True
+        HOME.clearProperty(P + "open")
+        super().close()
+
+
+def open_window():
+    if HOME.getProperty(P + "open"):
+        return
+    HOME.setProperty(P + "open", "1")
+    try:
+        import xbmcaddon
+        win = Info("Lucent_PlayerInfo.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
+        tick()
+        win.doModal()
+        del win
+    finally:
+        HOME.clearProperty(P + "open")
+
+
+if __name__ == "__main__":
+    import sys
+    if sys.argv[1:2] == ["open"]:
+        xbmc.executebuiltin("Dialog.Close(videoosd,true)")
+        open_window()

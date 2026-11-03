@@ -154,12 +154,7 @@ def run():
         import live
         live.check_reminders()
 
-    def player_info():
-        import playerinfo
-        playerinfo.tick()
-
-    quick = [Job("player info", 1, 1, player_info, lambda: cond("Skin.HasSetting(nuvio.osdstats) + Player.HasVideo")),
-             Job("tv reminders", 20, 15, tv_reminders), Job("subtitles", 30, 5, subtitles), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
+    quick = [Job("tv reminders", 20, 15, tv_reminders), Job("subtitles", 30, 5, subtitles), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
     stop = threading.Event()
 
     def beat():

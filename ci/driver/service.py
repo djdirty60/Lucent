@@ -2529,6 +2529,46 @@ def stats_test():
     xbmc.Player().stop()
     mon.waitForAbort(2)
 
+def pinfo2_test():
+    """Speler-info as its own window with three tabs."""
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
+    xbmc.Player().play("/tmp/ci/audio.mkv")
+    for _ in range(20):
+        if cond("Player.HasVideo"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(5)
+    for _ in range(6):
+        if not cond("System.HasVisibleModalDialog"):
+            break
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1.5)
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/playerinfo.py,open)")
+    mon.waitForAbort(6)
+    log(f"pinfo2: open={HOME.getProperty('lucent.pi.open')} tab={HOME.getProperty('lucent.pi.tab')} focus={lab('System.CurrentControlId')} "
+        f"dialog={lab('System.CurrentWindow')} osd={cond('Window.IsVisible(videoosd)')}")
+    shot("pi2-1")
+    keys = ["a.c1", "a.c2", "a.c3", "a.c4", "a.c5", "a.h1", "a.hs", "a.dev", "a.cfg", "a.vol", "a.chlabel", "a.t1.lang", "a.t1.codec", "a.t1.on",
+            "a.t2.lang", "sp.c", "sp.l", "v.resbox", "v.reslabel", "v.dar", "v.hdrbar", "v.c1", "v.p1", "v.p2", "v.p3", "v.p4", "v.p4s", "v.br"]
+    log("pinfo2: " + json.dumps({k: HOME.getProperty("lucent.pi." + k) for k in keys}, ensure_ascii=False))
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2.5)
+    log(f"pinfo2: after right tab={HOME.getProperty('lucent.pi.tab')} focus={lab('System.CurrentControlId')} time={lab('Player.Time')}")
+    shot("pi2-2")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2.5)
+    log(f"pinfo2: after right tab={HOME.getProperty('lucent.pi.tab')} focus={lab('System.CurrentControlId')}")
+    shot("pi2-3")
+    mon.waitForAbort(1.2)
+    shot("pi2-3b")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    log(f"pinfo2: after back open={HOME.getProperty('lucent.pi.open')!r} dialog={cond('System.HasVisibleModalDialog')} playing={cond('Player.HasVideo')}")
+    xbmc.Player().stop()
+    mon.waitForAbort(2)
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2542,9 +2582,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    svc_test()
-    stats_test()
-    sportosd_test()
+    pinfo2_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
