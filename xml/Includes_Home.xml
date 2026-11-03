@@ -15830,6 +15830,7 @@
 
 
 
+
     <!-- ==== Home: own screens for tabs without rows (tabpanels.py) ==== -->
     <expression name="LucentPCal">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),agenda.py)</expression>
     <expression name="LucentPTv">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) | [String.StartsWith(Container(9000).ListItem.Property(w1.path),pvr://channels/tv) + String.IsEmpty(Container(9000).ListItem.Property(w2.path))]] + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
