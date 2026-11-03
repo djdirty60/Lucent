@@ -552,11 +552,11 @@ def season_page_ref():
 
 
 def season_state():
-    """Window(home) lucent.s56.bell = the series title when its bell is on (the button on the season page reads it)."""
+    """Window(home) lucent.s56.bell = 1 when the bell of this series is on (the button on the season page reads it;
+    the season page sets it again whenever it gets the focus, so another series never shows an old state)."""
     ref = season_page_ref()
-    title = xbmc.getInfoLabel("Container.ShowTitle")
     if ref and is_following(show_key(ref["kind"], ref["tmdb"])):
-        HOME.setProperty("lucent.s56.bell", title)
+        HOME.setProperty("lucent.s56.bell", "1")
     else:
         HOME.clearProperty("lucent.s56.bell")
 
