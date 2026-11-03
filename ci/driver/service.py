@@ -2746,6 +2746,36 @@ def misc133_test():
     mon.waitForAbort(1)
 
 
+def wn_test():
+    """What's new, example A: versions left, headings right."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/whatsnew.py)")
+    mon.waitForAbort(4)
+    log(f"wn: win={lab('System.CurrentWindow')!r} focus={lab('System.CurrentControlId')} versions={lab('Container(100).NumItems')} "
+        f"title={lab('Window.Property(wn.title)')!r} sub={lab('Window.Property(wn.sub)')!r} items={lab('Container(200).NumItems')} first={lab('Container(200).ListItem.Label')!r}")
+    shot("wn-1")
+    for _ in range(2):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.8)
+    log(f"wn: down2 title={lab('Window.Property(wn.title)')!r} tag={lab('Window.Property(wn.tag)')!r} items={lab('Container(200).NumItems')}")
+    shot("wn-2")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(0.8)
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(0.8)
+    log(f"wn: right focus={lab('System.CurrentControlId')} item={lab('Container(200).CurrentItem')}")
+    shot("wn-3")
+    xbmc.executebuiltin("SetFocus(100)")
+    for _ in range(30):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.15)
+    mon.waitForAbort(1)
+    log(f"wn: far title={lab('Window.Property(wn.title)')!r} items={lab('Container(200).NumItems')} first={lab('Container(200).ListItem(0).Label')!r}")
+    shot("wn-4")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    log(f"wn: back win={lab('System.CurrentWindow')!r}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2759,9 +2789,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    wn_test()
     misc133_test()
-    tvfav_test()
-    pinfo2_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
