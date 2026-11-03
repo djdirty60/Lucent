@@ -637,6 +637,11 @@ def remove_gone(kind, base_dir, wanted, seren_count, started, manual):
 def export(con, started, manual):
     import quick
     rows = read_collection(con)
+    try:
+        import liblists                              # films from your own Trakt lists (Skin settings > Lucent Library)
+        rows += liblists.movie_rows({int(r["trakt"]) for r in rows if str(r["trakt"]).isdigit()})
+    except Exception as error:  # noqa: BLE001
+        log(f"lists: {error}")
     tw = trakt_watched()
     if tw:                                           # Seren's mark OR Trakt's own full list
         for r in rows:
@@ -680,6 +685,12 @@ def export(con, started, manual):
 def export_shows(con, started, manual):
     import quick
     shows = read_shows(con)
+    try:
+        import liblists                              # series from your own Trakt lists
+        for sid, show in liblists.show_entries({int(k) for k in shows if str(k).isdigit()}).items():
+            shows.setdefault(sid, show)
+    except Exception as error:  # noqa: BLE001
+        log(f"lists: {error}")
     added, seasons = 0, {}
     kept = read_json(NEW_EP_FILE, []) or []           # earlier new episodes stay (the calendar only looks back 2 weeks)
     fresh = new_episodes(set(shows))

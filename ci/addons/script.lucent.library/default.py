@@ -12,6 +12,9 @@ elif len(sys.argv) > 3 and sys.argv[1] in ("add", "remove"):
 elif len(sys.argv) > 3 and sys.argv[1] == "skip":
     import quick                       # one episode / season out for good: RunScript(script.lucent.library,skip,<show trakt id>,S01E02|S01)
     quick.skip(sys.argv[2], sys.argv[3])
+elif len(sys.argv) > 1 and sys.argv[1] == "chooselists":
+    import liblists                    # your own Trakt lists as library: RunScript(script.lucent.library,chooselists)
+    liblists.choose()
 elif len(sys.argv) > 1 and sys.argv[1] in ("status", "update", "surprise", "pushwatched", "nextinset"):
     import tools
     tools.run(sys.argv[1], sys.argv[2:])

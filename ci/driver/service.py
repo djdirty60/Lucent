@@ -2645,6 +2645,47 @@ def svcreset_test():
     mon.waitForAbort(2)
 
 
+def liblists_test():
+    """Skin settings > Integrations > Lucent Library: the new 'Use my lists as library' row."""
+    xbmc.executebuiltin("Skin.SetBool(lucent.ss.open.2505)")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(2)
+    n = int(lab("Container(9000).NumItems") or 0)
+    labels = [lab(f"Container(9000).ListItemAbsolute({i}).Label") for i in range(n)]
+    log(f"liblists: cats {labels}")
+    if "Integrations" not in labels:
+        return
+    xbmc.executebuiltin(f"SetFocus(9000,{labels.index('Integrations')},absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("SetFocus(1523)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(0.8)
+    log(f"liblists: down from surprise focus={lab('System.CurrentControlId')} vis={cond('Control.IsVisible(21524)')} sub={lab('$VAR[LucentLibLists]')!r}")
+    shot("liblists-row")
+    xbmc.executebuiltin("Skin.SetString(lucent.lib.lists,Movie collection · Serie collectie)")
+    mon.waitForAbort(0.8)
+    log(f"liblists: set sub={lab('$VAR[LucentLibLists]')!r}")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(0.8)
+    down = lab("System.CurrentControlId")
+    xbmc.executebuiltin("Action(Up)")
+    mon.waitForAbort(0.8)
+    log(f"liblists: down={down} up again={lab('System.CurrentControlId')}")
+    shot("liblists-set")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(6)
+    log(f"liblists: click dialog={lab('System.CurrentWindow')!r} ok={cond('Window.IsVisible(okdialog)')} text={lab('Control.GetLabel(9)')!r}")
+    shot("liblists-click")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Skin.Reset(lucent.lib.lists)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2658,9 +2699,11 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    liblists_test()
     settiles_test()
     sportosd_test()
     pinfo2_test()
+    svcreset_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
