@@ -11,7 +11,7 @@
 - **Sport in the TV player** – while you watch a game: a scoreboard top centre with the score and the minute, the scorers, and *Statistics*, *Also live*, *Table*, *Guide* and *Record*.
 - **Settings tab** – two new tiles next to *Player*: *What's new* and *Check for updates*.
 - **Series wait for their first broadcast** – just like films wait for their digital release, a new series only shows up once its first episode has aired.
-- **Your own Trakt lists as library** – Lucent Library can use one of your Trakt lists for films and one for series, next to the Trakt collection and without its limit (*Skin settings → Integrations → Lucent Library → Use my lists as library*). The *Library* row in the lists window then puts a title on that list.
+- **Your own Trakt lists as library** – Lucent Library can use your own Trakt lists (tick as many as you like), next to the Trakt collection and without its limit (*Skin settings → Integrations → Lucent Library → Use my lists as library*). The *Library* row in the lists window then puts a title on that list.
 - **Lucent Library fills in series and films by itself** – artwork and info come in right after adding a title; no more manual refresh.
 - **Series with one season** open the same series page as series with more seasons.
 - **Stadium photos** for many more clubs, and Up / Down on the sport channel list goes through every channel again.
@@ -124,7 +124,7 @@ A **TV** tab with your IPTV channels: the playing channel on the left of the hea
 
 New episodes are added **one day after they aired** (before that a source often has no link yet). Films and series in the library get the same **IMDb, Trakt and TMDB scores** as in Seren.
 
-**Your own lists as library:** Trakt can cap the collection; your own lists are not capped. In *Use my lists as library* choose a list for films and a list for series (for example *Movie collection* and *Series collection*). Their titles come into the Kodi library next to the collection, and the *Library* row in the lists window on the info page then adds a title to that list instead of the collection. A big list fills in over a few runs (episodes of about 60 series per run); if Trakt does not answer, the last copy is used, so nothing disappears.
+**Your own lists as library:** Trakt can cap the collection; your own lists are not capped. In *Use my lists as library* tick the lists you want (for example *Movie collection* and *Series collection* together). Their titles come into the Kodi library next to the collection, and the *Library* row in the lists window on the info page then adds a title to one of those lists instead of the collection (a film to the list with the most films, a series to the one with the most series). A big list fills in over a few runs (episodes of about 60 series per run); if Trakt does not answer, the last copy is used, so nothing disappears.
 
 Settings: *Skin settings > Integrations > Lucent Library* (update now, update every 6/12/24 hours, watched marks to Trakt, Surprise me, use my lists as library).
 

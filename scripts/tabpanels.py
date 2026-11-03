@@ -138,25 +138,39 @@ def update():
 
 
 def tv_path():
-    """The channels the TV tab shows: your favourite guide group, else all channels (Kodi wants 'name@client')."""
+    """The channels the TV tab shows: your favourite guide group, else all channels."""
     if not xbmc.getCondVisibility("Pvr.HasTVChannels"):
         put("lucent.ptv.path", "")
         return
     want = xbmc.getInfoLabel("Skin.String(lucent.guide.group)")
+    want_key = norm(want)
     path = "pvr://channels/tv/*/"
     if want:
         import json
-        try:
-            reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                                                                "params": {"directory": "pvr://channels/tv/", "media": "files"}})))
-            for f in (reply.get("result") or {}).get("files") or []:
-                if f.get("label") == want and f.get("file"):
-                    path = f["file"]
-                    break
+        import urllib.parse
+        try:                                    # the guide's groups are 'pvr://channels/tv/<name>/'
+            reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups",
+                                                                "params": {"channeltype": "tv"}})))
+            groups = [g.get("label") or "" for g in (reply.get("result") or {}).get("channelgroups") or []]
+            match = next((g for g in groups if norm(g) == want_key), None)
+            if match:
+                path = f"pvr://channels/tv/{urllib.parse.quote(match)}/"
+            else:
+                log(f"tv group {want!r} not found in {groups[:30]}")
         except Exception as error:  # noqa: BLE001
             log(f"tv group: {error}")
+    found = path != "pvr://channels/tv/*/"
     put("lucent.ptv.path", path)
-    put("lucent.ptv.title", tr("On your channels now", "Nu op je zenders") if want else tr("On TV now", "Nu op tv"))
+    put("lucent.ptv.title", tr("Your favourite channels now", "Nu op je favoriete zenders") if found else tr("On TV now", "Nu op tv"))
+
+
+def norm(text):
+    """Compare group names without colour tags, spaces at the ends or case."""
+    import re
+    return re.sub(r"\[/?(?:COLOR[^\]]*|B|I)\]", "", str(text or "")).strip().casefold()
+
+
+
 
 
 def open_calendar(n):
