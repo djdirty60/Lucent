@@ -2764,10 +2764,15 @@ def wn_test():
     mon.waitForAbort(0.8)
     log(f"wn: right focus={lab('System.CurrentControlId')} item={lab('Container(200).CurrentItem')}")
     shot("wn-3")
-    xbmc.executebuiltin("SetFocus(100)")
-    for _ in range(30):
+    xbmc.executebuiltin("Action(Left)")
+    mon.waitForAbort(0.8)
+    steps = [f"left:{lab('System.CurrentControlId')}:{lab('Container(100).CurrentItem')}"]
+    for n in range(1, 21):
         xbmc.executebuiltin("Action(Down)")
-        mon.waitForAbort(0.15)
+        mon.waitForAbort(0.4)
+        if n in (1, 5, 10, 13, 15, 20):
+            steps.append(f"{n}:{lab('Container(100).CurrentItem')}")
+    log(f"wn: steps {steps}")
     mon.waitForAbort(1)
     log(f"wn: far title={lab('Window.Property(wn.title)')!r} items={lab('Container(200).NumItems')} first={lab('Container(200).ListItem(0).Label')!r}")
     shot("wn-4")
