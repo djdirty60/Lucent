@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lucent theme for Seren - Intro overslaan (Seren) -->
+<window type="dialog">
+    <defaultcontrol always="true">3001</defaultcontrol>
+    <!-- colours: the Lucent skin's own (its colour theme) or Lucent's default glass colours -->
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,on_focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,glow,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,FFFFFFFF,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,FF0B1119,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,66D6F0FF,home)</onload>
+    <controls>
+        <control type="image">
+            <left>1120</left>
+            <top>720</top>
+            <width>800</width>
+            <height>360</height>
+            <texture>lucent/vignette.png</texture>
+            <colordiffuse>99000000</colordiffuse>
+            <animation effect="fade" start="0" end="100" time="300">WindowOpen</animation>
+            <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+        </control>
+        <control type="grouplist" id="3000">
+            <left>860</left>
+            <top>890</top>
+            <width>1000</width>
+            <height>72</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>14</itemgap>
+            <animation effect="slide" start="60,0" end="0,0" time="320" tween="cubic" easing="out">WindowOpen</animation>
+            <animation effect="fade" start="0" end="100" time="320">WindowOpen</animation>
+            <animation effect="slide" start="0,0" end="60,0" time="200" tween="cubic" easing="in">WindowClose</animation>
+            <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+            <control type="button" id="3002">
+                <width>auto</width>
+                <height>72</height>
+                <font>font12</font>
+                <textoffsetx>32</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFBDC8D1</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="32" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill64.png</texturefocus>
+                <texturenofocus border="32" colordiffuse="99000000">lucent/pill64.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30459]</label>
+            </control>
+            <control type="button" id="3001">
+                <width>auto</width>
+                <height>72</height>
+                <font>font12</font>
+                <textoffsetx>40</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="32" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill64.png</texturefocus>
+                <texturenofocus border="32" colordiffuse="CC0B1119">lucent/pill64.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>[B]$ADDON[plugin.video.seren 30784][/B]</label>
+                <animation effect="zoom" start="100" end="104" center="auto" time="160" tween="sine" easing="out">Focus</animation>
+            </control>
+        </control>
+        <control type="label">
+            <left>860</left>
+            <top>968</top>
+            <width>1000</width>
+            <height>30</height>
+            <font>font12</font>
+            <textcolor>FFBDC8D1</textcolor>
+            <align>right</align>
+            <aligny>center</aligny>
+            <shadowcolor>99000000</shadowcolor>
+            <animation effect="fade" start="0" end="100" time="320" delay="200">WindowOpen</animation>
+            <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+            <label>OK om over te slaan  ·  Terug om verder te kijken</label>
+        </control>
+    </controls>
+</window>

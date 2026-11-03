@@ -2212,6 +2212,153 @@ def sportosd_test():
     mon.waitForAbort(2)
 
 
+def serentheme_test():
+    """README screenshots of the Lucent theme for Seren: the real theme XML in this Kodi, filled the way Seren fills it."""
+    PATH = "/tmp/ci/serentheme"
+    ART = "special://home/addons/plugin.video.fakeseren/art/"
+    ep = {"item.info.tvshowtitle": "Northbound", "item.info.title": "The Long Crossing", "item.info.season": "2", "item.info.episode": "7",
+          "item.info.year": "2025", "item.info.rating": "8.4", "item.info.mpaa": "TV-14", "item.info.aired": "12 March 2025",
+          "item.info.duration.hours": "0", "item.info.duration.minutes": "52", "item.info.rottentomatoes_rating": "94%", "item.info.metacritic_rating": "81",
+          "item.info.plot": "A storm closes the northern pass, and the crew must choose between waiting it out and a dangerous shortcut over the ice. "
+                            "Placeholder text for this screenshot: in Kodi you see the real plot from TMDB.",
+          "item.art.fanart": ART + "f3.jpg", "item.art.thumb": ART + "f5.jpg", "seren.fanart": ART + "f3.jpg"}
+
+    class W(xbmcgui.WindowXMLDialog):
+        def __init__(self, *a, **k):
+            super().__init__(*a)
+            self.fill = k.get("fill")
+            self.focus = k.get("focus")
+
+        def onInit(self):
+            if self.fill:
+                self.fill(self)
+            if self.focus:
+                self.setFocusId(self.focus)
+
+    def show(xml, name, props, fill=None, focus=None, wait=4):
+        w = W(xml, PATH, "Default", "1080i", fill=fill, focus=focus)
+        for k, v in props.items():
+            w.setProperty(k, v)
+        w.show()
+        mon.waitForAbort(wait)
+        log(f"theme {name}: dialog={lab('System.CurrentWindow')} focus={lab('System.CurrentControlId')}")
+        shot(f"theme-{name}")
+        w.close()
+        mon.waitForAbort(1)
+        del w
+
+    # 1 source select (episode, the first stream = Recommended)
+    streams = [
+        ("4K", "Northbound.S02E07.2160p.WEB-DL.DV.HDR.DDP5.1.Atmos.H265", "TORRENTIO", "REAL-DEBRID", "TORRENT", "18.4 GB", "CACHED", "DUAL-AUDIO", ("DV", "HDR", "HEVC", "WEB", "ATMOS", "DD+", "5.1")),
+        ("4K", "Northbound.S02E07.2160p.UHD.BluRay.REMUX.HDR.TrueHD.7.1", "COMET", "REAL-DEBRID", "TORRENT", "41.2 GB", "CACHED", "", ("", "HDR", "HEVC", "REMUX", "TRUEHD", "", "7.1")),
+        ("1080p", "Northbound.S02E07.1080p.WEB-DL.DDP5.1.H264", "MEDIAFUSION", "PREMIUMIZE", "CLOUD", "3.1 GB", "", "MULTI-SUB", ("", "", "AVC", "WEB", "DD+", "", "5.1")),
+        ("1080p", "Northbound.S02E07.1080p.BluRay.x264.DTS", "TORRENTIO", "REAL-DEBRID", "TORRENT", "6.8 GB", "CACHED", "", ("", "", "AVC", "BLURAY", "DTS", "", "5.1")),
+        ("720p", "Northbound.S02E07.720p.HDTV.x264.AAC", "TORRENTIO", "REAL-DEBRID", "TORRENT", "1.2 GB", "", "", ("", "", "AVC", "HDTV", "AAC", "", "2.0")),
+        ("SD", "Northbound.S02E07.HDTV.x264", "TORRENTIO", "REAL-DEBRID", "TORRENT", "380 MB", "", "", ("", "", "AVC", "HDTV", "AAC", "", "2.0"))]
+
+    def fill_sources(w):
+        lst = w.getControl(1000)
+        for q, title, prov, deb, typ, size, cached, lang, (hdr1, hdr2, vc, misc, ac1, ac2, ch) in streams:
+            li = xbmcgui.ListItem(label=title)
+            d = {"quality": q, "release_title": title, "provider": prov, "debrid_provider": deb, "type": typ, "size": size,
+                 "info.sourcetype_text": cached, "aio_lang": lang, "info.hdrcodec_1": hdr1 or hdr2, "info.hdrcodec_2": hdr2 if hdr1 else "",
+                 "info.videocodec_1": vc, "info.misc_1": misc, "info.audiocodec_1": ac1, "info.audiocodec_2": ac2, "info.audiochannels_1": ch}
+            for k, v in d.items():
+                if v:
+                    li.setProperty(k, v)
+            lst.addItem(li)
+        w.setFocusId(1000)
+    show("source_select.xml", "source-select", dict(ep, instant_close="false", resolving="false", **{"filter.label": "Filter results"}), fill_sources)
+
+    # 2 scraping
+    def fill_scrape(w):
+        lst = w.getControl(2000)
+        for p in ("Comet", "MediaFusion", "Jackettio"):
+            lst.addItem(xbmcgui.ListItem(label=p))
+    show("get_sources.xml", "scraping", dict(ep, process_started="true", progress="62", remaining_providers_count="3", notification_text="",
+                                              totals_4K="7", totals_1080p="23", totals_720p="11", totals_SD="4", totals_total="45",
+                                              torrents_total="38", torrentsCached_total="21", hosters_total="0", cloudFiles_total="2",
+                                              directSources_total="0", adaptiveSources_total="0", has_torrent_providers="true",
+                                              has_cloud_scrapers="true", has_hoster_providers="false", has_direct_providers="false",
+                                              has_adaptive_providers="false"), fill_scrape, wait=5)
+
+    # 3 filters
+    groups = {1000: ["AV1", "AVC", "DIVX", "HEVC", "MP4", "MPEG", "VP9", "WMV", "XVID"], 2000: ["DV", "HDR", "HYBRID"],
+              3000: ["AAC", "ATMOS", "DD", "DD+", "DTS", "DTS-HD", "DTS-HDHR", "DTS-HDMA", "DTS-X", "MP3", "OPUS", "TRUEHD", "WMA"],
+              4000: ["2.0", "5.1", "7.1"], 5000: ["3D", "BLURAY", "CAM", "DVDRIP", "HC", "HD-RIP", "HDTV", "PDTV", "REMUX", "SCR", "WEB"]}
+    on = {"XVID", "DIVX", "WMV", "CAM", "SCR", "HC", "3D", "MP3"}
+
+    def fill_filters(w):
+        for cid, names in groups.items():
+            lst = w.getControl(cid)
+            for n in names:
+                li = xbmcgui.ListItem(label=n)
+                li.setProperty("label", n)
+                li.setProperty("value", str(n in on))
+                lst.addItem(li)
+        w.setFocusId(5000)
+    show("filter_select.xml", "filters", {"seren.fanart": ART + "f1.jpg"}, fill_filters)
+
+    # 4 sorting
+    sp = {"seren.fanart": ART + "f2.jpg", "max_level": "5"}
+    rows = [("Resolution",), ("Source Type", "Cloud", "Torrents", "Hosters"), ("Debrid Provider", "Real-Debrid", "Premiumize"),
+            ("DV/HDR", "DV", "HDR"), ("Size",), ("None",)]
+    for lvl, row in enumerate(rows, 1):
+        for i, t in enumerate(row):
+            sp[f"general.sortmethod.{lvl}.label.{i}"] = t
+        sp[f"general.sortmethod.{lvl}.label.{len(row) - 1}.last"] = "True"
+        sp[f"general.sortmethod.{lvl}.reverse"] = "True" if lvl == 5 else "False"
+    show("sort_select.xml", "sorting", sp, focus=2002)
+
+    # 5 provider packages
+    def fill_packs(w):
+        lst = w.getControl(1000)
+        for n, (name, ver, author, services) in enumerate([("aiostreams", "1.1.0", "djdirty60", "torrent · cloud"),
+                                                           ("torrentio", "2.4.1", "community", "torrent"),
+                                                           ("mediafusion", "1.3.0", "community", "torrent · hosters")]):
+            li = xbmcgui.ListItem(label=name)
+            for k, v in {"pack_name": name, "version": ver, "author": author, "services": services, "package.icon": f"{ART}c{n}.png"}.items():
+                li.setProperty(k, v)
+            lst.addItem(li)
+        w.setFocusId(1000)
+    show("provider_packages.xml", "provider-packages", {"seren.fanart": ART + "f4.jpg"}, fill_packs)
+
+    # 6 provider settings
+    def fill_pack(w):
+        st = w.getControl(1000)
+        for label, typ, value, action in [("Manifest URL", "string", "*******", False), ("Timeout (seconds)", "int", "20", False),
+                                          ("Only cached results", "bool", "True", False), ("Show IMAX / FEL tags", "bool", "True", False),
+                                          ("Include adult", "bool", "False", False), ("Test connection", "action", "", True)]:
+            li = xbmcgui.ListItem(label=label)
+            for k, v in {"label": label, "type": typ, "value": value, "has_action": str(action), "hide_value": "False"}.items():
+                li.setProperty(k, v)
+            st.addItem(li)
+        pr = w.getControl(2000)
+        for n, (name, typ, status) in enumerate([("Torrentio", "torrent", "enabled"), ("Comet", "torrent", "enabled"), ("MediaFusion", "torrent", "enabled"),
+                                                 ("Jackettio", "torrent", "disabled"), ("Easynews", "hosters", "enabled"), ("Debrid cloud", "hosters", "disabled")]):
+            li = xbmcgui.ListItem(label=name)
+            for k, v in {"provider_name": name, "provider_type": typ, "status": status, "package": "aiostreams", "provider.icon": f"{ART}c{n % 6}.png"}.items():
+                li.setProperty(k, v)
+            pr.addItem(li)
+        w.setFocusId(2000)
+    show("configure_provider_package.xml", "provider-settings", {"seren.fanart": ART + "f4.jpg", "package.name": "aiostreams", "hassettings": "true"}, fill_pack)
+
+    # 7 + 8 over a playing video: Playing next, Skip intro
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    for _ in range(20):
+        if cond("Player.HasVideo"):
+            break
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(3)
+    nxt = dict(ep, **{"item.info.title": "Thin Ice", "item.info.episode": "8", "item.info.duration.minutes": "49", "item.art.thumb": ART + "f7.jpg",
+                      "item.info.plot": "With the pass behind them, the crew reaches the old weather station and finds it is not as empty as it looked."})
+    show("playing_next.xml", "playing-next", nxt, focus=3001, wait=5)
+    show("skip_intro.xml", "skip-intro", {}, focus=3001, wait=3)
+    xbmc.Player().stop()
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2225,7 +2372,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    chanrows_test()
+    serentheme_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

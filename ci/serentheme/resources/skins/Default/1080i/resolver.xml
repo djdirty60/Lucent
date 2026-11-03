@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent theme for Seren - Resolver (opening the chosen stream) -->
+<window type="dialog">
+    <!-- colours: the Lucent skin's own (its colour theme) or Lucent's default glass colours -->
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,on_focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,glow,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,FFFFFFFF,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,FF0B1119,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,66D6F0FF,home)</onload>
+    <coordinates>
+        <left>0</left>
+        <top>0</top>
+        <width>1920</width>
+        <height>1080</height>
+    </coordinates>
+
+    <controls>
+        <!-- Cinematic backdrop -->
+        <control type="group">
+            <control type="image">
+                <texture>lucent/white.png</texture>
+                <colordiffuse>FF0B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <aspectratio>scale</aspectratio>
+                <texture background="true">$INFO[Window().Property(item.art.fanart)]</texture>
+            </control>
+            <control type="image">
+                <width>1500</width>
+                <texture>lucent/grad_left.png</texture>
+                <colordiffuse>F50B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <top>440</top>
+                <height>640</height>
+                <texture>lucent/grad_bottom.png</texture>
+                <colordiffuse>FF0B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <texture>lucent/vignette.png</texture>
+                <colordiffuse>99000000</colordiffuse>
+            </control>
+        </control>
+
+        <!-- Clearlogo / title -->
+        <control type="image">
+            <left>96</left>
+            <top>96</top>
+            <width>560</width>
+            <height>220</height>
+            <aspectratio align="left" aligny="bottom">keep</aspectratio>
+            <texture>$INFO[Window().Property(item.art.clearlogo)]</texture>
+            <visible>!String.IsEmpty(Window().Property(item.art.clearlogo))</visible>
+        </control>
+        <control type="textbox">
+            <left>96</left>
+            <top>196</top>
+            <width>760</width>
+            <height>120</height>
+            <font>font37</font>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>bottom</aligny>
+            <label>[B]$INFO[Window().Property(item.info.tvshowtitle)][/B]</label>
+            <visible>String.IsEmpty(Window().Property(item.art.clearlogo)) + !String.IsEmpty(Window().Property(item.info.season))</visible>
+        </control>
+        <control type="textbox">
+            <left>96</left>
+            <top>196</top>
+            <width>760</width>
+            <height>120</height>
+            <font>font37</font>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>bottom</aligny>
+            <label>[B]$INFO[Window().Property(item.info.title)][/B]</label>
+            <visible>String.IsEmpty(Window().Property(item.art.clearlogo)) + String.IsEmpty(Window().Property(item.info.season))</visible>
+        </control>
+
+        <!-- Notification -->
+        <control type="label">
+            <left>96</left>
+            <top>600</top>
+            <width>1200</width>
+            <height>40</height>
+            <font>font12</font>
+            <textcolor>FFBDC8D1</textcolor>
+            <label>$INFO[Window().Property(notification_text)]</label>
+        </control>
+
+        <!-- Glass "now opening" card -->
+        <control type="group">
+            <animation effect="fade" start="0" end="100" time="300">WindowOpen</animation>
+            <animation effect="slide" start="0,60" end="0,0" time="400" tween="cubic" easing="out">WindowOpen</animation>
+            <animation effect="fade" end="0" time="250">WindowClose</animation>
+            <left>96</left>
+            <top>676</top>
+            <width>1100</width>
+            <height>308</height>
+
+            <control type="image">
+                <left>-40</left>
+                <top>-40</top>
+                <width>1180</width>
+                <height>388</height>
+                <texture border="88">lucent/panel_shadow.png</texture>
+                <colordiffuse>80000000</colordiffuse>
+            </control>
+            <control type="image">
+                <texture border="48">lucent/panel.png</texture>
+                <colordiffuse>E0162532</colordiffuse>
+            </control>
+            <control type="image">
+                <texture border="48">lucent/panel_edge.png</texture>
+                <colordiffuse>2EFFFFFF</colordiffuse>
+            </control>
+
+            <!-- Source icon -->
+            <control type="image">
+                <left>40</left>
+                <top>40</top>
+                <width>120</width>
+                <height>120</height>
+                <aspectratio>keep</aspectratio>
+                <texture>$INFO[Window().Property(source.icon)]</texture>
+                <visible>!String.IsEmpty(Window().Property(source.icon))</visible>
+            </control>
+            <control type="image">
+                <left>40</left>
+                <top>40</top>
+                <width>120</width>
+                <height>120</height>
+                <aspectratio>keep</aspectratio>
+                <texture>$INFO[Window().Property(seren.logo)]</texture>
+                <visible>String.IsEmpty(Window().Property(source.icon))</visible>
+            </control>
+
+            <!-- Header + release -->
+            <control type="label">
+                <left>190</left>
+                <top>36</top>
+                <width>870</width>
+                <height>44</height>
+                <font>font27</font>
+                <textcolor>FFFFFFFF</textcolor>
+                <label>[B]Stream openen…[/B]</label>
+            </control>
+            <control type="label">
+                <left>190</left>
+                <top>88</top>
+                <width>870</width>
+                <height>40</height>
+                <font>font12</font>
+                <textcolor>FFDCE2E7</textcolor>
+                <scroll>true</scroll>
+                <label>$INFO[Window().Property(release_title)]</label>
+            </control>
+            <control type="label">
+                <left>190</left>
+                <top>126</top>
+                <width>870</width>
+                <height>36</height>
+                <font>font12</font>
+                <textcolor>FF8F9BA6</textcolor>
+                <label>[UPPERCASE]$INFO[Window().Property(source_provider)]$INFO[Window().Property(debrid_provider),  ·  ,][/UPPERCASE]</label>
+            </control>
+
+            <!-- Indeterminate loader -->
+            <control type="group">
+                <left>40</left>
+                <top>190</top>
+                <width>1020</width>
+                <height>6</height>
+                <control type="image">
+                    <texture border="3">lucent/pill6.png</texture>
+                    <colordiffuse>1FFFFFFF</colordiffuse>
+                </control>
+                <control type="image">
+                    <width>220</width>
+                    <texture border="3">lucent/pill6.png</texture>
+                    <colordiffuse>$INFO[Window(Home).Property(lucent.seren.focus)]</colordiffuse>
+                    <animation effect="slide" start="0,0" end="800,0" time="1100" tween="sine" easing="inout" pulse="true" condition="true">Conditional</animation>
+                </control>
+            </control>
+
+            <!-- Detail pills -->
+            <control type="grouplist">
+                <left>40</left>
+                <top>224</top>
+                <width>1020</width>
+                <height>48</height>
+                <orientation>horizontal</orientation>
+                <itemgap>10</itemgap>
+
+                <control type="button">
+                    <width>auto</width>
+                    <height>48</height>
+                    <font>font12</font>
+                    <textoffsetx>22</textoffsetx>
+                    <aligny>center</aligny>
+                    <textcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</textcolor>
+                    <disabledcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</disabledcolor>
+                    <texturenofocus border="24" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill48.png</texturenofocus>
+                    <texturefocus border="24" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill48.png</texturefocus>
+                    <enable>false</enable>
+                    <label>[B]$INFO[Window().Property(source_resolution)][/B]</label>
+                    <visible>!String.IsEmpty(Window().Property(source_resolution))</visible>
+                </control>
+                <control type="button">
+                    <width>auto</width>
+                    <height>48</height>
+                    <font>font12</font>
+                    <textoffsetx>22</textoffsetx>
+                    <aligny>center</aligny>
+                    <textcolor>FFDCE2E7</textcolor>
+                    <disabledcolor>FFDCE2E7</disabledcolor>
+                    <texturenofocus border="24" colordiffuse="1AFFFFFF">lucent/pill48.png</texturenofocus>
+                    <texturefocus border="24" colordiffuse="1AFFFFFF">lucent/pill48.png</texturefocus>
+                    <enable>false</enable>
+                    <label>[UPPERCASE]$INFO[Window().Property(source_type)][/UPPERCASE]</label>
+                    <visible>!String.IsEmpty(Window().Property(source_type))</visible>
+                </control>
+                <control type="button">
+                    <width>auto</width>
+                    <height>48</height>
+                    <font>font12</font>
+                    <textoffsetx>22</textoffsetx>
+                    <aligny>center</aligny>
+                    <textcolor>FFDCE2E7</textcolor>
+                    <disabledcolor>FFDCE2E7</disabledcolor>
+                    <texturenofocus border="24" colordiffuse="1AFFFFFF">lucent/pill48.png</texturenofocus>
+                    <texturefocus border="24" colordiffuse="1AFFFFFF">lucent/pill48.png</texturefocus>
+                    <enable>false</enable>
+                    <label>$INFO[Window().Property(source_size)]</label>
+                    <visible>!String.IsEmpty(Window().Property(source_size))</visible>
+                </control>
+                <!-- Media info badges -->
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.hdrcodec_1)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.hdrcodec_1))</visible>
+                </control>
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.hdrcodec_2)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.hdrcodec_2))</visible>
+                </control>
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.videocodec_1)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.videocodec_1))</visible>
+                </control>
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.misc_1)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.misc_1))</visible>
+                </control>
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.audiocodec_1)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.audiocodec_1))</visible>
+                </control>
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.audiocodec_2)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.audiocodec_2))</visible>
+                </control>
+                <control type="image">
+                    <width>88</width>
+                    <height>48</height>
+                    <aspectratio aligny="center">keep</aspectratio>
+                    <texture>lucent/flags/$INFO[Window().Property(info.audiochannels_1)].png</texture>
+                    <visible>!String.IsEmpty(Window().Property(info.audiochannels_1))</visible>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

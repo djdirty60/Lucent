@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lucent theme for Seren - Provider-instellingen -->
+<window type="dialog">
+    <defaultcontrol always="true">2000</defaultcontrol>
+    <!-- colours: the Lucent skin's own (its colour theme) or Lucent's default glass colours -->
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,on_focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,glow,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,FFFFFFFF,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,FF0B1119,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,66D6F0FF,home)</onload>
+    <controls>
+        <control type="group">
+            <control type="image">
+                <texture>lucent/white.png</texture>
+                <colordiffuse>FF0B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <aspectratio>scale</aspectratio>
+                <texture>$INFO[Window().Property(seren.fanart)]</texture>
+                <colordiffuse>59FFFFFF</colordiffuse>
+            </control>
+            <control type="image">
+                <width>1500</width>
+                <texture>lucent/grad_left.png</texture>
+                <colordiffuse>F50B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <top>440</top>
+                <height>640</height>
+                <texture>lucent/grad_bottom.png</texture>
+                <colordiffuse>FF0B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <texture>lucent/vignette.png</texture>
+                <colordiffuse>99000000</colordiffuse>
+            </control>
+        </control>
+        <control type="group">
+            <left>96</left>
+            <top>56</top>
+            <animation effect="fade" start="0" end="100" time="350">WindowOpen</animation>
+            <animation effect="slide" start="-60,0" end="0,0" time="350" tween="cubic" easing="out">WindowOpen</animation>
+            <control type="label">
+                <left>0</left>
+                <top>0</top>
+                <width>1400</width>
+                <height>64</height>
+                <font>font37</font>
+                <textcolor>FFFFFFFF</textcolor>
+                <aligny>center</aligny>
+                <label>[B][B]$INFO[Window().Property(package.name)][/B][/B]</label>
+            </control>
+            <control type="label">
+                <left>0</left>
+                <top>66</top>
+                <width>1500</width>
+                <height>40</height>
+                <font>font12</font>
+                <textcolor>FFBDC8D1</textcolor>
+                <aligny>center</aligny>
+                <label>OK zet een provider aan of uit. Links staan de instellingen van het pakket.</label>
+            </control>
+        </control>
+        <control type="group">
+            <animation effect="fade" start="0" end="100" time="350" delay="100">WindowOpen</animation>
+            <animation effect="slide" start="0,60" end="0,0" time="400" delay="100" tween="cubic" easing="out">WindowOpen</animation>
+            <animation effect="fade" end="0" time="250">WindowClose</animation>
+            <control type="image">
+                <left>56</left>
+                <top>156</top>
+                <width>840</width>
+                <height>840</height>
+                <texture border="88">lucent/panel_shadow.png</texture>
+                <colordiffuse>99000000</colordiffuse>
+            </control>
+            <control type="image">
+                <left>96</left>
+                <top>196</top>
+                <width>760</width>
+                <height>760</height>
+                <texture border="48">lucent/panel.png</texture>
+                <colordiffuse>E0162532</colordiffuse>
+            </control>
+            <control type="image">
+                <left>96</left>
+                <top>196</top>
+                <width>760</width>
+                <height>760</height>
+                <texture border="48">lucent/panel_edge.png</texture>
+                <colordiffuse>2EFFFFFF</colordiffuse>
+            </control>
+            <control type="label">
+                <left>136</left>
+                <top>222</top>
+                <width>600</width>
+                <height>44</height>
+                <font>font12</font>
+                <textcolor>FFBDC8D1</textcolor>
+                <aligny>center</aligny>
+                <label>[UPPERCASE][B]Instellingen[/B][/UPPERCASE]</label>
+            </control>
+            <control type="label">
+                <left>136</left>
+                <top>286</top>
+                <width>680</width>
+                <height>44</height>
+                <font>font12</font>
+                <textcolor>FF8F9BA6</textcolor>
+                <aligny>center</aligny>
+                <label>Dit pakket heeft geen instellingen.</label>
+                <visible>!String.IsEqual(Window().Property(hassettings),true)</visible>
+            </control>
+            <control type="list" id="1000">
+                <left>116</left>
+                <top>276</top>
+                <width>720</width>
+                <height>660</height>
+                <orientation>vertical</orientation>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <onright>2000</onright>
+                <onleft>noop</onleft>
+                <ondown>3000</ondown>
+                <onup>3000</onup>
+                <visible>String.IsEqual(Window().Property(hassettings),true)</visible>
+                <itemlayout width="720" height="76">
+                    <control type="image">
+                        <left>0</left>
+                        <top>4</top>
+                        <width>720</width>
+                        <height>68</height>
+                        <texture border="32">lucent/card.png</texture>
+                        <colordiffuse>00FFFFFF</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>4</top>
+                        <width>420</width>
+                        <height>68</height>
+                        <font>font12</font>
+                        <textcolor>FFDCE2E7</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(label)]</label>
+                    </control>
+                    <control type="label">
+                        <left>420</left>
+                        <top>4</top>
+                        <width>276</width>
+                        <height>68</height>
+                        <font>font12</font>
+                        <textcolor>FF8F9BA6</textcolor>
+                        <align>right</align>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(value)]</label>
+                        <visible>!String.IsEqual(ListItem.Property(type),bool) + !String.IsEqual(ListItem.Property(hide_value),True) + !String.IsEqual(ListItem.Property(has_action),True)</visible>
+                    </control>
+                    <control type="image">
+                        <left>620</left>
+                        <top>22</top>
+                        <width>76</width>
+                        <height>30</height>
+                        <texture>lucent/toggle_on.png</texture>
+                        <colordiffuse>FFFFFFFF</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(type),bool) + [String.IsEqual(ListItem.Property(value),True) | String.IsEqual(ListItem.Property(value),true)]</visible>
+                    </control>
+                    <control type="image">
+                        <left>620</left>
+                        <top>22</top>
+                        <width>76</width>
+                        <height>30</height>
+                        <texture>lucent/toggle_off.png</texture>
+                        <colordiffuse>FFBDC8D1</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(type),bool) + ![String.IsEqual(ListItem.Property(value),True) | String.IsEqual(ListItem.Property(value),true)]</visible>
+                    </control>
+                    <control type="image">
+                        <left>656</left>
+                        <top>20</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture>lucent/icon_chevron_right.png</texture>
+                        <colordiffuse>FF8F9BA6</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(has_action),True)</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="720" height="76" condition="!Control.HasFocus(1000)">
+                    <control type="image">
+                        <left>0</left>
+                        <top>4</top>
+                        <width>720</width>
+                        <height>68</height>
+                        <texture border="32">lucent/card.png</texture>
+                        <colordiffuse>14FFFFFF</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>4</top>
+                        <width>420</width>
+                        <height>68</height>
+                        <font>font12</font>
+                        <textcolor>FFDCE2E7</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(label)]</label>
+                    </control>
+                    <control type="label">
+                        <left>420</left>
+                        <top>4</top>
+                        <width>276</width>
+                        <height>68</height>
+                        <font>font12</font>
+                        <textcolor>FF8F9BA6</textcolor>
+                        <align>right</align>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(value)]</label>
+                        <visible>!String.IsEqual(ListItem.Property(type),bool) + !String.IsEqual(ListItem.Property(hide_value),True) + !String.IsEqual(ListItem.Property(has_action),True)</visible>
+                    </control>
+                    <control type="image">
+                        <left>620</left>
+                        <top>22</top>
+                        <width>76</width>
+                        <height>30</height>
+                        <texture>lucent/toggle_on.png</texture>
+                        <colordiffuse>FFFFFFFF</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(type),bool) + [String.IsEqual(ListItem.Property(value),True) | String.IsEqual(ListItem.Property(value),true)]</visible>
+                    </control>
+                    <control type="image">
+                        <left>620</left>
+                        <top>22</top>
+                        <width>76</width>
+                        <height>30</height>
+                        <texture>lucent/toggle_off.png</texture>
+                        <colordiffuse>FFBDC8D1</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(type),bool) + ![String.IsEqual(ListItem.Property(value),True) | String.IsEqual(ListItem.Property(value),true)]</visible>
+                    </control>
+                    <control type="image">
+                        <left>656</left>
+                        <top>20</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture>lucent/icon_chevron_right.png</texture>
+                        <colordiffuse>FF8F9BA6</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(has_action),True)</visible>
+                    </control>
+                </focusedlayout>
+                <focusedlayout width="720" height="76" condition="Control.HasFocus(1000)">
+                    <control type="image">
+                        <left>0</left>
+                        <top>4</top>
+                        <width>720</width>
+                        <height>68</height>
+                        <texture border="32">lucent/card.png</texture>
+                        <colordiffuse>$INFO[Window(Home).Property(lucent.seren.focus)]</colordiffuse>
+                    </control>
+                    <control type="label">
+                        <left>24</left>
+                        <top>4</top>
+                        <width>420</width>
+                        <height>68</height>
+                        <font>font12</font>
+                        <textcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(label)]</label>
+                    </control>
+                    <control type="label">
+                        <left>420</left>
+                        <top>4</top>
+                        <width>276</width>
+                        <height>68</height>
+                        <font>font12</font>
+                        <textcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</textcolor>
+                        <align>right</align>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(value)]</label>
+                        <visible>!String.IsEqual(ListItem.Property(type),bool) + !String.IsEqual(ListItem.Property(hide_value),True) + !String.IsEqual(ListItem.Property(has_action),True)</visible>
+                    </control>
+                    <control type="image">
+                        <left>620</left>
+                        <top>22</top>
+                        <width>76</width>
+                        <height>30</height>
+                        <texture>lucent/toggle_on.png</texture>
+                        <colordiffuse>$INFO[Window(Home).Property(lucent.seren.onfocus)]</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(type),bool) + [String.IsEqual(ListItem.Property(value),True) | String.IsEqual(ListItem.Property(value),true)]</visible>
+                    </control>
+                    <control type="image">
+                        <left>620</left>
+                        <top>22</top>
+                        <width>76</width>
+                        <height>30</height>
+                        <texture>lucent/toggle_off.png</texture>
+                        <colordiffuse>$INFO[Window(Home).Property(lucent.seren.onfocus)]</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(type),bool) + ![String.IsEqual(ListItem.Property(value),True) | String.IsEqual(ListItem.Property(value),true)]</visible>
+                    </control>
+                    <control type="image">
+                        <left>656</left>
+                        <top>20</top>
+                        <width>36</width>
+                        <height>36</height>
+                        <texture>lucent/icon_chevron_right.png</texture>
+                        <colordiffuse>$INFO[Window(Home).Property(lucent.seren.onfocus)]</colordiffuse>
+                        <visible>String.IsEqual(ListItem.Property(has_action),True)</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="image">
+                <left>844</left>
+                <top>156</top>
+                <width>1020</width>
+                <height>840</height>
+                <texture border="88">lucent/panel_shadow.png</texture>
+                <colordiffuse>99000000</colordiffuse>
+            </control>
+            <control type="image">
+                <left>884</left>
+                <top>196</top>
+                <width>940</width>
+                <height>760</height>
+                <texture border="48">lucent/panel.png</texture>
+                <colordiffuse>E0162532</colordiffuse>
+            </control>
+            <control type="image">
+                <left>884</left>
+                <top>196</top>
+                <width>940</width>
+                <height>760</height>
+                <texture border="48">lucent/panel_edge.png</texture>
+                <colordiffuse>2EFFFFFF</colordiffuse>
+            </control>
+            <control type="label">
+                <left>924</left>
+                <top>222</top>
+                <width>400</width>
+                <height>44</height>
+                <font>font12</font>
+                <textcolor>FFBDC8D1</textcolor>
+                <aligny>center</aligny>
+                <label>[UPPERCASE][B]Providers[/B][/UPPERCASE]</label>
+            </control>
+            <control type="label">
+                <left>1384</left>
+                <top>222</top>
+                <width>400</width>
+                <height>44</height>
+                <font>font12</font>
+                <textcolor>FF8F9BA6</textcolor>
+                <align>right</align>
+                <aligny>center</aligny>
+                <label>$INFO[Container(2000).NumItems]</label>
+            </control>
+            <control type="panel" id="2000">
+                <left>904</left>
+                <top>276</top>
+                <width>900</width>
+                <height>660</height>
+                <orientation>vertical</orientation>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <onleft condition="String.IsEqual(Window().Property(hassettings),true)">1000</onleft>
+                <onleft>noop</onleft>
+                <onright>noop</onright>
+                <ondown>3000</ondown>
+                <onup>3000</onup>
+                <itemlayout width="300" height="112">
+                    <control type="group">
+                        <left>6</left>
+                        <top>6</top>
+                        <width>288</width>
+                        <height>100</height>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>288</width>
+                            <height>100</height>
+                            <texture border="32">lucent/card.png</texture>
+                            <colordiffuse>0FFFFFFF</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>26</top>
+                            <width>48</width>
+                            <height>48</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture>$INFO[ListItem.Property(provider.icon)]</texture>
+                            <visible>!String.IsEmpty(ListItem.Property(provider.icon))</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>12</top>
+                            <width>196</width>
+                            <height>44</height>
+                            <font>font12</font>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <aligny>center</aligny>
+                            <label>[B]$INFO[ListItem.Label][/B]</label>
+                            <visible>String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>12</top>
+                            <width>196</width>
+                            <height>44</height>
+                            <font>font12</font>
+                            <textcolor>FF6F7C88</textcolor>
+                            <aligny>center</aligny>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>!String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>52</top>
+                            <width>120</width>
+                            <height>34</height>
+                            <font>font12</font>
+                            <textcolor>FF6F7C88</textcolor>
+                            <aligny>center</aligny>
+                            <label>[UPPERCASE]$INFO[ListItem.Property(provider_type)][/UPPERCASE]</label>
+                        </control>
+                        <control type="image">
+                            <left>206</left>
+                            <top>56</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <texture>lucent/toggle_on.png</texture>
+                            <colordiffuse>FFFFFFFF</colordiffuse>
+                            <visible>String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="image">
+                            <left>206</left>
+                            <top>56</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <texture>lucent/toggle_off.png</texture>
+                            <colordiffuse>FF8F9BA6</colordiffuse>
+                            <visible>!String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="300" height="112" condition="!Control.HasFocus(2000)">
+                    <control type="group">
+                        <left>6</left>
+                        <top>6</top>
+                        <width>288</width>
+                        <height>100</height>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>288</width>
+                            <height>100</height>
+                            <texture border="32">lucent/card.png</texture>
+                            <colordiffuse>1FFFFFFF</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>26</top>
+                            <width>48</width>
+                            <height>48</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture>$INFO[ListItem.Property(provider.icon)]</texture>
+                            <visible>!String.IsEmpty(ListItem.Property(provider.icon))</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>12</top>
+                            <width>196</width>
+                            <height>44</height>
+                            <font>font12</font>
+                            <textcolor>FFFFFFFF</textcolor>
+                            <aligny>center</aligny>
+                            <label>[B]$INFO[ListItem.Label][/B]</label>
+                            <visible>String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>12</top>
+                            <width>196</width>
+                            <height>44</height>
+                            <font>font12</font>
+                            <textcolor>FF6F7C88</textcolor>
+                            <aligny>center</aligny>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>!String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>52</top>
+                            <width>120</width>
+                            <height>34</height>
+                            <font>font12</font>
+                            <textcolor>FF6F7C88</textcolor>
+                            <aligny>center</aligny>
+                            <label>[UPPERCASE]$INFO[ListItem.Property(provider_type)][/UPPERCASE]</label>
+                        </control>
+                        <control type="image">
+                            <left>206</left>
+                            <top>56</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <texture>lucent/toggle_on.png</texture>
+                            <colordiffuse>FFFFFFFF</colordiffuse>
+                            <visible>String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="image">
+                            <left>206</left>
+                            <top>56</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <texture>lucent/toggle_off.png</texture>
+                            <colordiffuse>FF8F9BA6</colordiffuse>
+                            <visible>!String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                    </control>
+                </focusedlayout>
+                <focusedlayout width="300" height="112" condition="Control.HasFocus(2000)">
+                    <control type="group">
+                        <left>6</left>
+                        <top>6</top>
+                        <width>288</width>
+                        <height>100</height>
+                        <animation effect="zoom" start="96" end="100" center="auto" time="150" tween="cubic" easing="out">Focus</animation>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>288</width>
+                            <height>100</height>
+                            <texture border="32">lucent/card.png</texture>
+                            <colordiffuse>$INFO[Window(Home).Property(lucent.seren.focus)]</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>26</top>
+                            <width>48</width>
+                            <height>48</height>
+                            <aspectratio>keep</aspectratio>
+                            <texture>$INFO[ListItem.Property(provider.icon)]</texture>
+                            <visible>!String.IsEmpty(ListItem.Property(provider.icon))</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>12</top>
+                            <width>196</width>
+                            <height>44</height>
+                            <font>font12</font>
+                            <textcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</textcolor>
+                            <aligny>center</aligny>
+                            <scroll>true</scroll>
+                            <label>[B]$INFO[ListItem.Label][/B]</label>
+                            <visible>String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>12</top>
+                            <width>196</width>
+                            <height>44</height>
+                            <font>font12</font>
+                            <textcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</textcolor>
+                            <aligny>center</aligny>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>!String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="label">
+                            <left>80</left>
+                            <top>52</top>
+                            <width>120</width>
+                            <height>34</height>
+                            <font>font12</font>
+                            <textcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</textcolor>
+                            <aligny>center</aligny>
+                            <label>[UPPERCASE]$INFO[ListItem.Property(provider_type)][/UPPERCASE]</label>
+                        </control>
+                        <control type="image">
+                            <left>206</left>
+                            <top>56</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <texture>lucent/toggle_on.png</texture>
+                            <colordiffuse>$INFO[Window(Home).Property(lucent.seren.onfocus)]</colordiffuse>
+                            <visible>String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                        <control type="image">
+                            <left>206</left>
+                            <top>56</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <texture>lucent/toggle_off.png</texture>
+                            <colordiffuse>$INFO[Window(Home).Property(lucent.seren.onfocus)]</colordiffuse>
+                            <visible>!String.IsEqual(ListItem.Property(status),enabled)</visible>
+                        </control>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+        <control type="grouplist" id="3000">
+            <left>96</left>
+            <top>980</top>
+            <width>1728</width>
+            <height>64</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>12</itemgap>
+            <onup>2000</onup>
+            <ondown>2000</ondown>
+            <control type="button" id="3005">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30246]</label>
+            </control>
+            <control type="button" id="3006">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30247]</label>
+            </control>
+            <control type="button" id="3001">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30242]</label>
+            </control>
+            <control type="button" id="3003">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30244]</label>
+            </control>
+            <control type="button" id="3002">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30243]</label>
+            </control>
+            <control type="button" id="3004">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>$ADDON[plugin.video.seren 30245]</label>
+            </control>
+            <control type="button" id="2999">
+                <width>auto</width>
+                <height>60</height>
+                <font>font12</font>
+                <textoffsetx>24</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>FFFFFFFF</textcolor>
+                <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                <pulseonselect>false</pulseonselect>
+                <label>[B]$ADDON[plugin.video.seren 30623][/B]</label>
+            </control>
+        </control>
+    </controls>
+</window>

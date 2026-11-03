@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent theme for Seren - Persistent background -->
+<window type="dialog">
+    <!-- colours: the Lucent skin's own (its colour theme) or Lucent's default glass colours -->
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,on_focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,glow,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,FFFFFFFF,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,FF0B1119,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,66D6F0FF,home)</onload>
+    <coordinates>
+        <left>0</left>
+        <top>0</top>
+        <width>1920</width>
+        <height>1080</height>
+    </coordinates>
+    <animation effect="fade" time="400">WindowOpen</animation>
+
+    <controls>
+        <!-- Cinematic backdrop -->
+        <control type="group">
+            <control type="image">
+                <texture>lucent/white.png</texture>
+                <colordiffuse>FF0B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <aspectratio>scale</aspectratio>
+                <texture background="true">$INFO[Window().Property(item.art.fanart)]</texture>
+                <animation effect="zoom" start="100" end="110" center="960,540" time="24000" tween="sine" easing="inout" reversible="false" condition="!Skin.HasSetting(lucent.lite)">Conditional</animation>
+            </control>
+            <control type="image">
+                <width>1500</width>
+                <texture>lucent/grad_left.png</texture>
+                <colordiffuse>F50B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <top>440</top>
+                <height>640</height>
+                <texture>lucent/grad_bottom.png</texture>
+                <colordiffuse>FF0B1119</colordiffuse>
+            </control>
+            <control type="image">
+                <texture>lucent/vignette.png</texture>
+                <colordiffuse>99000000</colordiffuse>
+            </control>
+        </control>
+
+        <!-- Clearlogo -->
+        <control type="image">
+            <animation effect="fade" time="400" condition="!String.IsEmpty(Window().Property(item.art.clearlogo))">Conditional</animation>
+            <left>96</left>
+            <top>96</top>
+            <width>560</width>
+            <height>220</height>
+            <aspectratio align="left" aligny="bottom">keep</aspectratio>
+            <texture>$INFO[Window().Property(item.art.clearlogo)]</texture>
+            <visible>!String.IsEmpty(Window().Property(item.art.clearlogo))</visible>
+        </control>
+
+        <!-- Title fallback -->
+        <control type="textbox">
+            <left>96</left>
+            <top>196</top>
+            <width>760</width>
+            <height>120</height>
+            <font>font37</font>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>bottom</aligny>
+            <label>[B]$INFO[Window().Property(item.info.tvshowtitle)][/B]</label>
+            <visible>String.IsEmpty(Window().Property(item.art.clearlogo)) + !String.IsEmpty(Window().Property(item.info.season))</visible>
+        </control>
+        <control type="textbox">
+            <left>96</left>
+            <top>196</top>
+            <width>760</width>
+            <height>120</height>
+            <font>font37</font>
+            <textcolor>FFFFFFFF</textcolor>
+            <aligny>bottom</aligny>
+            <label>[B]$INFO[Window().Property(item.info.title)][/B]</label>
+            <visible>String.IsEmpty(Window().Property(item.art.clearlogo)) + String.IsEmpty(Window().Property(item.info.season))</visible>
+        </control>
+
+        <!-- Notification as a glass pill -->
+        <control type="group">
+            <animation effect="fade" time="300">VisibleChange</animation>
+            <left>96</left>
+            <top>920</top>
+            <width>1100</width>
+            <height>64</height>
+            <visible>!String.IsEmpty(Window().Property(notification_text))</visible>
+
+            <control type="grouplist">
+                <orientation>horizontal</orientation>
+                <width>1100</width>
+                <height>64</height>
+                <control type="button">
+                    <width>auto</width>
+                    <height>64</height>
+                    <font>font12</font>
+                    <textoffsetx>30</textoffsetx>
+                    <aligny>center</aligny>
+                    <textcolor>FFDCE2E7</textcolor>
+                    <disabledcolor>FFDCE2E7</disabledcolor>
+                    <texturenofocus border="32" colordiffuse="CC162532">lucent/pill64.png</texturenofocus>
+                    <texturefocus border="32" colordiffuse="CC162532">lucent/pill64.png</texturefocus>
+                    <enable>false</enable>
+                    <label>$INFO[Window().Property(notification_text)]</label>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

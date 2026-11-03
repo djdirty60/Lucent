@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent theme for Seren - $ADDON[plugin.video.seren 30559] -->
+<window>
+    <!-- colours: the Lucent skin's own (its colour theme) or Lucent's default glass colours -->
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,on_focus,home)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,glow,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.focus,FFFFFFFF,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.onfocus,FF0B1119,home)</onload>
+    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">SetProperty(lucent.seren.glow,66D6F0FF,home)</onload>
+    <onload>Dialog.Close(fullscreeninfo,true)</onload>
+    <onload>Dialog.Close(videoosd,true)</onload>
+    <defaultcontrol always="true">3001</defaultcontrol>
+
+    <controls>
+        <!-- Dim the video a little -->
+        <control type="image">
+            <top>540</top>
+            <height>540</height>
+            <texture>lucent/grad_bottom.png</texture>
+            <colordiffuse>CC000000</colordiffuse>
+            <animation effect="fade" start="0" end="100" time="400">WindowOpen</animation>
+            <animation effect="fade" end="0" time="300">WindowClose</animation>
+        </control>
+        <control type="group">
+            <right>64</right>
+            <bottom>72</bottom>
+            <width>860</width>
+            <height>292</height>
+
+            <animation type="WindowOpen" reversible="false">
+                <effect type="fade" start="0" end="100" time="300" tween="cubic" easing="out"/>
+                <effect type="slide" start="120,0" end="0,0" time="400" tween="cubic" easing="out"/>
+            </animation>
+            <animation type="WindowClose" reversible="false">
+                <effect type="fade" start="100" end="0" time="250"/>
+                <effect type="slide" start="0,0" end="120,0" time="300" tween="cubic" easing="in"/>
+            </animation>
+
+            <!-- Glass card -->
+            <control type="image">
+                <left>-40</left>
+                <top>-40</top>
+                <width>940</width>
+                <height>372</height>
+                <texture border="88">lucent/panel_shadow.png</texture>
+                <colordiffuse>B3000000</colordiffuse>
+            </control>
+            <control type="image">
+                <texture border="48">lucent/panel.png</texture>
+                <colordiffuse>EB162532</colordiffuse>
+            </control>
+            <control type="image">
+                <texture border="48">lucent/panel_edge.png</texture>
+                <colordiffuse>2EFFFFFF</colordiffuse>
+            </control>
+
+            <!-- Thumbnail (rounded) -->
+            <control type="group">
+                <left>28</left>
+                <top>28</top>
+                <width>320</width>
+                <height>180</height>
+                <control type="image">
+                    <texture diffuse="lucent/thumb_mask.png">lucent/white.png</texture>
+                    <colordiffuse>FF22303C</colordiffuse>
+                </control>
+                <control type="image">
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="lucent/thumb_mask.png">$INFO[Window.Property(item.art.thumb)]</texture>
+                    <visible>!String.IsEmpty(Window.Property(item.art.thumb))</visible>
+                </control>
+                <control type="image">
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="lucent/thumb_mask.png">$INFO[Window.Property(item.art.landscape)]</texture>
+                    <visible>String.IsEmpty(Window.Property(item.art.thumb)) + !String.IsEmpty(Window.Property(item.art.landscape))</visible>
+                </control>
+                <control type="image">
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="lucent/thumb_mask.png">$INFO[Window.Property(item.art.fanart)]</texture>
+                    <visible>String.IsEmpty(Window.Property(item.art.thumb)) + String.IsEmpty(Window.Property(item.art.landscape))</visible>
+                </control>
+            </control>
+
+            <!-- Text -->
+            <control type="group">
+                <left>376</left>
+                <top>30</top>
+                <width>456</width>
+                <control type="label">
+                    <top>0</top>
+                    <width>360</width>
+                    <height>36</height>
+                    <font>font12</font>
+                    <textcolor>FFBDC8D1</textcolor>
+                    <label>[UPPERCASE]Kijk je nog?[/UPPERCASE]</label>
+                </control>
+                <control type="label">
+                    <top>42</top>
+                    <width>456</width>
+                    <height>40</height>
+                    <font>font12</font>
+                    <textcolor>FFDCE2E7</textcolor>
+                    <label>[B]S$INFO[Window.Property(item.info.season)] · E$INFO[Window.Property(item.info.episode)][/B]$INFO[Window.Property(item.info.rating),   ★ ,]</label>
+                    <visible>!String.IsEmpty(Window.Property(item.info.season))</visible>
+                </control>
+                <control type="textbox">
+                    <top>84</top>
+                    <width>456</width>
+                    <height>96</height>
+                    <font>font27</font>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <label>[B]$INFO[Window.Property(item.info.title)][/B]</label>
+                </control>
+            </control>
+
+            <!-- Buttons -->
+            <control type="grouplist">
+                <left>28</left>
+                <top>216</top>
+                <width>804</width>
+                <height>60</height>
+                <orientation>horizontal</orientation>
+                <align>right</align>
+                <itemgap>14</itemgap>
+                <control type="button" id="3001">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font12</font>
+                    <textoffsetx>30</textoffsetx>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                    <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                    <pulseonselect>false</pulseonselect>
+                    <label>[B]$ADDON[plugin.video.seren 30560][/B]</label>
+                </control>
+                <control type="button" id="3002">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font12</font>
+                    <textoffsetx>30</textoffsetx>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                    <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                    <pulseonselect>false</pulseonselect>
+                    <label>[B]$ADDON[plugin.video.seren 30459][/B]</label>
+                </control>
+                <control type="button" id="3003">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font12</font>
+                    <textoffsetx>30</textoffsetx>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>$INFO[Window(Home).Property(lucent.seren.onfocus)]</focusedcolor>
+                    <texturefocus border="30" colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="24FFFFFF">lucent/pill60.png</texturenofocus>
+                    <pulseonselect>false</pulseonselect>
+                    <label>[B]$ADDON[plugin.video.seren 30561][/B]</label>
+                </control>
+            </control>
+
+            <!-- Countdown bar along the bottom edge -->
+            <control type="progress" id="3014">
+                <left>48</left>
+                <bottom>0</bottom>
+                <width>764</width>
+                <height>4</height>
+                <reveal>true</reveal>
+                <lefttexture></lefttexture>
+                <righttexture></righttexture>
+                <overlaytexture></overlaytexture>
+                <texturebg colordiffuse="1FFFFFFF">lucent/white.png</texturebg>
+                <midtexture colordiffuse="$INFO[Window(Home).Property(lucent.seren.focus)]">lucent/white.png</midtexture>
+            </control>
+        </control>
+    </controls>
+</window>

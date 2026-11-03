@@ -28,6 +28,7 @@ if [ "$VARIANT" = old ]; then rm -rf $K/addons/script.lucent.library; cp -r ci/o
 mkdir -p "$K/userdata/addon_data/script.lucent.library/movies/Test Film (2020)"
 echo 'plugin://plugin.video.seren/?action=getSources&action_args=%7B%22mediatype%22%3A+%22movie%22%2C+%22trakt_id%22%3A+4242%7D&forceresumecheck=true' > "$K/userdata/addon_data/script.lucent.library/movies/Test Film (2020)/Test Film (2020).strm"
 cp -r ci/fakerealseren $K/addons/plugin.video.seren
+mkdir -p /tmp/ci/serentheme && cp -r ci/serentheme/resources /tmp/ci/serentheme/ && mkdir -p $K/addons/plugin.video.seren/resources/language && cp -r ci/serentheme/resources/language/* $K/addons/plugin.video.seren/resources/language/
 cp -r ci/packs/* $K/addons/
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
