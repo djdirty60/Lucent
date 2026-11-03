@@ -15835,6 +15835,7 @@
 
 
 
+
     <!-- ==== Home: own screens for tabs without rows (tabpanels.py) ==== -->
     <expression name="LucentPCal">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),agenda.py)</expression>
     <expression name="LucentPTv">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) | [String.StartsWith(Container(9000).ListItem.Property(w1.path),pvr://channels/tv) + String.IsEmpty(Container(9000).ListItem.Property(w2.path))]] + String.Contains(Container(9000).ListItem.Property(act),scripts/tv.py)</expression>
@@ -16125,8 +16126,7 @@
                 <control type="group">
                     <left>770</left><top>170</top>
                     <visible>!String.IsEmpty(Window(home).Property(lucent.sol.img))</visible>
-                    <control type="image"><left>0</left><top>0</top><width>820</width><height>287</height><aspectratio>keep</aspectratio><fadetime>300</fadetime><texture background="true">$INFO[Window(home).Property(lucent.sol.img)]</texture><colordiffuse>F2FFFFFF</colordiffuse></control>
-                    <control type="image"><left>-2</left><top>0</top><width>150</width><height>287</height><texture>grad_left.png</texture><colordiffuse>bg</colordiffuse></control>
+                    <control type="image"><left>0</left><top>0</top><width>820</width><height>287</height><aspectratio>stretch</aspectratio><fadetime>300</fadetime><texture background="true" diffuse="sol_mask.png">$INFO[Window(home).Property(lucent.sol.img)]</texture><colordiffuse>F2FFFFFF</colordiffuse></control>
                 </control>
                 <control type="group">
                     <left>160</left><top>150</top>
