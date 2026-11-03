@@ -659,6 +659,8 @@ def export(con, started, manual):
             os.makedirs(directory, exist_ok=True)
             changed = write_if_changed(os.path.join(directory, f"{folder}.strm"), strm_url(r["args"]) + "\n")
             art, cast = ({}, []) if (USE_SCRAPER and r["tmdb"]) else movie_art_cast(con, r["trakt"])
+            if not (USE_SCRAPER and r["tmdb"]) and not (art or {}).get("poster") and r["tmdb"]:
+                art, cast = _tmdb_movie(r["tmdb"], art, cast)
             nfo = nfo_of(r["trakt"], r["tmdb"], r["imdb"], r["info"], art, cast, r["watched"], r["collected_at"])
             changed = write_if_changed(os.path.join(directory, f"{folder}.nfo"), nfo) or changed
             written += 1 if changed else 0
@@ -721,7 +723,18 @@ def export_shows(con, started, manual):
             os.makedirs(root, exist_ok=True)
             own_nfo = not (USE_SCRAPER and show.get("tmdb_id"))
             details = show_extras(con, show) if own_nfo else {}
-            changed += 1 if write_if_changed(os.path.join(root, "tvshow.nfo"), tvshow_nfo(show)) else 0
+            filled = False
+            if own_nfo:
+                try:
+                    import tmdbart
+                    filled = tmdbart.fill_show(show)          # Seren has no pictures of it (yet): TMDb's
+                except Exception as error:  # noqa: BLE001
+                    log(f"series {sid} artwork: {error}")
+            if write_if_changed(os.path.join(root, "tvshow.nfo"), tvshow_nfo(show)):
+                changed += 1
+                if filled:
+                    REFRESH["tv"].add(folder)
+            stills = show.get("stills") or {}
             skipped = quick.skip_codes(state, sid)                       # taken out by you (Options > Remove)
             for trakt_id, season, number, args, watched, collected_at in show["episodes"]:
                 if skipped and (f"S{int(season):02d}" in skipped or f"S{int(season):02d}E{int(number):02d}" in skipped):
@@ -736,6 +749,8 @@ def export_shows(con, started, manual):
                 b = False
                 if own_nfo:
                     info, art = details.get(trakt_id) or ((show.get("new_info") or {}).get(trakt_id, {}), {})
+                    if not (art or {}).get("thumb") and stills.get(f"S{int(season):02d}E{int(number):02d}"):
+                        art = dict(art or {}, thumb=stills[f"S{int(season):02d}E{int(number):02d}"])
                     b = write_if_changed(nfo_path, episode_nfo(show, trakt_id, season, number, info, art, watched, collected_at))
                 elif os.path.exists(nfo_path):
                     os.remove(nfo_path)
@@ -837,6 +852,74 @@ def source_path(special):
 
 def source_added(special=OUT_SPECIAL):
     return bool(source_path(special))
+
+
+REFRESH = {"tv": set(), "movies": set()}       # folders whose .nfo got TMDb pictures: Kodi re-reads those after the scan
+
+
+def _tmdb_movie(tmdb_id, art, cast):
+    try:
+        import tmdbart
+        extra = tmdbart.movie(tmdb_id)
+    except Exception as error:  # noqa: BLE001
+        log(f"film {tmdb_id} artwork: {error}")
+        return art, cast
+    if not extra:
+        return art, cast
+    merged = dict(extra.get("art") or {}, **{k: v for k, v in (art or {}).items() if v})
+    return merged, cast or extra.get("cast") or []
+
+
+def refresh_folders(kind, folders, limit=25):
+    """Kodi keeps the pictures it read the first time: let it read the .nfo of these titles again."""
+    if not folders:
+        return 0
+    method, field, idname, refresh = (("VideoLibrary.GetTVShows", "tvshows", "tvshowid", "VideoLibrary.RefreshTVShow")
+                                      if kind == "tv" else ("VideoLibrary.GetMovies", "movies", "movieid", "VideoLibrary.RefreshMovie"))
+    done = 0
+    for item in rpc(method, {"properties": ["file"]}).get(field, []):
+        f = item.get("file", "").replace("\\", "/").rstrip("/") + "/"
+        if ADDON_ID not in f:
+            continue
+        if any(f"/{folder}/" in f for folder in folders):
+            params = {idname: item[idname], "ignorenfo": False}
+            if kind == "tv":
+                params["refreshepisodes"] = True
+            rpc(refresh, params)
+            done += 1
+            if done >= limit:
+                break
+    if done:
+        log(f"refreshed {done} {kind} title(s) with new pictures")
+    return done
+
+
+def refresh_artless(kind, limit=15):
+    """Titles of ours that Kodi shows without a poster (it read an .nfo without pictures before): read them again."""
+    method, field, idname, refresh = (("VideoLibrary.GetTVShows", "tvshows", "tvshowid", "VideoLibrary.RefreshTVShow")
+                                      if kind == "tv" else ("VideoLibrary.GetMovies", "movies", "movieid", "VideoLibrary.RefreshMovie"))
+    done = 0
+    for item in rpc(method, {"properties": ["file", "art"]}).get(field, []):
+        if ADDON_ID not in item.get("file", "") or (item.get("art") or {}).get("poster"):
+            continue
+        f = xbmcvfs.translatePath(item["file"])
+        nfo = os.path.join(f, "tvshow.nfo") if kind == "tv" else os.path.splitext(f)[0] + ".nfo"
+        try:
+            with open(nfo, encoding="utf-8") as handle:
+                if 'aspect="poster"' not in handle.read():
+                    continue                         # no picture to read either: leave it
+        except OSError:
+            continue
+        params = {idname: item[idname], "ignorenfo": False}
+        if kind == "tv":
+            params["refreshepisodes"] = True
+        rpc(refresh, params)
+        done += 1
+        if done >= limit:
+            break
+    if done:
+        log(f"refreshed {done} {kind} title(s) that had no poster")
+    return done
 
 
 def _scanning():
@@ -981,6 +1064,11 @@ def _run(manual):
     title = "Lucent Bibliotheek" if NL else "Lucent Library"
     started = time.time()
     try:
+        import tmdbart
+        tmdbart.reset_budget(40)                 # at most 40 titles a run get their pictures from TMDb (the rest next run)
+    except Exception:  # noqa: BLE001
+        pass
+    try:
         con = _connect()
     except RuntimeError:
         if manual:
@@ -1019,6 +1107,19 @@ def _run(manual):
     for key in ("movies", "tv"):
         if paths[key]:
             scanned = scan(paths[key]) or scanned
+    for key in ("movies", "tv"):
+        if paths[key] and REFRESH[key]:
+            try:
+                refresh_folders(key, REFRESH[key])
+            except Exception as error:  # noqa: BLE001
+                log(f"refresh: {error}")
+            REFRESH[key].clear()
+        if paths[key]:
+            try:
+                wait_idle(600)
+                refresh_artless(key)
+            except Exception as error:  # noqa: BLE001
+                log(f"refresh artless: {error}")
     if scanned:
         home = xbmcgui.Window(10000)
         home.setProperty("lucent.lib.syncing", str(time.time()))   # service.py: these marks come from Trakt, do not send back

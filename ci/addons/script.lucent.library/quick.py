@@ -151,8 +151,9 @@ def movie_files(trakt, trakt_id):
             "mpaa": m.get("certification"), "premiered": m.get("released"), "tagline": m.get("tagline"),
             "trailer": m.get("trailer"), "rating": m.get("rating"), "votes": m.get("votes"),
             "duration": (m.get("runtime") or 0) * 60}
+    art, cast = lib._tmdb_movie(ids.get("tmdb"), {}, []) if ids.get("tmdb") else ({}, [])   # pictures right away
     lib.write_if_changed(os.path.join(directory, f"{folder}.nfo"),
-                         lib.nfo_of(int(trakt_id), ids.get("tmdb"), ids.get("imdb"), info, {}, [], False, None))
+                         lib.nfo_of(int(trakt_id), ids.get("tmdb"), ids.get("imdb"), info, art, cast, False, None))
     return folder, title
 
 
@@ -168,6 +169,12 @@ def show_files(trakt, trakt_id):
                      "mpaa": s.get("certification"), "premiered": s.get("first_aired"), "status": s.get("status"),
                      "rating": s.get("rating"), "votes": s.get("votes")},
             "art": {}, "cast": [], "episodes": [], "season_art": {}}
+    try:
+        import tmdbart
+        tmdbart.fill_show(show)                          # poster, backdrop, logo, cast, season posters, stills
+    except Exception as error:  # noqa: BLE001
+        log(f"artwork: {error}")
+    stills = show.get("stills") or {}
     lib.write_if_changed(os.path.join(root, "tvshow.nfo"), lib.tvshow_nfo(show))
     now = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(time.time() - lib.EPISODE_WAIT_HOURS * 3600))
     count = 0
@@ -189,8 +196,10 @@ def show_files(trakt, trakt_id):
             if not (lib.USE_SCRAPER and show.get("tmdb_id")):
                 info = {"title": ep.get("title"), "plot": ep.get("overview"), "aired": aired[:10],
                         "duration": (ep.get("runtime") or 0) * 60, "rating": ep.get("rating"), "votes": ep.get("votes")}
+                still = stills.get(f"S{int(number):02d}E{int(ep.get('number') or 0):02d}")
                 lib.write_if_changed(os.path.join(sdir, f"{name}.nfo"),
-                                     lib.episode_nfo(show, args["trakt_id"], number, ep.get("number"), info, {}, False, None))
+                                     lib.episode_nfo(show, args["trakt_id"], number, ep.get("number"), info,
+                                                     {"thumb": still} if still else {}, False, None))
             count += 1
     return folder, title, count
 
@@ -386,6 +395,10 @@ def _run(action, kind, trakt_id, tell_trakt=False):
             if lib.source_added(lib.OUT_SPECIAL if kind == "movie" else lib.TV_SPECIAL):
                 lib.say((f"{title} komt in je bibliotheek{extra}" if NL else f"{title} is going into your library{extra}"), 4000)
                 scan(kind, folder)
+                try:
+                    lib.refresh_folders("movies" if kind == "movie" else "tv", {folder}, limit=1)   # was it there already: new pictures
+                except Exception as error:  # noqa: BLE001
+                    log(f"refresh: {error}")
             else:
                 lib.say(("Klaar - voeg eenmalig de map toe als bron (Lucent Bibliotheek starten)" if NL
                          else "Done - add the folder as a source once (start Lucent Library)"), 6000)

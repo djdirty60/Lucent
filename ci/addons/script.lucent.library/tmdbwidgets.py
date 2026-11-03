@@ -762,8 +762,16 @@ def digital_for(entries, budget=25):
 
 def not_digital_yet(entry, today):
     """True for a film that cannot be streamed yet: its digital release is still to come, or it only came out in
-    cinemas recently (no digital date known). Library titles are always shown."""
+    cinemas recently (no digital date known); for a series: its first episode has not aired yet.
+    Library titles are always shown."""
     file = entry.get("file") or ""
+    if entry.get("type") == "tvshow":
+        # a series: only once its first episode has aired (on TV or on a streaming service); library shows always
+        if (isinstance(entry.get("id"), int) and entry["id"] > 0) or entry.get("tvshowid") or file.startswith("videodb://") \
+                or not file.startswith("plugin://"):
+            return False
+        first = (entry.get("premiered") or entry.get("firstaired") or "")[:10]
+        return bool(first) and first > today
     if entry.get("type") != "movie" or (isinstance(entry.get("id"), int) and entry["id"] > 0) or entry.get("movieid") \
             or ".strm" in file or file.startswith("videodb://") or not file.startswith("plugin://"):
         return False

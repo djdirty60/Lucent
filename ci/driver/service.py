@@ -2366,6 +2366,135 @@ def serentheme_test():
     mon.waitForAbort(2)
 
 
+def pinfo_test():
+    """Speler-info (example 3) over a playing video."""
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    for _ in range(20):
+        if cond("Player.HasVideo"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(5)
+    for _ in range(6):
+        if not cond("System.HasVisibleModalDialog"):
+            break
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Skin.SetBool(nuvio.osdstats)")
+    mon.waitForAbort(6)
+    keys = ["title", "time", "b.res", "b.vc", "b.ac", "b.ch", "b.sub", "t1.big", "t1.sub", "t3.big", "t4.big", "t4.sub", "spark", "t5.big", "t5.bar",
+            "t6.big", "t6.sub", "r.file", "r.loc", "r.cont", "r.rate", "r.res", "r.hdr", "r.fmt", "r.vdec", "r.disp", "r.vq", "r.atrack",
+            "r.afmt", "r.aq", "r.adec", "r.sub", "r.buf", "r.type", "cores", "cores.label", "core0", "m.ct", "m.mem", "m.clk", "m.fps", "m.vq"]
+    log("pinfo: " + json.dumps({k: HOME.getProperty("lucent.pi." + k) for k in keys}, ensure_ascii=False))
+    shot("pinfo-1")
+    mon.waitForAbort(3)
+    shot("pinfo-2")
+    xbmc.executebuiltin("Skin.Reset(nuvio.osdstats)")
+    xbmc.Player().stop()
+    mon.waitForAbort(3)
+
+
+def svc_test():
+    """Streaming service pop-up (example A)."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/service.py,8,Netflix,)")
+    mon.waitForAbort(8)
+    log(f"svc: window={lab('System.CurrentWindow')} focus={lab('System.CurrentControlId')} items={lab('Container(801).NumItems')} "
+        f"label={lab('Container(801).ListItem.Label')!r} row={lab('Window.Property(svc.rowlabel)')!r}")
+    shot("svc-1")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2)
+    shot("svc-2")
+    steps = []
+    for key in ("Up", "Up", "Right", "Select"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(1.2)
+        steps.append(f"{key}:{lab('System.CurrentControlId')}")
+    mon.waitForAbort(5)
+    steps.append(f"kind={lab('Window.Property(svc.kind)')} row={lab('Window.Property(svc.rowlabel)')} items={lab('Container(801).NumItems')}")
+    log(f"svc: nav {steps}")
+    shot("svc-3")
+    for key in ("Down", "Down"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(1)
+    log(f"svc: back down focus={lab('System.CurrentControlId')}")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+
+
+def sportnav_test():
+    """All games: from the list to the scrollbar, the channels and back; stadium photos for awkward names."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import sport_core as sc
+    for name, sport, venue, short in [("Bodø/Glimt", "soccer", "Aspmyra Stadion", "Bodø/Glimt"), ("Shakhtar Donetsk", "soccer", "Arena Lviv", "Shakhtar"),
+                                      ("Galatasaray", "soccer", "", ""), ("Atlético Madrid", "soccer", "", "Atlético"), ("FC Twente", "soccer", "", "Twente"),
+                                      ("Union St.-Gilloise", "soccer", "Stade Joseph Marien", "Union SG")]:
+        try:
+            img, st = sc.stadium_photo(name, sport, venue, short)
+        except Exception as error:  # noqa: BLE001
+            img, st = repr(error), ""
+        log(f"stadium: {name!r} -> {st!r} {img[:90]!r}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/sport.py)")
+    for _ in range(40):
+        mon.waitForAbort(1)
+        if lab("Window.Property(sport.loading)") == "" and int(lab("Container(200).NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(3)
+    win = xbmcgui.Window(xbmcgui.getCurrentWindowDialogId() if cond("System.HasVisibleModalDialog") else xbmcgui.getCurrentWindowId())
+    try:
+        item = win.getControl(200).getSelectedItem()
+        if item is not None and not item.getProperty("ch1name"):
+            for n, (name, sub) in enumerate([("ZIGGO SPORT", "NL · Live"), ("ESPN 1", "NL"), ("VIAPLAY 1", "NL")], 1):
+                item.setProperty(f"ch{n}name", name)
+                item.setProperty(f"ch{n}sub", sub)
+        log(f"sportnav: faked channels on {item.getLabel() if item else None!r}")
+    except Exception as error:  # noqa: BLE001
+        log(f"sportnav: cannot fake channels {error!r}")
+    xbmc.executebuiltin("SetFocus(200)")
+    mon.waitForAbort(1.5)
+    steps = [lab("System.CurrentControlId")]
+    for key in ("Right", "Right", "Down", "Down", "Down", "Up", "Up", "Up", "Left", "Left"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(0.8)
+        steps.append(f"{key}:{lab('System.CurrentControlId')}")
+        if key == "Down" and len(steps) == 4:
+            shot("sportnav-ch")
+    log(f"sportnav: nav {steps} ch1={lab('Container(200).ListItem.Property(ch1name)')!r}")
+    shot("sportnav-end")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def libfix_test():
+    """Library: series hidden until their first episode aired; TMDb pictures helper."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://home/addons/script.lucent.library"))
+    import tmdbwidgets as tw
+    xbmc.executebuiltin("Skin.SetBool(lucent.hide.undigital)")
+    mon.waitForAbort(1)
+    rows = [{"type": "tvshow", "file": "plugin://plugin.video.seren/?action=showSeasons", "premiered": "2026-12-25", "label": "future"},
+            {"type": "tvshow", "file": "plugin://plugin.video.seren/?action=showSeasons", "premiered": "2020-01-01", "label": "aired"},
+            {"type": "tvshow", "file": "videodb://tvshows/titles/5/", "premiered": "2030-01-01", "label": "library"},
+            {"type": "tvshow", "file": "plugin://plugin.video.seren/?x", "premiered": "", "label": "nodate"}]
+    kept = [r["label"] for r in tw.filter_undigital(rows)]
+    log(f"libfix: kept={kept}")
+    xbmc.executebuiltin("Skin.Reset(lucent.hide.undigital)")
+    try:
+        import tmdbart
+        res = tmdbart.show(1001)
+        log(f"libfix: tmdbart keys={sorted(res)} art={sorted((res.get('art') or {}))}")
+        sh = {"tmdb_id": 1002, "art": {}, "cast": [], "season_art": {}}
+        log(f"libfix: fill_show={tmdbart.fill_show(sh)} poster={(sh.get('art') or {}).get('poster','')[:60]!r}")
+        import lib
+        log(f"libfix: refresh_artless tv={lib.refresh_artless('tv')} movies={lib.refresh_artless('movies')}")
+    except Exception as error:  # noqa: BLE001
+        import traceback
+        log(f"libfix: error {error!r} {traceback.format_exc()[-500:]}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2379,7 +2508,10 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    serentheme_test()
+    libfix_test()
+    pinfo_test()
+    svc_test()
+    sportnav_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
