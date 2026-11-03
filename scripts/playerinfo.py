@@ -28,6 +28,20 @@ SPARK_DIR = "special://temp/lucent_pi/"
 def t(en, nl):
     return nl if NL else en
 
+def chan_word(n):
+    return t(f"{n} channel", f"{n} kanaal") if str(n) == "1" else t(f"{n} channels", f"{n} kanalen")
+
+
+def app_volume():
+    """Kodi's own volume in percent (Player.Volume only gives dB)."""
+    try:
+        req = {"jsonrpc": "2.0", "id": 1, "method": "Application.GetProperties", "params": {"properties": ["volume", "muted"]}}
+        res = json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}
+        return res.get("volume"), bool(res.get("muted"))
+    except Exception:
+        return None, xbmc.getCondVisibility("Player.Muted")
+
+
 
 def info(name):
     value = xbmc.getInfoLabel(name)
@@ -490,7 +504,7 @@ def video_tab(v):
     put("v.fps", f"{fps} fps" if fps else "–")
     put("v.scan", v["scan_word"] or "–")
     deint = info("Player.Process(deintmethod)")
-    put("v.deint", deint if deint and deint.lower() not in ("none", "") else t("not needed", "niet nodig"))
+    put("v.deint", deint if deint and deint.lower() not in ("none", "unknown", "") else t("not needed", "niet nodig"))
     bar = {"dolbyvision": "dv", "hdr10": "hdr10", "hdr10plus": "hdr10", "hlg": "hdr10"}.get(hdr, "sdr")
     put("v.hdrbar", bar)
     put("v.hb.dv", "DOLBY VISION" if hdr == "dolbyvision" else "")
@@ -549,7 +563,7 @@ def audio_tab(v):
     # the way of the sound
     put("a.c1k", t("File", "Bestand"))
     put("a.c1", f"{ABADGE.get(acodec, acodec.upper())}" + (" Atmos" if atmos else ""))
-    put("a.c1s", (f"{chs} + " + t("objects", "objecten")) if (atmos or dtsx) and chs else (t(f"{chn} channels", f"{chn} kanalen") if chn else ""))
+    put("a.c1s", (f"{chs} + " + t("objects", "objecten")) if (atmos or dtsx) and chs else (chan_word(chn) if chn else ""))
     put("a.c2k", "Kodi")
     put("a.c2", "passthrough" if passthrough else t("decodes itself", "decodeert zelf"))
     put("a.c2s", t("untouched ✓", "niet aangeraakt ✓") if passthrough else (adec or ""))
@@ -564,7 +578,7 @@ def audio_tab(v):
     cfg_ch = SPEAKER_CONFIG.get(sett.get("audiooutput.channels") if isinstance(sett.get("audiooutput.channels"), int) else -1, "")
     put("a.c5k", t("Speakers", "Luidsprekers"))
     put("a.c5", (chs or cfg_ch) + (" + Atmos" if atmos else " + DTS:X" if dtsx else ""))
-    put("a.c5s", t(f"{chn} channels", f"{chn} kanalen") + (t(" + height", " + hoogte") if (atmos or dtsx) else "") if chn else "")
+    put("a.c5s", chan_word(chn) + (t(" + height", " + hoogte") if (atmos or dtsx) else "") if chn else "")
     # what you hear
     put("a.h1", long_name)
     put("a.h2", "Atmos" if atmos else "")
@@ -574,10 +588,15 @@ def audio_tab(v):
     cfg = {1: t("Fixed", "Vast"), 2: t("Best match", "Beste match"), 3: t("Optimized", "Geoptimaliseerd")}.get(sett.get("audiooutput.config"), "")
     put("a.dev", ("HDMI · " if passthrough and dev and "hdmi" not in dev.lower() else "") + (dev or "–"))
     put("a.cfg", " · ".join(x for x in (cfg, cfg_ch) if x) or "–")
-    vol = info("Player.Volume")
+    vol, muted = app_volume()
+    vol = f"{vol}%" if vol is not None else info("Player.Volume")
     delay = info("Player.AudioDelay")
-    muted = xbmc.getCondVisibility("Player.Muted")
-    put("a.vol", " · ".join(x for x in ((t("muted", "gedempt") if muted else vol), (t("delay ", "vertraging ") + delay) if delay else "") if x) or "–")
+    try:
+        ms = round(float(delay.split()[0].replace(",", ".")) * 1000)
+        delay = t(f"delay {ms} ms", f"vertraging {ms} ms") if ms else t("no delay", "geen vertraging")
+    except (ValueError, IndexError, AttributeError):
+        delay = ""
+    put("a.vol", " · ".join(x for x in ((t("muted", "gedempt") if muted else vol), delay) if x) or "–")
     put("r.aqueue2", f"{aq:.0f}%")
     put("r.aqueue2.bar", step(aq))
     # speakers and bars: the channels this track has

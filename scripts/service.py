@@ -57,6 +57,20 @@ class Service(xbmcgui.WindowXMLDialog):
         label = next((t(en, nl) for k, en, nl in KINDS if k == key), "")
         self.setProperty("svc.rowlabel", label)
         self.setProperty("row", f"plugin://script.lucent.library/?action=tmdbbrowse&list=prov_{self.pid}_{key}")
+        threading.Thread(target=self.to_start, daemon=True).start()
+
+    def to_start(self):
+        """Another list: start at its first title (the list kept the place of the previous one)."""
+        mon = xbmc.Monitor()
+        for _ in range(40):
+            if mon.waitForAbort(0.15) or self.closed:
+                return
+            if not xbmc.getCondVisibility("Container(801).IsUpdating") and xbmc.getCondVisibility("Integer.IsGreater(Container(801).NumItems,0)"):
+                break
+        try:
+            self.getControl(801).selectItem(0)
+        except Exception as error:  # noqa: BLE001
+            xbmc.log(f"[skin.lucent] service.py: back to the first title: {error}", xbmc.LOGINFO)
 
     def onClick(self, cid):
         switch = {701: ("svc.kind", "movie"), 702: ("svc.kind", "tv"), 711: ("svc.cat", "new"), 712: ("svc.cat", "pop"), 713: ("svc.cat", "top")}

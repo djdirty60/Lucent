@@ -2569,6 +2569,80 @@ def pinfo2_test():
     xbmc.Player().stop()
     mon.waitForAbort(2)
 
+def settiles_test():
+    """Settings tab: four columns with 'Wat is er nieuw' and 'Op updates zoeken'."""
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu
+    import tabpanels
+    m = menu.Menu()
+    action = "ActivateWindow(Settings)"
+    if not any(t["action"] == action for t in m.tabs) and len(m.tabs) < menu.NTABS:
+        m.tabs.append({"label": "Settings", "icon": "icons/tv.png", "action": action, "widgets": [], "actionlabel": ""})
+    m.save()
+    tabpanels.update()
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    count = int(lab("Container(9000).NumItems") or 0)
+    idx = None
+    for i in range(count):
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{i})")
+        mon.waitForAbort(0.4)
+        if "ActivateWindow(Settings)" in lab("Container(9000).ListItem.Property(act)"):
+            idx = i
+            break
+    log(f"settiles: tab index={idx}")
+    if idx is None:
+        return
+    mon.waitForAbort(2)
+    n = int(lab("Container(9350).NumItems") or 0)
+    labels = [lab(f"Container(9350).ListItemAbsolute({i}).Label") for i in range(n)]
+    log(f"settiles: items={n} labels={labels} visible={cond('Control.IsVisible(9350)')}")
+    shot("settiles-1")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    moves = []
+    for key in ("Right", "Right", "Right", "Down", "Left"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(1)
+        moves.append(f"{key}:{lab('Container(9350).CurrentItem')}:{lab('Container(9350).ListItem.Label')}")
+    log(f"settiles: moves {moves}")
+    shot("settiles-2")
+    xbmc.executebuiltin("Action(Left)")
+    xbmc.executebuiltin("Action(Left)")
+    xbmc.executebuiltin("Action(Left)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+
+
+def svcreset_test():
+    """Switching a list in the streaming pop-up starts it at the first title again."""
+    xbmc.executebuiltin("RunScript(special://skin/scripts/service.py,8,Netflix,)")
+    mon.waitForAbort(8)
+    xbmc.executebuiltin("SetFocus(801)")
+    mon.waitForAbort(1)
+    for _ in range(4):
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.8)
+    log(f"svcreset: before cat={lab('Window.Property(svc.cat)')} item={lab('Container(801).CurrentItem')} items={lab('Container(801).NumItems')}")
+    for pill in ("702", "713", "701"):
+        xbmc.executebuiltin(f"SetFocus({pill})")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(5)
+        log(f"svcreset: pill {pill} cat={lab('Window.Property(svc.cat)')} item={lab('Container(801).CurrentItem')} items={lab('Container(801).NumItems')}")
+        xbmc.executebuiltin("SetFocus(801)")
+        mon.waitForAbort(1)
+        for _ in range(3):
+            xbmc.executebuiltin("Action(Right)")
+            mon.waitForAbort(0.8)
+        log(f"svcreset: scrolled item={lab('Container(801).CurrentItem')}")
+    shot("svcreset")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2583,6 +2657,8 @@ def main():
     watch("home1", 40)
     shot("1-home")
     pinfo2_test()
+    svcreset_test()
+    settiles_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
