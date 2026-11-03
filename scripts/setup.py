@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Lucent: setup assistant - the most important settings and logins, step by step.
 
-    RunScript(special://skin/scripts/setup.py)          open it (Settings > About > Setup assistant)
+    RunScript(special://skin/scripts/setup.py)          open it (Settings > Lucent > Setup assistant)
     RunScript(special://skin/scripts/setup.py,first)    from Home: only the very first time (Skin.String lucent.setup.done)
 
 Every step says what it is for, shows how it stands right now (green tick / orange note) and has buttons that set it
@@ -172,8 +172,17 @@ def ac_iptv():
         return [(t("Install IPTV Simple Client", "IPTV Simple Client installeren"), lambda: install(IPTV))]
     out = [(t("Xtream login", "Xtream-inlog"), lambda: run("RunScript(special://skin/scripts/xtream.py)")),
            (t("Channel list and guide", "Zenderlijst en gids"), lambda: run(f"Addon.OpenSettings({IPTV})"))]
-    if tv_channels():
-        out.append((t("Open the TV guide", "Tv-gids openen"), lambda: run("ActivateWindow(TVGuide)")))
+    if tv_channels():                       # the window has room for four buttons
+        group = xbmc.getInfoLabel("Skin.String(lucent.guide.group)") or t("none", "geen")
+        out.append((t(f"Favourite group: {group}", f"Favoriete groep: {group}"),
+                    lambda: run("RunScript(special://skin/scripts/guidefav.py,settings)")))
+        try:
+            import channels
+            logos = channels.load().get("logos")
+        except Exception:  # noqa: BLE001
+            logos = False
+        out.append((t("Channel logos: on", "Zenderlogo's: aan") if logos else t("Channel logos: off", "Zenderlogo's: uit"),
+                    lambda: run("RunScript(special://skin/scripts/channels.py,logos)")))
     return out
 
 
@@ -324,6 +333,9 @@ def st_library():
     every = xbmc.getInfoLabel("Skin.String(lucent.lib.every)") or "6"
     when = t("updates by itself every {0} hours", "werkt zichzelf om de {0} uur bij").format(every) if every != "0" \
         else t("does not update by itself", "werkt niet vanzelf bij")
+    lists = xbmc.getInfoLabel("Skin.String(lucent.lib.lists)")
+    if lists:
+        when += t(f"  ·  lists: {lists}", f"  ·  lijsten: {lists}")
     if movies or shows:
         return "ok", t(f"{movies or 0} films, {shows or 0} series  ·  {when}", f"{movies or 0} films, {shows or 0} series  ·  {when}")
     return "todo", t(f"Not filled yet  ·  {when}", f"Nog niet gevuld  ·  {when}")
@@ -334,8 +346,10 @@ def ac_library():
         return [(t("Install", "Installeren"), lambda: install(LIB))]
     every = xbmc.getInfoLabel("Skin.String(lucent.lib.every)") or "6"
     label = t("Automatic: off", "Automatisch: uit") if every == "0" else t(f"Automatic: every {every} h", f"Automatisch: om de {every} uur")
+    lists = xbmc.getInfoLabel("Skin.String(lucent.lib.lists)") or t("off", "uit")
     return [(t("Update now", "Nu bijwerken"), lambda: run(f"RunScript({LIB},update)")),
-            (label, lambda: run(f'Skin.SetString(lucent.lib.every,{EVERY_NEXT.get(every, "6")})'))]
+            (label, lambda: run(f'Skin.SetString(lucent.lib.every,{EVERY_NEXT.get(every, "6")})')),
+            (t(f"My lists as library: {lists}", f"Mijn lijsten als bibliotheek: {lists}"), lambda: run(f"RunScript({LIB},chooselists)"))]
 
 
 def st_look():
@@ -448,16 +462,57 @@ def ac_backup():
             (t("Restore", "Herstellen"), lambda: run("RunScript(special://skin/scripts/backup.py,restore)"))]
 
 
+
+# ----------------------------------------------------------------------------- tabs (only with the Solis add-on)
+SOLIS = "script.solis.dashboard"
+SOLIS_ACTION = f"RunAddon({SOLIS})"
+
+
+def solis_tab():
+    import menu
+    return any(SOLIS in tab["action"] for tab in menu.Menu().tabs)
+
+
+def st_tabs():
+    if solis_tab():
+        return "ok", t("Solis Dashboard has its own tab on Home", "Solis Dashboard heeft een eigen tabblad op Home")
+    return "todo", t("Solis Dashboard is installed but has no tab on Home yet", "Solis Dashboard staat erop, maar heeft nog geen tabblad op Home")
+
+
+def add_solis_tab():
+    import menu
+    m = menu.Menu()
+    if solis_tab():
+        return
+    if len(m.tabs) >= menu.NTABS:
+        xbmcgui.Dialog().ok("Lucent", t("The side menu is full. Remove a tab in Menu and widgets first.",
+                                        "Het zijmenu is vol. Haal eerst een tabblad weg bij Menu en widgets."))
+        return
+    at = next((i for i, tab in enumerate(m.tabs) if tab["action"] in ("AddonBrowser", "ActivateWindow(Settings)")
+               or "AddonBrowser" in tab["action"]), len(m.tabs))
+    start = m.start_tab()
+    m.tabs.insert(at, {"label": "Solis Dashboard", "icon": "icons/sparkle.png", "action": SOLIS_ACTION, "widgets": [], "actionlabel": ""})
+    m.start = start
+    m.save()
+    xbmcgui.Dialog().notification("Lucent", t("Solis Dashboard tab added", "Tabblad Solis Dashboard toegevoegd"), "", 3000, False)
+
+
+def ac_tabs():
+    if solis_tab():
+        return [(t("Menu and widgets", "Menu en widgets"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
+    return [(t("Add a Solis Dashboard tab", "Tabblad Solis Dashboard toevoegen"), add_solis_tab),
+            (t("Menu and widgets", "Menu en widgets"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
+
 STEPS = [
     ("welcome", "icons/sparkle.png", ("Welcome", "Welkom"),
      ("Welcome to Lucent. In a few steps we set up what matters most: Seren with your Trakt account, a TMDb key for "
       "pictures and information, your IPTV channels, subtitles and your own library.\n\nEvery step shows how it stands "
       "right now. Something you do not use, you simply skip. You can open this assistant again later: "
-      "Settings > About > Setup assistant.",
+      "Settings > Lucent > Setup assistant.",
       "Welkom bij Lucent. In een paar stappen zetten we het belangrijkste klaar: Seren met je Trakt-account, een "
       "TMDb-sleutel voor plaatjes en informatie, je IPTV-zenders, ondertitels en je eigen bibliotheek.\n\nBij elke stap "
       "zie je meteen hoe het nu staat. Wat je niet gebruikt, sla je gewoon over. Je kunt deze assistent later opnieuw "
-      "openen: Instellingen > Over > Setup-assistent."), st_welcome, ac_welcome),
+      "openen: Instellingen > Lucent > Setup-assistent."), st_welcome, ac_welcome),
     ("seren", "icons/trakt.png", ("Seren and Trakt", "Seren en Trakt"),
      ("Seren finds the streams and plays films and series. Your Trakt account keeps your lists, your collection and "
       "what you watched - Lucent reads its rows, the calendar and 'Tonight for you' from it.\n\nLink Trakt: a code "
@@ -476,11 +531,13 @@ STEPS = [
      ("For live TV Kodi uses IPTV Simple Client. Have an Xtream login (server address, user name, password)? "
       "Press 'Xtream login': Lucent checks it with the server and sets up IPTV Simple for you - channels, guide and replay. "
       "Got an M3U and EPG link instead? Fill those in under 'Channel list and guide'.\n\nAfter that Lucent shows the TV "
-      "guide, the Sport tab and live scores on the channels.",
+      "guide, the Sport tab and live scores on the channels. 'Favourite group' opens first in the guide and fills the TV tab "
+      "on Home; 'Channel logos' puts clean logos (tv-logos) in place of your provider's.",
       "Voor live tv gebruikt Kodi IPTV Simple Client. Heb je een Xtream-login (serveradres, gebruikersnaam, wachtwoord)? "
       "Druk op 'Xtream-inlog': Lucent controleert hem bij de server en stelt IPTV Simple voor je in - zenders, gids en "
       "terugkijken. Heb je een M3U- en EPG-link? Vul die in bij 'Zenderlijst en gids'.\n\nDaarna toont Lucent de tv-gids, "
-      "de Sport-tab en live standen bij de zenders."),
+      "de Sport-tab en live standen bij de zenders. 'Favoriete groep' opent als eerste in de gids en vult het tv-tabblad "
+      "op Home; 'Zenderlogo's' zet nette logo's (tv-logos) in plaats van die van je aanbieder."),
      st_iptv, ac_iptv),
     ("play", "icons/videosettings.png", ("Picture and sound", "Beeld en geluid"),
      ("Three things that make watching smoother. A bigger buffer: Kodi loads more of the stream ahead, so it stutters less "
@@ -519,11 +576,20 @@ STEPS = [
       "Bij 'Gesproken taal' kies je met welk geluid een film start (eerste en tweede keuze)."), st_subs, ac_subs),
     ("library", "icons/library.png", ("Lucent Library", "Lucent Bibliotheek"),
      ("Lucent Library turns your Trakt collection into Kodi's own library: films and series with their own pages, "
-      "'Continue watching' and 'Next episode' rows, and scores.\n\nImportant: first load your whole collection in Seren "
+      "'Continue watching' and 'Next episode' rows, and scores. Trakt caps the collection: with 'My lists as library' your own "
+      "Trakt lists (for example a film list and a series list) come in too, without that limit.\n\nImportant: first load your whole collection in Seren "
       "(Movies > My movies and TV shows > My shows) until everything is in, then press 'Update now'.",
       "Lucent Bibliotheek maakt van je Trakt-collectie de eigen bibliotheek van Kodi: films en series met eigen pagina's, "
-      "rijen 'Verder kijken' en 'Volgende aflevering', en scores.\n\nBelangrijk: laad eerst je hele collectie in Seren "
+      "rijen 'Verder kijken' en 'Volgende aflevering', en scores. Trakt heeft een limiet op de collectie: met 'Mijn lijsten als "
+      "bibliotheek' komen ook je eigen Trakt-lijsten erbij (bijvoorbeeld een filmlijst en een serielijst), zonder die limiet.\n\nBelangrijk: laad eerst je hele collectie in Seren "
       "(Films > Mijn films en Series > Mijn series) tot alles binnen is, en druk dan op 'Nu bijwerken'."), st_library, ac_library),
+    ("tabs", "icons/layout.png", ("Tabs", "Tabbladen"),
+     ("Solis Dashboard (for solar panels with Solis voor Homey) can get its own tab on Home: it shows the numbers of now - "
+      "solar panels, house, grid, today and this month - and OK opens the dashboard.\n\nOther tabs you add, move or remove "
+      "in Menu and widgets.",
+      "Solis Dashboard (voor zonnepanelen met Solis voor Homey) kan een eigen tabblad op Home krijgen: dat laat de cijfers "
+      "van nu zien - zonnepanelen, huis, net, vandaag en deze maand - en OK opent het dashboard.\n\nAndere tabbladen voeg "
+      "je toe, verplaats je of haal je weg bij Menu en widgets."), st_tabs, ac_tabs),
     ("look", "icons/palette.png", ("Look", "Weergave"),
      ("Light mode keeps Lucent quick on boxes with 2 GB of memory or less (fewer rows, no poster glow) - Lucent switches "
       "it on by itself on such boxes. 'Tonight for you' is a row on Home with titles that fit the moment of the day.\n\n"
@@ -545,6 +611,10 @@ STEPS = [
       "netwerkmap; na een nieuwe installatie (of op een tweede box) zet 'Herstellen' alles terug.\n\nIn het bestand staan je "
       "inlogs (Trakt, IPTV): houd het voor jezelf."), st_backup, ac_backup),
 ]
+
+
+if not cond(f"System.AddonIsEnabled({SOLIS})"):          # the Tabs step is only for the Solis add-on for now
+    STEPS = [step for step in STEPS if step[0] != "tabs"]
 
 
 class Setup(xbmcgui.WindowXMLDialog):
@@ -644,7 +714,7 @@ class Setup(xbmcgui.WindowXMLDialog):
         self.closing = True
         xbmc.executebuiltin(f'Skin.SetString({DONE},"1")')
         if later:
-            xbmcgui.Dialog().notification("Lucent", t("Setup assistant: Settings > About", "Setup-assistent: Instellingen > Over"),
+            xbmcgui.Dialog().notification("Lucent", t("Setup assistant: Settings > Lucent", "Setup-assistent: Instellingen > Lucent"),
                                           "special://skin/resources/icon.png", 4000, False)
         self.close()
 

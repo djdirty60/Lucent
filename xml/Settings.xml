@@ -123,18 +123,26 @@
             </focusedlayout>
             <content>
                 <item>
-                    <label>$LOCALIZE[31068]</label>
-                    <icon>icons/play.png</icon>
-                    <property name="cat">player</property>
-                    <property name="sub">$LOCALIZE[31260]</property>
+                    <label>Lucent</label>
+                    <icon>icons/sparkle.png</icon>
+                    <property name="cat">lucent</property>
+                    <property name="sub">$LOCALIZE[31767]</property>
                     <onclick>SetFocus(9100,0,absolute)</onclick>
                 </item>
                 <item>
-                    <label>$LOCALIZE[31069]</label>
-                    <icon>icons/library.png</icon>
-                    <property name="cat">media</property>
-                    <property name="sub">$LOCALIZE[31267]</property>
+                    <label>$LOCALIZE[31764]</label>
+                    <icon>icons/play.png</icon>
+                    <property name="cat">watch</property>
+                    <property name="sub">$LOCALIZE[31768]</property>
                     <onclick>SetFocus(9100,0,absolute)</onclick>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31765]</label>
+                    <icon>icons/movies.png</icon>
+                    <property name="cat">seren</property>
+                    <property name="sub">$LOCALIZE[31769]</property>
+                    <onclick>SetFocus(9100,0,absolute)</onclick>
+                    <visible>System.HasAddon(plugin.video.seren) | System.HasAddon(script.lucent.library)</visible>
                 </item>
                 <item>
                     <label>$LOCALIZE[31273]</label>
@@ -142,27 +150,12 @@
                     <property name="cat">pvr</property>
                     <property name="sub">$LOCALIZE[31274]</property>
                     <onclick>SetFocus(9100,0,absolute)</onclick>
-                    <visible>PVR.HasTVChannels | System.HasPVRAddon</visible>
-                </item>
-                <item>
-                    <label>$LOCALIZE[31070]</label>
-                    <icon>icons/palette.png</icon>
-                    <property name="cat">interface</property>
-                    <property name="sub">$LOCALIZE[31281]</property>
-                    <onclick>SetFocus(9100,0,absolute)</onclick>
                 </item>
                 <item>
                     <label>$LOCALIZE[31071]</label>
                     <icon>icons/settings.png</icon>
                     <property name="cat">system</property>
-                    <property name="sub">$LOCALIZE[31287]</property>
-                    <onclick>SetFocus(9100,0,absolute)</onclick>
-                </item>
-                <item>
-                    <label>$LOCALIZE[31072]</label>
-                    <icon>icons/cloud.png</icon>
-                    <property name="cat">services</property>
-                    <property name="sub">$LOCALIZE[31295]</property>
+                    <property name="sub">$LOCALIZE[31770]</property>
                     <onclick>SetFocus(9100,0,absolute)</onclick>
                 </item>
                 <item>
@@ -180,32 +173,10 @@
                     <onclick>SetFocus(9100,0,absolute)</onclick>
                 </item>
                 <item>
-                    <label>$LOCALIZE[31065]</label>
-                    <icon>icons/info.png</icon>
-                    <property name="cat">info</property>
-                    <property name="sub">$LOCALIZE[31314]</property>
-                    <onclick>SetFocus(9100,0,absolute)</onclick>
-                </item>
-                <item>
-                    <label>$LOCALIZE[31067]</label>
-                    <icon>icons/sparkle.png</icon>
-                    <property name="cat">lucent</property>
-                    <property name="sub">$LOCALIZE[31317]</property>
-                    <onclick>SetFocus(9100,0,absolute)</onclick>
-                </item>
-                <item>
-                    <label>Seren</label>
-                    <icon>icons/movies.png</icon>
-                    <property name="cat">seren</property>
-                    <property name="sub">$LOCALIZE[31322]</property>
-                    <onclick>SetFocus(9100,0,absolute)</onclick>
-                    <visible>System.HasAddon(plugin.video.seren)</visible>
-                </item>
-                <item>
-                    <label>$LOCALIZE[31138]</label>
+                    <label>$LOCALIZE[31766]</label>
                     <icon>icons/info.png</icon>
                     <property name="cat">about</property>
-                    <property name="sub">$LOCALIZE[31329]</property>
+                    <property name="sub">$LOCALIZE[31771]</property>
                     <onclick>SetFocus(9101,0,absolute)</onclick>
                 </item>
             </content>
@@ -454,81 +425,153 @@
                 </focusedlayout>
                 <content>
                     <item>
+                        <label>$LOCALIZE[31067]</label>
+                        <label2>$LOCALIZE[31318]</label2>
+                        <icon>icons/sparkle.png</icon>
+                        <onclick>ActivateWindow(SkinSettings)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31105]</label>
+                        <label2>$LOCALIZE[31319]</label2>
+                        <icon>icons/layout.png</icon>
+                        <onclick>RunScript(special://skin/scripts/menu.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31654]</label>
+                        <label2>$LOCALIZE[31655]</label2>
+                        <icon>icons/power.png</icon>
+                        <onclick>RunScript(special://skin/scripts/powermenu.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31656]</label>
+                        <label2>$LOCALIZE[31657]</label2>
+                        <icon>icons/tv.png</icon>
+                        <onclick>RunScript(special://skin/scripts/streamedit.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + System.HasAddon(script.lucent.library)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31654]</label>
+                        <label2>$LOCALIZE[31655]</label2>
+                        <icon>icons/power.png</icon>
+                        <onclick>RunScript(special://skin/scripts/powermenu.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31649]</label>
+                        <label2>$LOCALIZE[31650]</label2>
+                        <icon>icons/view.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
+                        <onclick>RunScript(special://skin/scripts/settings.py,litebuild)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + !Skin.HasSetting(lucent.lite)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31648]</label>
+                        <label2>$LOCALIZE[31650]</label2>
+                        <icon>icons/view.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
+                        <onclick>RunScript(special://skin/scripts/settings.py,litebuild)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + Skin.HasSetting(lucent.lite)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31628]</label>
+                        <label2>$LOCALIZE[31629]</label2>
+                        <icon>icons/lock.png</icon>
+                        <onclick>RunScript(special://skin/scripts/kids.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31622]</label>
+                        <label2>$LOCALIZE[31623]</label2>
+                        <icon>icons/sparkle.png</icon>
+                        <onclick>RunScript(special://skin/scripts/setup.py)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[14215]</label>
                         <label2>$LOCALIZE[31261]</label2>
                         <icon>icons/videosettings.png</icon>
                         <onclick>ActivateWindow(PlayerSettings,videoplayer)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),player)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31772]</label>
+                        <label2>$LOCALIZE[31773]</label2>
+                        <icon>icons/subtitles.png</icon>
+                        <onclick>Addon.OpenSettings(service.subtitles.lucent)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31774]</label>
+                        <label2>$LOCALIZE[31775]</label2>
+                        <icon>icons/search.png</icon>
+                        <onclick>RunScript(special://skin/scripts/subs_live.py,mode)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[287]</label>
                         <label2>$LOCALIZE[31262]</label2>
                         <icon>icons/subtitles.png</icon>
                         <onclick>ActivateWindow(PlayerSettings,subtitles)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),player)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[14218]</label>
                         <label2>$LOCALIZE[31263]</label2>
                         <icon>icons/globe.png</icon>
                         <onclick>ActivateWindow(PlayerSettings,language)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),player)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14216]</label>
-                        <label2>$LOCALIZE[31264]</label2>
-                        <icon>icons/music.png</icon>
-                        <onclick>ActivateWindow(PlayerSettings,musicplayer)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),player)</visible>
+                        <label>$LOCALIZE[31667]</label>
+                        <label2>$LOCALIZE[31777]</label2>
+                        <icon>icons/audio.png</icon>
+                        <onclick>RunScript(special://skin/scripts/subs_live.py,audio)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14087]</label>
-                        <label2>$LOCALIZE[31265]</label2>
-                        <icon>icons/disc.png</icon>
-                        <onclick>ActivateWindow(PlayerSettings,discs)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),player)</visible>
+                        <label>$LOCALIZE[31778]</label>
+                        <label2>$LOCALIZE[31779]</label2>
+                        <icon>icons/play.png</icon>
+                        <onclick>Addon.OpenSettings(plugin.video.tidb)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.tidb)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14217]</label>
-                        <label2>$LOCALIZE[31266]</label2>
-                        <icon>icons/pictures.png</icon>
-                        <onclick>ActivateWindow(PlayerSettings,pictures)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),player)</visible>
+                        <label>$LOCALIZE[31323]</label>
+                        <label2>$LOCALIZE[31324]</label2>
+                        <icon>icons/settings.png</icon>
+                        <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14202]</label>
-                        <label2>$LOCALIZE[31268]</label2>
-                        <icon>icons/library.png</icon>
-                        <onclick>ActivateWindow(MediaSettings,library)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),media)</visible>
+                        <label>$LOCALIZE[31325]</label>
+                        <label2>$LOCALIZE[31326]</label2>
+                        <icon>icons/user.png</icon>
+                        <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,accounts)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14215]</label>
-                        <label2>$LOCALIZE[31269]</label2>
-                        <icon>icons/movies.png</icon>
-                        <onclick>ActivateWindow(MediaSettings,video)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),media)</visible>
+                        <label>$LOCALIZE[31327]</label>
+                        <label2>$LOCALIZE[31328]</label2>
+                        <icon>icons/play.png</icon>
+                        <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,playback)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14216]</label>
-                        <label2>$LOCALIZE[31270]</label2>
-                        <icon>icons/music.png</icon>
-                        <onclick>ActivateWindow(MediaSettings,music)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),media)</visible>
+                        <label>$LOCALIZE[31780]</label>
+                        <label2>$LOCALIZE[31781]</label2>
+                        <icon>icons/refresh.png</icon>
+                        <onclick>RunScript(script.lucent.library,update)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(script.lucent.library)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[14217]</label>
-                        <label2>$LOCALIZE[31271]</label2>
-                        <icon>icons/pictures.png</icon>
-                        <onclick>ActivateWindow(MediaSettings,pictures)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),media)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[16000]</label>
-                        <label2>$LOCALIZE[31272]</label2>
-                        <icon>icons/files.png</icon>
-                        <onclick>ActivateWindow(MediaSettings,filelists)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),media)</visible>
+                        <label>$LOCALIZE[31760]</label>
+                        <label2>$LOCALIZE[31782]</label2>
+                        <icon>icons/list.png</icon>
+                        <onclick>RunScript(script.lucent.library,chooselists)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(script.lucent.library)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31632]</label>
@@ -543,6 +586,20 @@
                         <icon>icons/tv.png</icon>
                         <onclick>RunScript(special://skin/scripts/channels.py)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31783]</label>
+                        <label2>$LOCALIZE[31784]</label2>
+                        <icon>icons/tv.png</icon>
+                        <onclick>RunScript(special://skin/scripts/channels.py,logos)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr) + System.HasAddon(pvr.iptvsimple)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31785]</label>
+                        <label2>$INFO[Skin.String(lucent.guide.group),★  ,  ·  ]$LOCALIZE[31786]</label2>
+                        <icon>icons/star.png</icon>
+                        <onclick>RunScript(special://skin/scripts/guidefav.py,settings)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr) + Pvr.HasTVChannels</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31638]</label>
@@ -601,45 +658,17 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),pvr)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[166]</label>
-                        <label2>$LOCALIZE[31282]</label2>
-                        <icon>icons/view.png</icon>
-                        <onclick>ActivateWindow(InterfaceSettings,skin)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),interface)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[14222]</label>
-                        <label2>$LOCALIZE[31283]</label2>
-                        <icon>icons/globe.png</icon>
-                        <onclick>ActivateWindow(InterfaceSettings,regional)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),interface)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[360]</label>
-                        <label2>$LOCALIZE[31284]</label2>
-                        <icon>icons/clock.png</icon>
-                        <onclick>ActivateWindow(InterfaceSettings,screensaver)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),interface)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[14224]</label>
-                        <label2>$LOCALIZE[31285]</label2>
-                        <icon>icons/home.png</icon>
-                        <onclick>ActivateWindow(InterfaceSettings,other)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),interface)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[12360]</label>
-                        <label2>$LOCALIZE[31286]</label2>
-                        <icon>icons/lock.png</icon>
-                        <onclick>ActivateWindow(InterfaceSettings,masterlock)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),interface)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[14220]</label>
                         <label2>$LOCALIZE[31288]</label2>
                         <icon>icons/monitor.png</icon>
                         <onclick>ActivateWindow(SystemSettings,display)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31320]</label>
+                        <label2>$LOCALIZE[31321]</label2>
+                        <icon>icons/monitor.png</icon>
+                        <onclick>ActivateWindow(ScreenCalibration)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
                     </item>
                     <item>
@@ -664,17 +693,52 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[14223]</label>
+                        <label2>$LOCALIZE[31297]</label2>
+                        <icon>icons/remote.png</icon>
+                        <onclick>ActivateWindow(ServiceSettings,control)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[14222]</label>
+                        <label2>$LOCALIZE[31283]</label2>
+                        <icon>icons/globe.png</icon>
+                        <onclick>ActivateWindow(InterfaceSettings,regional)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[360]</label>
+                        <label2>$LOCALIZE[31284]</label2>
+                        <icon>icons/clock.png</icon>
+                        <onclick>ActivateWindow(InterfaceSettings,screensaver)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[14224]</label>
+                        <label2>$LOCALIZE[31285]</label2>
+                        <icon>icons/home.png</icon>
+                        <onclick>ActivateWindow(InterfaceSettings,other)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[166]</label>
+                        <label2>$LOCALIZE[31282]</label2>
+                        <icon>icons/view.png</icon>
+                        <onclick>ActivateWindow(InterfaceSettings,skin)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[12360]</label>
+                        <label2>$LOCALIZE[31286]</label2>
+                        <icon>icons/lock.png</icon>
+                        <onclick>ActivateWindow(InterfaceSettings,masterlock)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[14095]</label>
                         <label2>$LOCALIZE[31292]</label2>
                         <icon>icons/power.png</icon>
                         <onclick>ActivateWindow(SystemSettings,powermanagement)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[24001]</label>
-                        <label2>$LOCALIZE[31293]</label2>
-                        <icon>icons/addons.png</icon>
-                        <onclick>ActivateWindow(SystemSettings,addons)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
                     </item>
                     <item>
@@ -699,45 +763,24 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system) + System.HasAddon(service.libreelec.settings)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[16000]</label>
-                        <label2>$LOCALIZE[31296]</label2>
-                        <icon>icons/info.png</icon>
-                        <onclick>ActivateWindow(ServiceSettings,general)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),services)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[14223]</label>
-                        <label2>$LOCALIZE[31297]</label2>
-                        <icon>icons/remote.png</icon>
-                        <onclick>ActivateWindow(ServiceSettings,control)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),services)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[20187]</label>
-                        <label2>$LOCALIZE[31298]</label2>
-                        <icon>icons/globe.png</icon>
-                        <onclick>ActivateWindow(ServiceSettings,upnp)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),services)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[1273]</label>
-                        <label2>$LOCALIZE[31299]</label2>
-                        <icon>icons/tv.png</icon>
-                        <onclick>ActivateWindow(ServiceSettings,airplay)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),services)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[1200]</label>
-                        <label2>$LOCALIZE[31300]</label2>
-                        <icon>icons/folder.png</icon>
-                        <onclick>ActivateWindow(ServiceSettings,smb)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),services)</visible>
+                        <label>$LOCALIZE[31787]</label>
+                        <label2>$LOCALIZE[31788]</label2>
+                        <icon>icons/settings.png</icon>
+                        <onclick>RunScript(special://skin/scripts/settings.py,kodimore)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),system)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[24998]</label>
                         <label2>$LOCALIZE[31302]</label2>
                         <icon>icons/addons.png</icon>
                         <onclick>ActivateWindow(AddonBrowser,addons://user/,return)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),addons)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31306]</label>
+                        <label2>$LOCALIZE[31307]</label2>
+                        <icon>icons/search.png</icon>
+                        <onclick>ActivateWindow(AddonBrowser,addons://search/,return)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),addons)</visible>
                     </item>
                     <item>
@@ -762,13 +805,6 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),addons)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31306]</label>
-                        <label2>$LOCALIZE[31307]</label2>
-                        <icon>icons/search.png</icon>
-                        <onclick>ActivateWindow(AddonBrowser,addons://search/,return)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),addons)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[31308]</label>
                         <label2>$LOCALIZE[31309]</label2>
                         <icon>icons/settings.png</icon>
@@ -790,13 +826,6 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),files)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31628]</label>
-                        <label2>$LOCALIZE[31629]</label2>
-                        <icon>icons/lock.png</icon>
-                        <onclick>RunScript(special://skin/scripts/kids.py)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),files)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[31625]</label>
                         <label2>$LOCALIZE[31626]</label2>
                         <icon>icons/cloud.png</icon>
@@ -804,111 +833,25 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),files)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31170]</label>
-                        <label2>$LOCALIZE[31315]</label2>
-                        <icon>icons/info.png</icon>
-                        <onclick>ActivateWindow(SystemInfo)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),info)</visible>
+                        <label>$LOCALIZE[14202]</label>
+                        <label2>$LOCALIZE[31268]</label2>
+                        <icon>icons/library.png</icon>
+                        <onclick>ActivateWindow(MediaSettings,library)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),files)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31171]</label>
-                        <label2>$LOCALIZE[31316]</label2>
-                        <icon>icons/doc.png</icon>
-                        <onclick>ActivateWindow(EventLog)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),info)</visible>
+                        <label>$LOCALIZE[14215]</label>
+                        <label2>$LOCALIZE[31269]</label2>
+                        <icon>icons/movies.png</icon>
+                        <onclick>ActivateWindow(MediaSettings,video)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),files)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31634]</label>
-                        <label2>$LOCALIZE[31635]</label2>
-                        <icon>icons/info.png</icon>
-                        <onclick>RunScript(special://skin/scripts/diag.py,test)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),info)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31636]</label>
-                        <label2>$LOCALIZE[31637]</label2>
-                        <icon>icons/lock.png</icon>
-                        <onclick>RunScript(special://skin/scripts/diag.py,log)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),info)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31067]</label>
-                        <label2>$LOCALIZE[31318]</label2>
-                        <icon>icons/sparkle.png</icon>
-                        <onclick>ActivateWindow(SkinSettings)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31105]</label>
-                        <label2>$LOCALIZE[31319]</label2>
-                        <icon>icons/layout.png</icon>
-                        <onclick>RunScript(special://skin/scripts/menu.py)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31656]</label>
-                        <label2>$LOCALIZE[31657]</label2>
-                        <icon>icons/tv.png</icon>
-                        <onclick>RunScript(special://skin/scripts/streamedit.py)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + System.HasAddon(script.lucent.library)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31654]</label>
-                        <label2>$LOCALIZE[31655]</label2>
-                        <icon>icons/power.png</icon>
-                        <onclick>RunScript(special://skin/scripts/powermenu.py)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31622]</label>
-                        <label2>$LOCALIZE[31623]</label2>
-                        <icon>icons/sparkle.png</icon>
-                        <onclick>RunScript(special://skin/scripts/setup.py)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31649]</label>
-                        <label2>$LOCALIZE[31650]</label2>
-                        <icon>icons/view.png</icon>
-                        <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
-                        <onclick>RunScript(special://skin/scripts/settings.py,litebuild)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + !Skin.HasSetting(lucent.lite)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31648]</label>
-                        <label2>$LOCALIZE[31650]</label2>
-                        <icon>icons/view.png</icon>
-                        <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
-                        <onclick>RunScript(special://skin/scripts/settings.py,litebuild)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + Skin.HasSetting(lucent.lite)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31320]</label>
-                        <label2>$LOCALIZE[31321]</label2>
-                        <icon>icons/monitor.png</icon>
-                        <onclick>ActivateWindow(ScreenCalibration)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31323]</label>
-                        <label2>$LOCALIZE[31324]</label2>
-                        <icon>icons/settings.png</icon>
-                        <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31325]</label>
-                        <label2>$LOCALIZE[31326]</label2>
-                        <icon>icons/user.png</icon>
-                        <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,accounts)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31327]</label>
-                        <label2>$LOCALIZE[31328]</label2>
-                        <icon>icons/play.png</icon>
-                        <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,playback)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
+                        <label>$LOCALIZE[16000]</label>
+                        <label2>$LOCALIZE[31272]</label2>
+                        <icon>icons/files.png</icon>
+                        <onclick>ActivateWindow(MediaSettings,filelists)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),files)</visible>
                     </item>
                 </content>
             </control>
@@ -1095,13 +1038,6 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31334]</label>
-                        <label2>$LOCALIZE[31335]</label2>
-                        <icon>icons/download.png</icon>
-                        <onclick>ActivateWindow(SystemSettings,addons)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[31646]</label>
                         <label2>$LOCALIZE[31232]</label2>
                         <icon>icons/refresh.png</icon>
@@ -1114,6 +1050,34 @@
                         <icon>icons/refresh.png</icon>
                         <onclick>Skin.ToggleSetting(nuvio.update.off)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about) + Skin.HasSetting(nuvio.update.off)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31170]</label>
+                        <label2>$LOCALIZE[31315]</label2>
+                        <icon>icons/info.png</icon>
+                        <onclick>ActivateWindow(SystemInfo)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31171]</label>
+                        <label2>$LOCALIZE[31316]</label2>
+                        <icon>icons/doc.png</icon>
+                        <onclick>ActivateWindow(EventLog)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31634]</label>
+                        <label2>$LOCALIZE[31635]</label2>
+                        <icon>icons/info.png</icon>
+                        <onclick>RunScript(special://skin/scripts/diag.py,test)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31636]</label>
+                        <label2>$LOCALIZE[31637]</label2>
+                        <icon>icons/lock.png</icon>
+                        <onclick>RunScript(special://skin/scripts/diag.py,log)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31644]</label>

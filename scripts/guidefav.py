@@ -74,5 +74,41 @@ def open_group(label):
             return
 
 
+def from_settings():
+    """Settings > Live TV: choose the favourite group without opening the guide (Kodi's own list of groups)."""
+    import json
+    import urllib.parse
+    reply = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "PVR.GetChannelGroups",
+                                                        "params": {"channeltype": "tv"}})))
+    names = [g.get("label") or "" for g in (reply.get("result") or {}).get("channelgroups") or [] if g.get("label")]
+    if not names:
+        xbmcgui.Dialog().ok("TV", "Nog geen zendergroepen (eerst de Xtream-inlog)." if NL else "No channel groups yet (Xtream login first).")
+        return
+    current = xbmc.getInfoLabel(f"Skin.String({KEY})")
+    none = "Geen favoriet (Kodi kiest zelf)" if NL else "No favourite (Kodi chooses)"
+    labels = [none] + [f"★  {n}" if n == current else n for n in names]
+    pick = xbmcgui.Dialog().select("Favoriete groep - opent als eerste" if NL else "Favourite group - opens first",
+                                   labels, preselect=names.index(current) + 1 if current in names else 0)
+    if pick < 0:
+        return
+    if pick == 0:
+        xbmc.executebuiltin(f"Skin.Reset({KEY})", True)
+        xbmc.executebuiltin(f"Skin.Reset({PATH_KEY})", True)
+    else:
+        label = names[pick - 1]
+        xbmc.executebuiltin(f'Skin.SetString({KEY},"{label.replace(chr(34), chr(39))}")', True)
+        path = f"pvr://channels/tv/{urllib.parse.quote(label, safe='')}/"     # the guide's own form; the guide corrects it on its next visit
+        xbmc.executebuiltin(f'Skin.SetString({PATH_KEY},"{path}")', True)
+    try:
+        import tabpanels
+        tabpanels.tv_path()
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[Lucent] guidefav: tv tab {error}", xbmc.LOGINFO)
+
+
 if __name__ == "__main__":
-    run()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "settings":
+        from_settings()
+    else:
+        run()

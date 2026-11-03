@@ -2856,6 +2856,65 @@ def solis_test():
     mon.waitForAbort(1)
 
 
+def settings2_test():
+    """Lucent settings in eight categories; setup assistant with the new buttons and the Solis tab step."""
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Addons.SetAddonEnabled", "params": {"addonid": "script.solis.dashboard", "enabled": True}}))
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Settings)")
+    mon.waitForAbort(3)
+    n = int(lab("Container(9000).NumItems") or 0)
+    cats = []
+    for i in range(n):
+        xbmc.executebuiltin(f"SetFocus(9000,{i},absolute)")
+        mon.waitForAbort(0.8)
+        cid = 9101 if lab("Container(9000).ListItem.Property(cat)") == "about" else 9100
+        k = int(lab(f"Container({cid}).NumItems") or 0)
+        cats.append(f"{lab('Container(9000).ListItem.Label')}={k}:" + "|".join(lab(f"Container({cid}).ListItemAbsolute({j}).Label") for j in range(k)))
+        if i in (1, 3, 4, 7):
+            shot(f"set2-{i}")
+    for c in cats:
+        log(f"set2: {c[:400]}")
+    xbmc.executebuiltin("SetFocus(9000,4,absolute)")
+    mon.waitForAbort(0.8)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(0.8)
+    for _ in range(20):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.15)
+    log(f"set2: system last={lab('Container(9100).ListItem.Label')!r}")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2)
+    log(f"set2: more kodi dialog={lab('System.CurrentWindow')!r} heading={lab('Control.GetLabel(1)')!r} items={lab('Container(3).NumItems')}")
+    shot("set2-more")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    # setup assistant
+    xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py)")
+    mon.waitForAbort(4)
+    k = int(lab("Container(100).NumItems") or 0)
+    log(f"set2: setup steps {k}: {[lab(f'Container(100).ListItemAbsolute({j}).Label') for j in range(k)]}")
+    for j in range(k):
+        name = lab(f"Container(100).ListItemAbsolute({j}).Label")
+        if name in ("Live TV (IPTV)", "Lucent Library", "Tabs"):
+            xbmc.executebuiltin(f"SetFocus(100,{j},absolute)")
+            mon.waitForAbort(0.5)
+            xbmc.executebuiltin("Action(Select)")
+            mon.waitForAbort(2)
+            log(f"set2: setup {name}: status={lab('Window.Property(status)')!r} buttons {[lab(f'Window.Property(act{n})') for n in range(1, 5)]}")
+            shot(f"set2-setup-{j}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    import sys as _sys
+    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import setup as _setup
+    _setup.add_solis_tab()
+    import menu
+    log(f"set2: tabs after add {[t['label'] for t in menu.Menu().tabs]}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -2869,7 +2928,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    solis_test()
+    settings2_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

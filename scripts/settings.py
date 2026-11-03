@@ -365,6 +365,19 @@ def lite_build():
     xbmc.executebuiltin("ReloadSkin()")
 
 
+def kodi_more():
+    """Settings > System > More Kodi settings: Kodi's own setting pages that are not in Lucent's menu."""
+    pages = [(("Music player", "Muziekspeler"), "PlayerSettings,musicplayer"), (("Discs (DVD, Blu-ray)", "Schijven (dvd, Blu-ray)"), "PlayerSettings,discs"),
+             (("Pictures and slideshow", "Foto's en diavoorstelling"), "PlayerSettings,pictures"), (("Music library", "Muziekbibliotheek"), "MediaSettings,music"),
+             (("Picture library", "Fotobibliotheek"), "MediaSettings,pictures"), (("Services: name and zeroconf", "Diensten: naam en zeroconf"), "ServiceSettings,general"),
+             (("UPnP / DLNA", "UPnP / DLNA"), "ServiceSettings,upnp"), (("AirPlay", "AirPlay"), "ServiceSettings,airplay"),
+             (("Windows network (SMB)", "Windows-netwerk (SMB)"), "ServiceSettings,smb"), (("Skin, zoom and sounds", "Skin, zoom en geluiden"), "InterfaceSettings,skin"),
+             (("Games", "Games"), "GameSettings")]
+    pick = xbmcgui.Dialog().select(tr(("More Kodi settings", "Meer Kodi-instellingen")), [tr(n) for n, _w in pages])
+    if pick >= 0:
+        xbmc.executebuiltin(f"ActivateWindow({pages[pick][1]})")
+
+
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "sync"
     {
@@ -381,4 +394,5 @@ if __name__ == "__main__":
         "litecheck": lite_check,
         "litebuild": lite_build,
         "scanlogos": scan_logos,
+        "kodimore": kodi_more,
     }.get(what, sync)()
