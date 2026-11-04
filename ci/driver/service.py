@@ -2956,37 +2956,42 @@ def bell56_test():
     mon.waitForAbort(4)
     log(f"bell56: after 2nd click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
     # the real way: the list of series, open one, bell, Back
-    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
-    for _ in range(10):
-        mon.waitForAbort(1)
-        if lab("Container.Content") == "tvshows":
-            break
-    for _ in range(4):
-        if lab("ListItem.Label") == "Lib Show":
-            break
-        xbmc.executebuiltin("Action(Down)")
-        mon.waitForAbort(0.6)
-    view = lab("System.CurrentControlId")
-    log(f"bell56: series list view={view} item={lab('ListItem.Label')!r}")
     for start in ("5614", "5601"):
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
+        for _ in range(10):
+            mon.waitForAbort(1)
+            if lab("Container.Content") == "tvshows":
+                break
+        for _ in range(4):
+            if lab("ListItem.Label") == "Lib Show":
+                break
+            xbmc.executebuiltin("Action(Down)")
+            mon.waitForAbort(0.6)
+        view = lab("System.CurrentControlId")
+        log(f"bell56: series list content={lab('Container.Content')} view={view} item={lab('ListItem.Label')!r}")
         xbmc.executebuiltin("Action(Select)")
-        mon.waitForAbort(4)
+        for _ in range(8):
+            mon.waitForAbort(1)
+            if lab("Container.Content") == "seasons":
+                break
+        mon.waitForAbort(1)
         xbmc.executebuiltin(f"SetFocus({start})")
         mon.waitForAbort(1)
         if start == "5614":
             xbmc.executebuiltin("Action(Select)")
             mon.waitForAbort(3)
+        log(f"bell56: on the season page content={lab('Container.Content')} focus={lab('System.CurrentControlId')}")
         xbmc.executebuiltin("Action(Back)")
         mon.waitForAbort(3)
         after = [f"back:{lab('System.CurrentControlId')}:{lab('Container.Content')}"]
-        for key in ("Right", "Left"):
+        for key in ("Down", "Up", "Right"):
             xbmc.executebuiltin(f"Action({key})")
             mon.waitForAbort(0.8)
-            after.append(f"{key}:{lab('System.CurrentControlId')}")
+            after.append(f"{key}:{lab('System.CurrentControlId')}:{lab('ListItem.Label')}")
         log(f"bell56: back from {start} {after}")
         shot(f"bell56-back-{start}")
-        xbmc.executebuiltin(f"SetFocus({view})")
-        mon.waitForAbort(0.8)
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
