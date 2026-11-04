@@ -2818,6 +2818,9 @@ def tvfav2_test():
 
 def solis_test():
     """Solis Dashboard tab on Home (example C): numbers from the stand-in Homey."""
+    xbmc.executebuiltin('Skin.SetString(lucent.logoask,"1")')
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
     import sys as _sys
     _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
     import menu
