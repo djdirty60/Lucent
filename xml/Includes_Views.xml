@@ -2651,6 +2651,7 @@
                 <onleft>9050</onleft>
                 <onup>5610</onup>
                     <control type="button" id="5611">
+                        <onback>SetFocus(56)</onback>
                         <width>auto</width>
                         <height>64</height>
                         <font>font12_bold</font>
@@ -2664,6 +2665,7 @@
                         <onclick>RunScript(special://skin/scripts/info.py,resumeshow)</onclick>
                     </control>
                     <control type="button" id="5612">
+                        <onback>SetFocus(56)</onback>
                         <width>auto</width>
                         <height>64</height>
                         <font>font12_bold</font>
@@ -2677,6 +2679,7 @@
                     </control>
                     <!-- calendar notification: only for series that still get new seasons (not ended or cancelled) -->
                     <control type="button" id="5614">
+                        <onback>SetFocus(56)</onback>
                         <width>auto</width>
                         <height>64</height>
                         <font>font12_bold</font>
@@ -2691,6 +2694,7 @@
                         <visible>!String.Contains(Container(5698).ListItem.Status,ended) + !String.Contains(Container(5698).ListItem.Status,cancel) + !String.Contains(Container(56).ListItem.Status,ended) + !String.Contains(Container(56).ListItem.Status,cancel) + !String.IsEmpty(Container.ShowTitle)</visible>
                     </control>
                     <control type="button" id="5613">
+                        <onback>SetFocus(56)</onback>
                         <width>auto</width>
                         <height>64</height>
                         <font>font12_bold</font>
@@ -2779,6 +2783,7 @@
                 <height>400</height>
                 <orientation>horizontal</orientation>
                 <onfocus>RunScript(special://skin/scripts/agenda.py,state56)</onfocus>
+                <onback>SetFocus(56)</onback>
                 <onup>56</onup>
                 <onleft>9050</onleft>
                 <scrolltime tween="cubic" easing="out">260</scrolltime>
