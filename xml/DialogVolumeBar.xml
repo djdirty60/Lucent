@@ -1,53 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent: volume (example C) - a card at the bottom with growing blocks; above it a note when the sound goes straight to the
+     amplifier. scripts/volume.py keeps Window(home).Property(lucent.vol.*) up to date while it is open (Kodi gives the volume in dB). -->
 <window>
     <depth>DepthMax</depth>
-    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <onload>RunScript(special://skin/scripts/volume.py)</onload>
+    <animation effect="fade" start="0" end="100" time="160">WindowOpen</animation>
+    <animation effect="slide" start="0,30" end="0,0" time="200" tween="cubic" easing="out">WindowOpen</animation>
     <animation effect="fade" start="100" end="0" time="300">WindowClose</animation>
     <controls>
         <control type="group">
-            <left>1440</left>
-            <top>48</top>
-            <include content="GlassPanel">
-                <param name="left">0</param>
-                <param name="top">0</param>
-                <param name="width">432</param>
-                <param name="height">96</param>
-                <param name="body">modal</param>
-            </include>
-            <control type="image">
-                <left>28</left>
-                <top>24</top>
-                <width>48</width>
-                <height>48</height>
-                <texture colordiffuse="text">icons/audio.png</texture>
-            </control>
-            <control type="progress" id="29999">
-                <left>96</left>
-                <top>45</top>
-                <width>220</width>
-                <height>6</height>
-                <info>Player.Volume</info>
-            </control>
-            <control type="label">
-                <left>320</left>
-                <top>26</top>
-                <width>88</width>
-                <height>44</height>
-                <align>right</align>
-                <font>font12_bold</font>
-                <label>$INFO[Player.Volume]</label>
+            <left>560</left>
+            <top>800</top>
+            <control type="image"><left>-24</left><top>-14</top><width>848</width><height>210</height><texture border="44">rr20_glow.png</texture><colordiffuse>73000000</colordiffuse></control>
+            <control type="image"><left>0</left><top>0</top><width>800</width><height>170</height><texture border="28">pinfo/rr28.png</texture><colordiffuse>EB0E121C</colordiffuse></control>
+            <control type="image"><left>0</left><top>0</top><width>800</width><height>170</height><texture border="28">pinfo/rr28_edge.png</texture><colordiffuse>1AFFFFFF</colordiffuse></control>
+            <control type="image"><left>34</left><top>28</top><width>30</width><height>30</height><aspectratio>keep</aspectratio><texture colordiffuse="$VAR[LucentVolIcon]">icons/audio.png</texture></control>
+            <control type="label"><left>78</left><top>22</top><width>300</width><height>42</height><font>font12_bold</font><textcolor>FFFFFFFF</textcolor><aligny>center</aligny><label>$LOCALIZE[13376]</label></control>
+            <control type="grouplist"><left>366</left><top>14</top><width>400</width><height>56</height><orientation>horizontal</orientation><align>right</align><itemgap>4</itemgap>
                 <visible>!Player.Muted</visible>
+                <control type="label"><width>auto</width><height>56</height><font>font_sol_val</font><textcolor>FFFFFFFF</textcolor><aligny>center</aligny><label>$INFO[Window(home).Property(lucent.vol.pct)]</label></control>
+                <control type="label"><width>auto</width><height>56</height><font>font_sol_ct</font><textcolor>99FFFFFF</textcolor><aligny>center</aligny><label>%</label></control>
             </control>
-            <control type="label">
-                <left>300</left>
-                <top>26</top>
-                <width>108</width>
-                <height>44</height>
-                <align>right</align>
-                <font>font12_bold</font>
-                <textcolor>red</textcolor>
-                <label>$LOCALIZE[31096]</label>
-                <visible>Player.Muted</visible>
+            <control type="label"><left>366</left><top>14</top><width>400</width><height>56</height><font>font12_bold</font><textcolor>FFFF8A8D</textcolor><align>right</align><aligny>center</aligny><label>$LOCALIZE[31096]</label><visible>Player.Muted</visible></control>
+            <control type="image"><left>34</left><top>136</top><width>26</width><height>18</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>34</left><top>136</top><width>26</width><height>18</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),0)</visible></control><control type="image"><left>66</left><top>134</top><width>26</width><height>20</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>66</left><top>134</top><width>26</width><height>20</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),1)</visible></control><control type="image"><left>98</left><top>132</top><width>26</width><height>22</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>98</left><top>132</top><width>26</width><height>22</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),2)</visible></control><control type="image"><left>130</left><top>130</top><width>26</width><height>24</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>130</left><top>130</top><width>26</width><height>24</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),3)</visible></control><control type="image"><left>162</left><top>128</top><width>26</width><height>26</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>162</left><top>128</top><width>26</width><height>26</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),4)</visible></control><control type="image"><left>194</left><top>126</top><width>26</width><height>28</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>194</left><top>126</top><width>26</width><height>28</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),5)</visible></control><control type="image"><left>226</left><top>124</top><width>26</width><height>30</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>226</left><top>124</top><width>26</width><height>30</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),6)</visible></control><control type="image"><left>258</left><top>122</top><width>26</width><height>32</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>258</left><top>122</top><width>26</width><height>32</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),7)</visible></control><control type="image"><left>290</left><top>120</top><width>26</width><height>34</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>290</left><top>120</top><width>26</width><height>34</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),8)</visible></control><control type="image"><left>322</left><top>118</top><width>26</width><height>36</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>322</left><top>118</top><width>26</width><height>36</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),9)</visible></control><control type="image"><left>354</left><top>116</top><width>26</width><height>38</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>354</left><top>116</top><width>26</width><height>38</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),10)</visible></control><control type="image"><left>386</left><top>114</top><width>26</width><height>40</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>386</left><top>114</top><width>26</width><height>40</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),11)</visible></control><control type="image"><left>418</left><top>112</top><width>26</width><height>42</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>418</left><top>112</top><width>26</width><height>42</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),12)</visible></control><control type="image"><left>450</left><top>110</top><width>26</width><height>44</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>450</left><top>110</top><width>26</width><height>44</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),13)</visible></control><control type="image"><left>482</left><top>108</top><width>26</width><height>46</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>482</left><top>108</top><width>26</width><height>46</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),14)</visible></control><control type="image"><left>514</left><top>106</top><width>26</width><height>48</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>514</left><top>106</top><width>26</width><height>48</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),15)</visible></control><control type="image"><left>546</left><top>104</top><width>26</width><height>50</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>546</left><top>104</top><width>26</width><height>50</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),16)</visible></control><control type="image"><left>578</left><top>102</top><width>26</width><height>52</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>578</left><top>102</top><width>26</width><height>52</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),17)</visible></control><control type="image"><left>610</left><top>100</top><width>26</width><height>54</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>610</left><top>100</top><width>26</width><height>54</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),18)</visible></control><control type="image"><left>642</left><top>98</top><width>26</width><height>56</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>642</left><top>98</top><width>26</width><height>56</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),19)</visible></control><control type="image"><left>674</left><top>96</top><width>26</width><height>58</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>674</left><top>96</top><width>26</width><height>58</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),20)</visible></control><control type="image"><left>706</left><top>94</top><width>26</width><height>60</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>706</left><top>94</top><width>26</width><height>60</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),21)</visible></control><control type="image"><left>738</left><top>92</top><width>26</width><height>62</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>738</left><top>92</top><width>26</width><height>62</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),22)</visible></control><control type="image"><left>770</left><top>90</top><width>26</width><height>64</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>26FFFFFF</colordiffuse></control><control type="image"><left>770</left><top>90</top><width>26</width><height>64</height><texture border="5">pinfo/rr6.png</texture><colordiffuse>$VAR[LucentVolFill]</colordiffuse><visible>Integer.IsGreater(Window(home).Property(lucent.vol.seg),23)</visible></control>
+        </control>
+        <!-- sound straight to the amplifier: Kodi's volume does nothing then -->
+        <control type="group">
+            <left>560</left>
+            <top>710</top>
+            <visible>Player.Passthrough</visible>
+            <control type="image"><left>0</left><top>0</top><width>800</width><height>70</height><texture border="24">pinfo/rr22.png</texture><colordiffuse>EB0E121C</colordiffuse></control>
+            <control type="image"><left>0</left><top>0</top><width>800</width><height>70</height><texture border="28">pinfo/rr28_edge.png</texture><colordiffuse>1AFFFFFF</colordiffuse></control>
+            <control type="grouplist"><left>30</left><top>0</top><width>740</width><height>70</height><orientation>horizontal</orientation><itemgap>10</itemgap>
+                <control type="label"><width>auto</width><height>70</height><font>font10_bold</font><textcolor>FF5FE0E0</textcolor><aligny>center</aligny><label>$LOCALIZE[31789]</label></control>
+                <control type="label"><width>auto</width><height>70</height><font>font10</font><textcolor>BFFFFFFF</textcolor><aligny>center</aligny><label>·  $LOCALIZE[31790]</label></control>
             </control>
         </control>
     </controls>

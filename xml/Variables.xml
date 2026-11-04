@@ -58,6 +58,14 @@
         <value condition="!String.IsEmpty(ListItem.EpgEventTitle)">$INFO[ListItem.EpgEventTitle]</value>
         <value>$INFO[ListItem.Title]</value>
     </variable>
+    <variable name="LucentVolFill">
+        <value condition="Player.Muted">CCE5484D</value>
+        <value>FFFFFFFF</value>
+    </variable>
+    <variable name="LucentVolIcon">
+        <value condition="Player.Muted">80FFFFFF</value>
+        <value>FFFFFFFF</value>
+    </variable>
     <variable name="LucentShowInfoPath">
         <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID)">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
         <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItemAbsolute(1).TvShowDBID)">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItemAbsolute(1).TvShowDBID]</value>

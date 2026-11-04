@@ -126,6 +126,8 @@ New episodes are added **one day after they aired** (before that a source often 
 
 **Your own lists as library:** Trakt can cap the collection; your own lists are not capped. In *Use my lists as library* tick the lists you want (for example *Movie collection* and *Series collection* together). Their titles come into the Kodi library next to the collection, and the *Library* row in the lists window on the info page then adds a title to one of those lists instead of the collection (a film to the list with the most films, a series to the one with the most series). A big list fills in over a few runs (episodes of about 60 series per run); if Trakt does not answer, the last copy is used, so nothing disappears.
 
+Long press on a film or series in a row: **Add to my library** puts it in your library list (or the Trakt collection) and in the Kodi library at once. The Home row **New seasons** shows series in your library whose new season starts soon or just started.
+
 Settings: *Skin settings > Integrations > Lucent Library* (update now, update every 6/12/24 hours, watched marks to Trakt, Surprise me, use my lists as library).
 
 ### Also in the home menu
@@ -146,6 +148,12 @@ Player menu → *Statistics* opens a window with three tabs (Left / Right switch
 
 ### Streaming services
 The *Streaming services* row (Lucent Library, TMDb) opens a pop-up per service: the title under the cursor as a big landscape picture with year, genre, rating and plot, *Watch*, *Trailer* and *My list*, and New, Popular and Top lists for films and series. Top shows big numbers.
+
+### Volume
+Changing the volume shows a card at the bottom with the volume in percent and growing blocks (red when muted). When Dolby / DTS goes straight to your amplifier (passthrough), a note says to set the volume there.
+
+### Solis Dashboard tab
+With the add-on Solis Dashboard (Solis voor Homey 3.37.0 or newer) a tab shows the numbers of now: solar panels, house, grid, today, this month, price and advice, the power rings from your Homey, and with a dynamic contract today's hourly prices as bars. OK opens the dashboard.
 
 ### Sleep timer
 The player menu has a moon button: stop after this episode or film, or after 15, 30, 45, 60 or 90 minutes (the next episode does not start by itself). The time left shows under the button.

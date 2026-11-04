@@ -524,6 +524,52 @@
         </control>
     </include>
 
+    <!-- Clock with the weather in front of it (Home): only when a weather add-on is set up in Kodi -->
+    <include name="ClockWeather">
+        <control type="grouplist">
+            <right>96</right>
+            <top>44</top>
+            <width>700</width>
+            <height>44</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>12</itemgap>
+            <usecontrolcoords>true</usecontrolcoords>
+            <visible>!Skin.HasSetting(nuvio.hideclock)</visible>
+            <control type="image">
+                <top>2</top>
+                <width>40</width>
+                <height>40</height>
+                <aspectratio>keep</aspectratio>
+                <texture>$INFO[Weather.ConditionsIcon]</texture>
+                <visible>Weather.IsFetched + !String.IsEmpty(Weather.Temperature)</visible>
+            </control>
+            <control type="label">
+                <width>auto</width>
+                <height>44</height>
+                <font>font_clock</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[Weather.Temperature]</label>
+                <visible>Weather.IsFetched + !String.IsEmpty(Weather.Temperature)</visible>
+            </control>
+            <control type="image">
+                <top>12</top>
+                <width>2</width>
+                <height>22</height>
+                <texture>white.png</texture>
+                <colordiffuse>33FFFFFF</colordiffuse>
+                <visible>Weather.IsFetched + !String.IsEmpty(Weather.Temperature)</visible>
+            </control>
+            <control type="label">
+                <width>auto</width>
+                <height>44</height>
+                <font>font_clock</font>
+                <textcolor>text2</textcolor>
+                <label>$INFO[System.Time]</label>
+            </control>
+        </control>
+    </include>
+
     <!-- Page heading (top-left) -->
     <include name="PageHeading">
         <param name="label"></param>
