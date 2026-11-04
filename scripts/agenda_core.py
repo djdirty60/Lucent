@@ -571,10 +571,8 @@ def season_follow():
     xbmcgui.Dialog().notification(HEADING, tr("following" if now_following else "unfollowed", ref["name"]),
                                   xbmcgui.NOTIFICATION_INFO, 4000)
     xbmc.sleep(150)
-    if xbmc.getCondVisibility("Control.IsVisible(5614)") and not xbmc.getCondVisibility("Control.HasFocus(5614)"):
-        xbmc.executebuiltin("SetFocus(5614)")      # keep the cursor on the button (it got lost after the pop-up)
-    elif not xbmc.getCondVisibility("Control.IsVisible(5614)"):
-        xbmc.executebuiltin("SetFocus(5612)")
+    if xbmc.getCondVisibility("Control.IsVisible(5614) + !Control.HasFocus(5614)"):
+        xbmc.executebuiltin("SetFocus(5614)")      # keep the cursor on the button (only while the season page is there)
 
 
 def follow_button():

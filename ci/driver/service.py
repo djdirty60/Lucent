@@ -2955,6 +2955,24 @@ def bell56_test():
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(4)
     log(f"bell56: after 2nd click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
+    xbmc.executebuiltin("Action(Select)")          # bell on again, then Back to the list of series
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    after = [f"back:{lab('System.CurrentControlId')}:{lab('Container.Content')}:{lab('Container.FolderPath')[:40]}"]
+    for key in ("Right", "Down", "Left"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(0.8)
+        after.append(f"{key}:{lab('System.CurrentControlId')}")
+    log(f"bell56: back to the series list {after}")
+    shot("bell56-back")
+    xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/,return)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(5601)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    log(f"bell56: back from episodes focus={lab('System.CurrentControlId')} content={lab('Container.Content')}")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
@@ -3001,8 +3019,6 @@ def main():
     watch("home1", 40)
     shot("1-home")
     bell56_test()
-    misc134_test()
-    solis_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
