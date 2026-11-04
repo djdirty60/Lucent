@@ -2956,7 +2956,8 @@ def bell56_test():
     mon.waitForAbort(4)
     log(f"bell56: after 2nd click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
     # the real way: the list of series, open one, bell, Back
-    for start in ("5614", "5601"):
+    xbmc.executebuiltin('Skin.SetString(lucent.logoask,"1")')
+    for start in ("5614", "5601", "none"):
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(2)
         xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
@@ -2977,7 +2978,8 @@ def bell56_test():
             if lab("Container.Content") == "seasons":
                 break
         mon.waitForAbort(1)
-        xbmc.executebuiltin(f"SetFocus({start})")
+        if start != "none":
+            xbmc.executebuiltin(f"SetFocus({start})")
         mon.waitForAbort(1)
         if start == "5614":
             xbmc.executebuiltin("Action(Select)")
