@@ -2971,7 +2971,7 @@ def misc134_test():
         xbmc.executebuiltin(f"Action({key})")
         mon.waitForAbort(0.4)
     mon.waitForAbort(0.6)
-    log(f"misc134: volumebar={cond('Window.IsVisible(volumebar)')} pct={HOME.getProperty('lucent.vol.pct')!r} step={HOME.getProperty('lucent.vol.step')!r}")
+    log(f"misc134: volumebar={cond('Window.IsVisible(volumebar)')} pct={HOME.getProperty('lucent.vol.pct')!r} seg={HOME.getProperty('lucent.vol.seg')!r}")
     shot("vol-1")
     xbmc.executebuiltin("Action(Mute)")
     mon.waitForAbort(0.8)

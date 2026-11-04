@@ -1,5 +1,5 @@
 """Lucent: keeps Window(home).Property(lucent.vol.pct / lucent.vol.step) up to date while the volume bar is open
-(DialogVolumeBar.xml runs this on load). Kodi's own Player.Volume is in dB; the pill shows percent."""
+(DialogVolumeBar.xml runs this on load). Kodi's own Player.Volume is in dB; the card shows percent and 24 blocks."""
 import json
 
 import xbmc
@@ -27,7 +27,7 @@ def run():
         while not mon.abortRequested() and gone < 8:
             vol = read()
             HOME.setProperty("lucent.vol.pct", str(vol))
-            HOME.setProperty("lucent.vol.step", str(max(1, round(vol / 2))) if vol > 0 else "0")
+            HOME.setProperty("lucent.vol.seg", str(max(1, round(vol * 24 / 100))) if vol > 0 else "0")   # 24 blocks
             gone = 0 if xbmc.getCondVisibility("Window.IsVisible(volumebar)") else gone + 1
             if mon.waitForAbort(0.08):
                 break
