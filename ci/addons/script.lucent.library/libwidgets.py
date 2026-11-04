@@ -20,6 +20,7 @@ M_PROPS = ["title", "ratings", "art", "plot", "year", "genre", "rating", "playco
            "mpaa", "uniqueid", "dateadded", "lastplayed", "tagline", "studio"]
 E_PROPS = ["title", "ratings", "art", "plot", "season", "episode", "showtitle", "tvshowid", "rating", "playcount", "resume",
            "runtime", "file", "firstaired", "uniqueid", "dateadded", "lastplayed"]
+NL_ROWS = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 S_PROPS = ["title", "ratings", "art", "plot", "year", "genre", "rating", "playcount", "file", "premiered", "mpaa", "uniqueid",
            "dateadded", "lastplayed", "episode", "watchedepisodes", "season", "status", "studio"]
 
@@ -146,7 +147,66 @@ def recent(kind):
                 {"method": "dateadded", "order": "descending"})
 
 
-ROWS = {"continue": continue_watching, "nextup": next_up, "newepisodes": new_episodes, "newin": new_in_collection}
+
+SEASONS_FILE = None
+
+
+def new_seasons(only=""):
+    """Series in your library whose new season starts within 45 days or started in the last 21 (TMDb, kept 12 hours)."""
+    import datetime
+    import os
+    import time
+    import tmdbwidgets
+    global SEASONS_FILE
+    if SEASONS_FILE is None:
+        import lib
+        SEASONS_FILE = os.path.join(lib.DATA, "seasons.json")
+    import lib
+    cache = lib.read_json(SEASONS_FILE, {}) or {}
+    shows = rpc("VideoLibrary.GetTVShows", {"properties": S_PROPS}).get("tvshows", [])
+    today = datetime.date.today()
+    asked, now, out = 0, time.time(), []
+    for show in shows:
+        status = str(show.get("status") or "").lower()
+        if "ended" in status or "cancel" in status:
+            continue                                   # Kodi 21+: the series is finished
+        if "ended" in str((cache.get(str((show.get("uniqueid") or {}).get("tmdb") or "")) or {}).get("status", "")).lower():
+            continue
+        tmdb = str((show.get("uniqueid") or {}).get("tmdb") or "")
+        if not tmdb.isdigit():
+            continue
+        entry = cache.get(tmdb)
+        if (not entry or now - entry.get("t", 0) > 12 * 3600) and asked < 30:
+            asked += 1
+            d = tmdbwidgets.tmdb_get(f"tv/{tmdb}") or {}
+            if d:
+                entry = {"t": now, "next": d.get("next_episode_to_air") or {}, "last": d.get("last_episode_to_air") or {},
+                         "status": d.get("status") or ""}
+                cache[tmdb] = entry
+        if not entry:
+            continue
+        for key, lo, hi, nl_word, en_word in (("next", 0, 45, "vanaf", "from"), ("last", -21, 0, "sinds", "since")):
+            ep = entry.get(key) or {}
+            try:
+                day = datetime.date.fromisoformat(ep.get("air_date") or "")
+            except ValueError:
+                continue
+            delta = (day - today).days
+            if ep.get("episode_number") == 1 and (ep.get("season_number") or 0) > 1 and lo <= delta <= hi:
+                when = f"{day.day}-{day.month}"
+                show = dict(show)
+                show["seasonnote"] = (f"Seizoen {ep['season_number']} {nl_word} {when}" if NL_ROWS
+                                      else f"Season {ep['season_number']} {en_word} {when}")
+                show["seasonday"] = abs(delta)
+                show["plot"] = show["seasonnote"] + (" – " + show["plot"] if show.get("plot") else "")
+                out.append(("tvshow", show))
+                break
+    lib.write_json(SEASONS_FILE, cache)
+    out.sort(key=lambda x: x[1]["seasonday"])
+    return out[:LIMIT]
+
+ROWS = {"continue": continue_watching, "nextup": next_up, "newepisodes": new_episodes, "newin": new_in_collection,
+        "newseasons": new_seasons}
 FILTERS = {"unwatched": unwatched, "short": short, "recent": recent}
 
 
@@ -199,6 +259,9 @@ def listitem(kind, d):
             li.setProperty("NewEpisodes", str(d["newcount"]))
         if d.get("status"):
             tag.setTvShowStatus(d["status"])
+        if d.get("seasonnote"):
+            li.setLabel2(d["seasonnote"])
+            li.setProperty("seasonnote", d["seasonnote"])
     resume = d.get("resume") or {}
     if resume.get("position"):
         tag.setResumePoint(float(resume["position"]), float(resume.get("total") or 0))

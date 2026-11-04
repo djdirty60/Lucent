@@ -2838,7 +2838,7 @@ def solis_test():
             break
         mon.waitForAbort(1)
     mon.waitForAbort(3)
-    keys = ["big", "p1", "p2", "p3", "advice", "img", "hint", "err"] + [f"{n}.{k}" for n in range(1, 7) for k in ("t", "v", "s")]
+    keys = ["big", "p1", "p2", "p3", "advice", "img", "hint", "err", "pr.on", "pr.label", "pr.12.h", "pr.13.c", "pr.19.c"] + [f"{n}.{k}" for n in range(1, 7) for k in ("t", "v", "s")]
     log("solis: " + json.dumps({k: HOME.getProperty("lucent.sol." + k) for k in keys}, ensure_ascii=False))
     log(f"solis: panel={cond('Control.IsVisible(9370)')} rows9100={cond('Control.IsVisible(9100)')} items={lab('Container(9370).NumItems')}")
     shot("solis-1")
@@ -2939,12 +2939,48 @@ def bell56_test():
     shot("bell56-1")
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(6)
-    log(f"bell56: after click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
+    log(f"bell56: after click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r} focus={lab('System.CurrentControlId')}")
+    steps = []
+    for key in ("Right", "Left", "Left", "Right"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(0.8)
+        steps.append(f"{key}:{lab('System.CurrentControlId')}")
+    log(f"bell56: nav after click {steps}")
+    xbmc.executebuiltin("SetFocus(5614)")
+    mon.waitForAbort(0.8)
     shot("bell56-2")
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(4)
     log(f"bell56: after 2nd click prop={HOME.getProperty('lucent.s56.bell')!r} label={lab('Control.GetLabel(5614)')!r}")
     xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def misc134_test():
+    """Volume pill, Solis prices, New seasons row, Home clock."""
+    log(f"misc134: newseasons {json.dumps(json.loads(xbmc.executeJSONRPC(json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'Files.GetDirectory', 'params': {'directory': 'plugin://script.lucent.library/?action=lib&kind=newseasons', 'media': 'files'}}))))[:300]}")
+    xbmc.Player().play("/tmp/ci/audio.mkv")
+    for _ in range(20):
+        if cond("Player.HasVideo"):
+            break
+        mon.waitForAbort(1)
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    for key in ("VolumeDown", "VolumeDown", "VolumeDown"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(0.4)
+    mon.waitForAbort(0.6)
+    log(f"misc134: volumebar={cond('Window.IsVisible(volumebar)')} pct={HOME.getProperty('lucent.vol.pct')!r} step={HOME.getProperty('lucent.vol.step')!r}")
+    shot("vol-1")
+    xbmc.executebuiltin("Action(Mute)")
+    mon.waitForAbort(0.8)
+    log(f"misc134: muted={cond('Player.Muted')} volumebar={cond('Window.IsVisible(volumebar)')}")
+    shot("vol-2")
+    xbmc.executebuiltin("Action(Mute)")
+    mon.waitForAbort(3)
+    log(f"misc134: after 3s volumebar={cond('Window.IsVisible(volumebar)')} busy={HOME.getProperty('lucent.vol.busy')!r}")
+    xbmc.Player().stop()
     mon.waitForAbort(2)
 
 
@@ -2961,7 +2997,8 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    settings2_test()
+    misc134_test()
+    solis_test()
     bell56_test()
 
     os.makedirs(OUT, exist_ok=True)

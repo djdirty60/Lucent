@@ -209,6 +209,7 @@ WIDGETS_LIBRARY = [
     (("Continue watching (library)", "Verder kijken (bibliotheek)"), LIB + "continue", "land"),
     (("Next episode (library)", "Volgende aflevering (bibliotheek)"), LIB + "nextup", "land"),
     (("Series with new episodes", "Series met nieuwe afleveringen"), LIB + "newepisodes", "poster"),
+    (("New seasons", "Nieuwe seizoenen"), LIB + "newseasons", "poster"),
     (("New in your collection", "Nieuw in je collectie"), LIB + "newin", "poster"),
     (("Continue watching: movies (library)", "Verder kijken: films (bibliotheek)"), LIB + "continue&only=movie", "land"),
     (("Continue watching: episodes (library)", "Verder kijken: afleveringen (bibliotheek)"), LIB + "continue&only=tv", "land"),

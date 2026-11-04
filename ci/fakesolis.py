@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 DATA = {"version": 1, "updated": "2026-11-03T22:38:05+01:00", "status": "Normaal", "online": False, "solar_w": 0, "solar_max_w": 2500,
         "house_w": 157, "grid_w": 157, "today_kwh": 1.8, "today_expected_kwh": 3, "month_kwh": 6, "self_use_pct": 48,
         "month_value_eur": 0.41, "price_now_eur": None, "contract": "Vast", "advice": "Geen advies nu", "best_hour_tomorrow": "19:00",
-        "prices_today": None, "solar_today": [None] * 9 + [0.15, 0.4, 0.6, 0.5, 0.1] + [None] * 10}
+        "prices_today": [0.21, 0.19, 0.18, 0.17, 0.17, 0.18, 0.22, 0.27, 0.31, 0.28, 0.2, 0.12, 0.05, -0.02, 0.04, 0.11, 0.19, 0.3, 0.36, 0.38, 0.33, 0.27, 0.24, 0.22], "solar_today": [None] * 9 + [0.15, 0.4, 0.6, 0.5, 0.1] + [None] * 10}
 PNG = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "solis", "stroom.png"), "rb").read()
 
 

@@ -120,10 +120,35 @@ def show(d):
         put(f"lucent.sol.{n}.v", value)
         put(f"lucent.sol.{n}.s", sub)
         put(f"lucent.sol.{n}.c", colour)
+    prices(d.get("prices_today"))
     stamp = (d.get("updated") or "")[11:16]
     put("lucent.sol.hint", t(f"OK: open the dashboard  ·  updated {stamp}", f"OK: open het dashboard  ·  bijgewerkt {stamp}")
         if stamp else t("OK: open the dashboard", "OK: open het dashboard"))
     put("lucent.sol.err", "")
+
+
+def prices(values):
+    """Hourly prices of today (dynamic contract) as 24 bars: cheapest 6 hours green, dearest 6 red, this hour marked."""
+    vals = values if isinstance(values, list) and len(values) == 24 and any(v is not None for v in values) else None
+    put("lucent.sol.pr.on", "1" if vals else "")
+    if not vals:
+        return
+    known = sorted(v for v in vals if v is not None)
+    low, high = known[0], known[-1]
+    cheap, dear = known[min(5, len(known) - 1)], known[max(0, len(known) - 6)]
+    hour = time.localtime().tm_hour
+    for i, v in enumerate(vals):
+        if v is None:
+            put(f"lucent.sol.pr.{i}.h", "")
+            continue
+        span = (high - min(low, 0)) or 1
+        put(f"lucent.sol.pr.{i}.h", str(max(1, round(12 * (v - min(low, 0)) / span))))
+        put(f"lucent.sol.pr.{i}.c", "FF3B82F6" if v < 0 else "FF3DD68C" if v <= cheap else ("FFE5484D" if v >= dear else "66FFFFFF"))
+        put(f"lucent.sol.pr.{i}.now", "1" if i == hour else "")
+    now = vals[hour]
+    put("lucent.sol.pr.label", t(f"Prices today  ·  lowest € {num(low, 2)}  ·  highest € {num(high, 2)}",
+                                 f"Prijzen vandaag  ·  laagst € {num(low, 2)}  ·  hoogst € {num(high, 2)}")
+        + (t(f"  ·  now € {num(now, 2)}", f"  ·  nu € {num(now, 2)}") if now is not None else ""))
 
 
 def picture(url):

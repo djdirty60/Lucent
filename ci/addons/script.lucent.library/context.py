@@ -42,6 +42,9 @@ def from_tmdb(path):
 
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "select"
+    if what == "addlib":                             # a film or series in a row: into your library in one go (the skin does it)
+        xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,quickadd)")
+        return
     item = sys.listitem                              # noqa: F821 - given by Kodi to context scripts
     path = item.getPath() or xbmc.getInfoLabel("ListItem.FileNameAndPath")
     # a library file (.strm with Seren's address in it), or a Seren item itself (Seren's own menu switched off)

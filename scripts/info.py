@@ -36,6 +36,7 @@ _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 T = {
     "library": ("Seren library (Trakt collection)", "Seren-bibliotheek (Trakt-collectie)"),
     "library_list": ("Library (Trakt · {0})", "Bibliotheek (Trakt · {0})"),
+    "added_to": ("{0} added to your library ({1})", "{0} toegevoegd aan je bibliotheek ({1})"),
     "watchlist": ("Trakt · Watchlist", "Trakt · Kijklijst"),
     "list": ("Trakt · {0}", "Trakt · {0}"),
     "pick": ("{0} – choose the lists for this title", "{0} – kies in welke lijsten deze titel staat"),
@@ -452,6 +453,30 @@ def choose_lists(container=""):
         after_trakt_change()
     else:
         notify(tr("nothing"))
+
+
+def quick_add():
+    """Long press > Add to my library: on your library list (Lucent Library) or in the Trakt collection, and in Kodi's library."""
+    item = Item()
+    if not item.ids() or item.kind not in ("movie", "show"):
+        xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
+        return
+    trakt = trakt_or_explain()
+    if not trakt:
+        return
+    own, _ids = library_lists(item.kind)
+    try:
+        if own:
+            trakt.post(f"users/me/lists/{own['id']}/items", item.payload())
+        else:
+            trakt.post("sync/collection", item.payload())
+    except Exception as error:  # noqa: BLE001
+        explain_error(error)
+        return
+    to_kodi_library(item, trakt, "add")
+    where = own.get("name", "") if own else tr("library")
+    notify(tr("added_to", item.title, where))
+    after_trakt_change()
 
 
 def library_lists(kind):
@@ -1364,7 +1389,9 @@ def load():
 
 if __name__ == "__main__":
     action = sys.argv[1] if len(sys.argv) > 1 else "load"
-    if action == "lists":
+    if action == "quickadd":
+        quick_add()
+    elif action == "lists":
         choose_lists(sys.argv[2] if len(sys.argv) > 2 else "")
     elif action == "watched":
         toggle_watched()
