@@ -293,5 +293,8 @@ def show(handle, query):
         "episodes" if kinds and kinds.count("episode") > len(kinds) / 2 else \
         "tvshows" if kinds and kinds.count("tvshow") == len(kinds) else "videos"
     xbmcplugin.setContent(handle, content)
+    # keep this order: without a sort method Kodi sorts a row of only films / only episodes on its title itself
+    # ("As the source gives it" looked random on a Films or Series tab; a mixed row was not touched)
+    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.addDirectoryItems(handle, [listitem(k, d) for k, d in items], len(items))
     xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)

@@ -3359,6 +3359,29 @@ def music_fav_test():
     mon.waitForAbort(2)
 
 
+def smallposter_test():
+    """1.34.6: small posters with names: the focused poster grows up and sideways, not over its name."""
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+        "params": {"directory": "plugin://script.lucent.library/?action=lib&kind=newin&only=movie", "media": "video"}})))
+    log(f"librow: only=movie items={len((res.get('result') or {}).get('files') or [])} error={res.get('error')}")
+    xbmc.executebuiltin("Skin.SetBool(lucent.posters.small)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterlabels.hide)")
+    xbmc.executebuiltin("ReloadSkin()")
+    mon.waitForAbort(8)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(3)
+    log(f"smallposter: focus={lab('System.CurrentControlId')} item={lab('Container(' + lab('System.CurrentControlId') + ').ListItem.Label')}")
+    shot("smallposter-focus")
+    xbmc.executebuiltin("Skin.Reset(lucent.posters.small)")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.posterlabels.hide)")
+    xbmc.executebuiltin("ReloadSkin()")
+    mon.waitForAbort(6)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3379,6 +3402,7 @@ def main():
     fsback_test()
     omdb_test()
     music_fav_test()
+    smallposter_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
