@@ -48,6 +48,38 @@ def info(name):
     return "" if value == name else value              # Kodi gives the name back for a label it does not know
 
 
+DV2_NAME = re.compile(r"(?i)(?<![a-z0-9])(?:dv2|dovi[ ._-]?2|dolby[ ._-]?vision[ ._-]?2)(?![a-z0-9])")
+
+
+def dv_from_name(name):
+    """What the release name says about Dolby Vision: Dolby Vision 2, the profile (P5 / P7 / P8) and the layer (FEL / MEL)."""
+    name = name or ""
+    prof = re.search(r"(?i)(?<![a-z0-9])(?:dv|dovi)?[ ._-]?p([578])(?:[ ._]\d)?(?![0-9a-z])", name)
+    layer = re.search(r"(?i)(?<![a-z0-9])(fel|mel)(?![a-z0-9])", name)
+    return {"dv2": bool(DV2_NAME.search(name)), "prof": prof.group(1) if prof else "", "layer": layer.group(1).upper() if layer else ""}
+
+
+def dv_line(hdr, prof, layer, dvn):
+    """Video tab: what Kodi, the file name and the box + screen say about Dolby Vision, and what a Dolby Vision 2 TV does with it."""
+    if hdr != "dolbyvision":
+        put("v.dv.on", "")
+        return
+    put("v.dv.on", "1")
+    kodi = "Dolby Vision" + ((t(" · profile ", " · profiel ") + prof.group(1) + (f" {layer}" if layer else "")) if prof else "")
+    named = " · ".join(x for x in ((f"P{dvn['prof']}" + (f" {dvn['layer']}" if dvn["layer"] else "")) if dvn.get("prof") else dvn.get("layer", ""),
+                                    "DV2" if dvn.get("dv2") else "") if x) or t("nothing extra", "niets extra")
+    hdr_types = info("System.SupportedHDRTypes").lower()
+    screen = t("Dolby Vision ✓", "Dolby Vision ✓") if "dolby" in hdr_types else (t("no Dolby Vision reported", "geen Dolby Vision gemeld") if hdr_types
+                                                                                    else t("not reported", "niet gemeld"))
+    v = "[COLOR FFFFFFFF][B]{}[/B][/COLOR]"
+    put("v.dv.line", "   ·   ".join((t("Kodi: ", "Kodi: ") + v.format(kodi), t("File name: ", "Bestandsnaam: ") + v.format(named),
+                                     t("Box + screen: ", "Box + scherm: ") + v.format(screen))))
+    put("v.dv.note", t("The release says Dolby Vision 2: a TV with Dolby Vision 2 uses its extra information.",
+                       "De release noemt Dolby Vision 2: een tv met Dolby Vision 2 gebruikt die extra informatie.") if dvn.get("dv2") else
+        t("A TV with Dolby Vision 2 applies its new picture processing to this Dolby Vision picture by itself.",
+          "Een tv met Dolby Vision 2 past zijn nieuwe beeldverwerking zelf toe op dit Dolby Vision-beeld."))
+
+
 def put(key, value):
     value = "" if value is None else str(value)
     if HOME.getProperty(P + key) != value:
@@ -269,6 +301,7 @@ def tick():
     vcodec = info("VideoPlayer.VideoCodec").lower()
     vname = VCODEC.get(vcodec, vcodec.upper())
     fname = info("Player.Filename")
+    dvn = dv_from_name(fname + " " + info("Player.FilenameAndPath")) if hdr == "dolbyvision" else {}
 
     # audio facts
     acodec = info("VideoPlayer.AudioCodec").lower()
@@ -289,7 +322,7 @@ def tick():
     # badges
     put("b.res", res_badge)
     if hdr == "dolbyvision":
-        put("b.dv", "DOLBY VISION" + (f" P{prof.group(1)}" if prof else "") + (f" {layer}" if layer else ""))
+        put("b.dv", ("DOLBY VISION 2" if dvn.get("dv2") else "DOLBY VISION") + (f" P{prof.group(1)}" if prof else "") + (f" {layer}" if layer else ""))
         put("b.hdr", "")
     else:
         put("b.dv", "")
@@ -507,7 +540,8 @@ def video_tab(v):
     put("v.deint", deint if deint and deint.lower() not in ("none", "unknown", "") else t("not needed", "niet nodig"))
     bar = {"dolbyvision": "dv", "hdr10": "hdr10", "hdr10plus": "hdr10", "hlg": "hdr10"}.get(hdr, "sdr")
     put("v.hdrbar", bar)
-    put("v.hb.dv", "DOLBY VISION" if hdr == "dolbyvision" else "")
+    put("v.hb.dv", ("DOLBY VISION 2" if dvn.get("dv2") else "DOLBY VISION") if hdr == "dolbyvision" else "")
+    dv_line(hdr, prof, layer, dvn)
     put("v.hb.hdr", {"hdr10": "HDR10", "hdr10plus": "HDR10+", "hlg": "HLG"}.get(hdr, ""))
     put("v.hb.sdr", "SDR" if bar == "sdr" else "")
     put("v.hb2", (t("PROFILE ", "PROFIEL ") + prof.group(1) + (f" {layer}" if layer else "")) if hdr == "dolbyvision" and prof else "")

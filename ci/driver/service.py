@@ -3148,6 +3148,33 @@ def noseren_test():
     log(f"seren: setup status={_setup.st_seren()} actions={[a[0] for a in _setup.ac_seren()]}")
 
 
+def dv2_test():
+    """1.34.1: Dolby Vision 2 from the release name, the DV line on the Video tab of the player info, the DV2 flag."""
+    import sys as _s
+    import re as _re
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import playerinfo as _pi
+    for n in ("Movie.2026.2160p.PCOK.WEB-DL.DV2.HDR10.Atmos-GRP.mkv", "Film.2024.2160p.BluRay.REMUX.DV.P7.FEL.TrueHD-X.mkv", "x.DV.2160p.mkv"):
+        log(f"dv2: name {n} -> {_pi.dv_from_name(n)}")
+    dvn = _pi.dv_from_name("Movie.2026.2160p.PCOK.WEB-DL.DV2.HDR10.Atmos-GRP.mkv")
+    _pi.dv_line("dolbyvision", _re.search(r"(\d+)", "8"), "FEL", dvn)
+    log("dv2: props " + json.dumps({k: HOME.getProperty("lucent.pi." + k) for k in ("v.dv.on", "v.dv.line", "v.dv.note")}, ensure_ascii=False))
+    log(f"dv2: flag file={os.path.exists(xbmcvfs.translatePath('special://skin/media/flags/DV2.png'))}")
+    for k, v in (("title", "Movie.2026.2160p.PCOK.WEB-DL.DV2.HDR10.Atmos-GRP.mkv"), ("b.res", "4K"), ("b.dv", "DOLBY VISION 2 P8 FEL"),
+                 ("v.hdrbar", "dv"), ("v.hb.dv", "DOLBY VISION 2"), ("v.hb2", "PROFIEL 8 FEL"), ("v.p1k", "Bestand"), ("v.p1", "HEVC 10-bit")):
+        HOME.setProperty("lucent.pi." + k, v)
+    w = xbmcgui.WindowXMLDialog("Lucent_PlayerInfo.xml", xbmcvfs.translatePath("special://skin/"), "Default", "1080i")
+    w.show()
+    mon.waitForAbort(1.5)
+    w.setFocusId(102)
+    HOME.setProperty("lucent.pi.tab", "2")
+    mon.waitForAbort(2)
+    log(f"dv2: window={cond('Window.IsVisible(Lucent_PlayerInfo.xml)')} tab={HOME.getProperty('lucent.pi.tab')}")
+    shot("dv2-video")
+    w.close()
+    mon.waitForAbort(1)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3163,6 +3190,7 @@ def main():
     shot("1-home")
     diaglog_test()
     noseren_test()
+    dv2_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
