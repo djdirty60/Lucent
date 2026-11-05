@@ -2,7 +2,8 @@
 """Lucent: self-test and a safe log.
 
     RunScript(special://skin/scripts/diag.py,test)   checks the add-ons Lucent needs and says in plain words what is missing
-    RunScript(special://skin/scripts/diag.py,log)    writes a copy of Kodi's log with every login blanked out, to share
+    RunScript(special://skin/scripts/diag.py,log)    writes a copy of Kodi's log (this run and the previous one) with every login blanked out, to share;
+                                                     on screen only the last lines about playing
 
 The log copy removes: user names / passwords in links (?username=, /live/user/pass/), the Xtream login saved by Lucent,
 tokens / API keys, and the server address of the provider. Nothing is sent anywhere; the file stays on the box.
@@ -173,27 +174,75 @@ def scrub(text, known):
     return text
 
 
-def safe_log():
+KEEP = re.compile(r"(?i)lucent|seren|iptvsimple|pvr|error|exception|traceback|warning|youtube|inputstream|videoplayer"
+                  r"|ccurlfile|curl|ffmpeg|dash|cplayer|playlistplayer|onplayback|avstarted")
+SHOW = re.compile(r"(?i)youtube|inputstream|ccurlfile|videoplayer|error|onplayback|trailer")
+
+
+def tail(path, size):
+    """The last part of a log file as lines ('' when it is not there)."""
     try:
-        with open(xbmcvfs.translatePath(LOG), "rb") as fh:
+        with open(xbmcvfs.translatePath(path), "rb") as fh:
             fh.seek(0, 2)
-            size = fh.tell()
-            fh.seek(max(0, size - 1500 * 1024))
-            lines = fh.read().decode("utf-8", "replace").splitlines()
-    except Exception as error:  # noqa: BLE001
-        xbmcgui.Dialog().ok(t("Safe log", "Veilig logboek"), t(f"Could not read the log: {error}", f"Het logboek is niet te lezen: {error}"))
-        return
-    known = secrets()
-    keep = [scrub(x, known) for x in lines if re.search(r"(?i)lucent|seren|iptvsimple|pvr|error|exception|traceback|warning", x)]
-    keep = keep[-1500:]
-    body = t("Lucent safe log (logins blanked out)", "Lucent veilig logboek (logins weggehaald)") + "\n" + \
-        f"Kodi {xbmc.getInfoLabel('System.BuildVersion')}  |  skin {xbmc.getInfoLabel('System.AddonVersion(skin.lucent)')}\n\n" + "\n".join(keep)
-    with xbmcvfs.File(OUT, "w") as fh:
-        fh.write(body)
+            fh.seek(max(0, fh.tell() - size))
+            return fh.read().decode("utf-8", "replace").splitlines()
+    except OSError:
+        return None
+
+
+def screen_lines(lines, most=40):
+    """The last lines about playing, newest first: time only, the same message once (with how often it came)."""
+    seen, out = {}, []
+    for x in reversed(lines):
+        if not SHOW.search(x):
+            continue
+        m = re.match(r"\d{4}-\d\d-\d\d (\d\d:\d\d:\d\d)\.\d+ T:\d+\s+(.*)", x)
+        when, msg = (m.group(1), m.group(2)) if m else ("", x)
+        msg = re.sub(r"\s+", " ", msg)[:150]
+        if msg in seen:
+            seen[msg][1] += 1
+            continue
+        if len(out) >= most:
+            continue
+        seen[msg] = [when, 1]
+        out.append(msg)
+    return [f"{seen[m][0]}  {m}" + (f"   (×{seen[m][1]})" if seen[m][1] > 1 else "") for m in out]
+
+
+def safe_log():
+    bar = xbmcgui.DialogProgressBG()
+    bar.create(t("Safe log", "Veilig logboek"), t("Reading the log...", "Logboek lezen..."))
+    try:
+        now = tail(LOG, 1500 * 1024)
+        if now is None:
+            bar.close()
+            xbmcgui.Dialog().ok(t("Safe log", "Veilig logboek"), t("Could not read the log.", "Het logboek is niet te lezen."))
+            return
+        old = tail("special://logpath/kodi.old.log", 800 * 1024) or []   # the previous run: what happened before a crash
+        known = secrets()
+        bar.update(40)
+        keep_now = [scrub(x, known) for x in now if KEEP.search(x)][-2500:]
+        keep_old = [scrub(x, known) for x in old if KEEP.search(x)][-1200:]
+        bar.update(80)
+        body = (t("Lucent safe log (logins blanked out)", "Lucent veilig logboek (logins weggehaald)") + "\n"
+                + f"Kodi {xbmc.getInfoLabel('System.BuildVersion')}  |  skin {xbmc.getInfoLabel('System.AddonVersion(skin.lucent)')}"
+                + f"  |  YouTube {xbmc.getInfoLabel('System.AddonVersion(plugin.video.youtube)')}"
+                + f"  |  InputStream Adaptive {xbmc.getInfoLabel('System.AddonVersion(inputstream.adaptive)')}\n\n"
+                + "===== " + t("this run", "deze keer") + " =====\n" + "\n".join(keep_now)
+                + "\n\n===== " + t("previous run (kodi.old.log)", "vorige keer (kodi.old.log)") + " =====\n" + "\n".join(keep_old))
+        with xbmcvfs.File(OUT, "w") as fh:
+            fh.write(body)
+        # on screen only the last lines about playing (a long text makes the text window very slow on a TV box)
+        short = screen_lines(keep_now)
+    finally:
+        bar.close()
     xbmcgui.Dialog().ok(t("Safe log", "Veilig logboek"),
-                        t(f"Saved {len(keep)} lines to {xbmcvfs.translatePath(OUT)}. All logins are blanked out. Share that file or read it on screen next.",
-                          f"{len(keep)} regels opgeslagen in {xbmcvfs.translatePath(OUT)}. Alle logins zijn weggehaald. Deel dat bestand, of lees het hierna op het scherm."))
-    xbmcgui.Dialog().textviewer(t("Safe log", "Veilig logboek"), body[-60000:])
+                        t(f"Saved to {xbmcvfs.translatePath(OUT)} (logins blanked out). Next: the last lines about playing. "
+                          "Take a photo of them with your phone.",
+                          f"Opgeslagen in {xbmcvfs.translatePath(OUT)} (logins weggehaald). Hierna: de laatste regels over afspelen. "
+                          "Maak daar een foto van met je telefoon."))
+    xbmcgui.Dialog().textviewer(t("Last lines about playing (newest first)", "Laatste regels over afspelen (nieuwste bovenaan)"),
+                                "\n".join(short) or t("No lines about playing yet.", "Nog geen regels over afspelen."))
 
 
 if __name__ == "__main__":
