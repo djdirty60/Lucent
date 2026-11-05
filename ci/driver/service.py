@@ -3026,6 +3026,46 @@ def misc134_test():
     mon.waitForAbort(2)
 
 
+def diaglog_test():
+    """Safe log: quick, YouTube lines in it (this run and the previous one), logins blanked out, a short text on screen."""
+    import xbmcvfs as _v
+    xbmc.log("[plugin.video.youtube] CI trailer line: playback stopped at 65s", xbmc.LOGWARNING)
+    xbmc.log("CI secret line http://example.invalid/get.php?username=ciuser&password=cipass", xbmc.LOGWARNING)
+    oldp = _v.translatePath("special://logpath/kodi.old.log")
+    try:
+        with open(oldp, "a", encoding="utf-8") as fh:
+            fh.write("2026-11-05 10:00:00.000 T:1 warning <general>: CI old run: InputStream Adaptive stopped\n")
+    except OSError as e:
+        log(f"diaglog: old log not writable {e}")
+    t0 = time.time()
+    xbmc.executebuiltin("RunScript(special://skin/scripts/diag.py,log)")
+    for _ in range(80):
+        if cond("Window.IsActive(okdialog)"):
+            break
+        mon.waitForAbort(0.25)
+    log(f"diaglog: ok dialog after {time.time() - t0:.1f}s visible={cond('Window.IsActive(okdialog)')}")
+    shot("diaglog-ok")
+    xbmc.executebuiltin("Action(Select)")
+    t1 = time.time()
+    for _ in range(80):
+        if cond("Window.IsActive(textviewer)"):
+            break
+        mon.waitForAbort(0.25)
+    mon.waitForAbort(1)
+    log(f"diaglog: textviewer after {time.time() - t1:.1f}s visible={cond('Window.IsActive(textviewer)')}")
+    shot("diaglog-text")
+    xbmc.executebuiltin("Dialog.Close(textviewer,true)")
+    mon.waitForAbort(1)
+    try:
+        body = open(_v.translatePath("special://home/lucent-log.txt"), encoding="utf-8").read()
+    except OSError as e:
+        body = ""
+        log(f"diaglog: no file {e}")
+    log(f"diaglog: size={len(body)} yt={'CI trailer line' in body} old={'CI old run' in body} "
+        f"pass_hidden={'cipass' not in body and 'ciuser' not in body} header={body.splitlines()[1][:120] if body.count(chr(10)) > 1 else ''}")
+    log(f"diaglog: back on home={cond('Window.IsActive(home)')} dialogs={cond('System.HasVisibleModalDialog')}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3039,7 +3079,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
-    bell56_test()
+    diaglog_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
