@@ -525,6 +525,13 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31791]</label>
+                        <label2>$INFO[Skin.String(lucent.ytfix.state),,  ·  ]$LOCALIZE[31792]</label2>
+                        <icon>icons/trailer.png</icon>
+                        <onclick>RunScript(special://skin/scripts/ytfix.py,toggle)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.youtube)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[31778]</label>
                         <label2>$LOCALIZE[31779]</label2>
                         <icon>icons/play.png</icon>
