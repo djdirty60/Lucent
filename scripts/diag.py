@@ -190,6 +190,25 @@ def tail(path, size):
         return None
 
 
+def screen_lines(lines, most=40):
+    """The last lines about playing, newest first: time only, the same message once (with how often it came)."""
+    seen, out = {}, []
+    for x in reversed(lines):
+        if not SHOW.search(x):
+            continue
+        m = re.match(r"\d{4}-\d\d-\d\d (\d\d:\d\d:\d\d)\.\d+ T:\d+\s+(.*)", x)
+        when, msg = (m.group(1), m.group(2)) if m else ("", x)
+        msg = re.sub(r"\s+", " ", msg)[:150]
+        if msg in seen:
+            seen[msg][1] += 1
+            continue
+        if len(out) >= most:
+            continue
+        seen[msg] = [when, 1]
+        out.append(msg)
+    return [f"{seen[m][0]}  {m}" + (f"   (×{seen[m][1]})" if seen[m][1] > 1 else "") for m in out]
+
+
 def safe_log():
     bar = xbmcgui.DialogProgressBG()
     bar.create(t("Safe log", "Veilig logboek"), t("Reading the log...", "Logboek lezen..."))
@@ -214,7 +233,7 @@ def safe_log():
         with xbmcvfs.File(OUT, "w") as fh:
             fh.write(body)
         # on screen only the last lines about playing (a long text makes the text window very slow on a TV box)
-        short = [x[:170] for x in keep_now if SHOW.search(x)][-45:]
+        short = screen_lines(keep_now)
     finally:
         bar.close()
     xbmcgui.Dialog().ok(t("Safe log", "Veilig logboek"),
@@ -222,7 +241,7 @@ def safe_log():
                           "Take a photo of them with your phone.",
                           f"Opgeslagen in {xbmcvfs.translatePath(OUT)} (logins weggehaald). Hierna: de laatste regels over afspelen. "
                           "Maak daar een foto van met je telefoon."))
-    xbmcgui.Dialog().textviewer(t("Last lines about playing", "Laatste regels over afspelen"),
+    xbmcgui.Dialog().textviewer(t("Last lines about playing (newest first)", "Laatste regels over afspelen (nieuwste bovenaan)"),
                                 "\n".join(short) or t("No lines about playing yet.", "Nog geen regels over afspelen."))
 
 
