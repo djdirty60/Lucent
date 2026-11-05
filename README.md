@@ -27,7 +27,7 @@
 - **Skip intro, recap and preview** (TheIntroDB, for series episodes) with a Lucent-style *Skip* button; the setup assistant installs it.
 - **Spoken language** – a first and second choice for the sound; subtitles stay off when the sound is already in your language.
 - **Maintenance** (*Skin settings → Advanced*) – clears old cached pictures, add-on zips, old temporary files and the previous log; optionally once a month by itself.
-- **Seren Nixgate** repository comes with the skin; the setup assistant installs Seren from it.
+- **Seren Nixgate** repository is in the Lucent Repository; the setup assistant installs it and then Seren from it.
 - **Touch screens** – a quick swipe up or down on Home moves to the next or previous row.
 - **Tabs with their own screen** – Calendar (what is coming up), TV (what is on your channels now), Sport (today's games), Add-ons, Settings (six big buttons) and Power (a clock with the power buttons) no longer borrow the rows of the start tab.
 - **Number of titles** – 50, 100 or All now also works for Lucent's own TMDb / Trakt rows and for Seren rows (Lucent raises Seren's page limit when you ask).
@@ -280,7 +280,7 @@ All TV (PVR) windows – group and channel manager, programme info, guide search
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Lucent**.)
 
-Kodi also installs the YouTube add-on (for trailers), the white and coloured studio logo packs, and the **Seren Nixgate** repository (minhgi's Seren build, used with his permission), from which the setup assistant installs Seren.
+Kodi also installs the YouTube add-on (for trailers) and the white and coloured studio logo packs. When you choose Seren in the setup assistant, it installs the **Seren Nixgate** repository (minhgi's Seren build, used with his permission) and then Seren from it. Lucent also works without Seren.
 
 
 ### Automatic updates
