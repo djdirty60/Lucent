@@ -1375,4 +1375,11 @@
         <value condition="Control.HasFocus(1305)">on_focus</value>
         <value>text4</value>
     </variable>
+    <variable name="LucentImdbRating">
+        <value condition="!String.IsEmpty(ListItem.Rating(imdb))">$INFO[ListItem.Rating(imdb)]</value>
+        <value>$INFO[Window(home).Property(lucent.omdb.imdb)]</value>
+    </variable>
+    <variable name="LucentImdbVotes">
+        <value condition="Skin.HasSetting(lucent.rate.votes) + !String.IsEmpty(Window(home).Property(lucent.omdb.votes))">$INFO[Window(home).Property(lucent.omdb.votes),  [COLOR 80FFFFFF],[/COLOR]]</value>
+    </variable>
 </includes>

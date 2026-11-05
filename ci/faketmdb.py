@@ -28,6 +28,14 @@ class H(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?")[0]
+        if path.startswith("/omdb"):
+            if "apikey=badkey" in self.path:
+                return self.send(json.dumps({"Response": "False", "Error": "Invalid API key!"}).encode(), "application/json")
+            return self.send(json.dumps({"Response": "True", "imdbRating": "6.5", "imdbVotes": "282,345", "Metascore": "81",
+                                         "Ratings": [{"Source": "Internet Movie Database", "Value": "6.5/10"},
+                                                     {"Source": "Rotten Tomatoes", "Value": "87%"}]}).encode(), "application/json")
+        if path.endswith("/external_ids"):
+            return self.send(json.dumps({"imdb_id": "tt0185937"}).encode(), "application/json")
         if path.startswith("/t/p/"):
             name = path.rsplit("/", 1)[-1]
             return self.send(png(COLOURS.get(name[:1], COLOURS["x"])), "image/png")

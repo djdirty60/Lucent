@@ -159,15 +159,15 @@
                         <param name="visible">!String.IsEmpty(ListItem.Season) + [String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)]</param>
                     </include>
                     <include content="InfoPill">
-                        <param name="label">IMDb  $INFO[ListItem.Rating(imdb)]</param>
+                        <param name="label">IMDb  $VAR[LucentImdbRating]$VAR[LucentImdbVotes]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating(imdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !!String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</param>
+                        <param name="visible">[!String.IsEmpty(ListItem.Rating(imdb)) | !String.IsEmpty(Window(home).Property(lucent.omdb.imdb))] + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.imdb) + !!String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</param>
                     </include>
                     <control type="group">
                         <width>170</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(ListItem.Rating(imdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                        <visible>[!String.IsEmpty(ListItem.Rating(imdb)) | !String.IsEmpty(Window(home).Property(lucent.omdb.imdb))] + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.imdb) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                         <control type="image">
                             <left>0</left>
                             <top>4</top>
@@ -183,19 +183,19 @@
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text</textcolor>
-                            <label>$INFO[ListItem.Rating(imdb)]</label>
+                            <label>$VAR[LucentImdbRating]</label>
                         </control>
                     </control>
                     <include content="InfoPill">
                         <param name="label">TMDB  $INFO[ListItem.Rating(tmdb)]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating(tmdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !!String.IsEmpty(Window(home).Property(nuvio.logo.tmdb))</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(tmdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.tmdb) + !!String.IsEmpty(Window(home).Property(nuvio.logo.tmdb))</param>
                     </include>
                     <control type="group">
                         <width>170</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(ListItem.Rating(tmdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !String.IsEmpty(Window(home).Property(nuvio.logo.tmdb))</visible>
+                        <visible>!String.IsEmpty(ListItem.Rating(tmdb)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.tmdb) + !String.IsEmpty(Window(home).Property(nuvio.logo.tmdb))</visible>
                         <control type="image">
                             <left>0</left>
                             <top>4</top>
@@ -218,12 +218,12 @@
                         <param name="label">Trakt  $INFO[ListItem.Rating(trakt)]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating(trakt)) + !Skin.HasSetting(nuvio.info.hideratings) + !!String.IsEmpty(Window(home).Property(nuvio.logo.trakt))</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating(trakt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.trakt) + !!String.IsEmpty(Window(home).Property(nuvio.logo.trakt))</param>
                     </include>
                     <control type="group">
                         <width>170</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(ListItem.Rating(trakt)) + !Skin.HasSetting(nuvio.info.hideratings) + !String.IsEmpty(Window(home).Property(nuvio.logo.trakt))</visible>
+                        <visible>!String.IsEmpty(ListItem.Rating(trakt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.trakt) + !String.IsEmpty(Window(home).Property(nuvio.logo.trakt))</visible>
                         <control type="image">
                             <left>0</left>
                             <top>4</top>
@@ -243,10 +243,22 @@
                         </control>
                     </control>
                     <include content="InfoPill">
+                        <param name="label">[COLOR $INFO[Window(home).Property(lucent.omdb.rtc)]]●[/COLOR]  Rotten Tomatoes  $INFO[Window(home).Property(lucent.omdb.rt)]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!String.IsEmpty(Window(home).Property(lucent.omdb.rt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rt)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">[COLOR $INFO[Window(home).Property(lucent.omdb.mcc)]]●[/COLOR]  Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc)</param>
+                    </include>
+                    <include content="InfoPill">
                         <param name="label">★  $INFO[ListItem.Rating]</param>
                         <param name="bg">glass</param>
                         <param name="color">text2</param>
-                        <param name="visible">!Skin.HasSetting(nuvio.info.hideratings) + String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
+                        <param name="visible">!Skin.HasSetting(nuvio.info.hideratings) + String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(lucent.omdb.imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
                     </include>
                 </control>
 

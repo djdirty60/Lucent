@@ -3256,6 +3256,60 @@ def fsback_test():
     mon.waitForAbort(2)
 
 
+def omdb_test():
+    """1.34.4: OMDb scores on the info page (fake OMDb on 127.0.0.1:8765/omdb)."""
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    d = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "omdb.key"), "w") as fh:
+        fh.write("cikey1234")
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["title"]}})))
+    movies = (res.get("result") or {}).get("movies") or []
+    log(f"omdb: movies {[(m['movieid'], m['title']) for m in movies][:3]}")
+    if not movies:
+        return
+    mid = movies[0]["movieid"]
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                    "params": {"movieid": mid, "uniqueid": {"imdb": "tt0185937"}}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    for _ in range(4):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key("Down")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(20):
+        if cond("Window.IsActive(movieinformation)"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(4)
+    p = {k: HOME.getProperty("lucent.omdb." + k) for k in ("imdb", "votes", "rt", "rtc", "mc", "mcc", "for")}
+    log(f"omdb: page={cond('Window.IsActive(movieinformation)')} item={lab('ListItem.Title')} imdb={lab('ListItem.UniqueID(imdb)')} props={p}")
+    shot("omdb-page")
+    xbmc.executebuiltin("Skin.SetBool(lucent.rate.hide.rt)")
+    xbmc.executebuiltin("Skin.SetBool(lucent.rate.votes)")
+    mon.waitForAbort(1.5)
+    shot("omdb-page-choice")
+    xbmc.executebuiltin("Skin.Reset(lucent.rate.hide.rt)")
+    xbmc.executebuiltin("Skin.Reset(lucent.rate.votes)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    import omdb as _o
+    cache = os.path.exists(xbmcvfs.translatePath(_o.CACHE))
+    with open(os.path.join(d, "omdb.key"), "w") as fh:
+        fh.write("badkey")
+    try:
+        bad = _o.ask("tt0185937", "badkey").get("Error")
+    except Exception as e:  # noqa: BLE001
+        bad = repr(e)
+    log(f"omdb: cache={cache} badkey={bad} votes_short={_o.short_votes('282345')},{_o.short_votes('1234567')}")
+    os.remove(os.path.join(d, "omdb.key"))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3274,6 +3328,7 @@ def main():
     dv2_test()
     ytfix_test()
     fsback_test()
+    omdb_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
