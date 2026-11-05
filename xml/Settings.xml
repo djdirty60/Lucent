@@ -483,6 +483,13 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + Skin.HasSetting(lucent.hidetopbar)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31796]</label>
+                        <label2>$INFO[Skin.String(lucent.omdb.state),,  ·  ]$LOCALIZE[31797]</label2>
+                        <icon>icons/star.png</icon>
+                        <onclick>RunScript(special://skin/scripts/omdb.py,settings)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[31628]</label>
                         <label2>$LOCALIZE[31629]</label2>
                         <icon>icons/lock.png</icon>

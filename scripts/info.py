@@ -1380,6 +1380,11 @@ def load():
         xbmcgui.Dialog().notification(HEADING, tr("no_tmdb"), xbmcgui.NOTIFICATION_WARNING, 8000)
     HOME.setProperty("nuvio.info.key", item.key)
     HOME.clearProperty("nuvio.info.watched")
+    try:
+        import omdb                                 # IMDb, Rotten Tomatoes, Metacritic (your own OMDb key)
+        omdb.load(item)
+    except Exception as error:  # noqa: BLE001
+        log(f"omdb: {error}")
     load_studios()
     load_providers(item)
     load_credits(item)
