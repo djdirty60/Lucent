@@ -3066,6 +3066,84 @@ def diaglog_test():
     log(f"diaglog: back on home={cond('Window.IsActive(home)')} dialogs={cond('System.HasVisibleModalDialog')}")
 
 
+def waitfor(c, secs=10):
+    for _ in range(int(secs * 4)):
+        if cond(c):
+            return True
+        mon.waitForAbort(0.25)
+    return False
+
+
+CTX_VIS = ("ListItem.IsFolder + !ListItem.IsParentFolder + !String.IsEmpty(Skin.String(nuvio.tab1.label)) + !Window.IsVisible(home) + "
+           "[String.StartsWith(ListItem.FileNameAndPath,plugin://) | String.StartsWith(ListItem.FileNameAndPath,videodb://)]")
+
+
+def noseren_test():
+    """1.34: 'Add to Home as widget' in the context menu, the menu without Seren, the setup question."""
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    # 1. the context item on a library folder
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/,return)")
+    waitfor("Window.IsActive(videos)")
+    mon.waitForAbort(3)
+    for _ in range(3):
+        if not cond("ListItem.IsParentFolder"):
+            break
+        key("Down")
+        mon.waitForAbort(1)
+    log(f"ctx: item={lab('ListItem.Label')} path={lab('ListItem.FileNameAndPath')} folder={cond('ListItem.IsFolder')} vis={cond(CTX_VIS)}")
+    xbmc.executebuiltin("ContextMenu")
+    log(f"ctx: menu open={waitfor('Window.IsActive(contextmenu)', 6)}")
+    mon.waitForAbort(1)
+    shot("ctx-menu")
+    xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    waitfor("Window.IsActive(home)")
+    mon.waitForAbort(2)
+    # 2. add a widget (what the context item does)
+    HOME.setProperty("lucent.addw.path", "videodb://movies/genres/")
+    HOME.setProperty("lucent.addw.label", "CI Genres")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/menu.py,addwidget)")
+    log(f"addw: tab list={waitfor('Window.IsActive(selectdialog)')}")
+    mon.waitForAbort(1)
+    shot("addw-tabs")
+    xbmc.executebuiltin("Action(Select)")
+    log(f"addw: keyboard={waitfor('Window.IsActive(virtualkeyboard)')}")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("SendClick(10103,300)")
+    log(f"addw: style={waitfor('Window.IsActive(selectdialog)')}")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    found = [(t_, w_) for t_ in range(1, 13) for w_ in range(1, 11)
+             if lab(f"Skin.String(nuvio.tab{t_}.w{w_}.path)") == "videodb://movies/genres/" and lab(f"Skin.String(nuvio.tab{t_}.w{w_}.label)") == "CI Genres"]
+    log(f"addw: saved at {found} tab1={lab('Skin.String(nuvio.tab1.label)')} style={lab(f'Skin.String(nuvio.tab{found[0][0]}.w{found[0][1]}.style)') if found else ''}")
+    # 3. without Seren
+    xbmc.executebuiltin("Skin.SetBool(lucent.noseren)")
+    mon.waitForAbort(1)
+    import menu as _menu
+    import importlib
+    importlib.reload(_menu)
+    log(f"noseren: uses_seren={_menu.uses_seren()}")
+    m = _menu.Menu()
+    m.set_defaults()
+    m.save()
+    xbmc.executebuiltin("ReloadSkin()")
+    mon.waitForAbort(6)
+    waitfor("Window.IsActive(home)")
+    mon.waitForAbort(6)
+    tabs = [lab(f"Skin.String(nuvio.tab{i}.label)") for i in range(1, 13)]
+    log(f"noseren: tabs={[x for x in tabs if x]} search={lab('Skin.String(nuvio.tab1.action)')} seren_in_menu={any('plugin.video.seren' in lab(f'Skin.String(nuvio.tab{i}.action)') for i in range(1, 13))}")
+    log(f"noseren: home rows={[lab(f'Skin.String(nuvio.home.w{w}.label)') for w in range(1, 6)]}")
+    shot("noseren-home")
+    import setup as _setup
+    log(f"noseren: setup status={_setup.st_seren()} actions={[a[0] for a in _setup.ac_seren()]} steps={[x[0] for x in _setup.STEPS]}")
+    xbmc.executebuiltin("Skin.Reset(lucent.noseren)")
+    mon.waitForAbort(1)
+    importlib.reload(_setup)
+    log(f"seren: setup status={_setup.st_seren()} actions={[a[0] for a in _setup.ac_seren()]}")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3080,6 +3158,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     diaglog_test()
+    noseren_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

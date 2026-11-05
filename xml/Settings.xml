@@ -142,7 +142,7 @@
                     <property name="cat">seren</property>
                     <property name="sub">$LOCALIZE[31769]</property>
                     <onclick>SetFocus(9100,0,absolute)</onclick>
-                    <visible>System.HasAddon(plugin.video.seren) | System.HasAddon(script.lucent.library)</visible>
+                    <visible>System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)</visible>
                 </item>
                 <item>
                     <label>$LOCALIZE[31273]</label>
@@ -536,35 +536,35 @@
                         <label2>$LOCALIZE[31324]</label2>
                         <icon>icons/settings.png</icon>
                         <onclick>Addon.OpenSettings(plugin.video.seren)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31325]</label>
                         <label2>$LOCALIZE[31326]</label2>
                         <icon>icons/user.png</icon>
                         <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,accounts)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31327]</label>
                         <label2>$LOCALIZE[31328]</label2>
                         <icon>icons/play.png</icon>
                         <onclick>RunScript(special://skin/scripts/opensettings.py,plugin.video.seren,playback)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31780]</label>
                         <label2>$LOCALIZE[31781]</label2>
                         <icon>icons/refresh.png</icon>
                         <onclick>RunScript(script.lucent.library,update)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(script.lucent.library)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(script.lucent.library) + System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31760]</label>
                         <label2>$LOCALIZE[31782]</label2>
                         <icon>icons/list.png</icon>
                         <onclick>RunScript(script.lucent.library,chooselists)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(script.lucent.library)</visible>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),seren) + System.HasAddon(script.lucent.library) + System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31632]</label>

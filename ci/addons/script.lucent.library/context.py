@@ -9,6 +9,7 @@ import sys
 import urllib.parse
 
 import xbmc
+import xbmcgui
 import xbmcvfs
 
 SEREN = "plugin://plugin.video.seren/"
@@ -42,6 +43,13 @@ def from_tmdb(path):
 
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "select"
+    if what == "addwidget":                          # a folder of any add-on or of the library: a row on a Lucent tab
+        item = sys.listitem                          # noqa: F821 - given by Kodi to context scripts
+        home = xbmcgui.Window(10000)
+        home.setProperty("lucent.addw.path", item.getPath() or xbmc.getInfoLabel("ListItem.FileNameAndPath"))
+        home.setProperty("lucent.addw.label", item.getLabel() or xbmc.getInfoLabel("ListItem.Label"))
+        xbmc.executebuiltin("RunScript(special://skin/scripts/menu.py,addwidget)")
+        return
     if what == "addlib":                             # a film or series in a row: into your library in one go (the skin does it)
         xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,quickadd)")
         return
