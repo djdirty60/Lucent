@@ -78,7 +78,13 @@ def ac_welcome():
     return []
 
 
+def no_seren():
+    return cond("Skin.HasSetting(lucent.noseren)")
+
+
 def st_seren():
+    if no_seren():
+        return "ok", t("You use Lucent without Seren", "Je gebruikt Lucent zonder Seren")
     if not has(SEREN):
         return "todo", t("Seren is not installed", "Seren is nog niet geïnstalleerd")
     if not setting(SEREN, "trakt.auth"):
@@ -114,13 +120,45 @@ def install_seren():
     threading.Thread(target=go, daemon=True).start()
 
 
+def choose_menu(question):
+    """Offer the default menu that fits the choice (with or without Seren)."""
+    if xbmcgui.Dialog().yesno("Lucent", question):
+        import menu
+        m = menu.Menu()
+        m.set_defaults()
+        m.save()
+        xbmcgui.Dialog().notification("Lucent", t("Menu set up", "Menu klaargezet"), "", 3000, False)
+
+
+def seren_off():
+    """'No, without Seren': the Seren choices leave the menu editor and the setup, and the menu can go without Seren."""
+    run("Skin.SetBool(lucent.noseren)")
+    xbmc.sleep(200)
+    choose_menu(t("Lucent now leaves out the Seren choices.\n\nAlso set up the menu without Seren (your Kodi library, search, "
+                  "add-ons and favourites)? Your own tabs and widgets are replaced.",
+                  "Lucent laat de Seren-keuzes nu weg.\n\nOok het menu zonder Seren klaarzetten (je Kodi-bibliotheek, zoeken, "
+                  "add-ons en favorieten)? Je eigen tabs en widgets worden vervangen."))
+
+
+def seren_on():
+    run("Skin.Reset(lucent.noseren)")
+    xbmc.sleep(200)
+    if has(SEREN):
+        choose_menu(t("Also set up the menu with Seren (search, movies and series from Seren)? Your own tabs and widgets are replaced.",
+                      "Ook het menu met Seren klaarzetten (zoeken, films en series uit Seren)? Je eigen tabs en widgets worden vervangen."))
+
+
 def ac_seren():
+    if no_seren():
+        return [(t("Use Seren after all", "Toch Seren gebruiken"), seren_on)]
     if not has(SEREN):
-        return [(t("Install Seren", "Seren installeren"), install_seren)]
+        return [(t("Yes: install Seren", "Ja: Seren installeren"), install_seren),
+                (t("No, without Seren", "Nee, zonder Seren"), seren_off)]
     out = []
     if not setting(SEREN, "trakt.auth"):
         out.append((t("Link Trakt", "Trakt koppelen"), lambda: run(f"RunPlugin(plugin://{SEREN}/?action=authTrakt)")))
     out.append((t("Seren settings", "Seren-instellingen"), lambda: run(f"Addon.OpenSettings({SEREN})")))
+    out.append((t("I don't use Seren", "Ik gebruik geen Seren"), seren_off))
     return out
 
 
@@ -505,21 +543,25 @@ def ac_tabs():
 
 STEPS = [
     ("welcome", "icons/sparkle.png", ("Welcome", "Welkom"),
-     ("Welcome to Lucent. In a few steps we set up what matters most: Seren with your Trakt account, a TMDb key for "
+     ("Welcome to Lucent. In a few steps we set up what matters most: Seren with your Trakt account (if you use it), a TMDb key for "
       "pictures and information, your IPTV channels, subtitles and your own library.\n\nEvery step shows how it stands "
       "right now. Something you do not use, you simply skip. You can open this assistant again later: "
       "Settings > Lucent > Setup assistant.",
-      "Welkom bij Lucent. In een paar stappen zetten we het belangrijkste klaar: Seren met je Trakt-account, een "
+      "Welkom bij Lucent. In een paar stappen zetten we het belangrijkste klaar: Seren met je Trakt-account (als je dat gebruikt), een "
       "TMDb-sleutel voor plaatjes en informatie, je IPTV-zenders, ondertitels en je eigen bibliotheek.\n\nBij elke stap "
       "zie je meteen hoe het nu staat. Wat je niet gebruikt, sla je gewoon over. Je kunt deze assistent later opnieuw "
       "openen: Instellingen > Lucent > Setup-assistent."), st_welcome, ac_welcome),
-    ("seren", "icons/trakt.png", ("Seren and Trakt", "Seren en Trakt"),
+    ("seren", "icons/trakt.png", ("Do you use Seren?", "Gebruik je Seren?"),
      ("Seren finds the streams and plays films and series. Your Trakt account keeps your lists, your collection and "
       "what you watched - Lucent reads its rows, the calendar and 'Tonight for you' from it.\n\nLink Trakt: a code "
-      "appears, enter it on trakt.tv/activate (phone or computer).",
+      "appears, enter it on trakt.tv/activate (phone or computer).\n\nDon't use Seren? Choose 'No, without Seren'. Lucent then "
+      "works with your Kodi library and your own add-ons (Emby, Jellyfin, YouTube...) and leaves the Seren choices out. "
+      "Tip: long-press OK on a folder in any add-on and choose 'Add to Home as widget'.",
       "Seren zoekt de bronnen en speelt films en series af. Je Trakt-account bewaart je lijsten, je collectie en wat "
       "je gezien hebt - daar haalt Lucent zijn rijen, de kalender en 'Vanavond voor jou' uit.\n\nTrakt koppelen: er "
-      "verschijnt een code, vul die in op trakt.tv/activate (telefoon of computer)."), st_seren, ac_seren),
+      "verschijnt een code, vul die in op trakt.tv/activate (telefoon of computer).\n\nGebruik je geen Seren? Kies 'Nee, zonder "
+      "Seren'. Lucent werkt dan met je Kodi-bibliotheek en je eigen add-ons (Emby, Jellyfin, YouTube...) en laat de Seren-keuzes weg. "
+      "Tip: houd OK ingedrukt op een map in een add-on en kies 'Toevoegen aan Home als widget'."), st_seren, ac_seren),
     ("tmdb", "icons/movies.png", ("TMDb key", "TMDb-sleutel"),
      ("TMDb (The Movie Database) supplies posters, logos, cast, studios and trailers. A key of your own is free and "
       "makes everything faster and more complete.\n\nGet one: make an account on themoviedb.org, then Settings > API > "
@@ -615,6 +657,8 @@ STEPS = [
 
 if not cond(f"System.AddonIsEnabled({SOLIS})"):          # the Tabs step is only for the Solis add-on for now
     STEPS = [step for step in STEPS if step[0] != "tabs"]
+if no_seren():                                           # Lucent Library fills the library from Trakt / Seren
+    STEPS = [step for step in STEPS if step[0] != "library"]
 
 
 class Setup(xbmcgui.WindowXMLDialog):

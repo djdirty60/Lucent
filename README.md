@@ -296,15 +296,23 @@ From then on new versions arrive automatically (Kodi's default: **Settings → S
 - **Layout** – menu and widgets, what OK does on a film or episode (open its page first, or start the stream at once), poster labels, landscape posters on Home, watched titles (show/dim), hide side icons, full release date, fullscreen hero backdrop, edge glow on cards, and the details page (ratings, rating logos, trailer button, studio logos).
 - **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** – shortcuts to the matching Seren and Kodi settings. Integrations also has your TMDB API key, Lucent Subtitles and the update pop-up.
 
+### With or without Seren
+
+Lucent works fine as a skin **on its own**. Without Seren it starts with your Kodi library: *Search*, *Home*, *Movies*, *TV shows*, *Add-ons* and *Favourites*, with rows such as *Continue watching* and *Recently added*. The setup assistant asks **"Do you use Seren?"** – choose *No* and the Seren choices stay out of the menu editor, the settings and the assistant.
+
+**Add any add-on as a widget, like other skins:** long-press OK (or the menu button) on a folder in any add-on – Emby, Jellyfin, YouTube, an IPTV add-on – or in your library, and choose **Add to Home as widget**. Pick the tab, the name and posters or landscape, and the row is there.
+
 **Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.lucent/logos/` and the info page shows them instead of the names.
 
 ### Customising the menu and widgets
 
+The quickest way to add a widget: long-press OK on a folder in any add-on or in your library and choose **Add to Home as widget**.
+
 1. Go to **Settings → Lucent → Menu and widgets**.
 2. You see a list of your tabs. Choose a tab to change it:
    - **Widgets on this tab** – add, rename, move or remove widgets. A widget can be:
-     - a Seren list (continue watching, trending, popular, anticipated, watchlist, …),
-     - one of your **Trakt lists** (liked or your own),
+     - a Seren list (continue watching, trending, popular, anticipated, watchlist, …) – only when you use Seren,
+     - one of your **Trakt lists** (liked or your own) – only when you use Seren,
      - something from your **Kodi library**,
      - **any folder of any video add-on** (choose *Browse an add-on…* and walk to the folder you want),
      - your favourites, add-ons or a playlist,

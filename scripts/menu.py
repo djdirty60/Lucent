@@ -350,6 +350,7 @@ ACTION_GROUPS = [
     ]),
     (G("Video library", "Videobibliotheek"), "icons/library.png", [
         ("k_library", "icons/library.png", videos("videodb://")),
+        (G("Search the library", "Bibliotheek doorzoeken"), "icons/search.png", "VideoLibrary.Search"),
         ("k_lib_m", "icons/movies.png", videos("videodb://movies/titles/")),
         ("k_lib_s", "icons/tv.png", videos("videodb://tvshows/titles/")),
         (G("Movie sets", "Filmreeksen"), "icons/movies.png", videos("videodb://movies/sets/")),
@@ -431,8 +432,47 @@ def tr_pair(pair):
     return pair[1] if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else pair[0]
 
 
+def uses_seren():
+    """Seren is installed and not switched off in the setup assistant ("Do you use Seren? No")."""
+    return xbmc.getCondVisibility("System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)")
+
+
+def plain_tabs():
+    """The default menu without Seren: the Kodi library, search, add-ons and favourites."""
+    rows = {p: (n, st) for n, p, st in WIDGETS_LIBRARY}
+
+    def row(path):
+        name, style = rows[path]
+        return {"label": tr(name), "path": path, "style": style}
+
+    by_en = {(n if isinstance(n, tuple) else T[n])[0]: p for n, p, _s in WIDGETS_LIBRARY}
+    pick = by_en.__getitem__                          # a library row by its English name
+    home = [row(LIB + "continue"), row(LIB + "nextup"), row("videodb://recentlyaddedmovies/"),
+            row("videodb://recentlyaddedepisodes/"), row(pick("Random movies"))]
+    movies = [row("videodb://recentlyaddedmovies/"), row(pick("Movies in progress")), row(pick("Unwatched movies")),
+              row(pick("Top rated movies")), row("videodb://movies/genres/")]
+    shows = [row(LIB + "nextup"), row("videodb://recentlyaddedepisodes/"), row("videodb://inprogresstvshows/"),
+             row(pick("Unwatched shows")), row("videodb://tvshows/genres/")]
+
+    def tab(key, icon, action, widgets=None):
+        return {"label": tr(key), "icon": f"icons/{icon}.png", "action": action, "widgets": widgets or []}
+
+    return [
+        tab("t_search", "search", "VideoLibrary.Search"),
+        tab("t_home", "home", SHOW_WIDGETS, home),
+        tab("t_movies", "movies", videos("videodb://movies/titles/"), movies),
+        tab("t_shows", "tv", videos("videodb://tvshows/titles/"), shows),
+        tab("t_addons", "addons", "ActivateWindow(AddonBrowser)", addon_widgets()),
+        tab("t_favourites", "favourites", "ActivateWindow(favouritesbrowser)"),
+        tab("t_settings", "settings", "ActivateWindow(Settings)"),
+        tab("t_power", "power", "ActivateWindow(ShutdownMenu)"),
+    ], 2
+
+
 def default_tabs():
-    """The menu of version 1.0, plus the rows and Trakt lists the user had chosen there."""
+    """The menu of version 1.0, plus the rows and Trakt lists the user had chosen there (without Seren: plain_tabs)."""
+    if not uses_seren():
+        return plain_tabs()
     home = []
     old_rows = [("w_nextup", 8001), ("w_ondeck", 8002), ("w_trend_m", 8003), ("w_trend_s", 8004)]
     seren_by_key = {k: (p, s) for k, p, s in WIDGETS_SEREN}
@@ -687,7 +727,10 @@ def pick_widget():
                tr(G("Lucent fast lists (TMDb)", "Lucent snelle lijsten (TMDb)"))]
     icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png",
              "icons/favourites.png", "icons/list.png", "icons/star.png"]
-    source = select(tr("add_widget"), sources, True, icons)
+    # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
+    order = [3, 2, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 5, 6, 4]
+    pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])
+    source = order[pick] if pick >= 0 else -1
     style = "poster"
     if source == 0:
         choice = select(tr("src_seren"), [tr(k) for k, _p, _s in WIDGETS_SEREN])
@@ -725,9 +768,12 @@ def pick_widget():
     elif source == 7:
         trakt_entry = tr(G("Trakt lists (fast)…", "Trakt-lijsten (snel)…"))
         stream_entry = tr(G("Streaming services…", "Streamingdiensten…"))
-        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB] + [trakt_entry, stream_entry])
+        extra = [trakt_entry, stream_entry] if uses_seren() else [stream_entry]
+        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB] + extra)
         if choice < 0:
             return None
+        if choice >= len(WIDGETS_TMDB) and not uses_seren():
+            choice += 1                                   # no Trakt entry: the next one is the streaming services
         if choice == len(WIDGETS_TMDB) + 1:
             picked = pick_streaming()
             if not picked:
@@ -986,11 +1032,12 @@ def pick_action():
     if choice == 0:
         return SHOW_WIDGETS, None
     while choice == 1:
-        group = select(tr("act_window"), [tr(g) for g, _i, _e in ACTION_GROUPS], True, [i for _g, i, _e in ACTION_GROUPS])
+        groups = ACTION_GROUPS if uses_seren() else ACTION_GROUPS[1:]
+        group = select(tr("act_window"), [tr(g) for g, _i, _e in groups], True, [i for _g, i, _e in groups])
         if group < 0:
             return None, None
-        entries = ACTION_GROUPS[group][2]
-        pick = select(tr(ACTION_GROUPS[group][0]), [tr(k) for k, _i, _a in entries], True, [i for _k, i, _a in entries])
+        entries = groups[group][2]
+        pick = select(tr(groups[group][0]), [tr(k) for k, _i, _a in entries], True, [i for _k, i, _a in entries])
         if pick >= 0:
             key, icon, action = entries[pick]
             return action, (tr(key).split(" · ")[-1], icon)
@@ -1127,11 +1174,52 @@ def editor():
     notify(tr("saved"))
 
 
+def add_here():
+    """Context menu "Add to Home as widget" (Lucent Library): the folder under the cursor becomes a widget on a tab you pick.
+    The folder comes in Window(home).Property(lucent.addw.path / .label)."""
+    home = xbmcgui.Window(10000)
+    path, label = home.getProperty("lucent.addw.path"), clean(home.getProperty("lucent.addw.label"))
+    home.clearProperty("lucent.addw.path")
+    home.clearProperty("lucent.addw.label")
+    if not path:
+        return
+    menu = Menu()
+    if not menu.tabs:
+        menu.set_defaults()
+    tabs = [t for t in menu.tabs if t["action"] == SHOW_WIDGETS or t["widgets"]]
+    labels = [t["label"] for t in tabs] + [tr("add_tab").lstrip("+ ").strip()]
+    label2s = [tr("widgets_n", len(t["widgets"])) if t["widgets"] else tr(G("no widgets yet", "nog geen widgets")) for t in tabs] + [""]
+    icons = [t["icon"] for t in tabs] + ["icons/plus.png"]
+    choice = select(tr(G("Add \"{0}\" to which tab?", "\"{0}\" toevoegen aan welke tab?"), label or path), labels, True, icons, label2s)
+    if choice < 0:
+        return
+    if choice == len(tabs):
+        if len(menu.tabs) >= NTABS:
+            xbmcgui.Dialog().ok(HEADING, tr("max_tabs", NTABS))
+            return
+        name = keyboard(tr("rename"), label or tr("new_tab")) or label or tr("new_tab")
+        tab = {"label": name, "icon": "icons/star.png", "action": SHOW_WIDGETS, "actionlabel": "", "widgets": [], "slot": 0}
+        start = menu.start_tab()
+        at = menu.tabs.index(start) + 1 if start in menu.tabs else len(menu.tabs)
+        menu.tabs.insert(at, tab)                    # right after the start tab
+        menu.start = start
+    else:
+        tab = tabs[choice]
+    if len(tab["widgets"]) >= NWIDGETS:
+        xbmcgui.Dialog().ok(HEADING, tr("max_widgets", NWIDGETS))
+        return
+    name = keyboard(tr("rename"), label or path) or label or path
+    style = select(tr("style"), [tr("poster"), tr("land")])
+    tab["widgets"].append({"label": name, "path": path, "style": "land" if style == 1 else "poster"})
+    menu.save()
+    notify(tr(G("Widget added to {0}", "Widget toegevoegd aan {0}"), tab["label"]))
+
+
 def init():
     menu = Menu()
     if not menu.tabs:
         menu.set_defaults()
-        put("nuvio.agenda.tab", "1")      # the default menu already has the Calendar tab
+        put("nuvio.agenda.tab", "1")      # the default menu already has the Calendar tab (the plain menu wants none)
     menu.save()
     # select the start tab now that it is known (Home asked for this before the menu existed)
     pos = get("nuvio.homepos")
@@ -1166,6 +1254,8 @@ if __name__ == "__main__":
         init()
     elif arg == "addons":
         addons_once()
+    elif arg == "addwidget":
+        add_here()
     elif arg == "limitcheck":
         limit_check()
     elif arg == "reset":
