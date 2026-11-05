@@ -242,18 +242,64 @@
                             <label>$INFO[ListItem.Rating(trakt)]</label>
                         </control>
                     </control>
-                    <include content="InfoPill">
-                        <param name="label">[COLOR $INFO[Window(home).Property(lucent.omdb.rtc)]]●[/COLOR]  Rotten Tomatoes  $INFO[Window(home).Property(lucent.omdb.rt)]</param>
-                        <param name="bg">glass</param>
-                        <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(Window(home).Property(lucent.omdb.rt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rt)</param>
-                    </include>
-                    <include content="InfoPill">
-                        <param name="label">[COLOR $INFO[Window(home).Property(lucent.omdb.mcc)]]●[/COLOR]  Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</param>
-                        <param name="bg">glass</param>
-                        <param name="color">text2</param>
-                        <param name="visible">!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc)</param>
-                    </include>
+                    <control type="group">
+                        <width>316</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rt)</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>316</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>pill44.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.rtc)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <top>0</top>
+                            <width>260</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>Rotten Tomatoes  $INFO[Window(home).Property(lucent.omdb.rt)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>214</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>214</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>pill44.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.mcc)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <top>0</top>
+                            <width>158</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</label>
+                        </control>
+                    </control>
                     <include content="InfoPill">
                         <param name="label">★  $INFO[ListItem.Rating]</param>
                         <param name="bg">glass</param>
