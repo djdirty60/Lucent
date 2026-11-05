@@ -1382,4 +1382,7 @@
     <variable name="LucentImdbVotes">
         <value condition="Skin.HasSetting(lucent.rate.votes) + !String.IsEmpty(Window(home).Property(lucent.omdb.votes))">$INFO[Window(home).Property(lucent.omdb.votes),  [COLOR 80FFFFFF],[/COLOR]]</value>
     </variable>
+    <variable name="LucentRowArtist">
+        <value condition="Container.Content(albums) + !String.IsEmpty(ListItem.Artist) + !String.IsEqual(ListItem.Label2,ListItem.Artist)">$INFO[ListItem.Artist,  ·  ,]</value>
+    </variable>
 </includes>

@@ -684,6 +684,23 @@ def browse(heading):
     return None
 
 
+def pick_favourite():
+    """A favourite that is a folder (a library node, an add-on folder, a smart playlist ...) as a widget: (name, path)."""
+    favs = jsonrpc("Favourites.GetFavourites", {"properties": ["path", "window", "windowparameter", "thumbnail"]}).get("favourites") or []
+    found = []
+    for f in favs:
+        path = f.get("windowparameter") if f.get("type") == "window" else f.get("path") if f.get("type") == "media" else ""
+        path = (path or "").strip().strip('"')
+        if path and not path.lower().startswith(("script://", "runscript")) and (path.endswith("/") or "://" in path or path.endswith(".xsp")):
+            found.append((clean(f.get("title")), path, f.get("thumbnail") or "icons/favourites.png"))
+    if not found:
+        xbmcgui.Dialog().ok(HEADING, tr(G("None of your favourites is a folder that can be a widget (a library list, an add-on folder ...).",
+                                          "Geen van je favorieten is een map die een widget kan zijn (een bibliotheeklijst, een map van een add-on ...).")))
+        return None
+    choice = select(tr(G("Favourites", "Favorieten")), [f[0] for f in found], True, [f[2] for f in found], [f[1] for f in found])
+    return (found[choice][0], found[choice][1]) if choice >= 0 else None
+
+
 def pick_playlist():
     found = []
     for folder in ("special://profile/playlists/video/", "special://profile/playlists/mixed/", "special://profile/playlists/music/"):
@@ -724,11 +741,11 @@ def trakt_lists():
 def pick_widget():
     sources = [tr("src_seren"), tr("src_trakt"), tr("src_library"), tr("src_browse"), tr("src_type"),
                tr(G("Favourites and add-ons", "Favorieten en add-ons")), tr(G("A playlist…", "Een afspeellijst…")),
-               tr(G("Lucent fast lists (TMDb)", "Lucent snelle lijsten (TMDb)"))]
+               tr(G("Lucent fast lists (TMDb)", "Lucent snelle lijsten (TMDb)")), tr(G("One of your favourites…", "Een van je favorieten…"))]
     icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png",
-             "icons/favourites.png", "icons/list.png", "icons/star.png"]
+             "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
-    order = [3, 2, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 5, 6, 4]
+    order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])
     source = order[pick] if pick >= 0 else -1
     style = "poster"
@@ -760,6 +777,11 @@ def pick_widget():
             return None
         key, path, style = WIDGETS_OTHER[choice]
         label = tr(key)
+    elif source == 8:
+        picked = pick_favourite()
+        if not picked:
+            return None
+        label, path = picked
     elif source == 6:
         picked = pick_playlist()
         if not picked:
@@ -931,6 +953,8 @@ def SORTS():
             ("year", tr(G("Year (newest first)", "Jaar (nieuwste eerst)"))),
             ("rating", tr(G("Rating (highest first)", "Beoordeling (hoogste eerst)"))),
             ("dateadded", tr(G("Date added (newest first)", "Datum toegevoegd (nieuwste eerst)"))),
+            ("lastplayed", tr(G("Last watched (newest first)", "Laatst bekeken (nieuwste eerst)"))),
+            ("playcount", tr(G("Most watched first", "Meest bekeken eerst"))),
             ("random", tr(G("Random", "Willekeurig")))]
 
 

@@ -3310,6 +3310,55 @@ def omdb_test():
     mon.waitForAbort(2)
 
 
+def music_fav_test():
+    """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
+    import sys as _s
+    import threading
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import menu as _m
+    log(f"sorts: {[k for k, _n in _m.SORTS()]}")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Favourites.AddFavourite",
+                                    "params": {"title": "CI In progress", "type": "window", "window": "videos", "windowparameter": "videodb://inprogresstvshows/"}}))
+    res = []
+    th = threading.Thread(target=lambda: res.append(_m.pick_favourite()))
+    th.start()
+    for _ in range(20):
+        if cond("Window.IsActive(selectdialog)"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(1)
+    shot("fav-pick")
+    xbmc.executebuiltin("Action(Select)")
+    th.join(10)
+    log(f"fav: picked {res}")
+    # music
+    xbmc.executebuiltin("UpdateLibrary(music,/tmp/ci/music/)")
+    for _ in range(40):
+        mon.waitForAbort(1)
+        r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "AudioLibrary.GetAlbums", "params": {"properties": ["artist", "title"]}})))
+        albums = (r.get("result") or {}).get("albums") or []
+        if len(albums) >= 3 and not cond("Library.IsScanningMusic"):
+            break
+    log(f"music: albums {[(a.get('title'), a.get('artist')) for a in albums]}")
+    xbmc.executebuiltin("ActivateWindow(Music,musicdb://albums/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(54)")
+    mon.waitForAbort(2)
+    log(f"music: view={lab('Container.Viewmode')} 54={cond('Control.IsVisible(54)')} item={lab('ListItem.Label')} artist={lab('ListItem.Artist')}")
+    shot("music-covers")
+    xbmc.executebuiltin("Container.SetViewMode(50)")
+    mon.waitForAbort(2)
+    for _ in range(3):
+        if not cond("ListItem.IsParentFolder"):
+            break
+        key("Down")
+        mon.waitForAbort(1)
+    log(f"music: view={lab('Container.Viewmode')} 50={cond('Control.IsVisible(50)')} item={lab('ListItem.Label')} icon={lab('ListItem.Icon')[:60]}")
+    shot("music-list")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3329,6 +3378,7 @@ def main():
     ytfix_test()
     fsback_test()
     omdb_test()
+    music_fav_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
