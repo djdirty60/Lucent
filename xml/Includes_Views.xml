@@ -549,7 +549,17 @@
                     <height>200</height>
                     <aspectratio align="left" aligny="top">keep</aspectratio>
                     <texture background="true">$INFO[ListItem.Icon]</texture>
-                    <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo)) + ![Container.Content(albums) | Container.Content(artists) | Container.Content(songs)]</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>380</width>
+                    <height>380</height>
+                    <aspectratio align="left" aligny="top">keep</aspectratio>
+                    <fadetime>200</fadetime>
+                    <texture background="true">$INFO[ListItem.Icon]</texture>
+                    <visible>[Container.Content(albums) | Container.Content(artists) | Container.Content(songs)] + String.IsEmpty(ListItem.Art(clearlogo))</visible>
                 </control>
                 <control type="label">
                     <left>0</left>
@@ -566,7 +576,7 @@
                     <height>36</height>
                     <font>font12</font>
                     <textcolor>text3</textcolor>
-                    <label>$VAR[ItemSE]$INFO[ListItem.Year,   ,]$INFO[ListItem.Rating,   ★ ,]$INFO[ListItem.Genre,   ,]</label>
+                    <label>$INFO[ListItem.Artist,,   ]$VAR[ItemSE]$INFO[ListItem.Year,   ,]$INFO[ListItem.Rating,   ★ ,]$INFO[ListItem.Genre,   ,]</label>
                 </control>
                 <control type="textbox">
                     <left>0</left>
@@ -622,7 +632,7 @@
                         <font>font_label</font>
                         <textcolor>text2</textcolor>
                         <selectedcolor>text2</selectedcolor>
-                        <label>$INFO[ListItem.Label]</label>
+                        <label>$INFO[ListItem.Label]$VAR[LucentRowArtist]</label>
                     </control>
                     <control type="label">
                         <left>720</left>
@@ -713,7 +723,7 @@
                         <textcolor>on_focus</textcolor>
                         <scroll>true</scroll>
                         <selectedcolor>on_focus</selectedcolor>
-                        <label>$INFO[ListItem.Label]</label>
+                        <label>$INFO[ListItem.Label]$VAR[LucentRowArtist]</label>
                         <visible>Control.HasFocus(50)</visible>
                     </control>
                     <control type="label">
@@ -724,7 +734,7 @@
                         <font>font_label_bold</font>
                         <textcolor>text</textcolor>
                         <selectedcolor>text</selectedcolor>
-                        <label>$INFO[ListItem.Label]</label>
+                        <label>$INFO[ListItem.Label]$VAR[LucentRowArtist]</label>
                         <visible>!Control.HasFocus(50)</visible>
                     </control>
                     <control type="label">
@@ -3389,5 +3399,89 @@
         <include>View_55</include>
         <include>View_53</include>
         <include>View_50</include>
+    </include>
+    <!-- View 54: covers (albums, artists): square covers with the title and the artist under them -->
+    <include name="View_54">
+        <control type="group" id="9254">
+            <control type="panel" id="54">
+                <left>72</left>
+                <top>170</top>
+                <width>1776</width>
+                <height>880</height>
+                <orientation>vertical</orientation>
+                <onleft>9050</onleft>
+                <scrolltime tween="quadratic">250</scrolltime>
+                <visible>Container.Content(albums) | Container.Content(artists)</visible>
+                <viewtype label="$LOCALIZE[31798]">wrap</viewtype>
+                <include>Anim_SlideLeft</include>
+                <itemlayout width="296" height="380">
+                    <control type="image">
+                        <left>18</left>
+                        <top>18</top>
+                        <width>260</width>
+                        <height>260</height>
+                        <aspectratio>scale</aspectratio>
+                        <texture background="true">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>18</left>
+                        <top>290</top>
+                        <width>260</width>
+                        <height>34</height>
+                        <font>font_label</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>18</left>
+                        <top>324</top>
+                        <width>260</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Artist]$INFO[ListItem.Year,  ·  ,]</label>
+                        <visible>Container.Content(albums)</visible>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="296" height="380">
+                    <control type="image">
+                        <left>8</left>
+                        <top>8</top>
+                        <width>280</width>
+                        <height>280</height>
+                        <texture border="20" colordiffuse="FFFFFFFF">rr20.png</texture>
+                        <visible>Control.HasFocus(54)</visible>
+                    </control>
+                    <control type="image">
+                        <left>14</left>
+                        <top>14</top>
+                        <width>268</width>
+                        <height>268</height>
+                        <aspectratio>scale</aspectratio>
+                        <texture background="true">$INFO[ListItem.Icon]</texture>
+                    </control>
+                    <control type="label">
+                        <left>18</left>
+                        <top>290</top>
+                        <width>260</width>
+                        <height>34</height>
+                        <font>font_label</font>
+                        <textcolor>text</textcolor>
+                        <scroll>true</scroll>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>18</left>
+                        <top>324</top>
+                        <width>260</width>
+                        <height>30</height>
+                        <font>font10</font>
+                        <textcolor>text3</textcolor>
+                        <label>$INFO[ListItem.Artist]$INFO[ListItem.Year,  ·  ,]</label>
+                        <visible>Container.Content(albums)</visible>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
     </include>
 </includes>
