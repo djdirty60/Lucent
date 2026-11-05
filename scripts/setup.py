@@ -23,7 +23,7 @@ IPTV = "pvr.iptvsimple"
 SUBS = "service.subtitles.lucent"
 LIB = "script.lucent.library"
 SKIP = "plugin.video.tidb"          # TheIntroDB: skip intro, recap, credits and preview
-SKIP_REPO = "repository.tidb.repo"  # its repository; comes with the skin
+SKIP_REPO = "repository.tidb.repo"  # its repository; in the Lucent repository, installed by the setup assistant
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
 
 
@@ -87,7 +87,7 @@ def st_seren():
     return "ok", t(f"Linked to Trakt{' as ' + user if user else ''}", f"Gekoppeld met Trakt{' als ' + user if user else ''}")
 
 
-SEREN_REPO = "repository.seren-nixgate"   # minhgi's Seren build (scrapers in modules); comes with the skin
+SEREN_REPO = "repository.seren-nixgate"   # minhgi's Seren build (scrapers in modules); in the Lucent repository, installed by the setup assistant
 
 
 def install_seren():
