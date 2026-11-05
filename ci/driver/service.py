@@ -3214,6 +3214,48 @@ def ytfix_test():
     _y.xbmc = real
 
 
+def fsback_test():
+    """1.34.3: Back while skipping (a seek just done, fast forward) must not stop the film; Back later does."""
+    pl = xbmc.Player()
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(30):
+        if pl.isPlayingVideo():
+            break
+        mon.waitForAbort(0.5)
+    xbmc.executebuiltin("ActivateWindow(fullscreenvideo)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Seek(20)")
+    mon.waitForAbort(0.8)
+    log(f"fsback: after seek seeking={cond('Player.Seeking')} recent={cond('Player.HasPerformedSeek(3)')} seekbar={cond('Window.IsVisible(seekbar)')}")
+    shot("fsback-seek")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/fsback.py)")
+    mon.waitForAbort(1.5)
+    log(f"fsback: back after a seek -> playing={pl.isPlayingVideo()}")
+    xbmc.executebuiltin("PlayerControl(Forward)")
+    mon.waitForAbort(1.5)
+    log(f"fsback: forwarding={cond('Player.Forwarding')} speed={lab('Player.PlaySpeed')}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/fsback.py)")
+    mon.waitForAbort(1.5)
+    log(f"fsback: back while fast forward -> playing={pl.isPlayingVideo()} forwarding={cond('Player.Forwarding')} speed={lab('Player.PlaySpeed')}")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/fsback.py)")
+    mon.waitForAbort(2.5)
+    log(f"fsback: back while just watching -> playing={pl.isPlayingVideo()}")
+    if pl.isPlaying():
+        pl.stop()
+    # the name and count above lists
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    shot("topbar-on")
+    xbmc.executebuiltin("Skin.SetBool(lucent.hidetopbar)")
+    mon.waitForAbort(1.5)
+    shot("topbar-off")
+    log(f"topbar: hidden={cond('Skin.HasSetting(lucent.hidetopbar)')} folder={lab('Container.FolderName')}")
+    xbmc.executebuiltin("Skin.Reset(lucent.hidetopbar)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3231,6 +3273,7 @@ def main():
     noseren_test()
     dv2_test()
     ytfix_test()
+    fsback_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

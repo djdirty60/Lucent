@@ -469,6 +469,20 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + Skin.HasSetting(lucent.lite)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31793]</label>
+                        <label2>$LOCALIZE[31794]</label2>
+                        <icon>icons/list.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.hidetopbar)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + !Skin.HasSetting(lucent.hidetopbar)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31793]</label>
+                        <label2>$LOCALIZE[31795]</label2>
+                        <icon>icons/list.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.hidetopbar)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),lucent) + Skin.HasSetting(lucent.hidetopbar)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[31628]</label>
                         <label2>$LOCALIZE[31629]</label2>
                         <icon>icons/lock.png</icon>
