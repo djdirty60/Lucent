@@ -3091,8 +3091,12 @@ def noseren_test():
             break
         key("Down")
         mon.waitForAbort(1)
-    log(f"ctx: item={lab('ListItem.Label')} path={lab('ListItem.FileNameAndPath')} folder={cond('ListItem.IsFolder')} vis={cond(CTX_VIS)}")
-    xbmc.executebuiltin("ContextMenu")
+    import re as _re
+    vis = _re.search(r'args="addwidget">.*?<visible>(.*?)</visible>',
+                     open(xbmcvfs.translatePath("special://home/addons/script.lucent.library/addon.xml"), encoding="utf-8").read(), _re.S).group(1)
+    log(f"ctx: item={lab('ListItem.Label')} folderpath={lab('ListItem.FolderPath')} path={lab('ListItem.Path')} "
+        f"folder={cond('ListItem.IsFolder')} vis={cond(vis)}")
+    xbmc.executebuiltin("Action(ContextMenu)")
     log(f"ctx: menu open={waitfor('Window.IsActive(contextmenu)', 6)}")
     mon.waitForAbort(1)
     shot("ctx-menu")

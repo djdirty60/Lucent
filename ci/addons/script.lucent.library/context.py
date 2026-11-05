@@ -46,7 +46,7 @@ def main():
     if what == "addwidget":                          # a folder of any add-on or of the library: a row on a Lucent tab
         item = sys.listitem                          # noqa: F821 - given by Kodi to context scripts
         home = xbmcgui.Window(10000)
-        home.setProperty("lucent.addw.path", item.getPath() or xbmc.getInfoLabel("ListItem.FileNameAndPath"))
+        home.setProperty("lucent.addw.path", item.getPath() or xbmc.getInfoLabel("ListItem.FolderPath") or xbmc.getInfoLabel("ListItem.Path"))
         home.setProperty("lucent.addw.label", item.getLabel() or xbmc.getInfoLabel("ListItem.Label"))
         xbmc.executebuiltin("RunScript(special://skin/scripts/menu.py,addwidget)")
         return
