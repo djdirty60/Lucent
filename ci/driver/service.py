@@ -3175,6 +3175,45 @@ def dv2_test():
     mon.waitForAbort(1)
 
 
+def ytfix_test():
+    """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
+    import sys as _s
+    import shutil as _sh
+    import types as _t
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import ytfix as _y
+    src = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "ci", "data", "yt744_player_client.py")
+    if not os.path.exists(src):
+        src = "/tmp/ci/yt744_player_client.py"
+    work = xbmcvfs.translatePath("special://temp/ytfix/player_client.py")
+    os.makedirs(os.path.dirname(work), exist_ok=True)
+    _sh.copyfile(src, work)
+    real = _y.xbmc
+    fake = _t.SimpleNamespace(**{k: getattr(real, k) for k in dir(real) if not k.startswith("__")})
+    fake.getCondVisibility = lambda c: True if "HasAddon(plugin.video.youtube)" in c else real.getCondVisibility(c)
+    _y.xbmc = fake
+    _y.FILE = "special://temp/ytfix/player_client.py"
+    xbmc.executebuiltin("Skin.Reset(lucent.ytfix.off)")
+    mon.waitForAbort(0.5)
+    r1 = _y.check()
+    txt = open(work, encoding="utf-8").read()
+    import py_compile
+    try:
+        py_compile.compile(work, doraise=True)
+        ok = True
+    except Exception as e:  # noqa: BLE001
+        ok = repr(e)
+    backups = os.listdir(xbmcvfs.translatePath(_y.BACKUP_DIR)) if os.path.isdir(xbmcvfs.translatePath(_y.BACKUP_DIR)) else []
+    log(f"ytfix: on -> {r1} marker={'lucent-ytfix' in txt} vr_active={chr(39) + 'android_vr' + chr(39) + ',' in txt.replace('# ' + chr(39) + 'android_vr', '')} compiles={ok} backups={backups} label={_y.label()}")
+    log(f"ytfix: again -> {_y.check()}")
+    xbmc.executebuiltin("Skin.SetBool(lucent.ytfix.off)")
+    mon.waitForAbort(0.5)
+    r2 = _y.check()
+    log(f"ytfix: off -> {r2} identical={open(work, encoding='utf-8').read() == open(src, encoding='utf-8').read()} label={_y.label()}")
+    xbmc.executebuiltin("Skin.Reset(lucent.ytfix.off)")
+    _y.xbmc = real
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3191,6 +3230,7 @@ def main():
     diaglog_test()
     noseren_test()
     dv2_test()
+    ytfix_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))

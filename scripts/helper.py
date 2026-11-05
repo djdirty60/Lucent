@@ -127,6 +127,11 @@ def run():
             subs["catchup"] = catchup.Watcher()            # a Kodi player listener, like the subtitle one
         subs["catchup"].tick()
 
+    def youtube_fix():
+        import ytfix
+        ytfix.check()
+        xbmc.executebuiltin(f'Skin.SetString(lucent.ytfix.state,"{ytfix.label()}")')
+
     def subtitle_wishes():
         import subs_extra
         subs_extra.check_wanted()                   # every hour; each video on the list at most every 6 hours
@@ -149,6 +154,7 @@ def run():
         Job("solis", 3, 4, solis_tab, lambda: cond("System.AddonIsEnabled(script.solis.dashboard) + Window.IsVisible(home)")),
         Job("live sport", 20, 8, live_sport, lambda: cond("Pvr.IsPlayingTV") or bool(HOME.getProperty("live.sc.on"))),   # the score in the TV player               # Calendar / Sport / TV tabs on Home without rows of their own
         Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
+        Job("youtube fix", 3 * 3600, 25, youtube_fix, lambda: cond("System.HasAddon(plugin.video.youtube)")),   # trailers stopped at ~1:05 (ytfix.py)
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)
         Job("maintenance", 6 * 3600, 1500, maintenance, lambda: cond("Skin.HasSetting(lucent.maint.auto)")),   # once a month
