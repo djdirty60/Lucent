@@ -133,6 +133,11 @@ def run():
         ytfix.check()
         xbmc.executebuiltin(f'Skin.SetString(lucent.ytfix.state,"{ytfix.label()}")')
 
+    def skip_twice():
+        import skipdup
+        log(f"skip twice: {skipdup.check()}")
+        xbmc.executebuiltin(f'Skin.SetString(lucent.skipby.label,"{skipdup.label()}")')
+
     def subtitle_wishes():
         import subs_extra
         subs_extra.check_wanted()                   # every hour; each video on the list at most every 6 hours
@@ -155,6 +160,7 @@ def run():
         Job("solis", 3, 4, solis_tab, lambda: cond("System.AddonIsEnabled(script.solis.dashboard) + Window.IsVisible(home)")),
         Job("live sport", 20, 8, live_sport, lambda: cond("Pvr.IsPlayingTV") or bool(HOME.getProperty("live.sc.on"))),   # the score in the TV player               # Calendar / Sport / TV tabs on Home without rows of their own
         Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
+        Job("skip twice", 600, 40, skip_twice, lambda: cond("System.HasAddon(plugin.video.seren) + System.HasAddon(plugin.video.tidb) + Window.IsVisible(home)")),   # Seren and TheIntroDB both show Skip intro (skipdup.py)
         Job("youtube fix", 3 * 3600, 25, youtube_fix, lambda: cond("System.HasAddon(plugin.video.youtube)")),   # trailers stopped at ~1:05 (ytfix.py)
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)

@@ -567,6 +567,13 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.youtube)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31802]</label>
+                        <label2>$INFO[Skin.String(lucent.skipby.label),,  ·  ]$LOCALIZE[31803]</label2>
+                        <icon>icons/play.png</icon>
+                        <onclick>RunScript(special://skin/scripts/skipdup.py,choose)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.seren) + System.HasAddon(plugin.video.tidb)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[31778]</label>
                         <label2>$LOCALIZE[31779]</label2>
                         <icon>icons/play.png</icon>
