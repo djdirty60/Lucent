@@ -36,6 +36,7 @@
                     <font>font60</font>
                     <textcolor>text</textcolor>
                     <aligny>bottom</aligny>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$VAR[ItemTitle]</label>
                     <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
                 </control>
@@ -91,6 +92,7 @@
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>RT  $INFO[Window(home).Property(lucent.omdbl.rt)]</label>
                         </control>
                     </control>
@@ -117,6 +119,7 @@
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>Metacritic  $INFO[Window(home).Property(lucent.omdbl.mc)]</label>
                         </control>
                     </control>
@@ -125,6 +128,7 @@
                         <height>44</height>
                         <font>font12</font>
                         <textcolor>text3</textcolor>
+                        <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                         <label>$INFO[ListItem.Genre]</label>
                     </control>
                 </control>
@@ -134,6 +138,7 @@
                     <width>1100</width>
                     <height>44</height>
                     <font>font27</font>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[ListItem.Title]</label>
                     <visible>String.IsEqual(ListItem.DBType,episode)</visible>
                 </control>
@@ -144,6 +149,7 @@
                     <height>$PARAM[plotheight]</height>
                     <font>font_body</font>
                     <textcolor>text3</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[ListItem.Plot]</label>
 <include>TextAutoScroll</include>
 </control>
