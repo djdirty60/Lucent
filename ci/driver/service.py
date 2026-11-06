@@ -3175,6 +3175,25 @@ def dv2_test():
     mon.waitForAbort(1)
 
 
+def videotab_test():
+    """1.34.9: the Video tab of the player info is filled all the way (1.34.1 stopped halfway: name 'dvn' unknown)."""
+    import sys as _s
+    import re as _re
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import playerinfo as _pi
+    for k in ("v.p1", "v.p2", "v.p3", "v.p4k", "v.br", "v.dv.line", "v.gamut"):
+        HOME.clearProperty("lucent.pi." + k)
+    v = {"w": "3840", "h": "2160", "fps": "23.976", "hdr": "dolbyvision", "res_badge": "4K", "prof": _re.search(r"(\d+)", "7"),
+         "layer": "FEL", "pix": "yuv420p10", "ten": True, "vname": "HEVC", "scan_word": "progressief", "vbr": 61.2,
+         "dvn": _pi.dv_from_name("The.Movie.2026.2160p.BluRay.REMUX.DV.P7.FEL.TrueHD.Atmos.7.1-X.mkv")}
+    try:
+        _pi.video_tab(v)
+        err = None
+    except Exception as e:  # noqa: BLE001
+        err = repr(e)
+    log("videotab: err=%s props=%s" % (err, json.dumps({k: HOME.getProperty("lucent.pi." + k) for k in ("v.p1", "v.p2", "v.p3", "v.p4k", "v.br", "v.dv.line", "v.gamut")}, ensure_ascii=False)))
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3461,6 +3480,7 @@ def main():
     diaglog_test()
     noseren_test()
     dv2_test()
+    videotab_test()
     ytfix_test()
     fsback_test()
     omdb_test()

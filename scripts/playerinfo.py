@@ -516,6 +516,7 @@ SPEAKER_CONFIG = {0: "2.0", 1: "2.1", 2: "3.0", 3: "3.1", 4: "4.0", 5: "4.1", 6:
 def video_tab(v):
     w, h, fps, hdr = v["w"], v["h"], v["fps"], v["hdr"]
     res_badge, prof, layer, pix, ten, vname = v["res_badge"], v["prof"], v["layer"], v["pix"], v["ten"], v["vname"]
+    dvn = v.get("dvn") or {}                       # what the release name says about Dolby Vision (profile, FEL, DV2)
     try:
         width = int(w or 0)
     except ValueError:
