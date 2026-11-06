@@ -205,6 +205,30 @@ def fix_language():
                                   xbmcgui.NOTIFICATION_INFO, 4000)
 
 
+ALWAYS = "Skin.HasSetting(lucent.subs.alwayson)"
+
+
+def always_on():
+    """Settings > Watching > Subtitles always on: a new video starts with a subtitle on (also when the sound is in your
+    language). Your own languages first (Kodi's preferred subtitle language / your language), full ones before 'forced'
+    ones; with no language set, the first full subtitle. Nothing to choose: nothing happens (the automatic search may
+    still bring one)."""
+    if not xbmc.getCondVisibility(ALWAYS) or xbmc.getCondVisibility("VideoPlayer.SubtitlesEnabled"):
+        return
+    props = rpc("Player.GetProperties", {"playerid": 1, "properties": ["subtitles", "currentaudiostream"]})
+    subs = props.get("subtitles") or []
+    if not subs:
+        return
+    mine = my_languages(lang2((props.get("currentaudiostream") or {}).get("language")))
+    full = [x for x in subs if not x.get("isforced")]
+    pick = ([x for x in full if lang2(x.get("language")) in mine] or [x for x in subs if lang2(x.get("language")) in mine]
+            or ([] if mine else (full or subs)))
+    if not pick:
+        return
+    rpc("Player.SetSubtitle", {"playerid": 1, "subtitle": pick[0]["index"], "enable": True})
+    xbmc.log(f"[skin.lucent subtitles] always on: subtitle {pick[0].get('language') or pick[0].get('name')} switched on", xbmc.LOGINFO)
+
+
 class Watcher(xbmc.Player):
     def __init__(self):
         super().__init__()
@@ -247,7 +271,10 @@ class Watcher(xbmc.Player):
             if self.monitor.waitForAbort(12) or not self.isPlayingVideo():
                 return
             try:
-                if not quiet_if_same_language():
+                if xbmc.getCondVisibility(ALWAYS):
+                    fix_language()
+                    always_on()
+                elif not quiet_if_same_language():
                     fix_language()
             except Exception as error:  # noqa: BLE001
                 xbmc.log(f"[skin.lucent subtitles] language check (again): {error}", xbmc.LOGINFO)
@@ -281,7 +308,7 @@ class Watcher(xbmc.Player):
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] sound check: {error}", xbmc.LOGINFO)
         try:
-            if quiet_if_same_language():
+            if not xbmc.getCondVisibility(ALWAYS) and quiet_if_same_language():
                 self.check_again()                       # Seren may switch one on a little later
                 return                                   # sound in your language: no subtitle, no search
         except Exception as error:  # noqa: BLE001 - never break playback
@@ -290,6 +317,10 @@ class Watcher(xbmc.Player):
             fix_language()
         except Exception as error:  # noqa: BLE001 - never break playback
             xbmc.log(f"[skin.lucent subtitles] language check: {error}", xbmc.LOGINFO)
+        try:
+            always_on()
+        except Exception as error:  # noqa: BLE001 - never break playback
+            xbmc.log(f"[skin.lucent subtitles] always on: {error}", xbmc.LOGINFO)
         if not xbmc.getCondVisibility("Skin.HasSetting(nuvio.autosubs)") or not service_id():
             self.check_again()
             return

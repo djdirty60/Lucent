@@ -254,39 +254,69 @@ def os_login(force=False):
     return saved
 
 
+def os_attempts(video):
+    """What to ask OpenSubtitles, best first. For an episode several ways, because add-ons such as Seren often give
+    the series' IMDb id as the episode's id and no separate series id."""
+    if video.get("query"):
+        return [{"query": video["query"]}]
+    if not video["show"]:
+        if video["imdb"]:
+            return [{"imdb_id": video["imdb"][2:].lstrip("0")}]
+        if video["tmdb"]:
+            return [{"tmdb_id": video["tmdb"]}]
+        return [{"query": video["title"], "year": video["year"]}]
+    se = {"season_number": video["season"], "episode_number": video["episode"]}
+    out = []
+    for imdb in (video["show_imdb"], video["imdb"]):
+        if imdb:
+            out.append({"parent_imdb_id": imdb[2:].lstrip("0"), **se})
+    if video["show_tmdb"]:
+        out.append({"parent_tmdb_id": video["show_tmdb"], **se})
+    if video["imdb"]:
+        out.append({"imdb_id": video["imdb"][2:].lstrip("0")})        # a real episode id
+    out.append({"query": video["show"], "type": "episode", **se})
+    unique = []
+    for a in out:
+        if a not in unique:
+            unique.append(a)
+    return unique
+
+
 def os_search(video, langs, timeout):
     if not on("os_on") or not setting("os_key").strip():
         return []
-    params = {"languages": ",".join(sorted({os_code(c) for c in langs}))}
-    if video.get("query"):
-        params["query"] = video["query"]
-    elif video["show"]:
-        params.update({"season_number": video["season"], "episode_number": video["episode"]})
-        if video["show_imdb"]:
-            params["parent_imdb_id"] = video["show_imdb"][2:].lstrip("0")
-        elif video["show_tmdb"]:
-            params["parent_tmdb_id"] = video["show_tmdb"]
-        elif video["imdb"]:
-            params = {"languages": params["languages"], "imdb_id": video["imdb"][2:].lstrip("0")}
-        else:
-            params["query"] = video["show"]
-            params["type"] = "episode"
-    elif video["imdb"]:
-        params["imdb_id"] = video["imdb"][2:].lstrip("0")
-    elif video["tmdb"]:
-        params["tmdb_id"] = video["tmdb"]
-    else:
-        params["query"] = video["title"]
-        if video["year"]:
-            params["year"] = video["year"]
+    end = time.time() + budget(video, timeout)
+    for attempt in os_attempts(video):
+        left = end - time.time()
+        if left < 2:
+            break
+        rows = os_ask(video, langs, min(timeout, left), attempt)
+        if rows:
+            return rows
+    return []
+
+
+def budget(video, timeout):
+    """Seconds a source may use in all: an episode may need a second or third way of asking."""
+    return timeout * 2 if video["show"] and not video.get("query") else timeout
+
+
+def os_ask(video, langs, timeout, attempt):
+    params = {"languages": ",".join(sorted({os_code(c) for c in langs})), **attempt}
     if video.get("hash"):
         params["moviehash"] = video["hash"]
     # OpenSubtitles wants the parameters sorted and lower case (otherwise it answers with a redirect)
     query = urllib.parse.urlencode(sorted((k, str(v).lower()) for k, v in params.items() if v not in (None, "")), safe=",")
     data = get_json(f"{OS_API}/subtitles?{query}", headers=os_headers(), timeout=timeout)
+    log(f"os: {attempt} -> {len(data.get('data') or [])}")
     out = []
     for row in data.get("data") or []:
         a = row.get("attributes") or {}
+        if video["show"] and not video.get("query"):
+            feat = a.get("feature_details") or {}
+            if str(feat.get("season_number", video["season"])) != str(video["season"]) or \
+                    str(feat.get("episode_number", video["episode"])) != str(video["episode"]):
+                continue                                # another episode (an id search can return the whole series)
         files = a.get("files") or []
         if not files or a.get("machine_translated"):
             continue
@@ -328,28 +358,38 @@ def subdl_search(video, langs, timeout):
     key = setting("subdl_key").strip()
     if not on("subdl_on") or not key:
         return []
-    params = {"api_key": key, "languages": ",".join(sorted({c.upper() if c != "pb" else "BR_PT" for c in langs})),
-              "subs_per_page": "30"}
+    base = {"api_key": key, "languages": ",".join(sorted({c.upper() if c != "pb" else "BR_PT" for c in langs})),
+            "subs_per_page": "30"}
+    attempts = []
     if video.get("query"):
-        params["film_name"] = video["query"]
+        attempts.append({"film_name": video["query"]})
     elif video["show"]:
-        params.update({"type": "tv", "season_number": video["season"], "episode_number": video["episode"]})
-        if video["show_imdb"]:
-            params["imdb_id"] = video["show_imdb"]
-        elif video["show_tmdb"]:
-            params["tmdb_id"] = video["show_tmdb"]
-        else:
-            params["film_name"] = video["show"]
+        se = {"type": "tv", "season_number": video["season"], "episode_number": video["episode"]}
+        for imdb in (video["show_imdb"], video["imdb"]):
+            if imdb and {"imdb_id": imdb, **se} not in attempts:
+                attempts.append({"imdb_id": imdb, **se})
+        if video["show_tmdb"]:
+            attempts.append({"tmdb_id": video["show_tmdb"], **se})
+        attempts.append({"film_name": video["show"], **se})
     else:
-        params["type"] = "movie"
         if video["imdb"]:
-            params["imdb_id"] = video["imdb"]
+            attempts.append({"type": "movie", "imdb_id": video["imdb"]})
         elif video["tmdb"]:
-            params["tmdb_id"] = video["tmdb"]
+            attempts.append({"type": "movie", "tmdb_id": video["tmdb"]})
         else:
-            params["film_name"] = video["title"]
-            if video["year"]:
-                params["year"] = video["year"]
+            attempts.append({"type": "movie", "film_name": video["title"], "year": video["year"]})
+    end = time.time() + budget(video, timeout)
+    for attempt in attempts:
+        left = end - time.time()
+        if left < 2:
+            break
+        rows = subdl_ask(video, {**base, **{k: v for k, v in attempt.items() if v}}, min(timeout, left))
+        if rows:
+            return rows
+    return []
+
+
+def subdl_ask(video, params, timeout):
     data = get_json(f"{SUBDL_API}?{urllib.parse.urlencode(params)}", timeout=timeout)
     if not data.get("status", True) and data.get("error"):
         log(f"subdl: {data.get('error')}")
@@ -420,7 +460,7 @@ def cache_path():
 def search(video, langs):
     """All sources at once; whatever is not back within the time limit is left out. Results ranked."""
     key = json.dumps([video.get("query") or video.get("release") or video.get("title"), video["show"], video["season"],
-                      video["episode"], video["imdb"], sorted(langs)])
+                      video["episode"], video["imdb"], sorted(langs), bool(video.get("other"))])
     try:
         with open(cache_path(), encoding="utf-8") as fh:
             saved = json.load(fh)
@@ -430,7 +470,7 @@ def search(video, langs):
     except Exception:  # noqa: BLE001
         pass
     timeout = max(4, int(setting("timeout") or 10))
-    if not video.get("query"):
+    if not video.get("query") and not video.get("other"):
         video["hash"], video["size"] = os_hash(video.get("file"))
     results, threads = {}, []
 
@@ -447,7 +487,7 @@ def search(video, langs):
         thread = threading.Thread(target=run, args=(name, fn), daemon=True)
         thread.start()
         threads.append(thread)
-    deadline = time.time() + timeout + 1
+    deadline = time.time() + budget(video, timeout) + 1
     for thread in threads:
         thread.join(max(0, deadline - time.time()))
     rows = [r for name in SOURCES for r in results.get(name, [])]

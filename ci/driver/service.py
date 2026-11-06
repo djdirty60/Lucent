@@ -3382,6 +3382,29 @@ def smallposter_test():
     mon.waitForAbort(6)
 
 
+def alwayson_test():
+    """1.34.7: Subtitles always on: a new video starts with a subtitle, also when the sound is in your language."""
+    pl = xbmc.Player()
+    out = {}
+    for setting in (True, False):
+        xbmc.executebuiltin("Skin.SetBool(lucent.subs.alwayson)" if setting else "Skin.Reset(lucent.subs.alwayson)")
+        mon.waitForAbort(1)
+        for f in ("nodef-eng", "same-eng"):
+            xbmc.executebuiltin(f"PlayMedia(/tmp/ci/{f}.mkv)")
+            for _ in range(30):
+                if pl.isPlayingVideo():
+                    break
+                mon.waitForAbort(0.5)
+            mon.waitForAbort(9)
+            out[f"{'on' if setting else 'off'}:{f}"] = (cond("VideoPlayer.SubtitlesEnabled"), lab("VideoPlayer.SubtitlesLanguage"))
+            if f == "nodef-eng" and setting:
+                shot("alwayson-play")
+            pl.stop()
+            mon.waitForAbort(2)
+    log(f"alwayson: {out}")
+    xbmc.executebuiltin("Skin.Reset(lucent.subs.alwayson)")
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3403,6 +3426,7 @@ def main():
     omdb_test()
     music_fav_test()
     smallposter_test()
+    alwayson_test()
 
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
