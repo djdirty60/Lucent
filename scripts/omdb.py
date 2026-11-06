@@ -219,7 +219,7 @@ def list_tick():
     half a second after the cursor stopped there (fetched in the background, cached a week)."""
     if (not _key_cached() or xbmc.getCondVisibility("Skin.HasSetting(lucent.omdb.lists.off)")
             or not xbmc.getCondVisibility("Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]")):
-        LIST["id"] = ""
+        LIST["id"] = LIST["done"] = ""
         _lclear()
         return
     label = xbmc.getInfoLabel
@@ -231,7 +231,7 @@ def list_tick():
     ident = imdb_id or (f"tmdb:{kind}:{tmdb_id}" if tmdb_id else "")
     now = time.time()
     if ident != LIST["id"]:
-        LIST["id"], LIST["since"] = ident, now
+        LIST["id"], LIST["since"], LIST["done"] = ident, now, ""     # back on a title seen before: fill it again
         _lclear()
         return
     if not ident or LIST["done"] == ident or LIST["busy"] or now - LIST["since"] < 0.5:
