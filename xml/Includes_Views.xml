@@ -68,6 +68,58 @@
                         <param name="label">$INFO[ListItem.MPAA]</param>
                         <param name="visible">!String.IsEmpty(ListItem.MPAA)</param>
                     </include>
+                    <control type="group">
+                        <width>150</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.rt)) + !Skin.HasSetting(lucent.rate.hide.rt)</visible>
+                        <control type="image">
+                            <width>150</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.rtc)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <width>94</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>RT  $INFO[Window(home).Property(lucent.omdbl.rt)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>214</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.mc)) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
+                        <control type="image">
+                            <width>214</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.mcc)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <width>158</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>Metacritic  $INFO[Window(home).Property(lucent.omdbl.mc)]</label>
+                        </control>
+                    </control>
                     <control type="label">
                         <width>auto</width>
                         <height>44</height>
@@ -576,7 +628,7 @@
                     <height>36</height>
                     <font>font12</font>
                     <textcolor>text3</textcolor>
-                    <label>$INFO[ListItem.Artist,,   ]$VAR[ItemSE]$INFO[ListItem.Year,   ,]$INFO[ListItem.Rating,   ★ ,]$INFO[ListItem.Genre,   ,]</label>
+                    <label>$INFO[ListItem.Artist,,   ]$VAR[ItemSE]$INFO[ListItem.Year,   ,]$INFO[ListItem.Rating,   ★ ,]$VAR[LucentListScores]$INFO[ListItem.Genre,   ,]</label>
                 </control>
                 <control type="textbox">
                     <left>0</left>
@@ -1754,7 +1806,7 @@
                 <height>36</height>
                 <font>font12</font>
                 <textcolor>text3</textcolor>
-                <label>$INFO[ListItem.Year]$INFO[ListItem.Rating,   ★ ,]$INFO[ListItem.Genre,   ,]</label>
+                <label>$INFO[ListItem.Year]$INFO[ListItem.Rating,   ★ ,]$VAR[LucentListScores]$INFO[ListItem.Genre,   ,]</label>
             </control>
         </control>
         <control type="group" id="9252">

@@ -73,6 +73,7 @@ def run():
     import agenda_core
     import foryou
     import tint
+    import omdb
     import updater
 
     sport_state = {}
@@ -330,6 +331,10 @@ def run():
                 home_focus()
             except Exception as error:  # noqa: BLE001
                 log(f"focus: {error}")
+            try:
+                omdb.list_tick()                     # Rotten Tomatoes / Metacritic of the title under the cursor
+            except Exception as error:  # noqa: BLE001
+                log(f"omdb: {error}")
             fast = colour.tick()
             if monitor.waitForAbort(0.25 if fast else 1):
                 break

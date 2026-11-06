@@ -3407,6 +3407,34 @@ def alwayson_test():
     xbmc.executebuiltin("Skin.Reset(lucent.subs.alwayson)")
 
 
+def omdblist_test():
+    """1.34.8: Rotten Tomatoes / Metacritic of the title under the cursor in the lists (no info page)."""
+    d = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    with open(os.path.join(d, "omdb.key"), "w") as fh:
+        fh.write("cikey1234")
+    mon.waitForAbort(31)                                  # the helper reads the key again after 30 s
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    for view in (51, 50):
+        xbmc.executebuiltin(f"Container.SetViewMode({view})")
+        mon.waitForAbort(2)
+        for _ in range(4):
+            if lab("ListItem.DBType") == "movie":
+                break
+            key("Down")
+            mon.waitForAbort(1)
+        mon.waitForAbort(4)
+        p = {k: HOME.getProperty("lucent.omdbl." + k) for k in ("rt", "rtc", "mc", "mcc", "imdb", "for")}
+        log(f"omdblist: view={lab('Container.Viewmode')} item={lab('ListItem.Label')} props={p}")
+        shot(f"omdblist-{view}")
+        key("Up")
+        mon.waitForAbort(2)
+        log(f"omdblist: on '..' for={HOME.getProperty('lucent.omdbl.for')!r}")
+    os.remove(os.path.join(d, "omdb.key"))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -3426,6 +3454,7 @@ def main():
     ytfix_test()
     fsback_test()
     omdb_test()
+    omdblist_test()
     music_fav_test()
     smallposter_test()
     alwayson_test()
