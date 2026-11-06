@@ -183,8 +183,26 @@ def _lclear():
             HOME.clearProperty("lucent.omdbl." + p)
 
 
-def _fill(ident, imdb_id, tmdb_id, kind):
+def _from_library(kind, dbid):
+    """IMDb number (and TMDb id) of a library film or series, via JSON-RPC."""
+    method = "VideoLibrary.GetTVShowDetails" if kind == "tvshow" else "VideoLibrary.GetMovieDetails"
+    field = "tvshowid" if kind == "tvshow" else "movieid"
+    req = {"jsonrpc": "2.0", "id": 1, "method": method, "params": {field: int(dbid), "properties": ["uniqueid", "imdbnumber"]}}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}
+    details = res.get("tvshowdetails" if kind == "tvshow" else "moviedetails") or {}
+    ids = details.get("uniqueid") or {}
+    imdb = ids.get("imdb") or details.get("imdbnumber") or ""
+    return (imdb if imdb.startswith("tt") else ""), str(ids.get("tmdb") or "")
+
+
+def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
     try:
+        if not imdb_id and not tmdb_id and dbid:
+            got = TMDB_IMDB.get(f"db:{kind}:{dbid}")
+            if got is None:
+                got = TMDB_IMDB[f"db:{kind}:{dbid}"] = _from_library(kind, dbid)
+            imdb_id, tmdb_id = got
+            tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
         if not imdb_id and tmdb_id:
             imdb_id = TMDB_IMDB.get(f"{kind}:{tmdb_id}")
             if imdb_id is None:
@@ -228,7 +246,10 @@ def list_tick():
     tmdb_id = label("ListItem.UniqueID(tmdb)") or label("ListItem.Property(tmdb_id)")
     tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
     kind = "tvshow" if label("ListItem.DBType") == "tvshow" or xbmc.getCondVisibility("Container.Content(tvshows)") else "movie"
-    ident = imdb_id or (f"tmdb:{kind}:{tmdb_id}" if tmdb_id else "")
+    dbid = label("ListItem.DBID")
+    dbid = dbid if dbid.isdigit() and label("ListItem.DBType") in ("movie", "tvshow") else ""
+    # Kodi gives the IMDb number of a library title only on its info page: in a list we ask the library by DBID
+    ident = imdb_id or (f"tmdb:{kind}:{tmdb_id}" if tmdb_id else "") or (f"db:{kind}:{dbid}" if dbid else "")
     now = time.time()
     if ident != LIST["id"]:
         LIST["id"], LIST["since"], LIST["done"] = ident, now, ""     # back on a title seen before: fill it again
@@ -238,7 +259,7 @@ def list_tick():
         return
     LIST["busy"] = True
     import threading
-    threading.Thread(target=_fill, args=(ident, imdb_id, tmdb_id, kind), daemon=True).start()
+    threading.Thread(target=_fill, args=(ident, imdb_id, tmdb_id, kind, dbid), daemon=True).start()
 
 
 # ----------------------------------------------------------------------------- settings
