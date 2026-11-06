@@ -3241,17 +3241,34 @@ def scrub_open_test():
                "Error resolving item. Item 'plugin://plugin.video.seren/?action=getSources&action_args=%257B'",
                "CCurlFile::Open - <http://picon.example.net:25461/picon/NL/HGTV 8K+ UHD.png> Failed"]
     log("scrub: " + json.dumps([_dg.scrub(x, set()) for x in samples], ensure_ascii=False))
-    HOME.setProperty("lucent.pi.open", "1")                      # left behind, the screen is not on
-    xbmc.executebuiltin("RunScript(special://skin/scripts/playerinfo.py,open)")
-    seen = False
-    for _ in range(12):
-        mon.waitForAbort(0.5)
-        if cond("Window.IsVisible(Lucent_PlayerInfo.xml)"):
-            seen = True
+    pl = xbmc.Player()
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(40):
+        if pl.isPlayingVideo():
             break
-    log(f"pinfo-open: shown={seen}")
-    xbmc.executebuiltin("Dialog.Close(all,true)")
-    mon.waitForAbort(1)
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(3)
+    for case, flag in (("clean", ""), ("left-behind", "1")):
+        if flag:
+            HOME.setProperty("lucent.pi.open", flag)                 # left behind, the screen is not on
+        else:
+            HOME.clearProperty("lucent.pi.open")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/playerinfo.py,open)")
+        seen = False
+        for _ in range(16):
+            mon.waitForAbort(0.5)
+            if cond("Window.IsVisible(Lucent_PlayerInfo.xml)"):
+                seen = True
+                break
+        log(f"pinfo-open: {case} playing={pl.isPlayingVideo()} shown={seen}")
+        if seen:
+            shot(f"pinfo-open-{case}")
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(1.5)
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
+    pl.stop()
+    mon.waitForAbort(2)
     HOME.clearProperty("lucent.pi.open")
 
 
