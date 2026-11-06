@@ -3418,6 +3418,8 @@ def omdblist_test():
     for view in (51, 50):
         xbmc.executebuiltin(f"Container.SetViewMode({view})")
         mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({view})")
+        mon.waitForAbort(1)
         for _ in range(4):
             if lab("ListItem.DBType") == "movie":
                 break
