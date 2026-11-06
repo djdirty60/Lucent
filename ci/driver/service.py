@@ -3399,6 +3399,18 @@ def alwayson_test():
             out[f"{'on' if setting else 'off'}:{f}"] = (cond("VideoPlayer.SubtitlesEnabled"), lab("VideoPlayer.SubtitlesLanguage"))
             if f == "nodef-eng" and setting:
                 shot("alwayson-play")
+                import sys as _s
+                _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+                import subtitles as _sub
+                props = _sub.rpc("Player.GetProperties", {"playerid": 1, "properties": ["subtitles", "currentaudiostream", "subtitleenabled", "currentsubtitle"]})
+                log(f"alwayson: direct before cond={cond('Skin.HasSetting(lucent.subs.alwayson)')} enabled={cond('VideoPlayer.SubtitlesEnabled')} "
+                    f"mine={_sub.my_languages(_sub.lang2((props.get('currentaudiostream') or {}).get('language')))} props={json.dumps(props)[:400]}")
+                try:
+                    _sub.always_on()
+                except Exception as e:  # noqa: BLE001
+                    log(f"alwayson: direct error {e!r}")
+                mon.waitForAbort(1.5)
+                log(f"alwayson: direct after enabled={cond('VideoPlayer.SubtitlesEnabled')} watcher={HOME.getProperty('lucent.play.start')}")
             pl.stop()
             mon.waitForAbort(2)
     log(f"alwayson: {out}")
