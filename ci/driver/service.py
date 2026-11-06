@@ -3232,6 +3232,29 @@ def skipdup_test():
     log("skipdup: " + json.dumps(out))
 
 
+def scrub_open_test():
+    """1.34.10: the safe log hides playback links; the player info opens although 'open' stayed behind."""
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import diag as _dg
+    samples = ["VideoPlayer::OpenFile: https://abc12-aiostreams.elfhosted.wine/api/v1/debrid/playback/eyJpZCI6IjEyMyJ9",
+               "Error resolving item. Item 'plugin://plugin.video.seren/?action=getSources&action_args=%257B'",
+               "CCurlFile::Open - <http://picon.example.net:25461/picon/NL/HGTV 8K+ UHD.png> Failed"]
+    log("scrub: " + json.dumps([_dg.scrub(x, set()) for x in samples], ensure_ascii=False))
+    HOME.setProperty("lucent.pi.open", "1")                      # left behind, the screen is not on
+    xbmc.executebuiltin("RunScript(special://skin/scripts/playerinfo.py,open)")
+    seen = False
+    for _ in range(12):
+        mon.waitForAbort(0.5)
+        if cond("Window.IsVisible(Lucent_PlayerInfo.xml)"):
+            seen = True
+            break
+    log(f"pinfo-open: shown={seen}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    HOME.clearProperty("lucent.pi.open")
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3520,6 +3543,7 @@ def main():
     dv2_test()
     videotab_test()
     skipdup_test()
+    scrub_open_test()
     ytfix_test()
     fsback_test()
     omdb_test()

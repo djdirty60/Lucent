@@ -171,7 +171,19 @@ def scrub(text, known):
     text = re.sub(r"(?i)(Api-Key|Authorization|Bearer|Cookie|Set-Cookie)(:\s*|\s+)[^\s\"']+", r"\1\2***", text)
     text = re.sub(r"(/(?:live|movie|series|timeshift)/)[^/\s\"']+/[^/\s\"']+/", r"\1***/***/", text)
     text = re.sub(r"(https?://)[^/\s:@\"']+:[^/\s@\"']+@", r"\1***:***@", text)
+    text = re.sub(r"(https?://)([^/\s\"'<>@]+)(/[^\s\"'<>]*)?", _short_url, text)   # only the server name
+    text = re.sub(r"(plugin://[\w.]+/)\?[^\s\"'<>\]]*", r"\1?…", text)                      # add-on yes, its arguments no
     return text
+
+
+def _short_url(m):
+    """'https://name-app.host.tld:123/api/v1/secret' -> 'https://….host.tld/…': a personal sub-domain or a token in the
+    path (debrid playback links, AIOStreams) never shows."""
+    host = m.group(2).split(":")[0]
+    labels = host.split(".")
+    if not re.fullmatch(r"[\d.]+", host) and len(labels) > 2:
+        host = "…." + ".".join(labels[-2:])
+    return m.group(1) + host + ("/…" if m.group(3) and m.group(3) != "/" else "")
 
 
 KEEP = re.compile(r"(?i)lucent|seren|iptvsimple|pvr|error|exception|traceback|warning|youtube|inputstream|videoplayer"
