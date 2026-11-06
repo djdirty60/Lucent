@@ -3272,6 +3272,43 @@ def scrub_open_test():
     HOME.clearProperty("lucent.pi.open")
 
 
+def readable_test():
+    """1.34.11: readable text on light pictures (dark edge on the hero texts, darker fade with the fullscreen backdrop)."""
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
+    movies = (res.get("result") or {}).get("movies") or []
+    if not movies:
+        log("readable: no movie")
+        return
+    mid = movies[0]["movieid"]
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                    "params": {"movieid": mid, "art": {"fanart": "/tmp/ci/bright.jpg"},
+                                               "plot": "A long plot line to see how readable the text is over a very light picture, all the way to the right side of the screen.",
+                                               "genre": ["Horror", "Thriller", "Science Fiction"]}}))
+    xbmc.executebuiltin("Skin.SetBool(nuvio.fullbackdrop)")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(51)")
+    for _ in range(4):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key("Right")
+        mon.waitForAbort(1)
+    for case in ("on", "off"):
+        if case == "off":
+            xbmc.executebuiltin("Skin.SetBool(lucent.readable.off)")
+        else:
+            xbmc.executebuiltin("Skin.Reset(lucent.readable.off)")
+        mon.waitForAbort(2.5)
+        log(f"readable: {case} item={lab('ListItem.Label')} fanart={lab('ListItem.Art(fanart)')} var={lab('$VAR[LucentTextShadow]')}")
+        shot(f"readable-{case}")
+    xbmc.executebuiltin("Skin.Reset(lucent.readable.off)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3561,6 +3598,7 @@ def main():
     videotab_test()
     skipdup_test()
     scrub_open_test()
+    readable_test()
     ytfix_test()
     fsback_test()
     omdb_test()

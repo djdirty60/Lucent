@@ -136,6 +136,11 @@
         <value condition="String.IsEqual(Skin.String(lucent.subs.mode),background)">$LOCALIZE[31664]</value>
         <value>$LOCALIZE[31663]</value>
     </variable>
+    <!-- "Readable text on light pictures" (Settings > Lucent): a thin dark edge around hero texts, like subtitles -->
+    <variable name="LucentTextShadow">
+        <value condition="!Skin.HasSetting(lucent.readable.off)">E6000000</value>
+        <value>00000000</value>
+    </variable>
     <variable name="LucentEpThumb">
         <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>

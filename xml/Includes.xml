@@ -90,6 +90,16 @@
             <colordiffuse>bg_80</colordiffuse>
             <visible>Skin.HasSetting(nuvio.fullbackdrop)</visible>
         </control>
+        <!-- "Readable text on light pictures": a bit darker where the texts are, a bit further to the right -->
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1650</width>
+            <height>1080</height>
+            <texture>grad_left.png</texture>
+            <colordiffuse>8C000000</colordiffuse>
+            <visible>Skin.HasSetting(nuvio.fullbackdrop) + !Skin.HasSetting(lucent.readable.off)</visible>
+        </control>
         <control type="image">
             <left>0</left>
             <top>380</top>

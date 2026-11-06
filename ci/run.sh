@@ -43,6 +43,7 @@ cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/driver $K/addons/service.lucent.cidriver
 mkdir -p /tmp/ci && cp ci/data/yt744_player_client.py /tmp/ci/
 for n in 1 2 3; do mkdir -p "/tmp/ci/music/CI Artist $n/CI Album $n"; ffmpeg -loglevel error -y -f lavfi -i "sine=frequency=$((300*n)):duration=3" -metadata title="Song $n" -metadata artist="CI Artist $n" -metadata album="CI Album $n" -metadata date=202$n "/tmp/ci/music/CI Artist $n/CI Album $n/01.mp3"; ffmpeg -loglevel error -y -f lavfi -i "color=c=0x$((n*3))06090:s=300x300" -frames:v 1 "/tmp/ci/music/CI Artist $n/CI Album $n/folder.jpg"; done
+ffmpeg -loglevel error -y -f lavfi -i "gradients=s=1920x1080:c0=0xfff4e6:c1=0xd8c4a8:x0=300:y0=200:x1=1700:y1=900" -frames:v 1 /tmp/ci/bright.jpg
 printf '1\n00:00:01,000 --> 00:01:50,000\nHallo dit is Nederlands\n' > /tmp/ci/nl.srt
 printf '1\n00:00:01,000 --> 00:01:50,000\nUkrainian forced\n' > /tmp/ci/uk.srt
 ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -i /tmp/ci/uk.srt -i /tmp/ci/nl.srt -t 120 -map 0 -map 1 -map 2 -c:v libx264 -preset ultrafast -g 25 -pix_fmt yuv420p -c:s srt -metadata:s:s:0 language=ukr -metadata:s:s:0 title="Forced" -disposition:s:0 default+forced -metadata:s:s:1 language=dut -metadata:s:s:1 title="Volledig" /tmp/ci/test.mkv
