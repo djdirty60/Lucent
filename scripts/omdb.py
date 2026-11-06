@@ -165,6 +165,103 @@ def load(item):
     HOME.setProperty("lucent.omdb.for", item.key)
 
 
+# ----------------------------------------------------------------------------- scores in the lists
+LIST = {"id": "", "since": 0.0, "done": "", "busy": False, "key": "", "keyt": 0.0}
+LPROPS = ("rt", "rtc", "mc", "mcc", "imdb")
+TMDB_IMDB = {}                                     # tmdb id -> imdb id, for this session
+
+
+def _key_cached():
+    if time.time() - LIST["keyt"] > 30:
+        LIST["key"], LIST["keyt"] = key(), time.time()
+    return LIST["key"]
+
+
+def _lclear():
+    if HOME.getProperty("lucent.omdbl.for"):
+        for p in LPROPS + ("for",):
+            HOME.clearProperty("lucent.omdbl." + p)
+
+
+def _from_library(kind, dbid):
+    """IMDb number (and TMDb id) of a library film or series, via JSON-RPC."""
+    method = "VideoLibrary.GetTVShowDetails" if kind == "tvshow" else "VideoLibrary.GetMovieDetails"
+    field = "tvshowid" if kind == "tvshow" else "movieid"
+    req = {"jsonrpc": "2.0", "id": 1, "method": method, "params": {field: int(dbid), "properties": ["uniqueid", "imdbnumber"]}}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}
+    details = res.get("tvshowdetails" if kind == "tvshow" else "moviedetails") or {}
+    ids = details.get("uniqueid") or {}
+    imdb = ids.get("imdb") or details.get("imdbnumber") or ""
+    return (imdb if imdb.startswith("tt") else ""), str(ids.get("tmdb") or "")
+
+
+def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
+    try:
+        if not imdb_id and not tmdb_id and dbid:
+            got = TMDB_IMDB.get(f"db:{kind}:{dbid}")
+            if got is None:
+                got = TMDB_IMDB[f"db:{kind}:{dbid}"] = _from_library(kind, dbid)
+            imdb_id, tmdb_id = got
+            tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
+        if not imdb_id and tmdb_id:
+            imdb_id = TMDB_IMDB.get(f"{kind}:{tmdb_id}")
+            if imdb_id is None:
+                class _I:                           # what imdb_of() reads
+                    imdb, tmdb, dbtype = "", tmdb_id, kind
+                imdb_id = TMDB_IMDB[f"{kind}:{tmdb_id}"] = imdb_of(_I())
+        d = fetch(imdb_id) if imdb_id else {}
+        if LIST["id"] != ident:
+            return                                  # the cursor moved on meanwhile
+        for p in LPROPS:
+            HOME.clearProperty("lucent.omdbl." + p)
+        rt, mc = d.get("rt", ""), d.get("mc", "")
+        if rt:
+            HOME.setProperty("lucent.omdbl.rt", rt)
+            HOME.setProperty("lucent.omdbl.rtc", GREEN if int(rt.rstrip("%") or 0) >= 60 else RED)
+        if mc:
+            n = int(mc)
+            HOME.setProperty("lucent.omdbl.mc", mc)
+            HOME.setProperty("lucent.omdbl.mcc", GREEN if n >= 61 else YELLOW if n >= 40 else RED)
+        if d.get("imdb"):
+            HOME.setProperty("lucent.omdbl.imdb", d["imdb"])
+        HOME.setProperty("lucent.omdbl.for", ident)
+        LIST["done"] = ident
+    except Exception as error:  # noqa: BLE001
+        log(f"list: {error}")
+    finally:
+        LIST["busy"] = False
+
+
+def list_tick():
+    """Called by the helper several times a second: the scores of the film or series under the cursor in a video list,
+    half a second after the cursor stopped there (fetched in the background, cached a week)."""
+    if (not _key_cached() or xbmc.getCondVisibility("Skin.HasSetting(lucent.omdb.lists.off)")
+            or not xbmc.getCondVisibility("Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]")):
+        LIST["id"] = LIST["done"] = ""
+        _lclear()
+        return
+    label = xbmc.getInfoLabel
+    imdb_id = label("ListItem.UniqueID(imdb)") or label("ListItem.IMDBNumber") or label("ListItem.Property(imdb_id)")
+    imdb_id = imdb_id if imdb_id.startswith("tt") else ""
+    tmdb_id = label("ListItem.UniqueID(tmdb)") or label("ListItem.Property(tmdb_id)")
+    tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
+    kind = "tvshow" if label("ListItem.DBType") == "tvshow" or xbmc.getCondVisibility("Container.Content(tvshows)") else "movie"
+    dbid = label("ListItem.DBID")
+    dbid = dbid if dbid.isdigit() and label("ListItem.DBType") in ("movie", "tvshow") else ""
+    # Kodi gives the IMDb number of a library title only on its info page: in a list we ask the library by DBID
+    ident = imdb_id or (f"tmdb:{kind}:{tmdb_id}" if tmdb_id else "") or (f"db:{kind}:{dbid}" if dbid else "")
+    now = time.time()
+    if ident != LIST["id"]:
+        LIST["id"], LIST["since"], LIST["done"] = ident, now, ""     # back on a title seen before: fill it again
+        _lclear()
+        return
+    if not ident or LIST["done"] == ident or LIST["busy"] or now - LIST["since"] < 0.5:
+        return
+    LIST["busy"] = True
+    import threading
+    threading.Thread(target=_fill, args=(ident, imdb_id, tmdb_id, kind, dbid), daemon=True).start()
+
+
 # ----------------------------------------------------------------------------- settings
 def state_label():
     k = key()
@@ -203,6 +300,14 @@ def test():
                                       "de link die OMDb je mailde."))
 
 
+def toggle_lists():
+    xbmc.executebuiltin("Skin.ToggleSetting(lucent.omdb.lists.off)")
+
+
+def lists_label():
+    return t("off", "uit") if xbmc.getCondVisibility("Skin.HasSetting(lucent.omdb.lists.off)") else t("on", "aan")
+
+
 def choose():
     labels = [name for _k, name in SCORES] + [t("Number of IMDb votes", "Aantal IMDb-stemmen")]
     pre = [i for i, (k, _n) in enumerate(SCORES) if not xbmc.getCondVisibility(f"Skin.HasSetting(lucent.rate.hide.{k})")]
@@ -225,13 +330,15 @@ def settings():
     while True:
         items = [xbmcgui.ListItem(t("OMDb key", "OMDb-sleutel"), state_label()),
                  xbmcgui.ListItem(t("Test the key", "Sleutel testen")),
-                 xbmcgui.ListItem(t("Scores to show", "Scores tonen"), chosen_label())]
-        for li, icon in zip(items, ("icons/lock.png", "icons/refresh.png", "icons/star.png")):
+                 xbmcgui.ListItem(t("Scores to show", "Scores tonen"), chosen_label()),
+                 xbmcgui.ListItem(t("Rotten Tomatoes and Metacritic in the lists", "Rotten Tomatoes en Metacritic in de lijsten"), lists_label())]
+        for li, icon in zip(items, ("icons/lock.png", "icons/refresh.png", "icons/star.png", "icons/list.png")):
             li.setArt({"icon": icon})
         pick = xbmcgui.Dialog().select(t("Scores (OMDb)", "Scores (OMDb)"), items, useDetails=True)
         if pick < 0:
             break
-        (set_key, test, choose)[pick]()
+        (set_key, test, choose, toggle_lists)[pick]()
+        LIST["keyt"] = 0.0
     xbmc.executebuiltin(f'Skin.SetString(lucent.omdb.state,"{state_label()}")')
 
 

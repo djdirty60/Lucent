@@ -1385,4 +1385,9 @@
     <variable name="LucentRowArtist">
         <value condition="Container.Content(albums) + !String.IsEmpty(ListItem.Artist) + !String.IsEqual(ListItem.Label2,ListItem.Artist)">$INFO[ListItem.Artist,  ·  ,]</value>
     </variable>
+    <variable name="LucentListScores">
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.omdbl.for)) + !Skin.HasSetting(lucent.rate.hide.rt) + !Skin.HasSetting(lucent.rate.hide.mc)">$INFO[Window(home).Property(lucent.omdbl.rt),   RT ,]$INFO[Window(home).Property(lucent.omdbl.mc),   MC ,]</value>
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.omdbl.for)) + !Skin.HasSetting(lucent.rate.hide.rt)">$INFO[Window(home).Property(lucent.omdbl.rt),   RT ,]</value>
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.omdbl.for)) + !Skin.HasSetting(lucent.rate.hide.mc)">$INFO[Window(home).Property(lucent.omdbl.mc),   MC ,]</value>
+    </variable>
 </includes>
