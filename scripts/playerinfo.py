@@ -697,7 +697,9 @@ class Info(xbmcgui.WindowXMLDialog):
 
 
 def open_window():
-    if HOME.getProperty(P + "open"):
+    # 'open' stays behind when Kodi stopped the script while the screen was open (a skin update, a crash): only trust it
+    # when the screen is really on
+    if HOME.getProperty(P + "open") and xbmc.getCondVisibility("Window.IsVisible(Lucent_PlayerInfo.xml)"):
         return
     HOME.setProperty(P + "open", "1")
     try:
