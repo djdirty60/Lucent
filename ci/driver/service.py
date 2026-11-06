@@ -3194,6 +3194,44 @@ def videotab_test():
     log("videotab: err=%s props=%s" % (err, json.dumps({k: HOME.getProperty("lucent.pi." + k) for k in ("v.p1", "v.p2", "v.p3", "v.p4k", "v.br", "v.dv.line", "v.gamut")}, ensure_ascii=False)))
 
 
+def skipdup_test():
+    """1.34.9: Seren and TheIntroDB both show Skip intro: the choice switches the other one off (fake add-on settings)."""
+    import sys as _s
+    import types as _t
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import skipdup as _d
+
+    class Fake:
+        def __init__(self, vals):
+            self.vals = dict(vals)
+
+        def getSetting(self, k):
+            return self.vals.get(k, "")
+
+        def setSetting(self, k, v):
+            self.vals[k] = v
+
+        def getAddonInfo(self, k):
+            return "3.9.90"
+
+    out = {}
+    for choice in ("tidb", "seren"):
+        seren = Fake({"skip.intro": "true", "skip.recap": "true", "skip.credits": "false", "skip.autoIntro": "true"})
+        tidb = Fake({"introdb_enabled": "true", "enable_intro": "true", "enable_recap": "true", "enable_credits": "true"})
+        addons = {_d.SEREN: seren, _d.TIDB: tidb}
+        _d._addon = lambda i: addons[i]
+        _d.xbmcaddon = _t.SimpleNamespace(Addon=lambda i: addons[i])
+        before = _d.both_on()
+        xbmc.executebuiltin(f"Skin.SetString(lucent.skipby,{choice})")
+        mon.waitForAbort(0.5)
+        result = _d.check()
+        out[choice] = {"before": before, "result": result, "after": _d.both_on(), "label": _d.label(),
+                       "seren": {k: seren.vals.get(k) for k in ("skip.intro", "skip.recap", "skip.autoIntro")},
+                       "tidb": {k: tidb.vals.get(k) for k in ("enable_intro", "enable_recap", "enable_credits")}}
+    xbmc.executebuiltin("Skin.Reset(lucent.skipby)")
+    log("skipdup: " + json.dumps(out))
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3481,6 +3519,7 @@ def main():
     noseren_test()
     dv2_test()
     videotab_test()
+    skipdup_test()
     ytfix_test()
     fsback_test()
     omdb_test()
