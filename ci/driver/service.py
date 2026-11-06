@@ -3424,6 +3424,21 @@ def omdblist_test():
             key("Down")
             mon.waitForAbort(1)
         mon.waitForAbort(4)
+        log(f"omdblist: diag helper={HOME.getProperty('lucent.helper')} now={time.time():.1f} videos={cond('Window.IsActive(videos)')} "
+            f"content={lab('Container.Content')} c_movies={cond('Container.Content(movies)')} imdb={lab('ListItem.UniqueID(imdb)')!r} "
+            f"imdbnr={lab('ListItem.IMDBNumber')!r} dbtype={lab('ListItem.DBType')} off={cond('Skin.HasSetting(lucent.omdb.lists.off)')}")
+        try:
+            import sys as _s
+            _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+            import omdb as _o
+            log(f"omdblist: diag key={_o.key()!r} fetch={_o.fetch('tt0185937')}")
+            for _i in range(8):
+                _o.list_tick()
+                mon.waitForAbort(0.3)
+            mon.waitForAbort(2)
+            log(f"omdblist: diag own tick LIST={ {k: v for k, v in _o.LIST.items() if k != 'key'} } rt={HOME.getProperty('lucent.omdbl.rt')!r}")
+        except Exception as _e:  # noqa: BLE001
+            log(f"omdblist: diag error {_e!r}")
         p = {k: HOME.getProperty("lucent.omdbl." + k) for k in ("rt", "rtc", "mc", "mcc", "imdb", "for")}
         log(f"omdblist: view={lab('Container.Viewmode')} item={lab('ListItem.Label')} props={p}")
         shot(f"omdblist-{view}")
