@@ -3383,36 +3383,26 @@ def smallposter_test():
 
 
 def alwayson_test():
-    """1.34.7: Subtitles always on: a new video starts with a subtitle, also when the sound is in your language."""
+    """1.34.7: Subtitles always on: a new video starts with a subtitle, also when the sound is in your language.
+    (On CI a video only really starts after ~9 s: there is no sound card, Kodi waits for it first.)"""
     pl = xbmc.Player()
     out = {}
     for setting in (True, False):
         xbmc.executebuiltin("Skin.SetBool(lucent.subs.alwayson)" if setting else "Skin.Reset(lucent.subs.alwayson)")
         mon.waitForAbort(1)
         for f in ("nodef-eng", "same-eng"):
+            started = HOME.getProperty("lucent.play.start")
             xbmc.executebuiltin(f"PlayMedia(/tmp/ci/{f}.mkv)")
-            for _ in range(30):
-                if pl.isPlayingVideo():
+            for _ in range(60):                         # until Lucent's watcher saw the start (onAVStarted)
+                if HOME.getProperty("lucent.play.start") != started:
                     break
                 mon.waitForAbort(0.5)
-            mon.waitForAbort(9)
+            mon.waitForAbort(9)                          # the watcher waits 4 s, then checks
             out[f"{'on' if setting else 'off'}:{f}"] = (cond("VideoPlayer.SubtitlesEnabled"), lab("VideoPlayer.SubtitlesLanguage"))
             if f == "nodef-eng" and setting:
                 shot("alwayson-play")
-                import sys as _s
-                _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
-                import subtitles as _sub
-                props = _sub.rpc("Player.GetProperties", {"playerid": 1, "properties": ["subtitles", "currentaudiostream", "subtitleenabled", "currentsubtitle"]})
-                log(f"alwayson: direct before cond={cond('Skin.HasSetting(lucent.subs.alwayson)')} enabled={cond('VideoPlayer.SubtitlesEnabled')} "
-                    f"mine={_sub.my_languages(_sub.lang2((props.get('currentaudiostream') or {}).get('language')))} props={json.dumps(props)[:400]}")
-                try:
-                    _sub.always_on()
-                except Exception as e:  # noqa: BLE001
-                    log(f"alwayson: direct error {e!r}")
-                mon.waitForAbort(1.5)
-                log(f"alwayson: direct after enabled={cond('VideoPlayer.SubtitlesEnabled')} watcher={HOME.getProperty('lucent.play.start')}")
             pl.stop()
-            mon.waitForAbort(2)
+            mon.waitForAbort(3)
     log(f"alwayson: {out}")
     xbmc.executebuiltin("Skin.Reset(lucent.subs.alwayson)")
 
