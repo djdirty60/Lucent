@@ -525,6 +525,20 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31799]</label>
+                        <label2>$LOCALIZE[31800]</label2>
+                        <icon>icons/subtitles.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.subs.alwayson)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + !Skin.HasSetting(lucent.subs.alwayson)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31799]</label>
+                        <label2>$LOCALIZE[31801]</label2>
+                        <icon>icons/subtitles.png</icon>
+                        <onclick>Skin.ToggleSetting(lucent.subs.alwayson)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + Skin.HasSetting(lucent.subs.alwayson)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[287]</label>
                         <label2>$LOCALIZE[31262]</label2>
                         <icon>icons/subtitles.png</icon>
