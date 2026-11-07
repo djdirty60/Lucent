@@ -3346,6 +3346,9 @@ def fenlight_test():
     log(f"fenlight: addon={cond('System.HasAddon(plugin.video.fakefen)')}")
     out = {}
     for what in ("browseshow", "browseeps"):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2.5)
         xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
         mon.waitForAbort(3)
         xbmc.executebuiltin("Container.SetViewMode(50)")
@@ -3361,6 +3364,8 @@ def fenlight_test():
         mon.waitForAbort(4)
         out[what] = {"on": before, "now": lab("Container.FolderPath"), "first": lab("Container(50).ListItem(0).Label")}
     log("fenlight: browse " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2.5)
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
     mon.waitForAbort(3)
     xbmc.executebuiltin("SetFocus(50)")
