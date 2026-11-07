@@ -3309,6 +3309,33 @@ def readable_test():
     mon.waitForAbort(2)
 
 
+def landseries_test():
+    """1.34.12: episodes in landscape rows: still of the episode (default) or the series' landscape art."""
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetTVShowDetails",
+                                    "params": {"tvshowid": 901, "art": {"landscape": "/tmp/ci/bright.jpg", "fanart": "/tmp/ci/bright.jpg"}}}))
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetEpisodeDetails",
+                                    "params": {"episodeid": 901, "art": {"thumb": "/tmp/ci/test_still.jpg"}}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/901/901/,return)")
+    mon.waitForAbort(3)
+    for _ in range(4):
+        if lab("ListItem.DBType") == "episode":
+            break
+        key("Down")
+        mon.waitForAbort(1)
+    out = {}
+    for case in ("episode", "series"):
+        if case == "series":
+            xbmc.executebuiltin("Skin.SetBool(lucent.land.series)")
+        else:
+            xbmc.executebuiltin("Skin.Reset(lucent.land.series)")
+        mon.waitForAbort(1)
+        out[case] = lab("$VAR[ItemLandscape]")
+    xbmc.executebuiltin("Skin.Reset(lucent.land.series)")
+    log(f"landseries: item={lab('ListItem.Label')} type={lab('ListItem.DBType')} tvland={lab('ListItem.Art(tvshow.landscape)')} {json.dumps(out)}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3599,6 +3626,7 @@ def main():
     skipdup_test()
     scrub_open_test()
     readable_test()
+    landseries_test()
     ytfix_test()
     fsback_test()
     omdb_test()
