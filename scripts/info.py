@@ -556,14 +556,14 @@ def fen_light_mark(addon_id, item, watched):
 
 def toggle_watched():
     item = Item()
-    if not item.ids():
-        xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
-        return
-    fen = fen_light_id()
+    fen = fen_light_id()                            # Fen Light / Red Light: the add-on marks it (and tells Trakt) itself
     if fen and item.tmdb.isdigit():
         state = HOME.getProperty("nuvio.info.watched")
         if fen_light_mark(fen, item, (state == "1") if state in ("0", "1") else item.watched):
             return
+    if not item.ids():
+        xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
+        return
     trakt = trakt_or_explain()
     if not trakt:
         return
