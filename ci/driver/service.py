@@ -3341,6 +3341,53 @@ def landseries_test():
     mon.waitForAbort(2)
 
 
+def fenlight_test():
+    """1.34.13 + Library 1.15.5: Browse series / episodes and Mark as watched for a Fen Light clone (CI stand-in)."""
+    log(f"fenlight: addon={cond('System.HasAddon(plugin.video.fakefen)')}")
+    out = {}
+    for what in ("browseshow", "browseeps"):
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("Container.SetViewMode(50)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("SetFocus(50)")
+        for _ in range(4):
+            if lab("ListItem.DBType") == "episode":
+                break
+            key("Down")
+            mon.waitForAbort(1)
+        before = f"{lab('ListItem.Label')} tmdb={lab('ListItem.UniqueID(tmdb)')} s={lab('ListItem.Season')}"
+        xbmc.executebuiltin(f"RunScript(special://home/addons/script.lucent.library/context.py,{what})")
+        mon.waitForAbort(4)
+        out[what] = {"on": before, "now": lab("Container.FolderPath"), "first": lab("Container(50).ListItem(0).Label")}
+    log("fenlight: browse " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(50)")
+    for _ in range(4):
+        if lab("ListItem.DBType") == "episode":
+            break
+        key("Down")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(20):
+        if cond("Window.IsActive(movieinformation)"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(2)
+    log(f"fenlight: info={cond('Window.IsActive(movieinformation)')} button22={cond('Control.IsVisible(22)')}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,watched)")
+    mon.waitForAbort(4)
+    try:
+        calls = open("/tmp/ci/fakefen.log").read().splitlines()
+    except OSError:
+        calls = []
+    log("fenlight: calls " + json.dumps([c for c in calls if "watched_status" in c or "build_" in c]))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3632,6 +3679,7 @@ def main():
     scrub_open_test()
     readable_test()
     landseries_test()
+    fenlight_test()
     ytfix_test()
     fsback_test()
     omdb_test()

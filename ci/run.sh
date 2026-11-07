@@ -36,6 +36,7 @@ sed -i 's#https://www.omdbapi.com/?#http://127.0.0.1:8765/omdb/?#' $K/addons/ski
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
 # Solis Dashboard with a stand-in Homey (the example of the Solis handover)
 cp -r ci/addons/script.solis.dashboard $K/addons/
+cp -r ci/addons/plugin.video.fakefen $K/addons/
 mkdir -p $K/userdata/addon_data/script.solis.dashboard
 printf '<settings version="2">\n    <setting id="host">127.0.0.1</setting>\n    <setting id="port">8791</setting>\n    <setting id="notify_enabled">false</setting>\n</settings>\n' > $K/userdata/addon_data/script.solis.dashboard/settings.xml
 python3 ci/fakesolis.py > /tmp/ci/fakesolis.txt 2>&1 &

@@ -41,8 +41,60 @@ def from_tmdb(path):
     return ""
 
 
+def _plugin_id(path):
+    return path.split("/")[2] if path.startswith("plugin://") and len(path.split("/")) > 2 else ""
+
+
+def _is_fen_light(addon_id):
+    """Fen Light and its clones (Red Light, ...) build seasons and episodes with mode=build_season_list / _episode_list."""
+    router = f"special://home/addons/{addon_id}/resources/lib/modules/router.py"
+    try:
+        with xbmcvfs.File(router) as fh:
+            text = fh.read()
+        return "build_season_list" in text and "build_episode_list" in text
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def browse(episodes):
+    """'Browse series' / 'Browse episodes' on an episode (also on Home rows): the library, a Fen Light clone, Seren or
+    TMDb Helper - whichever knows this series."""
+    label = xbmc.getInfoLabel
+    season = label("ListItem.Season")
+    season = season if season.isdigit() else ""
+    nl = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
+    show_db = label("ListItem.TvShowDBID")
+    if show_db.isdigit():
+        target = f"videodb://tvshows/titles/{show_db}/" + (f"{season}/" if episodes and season else "")
+        xbmc.executebuiltin(f'ActivateWindow(Videos,"{target}",return)')
+        return
+    path = label("ListItem.FileNameAndPath") or label("ListItem.Path") or label("ListItem.FolderPath")
+    addon_id = _plugin_id(path) or _plugin_id(label("Container.FolderPath"))
+    tmdb = label("ListItem.UniqueID(tmdb)") or label("ListItem.Property(tmdb_id)")
+    tmdb = tmdb if tmdb.isdigit() else ""
+    target = ""
+    if addon_id and tmdb and _is_fen_light(addon_id):
+        params = {"mode": "build_episode_list" if episodes and season else "build_season_list", "tmdb_id": tmdb}
+        if episodes and season:
+            params["season"] = season
+        target = f"plugin://{addon_id}/?" + urllib.parse.urlencode(params)
+    elif tmdb and xbmc.getCondVisibility("System.HasAddon(plugin.video.themoviedb.helper)"):
+        params = {"info": "episodes" if episodes and season else "seasons", "tmdb_id": tmdb, "tmdb_type": "tv"}
+        if episodes and season:
+            params["season"] = season
+        target = "plugin://plugin.video.themoviedb.helper/?" + urllib.parse.urlencode(params)
+    if target:
+        xbmc.executebuiltin(f'ActivateWindow(Videos,"{target}",return)')
+        return
+    xbmcgui.Dialog().notification("Lucent", "Deze serie kan Lucent hier niet openen" if nl else "Lucent cannot open this series from here",
+                                  xbmcgui.NOTIFICATION_INFO, 3500)
+
+
 def main():
     what = sys.argv[1] if len(sys.argv) > 1 else "select"
+    if what in ("browseshow", "browseeps"):
+        browse(what == "browseeps")
+        return
     if what == "addwidget":                          # a folder of any add-on or of the library: a row on a Lucent tab
         item = sys.listitem                          # noqa: F821 - given by Kodi to context scripts
         home = xbmcgui.Window(10000)

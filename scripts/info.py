@@ -524,11 +524,46 @@ def to_kodi_library(item, trakt, action):
 
 
 # ----------------------------------------------------------------------------- watched
+def fen_light_id():
+    """The add-on of this item when it is Fen Light or a clone of it (Red Light, ...), else ''."""
+    path = info("FileNameAndPath") or info("Path") or xbmc.getInfoLabel("Container.FolderPath")
+    parts = path.split("/")
+    if not path.startswith("plugin://") or len(parts) < 3:
+        return ""
+    try:
+        with xbmcvfs.File(f"special://home/addons/{parts[2]}/resources/lib/modules/router.py") as fh:
+            return parts[2] if "watched_status.mark_episode" in fh.read() else ""
+    except Exception:  # noqa: BLE001
+        return ""
+
+
+def fen_light_mark(addon_id, item, watched):
+    """Let Fen Light / Red Light mark it itself: it also tells Trakt, as set in that add-on."""
+    season, episode = info("Season"), info("Episode")
+    if item.dbtype == "episode" and season.isdigit() and episode.isdigit():
+        params = {"mode": "watched_status.mark_episode", "tmdb_id": item.tmdb, "tvdb_id": info("UniqueID(tvdb)") or "0",
+                  "season": season, "episode": episode, "title": info("TVShowTitle") or item.title}
+    elif item.dbtype == "movie":
+        params = {"mode": "watched_status.mark_movie", "tmdb_id": item.tmdb, "title": item.title}
+    else:
+        return False
+    params["action"] = "mark_as_unwatched" if watched else "mark_as_watched"
+    params["refresh"] = "false"
+    xbmc.executebuiltin(f"RunPlugin(plugin://{addon_id}/?{urllib.parse.urlencode(params)})")
+    HOME.setProperty("nuvio.info.watched", "0" if watched else "1")
+    return True
+
+
 def toggle_watched():
     item = Item()
     if not item.ids():
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
         return
+    fen = fen_light_id()
+    if fen and item.tmdb.isdigit():
+        state = HOME.getProperty("nuvio.info.watched")
+        if fen_light_mark(fen, item, (state == "1") if state in ("0", "1") else item.watched):
+            return
     trakt = trakt_or_explain()
     if not trakt:
         return

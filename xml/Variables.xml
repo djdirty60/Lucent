@@ -141,6 +141,11 @@
         <value>$LOCALIZE[31663]</value>
     </variable>
     <!-- "Readable text on light pictures" (Settings > Lucent): a thin dark edge around hero texts, like subtitles -->
+    <!-- the grey lines over a big picture (genres, plot) a shade lighter when "Readable text" is on -->
+    <variable name="LucentHeroText3">
+        <value condition="!Skin.HasSetting(lucent.readable.off)">text2</value>
+        <value>text3</value>
+    </variable>
     <variable name="LucentTextShadow">
         <value condition="!Skin.HasSetting(lucent.readable.off)">E6000000</value>
         <value>00000000</value>
