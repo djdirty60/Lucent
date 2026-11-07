@@ -3315,8 +3315,13 @@ def landseries_test():
                                     "params": {"tvshowid": 901, "art": {"landscape": "/tmp/ci/bright.jpg", "fanart": "/tmp/ci/bright.jpg"}}}))
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetEpisodeDetails",
                                     "params": {"episodeid": 901, "art": {"thumb": "/tmp/ci/test_still.jpg"}}}))
-    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/901/901/,return)")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/901/1/,return)")
     mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(50)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(50)")
+    mon.waitForAbort(1)
+    log(f"landseries: folder={lab('Container.FolderPath')} items={lab('Container.NumItems')}")
     for _ in range(4):
         if lab("ListItem.DBType") == "episode":
             break
