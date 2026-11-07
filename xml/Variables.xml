@@ -27,6 +27,10 @@
         <value>$INFO[ListItem.Art(tvshow.clearlogo)]</value>
     </variable>
     <variable name="ItemLandscape">
+        <!-- "Episodes in landscape rows: picture of the series" (Settings > Lucent): the series' landscape art (with its logo) instead of a still -->
+        <value condition="Skin.HasSetting(lucent.land.series) + String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(tvshow.landscape))">$INFO[ListItem.Art(tvshow.landscape)]</value>
+        <value condition="Skin.HasSetting(lucent.land.series) + String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
+        <value condition="Skin.HasSetting(lucent.land.series) + String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(tvshow.fanart))">$INFO[ListItem.Art(tvshow.fanart)]</value>
         <value condition="String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(tvshow.landscape))">$INFO[ListItem.Art(tvshow.landscape)]</value>
