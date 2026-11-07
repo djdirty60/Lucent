@@ -3350,6 +3350,8 @@ def fenlight_test():
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(2.5)
         xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Container.Update(plugin://plugin.video.fakefen/?mode=list,replace)")
         mon.waitForAbort(3)
         xbmc.executebuiltin("Container.SetViewMode(50)")
         mon.waitForAbort(1)
@@ -3367,6 +3369,8 @@ def fenlight_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2.5)
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Container.Update(plugin://plugin.video.fakefen/?mode=list,replace)")
     mon.waitForAbort(3)
     xbmc.executebuiltin("SetFocus(50)")
     for _ in range(4):
@@ -3387,7 +3391,7 @@ def fenlight_test():
         calls = open("/tmp/ci/fakefen.log").read().splitlines()
     except OSError:
         calls = []
-    log("fenlight: calls " + json.dumps([c for c in calls if "watched_status" in c or "build_" in c]))
+    log("fenlight: calls " + json.dumps(calls))
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
