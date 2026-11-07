@@ -1,0 +1,48 @@
+name: Problem / bug
+description: Something in Lucent does not work as it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping! One problem per issue makes it easier to fix and to follow.
+        **Never paste passwords, API keys, IPTV logins or full playback links.** The safe log (Settings > Help and info > Safe log) already hides those.
+  - type: input
+    id: version
+    attributes:
+      label: Lucent version
+      description: Settings > Help and info, or Add-ons > My add-ons > Look and feel > Skin > Lucent
+      placeholder: "1.34.13"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Kodi version
+      placeholder: "Nvidia Shield 2019, Kodi 21.2"
+    validations:
+      required: true
+  - type: input
+    id: addon
+    attributes:
+      label: Add-on involved (if any)
+      placeholder: "Seren, Red Light, Fen Light, TMDb Helper, YouTube, ..."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to make it happen
+      placeholder: |
+        1. Go to ...
+        2. Press ...
+        3. See ...
+  - type: textarea
+    id: log
+    attributes:
+      label: Safe log / screenshots
+      description: A photo or screenshot helps a lot. For the log, use Settings > Help and info > Safe log right after it happens.
