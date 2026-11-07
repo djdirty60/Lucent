@@ -3385,8 +3385,18 @@ def fenlight_test():
         mon.waitForAbort(0.5)
     mon.waitForAbort(2)
     log(f"fenlight: info={cond('Window.IsActive(movieinformation)')} button22={cond('Control.IsVisible(22)')}")
+    try:
+        import sys as _s
+        _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+        import info as _inf
+        it = _inf.Item()
+        log(f"fenlight: diag fen={_inf.fen_light_id()!r} path={lab('ListItem.FileNameAndPath')!r} ids={bool(it.ids())} tmdb={it.tmdb!r} type={it.dbtype} "
+            f"s={lab('ListItem.Season')} e={lab('ListItem.Episode')}")
+    except Exception as _e:  # noqa: BLE001
+        log(f"fenlight: diag error {_e!r}")
     xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,watched)")
     mon.waitForAbort(4)
+    log(f"fenlight: after dialog={lab('System.CurrentWindow')} prop={HOME.getProperty('nuvio.info.watched')!r}")
     try:
         calls = open("/tmp/ci/fakefen.log").read().splitlines()
     except OSError:
