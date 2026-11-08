@@ -3433,6 +3433,8 @@ def views_pause_test():
     mon.waitForAbort(2)
     pl = xbmc.Player()
     out = {}
+    autosubs = cond("Skin.HasSetting(nuvio.autosubs)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
     for setting in ("clean3", ""):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.pauseinfo,{setting})" if setting else "Skin.Reset(nuvio.pauseinfo)")
         xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
@@ -3441,6 +3443,9 @@ def views_pause_test():
                 break
             mon.waitForAbort(0.5)
         mon.waitForAbort(10)                          # on CI the video really starts ~9 s after PlayMedia
+        for _ in range(3):                            # the automatic subtitle search may have opened its window
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            mon.waitForAbort(1)
         xbmc.executebuiltin("PlayerControl(Play)")    # pause
         mon.waitForAbort(1)
         early = cond("Window.IsVisible(seekbar)")
@@ -3450,6 +3455,8 @@ def views_pause_test():
         pl.stop()
         mon.waitForAbort(3)
     xbmc.executebuiltin("Skin.Reset(nuvio.pauseinfo)")
+    if autosubs:
+        xbmc.executebuiltin("Skin.SetBool(nuvio.autosubs)")
     log("pauseclean: " + json.dumps(out))
 
 
