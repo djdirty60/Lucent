@@ -3407,6 +3407,52 @@ def fenlight_test():
     mon.waitForAbort(2)
 
 
+def views_pause_test():
+    """1.34.14: the view per kind (issue #5) and the clean picture when paused (issue #4)."""
+    xbmc.executebuiltin("Skin.Reset(lucent.view.remember.off)")
+    xbmc.executebuiltin("Skin.Reset(lucent.view.videos.episodes)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/901/1/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(50)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(55)")
+    mon.waitForAbort(3)
+    saved = lab("Skin.String(lucent.view.videos.episodes)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://recentlyaddedepisodes/,return)")
+    mon.waitForAbort(4)
+    log(f"views: saved={saved!r} other folder content={lab('Container.Content')} items={lab('Container.NumItems')} "
+        f"view55={cond('Control.IsVisible(55)')} view50={cond('Control.IsVisible(50)')} mode={lab('Container.Viewmode')}")
+    xbmc.executebuiltin("Container.SetViewMode(50)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Skin.Reset(lucent.view.videos.episodes)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    pl = xbmc.Player()
+    out = {}
+    for setting in ("clean3", ""):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.pauseinfo,{setting})" if setting else "Skin.Reset(nuvio.pauseinfo)")
+        xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+        for _ in range(40):
+            if pl.isPlayingVideo():
+                break
+            mon.waitForAbort(0.5)
+        mon.waitForAbort(10)                          # on CI the video really starts ~9 s after PlayMedia
+        xbmc.executebuiltin("PlayerControl(Play)")    # pause
+        mon.waitForAbort(1)
+        early = cond("Window.IsVisible(seekbar)")
+        mon.waitForAbort(5)
+        out[setting or "default"] = {"paused": cond("Player.Paused"), "bar_at_1s": early, "bar_at_6s": cond("Window.IsVisible(seekbar)")}
+        shot(f"pause-{setting or 'default'}")
+        pl.stop()
+        mon.waitForAbort(3)
+    xbmc.executebuiltin("Skin.Reset(nuvio.pauseinfo)")
+    log("pauseclean: " + json.dumps(out))
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3699,6 +3745,7 @@ def main():
     readable_test()
     landseries_test()
     fenlight_test()
+    views_pause_test()
     ytfix_test()
     fsback_test()
     omdb_test()

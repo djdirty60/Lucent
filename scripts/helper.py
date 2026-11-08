@@ -74,6 +74,7 @@ def run():
     import foryou
     import tint
     import omdb
+    import views
     import updater
 
     sport_state = {}
@@ -341,6 +342,10 @@ def run():
                 omdb.list_tick()                     # Rotten Tomatoes / Metacritic of the title under the cursor
             except Exception as error:  # noqa: BLE001
                 log(f"omdb: {error}")
+            try:
+                views.tick()                         # the view you chose, for every folder of that kind (issue #5)
+            except Exception as error:  # noqa: BLE001
+                log(f"views: {error}")
             fast = colour.tick()
             if monitor.waitForAbort(0.25 if fast else 1):
                 break
