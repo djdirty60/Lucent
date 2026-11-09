@@ -18,6 +18,12 @@ samples, events = [], []
 def log(t):
     xbmc.log(f"[cidriver] {t}", xbmc.LOGINFO)
     events.append([round(time.time() - T0, 1), t])
+    try:                                              # save as we go: a run cut off by the time limit still has its results
+        os.makedirs(OUT, exist_ok=True)
+        with open(f"{OUT}/{TAG}.json", "w") as fh:
+            json.dump({"tag": TAG, "events": events, "samples": samples, "partial": True}, fh)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def cond(c):
