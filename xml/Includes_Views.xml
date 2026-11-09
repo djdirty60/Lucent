@@ -2,6 +2,8 @@
 <!-- Generated: media views (50 list, 51 posters, 52 poster wall, 53 landscape, 55 episodes) -->
 <includes>
     <!-- media flags row: keep its place fixed (no jumping) in the library views where Lucent shows flags (issue #9) -->
+    <!-- the row with OMDb / MDBList scores in the lists: kept in place while a key is set, so nothing jumps (issue #8) -->
+    <expression name="LucentScoreRow">!String.IsEmpty(Window(home).Property(lucent.omdbl.on))</expression>
     <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
         <value condition="Container.SortDirection(descending)">$LOCALIZE[31025]</value>
@@ -71,6 +73,23 @@
                         <param name="label">$INFO[ListItem.MPAA]</param>
                         <param name="visible">!String.IsEmpty(ListItem.MPAA)</param>
                     </include>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>$VAR[LucentHeroText3]</textcolor>
+                        <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                        <label>$INFO[ListItem.Genre]</label>
+                    </control>
+                <!-- scores of OMDb / MDBList on a row of their own under year, runtime and genre (issue #8) -->
+                <control type="grouplist">
+                    <left>0</left>
+                    <top>274</top>
+                    <width>1200</width>
+                    <height>44</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>12</itemgap>
+                    <visible>$EXP[LucentScoreRow]</visible>
                     <control type="group">
                         <width>150</width>
                         <height>44</height>
@@ -179,14 +198,7 @@
                             <label>LB  $INFO[Window(home).Property(lucent.omdbl.lb)]</label>
                         </control>
                     </control>
-                    <control type="label">
-                        <width>auto</width>
-                        <height>44</height>
-                        <font>font12</font>
-                        <textcolor>$VAR[LucentHeroText3]</textcolor>
-                        <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                        <label>$INFO[ListItem.Genre]</label>
-                    </control>
+                </control>
                 </control>
                 <!-- Media flags (issue #9): the player's flags for the title under the cursor, from scripts/mediaflags.py -->
                 <control type="grouplist">
@@ -197,6 +209,7 @@
                     <orientation>horizontal</orientation>
                     <itemgap>8</itemgap>
                     <usecontrolwidth>true</usecontrolwidth>
+                    <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <visible>!String.IsEmpty(Window(home).Property(lucent.mf.for))</visible>
                     <control type="label"><width>auto</width><height>30</height><font>font_tiny</font><textcolor>FF9FB0BF</textcolor><aligny>center</aligny><label>[B]$LOCALIZE[31821][/B]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.most))</visible></control>
                     <control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img1)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img1))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img2)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img2))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img3)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img3))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img4)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img4))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img5)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img5))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img6)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img6))</visible></control>
@@ -206,6 +219,7 @@
                     <left>0</left>
                     <top>282</top>
                     <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <width>1100</width>
                     <height>44</height>
                     <font>font27</font>
@@ -217,6 +231,7 @@
                     <left>0</left>
                     <top>334</top>
                     <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <width>920</width>
                     <height>$PARAM[plotheight]</height>
                     <font>font_body</font>

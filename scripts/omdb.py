@@ -371,7 +371,11 @@ def list_tick():
             or not xbmc.getCondVisibility("Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]")):
         LIST["id"] = LIST["done"] = ""
         _lclear()
+        if HOME.getProperty("lucent.omdbl.on"):
+            HOME.clearProperty("lucent.omdbl.on")
         return
+    if not HOME.getProperty("lucent.omdbl.on"):        # the scores row keeps its place in this list (issue #8)
+        HOME.setProperty("lucent.omdbl.on", "1")
     label = xbmc.getInfoLabel
     imdb_id = label("ListItem.UniqueID(imdb)") or label("ListItem.IMDBNumber") or label("ListItem.Property(imdb_id)")
     imdb_id = imdb_id if imdb_id.startswith("tt") else ""
