@@ -3768,6 +3768,12 @@ def main():
     smallposter_test()
     alwayson_test()
 
+    try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            bad = [ln.strip()[24:220] for ln in fh if "Error parsing boolean expression" in ln or "Misplaced" in ln]
+        log(f"parse errors: {len(bad)} {json.dumps(bad[:5])}")
+    except OSError as error:
+        log(f"parse errors: log not readable {error}")
     os.makedirs(OUT, exist_ok=True)
     json.dump({"tag": TAG, "events": events, "samples": samples}, open(f"{OUT}/{TAG}.json", "w"))
     log("done")

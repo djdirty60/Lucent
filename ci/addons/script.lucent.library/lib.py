@@ -349,6 +349,8 @@ def trakt_watched(force=False):
             return set(saved["movies"]), {tuple(x) for x in saved["episodes"]}
     except (OSError, ValueError, KeyError):
         saved = None
+    if not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
+        return None                                 # the Trakt login used here is Seren's: without Seren, nothing to ask
     try:
         import quick
         trakt = quick.Trakt()
