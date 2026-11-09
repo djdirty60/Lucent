@@ -21,6 +21,7 @@ import xbmcvfs
 
 import tmdb
 import tracker
+import users
 import util
 
 T = util.T
@@ -398,6 +399,10 @@ HOW_TO = T("Voeg deze map eenmalig toe in Kodi, via Video's > Bestanden > Video'
 
 
 def run(manual=False):
+    if users.current_id() != users.MAIN:      # one Kodi library: it follows the first profile
+        if manual:
+            util.notify(T("De bibliotheek volgt het eerste profiel", "The library follows the first profile"))
+        return
     if not tmdb.key():
         if manual:
             xbmcgui.Dialog().ok("Lucent", T("Vul eerst je TMDB-sleutel in.", "Enter your TMDB key first."))

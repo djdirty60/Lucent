@@ -10,7 +10,7 @@ import urllib.parse
 import xbmc
 import xbmcgui
 
-import keys
+import apikeys
 import tmdb
 import util
 
@@ -23,7 +23,7 @@ CHECK_EVERY = 300
 
 
 def client():
-    return util.setting("simkl_id") or keys.SIMKL_CLIENT_ID
+    return apikeys.simkl_id()
 
 
 def account():

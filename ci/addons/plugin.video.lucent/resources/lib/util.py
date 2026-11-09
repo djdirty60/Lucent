@@ -90,7 +90,7 @@ def http(url, data=None, headers=None, timeout=20, method=None, form=None, raw=N
 
 
 def _cache_path(key):
-    return os.path.join(CACHE, hashlib.sha1(key.encode("utf-8")).hexdigest() + ".json")
+    return os.path.join(CACHE, hashlib.sha1(_user_key(key).encode("utf-8")).hexdigest() + ".json")
 
 
 def cache_get(key, ttl):
@@ -130,17 +130,43 @@ def cache_clear():
         pass
 
 
+USERS = "users.json"
+PER_USER = {"trakt.json", "simkl.json", "simkl_state.json", "watched.json", "watchlist.json", "progress.json", "last_release.json"}
+
+
+def current_user():
+    try:
+        with open(os.path.join(PROFILE, USERS), encoding="utf-8") as handle:
+            return json.load(handle).get("current") or "main"
+    except (OSError, ValueError):
+        return "main"
+
+
+def _path(name):
+    """The first profile keeps its files where they always were; the others get their own folder."""
+    user = current_user()
+    if name in PER_USER and user != "main":
+        return os.path.join(PROFILE, "users", user, name)
+    return os.path.join(PROFILE, name)
+
+
+def _user_key(key):
+    """Account answers are cached per person; TMDB answers are shared."""
+    user = current_user()
+    return "%s|%s" % (user, key) if user != "main" and key.startswith(("trakt", "simkl", "nextup")) else key
+
+
 def load_json(name, default):
     try:
-        with open(os.path.join(PROFILE, name), encoding="utf-8") as handle:
+        with open(_path(name), encoding="utf-8") as handle:
             return json.load(handle)
     except (OSError, ValueError):
         return default
 
 
 def save_json(name, value):
-    os.makedirs(PROFILE, exist_ok=True)
-    path = os.path.join(PROFILE, name)
+    path = _path(name)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path + ".tmp", "w", encoding="utf-8") as handle:
         json.dump(value, handle)
     os.replace(path + ".tmp", path)

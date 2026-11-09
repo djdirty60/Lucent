@@ -7,10 +7,12 @@ import urllib.parse
 import xbmc
 import xbmcgui
 
+import apikeys
 import keys
 import util
 
 API = "https://api.trakt.tv/"
+OAUTH = "https://auth.trakt.tv/"     # Trakt wants every oauth request on this host
 FILE = "trakt.json"
 HAS_LISTS = True
 COLLECTIONS = {"watchlist_movie": ("sync/watchlist/movies", "movie"), "watchlist_tv": ("sync/watchlist/shows", "tvshow"),
@@ -18,7 +20,7 @@ COLLECTIONS = {"watchlist_movie": ("sync/watchlist/movies", "movie"), "watchlist
 
 
 def client():
-    return util.setting("trakt_id") or keys.TRAKT_CLIENT_ID, util.setting("trakt_secret") or keys.TRAKT_CLIENT_SECRET
+    return apikeys.trakt_id(), util.setting("trakt_secret") or keys.TRAKT_CLIENT_SECRET
 
 
 def account():
@@ -37,13 +39,20 @@ def _store(token):
     return token
 
 
+def _with_secret(body, secret):
+    """New Trakt apps have no secret at all; older ones still send theirs."""
+    if secret:
+        body["client_secret"] = secret
+    return body
+
+
 def _refresh():
     cid, secret = client()
     saved = account()
     try:
-        token, _ = util.http(API + "oauth/token", data={
-            "refresh_token": saved["refresh_token"], "client_id": cid, "client_secret": secret,
-            "redirect_uri": "urn:ietf:wg:oauth:2.0:oob", "grant_type": "refresh_token"})
+        token, _ = util.http(OAUTH + "oauth/token", data=_with_secret({
+            "refresh_token": saved["refresh_token"], "client_id": cid,
+            "redirect_uri": "urn:ietf:wg:oauth:2.0:oob", "grant_type": "refresh_token"}, secret))
     except (util.HttpError, KeyError) as error:
         util.log("Trakt renewal failed: %s" % type(error).__name__)
         return None
@@ -160,12 +169,12 @@ def login():
     import dialogs
     import threading
     cid, secret = client()
-    if not cid or not secret:
-        xbmcgui.Dialog().ok("Lucent", util.T("Vul eerst de Trakt Client ID en Secret in bij de instellingen.",
-                                             "Enter the Trakt Client ID and Secret in the settings first."))
+    if not cid:
+        xbmcgui.Dialog().ok("Lucent", util.T("Vul eerst de Trakt Client ID in bij de instellingen.",
+                                             "Enter the Trakt Client ID in the settings first."))
         return False
     try:
-        code, _ = util.http(API + "oauth/device/code", data={"client_id": cid})
+        code, _ = util.http(OAUTH + "oauth/device/code", data={"client_id": cid})
     except util.HttpError:
         util.notify(util.T("Trakt is niet bereikbaar", "Trakt cannot be reached"))
         return False
@@ -179,7 +188,7 @@ def login():
             if monitor.waitForAbort(interval):
                 break
             try:
-                token, _ = util.http(API + "oauth/device/token", data={"code": code["device_code"], "client_id": cid, "client_secret": secret})
+                token, _ = util.http(OAUTH + "oauth/device/token", data=_with_secret({"code": code["device_code"], "client_id": cid}, secret))
             except util.HttpError as error:
                 if error.status == 400:      # not entered yet
                     continue

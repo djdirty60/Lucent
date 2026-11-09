@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 import datetime
 import urllib.parse
 
-import keys
+import apikeys
 import util
 
 API = "https://api.themoviedb.org/3/"
@@ -13,7 +13,7 @@ DAY = 86400
 
 
 def key():
-    return util.setting("tmdb_key") or keys.TMDB_KEY
+    return apikeys.tmdb()
 
 
 def lang():

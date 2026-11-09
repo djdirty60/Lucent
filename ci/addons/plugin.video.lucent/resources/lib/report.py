@@ -16,6 +16,7 @@ RULES = [(re.compile(r"[a-z][a-z0-9+.-]*://[^\s\"'<>]+", re.I), lambda m: m.grou
          (re.compile(r"(authorization|api[_-]?key|apikey|token|password|passwd|secret)\s*[=:]\s*(?:bearer\s+|basic\s+)?\S+", re.I), r"\1=[hidden]"),
          (re.compile(r"\b(bearer|basic)\s+[A-Za-z0-9+/_.=-]{6,}", re.I), r"\1 [hidden]"),
          (re.compile(r"\b[A-Za-z0-9+/_-]{40,}={0,2}"), "[hidden]"),
+         (re.compile(r"\b[0-9a-fA-F]{32}\b"), "[hidden]"),
          (re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+"), "[e-mail]"),
          (re.compile(r"(/(?:Users|home)/)[^/\s]+"), r"\1[user]")]
 MAX_LINES = 1500

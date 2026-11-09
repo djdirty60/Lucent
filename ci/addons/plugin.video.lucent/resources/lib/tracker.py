@@ -12,6 +12,7 @@ import mdblist
 import simkl
 import tmdb
 import trakt
+import users
 import util
 
 T = util.T
@@ -21,7 +22,7 @@ PROGRESS = "progress.json"
 
 
 def choice():
-    return util.number("tracker", 0)     # 0 Trakt, 1 Simkl, 2 only this device
+    return users.tracker_choice()     # 0 Trakt, 1 Simkl, 2 only this device
 
 
 def active():

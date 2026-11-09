@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.lucent" version="0.11.0" name="Lucent Video" provider-name="Claude">
+<addon id="plugin.video.lucent" version="0.13.0" name="Lucent Video" provider-name="Claude">
     <requires>
         <import addon="xbmc.python" version="3.0.1"/>
     </requires>
@@ -14,11 +14,13 @@
         <description lang="nl_NL">Bladeren met TMDB, afspelen via je eigen AIOStreams-adres en je voortgang bijhouden op Trakt. Werkt zonder Seren.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>0.11.0: New lists: For you (recommendations from what you watched last), Calendar (new episodes of what you follow) and Cast (the films and series of an actor or actress). When a link breaks during playback, Lucent Video continues with the next source at the same point. The next episode's sources are found before the current one ends. Series keep the same release group and quality. Dolby Vision on this device: skip sources this device cannot play (P7 / FEL, or all Dolby Vision). Make an error report: a log without addresses, keys or passwords, to attach to a GitHub issue.
-0.10.0: More lists: public Trakt lists (trending, popular, search), MDBList search and your Floppy lists. Fixed: with Trakt as your account, lists with titles gave an error.
-0.9.0: Streaming services: a list of the services in your country, and per service what it offers, newest first (films, series or both). Country setting under Connections (empty = automatic). Lists used as Home rows no longer end with a "next page" item.
-0.8.0: Easynews (username and password) and TorBox (API key) as sources next to AIOStreams. TorBox only shows what it already has, so it can stream right away; the link is made when you press play. A dead link moves on to the next source.
-0.7.0 and earlier: first versions of Lucent Video - films and series from TMDB, playback through your own AIOStreams address, filters and order of sources, Trakt and SIMKL (continue watching, next episodes, watchlist, lists, scrobbling), resume and next episode, Lucent-style windows. Not yet tested with real accounts: feedback welcome.</news>
+        <news>0.13.0: Keys never live in the code. Testers get a private tester code: enter it once in the setup assistant (step Keys) and TMDB, Trakt and Simkl work. A key file (keys.json) from a USB stick or network folder works too, or your own free TMDB key. Without a key, Home rows stay empty instead of opening a window. Trakt login no longer needs a Client Secret.
+0.12.0: Setup assistant on first start (account, keys, sources, order, Dolby Vision). Family profiles: "Who is watching?" - everybody has their own account, progress and lists; the Kodi library follows the first profile.
+0.11.0: New lists: For you, Calendar and Cast. When a link breaks during playback, Lucent Video continues with the next source at the same point. The next episode's sources are found before the current one ends. Series keep the same release group and quality. Dolby Vision on this device: skip sources this device cannot play. Make an error report: a log without addresses, keys or passwords.
+0.10.0: Public Trakt lists (trending, popular, search), MDBList search and your Floppy lists.
+0.9.0: Streaming services in your country, newest first.
+0.8.0: Easynews and TorBox as sources next to AIOStreams.
+0.7.0 and earlier: first versions of Lucent Video - films and series from TMDB, playback through your own AIOStreams address, Trakt and SIMKL, resume and next episode, Lucent-style windows. Not yet tested with real accounts: feedback welcome.</news>
         <assets>
             <icon>icon.png</icon>
         </assets>

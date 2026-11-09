@@ -19,6 +19,7 @@ import streams
 import tmdb
 import tracker
 import trakt
+import users
 import usenet
 import util
 
@@ -107,6 +108,9 @@ def home(handle, _params):
         rows.insert(8, items.folder("MDBList", util.url_for(action="mdblistmenu"), "DefaultFolder.png"))
     if floppy.available():
         rows.insert(-1, items.folder("Floppy", util.url_for(action="floppylists"), "DefaultFolder.png"))
+    who = xbmcgui.ListItem(T("Profiel: %s", "Profile: %s") % users.current()["name"], offscreen=True)
+    who.setProperty("IsPlayable", "false")
+    rows.append((util.url_for(action="who"), who, False))
     send(handle, rows)
 
 
@@ -479,6 +483,15 @@ def run(argv):
             return xbmcgui.Dialog().ok("TorBox" if ok else T("Niet gelukt", "Failed"), text)
         if action == "test_floppy":
             return check_service(floppy, "Floppy")
+        if action == "make_testercode":
+            import apikeys
+            return apikeys.show_code()
+        if action == "setup":
+            import setup_ui
+            return setup_ui.open_setup()
+        if action == "who":
+            import setup_ui
+            return setup_ui.ask_who()
         if action == "ranking":
             import ranking_ui
             return ranking_ui.open_main()
@@ -497,7 +510,16 @@ def run(argv):
             return set_watched(params)
         if action == "watchlist":
             return set_watchlist(params)
+        if action == "":
+            import setup_ui
+            if setup_ui.needed():
+                setup_ui.open_setup()
+            if len(users.everyone()) > 1 and not util.HOME.getProperty("lucent.video.who.asked"):
+                util.HOME.setProperty("lucent.video.who.asked", "1")
+                setup_ui.ask_who()
         if not tmdb.key():
+            if params.get("widget") == "1":      # a row on Home: stay empty, never open a window
+                return xbmcplugin.endOfDirectory(handle, succeeded=False)
             xbmcgui.Dialog().ok("Lucent", T("Vul eerst je TMDB-sleutel in bij de instellingen.", "Enter your TMDB key in the settings first."))
             return xbmcplugin.endOfDirectory(handle, succeeded=False)
         return FOLDERS[action](handle, params)

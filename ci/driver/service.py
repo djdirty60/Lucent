@@ -3799,7 +3799,7 @@ def _dir_guarded(path, wait=20):
     t0 = time.time()
     while th.is_alive() and time.time() - t0 < wait:
         mon.waitForAbort(0.5)
-        if cond("Window.IsActive(okdialog) | Window.IsActive(yesnodialog) | Window.IsActive(selectdialog)"):
+        if cond("System.HasModalDialog | Window.IsActive(okdialog) | Window.IsActive(yesnodialog) | Window.IsActive(selectdialog)"):
             dialog = dialog or (lab("Control.GetLabel(9)") or lab("System.CurrentWindow"))
             xbmc.executebuiltin("Dialog.Close(all,true)")
     res = box.get("res") or {}
@@ -3809,7 +3809,7 @@ def _dir_guarded(path, wait=20):
 
 
 def lucentvideo_test():
-    """Lucent Video 0.11.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
+    """Lucent Video 0.13.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
     out = {"root": _dir_guarded("plugin://plugin.video.lucent/")}
     for nm in ("calendar", "foryou", "person&id=287", "trending_movie"):
