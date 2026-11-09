@@ -3454,6 +3454,10 @@ def views_pause_test():
         xbmc.executebuiltin("ActivateWindow(videoosd)")             # the player menu, as OK opens it on a Shield
         mon.waitForAbort(1)
         out[setting or "default"]["osd_opened"] = cond("Window.IsActive(videoosd)")
+        out[setting or "default"]["diag"] = {c: cond(c) for c in ("Player.Paused", "Window.IsActive(videoosd)", "System.HasActiveModalDialog",
+                                                              "Window.IsActive(sliderdialog)", "System.IdleTime(3)", "Window.IsVisible(videoosd)")}
+        out[setting or "default"]["diag"]["pauseinfo"] = lab("Skin.String(nuvio.pauseinfo)")
+        out[setting or "default"]["diag"]["helper"] = HOME.getProperty("lucent.helper")
         mon.waitForAbort(5)
         out[setting or "default"]["osd_after_6s"] = cond("Window.IsActive(videoosd)")
         xbmc.executebuiltin("Dialog.Close(videoosd)")
