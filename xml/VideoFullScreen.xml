@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-    <onunload>Skin.Reset(nuvio.osdstats)</onunload>
     <controls>
         <!-- Buffering -->
         <control type="group">
@@ -32,10 +31,6 @@
                 <font>font12_bold</font>
                 <label>$LOCALIZE[31077]$INFO[Player.CacheLevel,  ,%]</label>
             </control>
-        </control>
-        <control type="group"><!-- statistics: drawn once, by the top-most player screen -->
-            <visible>!Window.IsVisible(videoosd) + !Window.IsVisible(fullscreeninfo) + !Window.IsVisible(seekbar)</visible>
-            <include>NuvioStatsPanel</include>
         </control>
         <!-- Codec info labels (filled by Kodi) -->
         <control type="group">
