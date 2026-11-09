@@ -554,51 +554,12 @@ def fen_light_mark(addon_id, item, watched):
     return True
 
 
-def umbrella_id():
-    """The add-on of this item when it is Umbrella or built on it (luc_kodi, ...), else ''."""
-    path = info("FileNameAndPath") or info("Path") or xbmc.getInfoLabel("Container.FolderPath")
-    parts = path.split("/")
-    if not path.startswith("plugin://") or len(parts) < 3:
-        return ""
-    try:
-        with xbmcvfs.File(f"special://home/addons/{parts[2]}/resources/lib/modules/router.py") as fh:
-            text = fh.read()
-        return parts[2] if "action == 'playcount_Episode'" in text and "action == 'playcount_Movie'" in text else ""
-    except Exception:  # noqa: BLE001
-        return ""
-
-
-def umbrella_mark(addon_id, item, watched):
-    """Let luc_kodi / Umbrella mark it itself (playcount_*): it tells Trakt or keeps it locally, as set in that add-on.
-    Their episodes carry the IMDb number of the series; query 5 = watched, 4 = unwatched."""
-    imdb = info("UniqueID(imdb)") or info("IMDBNumber")
-    if not imdb.startswith("tt"):
-        return False
-    season, episode = info("Season"), info("Episode")
-    query = "4" if watched else "5"
-    if item.dbtype == "episode" and season.isdigit() and episode.isdigit():
-        params = {"action": "playcount_Episode", "name": info("TVShowTitle") or item.title, "imdb": imdb,
-                  "tvdb": info("UniqueID(tvdb)"), "season": season, "episode": episode, "query": query}
-    elif item.dbtype == "movie":
-        params = {"action": "playcount_Movie", "name": item.title, "imdb": imdb, "query": query}
-    else:
-        return False
-    xbmc.executebuiltin(f"RunPlugin(plugin://{addon_id}/?{urllib.parse.urlencode(params)})")
-    HOME.setProperty("nuvio.info.watched", "0" if watched else "1")
-    return True
-
-
 def toggle_watched():
     item = Item()
     fen = fen_light_id()                            # Fen Light / Red Light: the add-on marks it (and tells Trakt) itself
     if fen and item.tmdb.isdigit():
         state = HOME.getProperty("nuvio.info.watched")
         if fen_light_mark(fen, item, (state == "1") if state in ("0", "1") else item.watched):
-            return
-    umb = "" if fen else umbrella_id()              # luc_kodi / Umbrella: the same, through its playcount actions
-    if umb:
-        state = HOME.getProperty("nuvio.info.watched")
-        if umbrella_mark(umb, item, (state == "1") if state in ("0", "1") else item.watched):
             return
     if not item.ids():
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))

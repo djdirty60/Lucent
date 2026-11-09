@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated: media views (50 list, 51 posters, 52 poster wall, 53 landscape, 55 episodes) -->
 <includes>
+    <!-- media flags row: keep its place fixed (no jumping) in the library views where Lucent shows flags (issue #9) -->
+    <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
         <value condition="Container.SortDirection(descending)">$LOCALIZE[31025]</value>
         <value>$LOCALIZE[31024]</value>
@@ -203,7 +205,7 @@
                 <control type="label">
                     <left>0</left>
                     <top>282</top>
-                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.mf.for))">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
                     <width>1100</width>
                     <height>44</height>
                     <font>font27</font>
@@ -214,7 +216,7 @@
                 <control type="textbox">
                     <left>0</left>
                     <top>334</top>
-                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.mf.for))">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
                     <width>920</width>
                     <height>$PARAM[plotheight]</height>
                     <font>font_body</font>
