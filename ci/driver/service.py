@@ -3417,6 +3417,12 @@ def fenlight_test():
         mon.waitForAbort(4)
         out[what] = {"on": before, "now": lab("Container.FolderPath"), "first": lab("Container(50).ListItem(0).Label")}
     log("fenlight: browse " + json.dumps(out))
+    xbmc.executebuiltin("Container.Update(plugin://plugin.video.fakefen/?mode=list,replace)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(9050)")
+    mon.waitForAbort(1.5)
+    log(f"addonsettings: plugin={lab('Container.PluginName')!r} visible9069={cond('Control.IsVisible(9069)')} label={lab('Control.GetLabel(9069)')!r}")
+    shot("addonsettings-side")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2.5)
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")

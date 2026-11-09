@@ -535,6 +535,22 @@
                     <label>$LOCALIZE[653]</label>
                     <visible>[Window.IsActive(videos) | Window.IsActive(music)]</visible>
                 </control>
+                <!-- in an add-on: open the settings of that add-on -->
+                <control type="button" id="9069">
+                    <width>560</width>
+                    <height>76</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>48</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31833]</label>
+                    <onclick>Addon.OpenSettings($INFO[Container.PluginName])</onclick>
+                    <visible>[Window.IsActive(videos) | Window.IsActive(music)] + !String.IsEmpty(Container.PluginName)</visible>
+                </control>
                 <control type="button" id="9068">
                     <width>560</width>
                     <height>76</height>
