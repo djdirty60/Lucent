@@ -3786,41 +3786,42 @@ def omdb_test():
     mon.waitForAbort(2)
 
 
+def _dir_guarded(path, wait=20):
+    """Files.GetDirectory in a thread; a modal dialog that pops up meanwhile is noted and closed (it would block Kodi)."""
+    import threading
+    box = {}
+    def run():
+        box["res"] = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                "params": {"directory": path, "media": "files"}})))
+    th = threading.Thread(target=run, daemon=True)
+    th.start()
+    dialog = ""
+    t0 = time.time()
+    while th.is_alive() and time.time() - t0 < wait:
+        mon.waitForAbort(0.5)
+        if cond("Window.IsActive(okdialog) | Window.IsActive(yesnodialog) | Window.IsActive(selectdialog)"):
+            dialog = dialog or (lab("Control.GetLabel(9)") or lab("System.CurrentWindow"))
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+    res = box.get("res") or {}
+    files = (res.get("result") or {}).get("files")
+    return {"n": len(files) if files is not None else None, "labels": [f.get("label") for f in files or []][:12],
+            "paths": [f.get("file", "") for f in files or []][:20], "dialog": dialog, "error": str(res.get("error"))[:80] if res.get("error") else ""}
+
+
 def lucentvideo_test():
-    """Lucent Video 0.8.0 (plugin.video.lucent): installs, its menus open and nothing secret or broken lands in the log."""
+    """Lucent Video 0.11.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
-    out = {}
-    for name, path in (("root", "plugin://plugin.video.lucent/"),):
-        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                         "params": {"directory": path, "media": "files"}})))
-        files = (res.get("result") or {}).get("files") or []
-        out[name] = {"n": len(files), "labels": [f.get("label") for f in files][:20], "paths": [f.get("file", "")[:90] for f in files][:20],
-                     "error": res.get("error")}
-    sub = {}
-    for f_path in [p for p in out["root"]["paths"] if p.startswith("plugin://plugin.video.lucent/")][:8]:
-        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                         "params": {"directory": f_path, "media": "files"}})))
-        sub[f_path[29:70]] = len((res.get("result") or {}).get("files") or []) if "result" in res else str(res.get("error"))[:80]
-    out["sub"] = sub
-    for nm in ("calendar", "foryou", "person&id=287"):
-        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                         "params": {"directory": "plugin://plugin.video.lucent/?action=list&widget=1&name=" + nm, "media": "files"}})))
-        out["row_" + nm] = len((res.get("result") or {}).get("files") or []) if "result" in res else str(res.get("error"))[:80]
+    out = {"root": _dir_guarded("plugin://plugin.video.lucent/")}
+    for nm in ("calendar", "foryou", "person&id=287", "trending_movie"):
+        out["row_" + nm] = _dir_guarded("plugin://plugin.video.lucent/?action=list&widget=1&name=" + nm, 15)
     try:
         import sys as _s
         _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
         import menu as _menu
-        row = _menu.WIDGETS_LV[0][1]
-        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                         "params": {"directory": row, "media": "files"}})))
-        out["menu"] = {"has_lv": _menu.has_lv(), "rows": len(_menu.WIDGETS_LV), "first": row,
-                       "row_items": [f.get("label") for f in (res.get("result") or {}).get("files") or []][:5], "error": res.get("error")}
+        out["menu"] = {"has_lv": _menu.has_lv(), "rows": len(_menu.WIDGETS_LV), "names": [r[1].split("name=")[1] for r in _menu.WIDGETS_LV]}
     except Exception as _e:  # noqa: BLE001
         out["menu"] = repr(_e)
     log("lucentvideo: " + json.dumps(out))
-    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.lucent/,return)")
-    mon.waitForAbort(4)
-    shot("lucentvideo-root")
     xbmc.executebuiltin("Addon.OpenSettings(plugin.video.lucent)")
     mon.waitForAbort(3)
     shot("lucentvideo-settings")
@@ -3829,9 +3830,10 @@ def lucentvideo_test():
     mon.waitForAbort(2)
     try:
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
-            lines = [ln for ln in fh if "plugin.video.lucent" in ln or "Lucent-Video" in ln or "[lucent video]" in ln.lower()]
-        errs = [ln.strip()[24:200] for ln in lines if "error" in ln.lower() or "Traceback" in ln]
-        log(f"lucentvideo: log lines={len(lines)} errors={len(errs)} {json.dumps(errs[:6])}")
+            lines = [ln for ln in fh if "plugin.video.lucent" in ln or "Lucent-Video" in ln or "lucent video" in ln.lower()]
+        errs = [ln.strip()[24:200] for ln in lines if " error " in ln.lower() or "Traceback" in ln]
+        secrets = [ln.strip()[24:120] for ln in lines if "api_key=" in ln or "Authorization" in ln]
+        log(f"lucentvideo: log lines={len(lines)} errors={len(errs)} secrets={len(secrets)} {json.dumps(errs[:6])}")
     except OSError as e:
         log(f"lucentvideo: log {e}")
 
