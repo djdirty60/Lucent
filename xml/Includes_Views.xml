@@ -186,9 +186,24 @@
                         <label>$INFO[ListItem.Genre]</label>
                     </control>
                 </control>
+                <!-- Media flags (issue #9): the player's flags for the title under the cursor, from scripts/mediaflags.py -->
+                <control type="grouplist">
+                    <left>0</left>
+                    <top>274</top>
+                    <width>1200</width>
+                    <height>30</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>8</itemgap>
+                    <usecontrolwidth>true</usecontrolwidth>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.mf.for))</visible>
+                    <control type="label"><width>auto</width><height>30</height><font>font_tiny</font><textcolor>FF9FB0BF</textcolor><aligny>center</aligny><label>[B]$LOCALIZE[31821][/B]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.most))</visible></control>
+                    <control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img1)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img1))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img2)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img2))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img3)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img3))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img4)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img4))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img5)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img5))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img6)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img6))</visible></control>
+                    <control type="label"><width>auto</width><height>30</height><font>font_tiny</font><aligny>center</aligny><textcolor>FFE6ECF0</textcolor><shadowcolor>$VAR[LucentTextShadow]</shadowcolor><label>   [COLOR FF9FB0BF][B]$LOCALIZE[31819][/B][/COLOR]  $INFO[Window(home).Property(lucent.mf.alang)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.alang))</visible></control><control type="label"><width>auto</width><height>30</height><font>font_tiny</font><aligny>center</aligny><textcolor>FFE6ECF0</textcolor><shadowcolor>$VAR[LucentTextShadow]</shadowcolor><label>   [COLOR FF9FB0BF][B]$LOCALIZE[31820][/B][/COLOR]  $INFO[Window(home).Property(lucent.mf.slang)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.slang))</visible></control>
+                </control>
                 <control type="label">
                     <left>0</left>
                     <top>282</top>
+                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.mf.for))">Conditional</animation>
                     <width>1100</width>
                     <height>44</height>
                     <font>font27</font>
@@ -199,6 +214,7 @@
                 <control type="textbox">
                     <left>0</left>
                     <top>334</top>
+                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.mf.for))">Conditional</animation>
                     <width>920</width>
                     <height>$PARAM[plotheight]</height>
                     <font>font_body</font>
