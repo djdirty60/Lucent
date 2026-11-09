@@ -320,7 +320,9 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
         if not imdb_id and not tmdb_id and dbid:
             got = TMDB_IMDB.get(f"db:{kind}:{dbid}")
             if got is None:
-                got = TMDB_IMDB[f"db:{kind}:{dbid}"] = _from_library(kind, dbid)
+                got = _from_library(kind, dbid)
+                if got[0] or got[1]:                    # remember only a real answer: the library may get the ids later
+                    TMDB_IMDB[f"db:{kind}:{dbid}"] = got
             imdb_id, tmdb_id = got
             tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
         if not imdb_id and tmdb_id:
@@ -328,7 +330,9 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
             if imdb_id is None:
                 class _I:                           # what imdb_of() reads
                     imdb, tmdb, dbtype = "", tmdb_id, kind
-                imdb_id = TMDB_IMDB[f"{kind}:{tmdb_id}"] = imdb_of(_I())
+                imdb_id = imdb_of(_I())
+                if imdb_id:
+                    TMDB_IMDB[f"{kind}:{tmdb_id}"] = imdb_id
         d = all_scores(imdb_id, kind) if imdb_id else {}
         if LIST["id"] != ident:
             return                                  # the cursor moved on meanwhile
