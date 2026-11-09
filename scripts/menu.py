@@ -321,6 +321,137 @@ def pick_trakt_fast():
     return clean(entries[pick].get("label") or entries[pick].get("title")), entries[pick]["file"], "poster"
 
 
+LV = "plugin://plugin.video.lucent/?action=list&widget=1&name="
+WIDGETS_LV = [                                      # Lucent Video (plugin.video.lucent): rows without a 'next page' item
+    (("Films · Trending", "Films · Trending"), LV + "trending_movie", "poster"),
+    (("Films · Popular", "Films · Populair"), LV + "popular_movie", "poster"),
+    (("Films · Top rated", "Films · Best beoordeeld"), LV + "toprated_movie", "poster"),
+    (("Films · In cinemas", "Films · In de bioscoop"), LV + "nowplaying_movie", "poster"),
+    (("Films · Coming soon", "Films · Binnenkort"), LV + "upcoming_movie", "poster"),
+    (("Series · Trending", "Series · Trending"), LV + "trending_tv", "poster"),
+    (("Series · Popular", "Series · Populair"), LV + "popular_tv", "poster"),
+    (("Series · Top rated", "Series · Best beoordeeld"), LV + "toprated_tv", "poster"),
+    (("Series · On the air", "Series · Nu op tv"), LV + "airing_tv", "poster"),
+    (("Continue watching", "Verder kijken"), LV + "continue", "land"),
+    (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
+    (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
+    (("Next up", "Volgende afleveringen"), LV + "nextup", "land"),
+    (("Watchlist · Films", "Kijklijst · Films"), LV + "watchlist_movie", "poster"),
+    (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
+    (("Collection · Films", "Collectie · Films"), LV + "collection_movie", "poster"),
+    (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
+    (("Calendar", "Kalender"), LV + "calendar", "land"),
+    (("For you", "Voor jou"), LV + "foryou", "poster"),
+]
+
+
+def pick_lv_list():
+    """Your own and liked lists of Trakt and MDBList, and your Floppy lists, as a row (no 'next page' item)."""
+    base = "plugin://plugin.video.lucent/?action="
+    found = []
+    busy(True)
+    for folder, tag in (("traktlists&kind=mine", "Trakt"), ("traktlists&kind=liked", "Trakt"), ("mdblists&kind=mine", "MDBList"),
+                        ("mdblists&kind=liked", "MDBList"), ("floppylists", "Floppy")):
+        for f in jsonrpc("Files.GetDirectory", {"directory": base + folder, "media": "files"}).get("files", []) or []:
+            path = f.get("file", "")
+            if "action=list" in path and path not in [x[1] for x in found]:
+                found.append((clean(f.get("label")), path, tag))
+    busy(False)
+    if not found:
+        xbmcgui.Dialog().ok(HEADING, tr(G("No lists found. Log in to Trakt or set your MDBList key or Floppy in Lucent Video.",
+                                          "Geen lijsten gevonden. Log in bij Trakt of vul je MDBList-sleutel of Floppy in bij Lucent Video.")))
+        return None
+    pick = select(tr(G("Your lists", "Je lijsten")), [f[0] for f in found], True, ["icons/list.png"] * len(found), [f[2] for f in found])
+    if pick < 0:
+        return None
+    name, path, _tag = found[pick]
+    return name, path + ("&" if "?" in path else "?") + "widget=1", "poster"
+
+
+def pick_lv_person():
+    """Search a person on TMDb (the key of Lucent, else of Lucent Video): a row with their best-known films and series."""
+    name = keyboard(tr(G("Name of the actor or actress", "Naam van de acteur of actrice")))
+    if not name:
+        return None
+    import json
+    import urllib.parse
+    import urllib.request
+    import xbmcaddon
+    import info
+    key = info.tmdb_key()
+    if not key:
+        try:
+            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
+        except Exception:  # noqa: BLE001
+            key = ""
+    if not key:
+        xbmcgui.Dialog().ok(HEADING, tr(G("Lucent needs a TMDb key for this (Skin settings > Integrations).",
+                                          "Lucent heeft hiervoor een TMDb-sleutel nodig (Skin-instellingen > Integraties).")))
+        return None
+    busy(True)
+    try:
+        url = "https://api.themoviedb.org/3/search/person?" + urllib.parse.urlencode({"api_key": key, "query": name})
+        with urllib.request.urlopen(url, timeout=15) as response:
+            people = json.loads(response.read().decode("utf-8")).get("results") or []
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[skin.lucent] menu: person search failed: {type(error).__name__}", xbmc.LOGWARNING)
+        people = []
+    busy(False)
+    people = [p for p in people if p.get("id")][:20]
+    if not people:
+        notify(tr(G("Nobody found with that name", "Niemand gevonden met die naam")))
+        return None
+    known = lambda p: ", ".join(k.get("title") or k.get("name") or "" for k in (p.get("known_for") or [])[:2])  # noqa: E731
+    pick = select(tr(G("Who do you mean?", "Wie bedoel je?")), [p.get("name", "") for p in people], True,
+                  [f"https://image.tmdb.org/t/p/w185{p['profile_path']}" if p.get("profile_path") else "icons/user.png" for p in people],
+                  [known(p) for p in people])
+    if pick < 0:
+        return None
+    person = people[pick]
+    return person.get("name", ""), LV + f"person&id={person['id']}", "poster"
+
+
+def has_lv():
+    return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
+
+
+def pick_lv():
+    """A Lucent Video row: one of its lists, or a streaming service (newest first)."""
+    service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
+    own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
+    actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
+    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [own, actor, service]
+    choice = select("Lucent Video", labels)
+    if choice < 0:
+        return None
+    if choice < len(WIDGETS_LV):
+        key, path, style = WIDGETS_LV[choice]
+        return tr(key), path, style
+    if choice == len(WIDGETS_LV):
+        return pick_lv_list()
+    if choice == len(WIDGETS_LV) + 1:
+        return pick_lv_person()
+    busy(True)
+    entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://plugin.video.lucent/?action=services",
+                                             "media": "files", "properties": ["title", "thumbnail"]}).get("files", []) or []
+    busy(False)
+    entries = [e for e in entries if "provider=" in e.get("file", "")]
+    if not entries:
+        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Lucent Video needs its TMDb key.",
+                                          "Geen diensten gevonden. Lucent Video heeft zijn TMDb-sleutel nodig.")))
+        return None
+    pick = select(tr(G("Streaming services", "Streamingdiensten")), [clean(e.get("label") or e.get("title")) for e in entries],
+                  True, [e.get("thumbnail", "") for e in entries])
+    if pick < 0:
+        return None
+    import urllib.parse
+    q = urllib.parse.parse_qs(entries[pick]["file"].split("?", 1)[1])
+    pid, pname = (q.get("provider") or [""])[0], clean(entries[pick].get("label") or "")
+    if not pid:
+        return None
+    return f"{pname} · {tr(G('Newest', 'Nieuwste'))}", LV + f"provider&provider={pid}&type=all", "poster"
+
+
 WIDGETS_OTHER = [
     (("Favourites", "Favorieten"), "favourites://", "land"),
     (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
@@ -746,10 +877,19 @@ def pick_widget():
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
     order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
+    if has_lv():                                        # Lucent Video: its own rows, right after Seren / the add-on folders
+        sources.append("Lucent Video")
+        icons.append("icons/play.png")
+        order.insert(1 if uses_seren() else 0, 9)
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])
     source = order[pick] if pick >= 0 else -1
     style = "poster"
-    if source == 0:
+    if source == 9:
+        picked = pick_lv()
+        if not picked:
+            return None
+        label, path, style = picked
+    elif source == 0:
         choice = select(tr("src_seren"), [tr(k) for k, _p, _s in WIDGETS_SEREN])
         if choice < 0:
             return None

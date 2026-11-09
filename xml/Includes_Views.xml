@@ -2,6 +2,8 @@
 <!-- Generated: media views (50 list, 51 posters, 52 poster wall, 53 landscape, 55 episodes) -->
 <includes>
     <!-- media flags row: keep its place fixed (no jumping) in the library views where Lucent shows flags (issue #9) -->
+    <!-- the row with OMDb / MDBList scores in the lists: kept in place while a key is set, so nothing jumps (issue #8) -->
+    <expression name="LucentScoreRow">!String.IsEmpty(Window(home).Property(lucent.omdbl.on))</expression>
     <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
         <value condition="Container.SortDirection(descending)">$LOCALIZE[31025]</value>
@@ -71,6 +73,24 @@
                         <param name="label">$INFO[ListItem.MPAA]</param>
                         <param name="visible">!String.IsEmpty(ListItem.MPAA)</param>
                     </include>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>44</height>
+                        <font>font12</font>
+                        <textcolor>$VAR[LucentHeroText3]</textcolor>
+                        <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                        <label>$INFO[ListItem.Genre]</label>
+                    </control>
+                </control>
+                <!-- scores of OMDb / MDBList on a row of their own under year, runtime and genre (issue #8) -->
+                <control type="grouplist">
+                    <left>0</left>
+                    <top>274</top>
+                    <width>1200</width>
+                    <height>44</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>12</itemgap>
+                    <visible>$EXP[LucentScoreRow]</visible>
                     <control type="group">
                         <width>150</width>
                         <height>44</height>
@@ -179,14 +199,6 @@
                             <label>LB  $INFO[Window(home).Property(lucent.omdbl.lb)]</label>
                         </control>
                     </control>
-                    <control type="label">
-                        <width>auto</width>
-                        <height>44</height>
-                        <font>font12</font>
-                        <textcolor>$VAR[LucentHeroText3]</textcolor>
-                        <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                        <label>$INFO[ListItem.Genre]</label>
-                    </control>
                 </control>
                 <!-- Media flags (issue #9): the player's flags for the title under the cursor, from scripts/mediaflags.py -->
                 <control type="grouplist">
@@ -197,6 +209,7 @@
                     <orientation>horizontal</orientation>
                     <itemgap>8</itemgap>
                     <usecontrolwidth>true</usecontrolwidth>
+                    <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <visible>!String.IsEmpty(Window(home).Property(lucent.mf.for))</visible>
                     <control type="label"><width>auto</width><height>30</height><font>font_tiny</font><textcolor>FF9FB0BF</textcolor><aligny>center</aligny><label>[B]$LOCALIZE[31821][/B]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.most))</visible></control>
                     <control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img1)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img1))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img2)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img2))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img3)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img3))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img4)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img4))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img5)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img5))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img6)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img6))</visible></control>
@@ -206,6 +219,7 @@
                     <left>0</left>
                     <top>282</top>
                     <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <width>1100</width>
                     <height>44</height>
                     <font>font27</font>
@@ -217,6 +231,7 @@
                     <left>0</left>
                     <top>334</top>
                     <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <width>920</width>
                     <height>$PARAM[plotheight]</height>
                     <font>font_body</font>
@@ -306,31 +321,40 @@
                 <colordiffuse>bg_70</colordiffuse>
             </control>
             <control type="group">
-                <animation effect="slide" start="-560,0" end="0,0" time="260" tween="cubic" easing="out">Visible</animation>
-                <animation effect="slide" start="0,0" end="-560,0" time="200" tween="cubic" easing="in">Hidden</animation>
+                <animation effect="slide" start="-660,0" end="0,0" time="260" tween="cubic" easing="out">Visible</animation>
+                <animation effect="slide" start="0,0" end="-660,0" time="200" tween="cubic" easing="in">Hidden</animation>
+                <!-- a floating panel with round corners (look A, 1.35.3) -->
                 <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>560</width>
-                    <height>1080</height>
-                    <texture>white.png</texture>
+                    <left>4</left>
+                    <top>4</top>
+                    <width>636</width>
+                    <height>1072</height>
+                    <texture border="44">rr20_glow.png</texture>
+                    <colordiffuse>99000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>24</left>
+                    <top>24</top>
+                    <width>596</width>
+                    <height>1032</height>
+                    <texture border="20">rr20.png</texture>
                     <colordiffuse>bg_98</colordiffuse>
                 </control>
                 <control type="image">
-                    <left>560</left>
-                    <top>0</top>
-                    <width>60</width>
-                    <height>1080</height>
-                    <texture>grad_left.png</texture>
-                    <colordiffuse>66000000</colordiffuse>
+                    <left>24</left>
+                    <top>24</top>
+                    <width>596</width>
+                    <height>1032</height>
+                    <texture border="20">rr20_edge.png</texture>
+                    <colordiffuse>hairline</colordiffuse>
                 </control>
                 <control type="grouplist" id="9050">
-                    <left>0</left>
-                    <top>60</top>
-                    <width>560</width>
-                    <height>960</height>
+                    <left>44</left>
+                    <top>44</top>
+                    <width>556</width>
+                    <height>992</height>
                     <orientation>vertical</orientation>
-                    <itemgap>0</itemgap>
+                    <itemgap>4</itemgap>
                     <onright condition="Control.IsVisible(50)">50</onright>
                     <onright condition="Control.IsVisible(51)">51</onright>
                     <onright condition="Control.IsVisible(52)">52</onright>
@@ -348,292 +372,289 @@
                     <onback condition="Control.IsVisible(56)">56</onback>
                     <onback condition="Control.IsVisible(57)">57</onback>
                 <control type="label" id="9051">
-                    <width>560</width>
-                    <height>70</height>
+                    <width>556</width>
+                    <height>58</height>
                     <font>font_caps</font>
                     <textcolor>text4</textcolor>
                     <aligny>bottom</aligny>
-                    <label>        [B]$LOCALIZE[31177][/B]</label>
+                    <label>    [B]$LOCALIZE[31177][/B]</label>
                     <visible>true</visible>
                 </control>
-                <control type="button" id="2">
-                    <width>560</width>
-                    <height>76</height>
+                <control type="group" id="29102"><width>556</width><height>68</height><visible>!Window.IsActive(addonbrowser)</visible><control type="button" id="2">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31022]: $INFO[Container.Viewmode]</label>
-                    <visible>!Window.IsActive(addonbrowser)</visible>
-                </control>
-                <control type="button" id="3">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/view.png</texture><visible>Control.HasFocus(2)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/view.png</texture><visible>!Control.HasFocus(2)</visible></control></control>
+                <control type="group" id="29103"><width>556</width><height>68</height><visible>true</visible><control type="button" id="3">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31023]: $INFO[Container.SortMethod]</label>
-                    <visible>true</visible>
-                </control>
-                <control type="button" id="4">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/list.png</texture><visible>Control.HasFocus(3)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/list.png</texture><visible>!Control.HasFocus(3)</visible></control></control>
+                <control type="group" id="29104"><width>556</width><height>68</height><visible>true</visible><control type="button" id="4">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31179]</label>
                     <label2>$VAR[NuvioSortOrder]</label2>
-                    <visible>true</visible>
-                </control>
-                <control type="edit" id="19">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/arrow_up.png</texture><visible>Control.HasFocus(4)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/arrow_up.png</texture><visible>!Control.HasFocus(4)</visible></control></control>
+                <control type="group" id="29119"><width>556</width><height>68</height><visible>Container.CanFilter</visible><control type="edit" id="19">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31180]</label>
                     <hinttext></hinttext>
-                    <visible>Container.CanFilter</visible>
-                </control>
-                <control type="button" id="10">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/search.png</texture><visible>Control.HasFocus(19)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/search.png</texture><visible>!Control.HasFocus(19)</visible></control></control>
+                <control type="group" id="29110"><width>556</width><height>68</height><visible>Window.IsActive(videos)</visible><control type="button" id="10">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label></label>
-                    <visible>Window.IsActive(videos)</visible>
-                </control>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/movies.png</texture><visible>Control.HasFocus(10)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/movies.png</texture><visible>!Control.HasFocus(10)</visible></control></control>
                 <control type="label" id="9052">
-                    <width>560</width>
-                    <height>70</height>
+                    <width>556</width>
+                    <height>58</height>
                     <font>font_caps</font>
                     <textcolor>text4</textcolor>
                     <aligny>bottom</aligny>
-                    <label>        [B]$LOCALIZE[31178][/B]</label>
+                    <label>    [B]$LOCALIZE[31178][/B]</label>
                     <visible>Window.IsActive(addonbrowser) | [Window.IsActive(videos) | Window.IsActive(music)]</visible>
                 </control>
-                <control type="button" id="9">
-                    <width>560</width>
-                    <height>76</height>
+                <control type="group" id="29109"><width>556</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="button" id="9">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[24034]</label>
-                    <visible>Window.IsActive(addonbrowser)</visible>
-                </control>
-                <control type="button" id="5">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/download.png</texture><visible>Control.HasFocus(9)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/download.png</texture><visible>!Control.HasFocus(9)</visible></control></control>
+                <control type="group" id="29105"><width>556</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="button" id="5">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[5]</label>
-                    <visible>Window.IsActive(addonbrowser)</visible>
-                </control>
-                <control type="radiobutton" id="7">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/settings.png</texture><visible>Control.HasFocus(5)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/settings.png</texture><visible>!Control.HasFocus(5)</visible></control></control>
+                <control type="group" id="29107"><width>556</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="radiobutton" id="7">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
-                    <textoffsetx>48</textoffsetx>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <textoffsetx>70</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <radioposx>460</radioposx>
                     <label>$LOCALIZE[25001]</label>
-                    <visible>Window.IsActive(addonbrowser)</visible>
-                </control>
-                <control type="radiobutton" id="8">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(7)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(7)</visible></control></control>
+                <control type="group" id="29108"><width>556</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="radiobutton" id="8">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
-                    <textoffsetx>48</textoffsetx>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <textoffsetx>70</textoffsetx>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <radioposx>460</radioposx>
                     <label>$LOCALIZE[24999]</label>
-                    <visible>Window.IsActive(addonbrowser)</visible>
-                </control>
-                <control type="button" id="9061">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(8)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(8)</visible></control></control>
+                <control type="group" id="38061"><width>556</width><height>68</height><visible>Window.IsActive(videos)</visible><control type="button" id="9061">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31002]</label>
                     <onclick>VideoLibrary.Search</onclick>
-                    <visible>Window.IsActive(videos)</visible>
-                </control>
-                <control type="button" id="20">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/search.png</texture><visible>Control.HasFocus(9061)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/search.png</texture><visible>!Control.HasFocus(9061)</visible></control></control>
+                <control type="group" id="29120"><width>556</width><height>68</height><visible>[Window.IsActive(videos) | Window.IsActive(music)]</visible><control type="button" id="20">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[653]</label>
-                    <visible>[Window.IsActive(videos) | Window.IsActive(music)]</visible>
-                </control>
-                <control type="button" id="9068">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/refresh.png</texture><visible>Control.HasFocus(20)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/refresh.png</texture><visible>!Control.HasFocus(20)</visible></control></control>
+                <!-- in an add-on: open the settings of that add-on -->
+                <control type="group" id="38069"><width>556</width><height>68</height><visible>[Window.IsActive(videos) | Window.IsActive(music)] + !String.IsEmpty(Container.PluginName) + String.StartsWith(Container.FolderPath,plugin://)</visible><control type="button" id="9069">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31833]</label>
+                    <onclick>Addon.OpenSettings($INFO[Container.PluginName])</onclick>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/settings.png</texture><visible>Control.HasFocus(9069)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/settings.png</texture><visible>!Control.HasFocus(9069)</visible></control></control>
+                <control type="group" id="38068"><width>556</width><height>68</height><visible>System.HasAddon(script.lucent.library) + Integer.IsGreater(Container.TotalUnWatched,0) + String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)</visible><control type="button" id="9068">
+                    <width>556</width>
+                    <height>68</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <disabledcolor>text5</disabledcolor>
+                    <textoffsetx>70</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>▶  $LOCALIZE[31595]</label>
                     <onclick>RunScript(script.lucent.library,nextinset,$INFO[Container.FolderPath])</onclick>
-                    <visible>System.HasAddon(script.lucent.library) + Integer.IsGreater(Container.TotalUnWatched,0) + String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)</visible>
-                </control>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/play.png</texture><visible>Control.HasFocus(9068)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/play.png</texture><visible>!Control.HasFocus(9068)</visible></control></control>
                 <control type="label" id="9053">
-                    <width>560</width>
-                    <height>70</height>
+                    <width>556</width>
+                    <height>58</height>
                     <font>font_caps</font>
                     <textcolor>text4</textcolor>
                     <aligny>bottom</aligny>
-                    <label>        [B]$LOCALIZE[31588][/B]</label>
+                    <label>    [B]$LOCALIZE[31588][/B]</label>
                     <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible>
                 </control>
-                <control type="button" id="9062">
-                    <width>560</width>
-                    <height>76</height>
+                <control type="group" id="38062"><width>556</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible><control type="button" id="9062">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31589]</label>
                     <onclick>Container.Update(plugin://script.lucent.library/?action=lib&amp;kind=unwatched&amp;type=$VAR[LucentFilterType])</onclick>
-                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible>
-                </control>
-                <control type="button" id="9063">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(9062)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(9062)</visible></control></control>
+                <control type="group" id="38063"><width>556</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible><control type="button" id="9063">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31590]</label>
                     <onclick>Container.Update(videodb://$VAR[LucentFilterNode]/genres/)</onclick>
-                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible>
-                </control>
-                <control type="button" id="9064">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/list.png</texture><visible>Control.HasFocus(9063)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/list.png</texture><visible>!Control.HasFocus(9063)</visible></control></control>
+                <control type="group" id="38064"><width>556</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible><control type="button" id="9064">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31591]</label>
                     <onclick>Container.Update(videodb://$VAR[LucentFilterNode]/years/)</onclick>
-                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible>
-                </control>
-                <control type="button" id="9065">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/calendar.png</texture><visible>Control.HasFocus(9064)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/calendar.png</texture><visible>!Control.HasFocus(9064)</visible></control></control>
+                <control type="group" id="38065"><width>556</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + Container.Content(movies) + System.HasAddon(script.lucent.library)</visible><control type="button" id="9065">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31592]</label>
                     <onclick>Container.Update(plugin://script.lucent.library/?action=lib&amp;kind=short&amp;type=movie)</onclick>
-                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + Container.Content(movies) + System.HasAddon(script.lucent.library)</visible>
-                </control>
-                <control type="button" id="9066">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/clock.png</texture><visible>Control.HasFocus(9065)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/clock.png</texture><visible>!Control.HasFocus(9065)</visible></control></control>
+                <control type="group" id="38066"><width>556</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible><control type="button" id="9066">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31593]</label>
                     <onclick>Container.Update(plugin://script.lucent.library/?action=lib&amp;kind=recent&amp;type=$VAR[LucentFilterType])</onclick>
-                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible>
-                </control>
-                <control type="button" id="9067">
-                    <width>560</width>
-                    <height>76</height>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/sparkle.png</texture><visible>Control.HasFocus(9066)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/sparkle.png</texture><visible>!Control.HasFocus(9066)</visible></control></control>
+                <control type="group" id="38067"><width>556</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible><control type="button" id="9067">
+                    <width>556</width>
+                    <height>68</height>
                     <font>font_label</font>
                     <textcolor>text2</textcolor>
                     <focusedcolor>on_focus</focusedcolor>
                     <disabledcolor>text5</disabledcolor>
-                    <textoffsetx>48</textoffsetx>
+                    <textoffsetx>70</textoffsetx>
                     <aligny>center</aligny>
-                    <texturefocus colordiffuse="focus">white.png</texturefocus>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
                     <texturenofocus/>
                     <label>$LOCALIZE[31581]</label>
                     <onclick>RunScript(script.lucent.library,surprise,$VAR[LucentFilterPick])</onclick>
-                    <visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + System.HasAddon(script.lucent.library)</visible>
-                </control>
+                <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/star.png</texture><visible>Control.HasFocus(9067)</visible></control><control type="image"><left>24</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/star.png</texture><visible>!Control.HasFocus(9067)</visible></control></control>
                 </control>
             </control>
         </control>
