@@ -301,7 +301,23 @@
                             <label>Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</label>
                         </control>
                     </control>
-                    <!-- MDBList (issue #8): Rotten Tomatoes audience, Metacritic users, Letterboxd -->
+                    <include content="InfoPill">
+                        <param name="label">★  $INFO[ListItem.Rating]</param>
+                        <param name="bg">glass</param>
+                        <param name="color">text2</param>
+                        <param name="visible">!Skin.HasSetting(nuvio.info.hideratings) + String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(lucent.omdb.imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
+                    </include>
+                </control>
+
+                <!-- MDBList scores (issue #8) on a row of their own, so the first row never gets cut off -->
+                <control type="grouplist">
+                    <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
+                    <left>96</left>
+                    <top>588</top>
+                    <width>1600</width>
+                    <height>44</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>12</itemgap>
                     <control type="group">
                         <width>300</width>
                         <height>44</height>
@@ -389,12 +405,6 @@
                             <label>Letterboxd  $INFO[Window(home).Property(lucent.omdb.lb)]</label>
                         </control>
                     </control>
-                    <include content="InfoPill">
-                        <param name="label">★  $INFO[ListItem.Rating]</param>
-                        <param name="bg">glass</param>
-                        <param name="color">text2</param>
-                        <param name="visible">!Skin.HasSetting(nuvio.info.hideratings) + String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(lucent.omdb.imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
-                    </include>
                 </control>
 
                 <!-- Episode title -->
@@ -407,6 +417,7 @@
                     <textcolor>text</textcolor>
                     <label>$INFO[ListItem.Title]</label>
                     <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]">Conditional</animation>
                 </control>
 
                 <!-- Plot -->
@@ -419,6 +430,20 @@
                     <textcolor>text</textcolor>
                     <label>$INFO[ListItem.Plot]</label>
                     <include>TextAutoScroll</include>
+                    <visible>![!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]]</visible>
+                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="String.IsEqual(ListItem.DBType,episode)">Conditional</animation>
+                </control>
+                <!-- the same plot one row lower, when the MDBList row shows -->
+                <control type="textbox">
+                    <left>96</left>
+                    <top>656</top>
+                    <width>1150</width>
+                    <height>194</height>
+                    <font>font_plot</font>
+                    <textcolor>text</textcolor>
+                    <label>$INFO[ListItem.Plot]</label>
+                    <include>TextAutoScroll</include>
+                    <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
                     <animation effect="slide" start="0,0" end="0,56" time="0" condition="String.IsEqual(ListItem.DBType,episode)">Conditional</animation>
                 </control>
 
