@@ -56,9 +56,20 @@ def _is_fen_light(addon_id):
         return False
 
 
+def _is_umbrella(addon_id):
+    """Umbrella and add-ons built on it (luc_kodi, ...): seasons and episodes with action=seasons / action=episodes."""
+    router = f"special://home/addons/{addon_id}/resources/lib/modules/router.py"
+    try:
+        with xbmcvfs.File(router) as fh:
+            text = fh.read()
+        return "action == 'seasons'" in text and "action == 'episodes'" in text and "playcount_Episode" in text
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def browse(episodes):
-    """'Browse series' / 'Browse episodes' on an episode (also on Home rows): the library, a Fen Light clone, Seren or
-    TMDb Helper - whichever knows this series."""
+    """'Browse series' / 'Browse episodes' on an episode (also on Home rows): the library, a Fen Light clone, an Umbrella clone
+    (luc_kodi), Seren or TMDb Helper - whichever knows this series."""
     label = xbmc.getInfoLabel
     season = label("ListItem.Season")
     season = season if season.isdigit() else ""
@@ -75,6 +86,13 @@ def browse(episodes):
     target = ""
     if addon_id and tmdb and _is_fen_light(addon_id):
         params = {"mode": "build_episode_list" if episodes and season else "build_season_list", "tmdb_id": tmdb}
+        if episodes and season:
+            params["season"] = season
+        target = f"plugin://{addon_id}/?" + urllib.parse.urlencode(params)
+    elif addon_id and tmdb and _is_umbrella(addon_id):
+        params = {"action": "episodes" if episodes and season else "seasons",
+                  "tvshowtitle": label("ListItem.TVShowTitle") or label("ListItem.Title"), "year": label("ListItem.Year"),
+                  "imdb": label("ListItem.UniqueID(imdb)"), "tmdb": tmdb, "tvdb": label("ListItem.UniqueID(tvdb)")}
         if episodes and season:
             params["season"] = season
         target = f"plugin://{addon_id}/?" + urllib.parse.urlencode(params)

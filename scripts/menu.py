@@ -321,6 +321,43 @@ def pick_trakt_fast():
     return clean(entries[pick].get("label") or entries[pick].get("title")), entries[pick]["file"], "poster"
 
 
+LUC = "plugin://plugin.video.luc_kodi/?action=homewidget&id="
+WIDGETS_LUC = [                                     # luc_kodi's own Home rows (its 'homewidget' paths stay valid)
+    (("Films · Trending", "Films · Trending"), LUC + "movie.trending", "poster"),
+    (("Films · Popular", "Films · Populair"), LUC + "movie.popular", "poster"),
+    (("Films · Netflix", "Films · Netflix"), LUC + "movie.netflix", "poster"),
+    (("Films · Prime Video", "Films · Prime Video"), LUC + "movie.primevideo", "poster"),
+    (("Films · Apple TV+", "Films · Apple TV+"), LUC + "movie.appletv", "poster"),
+    (("Films · Disney+", "Films · Disney+"), LUC + "movie.disneyplus", "poster"),
+    (("Series · Trending", "Series · Trending"), LUC + "tv.trending", "poster"),
+    (("Series · Popular", "Series · Populair"), LUC + "tv.popular", "poster"),
+    (("Series · Netflix", "Series · Netflix"), LUC + "tv.netflix", "poster"),
+    (("Series · Prime Video", "Series · Prime Video"), LUC + "tv.primevideo", "poster"),
+    (("Series · Apple TV+", "Series · Apple TV+"), LUC + "tv.appletv", "poster"),
+    (("Series · Disney+", "Series · Disney+"), LUC + "tv.disneyplus", "poster"),
+]
+
+
+def has_luc():
+    return xbmc.getCondVisibility("System.HasAddon(plugin.video.luc_kodi)")
+
+
+def pick_luc():
+    """luc_kodi rows: one, or all six of films or series at once. Returns a widget dict or a list of them."""
+    all_films = tr(G("All 6 film rows at once", "Alle 6 filmrijen in één keer"))
+    all_series = tr(G("All 6 series rows at once", "Alle 6 serierijen in één keer"))
+    labels = [all_films, all_series] + [tr(k) for k, _p, _s in WIDGETS_LUC]
+    icons = ["icons/movies.png", "icons/tv.png"] + ["icons/play.png"] * len(WIDGETS_LUC)
+    choice = select("luc_kodi", labels, True, icons)
+    if choice < 0:
+        return None
+    if choice < 2:
+        rows = WIDGETS_LUC[:6] if choice == 0 else WIDGETS_LUC[6:]
+        return [{"label": tr(k), "path": p, "style": st} for k, p, st in rows]
+    key, path, style = WIDGETS_LUC[choice - 2]
+    return {"label": tr(key), "path": path, "style": style}
+
+
 WIDGETS_OTHER = [
     (("Favourites", "Favorieten"), "favourites://", "land"),
     (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
@@ -746,9 +783,15 @@ def pick_widget():
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
     order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
+    if has_luc():                                       # luc_kodi: its ready rows, right after Seren / the add-on folders
+        sources.append("luc_kodi")
+        icons.append("icons/play.png")
+        order.insert(1 if uses_seren() else 0, 9)
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])
     source = order[pick] if pick >= 0 else -1
     style = "poster"
+    if source == 9:
+        return pick_luc()
     if source == 0:
         choice = select(tr("src_seren"), [tr(k) for k, _p, _s in WIDGETS_SEREN])
         if choice < 0:
@@ -838,7 +881,13 @@ def edit_widgets(menu, tab):
                 xbmcgui.Dialog().ok(HEADING, tr("max_widgets", NWIDGETS))
                 continue
             new = pick_widget()
-            if new:
+            if isinstance(new, list):                   # several rows at once (luc_kodi): as many as still fit
+                room = NWIDGETS - len(widgets)
+                widgets.extend(new[:room])
+                if len(new) > room:
+                    xbmcgui.Dialog().ok(HEADING, tr("max_widgets", NWIDGETS))
+                menu.save()
+            elif new:
                 widgets.append(new)
                 menu.save()
             continue
@@ -870,6 +919,8 @@ def edit_widgets(menu, tab):
             wd["label"] = keyboard(tr("rename"), wd["label"]) or wd["label"]
         elif act == "change":
             new = pick_widget()
+            if isinstance(new, list):                   # 'all rows' while changing one row: take the first
+                new = new[0] if new else None
             if not new:
                 continue
             wd["path"], wd["label"], wd["style"] = new["path"], new["label"], new.get("style") or wd["style"]

@@ -3458,6 +3458,77 @@ def fenlight_test():
     mon.waitForAbort(2)
 
 
+def luckodi_test():
+    """1.35.1 + Library 1.15.7: luc_kodi (Umbrella based): ready rows, Browse series / episodes, Mark as watched (CI stand-in)."""
+    log(f"luckodi: addon={cond('System.HasAddon(plugin.video.luc_kodi)')}")
+    try:
+        import sys as _s
+        _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+        import menu as _menu
+        rows = _menu.WIDGETS_LUC
+        files = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                           "params": {"directory": rows[2][1], "media": "files"}}))).get("result", {}).get("files") or []
+        log(f"luckodi: menu has_luc={_menu.has_luc()} rows={len(rows)} first={rows[0][1]!r} netflix_row={[f.get('label') for f in files]}")
+    except Exception as _e:  # noqa: BLE001
+        log(f"luckodi: menu error {_e!r}")
+    out = {}
+    for what in ("browseshow", "browseeps"):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2.5)
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.luc_kodi/?action=list,return)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Container.Update(plugin://plugin.video.luc_kodi/?action=list,replace)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("Container.SetViewMode(50)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("SetFocus(50)")
+        for _ in range(4):
+            if lab("ListItem.DBType") == "episode":
+                break
+            key("Down")
+            mon.waitForAbort(1)
+        before = f"{lab('ListItem.Label')} imdb={lab('ListItem.UniqueID(imdb)')} s={lab('ListItem.Season')}"
+        xbmc.executebuiltin(f"RunScript(special://home/addons/script.lucent.library/context.py,{what})")
+        mon.waitForAbort(4)
+        out[what] = {"on": before, "now": lab("Container.FolderPath"), "first": lab("Container(50).ListItem(0).Label")}
+    log("luckodi: browse " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2.5)
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.luc_kodi/?action=list,return)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Container.Update(plugin://plugin.video.luc_kodi/?action=list,replace)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(50)")
+    for _ in range(4):
+        if lab("ListItem.DBType") == "episode":
+            break
+        key("Down")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(20):
+        if cond("Window.IsActive(movieinformation)"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(2)
+    try:
+        import info as _inf
+        log(f"luckodi: diag umb={_inf.umbrella_id()!r} fen={_inf.fen_light_id()!r} path={lab('ListItem.FileNameAndPath')!r}")
+    except Exception as _e:  # noqa: BLE001
+        log(f"luckodi: diag error {_e!r}")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,watched)")
+    mon.waitForAbort(4)
+    log(f"luckodi: after dialog={lab('System.CurrentWindow')} prop={HOME.getProperty('nuvio.info.watched')!r}")
+    try:
+        calls = open("/tmp/ci/luckodi.log").read().splitlines()
+    except OSError:
+        calls = []
+    log("luckodi: calls " + json.dumps(calls))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def views_pause_test():
     """1.34.14: the view per kind (issue #5) and the clean picture when paused (issue #4)."""
     xbmc.executebuiltin("Skin.Reset(lucent.view.remember.off)")
@@ -3920,6 +3991,7 @@ def main():
     mdblist_test()
     mediaflags_test()
     menumove_test()
+    luckodi_test()
     music_fav_test()
     smallposter_test()
     alwayson_test()
