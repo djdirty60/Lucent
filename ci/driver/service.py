@@ -1061,6 +1061,51 @@ def audio_test():
     xbmc.executebuiltin("Skin.Reset(lucent.audio.lang1)")
     xbmc.executebuiltin("Skin.Reset(lucent.audio.lang2)")
 
+def menumove_test():
+    """1.35.1: the list options moved from Settings > Lucent to Skin settings (Layout > Lists and posters, Look, Integrations)."""
+    for f in ("2206", "2501"):
+        xbmc.executebuiltin(f"Skin.SetBool(lucent.ss.open.{f})")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(2.5)
+    n = int(lab("Container(9000).NumItems") or 0)
+    labels = [lab(f"Container(9000).ListItemAbsolute({i}).Label") for i in range(n)]
+    log(f"menumove: cats {labels}")
+    for cat, first, ids, name in ((1, 1230, (2206, 1230, 1231, 1232, 1233, 1234), "layout"), (0, 1112, (1111, 1112), "look"),
+                                  (4, 1525, (1509, 1525), "integrations")):
+        xbmc.executebuiltin(f"SetFocus(9000,{cat},absolute)")
+        mon.waitForAbort(1.2)
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.6)
+        xbmc.executebuiltin(f"SetFocus({first})")
+        mon.waitForAbort(0.8)
+        vis = {i: cond(f"Control.IsVisible({i})") for i in ids}
+        log(f"menumove {name}: focus={lab('System.CurrentControlId')} visible={vis}")
+        shot(f"menumove-{name}")
+        path = [lab("System.CurrentControlId")]
+        for _ in range(7):
+            xbmc.executebuiltin("Action(Down)")
+            mon.waitForAbort(0.35)
+            path.append(lab("System.CurrentControlId"))
+        log(f"menumove {name}: down path {path}")
+    xbmc.executebuiltin("SetFocus(1230)")
+    mon.waitForAbort(0.5)
+    before = cond("Skin.HasSetting(lucent.mf.off)")
+    xbmc.executebuiltin("SetFocus(9000,1,absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("SetFocus(1230)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(0.8)
+    log(f"menumove toggle: mf.off {before} -> {cond('Skin.HasSetting(lucent.mf.off)')}")
+    xbmc.executebuiltin("Skin.Reset(lucent.mf.off)")
+    for f in ("2206", "2501"):
+        xbmc.executebuiltin(f"Skin.Reset(lucent.ss.open.{f})")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def navwalk_test():
     """Every pane of the skin settings, all folds open: Down and Up through every row; report where focus sticks."""
     import re
@@ -3874,6 +3919,7 @@ def main():
     omdblist_test()
     mdblist_test()
     mediaflags_test()
+    menumove_test()
     music_fav_test()
     smallposter_test()
     alwayson_test()
