@@ -3543,6 +3543,31 @@ def mdblist_test():
     mon.waitForAbort(2)
 
 
+def mediaflags_test():
+    """1.34.18 (issue #9): media flags in the list with the big picture, for a film, a series and an episode."""
+    out = {}
+    for name, path in (("movie", "videodb://movies/titles/"), ("tvshow", "videodb://tvshows/titles/"), ("episode", "videodb://tvshows/titles/901/1/")):
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"ActivateWindow(Videos,{path},return)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("Container.SetViewMode(51)")
+        mon.waitForAbort(1.5)
+        xbmc.executebuiltin("SetFocus(51)")
+        for _ in range(4):
+            if lab("ListItem.DBType") == name:
+                break
+            key("Right")
+            mon.waitForAbort(1)
+        mon.waitForAbort(2.5)
+        out[name] = {"item": lab("ListItem.Label"), "res": lab("ListItem.VideoResolution"), "hdr": lab("ListItem.HdrType"),
+                     **{k: HOME.getProperty("lucent.mf." + k) for k in ("img1", "img2", "img3", "img4", "img5", "img6", "alang", "slang", "most", "for")}}
+        shot(f"mediaflags-{name}")
+    log("mediaflags: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3842,6 +3867,7 @@ def main():
     omdb_test()
     omdblist_test()
     mdblist_test()
+    mediaflags_test()
     music_fav_test()
     smallposter_test()
     alwayson_test()

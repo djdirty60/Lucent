@@ -72,6 +72,20 @@ elif stage == "enable":
             v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (901, 902)")
             v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (901, 901, 1)")
             v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (901, 902, 'Pilot', '1', '1', 901, 901)")
+            # 1.34.18 media flags (issue #9): stream details like Kodi stores them after a scan
+            try:
+                cols = [r[1] for r in v.execute("PRAGMA table_info(streamdetails)")]
+                for fid, w, h, vc, hdr, ac, ch, al in ((901, 3840, 2160, "hevc", "dolbyvision", "truehd_atmos", 8, "eng"),
+                                                       (902, 1920, 1080, "h264", "", "eac3", 6, "eng")):
+                    v.execute("INSERT INTO streamdetails (idFile, iStreamType, strVideoCodec, iVideoWidth, iVideoHeight"
+                              + (", strHdrType" if "strHdrType" in cols else "") + ") VALUES (?, 0, ?, ?, ?" + (", ?" if "strHdrType" in cols else "") + ")",
+                              (fid, vc, w, h, hdr) if "strHdrType" in cols else (fid, vc, w, h))
+                    v.execute("INSERT INTO streamdetails (idFile, iStreamType, strAudioCodec, iAudioChannels, strAudioLanguage) VALUES (?, 1, ?, ?, ?)",
+                              (fid, ac, ch, al))
+                    v.execute("INSERT INTO streamdetails (idFile, iStreamType, strSubtitleLanguage) VALUES (?, 2, 'dut')", (fid,))
+                print("streamdetails ok", "hdr column" if "strHdrType" in cols else "no hdr column")
+            except Exception as error:  # noqa: BLE001
+                print("streamdetails failed", error)
             for f in (901, 902):
                 v.execute("INSERT INTO bookmark (idFile, timeInSeconds, totalTimeInSeconds, thumbNailImage, player, playerState, type) VALUES (?, 600, 3000, '', 'VideoPlayer', '', 1)", (f,))
             v.commit()

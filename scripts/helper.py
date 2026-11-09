@@ -75,6 +75,7 @@ def run():
     import tint
     import omdb
     import views
+    import mediaflags
     import updater
 
     sport_state = {}
@@ -355,6 +356,10 @@ def run():
                 views.tick()                         # the view you chose, for every folder of that kind (issue #5)
             except Exception as error:  # noqa: BLE001
                 log(f"views: {error}")
+            try:
+                mediaflags.tick()                    # flags of the title under the cursor in the lists (issue #9)
+            except Exception as error:  # noqa: BLE001
+                log(f"media flags: {error}")
             try:
                 pause_clean()                        # "Clean picture" when paused: the player menu goes too (issue #4)
             except Exception as error:  # noqa: BLE001
