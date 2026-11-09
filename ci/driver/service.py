@@ -3471,6 +3471,30 @@ def views_pause_test():
     log("pauseclean: " + json.dumps(out))
 
 
+def pct_test():
+    """1.34.16: percentage watched above the progress bar (issue #7)."""
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(51)")
+    for _ in range(4):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key("Right")
+        mon.waitForAbort(1)
+    for case in ("on", "off"):
+        xbmc.executebuiltin("Skin.SetBool(lucent.pct.off)" if case == "off" else "Skin.Reset(lucent.pct.off)")
+        mon.waitForAbort(1.5)
+        log(f"pct: {case} item={lab('ListItem.Label')} percent={lab('ListItem.PercentPlayed')}")
+        shot(f"pct-{case}")
+    xbmc.executebuiltin("Skin.Reset(lucent.pct.off)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3764,6 +3788,7 @@ def main():
     landseries_test()
     fenlight_test()
     views_pause_test()
+    pct_test()
     ytfix_test()
     fsback_test()
     omdb_test()
