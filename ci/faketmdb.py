@@ -34,6 +34,17 @@ class H(BaseHTTPRequestHandler):
             return self.send(json.dumps({"Response": "True", "imdbRating": "6.5", "imdbVotes": "282,345", "Metascore": "81",
                                          "Ratings": [{"Source": "Internet Movie Database", "Value": "6.5/10"},
                                                      {"Source": "Rotten Tomatoes", "Value": "87%"}]}).encode(), "application/json")
+        if path.startswith("/mdblist/"):                    # MDBList: /mdblist/imdb/<movie|show>/<tt...>
+            if "apikey=badkey" in self.path:
+                return self.send(json.dumps({"error": "Invalid API key"}).encode(), "application/json")
+            return self.send(json.dumps({"title": "CI", "ratings": [
+                {"source": "imdb", "value": 6.5, "score": 65, "votes": 282345},
+                {"source": "metacritic", "value": 81, "score": 81, "votes": 30},
+                {"source": "metacriticuser", "value": 7.4, "score": 74, "votes": 541},
+                {"source": "trakt", "value": 66, "score": 66, "votes": 1200},
+                {"source": "tomatoes", "value": 87, "score": 87, "votes": 120},
+                {"source": "popcorn", "value": 56, "score": 56, "votes": 250000},
+                {"source": "letterboxd", "value": 3.4, "score": 68, "votes": 90000}]}).encode(), "application/json")
         if path.endswith("/external_ids"):
             return self.send(json.dumps({"imdb_id": "tt0185937"}).encode(), "application/json")
         if path.startswith("/t/p/"):

@@ -33,6 +33,7 @@ cp -r ci/packs/* $K/addons/
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
 sed -i 's#https://www.omdbapi.com/?#http://127.0.0.1:8765/omdb/?#' $K/addons/skin.lucent/scripts/omdb.py
+sed -i 's#https://api.mdblist.com/#http://127.0.0.1:8765/mdblist/#' $K/addons/skin.lucent/scripts/omdb.py
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
 # Solis Dashboard with a stand-in Homey (the example of the Solis handover)
 cp -r ci/addons/script.solis.dashboard $K/addons/

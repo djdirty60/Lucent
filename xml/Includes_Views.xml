@@ -123,6 +123,60 @@
                             <label>Metacritic  $INFO[Window(home).Property(lucent.omdbl.mc)]</label>
                         </control>
                     </control>
+                    <control type="group">
+                        <width>250</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
+                        <control type="image">
+                            <width>250</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.rtac)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <width>194</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$LOCALIZE[31818]  $INFO[Window(home).Property(lucent.omdbl.rta)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>230</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)</visible>
+                        <control type="image">
+                            <width>230</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.lb.c)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <width>174</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>Letterboxd  $INFO[Window(home).Property(lucent.omdbl.lb)]</label>
+                        </control>
+                    </control>
                     <control type="label">
                         <width>auto</width>
                         <height>44</height>

@@ -301,6 +301,94 @@
                             <label>Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</label>
                         </control>
                     </control>
+                    <!-- MDBList (issue #8): Rotten Tomatoes audience, Metacritic users, Letterboxd -->
+                    <control type="group">
+                        <width>300</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>300</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.rtac)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <top>0</top>
+                            <width>158</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$LOCALIZE[31816]  $INFO[Window(home).Property(lucent.omdb.rta)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>280</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mcu)</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>280</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.mcu.c)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <top>0</top>
+                            <width>158</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$LOCALIZE[31817]  $INFO[Window(home).Property(lucent.omdb.mcu)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>230</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.lb)</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>230</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.lb.c)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <top>0</top>
+                            <width>158</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>Letterboxd  $INFO[Window(home).Property(lucent.omdb.lb)]</label>
+                        </control>
+                    </control>
                     <include content="InfoPill">
                         <param name="label">★  $INFO[ListItem.Rating]</param>
                         <param name="bg">glass</param>

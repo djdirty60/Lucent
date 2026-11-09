@@ -3495,6 +3495,54 @@ def pct_test():
     mon.waitForAbort(2)
 
 
+def mdblist_test():
+    """1.34.17 (issue #8): MDBList scores (Letterboxd, RT audience, Metacritic users) on the info page and in the lists,
+    with only an MDBList key (no OMDb key): MDBList also fills RT / Metacritic / IMDb."""
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import omdb as _o
+    d = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    os.makedirs(d, exist_ok=True)
+    for f in ("omdb.key", "omdb_cache.json", "mdblist_cache.json"):
+        try:
+            os.remove(os.path.join(d, f))
+        except OSError:
+            pass
+    with open(os.path.join(d, "mdblist.key"), "w") as fh:
+        fh.write("cimdbkey")
+    log(f"mdblist: parse={_o.mdb_fetch('tt0185937', 'movie')} text={_o.list_text(_o.all_scores('tt0185937', 'movie'))!r}")
+    mon.waitForAbort(31)                                  # the helper reads the keys again after 30 s
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(51)")
+    for _ in range(4):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key("Right")
+        mon.waitForAbort(1)
+    mon.waitForAbort(4)
+    p = {k: HOME.getProperty("lucent.omdbl." + k) for k in ("rt", "rta", "mc", "mcu", "lb", "text", "for")}
+    log(f"mdblist: list item={lab('ListItem.Label')} props={json.dumps(p, ensure_ascii=False)}")
+    shot("mdblist-list")
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(20):
+        if cond("Window.IsActive(movieinformation)"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(4)
+    p = {k: HOME.getProperty("lucent.omdb." + k) for k in ("imdb", "rt", "rta", "mc", "mcu", "lb", "lb.c", "for")}
+    log(f"mdblist: page props={json.dumps(p, ensure_ascii=False)}")
+    shot("mdblist-page")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    os.remove(os.path.join(d, "mdblist.key"))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def ytfix_test():
     """1.34.2: the YouTube trailer fix on a copy of player_client.py of YouTube 7.4.4 (the add-on is not in CI)."""
     import sys as _s
@@ -3789,6 +3837,7 @@ def main():
     fenlight_test()
     views_pause_test()
     pct_test()
+    mdblist_test()
     ytfix_test()
     fsback_test()
     omdb_test()
