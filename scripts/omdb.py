@@ -1,4 +1,7 @@
-"""Lucent: scores from OMDb (IMDb, Rotten Tomatoes, Metacritic) on the info page, with your own free OMDb key.
+"""Lucent: scores from OMDb (IMDb, Rotten Tomatoes, Metacritic) and MDBList (also Letterboxd, the Rotten Tomatoes
+audience score and the Metacritic user score) on the info page and in the lists, each with your own free key.
+MDBList: the endpoint is https://api.mdblist.com/imdb/<movie|show>/<tt...>?apikey=..., its 'ratings' list gives per
+source 'value' (own scale), 'score' (0-100) and 'votes'.
 
     RunScript(special://skin/scripts/omdb.py,settings)   Settings > Lucent > Scores (OMDb): key, test, which scores you see
 
@@ -22,11 +25,14 @@ HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DIR = "special://profile/addon_data/skin.lucent/"
 KEYFILE = DIR + "omdb.key"
+MDB_KEYFILE = DIR + "mdblist.key"
+MDB_CACHE = DIR + "mdblist_cache.json"
 CACHE = DIR + "omdb_cache.json"         # *_cache.json stays out of the backup
 WEEK, DAY = 7 * 86400, 86400
-PROPS = ("imdb", "votes", "rt", "rtc", "mc", "mcc", "for")
+PROPS = ("imdb", "votes", "rt", "rtc", "mc", "mcc", "lb", "lb.c", "rta", "rtac", "mcu", "mcu.c", "for")
 GREEN, YELLOW, RED = "FF3DD68C", "FFFFCC33", "FFE5484D"
-SCORES = [("imdb", "IMDb"), ("rt", "Rotten Tomatoes"), ("mc", "Metacritic"), ("tmdb", "TMDB"), ("trakt", "Trakt")]
+SCORES = [("imdb", "IMDb"), ("rt", "Rotten Tomatoes"), ("mc", "Metacritic"), ("tmdb", "TMDB"), ("trakt", "Trakt"),
+          ("lb", "Letterboxd (MDBList)"), ("rta", "Rotten Tomatoes audience (MDBList)"), ("mcu", "Metacritic users (MDBList)")]
 
 
 def t(en, nl):
@@ -108,6 +114,113 @@ def fetch(imdb_id):
     return out
 
 
+def mdb_key():
+    try:
+        with xbmcvfs.File(MDB_KEYFILE) as fh:
+            return (fh.read() or "").strip()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
+def mdb_ask(imdb_id, kind, api_key):
+    url = f"https://api.mdblist.com/imdb/{'show' if kind == 'tvshow' else 'movie'}/{imdb_id}?" + urllib.parse.urlencode({"apikey": api_key})
+    req = urllib.request.Request(url, headers={"User-Agent": "Kodi-skin.lucent"})
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def _num(x):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return None
+
+
+def mdb_parse(data):
+    """MDBList's answer -> {'imdb', 'votes', 'rt', 'mc', 'lb', 'rta', 'mcu'} (only what it knows)."""
+    out = {}
+    for r in data.get("ratings") or []:
+        src = str(r.get("source") or "").lower()
+        value, score = _num(r.get("value")), _num(r.get("score"))
+        if src == "imdb" and value:
+            out["imdb"] = f"{value:.1f}"
+            if r.get("votes"):
+                out["votes"] = str(r["votes"])
+        elif src in ("tomatoes", "tomatometer") and score:
+            out["rt"] = f"{round(score)}%"
+        elif src in ("popcorn", "tomatoesaudience", "audience") and score:
+            out["rta"] = f"{round(score)}%"
+        elif src == "metacritic" and score:
+            out["mc"] = str(round(score))
+        elif src == "metacriticuser" and value:
+            out["mcu"] = f"{value:.1f}"
+        elif src == "letterboxd" and value:
+            out["lb"] = f"{value:.1f}"
+    return out
+
+
+def mdb_fetch(imdb_id, kind="movie"):
+    api_key = mdb_key()
+    if not api_key or not imdb_id.startswith("tt"):
+        return {}
+    try:
+        with open(xbmcvfs.translatePath(MDB_CACHE), encoding="utf-8") as fh:
+            cache = json.load(fh)
+    except (OSError, ValueError):
+        cache = {}
+    hit = cache.get(imdb_id)
+    if hit and time.time() - hit.get("t", 0) < (WEEK if hit.get("d") else DAY):
+        return hit.get("d") or {}
+    try:
+        data = mdb_ask(imdb_id, kind, api_key)
+    except Exception as error:  # noqa: BLE001 - no network / key problem: try again next time
+        log(f"mdblist {imdb_id}: {type(error).__name__}")
+        return (hit or {}).get("d") or {}
+    out = mdb_parse(data if isinstance(data, dict) else {})
+    cache[imdb_id] = {"t": time.time(), "d": out}
+    try:
+        now = time.time()
+        cache = {k: v for k, v in cache.items() if now - v.get("t", 0) < WEEK}
+        with open(xbmcvfs.translatePath(MDB_CACHE), "w", encoding="utf-8") as fh:
+            json.dump(cache, fh)
+    except OSError as error:
+        log(f"mdblist cache: {error}")
+    return out
+
+
+def all_scores(imdb_id, kind="movie"):
+    """OMDb (when there is a key) plus MDBList (when there is a key): MDBList fills what OMDb lacks."""
+    d = dict(fetch(imdb_id)) if imdb_id else {}
+    m = mdb_fetch(imdb_id, kind) if imdb_id else {}
+    for k, v in m.items():
+        if v and not d.get(k):
+            d[k] = v
+    return d
+
+
+def any_key():
+    return key() or mdb_key()
+
+
+def _dot(k, v):
+    """Dot colour for the MDBList scores: Metacritic users (0-10) and Letterboxd (0-5), green / yellow / red."""
+    n = _num(v) or 0
+    top, mid = (6.1, 4.0) if k == "mcu" else (3.5, 2.5)
+    return GREEN if n >= top else YELLOW if n >= mid else RED
+
+
+def _fresh(pct):
+    return GREEN if int(str(pct).rstrip("%") or 0) >= 60 else RED
+
+
+def list_text(d):
+    """The short line for list views: 'RT 87%  MC 81  LB 3.9', only the scores you chose."""
+    shown = lambda k: not xbmc.getCondVisibility(f"Skin.HasSetting(lucent.rate.hide.{k})")   # noqa: E731
+    parts = [(k, label) for k, label in (("rt", "RT"), ("rta", "RT audience" if not NL else "RT publiek"), ("mc", "MC"),
+                                         ("mcu", "MC users" if not NL else "MC gebruikers"), ("lb", "LB")) if d.get(k) and shown(k)]
+    return "   ".join(f"{label} {d[k]}" for k, label in parts)
+
+
 def short_votes(votes):
     try:
         n = int(votes)
@@ -143,10 +256,10 @@ def imdb_of(item):
 def load(item):
     """Called by info.py when the info page opens."""
     clear()
-    if not key() or item.dbtype not in ("movie", "tvshow"):
+    if not any_key() or item.dbtype not in ("movie", "tvshow"):
         return
     imdb_id = imdb_of(item)
-    d = fetch(imdb_id) if imdb_id else {}
+    d = all_scores(imdb_id, item.dbtype) if imdb_id else {}
     if not d:
         return
     if HOME.getProperty("nuvio.info.key") not in ("", item.key):
@@ -162,18 +275,25 @@ def load(item):
         n = int(mc)
         HOME.setProperty("lucent.omdb.mc", mc)
         HOME.setProperty("lucent.omdb.mcc", GREEN if n >= 61 else YELLOW if n >= 40 else RED)  # Metacritic's own colours
+    if d.get("rta"):
+        HOME.setProperty("lucent.omdb.rta", d["rta"])
+        HOME.setProperty("lucent.omdb.rtac", _fresh(d["rta"]))
+    for k in ("lb", "mcu"):
+        if d.get(k):
+            HOME.setProperty("lucent.omdb." + k, d[k])
+            HOME.setProperty(f"lucent.omdb.{k}.c", _dot(k, d[k]))
     HOME.setProperty("lucent.omdb.for", item.key)
 
 
 # ----------------------------------------------------------------------------- scores in the lists
 LIST = {"id": "", "since": 0.0, "done": "", "busy": False, "key": "", "keyt": 0.0}
-LPROPS = ("rt", "rtc", "mc", "mcc", "imdb")
+LPROPS = ("rt", "rtc", "mc", "mcc", "imdb", "lb", "lb.c", "rta", "rtac", "mcu", "mcu.c", "text")
 TMDB_IMDB = {}                                     # tmdb id -> imdb id, for this session
 
 
 def _key_cached():
     if time.time() - LIST["keyt"] > 30:
-        LIST["key"], LIST["keyt"] = key(), time.time()
+        LIST["key"], LIST["keyt"] = any_key(), time.time()
     return LIST["key"]
 
 
@@ -200,7 +320,9 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
         if not imdb_id and not tmdb_id and dbid:
             got = TMDB_IMDB.get(f"db:{kind}:{dbid}")
             if got is None:
-                got = TMDB_IMDB[f"db:{kind}:{dbid}"] = _from_library(kind, dbid)
+                got = _from_library(kind, dbid)
+                if got[0] or got[1]:                    # remember only a real answer: the library may get the ids later
+                    TMDB_IMDB[f"db:{kind}:{dbid}"] = got
             imdb_id, tmdb_id = got
             tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
         if not imdb_id and tmdb_id:
@@ -208,8 +330,10 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
             if imdb_id is None:
                 class _I:                           # what imdb_of() reads
                     imdb, tmdb, dbtype = "", tmdb_id, kind
-                imdb_id = TMDB_IMDB[f"{kind}:{tmdb_id}"] = imdb_of(_I())
-        d = fetch(imdb_id) if imdb_id else {}
+                imdb_id = imdb_of(_I())
+                if imdb_id:
+                    TMDB_IMDB[f"{kind}:{tmdb_id}"] = imdb_id
+        d = all_scores(imdb_id, kind) if imdb_id else {}
         if LIST["id"] != ident:
             return                                  # the cursor moved on meanwhile
         for p in LPROPS:
@@ -224,6 +348,14 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
             HOME.setProperty("lucent.omdbl.mcc", GREEN if n >= 61 else YELLOW if n >= 40 else RED)
         if d.get("imdb"):
             HOME.setProperty("lucent.omdbl.imdb", d["imdb"])
+        if d.get("rta"):
+            HOME.setProperty("lucent.omdbl.rta", d["rta"])
+            HOME.setProperty("lucent.omdbl.rtac", _fresh(d["rta"]))
+        for k in ("lb", "mcu"):
+            if d.get(k):
+                HOME.setProperty("lucent.omdbl." + k, d[k])
+                HOME.setProperty(f"lucent.omdbl.{k}.c", _dot(k, d[k]))
+        HOME.setProperty("lucent.omdbl.text", list_text(d))
         HOME.setProperty("lucent.omdbl.for", ident)
         LIST["done"] = ident
     except Exception as error:  # noqa: BLE001
@@ -300,6 +432,42 @@ def test():
                                       "de link die OMDb je mailde."))
 
 
+def mdb_state_label():
+    k = mdb_key()
+    return (t("key ", "sleutel ") + "••••" + k[-4:]) if k else t("no key yet (optional)", "nog geen sleutel (mag)")
+
+
+def set_mdb_key():
+    text = t("MDBList API key (free: mdblist.com > Preferences > API Access)", "MDBList API-sleutel (gratis: mdblist.com > Preferences > API Access)")
+    new = xbmcgui.Dialog().input(text, defaultt=mdb_key())
+    if new is None:
+        return
+    os.makedirs(xbmcvfs.translatePath(DIR), exist_ok=True)
+    with open(xbmcvfs.translatePath(MDB_KEYFILE), "w", encoding="utf-8") as fh:
+        fh.write(new.strip())
+    if new.strip():
+        test_mdb()
+
+
+def test_mdb():
+    k = mdb_key()
+    if not k:
+        xbmcgui.Dialog().ok("MDBList", t("Fill in your key first.", "Vul eerst je sleutel in."))
+        return
+    try:
+        got = mdb_parse(mdb_ask("tt0185937", "movie", k))      # The Blair Witch Project
+        ok, why = bool(got), "" if got else t("no scores in the answer", "geen scores in het antwoord")
+    except Exception as error:  # noqa: BLE001
+        ok, why = False, getattr(error, "code", "") or type(error).__name__
+    if ok:
+        names = {"imdb": "IMDb", "rt": "Rotten Tomatoes", "rta": t("RT audience", "RT publiek"), "mc": "Metacritic",
+                 "mcu": t("Metacritic users", "Metacritic gebruikers"), "lb": "Letterboxd"}
+        xbmcgui.Dialog().ok("MDBList", t("The key works. Scores it gave: ", "De sleutel werkt. Scores die het gaf: ")
+                            + ", ".join(names[x] for x in names if x in got))
+    else:
+        xbmcgui.Dialog().ok("MDBList", t(f"The key does not work: {why}", f"De sleutel werkt niet: {why}"))
+
+
 def toggle_lists():
     xbmc.executebuiltin("Skin.ToggleSetting(lucent.omdb.lists.off)")
 
@@ -330,14 +498,16 @@ def settings():
     while True:
         items = [xbmcgui.ListItem(t("OMDb key", "OMDb-sleutel"), state_label()),
                  xbmcgui.ListItem(t("Test the key", "Sleutel testen")),
+                 xbmcgui.ListItem(t("MDBList key (Letterboxd, RT audience, Metacritic users)", "MDBList-sleutel (Letterboxd, RT publiek, Metacritic gebruikers)"), mdb_state_label()),
+                 xbmcgui.ListItem(t("Test the MDBList key", "MDBList-sleutel testen")),
                  xbmcgui.ListItem(t("Scores to show", "Scores tonen"), chosen_label()),
-                 xbmcgui.ListItem(t("Rotten Tomatoes and Metacritic in the lists", "Rotten Tomatoes en Metacritic in de lijsten"), lists_label())]
-        for li, icon in zip(items, ("icons/lock.png", "icons/refresh.png", "icons/star.png", "icons/list.png")):
+                 xbmcgui.ListItem(t("Scores in the lists", "Scores in de lijsten"), lists_label())]
+        for li, icon in zip(items, ("icons/lock.png", "icons/refresh.png", "icons/lock.png", "icons/refresh.png", "icons/star.png", "icons/list.png")):
             li.setArt({"icon": icon})
-        pick = xbmcgui.Dialog().select(t("Scores (OMDb)", "Scores (OMDb)"), items, useDetails=True)
+        pick = xbmcgui.Dialog().select(t("Scores (OMDb / MDBList)", "Scores (OMDb / MDBList)"), items, useDetails=True)
         if pick < 0:
             break
-        (set_key, test, choose, toggle_lists)[pick]()
+        (set_key, test, set_mdb_key, test_mdb, choose, toggle_lists)[pick]()
         LIST["keyt"] = 0.0
     xbmc.executebuiltin(f'Skin.SetString(lucent.omdb.state,"{state_label()}")')
 
