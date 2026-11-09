@@ -3685,6 +3685,12 @@ def mediaflags_test():
         out[name] = {"item": lab("ListItem.Label"), "res": lab("ListItem.VideoResolution"), "hdr": lab("ListItem.HdrType"),
                      **{k: HOME.getProperty("lucent.mf." + k) for k in ("img1", "img2", "img3", "img4", "img5", "img6", "alang", "slang", "most", "for")}}
         shot(f"mediaflags-{name}")
+        if name in ("movie", "episode"):                 # 1.35.2: shown at once, and the row keeps its place
+            xbmc.executebuiltin("Action(Left)")
+            mon.waitForAbort(0.6)
+            out[name]["fast"] = {"item": lab("ListItem.Label"), "for": HOME.getProperty("lucent.mf.for")[:40],
+                                 "img1": HOME.getProperty("lucent.mf.img1"),
+                                 "row": cond("!Skin.HasSetting(lucent.mf.off) + String.StartsWith(Container.FolderPath,videodb://)")}
     log("mediaflags: " + json.dumps(out))
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)

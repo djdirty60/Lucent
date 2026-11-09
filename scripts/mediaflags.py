@@ -188,9 +188,14 @@ def tick():
         return
     ident = f"{label('ListItem.DBType')}:{label('ListItem.DBID')}:{label('ListItem.FileNameAndPath')}:{label('ListItem.Label')}"
     now = time.time()
+    series = label("ListItem.DBType") in ("tvshow", "season")
     if ident != STATE["id"]:
         STATE["id"], STATE["since"], STATE["done"] = ident, now, ""
-        clear()
+        if series:                                    # series and seasons ask the library: wait until the cursor rests
+            clear()
+            return
+        STATE["done"] = ident                         # films and episodes: Kodi already knows their streams, show them at once
+        fill(ident)
         return
     if STATE["done"] == ident or now - STATE["since"] < 0.3:
         return
