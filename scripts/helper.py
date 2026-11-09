@@ -285,7 +285,7 @@ def run():
     def pause_clean():
         """With "Clean picture after N seconds" (pause screen): close the player menu (opened with OK on a Shield) once
         the video has been paused and no button was pressed for N seconds. Not while one of its sub-menus is open."""
-        if not cond("Player.Paused + Window.IsActive(videoosd) + !System.HasActiveModalDialog + !Window.IsActive(osdvideosettings) + !Window.IsActive(osdaudiosettings) + !Window.IsActive(osdsubtitlesettings) + !Window.IsActive(sliderdialog)"):
+        if not cond("Player.Paused + Window.IsActive(videoosd) + !Window.IsActive(subtitlesearch) + !Window.IsActive(contextmenu) + !Window.IsActive(selectdialog) + !Window.IsActive(Lucent_PlayerInfo.xml) + !Window.IsActive(Lucent_Subtitles.xml) + !Window.IsActive(osdvideosettings) + !Window.IsActive(osdaudiosettings) + !Window.IsActive(osdsubtitlesettings) + !Window.IsActive(sliderdialog)"):
             return
         wait = {"clean3": 3, "clean5": 5, "clean10": 10}.get(xbmc.getInfoLabel("Skin.String(nuvio.pauseinfo)"))
         if wait and cond(f"System.IdleTime({wait})"):
