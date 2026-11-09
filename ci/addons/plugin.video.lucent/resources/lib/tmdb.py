@@ -1,0 +1,226 @@
+# -*- coding: utf-8 -*-
+"""Titles, pictures and episode data from TMDB, in one simple shape."""
+from concurrent.futures import ThreadPoolExecutor
+import datetime
+import urllib.parse
+
+import keys
+import util
+
+API = "https://api.themoviedb.org/3/"
+IMG = "https://image.tmdb.org/t/p/"
+DAY = 86400
+
+
+def key():
+    return util.setting("tmdb_key") or keys.TMDB_KEY
+
+
+def lang():
+    return "nl-NL" if util.NL else "en-US"
+
+
+def get(path, ttl=DAY, language=None, **params):
+    params.update(api_key=key(), language=language or lang())
+    url = API + path + "?" + urllib.parse.urlencode(sorted(params.items()))
+    cached = util.cache_get("tmdb" + url, ttl)
+    if cached is not None:
+        return cached
+    data, _ = util.http(url)
+    util.cache_set("tmdb" + url, data)
+    return data
+
+
+def image(path, size):
+    return IMG + size + path if path else ""
+
+
+def _logo(images):
+    logos = (images or {}).get("logos") or []
+    wanted = "nl" if util.NL else "en"
+    for code in (wanted, "en", None):
+        for logo in logos:
+            if logo.get("iso_639_1") == code and not (logo.get("file_path") or "").endswith(".svg"):
+                return image(logo["file_path"], "w500")
+    return ""
+
+
+def _year(text):
+    return int(text[:4]) if text and text[:4].isdigit() else 0
+
+
+def aired(date):
+    return bool(date) and date <= datetime.date.today().isoformat()
+
+
+def _mpaa(raw, movie):
+    wanted = ("NL", "US")
+    if movie:
+        table = {r.get("iso_3166_1"): [d.get("certification") for d in r.get("release_dates") or [] if d.get("certification")]
+                 for r in (raw.get("release_dates") or {}).get("results") or []}
+    else:
+        table = {r.get("iso_3166_1"): [r.get("rating")] for r in (raw.get("content_ratings") or {}).get("results") or [] if r.get("rating")}
+    for country in wanted:
+        if table.get(country):
+            return table[country][0]
+    return ""
+
+
+def _trailer(raw):
+    videos = [v for v in (raw.get("videos") or {}).get("results") or [] if v.get("site") == "YouTube" and v.get("key")]
+    videos.sort(key=lambda v: v.get("type") != "Trailer")
+    return "plugin://plugin.video.youtube/play/?video_id=%s" % videos[0]["key"] if videos else ""
+
+
+def details(kind, tmdb_id):
+    """kind: movie or tvshow. Returns the normalised title, or None."""
+    api_kind = "movie" if kind == "movie" else "tv"
+    extra = {"append_to_response": "external_ids,images,credits,release_dates,content_ratings,videos", "include_image_language": "nl,en,null"}
+    try:
+        raw = get("%s/%s" % (api_kind, tmdb_id), ttl=7 * DAY, **extra)
+        if not raw.get("overview") and util.NL:
+            english = get("%s/%s" % (api_kind, tmdb_id), ttl=7 * DAY, language="en-US", **extra)
+            raw["overview"] = english.get("overview", "")
+    except util.HttpError as error:
+        util.log("details failed: %s" % error)
+        return None
+    movie = kind == "movie"
+    crew = raw.get("credits") or {}
+    date = raw.get("release_date" if movie else "first_air_date") or ""
+    runtimes = raw.get("episode_run_time") or [0]
+    return {
+        "kind": kind,
+        "tmdb": str(raw["id"]),
+        "imdb": raw.get("imdb_id") or (raw.get("external_ids") or {}).get("imdb_id") or "",
+        "title": raw.get("title" if movie else "name") or "",
+        "original_title": raw.get("original_title" if movie else "original_name") or "",
+        "year": _year(date),
+        "premiered": date,
+        "plot": raw.get("overview") or "",
+        "tagline": raw.get("tagline") or "",
+        "poster": image(raw.get("poster_path"), "w500"),
+        "fanart": image(raw.get("backdrop_path"), "w1280"),
+        "logo": _logo(raw.get("images")),
+        "rating": raw.get("vote_average") or 0,
+        "votes": raw.get("vote_count") or 0,
+        "genres": [g["name"] for g in raw.get("genres") or []],
+        "studios": [s["name"] for s in (raw.get("production_companies") or raw.get("networks") or [])[:3]],
+        "runtime": (raw.get("runtime") if movie else runtimes[0]) or 0,
+        "seasons": [s for s in raw.get("seasons") or [] if s.get("season_number", 0) > 0],
+        "episodes": raw.get("number_of_episodes") or 0,
+        "tvdb": str((raw.get("external_ids") or {}).get("tvdb_id") or ""),
+        "mpaa": _mpaa(raw, movie),
+        "trailer": _trailer(raw),
+        "set": (raw.get("belongs_to_collection") or {}).get("name") or "",
+        "cast": [{"name": c["name"], "role": c.get("character") or "", "thumb": image(c.get("profile_path"), "w185")}
+                 for c in crew.get("cast") or []][:25],
+        "directors": [c["name"] for c in crew.get("crew") or [] if c.get("job") == "Director"],
+        "writers": [c["name"] for c in crew.get("crew") or [] if c.get("department") == "Writing"][:6],
+    }
+
+
+def many(pairs):
+    """Details of many (kind, id) pairs at once, in the same order, skipping failures."""
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        return [m for m in pool.map(lambda p: details(p[0], p[1]), pairs) if m]
+
+
+def listing(path, kind, page=1, **params):
+    """A TMDB list page: (titles, more pages?)."""
+    data = get(path, ttl=6 * 3600, page=page, **params)
+    titles = many([(kind, r["id"]) for r in data.get("results") or []])
+    return titles, page < min(data.get("total_pages") or 1, 500)
+
+
+def find(kind, imdb=None, tvdb=None):
+    """The TMDB id for an IMDb or TVDB id, or None."""
+    key_name = "movie_results" if kind == "movie" else "tv_results"
+    for source, value in (("imdb_id", imdb), ("tvdb_id", tvdb)):
+        if not value:
+            continue
+        try:
+            rows = get("find/%s" % value, ttl=30 * DAY, external_source=source).get(key_name) or []
+        except util.HttpError:
+            continue
+        if rows:
+            return rows[0]["id"]
+    return None
+
+
+def region():
+    """The country the streaming services are read for."""
+    chosen = util.setting("watch_region").upper()
+    return chosen or ("NL" if util.NL else "US")
+
+
+def providers():
+    """Streaming services of your country, most popular first: [(id, name, logo)]."""
+    found = {}
+    for api in ("movie", "tv"):
+        for row in get("watch/providers/%s" % api, ttl=7 * DAY, watch_region=region()).get("results") or []:
+            entry = found.setdefault(row["provider_id"], (row.get("display_priorities", {}).get(region(), row.get("display_priority", 999)), row["provider_name"], row.get("logo_path")))
+            if row.get("display_priority", 999) < entry[0]:
+                found[row["provider_id"]] = (row.get("display_priority", 999), entry[1], entry[2])
+    return [(pid, name, image(logo, "w500")) for pid, (_, name, logo) in sorted(found.items(), key=lambda item: item[1][0])]
+
+
+def newest_on(provider, kind, page=1):
+    """What a service offers, newest release first and nothing that is yet to come. kind: movie, tvshow or all."""
+    today = datetime.date.today().isoformat()
+    base = {"with_watch_providers": provider, "watch_region": region(), "with_watch_monetization_types": "flatrate", "include_adult": "false"}
+    if kind == "all":
+        films, more_films = newest_on(provider, "movie", page)
+        shows, more_shows = newest_on(provider, "tvshow", page)
+        return sorted(films + shows, key=lambda m: m.get("premiered") or "", reverse=True), more_films or more_shows
+    if kind == "movie":
+        titles, more = listing("discover/movie", "movie", page, sort_by="primary_release_date.desc", **dict(base, **{"primary_release_date.lte": today}))
+    else:
+        titles, more = listing("discover/tv", "tvshow", page, sort_by="first_air_date.desc", **dict(base, **{"first_air_date.lte": today}))
+    return sorted(titles, key=lambda m: m.get("premiered") or "", reverse=True), more
+
+
+def season(tmdb_id, number):
+    return get("tv/%s/season/%s" % (tmdb_id, number), ttl=6 * 3600)
+
+
+def episode_meta(show, raw):
+    return {
+        "kind": "episode",
+        "tmdb": show["tmdb"],
+        "imdb": show["imdb"],
+        "tvdb": show.get("tvdb", ""),
+        "tmdb_episode": str(raw.get("id") or ""),
+        "tvshow_fanart": show["fanart"],
+        "mpaa": show.get("mpaa", ""),
+        "cast": show.get("cast") or [],
+        "show": show["title"],
+        "title": raw.get("name") or "",
+        "season": raw["season_number"],
+        "episode": raw["episode_number"],
+        "premiered": raw.get("air_date") or "",
+        "year": _year(raw.get("air_date")),
+        "plot": raw.get("overview") or "",
+        "poster": show["poster"],
+        "fanart": show["fanart"],
+        "logo": show["logo"],
+        "thumb": image(raw.get("still_path"), "w780") or show["fanart"],
+        "rating": raw.get("vote_average") or 0,
+        "votes": raw.get("vote_count") or 0,
+        "genres": show["genres"],
+        "studios": show["studios"],
+        "runtime": raw.get("runtime") or show["runtime"],
+    }
+
+
+def next_episode(tmdb_id, season_number, episode_number):
+    """The aired episode after this one as {season, episode}, or None."""
+    this = season(tmdb_id, season_number)
+    for raw in this.get("episodes") or []:
+        if raw["episode_number"] == episode_number + 1:
+            return {"season": season_number, "episode": raw["episode_number"]} if aired(raw.get("air_date")) else None
+    show = details("tvshow", tmdb_id)
+    if show and any(s["season_number"] == season_number + 1 for s in show["seasons"]):
+        first = (season(tmdb_id, season_number + 1).get("episodes") or [{}])[0]
+        if first and aired(first.get("air_date")):
+            return {"season": season_number + 1, "episode": first["episode_number"]}
+    return None

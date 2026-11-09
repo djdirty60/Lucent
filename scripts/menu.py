@@ -321,6 +321,63 @@ def pick_trakt_fast():
     return clean(entries[pick].get("label") or entries[pick].get("title")), entries[pick]["file"], "poster"
 
 
+LV = "plugin://plugin.video.lucent/?action=list&widget=1&name="
+WIDGETS_LV = [                                      # Lucent Video (plugin.video.lucent): rows without a 'next page' item
+    (("Films · Trending", "Films · Trending"), LV + "trending_movie", "poster"),
+    (("Films · Popular", "Films · Populair"), LV + "popular_movie", "poster"),
+    (("Films · Top rated", "Films · Best beoordeeld"), LV + "toprated_movie", "poster"),
+    (("Films · In cinemas", "Films · In de bioscoop"), LV + "nowplaying_movie", "poster"),
+    (("Films · Coming soon", "Films · Binnenkort"), LV + "upcoming_movie", "poster"),
+    (("Series · Trending", "Series · Trending"), LV + "trending_tv", "poster"),
+    (("Series · Popular", "Series · Populair"), LV + "popular_tv", "poster"),
+    (("Series · Top rated", "Series · Best beoordeeld"), LV + "toprated_tv", "poster"),
+    (("Series · On the air", "Series · Nu op tv"), LV + "airing_tv", "poster"),
+    (("Continue watching", "Verder kijken"), LV + "continue", "land"),
+    (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
+    (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
+    (("Next up", "Volgende afleveringen"), LV + "nextup", "land"),
+    (("Watchlist · Films", "Kijklijst · Films"), LV + "watchlist_movie", "poster"),
+    (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
+    (("Collection · Films", "Collectie · Films"), LV + "collection_movie", "poster"),
+    (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
+]
+
+
+def has_lv():
+    return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
+
+
+def pick_lv():
+    """A Lucent Video row: one of its lists, or a streaming service (newest first)."""
+    service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
+    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [service]
+    choice = select("Lucent Video", labels)
+    if choice < 0:
+        return None
+    if choice < len(WIDGETS_LV):
+        key, path, style = WIDGETS_LV[choice]
+        return tr(key), path, style
+    busy(True)
+    entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://plugin.video.lucent/?action=services",
+                                             "media": "files", "properties": ["title", "thumbnail"]}).get("files", []) or []
+    busy(False)
+    entries = [e for e in entries if "provider=" in e.get("file", "")]
+    if not entries:
+        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Lucent Video needs its TMDb key.",
+                                          "Geen diensten gevonden. Lucent Video heeft zijn TMDb-sleutel nodig.")))
+        return None
+    pick = select(tr(G("Streaming services", "Streamingdiensten")), [clean(e.get("label") or e.get("title")) for e in entries],
+                  True, [e.get("thumbnail", "") for e in entries])
+    if pick < 0:
+        return None
+    import urllib.parse
+    q = urllib.parse.parse_qs(entries[pick]["file"].split("?", 1)[1])
+    pid, pname = (q.get("provider") or [""])[0], clean(entries[pick].get("label") or "")
+    if not pid:
+        return None
+    return f"{pname} · {tr(G('Newest', 'Nieuwste'))}", LV + f"provider&provider={pid}&type=all", "poster"
+
+
 WIDGETS_OTHER = [
     (("Favourites", "Favorieten"), "favourites://", "land"),
     (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
@@ -746,10 +803,19 @@ def pick_widget():
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
     order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
+    if has_lv():                                        # Lucent Video: its own rows, right after Seren / the add-on folders
+        sources.append("Lucent Video")
+        icons.append("icons/play.png")
+        order.insert(1 if uses_seren() else 0, 9)
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])
     source = order[pick] if pick >= 0 else -1
     style = "poster"
-    if source == 0:
+    if source == 9:
+        picked = pick_lv()
+        if not picked:
+            return None
+        label, path, style = picked
+    elif source == 0:
         choice = select(tr("src_seren"), [tr(k) for k, _p, _s in WIDGETS_SEREN])
         if choice < 0:
             return None

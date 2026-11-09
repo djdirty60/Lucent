@@ -3767,6 +3767,52 @@ def omdb_test():
     mon.waitForAbort(2)
 
 
+def lucentvideo_test():
+    """Lucent Video 0.8.0 (plugin.video.lucent): installs, its menus open and nothing secret or broken lands in the log."""
+    log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
+    out = {}
+    for name, path in (("root", "plugin://plugin.video.lucent/"),):
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                         "params": {"directory": path, "media": "files"}})))
+        files = (res.get("result") or {}).get("files") or []
+        out[name] = {"n": len(files), "labels": [f.get("label") for f in files][:20], "paths": [f.get("file", "")[:90] for f in files][:20],
+                     "error": res.get("error")}
+    sub = {}
+    for f_path in [p for p in out["root"]["paths"] if p.startswith("plugin://plugin.video.lucent/")][:8]:
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                         "params": {"directory": f_path, "media": "files"}})))
+        sub[f_path[29:70]] = len((res.get("result") or {}).get("files") or []) if "result" in res else str(res.get("error"))[:80]
+    out["sub"] = sub
+    try:
+        import sys as _s
+        _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+        import menu as _menu
+        row = _menu.WIDGETS_LV[0][1]
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                         "params": {"directory": row, "media": "files"}})))
+        out["menu"] = {"has_lv": _menu.has_lv(), "rows": len(_menu.WIDGETS_LV), "first": row,
+                       "row_items": [f.get("label") for f in (res.get("result") or {}).get("files") or []][:5], "error": res.get("error")}
+    except Exception as _e:  # noqa: BLE001
+        out["menu"] = repr(_e)
+    log("lucentvideo: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.lucent/,return)")
+    mon.waitForAbort(4)
+    shot("lucentvideo-root")
+    xbmc.executebuiltin("Addon.OpenSettings(plugin.video.lucent)")
+    mon.waitForAbort(3)
+    shot("lucentvideo-settings")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            lines = [ln for ln in fh if "plugin.video.lucent" in ln or "Lucent-Video" in ln or "[lucent video]" in ln.lower()]
+        errs = [ln.strip()[24:200] for ln in lines if "error" in ln.lower() or "Traceback" in ln]
+        log(f"lucentvideo: log lines={len(lines)} errors={len(errs)} {json.dumps(errs[:6])}")
+    except OSError as e:
+        log(f"lucentvideo: log {e}")
+
+
 def music_fav_test():
     """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
     import sys as _s
@@ -3933,6 +3979,7 @@ def main():
     mdblist_test()
     mediaflags_test()
     menumove_test()
+    lucentvideo_test()
     music_fav_test()
     smallposter_test()
     alwayson_test()
