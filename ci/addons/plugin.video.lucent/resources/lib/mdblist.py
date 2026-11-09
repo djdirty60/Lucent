@@ -26,13 +26,14 @@ def _url(path, **params):
     return API + path + "?" + urllib.parse.urlencode(params)
 
 
-def lists(kind):
-    """kind: mine, liked or top. [(id, name)]"""
-    path = {"mine": "lists/user", "liked": "lists/liked", "top": "lists/top"}[kind]
-    cached_key = "mdblist" + path
+def lists(kind, query=None):
+    """kind: mine, liked, top or search. [(id, name)]"""
+    path = {"mine": "lists/user", "liked": "lists/liked", "top": "lists/top", "search": "lists/search"}[kind]
+    extra = {"query": query} if kind == "search" else {}
+    cached_key = "mdblist" + path + (query or "")
     data = util.cache_get(cached_key, 900)
     if data is None:
-        data, _ = util.http(_url(path))
+        data, _ = util.http(_url(path, **extra))
         util.cache_set(cached_key, data)
     rows = data.get("lists") or [] if isinstance(data, dict) else data or []
     return [(row["id"], row.get("name") or "") for row in rows if row.get("id")]

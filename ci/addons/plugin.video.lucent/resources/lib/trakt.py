@@ -2,6 +2,7 @@
 """Your Trakt account: login, lists, progress and scrobbling. Tokens are never logged."""
 import os
 import time
+import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -109,11 +110,23 @@ def pairs(name):
     return pairs_from(cached(COLLECTIONS[name][0]))
 
 
-def custom_lists(kind):
-    """[(owner, id, name)]"""
+def custom_lists(kind, query=None):
+    """[(owner, id, name)]. kind: mine, liked, trending, popular or search."""
+    if kind == "mine":
+        return [("me", i["ids"]["trakt"], i["name"]) for i in cached("users/me/lists", 900)]
     if kind == "liked":
-        return [(i["list"]["user"]["ids"]["slug"], i["list"]["ids"]["trakt"], i["list"]["name"]) for i in cached("users/likes/lists?limit=100", 900)]
-    return [("me", i["ids"]["trakt"], i["name"]) for i in cached("users/me/lists", 900)]
+        path = "users/likes/lists?limit=100"
+    elif kind == "search":
+        path = "search/list?" + urllib.parse.urlencode({"query": query or "", "limit": 50})
+    else:
+        path = "lists/%s?limit=50" % ("popular" if kind == "popular" else "trending")
+    rows = []
+    for row in cached(path, 900) or []:
+        entry = row.get("list") or {}
+        owner = ((entry.get("user") or {}).get("ids") or {}).get("slug")
+        if owner and (entry.get("ids") or {}).get("trakt") and entry.get("privacy", "public") == "public" or kind == "liked" and owner:
+            rows.append((owner, entry["ids"]["trakt"], entry["name"]))
+    return rows
 
 
 def list_pairs(owner, list_id, page, size):
@@ -233,6 +246,10 @@ def forget_lists():
                  "sync/watchlist/shows"):
         util.cache_drop("trakt" + path)
     util.cache_drop("nextup")
+
+
+def _stamp(text):
+    return str(text or "").replace("T", " ")[:19]
 
 
 def watched_movies():

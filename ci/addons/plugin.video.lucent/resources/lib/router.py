@@ -101,6 +101,8 @@ def home(handle, _params):
     ]
     if mdblist.available():
         rows.insert(6, items.folder("MDBList", util.url_for(action="mdblistmenu"), "DefaultFolder.png"))
+    if floppy.available():
+        rows.insert(-1, items.folder("Floppy", util.url_for(action="floppylists"), "DefaultFolder.png"))
     send(handle, rows)
 
 
@@ -125,26 +127,53 @@ def trakt_menu(handle, _params):
     if tracker.has_lists():
         rows.append(items.folder(T("Mijn eigen lijsten", "My own lists"), util.url_for(action="traktlists", kind="mine")))
         rows.append(items.folder(T("Gelikete lijsten", "Liked lists"), util.url_for(action="traktlists", kind="liked")))
+        rows.append(items.folder(T("Openbare lijsten", "Public lists"), util.url_for(action="publiclists")))
     entry = xbmcgui.ListItem(T("Bibliotheek nu bijwerken", "Update the library now"), offscreen=True)
     entry.setProperty("IsPlayable", "false")
     rows.append((util.url_for(action="library_sync"), entry, False))
     send(handle, rows)
 
 
+def _query(params):
+    return params.get("query") or xbmcgui.Dialog().input(T("Lijst zoeken", "Search lists"))
+
+
 def trakt_lists(handle, params):
+    kind = params.get("kind")
+    query = None
+    if kind == "search":
+        query = _query(params)
+        if not query:
+            return xbmcplugin.endOfDirectory(handle, succeeded=False)
     rows = [items.folder(name, util.url_for(action="list", name="traktlist", user=owner, id=list_id))
-            for owner, list_id, name in tracker.custom_lists(params.get("kind"))]
+            for owner, list_id, name in tracker.custom_lists(kind, query)]
     send(handle, rows)
+    return None
+
+
+def public_lists(handle, _params):
+    send(handle, [items.folder(label, util.url_for(action="traktlists", kind=kind)) for label, kind in
+                  ((T("Trending lijsten", "Trending lists"), "trending"), (T("Populaire lijsten", "Popular lists"), "popular"), (T("Lijst zoeken", "Search lists"), "search"))])
+
+
+def floppy_lists(handle, _params):
+    send(handle, [items.folder(name, util.url_for(action="list", name="floppylist", id=list_id)) for list_id, name in floppy.lists()])
 
 
 def mdblist_menu(handle, _params):
     send(handle, [items.folder(label, util.url_for(action="mdblists", kind=kind)) for label, kind in
-                  ((T("Mijn lijsten", "My lists"), "mine"), (T("Gelikete lijsten", "Liked lists"), "liked"), (T("Toplijsten", "Top lists"), "top"))])
+                  ((T("Mijn lijsten", "My lists"), "mine"), (T("Gelikete lijsten", "Liked lists"), "liked"), (T("Toplijsten", "Top lists"), "top"), (T("Lijst zoeken", "Search lists"), "search"))])
 
 
 def mdblists(handle, params):
-    rows = [items.folder(name, util.url_for(action="list", name="mdblist", id=list_id)) for list_id, name in mdblist.lists(params.get("kind", "mine"))]
-    send(handle, rows)
+    kind = params.get("kind", "mine")
+    query = None
+    if kind == "search":
+        query = _query(params)
+        if not query:
+            return xbmcplugin.endOfDirectory(handle, succeeded=False)
+    send(handle, [items.folder(name, util.url_for(action="list", name="mdblist", id=list_id)) for list_id, name in mdblist.lists(kind, query)])
+    return None
 
 
 def genres(handle, params):
@@ -244,6 +273,9 @@ def list_titles(handle, params):
     elif name == "traktlist":
         found = tracker.list_pairs(params["user"], params["id"], page, PAGE)
         titles, more = tmdb.many(found), len(found) >= PAGE
+    elif name == "floppylist":
+        found, more = floppy.items(params["id"], page, PAGE)
+        titles = tmdb.many(found)
     elif name == "mdblist":
         found, more = mdblist.items(params["id"], page, PAGE)
         titles = tmdb.many(found)
@@ -342,7 +374,7 @@ def test():
 
 
 FOLDERS = {"": home, "menu": menu, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
-           "searchmenu": search_menu, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
+           "searchmenu": search_menu, "publiclists": public_lists, "floppylists": floppy_lists, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
 
 
 def run(argv):

@@ -173,9 +173,9 @@ def pairs(name_of_list):
     return []
 
 
-def custom_lists(kind):
+def custom_lists(kind, query=None):
     account = active()
-    return account.custom_lists(kind) if account and account.HAS_LISTS else []
+    return account.custom_lists(kind, query) if account and account.HAS_LISTS else []
 
 
 def list_pairs(owner, list_id, page, size):

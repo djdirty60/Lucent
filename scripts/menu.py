@@ -343,6 +343,29 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
 ]
 
 
+def pick_lv_list():
+    """Your own and liked lists of Trakt and MDBList, and your Floppy lists, as a row (no 'next page' item)."""
+    base = "plugin://plugin.video.lucent/?action="
+    found = []
+    busy(True)
+    for folder, tag in (("traktlists&kind=mine", "Trakt"), ("traktlists&kind=liked", "Trakt"), ("mdblists&kind=mine", "MDBList"),
+                        ("mdblists&kind=liked", "MDBList"), ("floppylists", "Floppy")):
+        for f in jsonrpc("Files.GetDirectory", {"directory": base + folder, "media": "files"}).get("files", []) or []:
+            path = f.get("file", "")
+            if "action=list" in path and path not in [x[1] for x in found]:
+                found.append((clean(f.get("label")), path, tag))
+    busy(False)
+    if not found:
+        xbmcgui.Dialog().ok(HEADING, tr(G("No lists found. Log in to Trakt or set your MDBList key or Floppy in Lucent Video.",
+                                          "Geen lijsten gevonden. Log in bij Trakt of vul je MDBList-sleutel of Floppy in bij Lucent Video.")))
+        return None
+    pick = select(tr(G("Your lists", "Je lijsten")), [f[0] for f in found], True, ["icons/list.png"] * len(found), [f[2] for f in found])
+    if pick < 0:
+        return None
+    name, path, _tag = found[pick]
+    return name, path + ("&" if "?" in path else "?") + "widget=1", "poster"
+
+
 def has_lv():
     return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
 
@@ -350,13 +373,16 @@ def has_lv():
 def pick_lv():
     """A Lucent Video row: one of its lists, or a streaming service (newest first)."""
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
-    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [service]
+    own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
+    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [own, service]
     choice = select("Lucent Video", labels)
     if choice < 0:
         return None
     if choice < len(WIDGETS_LV):
         key, path, style = WIDGETS_LV[choice]
         return tr(key), path, style
+    if choice == len(WIDGETS_LV):
+        return pick_lv_list()
     busy(True)
     entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://plugin.video.lucent/?action=services",
                                              "media": "files", "properties": ["title", "thumbnail"]}).get("files", []) or []
