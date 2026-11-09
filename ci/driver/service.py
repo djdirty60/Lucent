@@ -3451,6 +3451,13 @@ def views_pause_test():
         early = cond("Window.IsVisible(seekbar)")
         mon.waitForAbort(5)
         out[setting or "default"] = {"paused": cond("Player.Paused"), "bar_at_1s": early, "bar_at_6s": cond("Window.IsVisible(seekbar)")}
+        xbmc.executebuiltin("ActivateWindow(videoosd)")             # the player menu, as OK opens it on a Shield
+        mon.waitForAbort(1)
+        out[setting or "default"]["osd_opened"] = cond("Window.IsActive(videoosd)")
+        mon.waitForAbort(5)
+        out[setting or "default"]["osd_after_6s"] = cond("Window.IsActive(videoosd)")
+        xbmc.executebuiltin("Dialog.Close(videoosd)")
+        mon.waitForAbort(1)
         shot(f"pause-{setting or 'default'}")
         pl.stop()
         mon.waitForAbort(3)
