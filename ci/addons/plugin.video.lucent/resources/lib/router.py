@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Every menu and action of the add-on. The Lucent skin can use these same addresses."""
 from concurrent.futures import ThreadPoolExecutor
+import datetime
 import urllib.parse
 
 import xbmc
@@ -10,6 +11,7 @@ import xbmcplugin
 import items
 import library
 import player
+import report
 import floppy
 import mdblist
 import simkl
@@ -96,11 +98,13 @@ def home(handle, _params):
     rows[2:2] = [
         items.folder(T("Verder kijken", "Continue watching"), util.url_for(action="list", name="continue"), "DefaultInProgressShows.png"),
         items.folder(T("Volgende afleveringen", "Next up"), util.url_for(action="list", name="nextup"), "DefaultTVShows.png"),
+        items.folder(T("Voor jou", "For you"), util.url_for(action="list", name="foryou"), "DefaultFolder.png"),
+        items.folder(T("Kalender", "Calendar"), util.url_for(action="list", name="calendar"), "DefaultFolder.png"),
         items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultFolder.png"),
         items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultFolder.png"),
     ]
     if mdblist.available():
-        rows.insert(6, items.folder("MDBList", util.url_for(action="mdblistmenu"), "DefaultFolder.png"))
+        rows.insert(8, items.folder("MDBList", util.url_for(action="mdblistmenu"), "DefaultFolder.png"))
     if floppy.available():
         rows.insert(-1, items.folder("Floppy", util.url_for(action="floppylists"), "DefaultFolder.png"))
     send(handle, rows)
@@ -242,6 +246,65 @@ def next_up_titles():
     return titles
 
 
+def calendar_titles():
+    """New episodes of what you follow: from a week ago up to a month ahead."""
+    today = datetime.date.today()
+    first, last = (today - datetime.timedelta(days=7)).isoformat(), (today + datetime.timedelta(days=30)).isoformat()
+
+    def load(show):
+        try:
+            aired, coming = tmdb.on_air(show)
+            found = []
+            for episode in (aired, coming):
+                if episode and first <= (episode.get("air_date") or "") <= last:
+                    meta = player.title_meta("episode", show, episode["season_number"], episode["episode_number"])
+                    if meta:
+                        found.append(meta)
+            return found
+        except (util.HttpError, KeyError, TypeError):
+            return []
+    shows = list(tracker.watched_episodes())[:60] + [str(i) for _k, i in tracker.pairs("watchlist_tv")][:40]
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        titles = [meta for found in pool.map(load, list(dict.fromkeys(shows))) for meta in found]
+    return sorted(titles, key=lambda m: m.get("premiered") or "")
+
+
+def for_you_titles():
+    """Recommendations from what you watched last, without what you already saw."""
+    films, shows = tracker.watched_movies(), tracker.watched_episodes()
+    recent_films = sorted(films, key=lambda i: films[i], reverse=True)[:6]
+    recent_shows = sorted(shows, key=lambda i: max(shows[i].values()) if shows[i] else "", reverse=True)[:6]
+
+    def load(job):
+        api, kind, tmdb_id = job
+        try:
+            return [(kind, r["id"]) for r in tmdb.get("%s/%s/recommendations" % (api, tmdb_id), ttl=tmdb.DAY).get("results") or []]
+        except util.HttpError:
+            return []
+    jobs = [("movie", "movie", i) for i in recent_films] + [("tv", "tvshow", i) for i in recent_shows]
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(load, jobs))
+    counts = {}
+    for found in results:
+        for pair in found:
+            counts[pair] = counts.get(pair, 0) + 1
+    fresh = [p for p in counts if not (p[0] == "movie" and str(p[1]) in films) and not (p[0] == "tvshow" and str(p[1]) in shows)]
+    fresh.sort(key=lambda p: counts[p], reverse=True)
+    return tmdb.many(fresh[:40])
+
+
+def cast(handle, params):
+    meta = tmdb.details(params.get("type", "movie"), params["tmdb"])
+    rows = []
+    for person in (meta or {}).get("cast") or []:
+        url, item, folder = items.folder(person["name"], util.url_for(action="list", name="person", id=person.get("id")))
+        item.setLabel2(person.get("role") or "")
+        if person.get("thumb"):
+            item.setArt({"thumb": person["thumb"], "poster": person["thumb"], "icon": person["thumb"]})
+        rows.append((url, item, folder))
+    send(handle, rows)
+
+
 def list_titles(handle, params):
     name = params.get("name", "")
     page = int(params.get("page") or 1)
@@ -254,6 +317,12 @@ def list_titles(handle, params):
         kind = params.get("type")
         titles, more = tmdb.listing("discover/" + ("movie" if kind == "movie" else "tv"), kind, page,
                                     with_genres=params["genre"], sort_by="popularity.desc")
+    elif name == "calendar":
+        titles, content = calendar_titles(), "episodes"
+    elif name == "foryou":
+        titles = for_you_titles()
+    elif name == "person":
+        titles = tmdb.many(tmdb.person_titles(params["id"]))
     elif name == "provider":
         titles, more = tmdb.newest_on(params["provider"], params.get("type", "all"), page)
     elif name == "similar":
@@ -374,7 +443,7 @@ def test():
 
 
 FOLDERS = {"": home, "menu": menu, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
-           "searchmenu": search_menu, "publiclists": public_lists, "floppylists": floppy_lists, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
+           "searchmenu": search_menu, "cast": cast, "publiclists": public_lists, "floppylists": floppy_lists, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
 
 
 def run(argv):
@@ -400,6 +469,8 @@ def run(argv):
             return trakt_status()
         if action == "test_mdblist":
             return check_service(mdblist, "MDBList")
+        if action == "report":
+            return report.save()
         if action == "test_easynews":
             ok, text = usenet.check_easynews()
             return xbmcgui.Dialog().ok("Easynews" if ok else T("Niet gelukt", "Failed"), text)

@@ -14,6 +14,7 @@ import xbmcplugin
 
 import dialogs
 import items
+import ranking
 import scrapers
 import tmdb
 import tracker
@@ -22,6 +23,7 @@ import util
 HANDOFF = "lucent.video.now"
 RUN = "lucent.video.run"
 LOCAL = "progress.json"
+LAST_RELEASE = "last_release.json"
 MIME = {"mkv": "video/x-matroska", "mp4": "video/mp4", "avi": "video/x-msvideo", "m2ts": "video/mp2t", "ts": "video/mp2t"}
 
 
@@ -56,8 +58,8 @@ def link_works(source):
     return _answers(source)
 
 
-def _answers(source):
-    """A tiny request (first byte only) to see whether the link answers. Works with redirects to the debrid service."""
+def _answers(source, offset=0):
+    """A tiny request (one byte) to see whether the link answers. Works with redirects to the debrid service."""
     url, _, extra = source["url"].partition("|")
     head = dict(urllib.parse.parse_qsl(extra))
     parts = urllib.parse.urlsplit(url)
@@ -66,7 +68,7 @@ def _answers(source):
         head["Authorization"] = "Basic " + base64.b64encode(login.encode("utf-8")).decode("ascii")
         url = urllib.parse.urlunsplit((parts.scheme, parts.netloc.rsplit("@", 1)[1], parts.path, parts.query, ""))
     head.setdefault("User-Agent", "Lucent-Video/0.1")
-    head["Range"] = "bytes=0-0"
+    head["Range"] = "bytes=%d-%d" % (offset, offset)
     try:
         with urllib.request.urlopen(urllib.request.Request(url, headers=head), timeout=10) as response:
             return response.status < 400
@@ -123,6 +125,10 @@ def build(meta, source):
     # Kodi reports the default id as "the IMDb number": other add-ons (like PunchPlay) read that while playing
     items.fill_tag(item, meta, default_id="imdb")
     item.setProperty("IsPlayable", "true")
+    if meta["kind"] == "episode":      # read by Lucent Ondertitels and TheIntroDB
+        for key in ("tmdb", "imdb", "tvdb"):
+            if meta.get(key):
+                item.setProperty("tvshow.%s_id" % key, str(meta[key]))
     extension = source["name"].rsplit(".", 1)[-1].lower()
     if extension in MIME:             # saves Kodi an extra request to the link
         item.setMimeType(MIME[extension])
@@ -130,12 +136,62 @@ def build(meta, source):
     return item
 
 
-def handoff(meta, resume, source):
+def handoff(meta, resume, source, alternates=None):
     keep = ("kind", "tmdb", "imdb", "season", "episode", "title", "runtime")
     now = {k: meta.get(k) for k in keep}
-    now.update(resume=resume, started=time.time())
+    now.update(resume=resume, started=time.time(), alternates=alternates or [], url=source.get("url"), size=source.get("size") or 0)
     util.HOME.setProperty(HANDOFF, json.dumps(now))
     return now
+
+
+def cannot_play(source):
+    """Does this device, by the setting 'Dolby Vision on this device', not handle this source?"""
+    support = util.number("dv_support", 0)
+    tags = ranking.tags_of(source)
+    return (support == 1 and bool(tags & {"fel", "p7"})) or (support == 2 and "dv" in tags)
+
+
+def same_release_first(meta, sources):
+    """A series keeps the release group and quality of the previous episode, so sound and language do not jump."""
+    if meta["kind"] != "episode" or not util.flag("same_release"):
+        return sources
+    last = util.load_json(LAST_RELEASE, {}).get(str(meta["tmdb"]))
+    if not last:
+        return sources
+    return sorted(sources, key=lambda s: 0 if (ranking.release_group(s) or "").lower() == last["group"] and s["resolution"] == last["res"] else 1)
+
+
+def remember_release(meta, source):
+    group = ranking.release_group(source)
+    if meta["kind"] == "episode" and group:
+        saved = util.load_json(LAST_RELEASE, {})
+        saved[str(meta["tmdb"])] = {"group": group.lower(), "res": source["resolution"]}
+        util.save_json(LAST_RELEASE, saved)
+
+
+def link_is_dead(now, position, total):
+    """Kodi reports a stream that broke the same as you pressing stop. So: does the link still answer at this point?"""
+    if not now.get("url") or not total:
+        return False
+    return not _answers({"url": now["url"]}, int((now.get("size") or 0) * position / total))
+
+
+def resume_elsewhere(now, position):
+    """The link broke. Starts the next source at the same place. True when one was started."""
+    alternates = now.get("alternates") or []
+    full = None
+    while alternates:
+        source = alternates.pop(0)
+        if not scrapers.ready(source) or not _answers(source):
+            continue
+        full = full or title_meta(now["kind"], now["tmdb"], now.get("season"), now.get("episode"))
+        if not full:
+            return False
+        handoff(full, position, source, alternates)
+        util.notify(util.T("Link viel weg, verder met een andere bron", "Link dropped, continuing with another source"))
+        xbmc.Player().play(source["url"], build(full, source))
+        return True
+    return False
 
 
 def find(meta_out, params):
@@ -196,13 +252,19 @@ def play(params, handle):
         return _fail(handle, util.T("Geen bronnen over. Kijk naar je filters of probeer een ander profiel.", "No sources left. Check your filters or try another profile."))
 
     usable = sources if util.flag("include_uncached") or not any(s["cached"] for s in sources) else [s for s in sources if s["cached"]]
+    for source in sources:
+        source["cannot"] = cannot_play(source)
+    usable = [s for s in usable if not s["cannot"]] or usable
     if params.get("select") == "1" or (util.number("play_mode", 0) == 1 and not autoplay):
         chosen = dialogs.choose_source(meta, sources, util.flag("include_uncached"))
         if not chosen:
             return _fail(handle)
+        if chosen["cannot"] and not xbmcgui.Dialog().yesno("Lucent", util.T("Dit apparaat kan deze bron volgens je instelling niet goed afspelen. Toch proberen?",
+                                                                            "This device may not play this source properly, according to your setting. Try anyway?")):
+            return _fail(handle)
         order = [chosen] + [s for s in usable if s is not chosen]
     else:
-        order = usable
+        order = same_release_first(meta, usable)
     # from the library Kodi itself asks about resuming; asking again would be a second pop-up
     resume = 0 if autoplay or params.get("lib") == "1" else ask_resume(meta)
     if resume is None:
@@ -212,7 +274,8 @@ def play(params, handle):
     if not source.get("url"):
         return _fail(handle, util.T("Deze bron kon niet worden gestart", "This source could not be started"))
     item = build(meta, source)
-    handoff(meta, resume, source)
+    remember_release(meta, source)
+    handoff(meta, resume, source, [s for s in order if s is not source][:4])
     util.log("playing %s" % progress_key(meta))
     if handle >= 0:
         xbmcplugin.setResolvedUrl(handle, True, item)

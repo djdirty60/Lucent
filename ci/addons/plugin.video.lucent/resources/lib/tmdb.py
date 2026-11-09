@@ -112,7 +112,7 @@ def details(kind, tmdb_id):
         "mpaa": _mpaa(raw, movie),
         "trailer": _trailer(raw),
         "set": (raw.get("belongs_to_collection") or {}).get("name") or "",
-        "cast": [{"name": c["name"], "role": c.get("character") or "", "thumb": image(c.get("profile_path"), "w185")}
+        "cast": [{"id": c.get("id"), "name": c["name"], "role": c.get("character") or "", "thumb": image(c.get("profile_path"), "w185")}
                  for c in crew.get("cast") or []][:25],
         "directors": [c["name"] for c in crew.get("crew") or [] if c.get("job") == "Director"],
         "writers": [c["name"] for c in crew.get("crew") or [] if c.get("department") == "Writing"][:6],
@@ -145,6 +145,25 @@ def find(kind, imdb=None, tvdb=None):
         if rows:
             return rows[0]["id"]
     return None
+
+
+def on_air(tmdb_id):
+    """(last aired, next to air) episodes of a series, as dicts or None."""
+    raw = get("tv/%s" % tmdb_id, ttl=6 * 3600)
+    return raw.get("last_episode_to_air"), raw.get("next_episode_to_air")
+
+
+def person_titles(person, page_size=40):
+    """Best-known films and series of one person: [(kind, id)]."""
+    credits_ = get("person/%s/combined_credits" % person, ttl=7 * DAY).get("cast") or []
+    credits_.sort(key=lambda c: c.get("popularity") or 0, reverse=True)
+    pairs, seen = [], set()
+    for row in credits_:
+        kind = {"movie": "movie", "tv": "tvshow"}.get(row.get("media_type"))
+        if kind and row.get("id") not in seen:
+            seen.add(row["id"])
+            pairs.append((kind, row["id"]))
+    return pairs[:page_size]
 
 
 def region():

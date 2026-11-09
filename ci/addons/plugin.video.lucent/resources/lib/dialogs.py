@@ -96,7 +96,7 @@ class Sources(Base):
         for source in self.current:
             item = xbmcgui.ListItem(source["name"], offscreen=True)
             item.setProperty("res", source["resolution"])
-            item.setProperty("meta", source["meta"])
+            item.setProperty("meta", source["meta"] + (T(" · Kan dit apparaat niet", " · Not for this device") if source.get("cannot") else ""))
             if source["cached"]:
                 item.setProperty("cached", "1")
             if source is self.sources[0]:

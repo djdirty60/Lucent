@@ -3802,6 +3802,10 @@ def lucentvideo_test():
                          "params": {"directory": f_path, "media": "files"}})))
         sub[f_path[29:70]] = len((res.get("result") or {}).get("files") or []) if "result" in res else str(res.get("error"))[:80]
     out["sub"] = sub
+    for nm in ("calendar", "foryou", "person&id=287"):
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                         "params": {"directory": "plugin://plugin.video.lucent/?action=list&widget=1&name=" + nm, "media": "files"}})))
+        out["row_" + nm] = len((res.get("result") or {}).get("files") or []) if "result" in res else str(res.get("error"))[:80]
     try:
         import sys as _s
         _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))

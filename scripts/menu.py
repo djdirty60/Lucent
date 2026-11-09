@@ -340,6 +340,8 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
     (("Collection · Films", "Collectie · Films"), LV + "collection_movie", "poster"),
     (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
+    (("Calendar", "Kalender"), LV + "calendar", "land"),
+    (("For you", "Voor jou"), LV + "foryou", "poster"),
 ]
 
 
@@ -366,6 +368,49 @@ def pick_lv_list():
     return name, path + ("&" if "?" in path else "?") + "widget=1", "poster"
 
 
+def pick_lv_person():
+    """Search a person on TMDb (the key of Lucent, else of Lucent Video): a row with their best-known films and series."""
+    name = keyboard(tr(G("Name of the actor or actress", "Naam van de acteur of actrice")))
+    if not name:
+        return None
+    import json
+    import urllib.parse
+    import urllib.request
+    import xbmcaddon
+    import info
+    key = info.tmdb_key()
+    if not key:
+        try:
+            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
+        except Exception:  # noqa: BLE001
+            key = ""
+    if not key:
+        xbmcgui.Dialog().ok(HEADING, tr(G("Lucent needs a TMDb key for this (Skin settings > Integrations).",
+                                          "Lucent heeft hiervoor een TMDb-sleutel nodig (Skin-instellingen > Integraties).")))
+        return None
+    busy(True)
+    try:
+        url = "https://api.themoviedb.org/3/search/person?" + urllib.parse.urlencode({"api_key": key, "query": name})
+        with urllib.request.urlopen(url, timeout=15) as response:
+            people = json.loads(response.read().decode("utf-8")).get("results") or []
+    except Exception as error:  # noqa: BLE001
+        xbmc.log(f"[skin.lucent] menu: person search failed: {type(error).__name__}", xbmc.LOGWARNING)
+        people = []
+    busy(False)
+    people = [p for p in people if p.get("id")][:20]
+    if not people:
+        notify(tr(G("Nobody found with that name", "Niemand gevonden met die naam")))
+        return None
+    known = lambda p: ", ".join(k.get("title") or k.get("name") or "" for k in (p.get("known_for") or [])[:2])  # noqa: E731
+    pick = select(tr(G("Who do you mean?", "Wie bedoel je?")), [p.get("name", "") for p in people], True,
+                  [f"https://image.tmdb.org/t/p/w185{p['profile_path']}" if p.get("profile_path") else "icons/user.png" for p in people],
+                  [known(p) for p in people])
+    if pick < 0:
+        return None
+    person = people[pick]
+    return person.get("name", ""), LV + f"person&id={person['id']}", "poster"
+
+
 def has_lv():
     return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
 
@@ -374,7 +419,8 @@ def pick_lv():
     """A Lucent Video row: one of its lists, or a streaming service (newest first)."""
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
     own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
-    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [own, service]
+    actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
+    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [own, actor, service]
     choice = select("Lucent Video", labels)
     if choice < 0:
         return None
@@ -383,6 +429,8 @@ def pick_lv():
         return tr(key), path, style
     if choice == len(WIDGETS_LV):
         return pick_lv_list()
+    if choice == len(WIDGETS_LV) + 1:
+        return pick_lv_person()
     busy(True)
     entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://plugin.video.lucent/?action=services",
                                              "media": "files", "properties": ["title", "thumbnail"]}).get("files", []) or []

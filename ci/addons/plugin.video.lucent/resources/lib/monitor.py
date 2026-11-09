@@ -9,11 +9,14 @@ import xbmc
 import dialogs
 import library
 import player
+import scrapers
 import tmdb
 import tracker
 import util
 
 WATCHED_AT = 90.0     # percent
+BROKEN_BEFORE_END = 180     # seconds
+PREFETCH_BEFORE_END = 300   # seconds
 
 
 class Watcher(xbmc.Player):
@@ -26,6 +29,7 @@ class Watcher(xbmc.Player):
         self.dialog = None
         self.following = None     # the next episode, while it should still start
         self.auto_next = False    # start it when this video ends
+        self.prefetched = False
 
     def percent(self):
         return min(100.0, self.position * 100.0 / self.total) if self.total else 0.0
@@ -46,7 +50,7 @@ class Watcher(xbmc.Player):
             self.current = None
             return
         util.HOME.clearProperty(player.HANDOFF)
-        self.current, self.asked_next, self.following, self.auto_next = now, False, None, False
+        self.current, self.asked_next, self.following, self.auto_next, self.prefetched = now, False, None, False, False
         self.position = 0.0
         self.total = self.getTotalTime() or 0.0
         if now.get("resume"):
@@ -92,16 +96,52 @@ class Watcher(xbmc.Player):
                                                            episode=following["episode"], autoplay=1))
 
     def onPlayBackStopped(self):
+        meta = self.current
+        if meta and meta.get("alternates") and self.total - self.position > BROKEN_BEFORE_END and player.link_is_dead(meta, self.position, self.total):
+            position, self.current = self.position, None
+            self.close_dialog()
+            self._try_elsewhere(meta, position)
+            return
         self.following, self.auto_next = None, False
         self.finish()
 
+    def _try_elsewhere(self, now, position):
+        threading.Thread(target=player.resume_elsewhere, args=(now, position), daemon=True).start()
+
+    def onPlayBackError(self):
+        now, position = self.current, self.position
+        if not now:                  # it did not even start
+            raw = util.HOME.getProperty(player.HANDOFF)
+            if not raw:
+                return
+            now, position = json.loads(raw), json.loads(raw).get("resume") or 0
+            util.HOME.clearProperty(player.HANDOFF)
+        self.close_dialog()
+        self.current = None
+        self._try_elsewhere(now, position)
+
     def onPlayBackEnded(self):
         meta = self.current
+        if meta and self.total and self.total - self.position > BROKEN_BEFORE_END and meta.get("alternates"):
+            position, self.current = self.position, None     # ended far too early: the link broke
+            self.close_dialog()
+            self._try_elsewhere(meta, position)
+            return
         go = bool(meta and self.following and self.auto_next)
         self.finish()
         if go:
             util.HOME.setProperty(player.RUN, str(run_count() + 1))
             self.play_next(meta)
+
+    def prefetch(self, meta):
+        """Finds the sources of the next episode in advance, so it starts right away."""
+        try:
+            step = tmdb.next_episode(meta["tmdb"], int(meta["season"]), int(meta["episode"]))
+            following = step and player.title_meta("episode", meta["tmdb"], step["season"], step["episode"])
+            if following:
+                scrapers.search(following)
+        except util.HttpError:
+            pass
 
     def open_next(self, meta):
         try:
@@ -147,6 +187,9 @@ class Watcher(xbmc.Player):
         except RuntimeError:
             return
         meta = self.current
+        if meta["kind"] == "episode" and not self.prefetched and util.flag("next_episode") and self.total and self.total - self.position <= PREFETCH_BEFORE_END:
+            self.prefetched = True
+            threading.Thread(target=self.prefetch, args=(meta,), daemon=True).start()
         if self.dialog:
             self.follow_dialog(meta)
             return

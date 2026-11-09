@@ -90,6 +90,7 @@ def context(meta, watched):
     if meta["kind"] in ("movie", "tvshow"):
         run(util.T("Op kijklijst", "Add to watchlist"), action="watchlist", value=1, **target)
         run(util.T("Van kijklijst af", "Remove from watchlist"), action="watchlist", value=0, **target)
+        entries.append((util.T("Acteurs", "Cast"), "Container.Update(%s)" % util.url_for(action="cast", type=meta["kind"], tmdb=meta["tmdb"])))
         entries.append((util.T("Vergelijkbare titels", "Similar titles"), "Container.Update(%s)" % util.url_for(
             action="list", name="similar", type=meta["kind"], tmdb=meta["tmdb"])))
     return entries
