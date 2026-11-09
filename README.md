@@ -1,10 +1,31 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (Beta 3)
+# Lucent – Kodi skin (Beta 4)
 
-> **Beta 3:** the third public beta. Everything is in place, but expect small bugs – please report them on the [issues page](https://github.com/djdirty60/Lucent/issues).
+> **Beta 4:** the fourth public beta. Everything is in place, but expect small bugs – please report them on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
 
-## New in Beta 3
+## New in Beta 4
+
+- **Lucent without Seren** – Lucent works on its own too: a standard menu without Seren, and any add-on or library folder (Emby, Jellyfin, YouTube, IPTV …) can be added to Home as a row (long press OK → *Add to Home as widget*).
+- **Scores everywhere** – with your own free key: IMDb, Rotten Tomatoes and Metacritic from **OMDb**, plus Letterboxd, the Rotten Tomatoes audience score and the Metacritic user score from **MDBList**. On the info page and, without opening it, in the lists (*Settings → Lucent → Scores*). You choose which ones you see.
+- **Media flags in the lists** – the title under the cursor shows the same flags as the player (4K, Dolby Vision, HEVC, Atmos, 7.1 …) and the languages of sound and subtitles; series and seasons show what most of their episodes have.
+- **Readable text on light pictures** – titles, details and plots over a big picture get a thin dark edge, like subtitles.
+- **Remember view per kind** – pick a view once for episodes (or films, series, seasons, albums) and every folder of that kind uses it.
+- **Percentage watched** – a small *45%* label above the progress bar of what you are watching.
+- **Browse series / Browse episodes** from any episode, also on Home rows (library, Fen Light and clones like Red Light, TMDb Helper) – needs Lucent Library 1.15.5.
+- **Episodes in landscape rows** – the still of the episode or the series' landscape art with its logo.
+- **Clean picture when paused** – after 3, 5 or 10 seconds the bar and player menu go away.
+- **Player** – Back while skipping no longer stops the film; *Dolby Vision 2* badge; the player info shows a Dolby Vision line.
+- **Subtitles always on** if you like, also when the sound is in your own language.
+- **Only one Skip intro** – when Seren and TheIntroDB both show one, Lucent asks once which to keep.
+- **YouTube trailer fix** – trailers no longer stop after about a minute (YouTube add-on 7.4).
+- **Safe log** – shows the last playback lines on screen and never shows links, keys or your server name.
+- **Music** – a *Covers* view for albums and artists.
+- **Widgets** – sort on *Last watched* or *Most watched*, and a single favourite can be a row.
+- **Cleaned up** – the old player info overlay, unused variables, texts and pictures are gone; all menus checked.
+
+<details>
+<summary><b>New in Beta 3</b></summary>
 
 - **Player info, redone** (player menu → *Statistics*) – its own window with three tabs, *Overview*, *Video* and *Audio*. Overview has the badges (4K, Dolby Vision, HDR, Atmos …), tiles for resolution, HDR, bitrate, the buffer and your box, and every detail of the source, video, audio, subtitles and network. Video shows the resolution as a picture, HDR brightness, colour space, the way from file to screen and a live bitrate graph. Audio shows the sound chain, your output (device, speaker setup, volume), a room with the speakers that are in use, a moving bar per channel and all audio tracks. Back closes it – it no longer comes back when you open the player again.
 - **Streaming service pop-up** – click a service in the *Streaming services* row: the chosen title as a big landscape picture with its info and *Watch*, *Trailer* and *My list*, then Films / Series and New / Popular / Top. Top shows big numbers; each list starts at its first title.
@@ -15,6 +36,8 @@
 - **Lucent Library fills in series and films by itself** – artwork and info come in right after adding a title; no more manual refresh.
 - **Series with one season** open the same series page as series with more seasons.
 - **Stadium photos** for many more clubs, and Up / Down on the sport channel list goes through every channel again.
+
+</details>
 
 <details>
 <summary><b>New in Beta 2</b></summary>
