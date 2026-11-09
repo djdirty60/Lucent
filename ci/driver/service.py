@@ -3617,7 +3617,13 @@ def mediaflags_test():
         shot(f"mediaflags-{name}")
         if name in ("movie", "episode"):                 # 1.35.2: shown at once, and the row keeps its place
             xbmc.executebuiltin("Action(Left)")
-            mon.waitForAbort(0.6)
+            mon.waitForAbort(1.5)
+            shot(f"mediaflags-{name}-noflags")
+            xbmc.executebuiltin("Action(Right)")
+            t0 = time.time()
+            while not HOME.getProperty("lucent.mf.img1") and time.time() - t0 < 3:
+                mon.waitForAbort(0.05)
+            out[name]["fast_s"] = round(time.time() - t0, 2)
             out[name]["fast"] = {"item": lab("ListItem.Label"), "for": HOME.getProperty("lucent.mf.for")[:40],
                                  "img1": HOME.getProperty("lucent.mf.img1"),
                                  "row": cond("!Skin.HasSetting(lucent.mf.off) + String.StartsWith(Container.FolderPath,videodb://)")}
