@@ -282,6 +282,15 @@ def run():
                 else:
                     HOME.clearProperty(f"lucent.rowok.{n}")
 
+    def pause_clean():
+        """With "Clean picture after N seconds" (pause screen): close the player menu (opened with OK on a Shield) once
+        the video has been paused and no button was pressed for N seconds. Not while one of its sub-menus is open."""
+        if not cond("Player.Paused + Window.IsActive(videoosd) + !Window.IsActive(subtitlesearch) + !Window.IsActive(contextmenu) + !Window.IsActive(selectdialog) + !Window.IsActive(Lucent_PlayerInfo.xml) + !Window.IsActive(Lucent_Subtitles.xml) + !Window.IsActive(osdvideosettings) + !Window.IsActive(osdaudiosettings) + !Window.IsActive(osdsubtitlesettings) + !Window.IsActive(sliderdialog)"):
+            return
+        wait = {"clean3": 3, "clean5": 5, "clean10": 10}.get(xbmc.getInfoLabel("Skin.String(nuvio.pauseinfo)"))
+        if wait and cond(f"System.IdleTime({wait})"):
+            xbmc.executebuiltin("Dialog.Close(videoosd)")
+
     def home_focus():
         """Home without any focus (for example OK on the Home tab while it has no rows yet, or after closing the setup
         assistant on a new installation): nothing reacts to the remote any more. Give the focus back to the menu."""
@@ -346,6 +355,10 @@ def run():
                 views.tick()                         # the view you chose, for every folder of that kind (issue #5)
             except Exception as error:  # noqa: BLE001
                 log(f"views: {error}")
+            try:
+                pause_clean()                        # "Clean picture" when paused: the player menu goes too (issue #4)
+            except Exception as error:  # noqa: BLE001
+                log(f"pause clean: {error}")
             fast = colour.tick()
             if monitor.waitForAbort(0.25 if fast else 1):
                 break
