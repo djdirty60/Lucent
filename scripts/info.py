@@ -302,6 +302,125 @@ def after_trakt_change():
     xbmc.executebuiltin("Container.Refresh")
 
 
+# ----------------------------------------------------------------------------- Lucent Video (1.37.0)
+LV_ID = "plugin.video.lucent"
+LVP = "plugin://plugin.video.lucent/"
+
+
+def lv_on():
+    return xbmc.getCondVisibility(f"System.AddonIsEnabled({LV_ID})")
+
+
+def lv_version():
+    try:
+        return tuple(int(x) for x in xbmc.getInfoLabel(f"System.AddonVersion({LV_ID})").split(".")[:3])
+    except ValueError:
+        return (0, 0, 0)
+
+
+def seren_login():
+    """Seren is used (not switched off in the setup assistant) and logged in to Trakt."""
+    if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID}) + !Skin.HasSetting(lucent.noseren)"):
+        return False
+    try:
+        return bool(xbmcaddon.Addon(SEREN_ID).getSetting("trakt.auth"))
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def use_lv(prefix="ListItem."):
+    """Who does Library and lists / Mark as watched: Lucent Video for its own titles and whenever Seren is not used
+    (or not logged in to Trakt), also for titles of other video add-ons; Seren's Trakt login for Seren's titles."""
+    if not lv_on():
+        return False
+    path = xbmc.getInfoLabel(f"{prefix}FileNameAndPath") or xbmc.getInfoLabel(f"{prefix}Path")
+    if path.startswith(LVP) or xbmc.getInfoLabel(f"{prefix}Property(lucent_video)") == "1":
+        return True
+    if path.startswith(SEREN) and seren_login():
+        return False
+    return not seren_login()
+
+
+def lv_target(prefix="ListItem."):
+    """{type, tmdb[, season, episode]} of the item in Lucent Video's words, or None without a TMDB number.
+    Episodes and seasons use the number of their series (from the item, or from Kodi's library)."""
+    def get(label):
+        return xbmc.getInfoLabel(f"{prefix}{label}")
+    dbtype = get("DBType") or "movie"
+    if dbtype == "movie":
+        tmdb_id = get("UniqueID(tmdb)") or get("Property(tmdb_id)")
+        return {"type": "movie", "tmdb": tmdb_id} if tmdb_id.isdigit() else None
+    if dbtype in ("season", "episode") and get("DBID").isdigit():
+        show = str(library_show_ids(prefix).get("tmdb", ""))       # Kodi's library: the episode's own number is not the series'
+    elif dbtype in ("season", "episode"):
+        show = get("Property(tmdb_id)") or get("UniqueID(tmdb)")
+    else:
+        show = get("UniqueID(tmdb)") or get("Property(tmdb_id)")
+        if not show.isdigit() and get("DBID").isdigit():
+            show = str(library_show_ids(prefix).get("tmdb", ""))
+    if not show.isdigit():
+        return None
+    if dbtype == "episode" and get("Season").isdigit() and get("Episode").isdigit():
+        return {"type": "episode", "tmdb": show, "season": get("Season"), "episode": get("Episode")}
+    if dbtype == "season" and get("Season").isdigit():
+        return {"type": "season", "tmdb": show, "season": get("Season")}
+    return {"type": "tvshow", "tmdb": show}
+
+
+def lv_run(action, **params):
+    xbmc.executebuiltin(f"RunPlugin({LVP}?{urllib.parse.urlencode(dict(action=action, **params))})")
+
+
+def lv_watched(prefix="ListItem."):
+    target = lv_target(prefix)
+    if not target:
+        xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
+        return
+    state = HOME.getProperty("nuvio.info.watched")
+    watched = (state == "1") if state in ("0", "1") else int(xbmc.getInfoLabel(f"{prefix}PlayCount") or 0) > 0
+    lv_run("watched", value=0 if watched else 1, **target)          # Lucent Video tells Trakt / Simkl (or keeps it itself)
+    HOME.setProperty("nuvio.info.watched", "0" if watched else "1")
+    dbid = xbmc.getInfoLabel(f"{prefix}DBID")
+    dbtype = xbmc.getInfoLabel(f"{prefix}DBType")
+    if dbid.isdigit() and dbtype in ("movie", "episode"):            # Kodi's own library: the same mark at once
+        method = "VideoLibrary.SetMovieDetails" if dbtype == "movie" else "VideoLibrary.SetEpisodeDetails"
+        key = "movieid" if dbtype == "movie" else "episodeid"
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method,
+                                        "params": {key: int(dbid), "playcount": 0 if watched else 1}}))
+    notify(tr("unwatched") if watched else tr("watched"))
+
+
+def lv_lists(prefix="ListItem."):
+    """Library and lists through Lucent Video (its own account: Trakt, Simkl or this device)."""
+    target = lv_target(prefix)
+    if target and target["type"] in ("season", "episode"):
+        target = {"type": "tvshow", "tmdb": target["tmdb"]}          # a season or episode: the whole series goes on the list
+    if not target:
+        xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
+        return
+    if lv_version() >= LV_LISTS:                                      # Lucent Video's own chooser (knows what is on which list)
+        lv_run("lists", **target)
+        return
+    title = xbmc.getInfoLabel(f"{prefix}Title") or xbmc.getInfoLabel(f"{prefix}Label")
+    rows = [(G_LV["wl_add"], "watchlist", {"value": 1}), (G_LV["wl_remove"], "watchlist", {"value": 0})]
+    if lv_version() >= (0, 26, 0):
+        rows += [(G_LV["lib_add"], "library_add", {}), (G_LV["lib_remove"], "library_remove", {})]
+    pick = xbmcgui.Dialog().select(tr("pick", title), [r[0][1 if _NL else 0] for r in rows])
+    if pick < 0:
+        return
+    _label, action, extra = rows[pick]
+    lv_run(action, **dict(target, **extra))
+
+
+LV_LISTS = (0, 29, 0)       # the first Lucent Video with action=lists (asked for in the project)
+G_LV = {
+    "wl_add": ("Watchlist: add", "Kijklijst: toevoegen"),
+    "wl_remove": ("Watchlist: remove", "Kijklijst: weghalen"),
+    "lib_add": ("Kodi library: add", "Kodi-bibliotheek: toevoegen"),
+    "lib_remove": ("Kodi library: remove", "Kodi-bibliotheek: weghalen"),
+}
+
+
 # ----------------------------------------------------------------------------- series from Kodi's own library
 def library_show_ids(prefix="ListItem."):
     """{'trakt', 'tmdb', 'imdb', 'tvdb', 'title'} of the series a library season / episode belongs to.
@@ -356,7 +475,11 @@ def trakt_show_from(ids):
 
 # ----------------------------------------------------------------------------- lists dialog
 def choose_lists(container=""):
-    item = Item(f"Container({container}).ListItem." if container.isdigit() else "ListItem.")
+    prefix = f"Container({container}).ListItem." if container.isdigit() else "ListItem."
+    if use_lv(prefix):
+        lv_lists(prefix)
+        return
+    item = Item(prefix)
     if item.dbtype in ("season", "episode") and (item.is_seren_episode or item.tmdb.isdigit() or item.imdb.startswith("tt")):
         item = item.as_show()                      # a season or episode: put the whole series in the list
     if not item.ids() and item.dbtype in ("season", "episode", "tvshow"):
@@ -457,6 +580,16 @@ def choose_lists(container=""):
 
 def quick_add():
     """Long press > Add to my library: on your library list (Lucent Library) or in the Trakt collection, and in Kodi's library."""
+    if use_lv():
+        target = lv_target()
+        if target and target["type"] in ("season", "episode"):
+            target = {"type": "tvshow", "tmdb": target["tmdb"]}
+        if target and lv_version() >= (0, 26, 0):
+            lv_run("library_add", **target)
+            return
+        if target:
+            lv_run("watchlist", value=1, **target)
+            return
     item = Item()
     if not item.ids() or item.kind not in ("movie", "show"):
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
@@ -555,6 +688,9 @@ def fen_light_mark(addon_id, item, watched):
 
 
 def toggle_watched():
+    if use_lv() and not fen_light_id():
+        lv_watched()
+        return
     item = Item()
     fen = fen_light_id()                            # Fen Light / Red Light: the add-on marks it (and tells Trakt) itself
     if fen and item.tmdb.isdigit():
@@ -617,6 +753,16 @@ def tmdb_key():
         if key:
             break
         key = _read_key(path)
+    if not key:                                         # Lucent Video: its own setting, or the tester code's keys.json
+        try:
+            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
+        except Exception:  # noqa: BLE001 - not installed
+            key = ""
+        if not key:
+            try:
+                key = str(json.loads(_read_key("special://profile/addon_data/plugin.video.lucent/keys.json") or "{}").get("tmdb") or "").strip()
+            except ValueError:
+                key = ""
     _KEY.update(value=key, time=time.time())
     return key
 
@@ -1159,15 +1305,37 @@ def _overlay_open():
         return None
 
 
+def lv_open_with():
+    """Titles opened by Lucent itself (actor, collection, similar): played with Lucent Video when Seren is not used."""
+    return lv_on() and not seren_login()
+
+
+def lv_play_url(kind, tmdb_id):
+    return f"{LVP}?action=play&type=movie&tmdb={tmdb_id}" if kind == "movie" else f"{LVP}?action=seasons&tmdb={tmdb_id}"
+
+
 def _show_title(kind, tmdb_id, trakt_id):
     """Open the page of a title from TMDB data. Raises when that does not work."""
-    trakt = int(trakt_id) if str(trakt_id).isdigit() else trakt_id_for(kind, tmdb_id)
-    if not trakt:
-        raise RuntimeError("no Trakt id")
-    li = build_listitem(kind, tmdb_id, trakt)
+    if lv_open_with():
+        li = build_listitem(kind, tmdb_id, None)
+        li.setPath(lv_play_url(kind, tmdb_id))
+        li.setProperty("tmdb_id", str(tmdb_id))
+        li.setProperty("lucent_video", "1")
+        if kind != "movie":
+            try:
+                li.setIsFolder(True)
+            except AttributeError:      # older Kodi
+                pass
+        folder = lv_play_url(kind, tmdb_id) if kind != "movie" else ""
+    else:
+        trakt = int(trakt_id) if str(trakt_id).isdigit() else trakt_id_for(kind, tmdb_id)
+        if not trakt:
+            raise RuntimeError("no Trakt id")
+        li = build_listitem(kind, tmdb_id, trakt)
+        folder = seren_seasons_url(trakt) if kind != "movie" else ""
     HOME.setProperty("nuvio.open.current", json.dumps([kind, str(tmdb_id)]))
     # what Play opens for a series: the streaming pop-up (service.py) opens it itself after closing (see there)
-    HOME.setProperty("nuvio.open.folder", seren_seasons_url(trakt) if kind != "movie" else "")
+    HOME.setProperty("nuvio.open.folder", folder)
     xbmc.executebuiltin("Dialog.Close(1180,true)")
     xbmc.executebuiltin("Dialog.Close(movieinformation,true)")
     xbmc.Monitor().waitForAbort(0.4)
@@ -1328,6 +1496,13 @@ def open_seasons():
     in the library. When Trakt does not know it (or Seren is missing) its page opens instead."""
     tmdb_id = HOME.getProperty("nuvio.open.tmdb")
     trakt = HOME.getProperty("nuvio.open.trakt")
+    if lv_open_with() and tmdb_id.isdigit():                 # Lucent Video: its seasons, no Trakt number needed
+        folder = lv_play_url("tv", tmdb_id)
+        if xbmc.getCondVisibility("Window.IsVisible(Lucent_Service.xml)"):
+            HOME.setProperty("lucent.svc.folder", folder)
+        else:
+            xbmc.executebuiltin(f'ActivateWindow(Videos,"{folder}",return)')
+        return
     if not trakt.isdigit() and tmdb_id.isdigit() and xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})"):
         trakt = str(trakt_id_for("tv", tmdb_id) or "")
     if not trakt.isdigit():
