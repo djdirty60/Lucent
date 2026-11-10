@@ -13,7 +13,9 @@ import sys
 import urllib.parse
 
 import xbmc
+import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 VERSION = "1"
 NTABS = 12
@@ -271,12 +273,14 @@ def pick_streaming():
     row = tr(G("All streaming services (a row of services)", "Alle streamingdiensten (een rij met diensten)"))
     one = tr(G("One service: one of its lists…", "Eén dienst: een van zijn lijsten…"))
     choice = select(tr(G("Streaming services", "Streamingdiensten")), [row, one])
+    lv = lv_ready()                                     # Lucent Video has the same rows (since 0.18.0)
+    source = LV + "service_row" if lv else "plugin://script.lucent.library/?action=providers"
     if choice == 0:
-        return tr(G("Streaming services", "Streamingdiensten")), "plugin://script.lucent.library/?action=providers", "land"
+        return tr(G("Streaming services", "Streamingdiensten")), source, "land"
     if choice != 1:
         return None
     busy(True)
-    entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://script.lucent.library/?action=providers",
+    entries = jsonrpc("Files.GetDirectory", {"directory": source,
                                              "media": "files", "properties": ["title"]}).get("files", []) or []
     busy(False)
     entries = [e for e in entries if e.get("file")]
@@ -289,11 +293,14 @@ def pick_streaming():
         return None
     import urllib.parse
     q = urllib.parse.parse_qs(entries[pick]["file"].split("?", 1)[1])
-    pid, pname = (q.get("id") or [""])[0], (q.get("name") or [""])[0]
+    pid = (q.get("provider") or q.get("id") or [""])[0]
+    pname = (q.get("name") or [""])[0] or clean(entries[pick].get("label") or "")
     k = select(pname, [tr(lab) for _k, lab in PROV_KINDS])
     if k < 0 or not pid:
         return None
     kind, lab = PROV_KINDS[k]
+    if lv:
+        return f"{pname} · {tr(lab)}", LV + f"service_list&provider={pid}&kind={kind}", "poster"
     return f"{pname} · {tr(lab)}", TMDB + f"prov_{pid}_{kind}", "poster"
 
 
@@ -333,6 +340,7 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Series · Top rated", "Series · Best beoordeeld"), LV + "toprated_tv", "poster"),
     (("Series · On the air", "Series · Nu op tv"), LV + "airing_tv", "poster"),
     (("Series · Coming soon", "Series · Binnenkort"), LV + "upcoming_tv", "poster"),
+    (("Series · New", "Series · Nieuw"), LV + "new_tv", "poster"),
     (("Continue watching", "Verder kijken"), LV + "continue", "land"),
     (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
     (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
@@ -343,6 +351,7 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
     (("Calendar · New episodes", "Kalender · Nieuwe afleveringen"), LV + "calendar", "land"),
     (("For you", "Voor jou"), LV + "foryou", "poster"),
+    (("Ready in top quality", "Klaar in topkwaliteit"), LV + "alerts", "land"),
 ]
 
 
@@ -414,6 +423,83 @@ def pick_lv_person():
 
 def has_lv():
     return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
+
+
+def log(text):
+    xbmc.log(f"[skin.lucent] menu: {text}", xbmc.LOGINFO)
+
+
+def lv_ready():
+    """Lucent Video has a TMDB key (its own setting or the tester code's keys.json): its rows can fill."""
+    if not has_lv():
+        return False
+    try:
+        if xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key"):
+            return True
+    except Exception:  # noqa: BLE001
+        return False
+    return xbmcvfs.exists("special://profile/addon_data/plugin.video.lucent/keys.json")
+
+
+def use_lv():
+    """The default rows come from Lucent Video: it is installed and Seren is not used."""
+    return has_lv() and not uses_seren()
+
+
+LVA = "plugin://plugin.video.lucent/?action="
+SEREN_TO_LV = [  # (part of a Seren row address, Lucent Video row name): the first match wins
+    ("showsNextUp", "nextup"), ("onDeckMovies", "continue_movie"),
+    ("mediatype=movies&endpoint=trending", "trending_movie"), ("mediatype=shows&endpoint=trending", "trending_tv"),
+    ("mediatype=movies&endpoint=popular", "popular_movie"), ("mediatype=shows&endpoint=popular", "popular_tv"),
+    ("mediatype=movies&endpoint=anticipated", "upcoming_movie"), ("mediatype=shows&endpoint=anticipated", "upcoming_tv"),
+    ("endpoint=boxoffice", "nowplaying_movie"), ("showsNew", "new_tv"), ("moviesMyWatchlist", "watchlist_movie"),
+    ("showsMyWatchlist", "watchlist_tv"), ("myUpcomingEpisodes", "calendar"), ("movieTrendingRecent", "trending_movie"),
+    ("moviePopularRecent", "popular_movie"), ("showsTrendingRecent", "trending_tv"), ("showsPopularRecent", "popular_tv"),
+    ("moviesRecommended", "foryou"), ("showsRecommended", "foryou"), ("moviesMyCollection", "collection_movie"),
+    ("mediatype=shows", "popular_tv"), ("action=shows", "popular_tv"), ("", "popular_movie")]
+SEREN_TABS = [("action=searchMenu", "searchmenu"), ("action=moviesHome", "menu&type=movie"), ("action=showsHome", "menu&type=tvshow")]
+
+
+def lv_path(path, seren_too=True):
+    """The Lucent Video row for a Seren row or a Lucent Library streaming row, or '' when there is none."""
+    if seren_too and path.startswith(SEREN):
+        return LV + next(name for part, name in SEREN_TO_LV if part in path)
+    if path.startswith("plugin://script.lucent.library/?action=providers"):
+        return LV + "service_row"
+    found = re.search(r"^plugin://script\.lucent\.library/\?action=tmdb\w*&list=prov_(\d+)_(\w+)$", path)
+    if found:
+        return LV + f"service_list&provider={found.group(1)}&kind={found.group(2)}"
+    return ""
+
+
+def lv_convert():
+    """Rows of Seren (when Seren is not used) and the streaming rows of Lucent Library become Lucent Video rows.
+    Runs from Home until there is nothing left to change and Lucent Video has its key."""
+    if not has_lv():
+        return
+    seren_too, services_too = not uses_seren(), lv_ready()
+    menu = Menu()
+    changed = False
+    for tab in menu.tabs:
+        if seren_too and tab["action"].startswith(f"ActivateWindow(Videos,{SEREN}"):
+            new = next((videos(LVA + lv) for part, lv in SEREN_TABS if part in tab["action"]), "")
+            if new:
+                tab["action"], changed = new, True
+        for wd in tab["widgets"]:
+            path = wd["path"]
+            if path.startswith(SEREN) and not seren_too:
+                continue
+            if not path.startswith(SEREN) and not services_too:
+                continue
+            new = lv_path(path, seren_too)
+            if new and new != path:
+                wd["path"], changed = new, True
+    if changed:
+        menu.save()
+        log(f"rows moved to Lucent Video (seren={seren_too}, services={services_too})")
+        xbmc.executebuiltin("Container.Refresh")
+    if services_too:
+        put("lucent.lvrows", "done")
 
 
 def pick_lv():
@@ -601,10 +687,44 @@ def plain_tabs():
     ], 2
 
 
+def lv_tabs():
+    """The default menu with Lucent Video instead of Seren: its rows on the tabs, its search and menus behind them."""
+    lib_by_key = {k: (p, s) for k, p, s in WIDGETS_LIBRARY}
+    names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV}
+    names["new_tv"] = (("Series · New", "Series · Nieuw"), "poster")
+
+    def row(name):
+        label, style = names[name]
+        return {"label": tr_pair(label), "path": LV + name, "style": style}
+
+    home = [row("continue"), row("nextup"), row("trending_movie"), row("trending_tv"),
+            widget("w_recent_m", *lib_by_key["w_recent_m"]), widget("w_recent_e", *lib_by_key["w_recent_e"])]
+    movies = [row("continue_movie"), row("trending_movie"), row("popular_movie"), row("upcoming_movie"), row("nowplaying_movie")]
+    shows = [row("nextup"), row("trending_tv"), row("popular_tv"), row("new_tv"), row("calendar")]
+    library = [widget(k, *lib_by_key[k]) for k in ("w_recent_m", "w_recent_e", "w_inprog_s")]
+
+    def tab(key, icon, action, widgets=None):
+        return {"label": tr(key), "icon": f"icons/{icon}.png", "action": action, "widgets": widgets or []}
+
+    return [
+        tab("t_search", "search", videos(LVA + "searchmenu")),
+        tab("t_home", "home", SHOW_WIDGETS, home),
+        tab("t_movies", "movies", videos(LVA + "menu&type=movie"), movies),
+        tab("t_shows", "tv", videos(LVA + "menu&type=tvshow"), shows),
+        tab("t_library", "library", videos("videodb://"), library),
+        tab("t_addons", "addons", "ActivateWindow(AddonBrowser)", addon_widgets()),
+        tab("t_favourites", "favourites", "ActivateWindow(favouritesbrowser)"),
+        tab("t_calendar", "calendar", "RunScript(special://skin/scripts/agenda.py)"),
+        tab("t_settings", "settings", "ActivateWindow(Settings)"),
+        tab("t_power", "power", "ActivateWindow(ShutdownMenu)"),
+    ], 2
+
+
 def default_tabs():
-    """The menu of version 1.0, plus the rows and Trakt lists the user had chosen there (without Seren: plain_tabs)."""
+    """The menu of version 1.0, plus the rows and Trakt lists the user had chosen there (without Seren: Lucent Video's
+    rows when it is installed, else plain_tabs)."""
     if not uses_seren():
-        return plain_tabs()
+        return lv_tabs() if has_lv() else plain_tabs()
     home = []
     old_rows = [("w_nextup", 8001), ("w_ondeck", 8002), ("w_trend_m", 8003), ("w_trend_s", 8004)]
     seren_by_key = {k: (p, s) for k, p, s in WIDGETS_SEREN}
@@ -986,7 +1106,7 @@ def edit_widgets(menu, tab):
         wd = widgets[choice]
         own = lambda key: tr("own_set") if wd.get(key) else tr("own_none")  # noqa: E731
         options = []                                # (key, text): what the action is, not where it is in the list
-        if "action=providers" in wd.get("path", ""):
+        if "action=providers" in wd.get("path", "") or "name=service_row" in wd.get("path", ""):
             options.append(("services", tr("edit_services")))
         options += [("rename", tr("rename")),
                     ("change", tr(G("Change to another widget…", "Wijzigen naar een andere widget…"))),
@@ -1419,6 +1539,8 @@ if __name__ == "__main__":
         init()
     elif arg == "addons":
         addons_once()
+    elif arg == "lv":
+        lv_convert()
     elif arg == "addwidget":
         add_here()
     elif arg == "limitcheck":

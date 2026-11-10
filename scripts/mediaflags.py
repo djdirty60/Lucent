@@ -6,6 +6,7 @@ A series or season: Lucent asks the library for its episodes and shows the quali
 when they are not all the same.
 The helper calls tick() several times a second. Fills Window(home).Property(lucent.mf.*):
   img1..img6  flag images in player order     alang / slang  languages (EN · NL)
+  t1..t6 / c1..c6 / k1..k6  the same flags as coloured text badges (text, badge colour, text colour), always sharp
   most        '1' when it is what most episodes have          for  the title the flags belong to
 """
 import json
@@ -18,7 +19,7 @@ import xbmcgui
 HOME = xbmcgui.Window(10000)
 OFF = "Skin.HasSetting(lucent.mf.off)"
 P = "lucent.mf."
-PROPS = ("img1", "img2", "img3", "img4", "img5", "img6", "alang", "slang", "most", "for")
+PROPS = tuple(f"{k}{i}" for k in ("img", "t", "c", "k") for i in range(1, 7)) + ("alang", "slang", "most", "for")
 STATE = {"id": "", "since": 0.0, "done": ""}
 SHOW_CACHE = {}                                   # 'tvshow:12' / 'season:12:3' -> flags, for this session
 
@@ -27,6 +28,19 @@ HDR = {"dolbyvision": ("DV", "dolbyvision"), "hdr10plus": ("HDR10+", "hdr10plus"
 VCODEC = {"hevc": ("HEVC", "hevc"), "h265": ("HEVC", "hevc"), "av1": ("AV1", "av1"), "h264": ("AVC", "h264"), "avc1": ("AVC", "h264"),
           "vp9": ("VP9", "vp9")}
 CH = {8: ("7.1", "71"), 7: ("6.1", "61"), 6: ("5.1", "51"), 2: ("2.0", "20"), 1: ("1.0", "10")}
+
+
+# key -> (badge text, badge colour, text colour): the coloured badges in the lists (look C, issue #9)
+DARK, GREY, LIGHT, WHITE, BLACK = "FF3A3A3A", "FF555555", "FFD9D9D9", "FFFFFFFF", "FF111111"
+BADGE = {"8k": ("8K", LIGHT, BLACK), "4k": ("4K", LIGHT, BLACK), "1080": ("1080P", DARK, WHITE), "720": ("720P", DARK, WHITE),
+         "sd": ("SD", DARK, WHITE), "dolbyvision": ("DOLBY VISION", "FF7B35B0", WHITE), "hdr10plus": ("HDR10+", "FFC9A227", BLACK),
+         "hdr10": ("HDR10", "FFC9A227", BLACK), "hlg": ("HLG", "FF2E8B57", WHITE), "hevc": ("HEVC", DARK, WHITE), "av1": ("AV1", DARK, WHITE),
+         "h264": ("H.264", DARK, WHITE), "vp9": ("VP9", DARK, WHITE), "atmos": ("ATMOS", "FF262A33", WHITE),
+         "dtsx": ("DTS:X", "FF2F6FD6", WHITE), "dtshd_ma": ("DTS-HD MA", "FF2F6FD6", WHITE), "dtshd_hra": ("DTS-HD HRA", "FF2F6FD6", WHITE),
+         "dts": ("DTS", "FF2F6FD6", WHITE), "truehd": ("TRUEHD", "FF4A4A55", WHITE), "eac3": ("DD+", "FF4A4A55", WHITE),
+         "ac3": ("DD", "FF4A4A55", WHITE), "aac": ("AAC", DARK, WHITE), "flac": ("FLAC", DARK, WHITE), "opus": ("OPUS", DARK, WHITE),
+         "pcm": ("PCM", DARK, WHITE), "mp3": ("MP3", DARK, WHITE), "71": ("7.1", GREY, WHITE), "61": ("6.1", GREY, WHITE),
+         "51": ("5.1", GREY, WHITE), "20": ("2.0", GREY, WHITE), "10": ("1.0", GREY, WHITE)}
 
 
 def cond(text):
@@ -38,9 +52,9 @@ def label(text):
 
 
 def _img(name, key):
-    """flags/<name>.png, or the flag the user chose for it (Settings > Player > flags), like the player does."""
+    """(picture, key): flags/<name>.png, or the flag the user chose for it (Settings > Player > flags), like the player does."""
     own = label(f"Skin.String(nuvio.flag.{key})")
-    return own or f"flags/{name}.png"
+    return own or f"flags/{name}.png", key
 
 
 def res_tier(res, width=0):
@@ -169,8 +183,12 @@ def fill(ident):
         HOME.clearProperty(P + p)
     if not imgs and not alang and not slang:
         return
-    for i, img in enumerate(imgs[:6], 1):
+    for i, (img, key) in enumerate(imgs[:6], 1):
         HOME.setProperty(f"{P}img{i}", img)
+        text, colour, ink = BADGE.get(key, (key.upper(), DARK, WHITE))
+        HOME.setProperty(f"{P}t{i}", text)
+        HOME.setProperty(f"{P}c{i}", colour)
+        HOME.setProperty(f"{P}k{i}", ink)
     if alang:
         HOME.setProperty(P + "alang", alang)
     if slang:

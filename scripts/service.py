@@ -1,8 +1,9 @@
 """Lucent: one streaming service in a pop-up - its six lists under each other (Lucent_Service.xml).
 
-  RunScript(special://skin/scripts/service.py,<TMDb provider id>,<name>,<logo url>)
+  RunScript(special://skin/scripts/service.py,<TMDb provider id>,<name>,<logo url>[,lucentvideo])
 
-The lists come from Lucent Library (TMDb, saved copies). OK on a title opens its page, Back closes the pop-up.
+The lists come from Lucent Library (TMDb, saved copies), or from Lucent Video when the fourth argument is lucentvideo
+(or Lucent Library is not installed). OK on a title opens its page, Back closes the pop-up.
 """
 import sys
 import threading
@@ -25,8 +26,9 @@ def t(en, nl):
 
 
 class Service(xbmcgui.WindowXMLDialog):
-    def setup(self, pid, name, logo):
+    def setup(self, pid, name, logo, source=""):
         self.pid, self.name, self.logo = pid, name, logo
+        self.lv = source == "lucentvideo" or not xbmc.getCondVisibility("System.HasAddon(script.lucent.library)")
         self.closed = False
 
     def onInit(self):
@@ -56,7 +58,10 @@ class Service(xbmcgui.WindowXMLDialog):
         key = f"{cat}{kind}"
         label = next((t(en, nl) for k, en, nl in KINDS if k == key), "")
         self.setProperty("svc.rowlabel", label)
-        self.setProperty("row", f"plugin://script.lucent.library/?action=tmdbbrowse&list=prov_{self.pid}_{key}")
+        if self.lv:
+            self.setProperty("row", f"plugin://plugin.video.lucent/?action=list&name=service_list&provider={self.pid}&kind={key}&widget=1")
+        else:
+            self.setProperty("row", f"plugin://script.lucent.library/?action=tmdbbrowse&list=prov_{self.pid}_{key}")
         threading.Thread(target=self.to_start, daemon=True).start()
 
     def to_start(self):
@@ -175,7 +180,7 @@ def main():
     name = urllib.parse.unquote(args[1]) if len(args) > 1 else ""
     logo = urllib.parse.unquote(args[2]) if len(args) > 2 else ""
     window = Service("Lucent_Service.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
-    window.setup(args[0], name, logo)
+    window.setup(args[0], name, logo, args[3] if len(args) > 3 else "")
     window.doModal()
     window.closed = True
     del window
