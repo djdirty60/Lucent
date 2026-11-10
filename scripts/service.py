@@ -28,7 +28,7 @@ def t(en, nl):
 class Service(xbmcgui.WindowXMLDialog):
     def setup(self, pid, name, logo, source=""):
         self.pid, self.name, self.logo = pid, name, logo
-        self.lv = source == "lucentvideo" or not xbmc.getCondVisibility("System.HasAddon(script.lucent.library)")
+        self.lv = source == "lucentvideo" or not xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)")
         self.closed = False
 
     def onInit(self):

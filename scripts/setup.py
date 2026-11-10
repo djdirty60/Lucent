@@ -60,6 +60,11 @@ def has(addon_id):
     return cond(f"System.HasAddon({addon_id})")
 
 
+def lib_on():
+    """The older Lucent Library is installed and switched on."""
+    return cond(f"System.AddonIsEnabled({LIB})")
+
+
 def install(addon_id):
     xbmc.executebuiltin(f"InstallAddon({addon_id})")
 
@@ -365,7 +370,7 @@ EVERY_NEXT = {"6": "12", "12": "24", "24": "0"}
 
 
 def st_library():
-    if not has(LIB):
+    if not lib_on():
         if not has(LV):
             return "info", t("Optional: Lucent Video can fill Kodi's library", "Optioneel: Lucent Video kan de bibliotheek van Kodi vullen")
         on = setting(LV, "library_on") == "true"
@@ -385,7 +390,7 @@ def st_library():
 
 
 def ac_library():
-    if not has(LIB):
+    if not lib_on():
         if not has(LV):
             return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
         base = "RunPlugin(plugin://plugin.video.lucent/?action="
@@ -777,7 +782,7 @@ def open_window():
     path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
     window = Setup("Lucent_Setup.xml", path, "Default", "1080i")
     try:
-        if has(LIB):
+        if lib_on():
             xbmc.executebuiltin(f"RunScript({LIB},status)")   # film / series numbers for the library step
         window.doModal()
     finally:

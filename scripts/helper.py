@@ -220,7 +220,7 @@ def run():
     def cached(path):
         """True / False: Lucent Library has a filled / no copy of this row. None: the row does not come from its copies."""
         if not path.startswith("plugin://") or path.startswith("plugin://script.lucent.library/?action=lib") or \
-                cond("Skin.HasSetting(lucent.wcache.off) | !System.HasAddon(script.lucent.library)"):
+                cond("Skin.HasSetting(lucent.wcache.off) | !System.AddonIsEnabled(script.lucent.library)"):
             return None
         if path.startswith("plugin://script.lucent.library/?action=providers"):
             file = os.path.join(libdir, "tmdb", "providers.json")        # the streaming services row

@@ -434,7 +434,7 @@ def has_lv():
 
 def has_lib():
     """The older Lucent Library (no longer needed by the skin): its rows only fill when it is installed."""
-    return xbmc.getCondVisibility("System.HasAddon(script.lucent.library)")
+    return xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)")
 
 
 def log(text):
@@ -506,7 +506,7 @@ def lv_convert():
     if not has_lv():
         return
     seren_too, services_too = not uses_seren(), lv_ready()
-    lib_too = not xbmc.getCondVisibility("System.HasAddon(script.lucent.library)")      # its rows can never fill
+    lib_too = not xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)")      # its rows can never fill
     menu = Menu()
     changed = False
     for tab in menu.tabs:
@@ -1281,7 +1281,7 @@ def source_page(wd):
                 have, want)):
             ser.setSetting("item.limit", str(want))
             notify(tr(G("Seren now gives {0} titles per list", "Seren geeft nu {0} titels per lijst"), want))
-            if xbmc.getCondVisibility("System.HasAddon(script.lucent.library)"):
+            if xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)"):
                 xbmc.executebuiltin("RunScript(script.lucent.library,widgets_stale)")   # the saved copies of 20: again
     elif path.startswith("plugin://script.lucent.library/"):
         return                                      # Lucent's own rows give up to 60 (TMDb) or 100 (Trakt) titles
