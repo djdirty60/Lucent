@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.lucent" version="0.16.0" name="Lucent Video" provider-name="Claude">
+<addon id="plugin.video.lucent" version="0.17.0" name="Lucent Video" provider-name="Claude">
     <requires>
         <import addon="xbmc.python" version="3.0.1"/>
     </requires>
@@ -7,6 +7,42 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.service" library="service.py"/>
+    <extension point="kodi.context.item">
+        <menu id="kodi.core.main">
+            <item library="context.py" args="source">
+                <label>32130</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)]</visible>
+            </item>
+            <item library="context.py" args="watched">
+                <label>32131</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow) | String.IsEqual(ListItem.DBTYPE,episode)] + Integer.IsEqual(ListItem.PlayCount,0)</visible>
+            </item>
+            <item library="context.py" args="watched">
+                <label>32132</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow) | String.IsEqual(ListItem.DBTYPE,episode)] + Integer.IsGreater(ListItem.PlayCount,0)</visible>
+            </item>
+            <item library="context.py" args="watchlist_add">
+                <label>32133</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+            </item>
+            <item library="context.py" args="watchlist_remove">
+                <label>32134</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+            </item>
+            <item library="context.py" args="trailer">
+                <label>32135</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)] + !String.IsEmpty(ListItem.Trailer)</visible>
+            </item>
+            <item library="context.py" args="cast">
+                <label>32136</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+            </item>
+            <item library="context.py" args="similar">
+                <label>32137</label>
+                <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+            </item>
+        </menu>
+    </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Movies and series for Lucent, with AIOStreams and Trakt</summary>
         <summary lang="nl_NL">Films en series voor Lucent, met AIOStreams en Trakt</summary>
@@ -14,12 +50,12 @@
         <description lang="nl_NL">Bladeren met TMDB, afspelen via je eigen AIOStreams-adres en je voortgang bijhouden op Trakt. Werkt zonder Seren.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>0.16.0: CocoScrapers as a source, played through Real-Debrid, AllDebrid, Premiumize or TorBox (enter your API key in the settings). Kids profiles with an age limit and a PIN. Search history per profile. "Watch trailer" in the context menu. Backup and restore of all Lucent Video settings. Automatic subtitle search when no subtitle in your language is found (the Lucent skin does this itself).
+        <news>0.17.0: Coming soon for movies and series shows only what is still to come, nearest date first; the calendar shows episodes from today up to two months ahead. Library titles get every TMDB poster, logo and background (Choose art), and Lucent Video options in their context menu. New, tidier main menu and settings.
+0.16.0: CocoScrapers as a source, played through Real-Debrid, AllDebrid, Premiumize or TorBox (enter your API key in the settings). Kids profiles with an age limit and a PIN. Search history per profile. "Watch trailer" in the context menu. Backup and restore of all Lucent Video settings. Automatic subtitle search when no subtitle in your language is found (the Lucent skin does this itself).
 0.15.0: The library now follows every page of Trakt (no limit of 100), and you can choose what goes in it: collection, watchlist and/or your Trakt lists.
 0.14.0: The library folders are added to Kodi automatically (new setting, on by default).
 0.13.1: Clearer focus in the source window.
-0.13.0: Keys never live in the code. Testers get a private tester code: enter it once in the setup assistant (step Keys) and TMDB, Trakt and Simkl work. A key file (keys.json) from a USB stick or network folder works too, or your own free TMDB key. Without a key, Home rows stay empty instead of opening a window. Trakt login no longer needs a Client Secret.
-0.12.0: Setup assistant on first start (account, keys, sources, order, Dolby Vision). Family profiles: "Who is watching?" - everybody has their own account, progress and lists; the Kodi library follows the first profile.</news>
+0.13.0: Keys never live in the code. Testers get a private tester code: enter it once in the setup assistant (step Keys) and TMDB, Trakt and Simkl work. A key file (keys.json) from a USB stick or network folder works too, or your own free TMDB key. Without a key, Home rows stay empty instead of opening a window. Trakt login no longer needs a Client Secret.</news>
         <assets>
             <icon>icon.png</icon>
         </assets>

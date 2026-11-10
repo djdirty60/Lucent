@@ -332,6 +332,7 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Series · Popular", "Series · Populair"), LV + "popular_tv", "poster"),
     (("Series · Top rated", "Series · Best beoordeeld"), LV + "toprated_tv", "poster"),
     (("Series · On the air", "Series · Nu op tv"), LV + "airing_tv", "poster"),
+    (("Series · Coming soon", "Series · Binnenkort"), LV + "upcoming_tv", "poster"),
     (("Continue watching", "Verder kijken"), LV + "continue", "land"),
     (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
     (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
@@ -340,7 +341,7 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
     (("Collection · Films", "Collectie · Films"), LV + "collection_movie", "poster"),
     (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
-    (("Calendar", "Kalender"), LV + "calendar", "land"),
+    (("Calendar · New episodes", "Kalender · Nieuwe afleveringen"), LV + "calendar", "land"),
     (("For you", "Voor jou"), LV + "foryou", "poster"),
 ]
 

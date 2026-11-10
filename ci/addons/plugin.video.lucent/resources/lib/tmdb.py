@@ -35,6 +35,15 @@ def image(path, size):
     return IMG + size + path if path else ""
 
 
+def _gallery(images, key, size, limit=20):
+    """All choices of one kind of picture, own language first, then English, then without text, then the rest."""
+    wanted = "nl" if util.NL else "en"
+    rank = {wanted: 0, "en": 1, None: 2}
+    rows = [i for i in (images or {}).get(key) or [] if i.get("file_path") and not i["file_path"].endswith(".svg")]
+    rows.sort(key=lambda i: (rank.get(i.get("iso_639_1"), 3), -(i.get("vote_average") or 0)))
+    return [image(i["file_path"], size) for i in rows[:limit]]
+
+
 def _logo(images):
     logos = (images or {}).get("logos") or []
     wanted = "nl" if util.NL else "en"
@@ -75,7 +84,7 @@ def _trailer(raw):
 def details(kind, tmdb_id):
     """kind: movie or tvshow. Returns the normalised title, or None."""
     api_kind = "movie" if kind == "movie" else "tv"
-    extra = {"append_to_response": "external_ids,images,credits,release_dates,content_ratings,videos", "include_image_language": "nl,en,null"}
+    extra = {"append_to_response": "external_ids,images,credits,release_dates,content_ratings,videos", "include_image_language": "nl,en,null,de,fr,es,it"}
     try:
         raw = get("%s/%s" % (api_kind, tmdb_id), ttl=7 * DAY, **extra)
         if not raw.get("overview") and util.NL:
@@ -101,6 +110,10 @@ def details(kind, tmdb_id):
         "poster": image(raw.get("poster_path"), "w500"),
         "fanart": image(raw.get("backdrop_path"), "w1280"),
         "logo": _logo(raw.get("images")),
+        "gallery": {"poster": _gallery(raw.get("images"), "posters", "w500"), "clearlogo": _gallery(raw.get("images"), "logos", "w500"),
+                    "fanart": _gallery(raw.get("images"), "backdrops", "w1280"),
+                    "landscape": [image(i["file_path"], "w1280") for i in (raw.get("images") or {}).get("backdrops") or []
+                                  if i.get("iso_639_1") and i.get("file_path")][:10]},
         "rating": raw.get("vote_average") or 0,
         "votes": raw.get("vote_count") or 0,
         "genres": [g["name"] for g in raw.get("genres") or []],
@@ -170,6 +183,28 @@ def region():
     """The country the streaming services are read for."""
     chosen = util.setting("watch_region").upper()
     return chosen or ("NL" if util.NL else "US")
+
+
+def upcoming(kind, page=1, size=20):
+    """Films or series that are still to come: nothing already out, the first release date first. (titles, more?)"""
+    today = datetime.date.today()
+    later = (today + datetime.timedelta(days=365)).isoformat()
+    api, field = ("movie", "primary_release_date") if kind == "movie" else ("tv", "first_air_date")
+    params = {field + ".gte": (today + datetime.timedelta(days=1)).isoformat(), field + ".lte": later,
+              "sort_by": "popularity.desc", "include_adult": "false"}
+    if kind == "movie":
+        params.update(region=region(), with_release_type="2|3|4")
+    rows = []
+    for number in range(1, 6):              # the 100 most awaited, then sorted by date
+        data = get("discover/" + api, ttl=12 * 3600, page=number, **params)
+        rows += data.get("results") or []
+        if number >= (data.get("total_pages") or 1):
+            break
+    date_key = "release_date" if kind == "movie" else "first_air_date"
+    rows = [r for r in rows if (r.get(date_key) or "") > today.isoformat()]
+    rows.sort(key=lambda r: r.get(date_key) or "9999")
+    part = rows[(page - 1) * size:page * size]
+    return [m for m in many([(kind, r["id"]) for r in part])], len(rows) > page * size
 
 
 def providers():

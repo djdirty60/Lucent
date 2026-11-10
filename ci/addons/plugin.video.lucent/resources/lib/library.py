@@ -69,13 +69,24 @@ def rating_block(meta):
             % (meta["rating"], meta.get("votes") or 0))
 
 
+def _preview(url):
+    return url.replace("/w1280/", "/w300/").replace("/w500/", "/w185/")
+
+
 def art_block(meta):
+    """Every picture TMDB has, so Kodi's 'Choose art' offers them all. The first of each kind is the one used."""
+    gallery = meta.get("gallery") or {}
     out = ""
-    for kind, key in (("poster", "poster"), ("clearlogo", "logo")):
-        if meta.get(key):
-            out += '  <thumb aspect="%s">%s</thumb>\n' % (kind, escape(meta[key]))
-    if meta.get("fanart"):
-        out += "  <fanart><thumb>%s</thumb></fanart>\n" % escape(meta["fanart"])
+    for kind, key in (("poster", "poster"), ("clearlogo", "logo"), ("landscape", None)):
+        urls = list(dict.fromkeys(([meta[key]] if key and meta.get(key) else []) + (gallery.get(kind) or [])))
+        out += "".join('  <thumb aspect="%s" preview="%s">%s</thumb>\n' % (kind, escape(_preview(u)), escape(u)) for u in urls)
+    for season in meta.get("seasons") or []:
+        if season.get("poster_path"):
+            url = tmdb.image(season["poster_path"], "w500")
+            out += '  <thumb aspect="poster" type="season" season="%d" preview="%s">%s</thumb>\n' % (season["season_number"], escape(_preview(url)), escape(url))
+    fanart = list(dict.fromkeys(([meta["fanart"]] if meta.get("fanart") else []) + (gallery.get("fanart") or [])))
+    if fanart:
+        out += "  <fanart>\n%s  </fanart>\n" % "".join('    <thumb preview="%s">%s</thumb>\n' % (escape(_preview(u)), escape(u)) for u in fanart)
     return out
 
 
@@ -100,7 +111,7 @@ def ids_block(meta):
 def base_block(meta):
     return (tag("title", meta["title"]) + tag("originaltitle", meta.get("original_title")) + tag("year", meta.get("year"))
             + tag("plot", meta.get("plot")) + tag("tagline", meta.get("tagline")) + tag("runtime", meta.get("runtime"))
-            + tag("premiered", meta.get("premiered")) + rating_block(meta) + ids_block(meta) + people_block(meta) + art_block(meta))
+            + tag("premiered", meta.get("premiered")) + tag("trailer", meta.get("trailer")) + tag("mpaa", meta.get("mpaa")) + rating_block(meta) + ids_block(meta) + people_block(meta) + art_block(meta))
 
 
 HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
@@ -202,7 +213,12 @@ def export_movies(manual, folders):
         os.makedirs(path, exist_ok=True)
         strm = util.url_for(action="play", type="movie", tmdb=tmdb_id, lib=1) + "\n"
         changed += write_if_changed(os.path.join(path, folder + ".strm"), strm)
-        changed += write_if_changed(os.path.join(path, folder + ".nfo"), movie_nfo(meta, stamp(row.get("collected_at"))))
+        nfo = os.path.join(path, folder + ".nfo")
+        existed = os.path.exists(nfo)
+        if write_if_changed(nfo, movie_nfo(meta, stamp(row.get("collected_at")))):
+            changed += 1
+            if existed:
+                REFRESH.add(path)
     removed, held = remove_gone("movies", MOVIES, wanted, len(collection), manual)
     return len(collection), changed, removed, held
 
@@ -237,7 +253,11 @@ def export_shows(manual, folders):
         folder = names[tmdb_id]
         root = os.path.join(SHOWS, folder)
         os.makedirs(root, exist_ok=True)
-        changed += write_if_changed(os.path.join(root, "tvshow.nfo"), show_nfo(show))
+        existed = os.path.exists(os.path.join(root, "tvshow.nfo"))
+        if write_if_changed(os.path.join(root, "tvshow.nfo"), show_nfo(show)):
+            changed += 1
+            if existed:
+                REFRESH.add(root)
         keep = {"tvshow.nfo"}
         added = stamp(row.get("last_collected_at"))
         for raw in episodes:
@@ -303,6 +323,32 @@ def scan(path):
         if scanning() or monitor.waitForAbort(1):
             break
     return wait_idle(3600)
+
+
+REFRESH = set()
+
+
+def refresh_changed():
+    """Kodi only reads a changed .nfo when a title is refreshed: do that for titles whose information or pictures changed."""
+    if not REFRESH or not wait_idle():
+        return
+    folders = {os.path.normcase(os.path.normpath(p)) for p in REFRESH}
+    calls = []
+    for method, key, id_name, refresh in (("VideoLibrary.GetMovies", "movies", "movieid", "VideoLibrary.RefreshMovie"),
+                                          ("VideoLibrary.GetTVShows", "tvshows", "tvshowid", "VideoLibrary.RefreshTVShow")):
+        for item in rpc(method, {"properties": ["file"]}).get(key, []):
+            path = xbmcvfs.translatePath(item.get("file", ""))
+            folder = path if key == "tvshows" else os.path.dirname(path)
+            if util.ADDON_ID in path and os.path.normcase(os.path.normpath(folder)) in folders:
+                params = {id_name: item[id_name], "ignorenfo": False}
+                if key == "tvshows":
+                    params["refreshepisodes"] = False
+                calls.append((refresh, params))
+    REFRESH.clear()
+    for method, params in calls:                # one by one: Kodi runs each refresh as its own job
+        rpc(method, params)
+        wait_idle(600)
+    util.log("library: %d titles refreshed" % len(calls))
 
 
 def prune():
@@ -453,6 +499,7 @@ def run(manual=False):
                     progress.update(80, message=word)
                 if result[1] or fresh or util.flag("library_force_scan"):
                     scan(path)
+            refresh_changed()
             prune()
             sync_state()
         finally:

@@ -29,7 +29,7 @@ PAGE = 40
 TMDB_LISTS = {
     "trending_movie": ("trending/movie/week", "movie"), "popular_movie": ("movie/popular", "movie"),
     "toprated_movie": ("movie/top_rated", "movie"), "nowplaying_movie": ("movie/now_playing", "movie"),
-    "upcoming_movie": ("movie/upcoming", "movie"), "trending_tv": ("trending/tv/week", "tvshow"),
+"trending_tv": ("trending/tv/week", "tvshow"),
     "popular_tv": ("tv/popular", "tvshow"), "toprated_tv": ("tv/top_rated", "tvshow"),
     "airing_tv": ("tv/on_the_air", "tvshow"),
 }
@@ -92,44 +92,50 @@ def send_titles(handle, titles, content, more=None):
     send(handle, rows, content, more)
 
 
+def _action(label, url, icon="DefaultAddonProgram.png"):
+    """A row that does something instead of opening a list."""
+    item = xbmcgui.ListItem(label, offscreen=True)
+    item.setArt({"icon": icon, "thumb": icon})
+    item.setProperty("IsPlayable", "false")
+    return url, item, False
+
+
 def home(handle, _params):
+    """Watching first, then browsing, then your own things, then the tools."""
     rows = [
-        items.folder(T("Films", "Movies"), util.url_for(action="menu", type="movie"), "DefaultMovies.png"),
-        items.folder(T("Series", "Shows"), util.url_for(action="menu", type="tvshow"), "DefaultTVShows.png"),
-        items.folder(T("Zoeken", "Search"), util.url_for(action="searchmenu"), "DefaultAddonsSearch.png"),
-    ]
-    rows[2:2] = [
         items.folder(T("Verder kijken", "Continue watching"), util.url_for(action="list", name="continue"), "DefaultInProgressShows.png"),
         items.folder(T("Volgende afleveringen", "Next up"), util.url_for(action="list", name="nextup"), "DefaultTVShows.png"),
-        items.folder(T("Voor jou", "For you"), util.url_for(action="list", name="foryou"), "DefaultFolder.png"),
-        items.folder(T("Kalender", "Calendar"), util.url_for(action="list", name="calendar"), "DefaultFolder.png"),
-        items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultFolder.png"),
-        items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultFolder.png"),
+        items.folder(T("Films", "Movies"), util.url_for(action="menu", type="movie"), "DefaultMovies.png"),
+        items.folder(T("Series", "Shows"), util.url_for(action="menu", type="tvshow"), "DefaultTVShows.png"),
+        items.folder(T("Voor jou", "For you"), util.url_for(action="list", name="foryou"), "DefaultRecentlyAddedMovies.png"),
+        items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultNetwork.png"),
+        items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultPlaylist.png"),
+        items.folder(T("Zoeken", "Search"), util.url_for(action="searchmenu"), "DefaultAddonsSearch.png"),
+        _action(T("Profiel: %s", "Profile: %s") % users.current()["name"], util.url_for(action="who"), "DefaultUser.png"),
+        items.folder(T("Instellingen en hulp", "Settings and help"), util.url_for(action="tools"), "DefaultAddonProgram.png"),
     ]
-    if mdblist.available():
-        rows.insert(8, items.folder("MDBList", util.url_for(action="mdblistmenu"), "DefaultFolder.png"))
-    if floppy.available():
-        rows.insert(-1, items.folder("Floppy", util.url_for(action="floppylists"), "DefaultFolder.png"))
-    who = xbmcgui.ListItem(T("Profiel: %s", "Profile: %s") % users.current()["name"], offscreen=True)
-    who.setProperty("IsPlayable", "false")
-    rows.append((util.url_for(action="who"), who, False))
     send(handle, rows)
 
 
 def menu(handle, params):
-    if params.get("type") == "movie":
+    movie = params.get("type") == "movie"
+    if movie:
         entries = [(T("Trending", "Trending"), "trending_movie"), (T("Populair", "Popular"), "popular_movie"),
                    (T("Best beoordeeld", "Top rated"), "toprated_movie"), (T("Nu in de bioscoop", "In cinemas"), "nowplaying_movie"),
                    (T("Binnenkort", "Coming soon"), "upcoming_movie")]
     else:
         entries = [(T("Trending", "Trending"), "trending_tv"), (T("Populair", "Popular"), "popular_tv"),
-                   (T("Best beoordeeld", "Top rated"), "toprated_tv"), (T("Lopende series", "On the air"), "airing_tv")]
+                   (T("Best beoordeeld", "Top rated"), "toprated_tv"), (T("Lopende series", "On the air"), "airing_tv"),
+                   (T("Binnenkort", "Coming soon"), "upcoming_tv"), (T("Kalender: nieuwe afleveringen", "Calendar: new episodes"), "calendar")]
     rows = [items.folder(label, util.url_for(action="list", name=name)) for label, name in entries]
     rows.append(items.folder(T("Genres", "Genres"), util.url_for(action="genres", type=params.get("type"))))
+    rows.append(items.folder(T("Films zoeken", "Search movies") if movie else T("Series zoeken", "Search shows"),
+                             util.url_for(action="search", type="movie" if movie else "tvshow"), "DefaultAddonsSearch.png"))
     send(handle, rows)
 
 
 def trakt_menu(handle, _params):
+    """Everything that is yours: watchlists, collection and lists of every service you use."""
     entries = [(T("Kijklijst films", "Watchlist movies"), "watchlist_movie"), (T("Kijklijst series", "Watchlist shows"), "watchlist_tv")]
     if tracker.logged_in():
         entries += [(T("Collectie films", "Collection movies"), "collection_movie"), (T("Collectie series", "Collection shows"), "collection_tv")]
@@ -138,9 +144,24 @@ def trakt_menu(handle, _params):
         rows.append(items.folder(T("Mijn eigen lijsten", "My own lists"), util.url_for(action="traktlists", kind="mine")))
         rows.append(items.folder(T("Gelikete lijsten", "Liked lists"), util.url_for(action="traktlists", kind="liked")))
         rows.append(items.folder(T("Openbare lijsten", "Public lists"), util.url_for(action="publiclists")))
-    entry = xbmcgui.ListItem(T("Bibliotheek nu bijwerken", "Update the library now"), offscreen=True)
-    entry.setProperty("IsPlayable", "false")
-    rows.append((util.url_for(action="library_sync"), entry, False))
+    if mdblist.available():
+        rows.append(items.folder("MDBList", util.url_for(action="mdblistmenu")))
+    if floppy.available():
+        rows.append(items.folder("Floppy", util.url_for(action="floppylists")))
+    send(handle, rows)
+
+
+def tools(handle, _params):
+    rows = [
+        _action(T("Instellingen openen", "Open settings"), util.url_for(action="settings")),
+        _action(T("Installatie-assistent", "Setup assistant"), util.url_for(action="setup")),
+        _action(T("Volgorde van bronnen", "Order of sources"), util.url_for(action="ranking")),
+        _action(T("Bibliotheek nu bijwerken", "Update the library now"), util.url_for(action="library_sync"), "DefaultAddonLibrary.png"),
+        _action(T("Kiezen wat in de bibliotheek komt", "Choose what goes in the library"), util.url_for(action="library_choose"), "DefaultAddonLibrary.png"),
+        _action(T("Back-up maken of terugzetten", "Backup and restore"), util.url_for(action="backup")),
+        _action(T("Foutrapport maken", "Make an error report"), util.url_for(action="report")),
+        _action(T("Cache wissen", "Clear cache"), util.url_for(action="clear_cache")),
+    ]
     send(handle, rows)
 
 
@@ -268,16 +289,19 @@ def next_up_titles():
 
 
 def calendar_titles():
-    """New episodes of what you follow: from a week ago up to a month ahead."""
+    """Episodes still to come of what you follow, from today up to two months ahead, the first one first."""
     today = datetime.date.today()
-    first, last = (today - datetime.timedelta(days=7)).isoformat(), (today + datetime.timedelta(days=30)).isoformat()
+    first, last = today.isoformat(), (today + datetime.timedelta(days=60)).isoformat()
 
     def load(show):
         try:
-            aired, coming = tmdb.on_air(show)
+            _aired, coming = tmdb.on_air(show)
+            if not coming:
+                return []
+            episodes = tmdb.season(show, coming["season_number"]).get("episodes") or [coming]
             found = []
-            for episode in (aired, coming):
-                if episode and first <= (episode.get("air_date") or "") <= last:
+            for episode in episodes:
+                if first <= (episode.get("air_date") or "") <= last:
                     meta = player.title_meta("episode", show, episode["season_number"], episode["episode_number"])
                     if meta:
                         found.append(meta)
@@ -338,6 +362,10 @@ def list_titles(handle, params):
         kind = params.get("type")
         titles, more = tmdb.listing("discover/" + ("movie" if kind == "movie" else "tv"), kind, page,
                                     with_genres=params["genre"], sort_by="popularity.desc")
+    elif name in ("upcoming_movie", "upcoming_tv"):
+        kind = "movie" if name == "upcoming_movie" else "tvshow"
+        titles, more = tmdb.upcoming(kind, page)
+        content = "movies" if kind == "movie" else "tvshows"
     elif name == "calendar":
         titles, content = calendar_titles(), "episodes"
     elif name == "foryou":
@@ -438,11 +466,11 @@ def title(handle, params):
     send_titles(handle, [meta] if meta else [], "movies" if kind == "movie" else "tvshows")
 
 
-SECTIONS = {"conn": -100, "play": -99, "trakt": -98, "account": -98, "library": -97, "services": -96}
+SECTIONS = {"general": -100, "account": -99, "trakt": -99, "sources": -98, "conn": -98, "play": -97, "library": -96, "services": -95}
 
 
 def open_settings(params):
-    """Opens the add-on's settings on one part: conn, play, trakt or library."""
+    """Opens the add-on's settings on one part: general, account, sources, play, library or services."""
     xbmc.executebuiltin("Addon.OpenSettings(%s)" % util.ADDON_ID)
     focus = SECTIONS.get(params.get("section", ""))
     if focus is not None:
@@ -465,7 +493,7 @@ def test():
     xbmcgui.Dialog().ok("AIOStreams" if ok else T("Niet gelukt", "Failed"), text)
 
 
-FOLDERS = {"": home, "menu": menu, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
+FOLDERS = {"": home, "menu": menu, "tools": tools, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
            "searchmenu": search_menu, "cast": cast, "publiclists": public_lists, "floppylists": floppy_lists, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
 
 
