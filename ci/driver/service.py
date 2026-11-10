@@ -4111,6 +4111,23 @@ def trailerlayer_test():
         mon.waitForAbort(1.5)
     xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
     log("trailerlayer: " + json.dumps(out))
+    # Go to playlist in the side menu of a list (issue #11)
+    r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies"})))
+    mv = ((r.get("result") or {}).get("movies") or [{}])[0].get("movieid")
+    if mv:
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Playlist.Add", "params": {"playlistid": 1, "item": {"movieid": mv}}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(9070)")
+    mon.waitForAbort(1)
+    log(f"playlist: len={lab('Playlist.Length(video)')} visible={cond('Control.IsVisible(9070)')} focus={cond('Control.HasFocus(9070)')}")
+    shot("playlist-sidemenu")
+    xbmc.executebuiltin("SendClick(9070)")
+    mon.waitForAbort(2)
+    log(f"playlist: after click window={xbmcgui.getCurrentWindowId()} playlistwin={cond('Window.IsActive(videoplaylist)')}")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Playlist.Clear", "params": {"playlistid": 1}}))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
 
 
 def music_fav_test():
