@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Lucent: home screen -->
 <window>
+    <backgroundcolor>$VAR[LucentHomeClear]</backgroundcolor>
     <defaultcontrol always="true">9100</defaultcontrol>
     <!-- First time: write the default menu; once per session: select the start tab -->
     <!-- boxes with 2 GB memory or less get the light mode once (Skin settings > Advanced) -->
@@ -42,7 +43,7 @@
             <top>0</top>
             <width>1920</width>
             <height>1080</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + Skin.HasSetting(nuvio.fullbackdrop)</visible>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + Skin.HasSetting(nuvio.fullbackdrop) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
         </control>
         <control type="videowindow">
             <depth>-0.80</depth>
@@ -50,7 +51,7 @@
             <top>0</top>
             <width>1280</width>
             <height>720</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + !Skin.HasSetting(nuvio.fullbackdrop)</visible>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + !Skin.HasSetting(nuvio.fullbackdrop) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
         </control>
         <control type="videowindow">
             <depth>-0.80</depth>
@@ -58,7 +59,7 @@
             <top>30</top>
             <width>1080</width>
             <height>608</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
         </control>
         <!-- ============ Backdrop ============ -->
         <control type="image">
@@ -165,6 +166,31 @@
                 <texture>grad_top.png</texture>
                 <colordiffuse>bg_60</colordiffuse>
             </control>
+        </control>
+        <!-- Trailer layer B/C (test for CoreELEC): the video is drawn after the backdrops, so nothing opaque is drawn on top of it -->
+        <control type="videowindow">
+            <depth>-0.80</depth>
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + Skin.HasSetting(nuvio.fullbackdrop) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+        </control>
+        <control type="videowindow">
+            <depth>-0.80</depth>
+            <left>640</left>
+            <top>0</top>
+            <width>1280</width>
+            <height>720</height>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + !Skin.HasSetting(nuvio.fullbackdrop) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+        </control>
+        <control type="videowindow">
+            <depth>-0.80</depth>
+            <left>820</left>
+            <top>30</top>
+            <width>1080</width>
+            <height>608</height>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
         </control>
         <!-- Poster focus "trailer window with soft edge" -->
         <control type="group">
