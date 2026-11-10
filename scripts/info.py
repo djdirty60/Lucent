@@ -412,7 +412,7 @@ def lv_lists(prefix="ListItem."):
     lv_run(action, **dict(target, **extra))
 
 
-LV_LISTS = (0, 29, 0)       # the first Lucent Video with action=lists (asked for in the project)
+LV_LISTS = (0, 30, 0)       # the first Lucent Video with action=lists (asked for in the project; not in 0.29.x)
 G_LV = {
     "wl_add": ("Watchlist: add", "Kijklijst: toevoegen"),
     "wl_remove": ("Watchlist: remove", "Kijklijst: weghalen"),
