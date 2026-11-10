@@ -867,7 +867,7 @@
                         <top>27</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="red">buttons/check_fo.png</texture>
+                        <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                     </control>
                     <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -983,7 +983,7 @@
                         <top>27</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="red">buttons/check_fo.png</texture>
+                        <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                     </control>
                     <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -1127,14 +1127,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>16</left>
+                            <top>310</top>
+                            <width>188</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>16</left><top>270</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>16</left><top>270</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>168</left>
                             <top>12</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -1237,14 +1246,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>16</left>
+                            <top>310</top>
+                            <width>188</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>16</left><top>270</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>16</left><top>270</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>168</left>
                             <top>12</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -2055,14 +2073,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>16</left>
+                            <top>289</top>
+                            <width>174</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>16</left><top>249</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>16</left><top>249</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>154</left>
                             <top>12</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -2165,14 +2192,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>16</left>
+                            <top>289</top>
+                            <width>174</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>16</left><top>249</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>16</left><top>249</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>154</left>
                             <top>12</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -2297,14 +2333,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>16</left>
+                            <top>205</top>
+                            <width>368</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>16</left><top>165</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>16</left><top>165</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>348</left>
                             <top>12</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -2417,14 +2462,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>16</left>
+                            <top>205</top>
+                            <width>368</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>16</left><top>165</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>16</left><top>165</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>348</left>
                             <top>12</top>
                             <width>40</width>
                             <height>40</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -2575,7 +2629,7 @@
                         <top>42</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="red">buttons/check_fo.png</texture>
+                        <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                     </control>
                     <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -2635,8 +2689,17 @@
                         <info>ListItem.PercentPlayed</info>
                         <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                     </control>
+                    <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                    <control type="progress">
+                        <left>54</left>
+                        <top>192</top>
+                        <width>288</width>
+                        <height>6</height>
+                        <info>ListItem.Property(WatchedProgress)</info>
+                        <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                    </control>
                     <!-- Percentage watched (issue #7) -->
-                    <control type="group"><left>54</left><top>152</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                    <control type="group"><left>54</left><top>152</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                     <control type="label">
                         <left>392</left>
                         <top>36</top>
@@ -2674,7 +2737,7 @@
                         <top>42</top>
                         <width>36</width>
                         <height>36</height>
-                        <texture colordiffuse="red">buttons/check_fo.png</texture>
+                        <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                         <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                     </control>
                     <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -3052,7 +3115,7 @@
                             </control>
                             <control type="image">
                                 <left>374</left><top>12</top><width>34</width><height>34</height>
-                                <texture colordiffuse="red">buttons/check_fo.png</texture>
+                                <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                                 <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                             </control>
                             <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -3082,8 +3145,14 @@
                                 <info>ListItem.PercentPlayed</info>
                                 <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
                             </control>
+                            <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                            <control type="progress">
+                                <left>14</left><top>218</top><width>392</width><height>6</height>
+                                <info>ListItem.Property(WatchedProgress)</info>
+                                <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0) + Integer.IsLess(ListItem.Property(WatchedProgress),100)</visible>
+                            </control>
                             <!-- Percentage watched (issue #7) -->
-                            <control type="group"><left>14</left><top>178</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                            <control type="group"><left>14</left><top>178</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                             <control type="label">
                                 <left>0</left><top>250</top><width>420</width><height>34</height>
                                 <font>font12_bold</font><textcolor>text</textcolor>
@@ -3126,7 +3195,7 @@
                             </control>
                             <control type="image">
                                 <left>374</left><top>12</top><width>34</width><height>34</height>
-                                <texture colordiffuse="red">buttons/check_fo.png</texture>
+                                <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                                 <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                             </control>
                             <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -3156,8 +3225,14 @@
                                 <info>ListItem.PercentPlayed</info>
                                 <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
                             </control>
+                            <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                            <control type="progress">
+                                <left>14</left><top>218</top><width>392</width><height>6</height>
+                                <info>ListItem.Property(WatchedProgress)</info>
+                                <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0) + Integer.IsLess(ListItem.Property(WatchedProgress),100)</visible>
+                            </control>
                             <!-- Percentage watched (issue #7) -->
-                            <control type="group"><left>14</left><top>178</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                            <control type="group"><left>14</left><top>178</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>0</left><top>0</top><width>420</width><height>236</height>
                             <texture border="20">rr20_ring.png</texture>
@@ -3428,14 +3503,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>34</left>
+                            <top>506</top>
+                            <width>892</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>34</left><top>466</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>34</left><top>466</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>900</left>
                             <top>18</top>
                             <width>42</width>
                             <height>42</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
@@ -3575,14 +3659,23 @@
                             <info>ListItem.PercentPlayed</info>
                             <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
                         </control>
+                        <!-- the same bar for add-ons that only give WatchedProgress (Fen Light, Red Light: issue #7) -->
+                        <control type="progress">
+                            <left>34</left>
+                            <top>506</top>
+                            <width>892</width>
+                            <height>6</height>
+                            <info>ListItem.Property(WatchedProgress)</info>
+                            <visible>!Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsGreater(ListItem.Property(WatchedProgress),0)</visible>
+                        </control>
                         <!-- Percentage watched (issue #7) -->
-                        <control type="group"><left>34</left><top>466</top><visible>!Skin.HasSetting(lucent.pct.off) + Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$INFO[ListItem.PercentPlayed]%</label></control></control>
+                        <control type="group"><left>34</left><top>466</top><visible>!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</visible><control type="image"><width>70</width><height>30</height><texture border="14">rr14.png</texture><colordiffuse>D9000000</colordiffuse></control><control type="label"><width>70</width><height>30</height><font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><label>$VAR[LucentPct]%</label></control></control>
                         <control type="image">
                             <left>900</left>
                             <top>18</top>
                             <width>42</width>
                             <height>42</height>
-                            <texture colordiffuse="red">buttons/check_fo.png</texture>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->

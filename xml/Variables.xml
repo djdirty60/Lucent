@@ -1392,4 +1392,98 @@
         <value condition="Control.HasFocus(1525)">on_focus</value>
         <value>text4</value>
     </variable>
+    <!-- colour of the watched check on posters (Skin settings > Watched titles; issue #10) -->
+    <variable name="LucentWatchedColour">
+        <value condition="String.IsEqual(Skin.String(lucent.watched.colour),graphite)">FF5F656D</value>
+        <value condition="String.IsEqual(Skin.String(lucent.watched.colour),white)">FFFFFFFF</value>
+        <value condition="String.IsEqual(Skin.String(lucent.watched.colour),green)">FF3FB950</value>
+        <value condition="String.IsEqual(Skin.String(lucent.watched.colour),blue)">FF4EA1F5</value>
+        <value condition="String.IsEqual(Skin.String(lucent.watched.colour),gold)">FFE5B53A</value>
+        <value>FFE5534B</value>
+    </variable>
+    <!-- percentage watched: Kodi's own, else WatchedProgress of Fen Light / Red Light (issue #7) -->
+    <variable name="LucentPct">
+        <value condition="Integer.IsGreater(ListItem.PercentPlayed,0)">$INFO[ListItem.PercentPlayed]</value>
+        <value>$INFO[ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8101">
+        <value condition="Integer.IsGreater(Container(8101).ListItem.PercentPlayed,0)">$INFO[Container(8101).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8101).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8102">
+        <value condition="Integer.IsGreater(Container(8102).ListItem.PercentPlayed,0)">$INFO[Container(8102).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8102).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8103">
+        <value condition="Integer.IsGreater(Container(8103).ListItem.PercentPlayed,0)">$INFO[Container(8103).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8103).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8104">
+        <value condition="Integer.IsGreater(Container(8104).ListItem.PercentPlayed,0)">$INFO[Container(8104).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8104).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8105">
+        <value condition="Integer.IsGreater(Container(8105).ListItem.PercentPlayed,0)">$INFO[Container(8105).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8105).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8106">
+        <value condition="Integer.IsGreater(Container(8106).ListItem.PercentPlayed,0)">$INFO[Container(8106).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8106).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8107">
+        <value condition="Integer.IsGreater(Container(8107).ListItem.PercentPlayed,0)">$INFO[Container(8107).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8107).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8108">
+        <value condition="Integer.IsGreater(Container(8108).ListItem.PercentPlayed,0)">$INFO[Container(8108).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8108).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8109">
+        <value condition="Integer.IsGreater(Container(8109).ListItem.PercentPlayed,0)">$INFO[Container(8109).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8109).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8110">
+        <value condition="Integer.IsGreater(Container(8110).ListItem.PercentPlayed,0)">$INFO[Container(8110).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8110).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8201">
+        <value condition="Integer.IsGreater(Container(8201).ListItem.PercentPlayed,0)">$INFO[Container(8201).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8201).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8202">
+        <value condition="Integer.IsGreater(Container(8202).ListItem.PercentPlayed,0)">$INFO[Container(8202).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8202).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8203">
+        <value condition="Integer.IsGreater(Container(8203).ListItem.PercentPlayed,0)">$INFO[Container(8203).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8203).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8204">
+        <value condition="Integer.IsGreater(Container(8204).ListItem.PercentPlayed,0)">$INFO[Container(8204).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8204).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8205">
+        <value condition="Integer.IsGreater(Container(8205).ListItem.PercentPlayed,0)">$INFO[Container(8205).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8205).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8206">
+        <value condition="Integer.IsGreater(Container(8206).ListItem.PercentPlayed,0)">$INFO[Container(8206).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8206).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8207">
+        <value condition="Integer.IsGreater(Container(8207).ListItem.PercentPlayed,0)">$INFO[Container(8207).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8207).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8208">
+        <value condition="Integer.IsGreater(Container(8208).ListItem.PercentPlayed,0)">$INFO[Container(8208).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8208).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8209">
+        <value condition="Integer.IsGreater(Container(8209).ListItem.PercentPlayed,0)">$INFO[Container(8209).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8209).ListItem.Property(WatchedProgress)]</value>
+    </variable>
+    <variable name="LucentPct_8210">
+        <value condition="Integer.IsGreater(Container(8210).ListItem.PercentPlayed,0)">$INFO[Container(8210).ListItem.PercentPlayed]</value>
+        <value>$INFO[Container(8210).ListItem.Property(WatchedProgress)]</value>
+    </variable>
 </includes>

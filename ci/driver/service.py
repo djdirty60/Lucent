@@ -4022,6 +4022,35 @@ def infobuttons_test():
     mon.waitForAbort(2)
 
 
+def progress_colour_test():
+    """1.38.1: percentage from WatchedProgress (Fen Light / Red Light, issue #7) and the colour of the watched check (#10)."""
+    out = {}
+    try:
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=progress,return)")
+        for _ in range(30):
+            if cond("Window.IsActive(videos) + Integer.IsGreater(Container.NumItems,0) + String.IsEqual(ListItem.Label,Half Film)"):
+                break
+            mon.waitForAbort(0.5)
+        xbmc.executebuiltin("Container.SetViewMode(51)")
+        mon.waitForAbort(2)
+        out["kodi_pct"] = lab("ListItem.PercentPlayed")
+        out["prop"] = lab("ListItem.Property(WatchedProgress)")
+        out["pct_var"] = lab("$VAR[LucentPct]")
+        out["show"] = cond("[Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)]")
+        shot("progress-redlight")
+        xbmc.executebuiltin("Skin.SetString(lucent.watched.colour,graphite)")
+        mon.waitForAbort(1)
+        out["colour_graphite"] = lab("$VAR[LucentWatchedColour]")
+        xbmc.executebuiltin("Skin.SetString(lucent.watched.colour,)")
+        mon.waitForAbort(1)
+        out["colour_default"] = lab("$VAR[LucentWatchedColour]")
+    except Exception as _e:  # noqa: BLE001
+        out["error"] = repr(_e)
+    log("progress: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def music_fav_test():
     """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
     import sys as _s
@@ -4196,6 +4225,7 @@ def main():
     alwayson_test()
     nolib_test()
     infobuttons_test()
+    progress_colour_test()
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:

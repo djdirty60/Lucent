@@ -20,6 +20,14 @@ if handle >= 0:
             xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&t=" + urllib.parse.quote(name), li, False)
         xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_TITLE)
         xbmcplugin.setContent(handle, "movies")
+    elif params.get("mode") == "progress":               # like Fen Light: a resume point without total time + WatchedProgress
+        li = xbmcgui.ListItem("Half Film")
+        tag = li.getVideoInfoTag()
+        tag.setMediaType("movie"), tag.setTitle("Half Film"), tag.setUniqueIDs({"tmdb": "2667"}), tag.setResumePoint(45.0)
+        li.setProperty("WatchedProgress", "45")
+        li.setProperty("IsPlayable", "true")
+        xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&tmdb_id=2667", li, False)
+        xbmcplugin.setContent(handle, "movies")
     elif params.get("mode") == "list":
         li = xbmcgui.ListItem("The Episode")
         tag = li.getVideoInfoTag()
