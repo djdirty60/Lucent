@@ -7,6 +7,8 @@ import xbmcgui
 import dialogs
 import floppy
 import apikeys
+import kids
+import debrid
 import library
 import mdblist
 import ranking
@@ -70,7 +72,7 @@ class Setup(dialogs.Base):
         if key == "keys":
             return bool(tmdb.key())
         if key == "scrapers":
-            return bool(setting("manifest_url") or setting("torbox_key") or (setting("easynews_user") and setting("easynews_pass")))
+            return bool(setting("manifest_url") or setting("torbox_key") or (setting("easynews_user") and setting("easynews_pass")) or debrid.active())
         return True
 
     def rows(self):
@@ -97,7 +99,8 @@ class Setup(dialogs.Base):
         if key == "scrapers":
             return [(T("AIOStreams-adres", "AIOStreams address"), state("manifest_url"), None), (T("Easynews-gebruikersnaam", "Easynews username"), state("easynews_user"), None),
                     (T("Easynews-wachtwoord", "Easynews password"), state("easynews_pass"), None), (T("TorBox API-sleutel", "TorBox API key"), state("torbox_key"), None),
-                    (T("Verbindingen testen", "Test connections"), "", None)]
+                    (T("Real-Debrid API-sleutel", "Real-Debrid API key"), state("realdebrid_key"), None), (T("AllDebrid API-sleutel", "AllDebrid API key"), state("alldebrid_key"), None),
+                    (T("Premiumize API-sleutel", "Premiumize API key"), state("premiumize_key"), None), (T("Verbindingen testen", "Test connections"), "", None)]
         if key == "order":
             return [(T("Volgorde van bronnen openen", "Open the order of sources"), ranking.active()["name"], None)]
         if key == "dv":
@@ -169,9 +172,10 @@ class Setup(dialogs.Base):
             else:
                 ask(label, {"Trakt Client ID": "trakt_id", "Simkl Client ID": "simkl_id"}.get(label, "tmdb_key"))
         elif key == "scrapers":
-            if at == 4:
+            if at == 7:
                 return self.test()
-            name, hide, heading = (("manifest_url", True, "AIOStreams"), ("easynews_user", False, "Easynews"), ("easynews_pass", True, "Easynews"), ("torbox_key", True, "TorBox"))[at]
+            name, hide, heading = (("manifest_url", True, "AIOStreams"), ("easynews_user", False, "Easynews"), ("easynews_pass", True, "Easynews"), ("torbox_key", True, "TorBox"),
+                                   ("realdebrid_key", True, "Real-Debrid"), ("alldebrid_key", True, "AllDebrid"), ("premiumize_key", True, "Premiumize"))[at]
             ask(heading, name, hide)
         elif key == "order":
             ranking_ui.open_main()
@@ -182,6 +186,8 @@ class Setup(dialogs.Base):
     def test(self):
         lines = []
         for name, on, check in (("AIOStreams", setting("manifest_url"), streams.check), ("Easynews", setting("easynews_user"), usenet.check_easynews), ("TorBox", setting("torbox_key"), usenet.check_torbox),
+                                ("Real-Debrid", setting("realdebrid_key"), lambda: debrid.check("realdebrid")), ("AllDebrid", setting("alldebrid_key"), lambda: debrid.check("alldebrid")),
+                                ("Premiumize", setting("premiumize_key"), lambda: debrid.check("premiumize")),
                                 ("MDBList", mdblist.available(), mdblist.check), ("Floppy", floppy.available(), floppy.check)):
             if on:
                 ok, text = check()
@@ -233,10 +239,14 @@ class Who(dialogs.Base):
         key = self.ids[self.row.getSelectedPosition()]
         if key == NEW:
             return self.create()
+        if key != users.current_id() and kids.limit() and not kids.ask_pin(T("Pincode om van profiel te wisselen", "PIN to change profile")):
+            return None
         users.choose(key)
         return self.close()
 
     def create(self):
+        if kids.limit() and not kids.ask_pin(T("Pincode", "PIN")):
+            return
         name = xbmcgui.Dialog().input(T("Naam van het profiel", "Name of the profile"))
         if not name:
             return
@@ -260,9 +270,19 @@ class Who(dialogs.Base):
         return None
 
     def options(self, key):
-        labels = [T("Naam wijzigen", "Rename")] + ([T("Verwijderen", "Delete")] if key != users.MAIN else [])
-        choice = xbmcgui.Dialog().contextmenu(labels)
+        if kids.limit() and not kids.ask_pin(T("Pincode", "PIN")):
+            return
+        labels = [T("Naam wijzigen", "Rename"), T("Verwijderen", "Delete"), T("Leeftijdsgrens (kinderprofiel)", "Age limit (kids profile)"), T("Pincode instellen", "Set PIN")]
+        if key == users.MAIN:
+            labels[1] = None
+        shown = [label for label in labels if label]
+        picked = xbmcgui.Dialog().contextmenu(shown)
+        choice = labels.index(shown[picked]) if picked >= 0 else -1
         person = next(u for u in users.everyone() if u["id"] == key)
+        if choice == 2:
+            kids.choose_limit(key)
+        elif choice == 3:
+            kids.set_pin()
         if choice == 0:
             name = xbmcgui.Dialog().input(T("Naam", "Name"), person["name"])
             if name:

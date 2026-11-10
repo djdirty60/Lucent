@@ -84,3 +84,22 @@ def set_tracker(value):
         if user["id"] == current_id():
             user["tracker"] = value
     util.save_json(util.USERS, data)
+
+
+def set_value(user_id, name, value):
+    data = _data()
+    for user in data["users"]:
+        if user["id"] == user_id:
+            user[name] = value
+    util.save_json(util.USERS, data)
+
+
+def settings_value(name):
+    """Values for all profiles together, such as the PIN hash."""
+    return (_data().get("shared") or {}).get(name, "")
+
+
+def set_settings_value(name, value):
+    data = _data()
+    data.setdefault("shared", {})[name] = value
+    util.save_json(util.USERS, data)

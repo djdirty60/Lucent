@@ -57,6 +57,15 @@ class Watcher(xbmc.Player):
             self.seekTime(float(now["resume"]))
             self.position = float(now["resume"])
         self._scrobble("start")
+        threading.Thread(target=self._subtitles, args=(now,), daemon=True).start()
+
+    def _subtitles(self, meta):
+        import subs
+        if not xbmc.Monitor().waitForAbort(4) and self.current is meta:
+            try:
+                subs.check(self, meta)
+            except Exception as error:      # never break playback
+                util.log("subtitle check: %s" % type(error).__name__)
 
     def onPlayBackPaused(self):
         self._scrobble("pause")

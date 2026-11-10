@@ -131,7 +131,7 @@ def cache_clear():
 
 
 USERS = "users.json"
-PER_USER = {"trakt.json", "simkl.json", "simkl_state.json", "watched.json", "watchlist.json", "progress.json", "last_release.json"}
+PER_USER = {"search_history.json", "trakt.json", "simkl.json", "simkl_state.json", "watched.json", "watchlist.json", "progress.json", "last_release.json"}
 
 
 def current_user():

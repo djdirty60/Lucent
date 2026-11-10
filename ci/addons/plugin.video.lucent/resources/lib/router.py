@@ -9,6 +9,7 @@ import xbmcgui
 import xbmcplugin
 
 import items
+import kids
 import library
 import player
 import report
@@ -71,6 +72,7 @@ def _paused_table():
 
 
 def send_titles(handle, titles, content, more=None):
+    titles = kids.keep(titles)
     tracker.enrich(titles)
     films, shows = tracker.watched_movies(), tracker.watched_episodes()
     local, paused = _resume_table(), _paused_table()
@@ -206,9 +208,24 @@ def service(handle, params):
     send(handle, rows)
 
 
+HISTORY = "search_history.json"
+
+
 def search_menu(handle, _params):
-    send(handle, [items.folder(T("Films zoeken", "Search movies"), util.url_for(action="search", type="movie")),
-                  items.folder(T("Series zoeken", "Search shows"), util.url_for(action="search", type="tvshow"))])
+    rows = [items.folder(T("Films zoeken", "Search movies"), util.url_for(action="search", type="movie"), "DefaultAddonsSearch.png"),
+            items.folder(T("Series zoeken", "Search shows"), util.url_for(action="search", type="tvshow"), "DefaultAddonsSearch.png")]
+    history = util.load_json(HISTORY, [])
+    for kind, query in history:
+        word = T("Film", "Movie") if kind == "movie" else T("Serie", "Show")
+        rows.append(items.folder("%s: %s" % (word, query), util.url_for(action="search", type=kind, query=query), "DefaultAddonsSearch.png"))
+    if history:
+        rows.append((util.url_for(action="clear_history"), xbmcgui.ListItem(T("Zoekgeschiedenis wissen", "Clear search history"), offscreen=True), False))
+    send(handle, rows)
+
+
+def remember_search(kind, query):
+    history = [entry for entry in util.load_json(HISTORY, []) if entry != [kind, query]]
+    util.save_json(HISTORY, ([[kind, query]] + history)[:15])
 
 
 def _slice(pairs, page):
@@ -368,6 +385,8 @@ def search(handle, params):
         return xbmcplugin.endOfDirectory(handle, succeeded=False)
     kind = params.get("type", "movie")
     page = int(params.get("page") or 1)
+    if page == 1:
+        remember_search(kind, query.strip())
     titles, more = tmdb.listing("search/" + ("movie" if kind == "movie" else "tv"), kind, page, query=query, include_adult="false")
     next_url = util.url_for(action="search", type=kind, query=query, page=page + 1) if more else None
     send_titles(handle, titles, "movies" if kind == "movie" else "tvshows", next_url)
@@ -478,6 +497,21 @@ def run(argv):
         if action == "test_easynews":
             ok, text = usenet.check_easynews()
             return xbmcgui.Dialog().ok("Easynews" if ok else T("Niet gelukt", "Failed"), text)
+        if action == "backup":
+            import backup
+            return backup.menu()
+        if action == "clear_history":
+            util.save_json(HISTORY, [])
+            return xbmc.executebuiltin("Container.Refresh")
+        if action == "trailer":
+            meta = tmdb.details(params.get("type", "movie"), params["tmdb"])
+            if meta and meta.get("trailer"):
+                return xbmc.executebuiltin("PlayMedia(%s)" % meta["trailer"])
+            return util.notify(T("Geen trailer gevonden", "No trailer found"))
+        if action == "test_debrid":
+            import debrid
+            ok, text = debrid.check(params.get("service", ""))
+            return xbmcgui.Dialog().ok("Lucent" if ok else T("Niet gelukt", "Failed"), text)
         if action == "test_torbox":
             ok, text = usenet.check_torbox()
             return xbmcgui.Dialog().ok("TorBox" if ok else T("Niet gelukt", "Failed"), text)
@@ -501,6 +535,13 @@ def run(argv):
             return trakt_status()
         if action == "test":
             return test()
+        if action == "library_choose":
+            if tracker.active() is not trakt:
+                return xbmcgui.Dialog().ok("Lucent", T("Kiezen kan alleen met Trakt. Met Simkl gaat alles wat je volgt in de bibliotheek.",
+                                                     "Choosing works with Trakt only. With Simkl everything you follow goes in the library."))
+            if trakt.choose_library() and xbmcgui.Dialog().yesno("Lucent", T("Bibliotheek nu bijwerken?", "Update the library now?")):
+                return library.run(manual=True)
+            return None
         if action == "library_sync":
             return library.run(manual=True)
         if action == "clear_cache":

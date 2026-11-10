@@ -3855,7 +3855,7 @@ def _dir_guarded(path, wait=20):
 
 
 def lucentvideo_test():
-    """Lucent Video 0.13.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
+    """Lucent Video 0.16.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
     out = {"root": _dir_guarded("plugin://plugin.video.lucent/")}
     for nm in ("calendar", "foryou", "person&id=287", "trending_movie"):

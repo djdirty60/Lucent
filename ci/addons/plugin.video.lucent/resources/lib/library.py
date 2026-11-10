@@ -394,8 +394,8 @@ class Busy:
             pass
 
 
-HOW_TO = T("Voeg deze map eenmalig toe in Kodi, via Video's > Bestanden > Video's toevoegen:\n%s\nKies bij 'Deze map bevat' %s en als informatiebron Local information only.",
-           "Add this folder once in Kodi, via Videos > Files > Add videos:\n%s\nSet 'This directory contains' to %s and the information provider to Local information only.")
+HOW_TO = T("Voeg deze map eenmalig toe in Kodi, via Video's > Bestanden > Video's toevoegen:\n%s\nKies bij 'Deze map bevat' %s en als informatiebron The Movie Database.",
+           "Add this folder once in Kodi, via Videos > Files > Add videos:\n%s\nSet 'This directory contains' to %s and the information provider to The Movie Database.")
 
 
 def run(manual=False):
@@ -434,15 +434,24 @@ def run(manual=False):
             util.log("library: films %s, shows %s (total, changed files, removed, held)" % (films, series))
             util.save_json(LAST, {"at": time.time()})
             missing_sources = []
-            for special, result, word in ((MOVIES_SPECIAL, films, T("Films", "Movies")), (SHOWS_SPECIAL, series, T("Series", "TV shows"))):
+            restart = False
+            for special, result, word, content in ((MOVIES_SPECIAL, films, T("Films", "Movies"), "movies"),
+                                                   (SHOWS_SPECIAL, series, T("Series", "TV shows"), "tvshows")):
                 path = source_path(special)
+                fresh = False
+                if not path and result[0] and util.flag("library_auto_sources"):
+                    import libsources
+                    scannable, changed = libsources.ensure(special, "Lucent Video %s" % word, content)
+                    restart = restart or changed
+                    if scannable:
+                        path, fresh = special, True
                 if not path:
                     if result[0]:
                         missing_sources.append(HOW_TO % (special, word))
                     continue
                 if progress:
                     progress.update(80, message=word)
-                if result[1] or util.flag("library_force_scan"):
+                if result[1] or fresh or util.flag("library_force_scan"):
                     scan(path)
             prune()
             sync_state()
@@ -453,6 +462,9 @@ def run(manual=False):
     if manual:
         if missing_sources:
             xbmcgui.Dialog().textviewer("Lucent", "\n\n".join(missing_sources))
+        elif restart:
+            xbmcgui.Dialog().ok("Lucent", T("De mappen van Lucent Video staan nu in je bibliotheek. Na de volgende herstart van Kodi zie je ze ook bij Video's > Bestanden.",
+                                            "Lucent Video's folders are now in your library. After the next restart of Kodi you also see them under Videos > Files."))
         else:
             util.notify(T("Bibliotheek bijgewerkt: %d films, %d series", "Library updated: %d films, %d shows") % (films[0], series[0]))
 

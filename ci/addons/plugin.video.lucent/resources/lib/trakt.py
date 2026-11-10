@@ -159,10 +159,73 @@ def next_up():
         return [r for r in pool.map(load, shows) if r]
 
 
+def all_pages(path, limit=250):
+    """Every page of a paged Trakt answer, so there is no limit of 100. A failure reaches the caller."""
+    join = "&" if "?" in path else "?"
+    out, page = [], 1
+    while True:
+        data, head = call("%s%spage=%d&limit=%d" % (path, join, page, limit))
+        out += data or []
+        head = {k.lower(): v for k, v in (head or {}).items()}
+        try:
+            pages = int(head.get("x-pagination-page-count") or 1)
+        except ValueError:
+            pages = 1
+        if page >= pages or not data or page >= 400:
+            return out
+        page += 1
+
+
+LIBRARY = "library_sources.json"
+
+
+def library_sources():
+    """What the Kodi library follows: the collection, the watchlist and/or chosen lists."""
+    saved = util.load_json(LIBRARY, {})
+    return {"collection": saved.get("collection", True), "watchlist": bool(saved.get("watchlist")),
+            "lists": [entry for entry in saved.get("lists") or [] if len(entry) == 3]}
+
+
 def library_rows(kind):
-    """A failure reaches the caller: then nothing gets removed."""
+    """Everything the library follows, without any limit. A failure reaches the caller: then nothing gets removed."""
     key = "movie" if kind == "movies" else "show"
-    return [r for r in call("sync/collection/%s" % kind)[0] or [] if r.get(key, {}).get("ids", {}).get("tmdb")]
+    chosen = library_sources()
+    paths = []
+    if chosen["collection"]:
+        paths.append("sync/collection/%s" % kind)
+    if chosen["watchlist"]:
+        paths.append("sync/watchlist/%s" % kind)
+    paths += ["users/%s/lists/%s/items/%s" % (owner, list_id, key) for owner, list_id, _name in chosen["lists"]]
+    out, seen = [], set()
+    for path in paths:
+        for row in all_pages(path):
+            item = row.get(key) or {}
+            tmdb_id = (item.get("ids") or {}).get("tmdb")
+            if not tmdb_id or tmdb_id in seen:
+                continue
+            seen.add(tmdb_id)
+            row.setdefault("collected_at", row.get("listed_at"))
+            out.append(row)
+    return out
+
+
+def choose_library():
+    """A simple tick list: which Trakt parts the Kodi library follows."""
+    chosen = library_sources()
+    try:
+        lists = [(o, i, n) for o, i, n in custom_lists("mine")] + [(o, i, n) for o, i, n in custom_lists("liked")]
+    except util.HttpError:
+        lists = []
+    names = [util.T("Collectie", "Collection"), "Watchlist"] + [n if o == "me" else "%s (%s)" % (n, o) for o, i, n in lists]
+    picked = [i for i, on in enumerate((chosen["collection"], chosen["watchlist"])) if on]
+    keep = {(str(o), str(i)) for o, i, _n in chosen["lists"]}
+    picked += [2 + number for number, (o, i, _n) in enumerate(lists) if (str(o), str(i)) in keep]
+    answer = xbmcgui.Dialog().multiselect(util.T("Wat komt in de bibliotheek?", "What goes in the library?"), names, preselect=picked)
+    if answer is None:
+        return False
+    util.save_json(LIBRARY, {"collection": 0 in answer, "watchlist": 1 in answer,
+                             "lists": [list(lists[n - 2]) for n in answer if n >= 2]})
+    return True
 
 
 def login():

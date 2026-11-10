@@ -241,6 +241,12 @@ def play(params, handle):
     autoplay = params.get("autoplay") == "1"
     if not autoplay:
         util.HOME.clearProperty(RUN)
+    if params.get("type") in ("movie", "episode", "tvshow"):
+        import kids
+        if kids.limit():
+            check = tmdb.details("movie" if params["type"] == "movie" else "tvshow", params["tmdb"])
+            if not check or not kids.allowed(check):
+                return _fail(handle, util.T("Dit profiel mag deze titel niet kijken", "This profile may not watch this title"))
     meta, sources = search_with_screen(params)
     if meta is None:
         if sources == "cancelled":

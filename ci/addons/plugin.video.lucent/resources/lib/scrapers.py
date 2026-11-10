@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-"""All sources of streams (CocoScrapers can join later). A new scraper = one entry here, with a fetch(meta) that returns a list of source dicts.
+"""All sources of streams. A new scraper = one entry here, with a fetch(meta) that returns a list of source dicts.
 
 Required in each source: url, name, resolution, flags (may be []), size, cached, service, meta. See streams.convert.
 """
 from concurrent.futures import ThreadPoolExecutor, wait
 
+import coco
 import ranking
 import streams
 import usenet
 import util
 
-REGISTRY = {"AIOStreams": streams.fetch, "Easynews": usenet.easynews, "TorBox": usenet.torbox}
-LINKS = {"TorBox": usenet.torbox_link}
+REGISTRY = {"AIOStreams": streams.fetch, "Easynews": usenet.easynews, "TorBox": usenet.torbox, "CocoScrapers": coco.fetch}
+LINKS = {"TorBox": usenet.torbox_link, "CocoScrapers": coco.link}
 
 
 def names(profile):
