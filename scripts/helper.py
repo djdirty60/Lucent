@@ -207,11 +207,13 @@ def run():
                     HOME.clearProperty(f"lucent.rowok.{n}")
 
     def pause_clean():
-        """With "Clean picture after N seconds" (pause screen): close the player menu (opened with OK on a Shield) once
-        the video has been paused and no button was pressed for N seconds. Not while one of its sub-menus is open."""
-        if not cond("Player.Paused + Window.IsActive(videoosd) + !Window.IsActive(subtitlesearch) + !Window.IsActive(contextmenu) + !Window.IsActive(selectdialog) + !Window.IsActive(Lucent_PlayerInfo.xml) + !Window.IsActive(Lucent_Subtitles.xml) + !Window.IsActive(osdvideosettings) + !Window.IsActive(osdaudiosettings) + !Window.IsActive(osdsubtitlesettings) + !Window.IsActive(sliderdialog)"):
+        """Paused with the player menu open (OK on a Shield): close the menu once no button was pressed for as long as the
+        pause screen setting says, so the pause info (or the clean picture) can come. Not while a sub-menu is open."""
+        if not cond("Player.Paused + Window.IsActive(videoosd) + !Window.IsActive(subtitlesearch) + !Window.IsActive(contextmenu) + !Window.IsActive(selectdialog) + !Window.IsActive(Lucent_PlayerInfo.xml) + !Window.IsActive(Lucent_Subtitles.xml) + !Window.IsActive(osdvideosettings) + !Window.IsActive(osdaudiosettings) + !Window.IsActive(osdsubtitlesettings) + !Window.IsActive(sliderdialog) + !Window.IsActive(videobookmarks) + !Window.IsActive(numericinput)"):
             return
-        wait = {"clean3": 3, "clean5": 5, "clean10": 10}.get(xbmc.getInfoLabel("Skin.String(nuvio.pauseinfo)"))
+        # the menu goes when the pause screen would come: after the time of the setting (default 5 s); 'Off' keeps it
+        choice = xbmc.getInfoLabel("Skin.String(nuvio.pauseinfo)")
+        wait = {"clean3": 3, "clean5": 5, "clean10": 10, "": 5, "3": 3, "5": 5, "10": 10, "15": 15, "30": 30, "60": 60}.get(choice)
         if wait and cond(f"System.IdleTime({wait})"):
             xbmc.executebuiltin("Dialog.Close(videoosd)")
 

@@ -1175,6 +1175,15 @@
         <value condition="Container.Content(albums) + !String.IsEmpty(ListItem.Artist) + !String.IsEqual(ListItem.Label2,ListItem.Artist)">$INFO[ListItem.Artist,  ·  ,]</value>
     </variable>
     <!-- scores in the list / poster views: the line omdb.py makes (only the scores you chose) -->
+    <!-- an add-on that keeps its own order (SORT_METHOD_NONE): Kodi still calls it "Date", so show no sort method -->
+    <variable name="LucentSortSuffix">
+        <value condition="Container.SortMethod(0)"></value>
+        <value>$INFO[Container.SortMethod,   ·   ,]</value>
+    </variable>
+    <variable name="LucentListRatingText">
+        <value condition="!String.IsEmpty(ListItem.Rating(imdb))">IMDb  $INFO[ListItem.Rating(imdb)]</value>
+        <value>★  $INFO[ListItem.Rating]</value>
+    </variable>
     <variable name="LucentListScores">
         <value condition="!String.IsEmpty(Window(home).Property(lucent.omdbl.for)) + !String.IsEmpty(Window(home).Property(lucent.omdbl.text))">   $INFO[Window(home).Property(lucent.omdbl.text)]</value>
     </variable>
