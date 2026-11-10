@@ -4051,6 +4051,37 @@ def progress_colour_test():
     mon.waitForAbort(2)
 
 
+def formatclips_test():
+    """Lucent Video's format check: do its clips start in Kodi (windowed, like the check does)?"""
+    out = {}
+    base = xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/formattest/")
+    player = xbmc.Player()
+    for name in ("hevc4k.mp4", "ddplus.mkv", "vp9.webm", "dv81.mp4"):
+        path = os.path.join(base, name)
+        res = {"exists": os.path.exists(path)}
+        try:
+            player.play(path, xbmcgui.ListItem(name, path=path), windowed=True)
+            started = False
+            for _ in range(100):
+                if mon.waitForAbort(0.1):
+                    break
+                if player.isPlayingVideo() and player.getTime() > 0.2:
+                    started = True
+                    break
+            res.update(started=started, hdr=lab("VideoPlayer.HdrType"), codec=lab("VideoPlayer.VideoCodec"))
+        except Exception as _e:  # noqa: BLE001
+            res["error"] = repr(_e)
+        player.stop()
+        mon.waitForAbort(1.5)
+        out[name] = res
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            out["errors"] = [ln.strip()[24:200] for ln in fh if "formattest" in ln and (" error " in ln.lower() or "warning" in ln.lower())][:8]
+    except OSError:
+        pass
+    log("formatclips: " + json.dumps(out))
+
+
 def music_fav_test():
     """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
     import sys as _s
@@ -4226,6 +4257,7 @@ def main():
     nolib_test()
     infobuttons_test()
     progress_colour_test()
+    formatclips_test()
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
