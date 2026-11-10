@@ -10,6 +10,7 @@ to Skin.String(nuvio.posterfocus): window | hero | expand.
 Safety: it only ever stops a video it started itself, and only while you are still
 on the Home screen; as soon as something else plays, it lets go.
 """
+import threading
 import time
 import urllib.parse
 
@@ -127,12 +128,19 @@ class Trailers(xbmc.Player):
         self.stray_since = 0.0     # since when a video without an owner plays behind Home
         self.lost_since = 0.0      # since when the focused card is not readable
         self.pause_until = 0.0     # after repeated failures we stop trying for a while
+        self.cancelled_at = 0.0    # when we gave up a trailer that YouTube was still resolving
 
     # -- player callbacks: anything we did not start is not ours
     def onAVStarted(self):
         # the YouTube add-on needs a few seconds to resolve; anything that starts much
         # later than our request was started by someone else
         if not (self.ours or self.requested):
+            if time.time() - self.cancelled_at < 45 and self.is_youtube():
+                # the trailer of a card you already left: YouTube only now got it going. Stop it at once,
+                # instead of letting it play (and hold the screen) behind Home
+                log("late trailer of a card you left: stop")
+                self.cancelled_at = 0.0
+                xbmc.executebuiltin("PlayerControl(Stop)")
             return
         if time.time() - self.started_at > 45:
             self.let_go()
@@ -199,8 +207,24 @@ class Trailers(xbmc.Player):
     def stop_ours(self):
         if self.ours or self.requested:
             log("stop")
-            self.let_go()
-            self.stop()
+            if not self.av_started:
+                self.cancelled_at = time.time()
+            playing = self.av_started or self.isPlayingVideo()
+            self.let_go()                   # the skin hides the video at once
+            if playing:
+                xbmc.executebuiltin("PlayerControl(Stop)")      # does not wait for the player
+
+    def prefetch(self, focus):
+        """Looks the trailer up while the delay counts down, so it can start as soon as the delay is over."""
+        if focus.key in self.cache:
+            return
+
+        def find():
+            try:
+                self.cache[focus.key] = youtube_id(focus.trailer) or tmdb_trailer(focus)
+            except Exception as error:  # noqa: BLE001
+                log(f"prefetch: {error}")
+        threading.Thread(target=find, daemon=True).start()
 
     # -- main loop
     def run(self):
@@ -266,6 +290,8 @@ class Trailers(xbmc.Player):
             self.focus_key = focus.key
             self.focus_since = time.time()
             self.tried = ""
+            if mode and not xbmc.getCondVisibility("Skin.HasSetting(nuvio.trailer.test)"):
+                self.prefetch(focus)
             return
         if (self.requested or self.ours) and not HOME.getProperty(PLAYING) and self.isPlayingVideo():
             # the callback was missed (it is on some boxes): a video is playing and we asked for it, so it is ours
@@ -284,9 +310,9 @@ class Trailers(xbmc.Player):
             dbg("something else is playing: not starting")
             return                  # something else is playing (music, a video in the background)
         try:
-            delay = float(skin("nuvio.trailer.delay") or 3)
+            delay = float(skin("nuvio.trailer.delay") or 2)
         except ValueError:
-            delay = 3.0
+            delay = 2.0
         waited = time.time() - self.focus_since
         if waited < delay:
             dbg(f"counting {waited:.0f}s of {delay:.0f}s")
@@ -295,7 +321,7 @@ class Trailers(xbmc.Player):
         dbg("starting")
         test = xbmc.getCondVisibility("Skin.HasSetting(nuvio.trailer.test)")
         video_id = "live-test" if test else self.cache.get(focus.key)
-        if not video_id:
+        if video_id is None:
             video_id = youtube_id(focus.trailer) or tmdb_trailer(focus)
             self.cache[focus.key] = video_id
         if not video_id:

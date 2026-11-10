@@ -8233,7 +8233,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -8997,7 +9075,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -9761,7 +9917,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -10525,7 +10759,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -11289,7 +11601,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -12053,7 +12443,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -12822,7 +13290,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -13586,7 +14132,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -14350,7 +14974,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
@@ -15114,7 +15816,85 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="248" height="370">
+                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
+                        <control type="group">
+                            <left>40</left>
+            <control type="group">
+                <left>0</left>
+                <top>16</top>
+                <width>587</width>
+                <height>330</height>
+                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture diffuse="mask_landscape.png">white.png</texture>
+                    <colordiffuse>card</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(fanart)]</texture>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <aspectratio scalediffuse="false">scale</aspectratio>
+                    <texture background="true" diffuse="mask_landscape.png">$INFO[ListItem.Art(landscape)]</texture>
+                </control>
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>635</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>165</top>
+                    <width>587</width>
+                    <height>165</height>
+                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                    <colordiffuse>dim_strong</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>22</left>
+                    <top>218</top>
+                    <width>293</width>
+                    <height>88</height>
+                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                    <texture background="true">$VAR[ItemClearlogo]</texture>
+                </control>
+                <control type="label">
+                    <left>22</left>
+                    <top>254</top>
+                    <width>543</width>
+                    <height>56</height>
+                    <font>font27_title</font>
+                    <selectedcolor>text</selectedcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                </control>
+                <control type="image">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>587</width>
+                    <height>330</height>
+                    <texture border="14">rr14_edge.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                </control>
+            </control>
+                        </control>
+                    </focusedlayout>
+                    <focusedlayout width="248" height="370" condition="!String.IsEqual(Skin.String(nuvio.posterfocus),expand)">
                         <control type="group">
                             <left>40</left>
             <control type="group">
