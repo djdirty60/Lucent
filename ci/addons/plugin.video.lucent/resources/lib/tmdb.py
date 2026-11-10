@@ -207,6 +207,24 @@ def upcoming(kind, page=1, size=20):
     return [m for m in many([(kind, r["id"]) for r in part])], len(rows) > page * size
 
 
+def new_series(page=1, size=20, days=120):
+    """Series that started in the last months, the newest start first. (titles, more?)"""
+    today = datetime.date.today()
+    params = {"first_air_date.gte": (today - datetime.timedelta(days=days)).isoformat(), "first_air_date.lte": today.isoformat(),
+              "sort_by": "popularity.desc", "include_adult": "false", "include_null_first_air_dates": "false",
+              "without_genres": "10763,10767"}            # no news or talk shows
+    rows = []
+    for number in range(1, 6):              # the 100 most watched new series, then sorted by date
+        data = get("discover/tv", ttl=6 * 3600, page=number, **params)
+        rows += data.get("results") or []
+        if number >= (data.get("total_pages") or 1):
+            break
+    rows = [r for r in rows if r.get("first_air_date") and r["first_air_date"] <= today.isoformat()]
+    rows.sort(key=lambda r: r["first_air_date"], reverse=True)
+    part = rows[(page - 1) * size:page * size]
+    return many([("tvshow", r["id"]) for r in part]), len(rows) > page * size
+
+
 def providers():
     """Streaming services of your country, most popular first: [(id, name, logo)]."""
     found = {}

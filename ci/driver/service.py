@@ -3855,17 +3855,25 @@ def _dir_guarded(path, wait=20):
 
 
 def lucentvideo_test():
-    """Lucent Video 0.17.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
+    """Lucent Video 0.18.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
     out = {"root": _dir_guarded("plugin://plugin.video.lucent/")}
     out["tools"] = _dir_guarded("plugin://plugin.video.lucent/?action=tools")
-    for nm in ("calendar", "foryou", "person&id=287", "trending_movie", "upcoming_movie", "upcoming_tv"):
+    out["service_row"] = _dir_guarded("plugin://plugin.video.lucent/?action=list&name=service_row&widget=1", 15)
+    for nm in ("calendar", "foryou", "person&id=287", "trending_movie", "upcoming_movie", "upcoming_tv", "new_tv"):
         out["row_" + nm] = _dir_guarded("plugin://plugin.video.lucent/?action=list&widget=1&name=" + nm, 15)
     try:
         import sys as _s
         _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
         import menu as _menu
         out["menu"] = {"has_lv": _menu.has_lv(), "rows": len(_menu.WIDGETS_LV), "names": [r[1].split("name=")[1] for r in _menu.WIDGETS_LV]}
+        out["lvmap"] = {p: _menu.lv_path(p) for p in ("plugin://plugin.video.seren/?action=showsNextUp",
+                         "plugin://plugin.video.seren/?action=genericEndpoint&mediatype=shows&endpoint=anticipated",
+                         "plugin://plugin.video.seren/?action=moviesUpdated", "plugin://script.lucent.library/?action=providers",
+                         "plugin://script.lucent.library/?action=tmdb&list=prov_8_newtv", "videodb://movies/titles/")}
+        _tabs = _menu.lv_tabs()[0]
+        out["lvtabs"] = [[tb["action"], [w["path"].split("name=")[-1] for w in tb["widgets"]]] for tb in _tabs[:5]]
+        out["use_lv"] = _menu.use_lv()
     except Exception as _e:  # noqa: BLE001
         out["menu"] = repr(_e)
     log("lucentvideo: " + json.dumps(out))

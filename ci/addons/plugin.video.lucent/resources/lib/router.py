@@ -102,6 +102,11 @@ def _action(label, url, icon="DefaultAddonProgram.png"):
 
 def home(handle, _params):
     """Watching first, then browsing, then your own things, then the tools."""
+    if not tmdb.key():                  # nothing to browse yet: only the way to get started
+        send(handle, [_action(T("Installatie-assistent: sleutels instellen", "Setup assistant: set your keys"), util.url_for(action="setup")),
+                      _action(T("Profiel: %s", "Profile: %s") % users.current()["name"], util.url_for(action="who"), "DefaultUser.png"),
+                      items.folder(T("Instellingen en hulp", "Settings and help"), util.url_for(action="tools"), "DefaultAddonProgram.png")])
+        return
     rows = [
         items.folder(T("Verder kijken", "Continue watching"), util.url_for(action="list", name="continue"), "DefaultInProgressShows.png"),
         items.folder(T("Volgende afleveringen", "Next up"), util.url_for(action="list", name="nextup"), "DefaultTVShows.png"),
@@ -125,6 +130,7 @@ def menu(handle, params):
                    (T("Binnenkort", "Coming soon"), "upcoming_movie")]
     else:
         entries = [(T("Trending", "Trending"), "trending_tv"), (T("Populair", "Popular"), "popular_tv"),
+                   (T("Nieuwe series", "New series"), "new_tv"),
                    (T("Best beoordeeld", "Top rated"), "toprated_tv"), (T("Lopende series", "On the air"), "airing_tv"),
                    (T("Binnenkort", "Coming soon"), "upcoming_tv"), (T("Kalender: nieuwe afleveringen", "Calendar: new episodes"), "calendar")]
     rows = [items.folder(label, util.url_for(action="list", name=name)) for label, name in entries]
@@ -224,8 +230,10 @@ def services(handle, _params):
 
 
 def service(handle, params):
-    rows = [items.folder(label, util.url_for(action="list", name="provider", provider=params["provider"], type=kind)) for label, kind in
-            ((T("Nieuwste eerst", "Newest first"), "all"), (T("Films", "Movies"), "movie"), (T("Series", "Shows"), "tvshow"))]
+    import services
+    rows = [items.folder(T("Nieuwste eerst", "Newest first"), util.url_for(action="list", name="provider", provider=params["provider"], type="all"))]
+    rows += [items.folder(services.label(kind), util.url_for(action="list", name="service_list", provider=params["provider"], kind=kind))
+             for kind in services.KINDS]
     send(handle, rows)
 
 
@@ -362,6 +370,16 @@ def list_titles(handle, params):
         kind = params.get("type")
         titles, more = tmdb.listing("discover/" + ("movie" if kind == "movie" else "tv"), kind, page,
                                     with_genres=params["genre"], sort_by="popularity.desc")
+    elif name == "service_row":
+        import services
+        return send(handle, services.tiles())
+    elif name == "service_list":
+        import services
+        titles, more = services.titles(params["provider"], params.get("kind", "newmovie"), page)
+        content = "movies" if params.get("kind", "").endswith("movie") else "tvshows"
+    elif name == "new_tv":
+        titles, more = tmdb.new_series(page)
+        content = "tvshows"
     elif name in ("upcoming_movie", "upcoming_tv"):
         kind = "movie" if name == "upcoming_movie" else "tvshow"
         titles, more = tmdb.upcoming(kind, page)
@@ -525,6 +543,9 @@ def run(argv):
         if action == "test_easynews":
             ok, text = usenet.check_easynews()
             return xbmcgui.Dialog().ok("Easynews" if ok else T("Niet gelukt", "Failed"), text)
+        if action == "service_open":
+            import services
+            return services.open_service(params)
         if action == "backup":
             import backup
             return backup.menu()
@@ -586,7 +607,7 @@ def run(argv):
             if len(users.everyone()) > 1 and not util.HOME.getProperty("lucent.video.who.asked"):
                 util.HOME.setProperty("lucent.video.who.asked", "1")
                 setup_ui.ask_who()
-        if not tmdb.key():
+        if not tmdb.key() and action not in ("tools", ""):
             if params.get("widget") == "1":      # a row on Home: stay empty, never open a window
                 return xbmcplugin.endOfDirectory(handle, succeeded=False)
             xbmcgui.Dialog().ok("Lucent", T("Vul eerst je TMDB-sleutel in bij de instellingen.", "Enter your TMDB key in the settings first."))
