@@ -73,7 +73,7 @@ def main(what):
     elif what == "trailer":
         xbmc.executebuiltin("RunPlugin(%s)" % util.url_for(action="trailer", type=meta["type"], tmdb=meta["tmdb"]))
     elif what == "cast":
-        xbmc.executebuiltin("ActivateWindow(Videos,%s,return)" % util.url_for(action="cast", type=meta["type"], tmdb=meta["tmdb"]))
+        xbmc.executebuiltin("RunPlugin(%s)" % util.url_for(action="cast_popup", type=meta["type"], tmdb=meta["tmdb"]))
     elif what == "similar":
         xbmc.executebuiltin("ActivateWindow(Videos,%s,return)" % util.url_for(action="list", name="similar", type=meta["type"], tmdb=meta["tmdb"]))
 

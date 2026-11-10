@@ -548,6 +548,9 @@ def run(argv):
         if action == "test_easynews":
             ok, text = usenet.check_easynews()
             return xbmcgui.Dialog().ok("Easynews" if ok else T("Niet gelukt", "Failed"), text)
+        if action == "cast_popup":
+            import castui
+            return castui.open_cast(params.get("type", "movie"), params["tmdb"])
         if action == "pick":
             import pick
             return pick.open_pick()

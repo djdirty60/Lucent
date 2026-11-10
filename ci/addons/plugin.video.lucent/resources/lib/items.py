@@ -92,7 +92,7 @@ def context(meta, watched):
         run(util.T("Van kijklijst af", "Remove from watchlist"), action="watchlist", value=0, **target)
         if meta.get("trailer"):
             entries.append((util.T("Trailer bekijken", "Watch trailer"), "PlayMedia(%s)" % meta["trailer"]))
-        entries.append((util.T("Acteurs", "Cast"), "Container.Update(%s)" % util.url_for(action="cast", type=meta["kind"], tmdb=meta["tmdb"])))
+        entries.append((util.T("Acteurs", "Cast"), "RunPlugin(%s)" % util.url_for(action="cast_popup", type=meta["kind"], tmdb=meta["tmdb"])))
         entries.append((util.T("Vergelijkbare titels", "Similar titles"), "Container.Update(%s)" % util.url_for(
             action="list", name="similar", type=meta["kind"], tmdb=meta["tmdb"])))
     return entries
