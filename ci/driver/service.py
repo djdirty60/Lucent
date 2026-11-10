@@ -4246,6 +4246,60 @@ def omdblist_test():
     mon.waitForAbort(2)
 
 
+def flicker_test():
+    """Lucent Video marks many titles watched: does the focus jump to the side menu while the library changes?"""
+    import threading
+    r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["playcount"]}})))
+    movies = (r.get("result") or {}).get("movies") or []
+    out = {"movies": len(movies)}
+    if not movies:
+        log("flicker: " + json.dumps(out))
+        return
+    mid = movies[0]["movieid"]
+
+    def run(name, focus):
+        xbmc.executebuiltin(focus)
+        mon.waitForAbort(2.5)
+        start_id = lab("System.CurrentControlId")
+        seen = []
+        stop = []
+
+        def sample():
+            while not stop and not mon.abortRequested():
+                cid = lab("System.CurrentControlId") + ("/menu" if cond("Control.HasFocus(9000)") else "")
+                if not seen or seen[-1] != cid:
+                    seen.append(cid)
+                time.sleep(0.03)
+        th = threading.Thread(target=sample)
+        th.start()
+        for n in range(30):
+            xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                            "params": {"movieid": mid, "playcount": n % 2}}))
+            mon.waitForAbort(0.2)
+        mon.waitForAbort(1.5)
+        stop.append(1)
+        th.join(5)
+        out[name] = {"start": start_id, "changes": len(seen) - 1, "seen": seen[:12], "end": lab("System.CurrentControlId")}
+        shot(f"flicker-{name}")
+
+    tab = None
+    for i in range(16):
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{i})")
+        mon.waitForAbort(0.4)
+        if cond("String.Contains(Container(9000).ListItem.Property(act),AddonBrowser)"):
+            tab = i
+            break
+    out["addontab"] = tab
+    if tab is not None:
+        run("addons", "SetFocus(9340)")
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+    run("homerow", "SetFocus(9100)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails", "params": {"movieid": mid, "playcount": movies[0].get("playcount", 0)}}))
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    log("flicker: " + json.dumps(out))
+
+
 def main():
     for _ in range(180):
         if cond("Window.IsActive(home)") and HOME.getProperty("nuvio.started"):
@@ -4259,6 +4313,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    flicker_test()
     diaglog_test()
     noseren_test()
     dv2_test()
