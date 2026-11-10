@@ -428,21 +428,31 @@ def lv_convert():
         put("lucent.lvrows", "done4")                       # done4: Lucent Library rows converted too (1.39.0)
 
 
+def lv_knows(name):
+    """True when the installed Lucent Video knows this row (it can also go back to an older version)."""
+    try:
+        with open(xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/lib/router.py"), encoding="utf-8") as fh:
+            return f'"{name}"' in fh.read()
+    except OSError:
+        return False
+
+
 def pick_lv():
     """A Lucent Video row: one of its lists, or a streaming service (newest first)."""
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
     own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
     actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
-    labels = [tr(k) for k, _p, _s in WIDGETS_LV] + [own, actor, service]
+    rows = [r for r in WIDGETS_LV if "coming_watchlist" not in r[1] or lv_knows("coming_watchlist")]
+    labels = [tr(k) for k, _p, _s in rows] + [own, actor, service]
     choice = select("Lucent Video", labels)
     if choice < 0:
         return None
-    if choice < len(WIDGETS_LV):
-        key, path, style = WIDGETS_LV[choice]
+    if choice < len(rows):
+        key, path, style = rows[choice]
         return tr(key), path, style
-    if choice == len(WIDGETS_LV):
+    if choice == len(rows):
         return pick_lv_list()
-    if choice == len(WIDGETS_LV) + 1:
+    if choice == len(rows) + 1:
         return pick_lv_person()
     busy(True)
     entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://plugin.video.lucent/?action=services",

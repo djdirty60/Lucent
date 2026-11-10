@@ -235,13 +235,24 @@ def relink_trakt():
         xbmc.executebuiltin(f"RunPlugin({SEREN}?action=authTrakt)")
 
 
+def lv_supports(action):
+    """True when the installed Lucent Video knows this action or row name (versions can go back as well as forward,
+    so its code is checked instead of its version number)."""
+    try:
+        path = xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/lib/router.py")
+        with open(path, encoding="utf-8") as fh:
+            return f'"{action}"' in fh.read()
+    except OSError:
+        return False
+
+
 def lv_renew(wait=15):
     """Lucent Video renews its Trakt login itself: ask it (0.32.4+: action=trakt_refresh, older: open the watchlist once)
     and wait for the new login."""
     old = _lv_json("trakt.json").get("access_token") or ""
     if not old or not _lv_json("trakt.json").get("refresh_token"):
         return
-    if lv_version() >= (0, 32, 4):               # its own quiet renewal (no listing, no dialog)
+    if lv_supports("trakt_refresh"):             # its own quiet renewal (no listing, no dialog)
         xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=trakt_refresh)")
     else:
         xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=list&name=watchlist_movie&widget=1)")
