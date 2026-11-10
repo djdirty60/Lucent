@@ -272,10 +272,13 @@ class Trailers(xbmc.Player):
         mode = skin("nuvio.posterfocus")
         if self.close_error_dialog():
             return
-        on_home = xbmcgui.getCurrentWindowId() == HOME_ID
+        window = xbmcgui.getCurrentWindowId()
+        on_home = window == HOME_ID
         dialog = xbmc.getCondVisibility("[System.HasVisibleModalDialog | Window.IsActive(contextmenu)]"
                                         " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel)")
-        fullscreen = xbmc.getCondVisibility("Window.IsActive(fullscreenvideo)")
+        # Back on Home makes the trailer full screen. Kodi switches the window before Window.IsActive says so: also go
+        # by the window id, or the trailer was stopped as "you left Home" and the full screen stayed black
+        fullscreen = window in (12005, 12901) or xbmc.getCondVisibility("Window.IsActive(fullscreenvideo) | Window.IsActive(videoosd)")
         busy = self.ours or self.requested
         # safety net: a YouTube video that plays behind the Home screen and that we do not own is a stray trailer
         # (it lost its owner, for example after a window change): stop it after a few seconds
