@@ -125,7 +125,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.lucent" version="0.33.0" name="Lucent Video" provider-name="Claude">
+<addon id="plugin.video.lucent" version="0.33.4" name="Lucent Video" provider-name="Claude">
     <requires>
         <import addon="xbmc.python" version="3.0.1"/>
     </requires>
@@ -204,25 +204,9 @@
         <description lang="nl_NL">Bladeren met TMDB, afspelen via je eigen AIOStreams-adres en je voortgang bijhouden op Trakt. Werkt zonder Seren.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>0.33.0: Everything from 0.31.6-0.32.5 is back. Background work waits while any video plays, and the Home-rows-at-start and Coming-soon checks are off for now (Dolby Vision on CoreELEC).
-0.32.5: A trailer from the skin is stopped completely before a film starts.
-0.32.4: For skins: action=trakt_refresh renews the Trakt login quietly.
-0.32.3: New setting (off by default) for CoreELEC: rebuild the picture once when Dolby Vision over a stream shows purple and green.
-0.32.2: While finding sources you see per scraper how many it found (or that it is still busy), and per resolution, not only at the end.
-0.32.1: The source list shows which scraper found each source (AIO, Coco, Fenom, Open, Easynews, TorBox).
-0.32.0:
-- New titles come into the Kodi library already marked as watched when you saw them, so less needs to be marked afterwards.
-- Coming soon: films and series from your watchlist that are not out yet, with their date, and a message on the day they are out.
-- Your watchlist tidies itself up: a watched film, or an ended series you saw completely, leaves it (setting).
-- Series show how far you are: "3 episodes to go" and "S2 · 5 of 8".
-- Download an error report on the "Type with your phone" page.
-- Home rows are fetched right after Kodi starts.
-- Besides CocoScrapers also FenomScrapers and OpenScrapers (when installed, with a debrid service).
-0.31.10: The library progress bar no longer stays on screen.
-0.31.9: The setting "Titles per Home row" shows its name again.
-0.31.8: New setting "Titles per Home row".
-0.31.7: "What shall we watch?" respects your choices again.
-0.31.6: Watched series work again with Trakt. The format check is removed.</news>
+        <news>0.33.4: New, sharper icon (orange, with a play button). When Trakt says a list is full, Lucent reads your own limits from Trakt (VIP accounts also have a maximum per list) and shows the numbers, e.g. 1000 of 1000, and offers to make a new list (like "Movie collection 2") for the title.
+0.33.3: Every setting has a short explanation. Library and lists: your Trakt watchlist, collection and lists first (lists that fit the title on top), the Kodi library last; if a change fails you see why. Watchlist, collection and long lists are read to the end again (Trakt sends only 100 at a time since April 2026). The More menu on the info page no longer repeats buttons that are already on the page.
+0.33.2: New look for every menu: each item has its own card with an icon and colour, a dark film background and a short line that explains what you find there.</news>
         <assets>
             <icon>icon.png</icon>
         </assets>
