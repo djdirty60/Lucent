@@ -4082,6 +4082,19 @@ def formatclips_test():
     log("formatclips: " + json.dumps(out))
 
 
+def trailerlayer_test():
+    """1.38.2: the test option for poster trailers on CoreELEC: the variable and Home still work with each layer."""
+    out = {}
+    for layer in ("", "late", "clear"):
+        xbmc.executebuiltin(f"Skin.SetString(lucent.trailer.layer,{layer})")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        out[layer or "A"] = {"clear": lab("$VAR[LucentHomeClear]"), "home": cond("Window.IsActive(home)")}
+    shot("home-layer-clear")
+    xbmc.executebuiltin("Skin.SetString(lucent.trailer.layer,)")
+    log("trailerlayer: " + json.dumps(out))
+
+
 def music_fav_test():
     """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
     import sys as _s
@@ -4258,6 +4271,7 @@ def main():
     infobuttons_test()
     progress_colour_test()
     formatclips_test()
+    trailerlayer_test()
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
