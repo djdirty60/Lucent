@@ -20,8 +20,7 @@ NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DONE = "lucent.setup.done"
 SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
-LIB = "script.lucent.library"     # old library add-on; still used when it is installed
-LV = "plugin.video.lucent"        # Lucent Video: has its own library (optional)
+LV = "plugin.video.lucent"        # Lucent Video: works best with the skin (rows, info page, library, subtitles)
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
 
 
@@ -57,11 +56,6 @@ def has(addon_id):
     return cond(f"System.HasAddon({addon_id})")
 
 
-def lib_on():
-    """The older Lucent Library is installed and switched on."""
-    return cond(f"System.AddonIsEnabled({LIB})")
-
-
 def install(addon_id):
     xbmc.executebuiltin(f"InstallAddon({addon_id})")
 
@@ -83,44 +77,6 @@ def ac_welcome():
 
 def no_seren():
     return cond("Skin.HasSetting(lucent.noseren)")
-
-
-def st_seren():
-    if no_seren():
-        return "ok", t("You use Lucent without Seren", "Je gebruikt Lucent zonder Seren")
-    if not has(SEREN):
-        return "todo", t("Seren is not installed", "Seren is nog niet geïnstalleerd")
-    if not setting(SEREN, "trakt.auth"):
-        return "todo", t("Seren is there - Trakt is not linked yet", "Seren staat erop - Trakt is nog niet gekoppeld")
-    user = setting(SEREN, "trakt.username")
-    return "ok", t(f"Linked to Trakt{' as ' + user if user else ''}", f"Gekoppeld met Trakt{' als ' + user if user else ''}")
-
-
-SEREN_REPO = "repository.seren-nixgate"   # minhgi's Seren build (scrapers in modules); in the Lucent repository, installed by the setup assistant
-
-
-def install_seren():
-    """Seren is not in Kodi's own repository: first its own repository (Seren Nixgate by minhgi, installed with the skin from the Lucent
-    repository), then Seren from there. Runs in the background; Kodi asks to confirm each install."""
-    import threading
-
-    def go():
-        monitor = xbmc.Monitor()
-        if not has(SEREN_REPO):
-            xbmc.executebuiltin(f"InstallAddon({SEREN_REPO})")
-            for _ in range(120):
-                if has(SEREN_REPO) or monitor.waitForAbort(1):
-                    break
-            if not has(SEREN_REPO):
-                xbmcgui.Dialog().ok("Seren", t("The Seren repository (Seren Nixgate) could not be installed. Update the Lucent "
-                                               "repository (Add-ons > Check for updates) and try again.",
-                                               "De repository van Seren (Seren Nixgate) kon niet worden geïnstalleerd. Werk de "
-                                               "Lucent-repository bij (Add-ons > Controleren op updates) en probeer het opnieuw."))
-                return
-            xbmc.executebuiltin("UpdateAddonRepos")
-            monitor.waitForAbort(6)
-        xbmc.executebuiltin(f"InstallAddon({SEREN})")
-    threading.Thread(target=go, daemon=True).start()
 
 
 def choose_menu(question):
@@ -151,17 +107,32 @@ def seren_on():
                       "Ook het menu met Seren klaarzetten (zoeken, films en series uit Seren)? Je eigen tabs en widgets worden vervangen."))
 
 
-def ac_seren():
-    if no_seren():
-        return [(t("Use Seren after all", "Toch Seren gebruiken"), seren_on)]
-    if not has(SEREN):
-        return [(t("Yes: install Seren", "Ja: Seren installeren"), install_seren),
-                (t("No, without Seren", "Nee, zonder Seren"), seren_off)]
+def st_video():
+    """Which video add-on fills the rows and plays: Lucent Video works best, Seren and any other add-on work too."""
+    if has(LV):
+        account = setting(LV, "trakt_user") or setting(LV, "simkl_user")
+        return "ok", t(f"Lucent Video is installed{'  ·  account: ' + account if account else ''}",
+                       f"Lucent Video staat erop{'  ·  account: ' + account if account else ''}")
+    if has(SEREN) and not no_seren():
+        return "ok", t("Seren is installed", "Seren staat erop")
+    return "info", t("No video add-on for films and series yet", "Nog geen video-add-on voor films en series")
+
+
+def ac_video():
     out = []
-    if not setting(SEREN, "trakt.auth"):
-        out.append((t("Link Trakt", "Trakt koppelen"), lambda: run(f"RunPlugin(plugin://{SEREN}/?action=authTrakt)")))
-    out.append((t("Seren settings", "Seren-instellingen"), lambda: run(f"Addon.OpenSettings({SEREN})")))
-    out.append((t("I don't use Seren", "Ik gebruik geen Seren"), seren_off))
+    if has(LV):
+        out.append((t("Lucent Video: setup assistant", "Lucent Video: installatie-assistent"),
+                    lambda: run("RunPlugin(plugin://plugin.video.lucent/?action=setup)")))
+        out.append((t("Lucent Video settings", "Instellingen van Lucent Video"), lambda: run(f"Addon.OpenSettings({LV})")))
+    else:
+        out.append((t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV)))
+    if has(SEREN):
+        if no_seren():
+            out.append((t("Use Seren after all", "Toch Seren gebruiken"), seren_on))
+        else:
+            out.append((t("Seren settings", "Seren-instellingen"), lambda: run(f"Addon.OpenSettings({SEREN})")))
+            out.append((t("I don't use Seren", "Ik gebruik geen Seren"), seren_off))
+    out.append((t("Menu and widgets", "Menu en widgets"), lambda: run("RunScript(special://skin/scripts/menu.py)")))
     return out
 
 
@@ -245,43 +216,23 @@ def ac_subskip():
             (t("Settings", "Instellingen"), lambda: run(base + "subs_settings)"))]
 
 
-EVERY_NEXT = {"6": "12", "12": "24", "24": "0"}
 
 
 def st_library():
-    if not lib_on():
-        if not has(LV):
-            return "info", t("Optional: Lucent Video can fill Kodi's library", "Optioneel: Lucent Video kan de bibliotheek van Kodi vullen")
-        on = setting(LV, "library_on") == "true"
-        return ("ok", t("Lucent Video fills the library", "Lucent Video vult de bibliotheek")) if on else \
-            ("info", t("Off  ·  switch it on in Lucent Video", "Uit  ·  zet het aan in Lucent Video"))
-    home = xbmcgui.Window(10000)
-    movies, shows = home.getProperty("lucent.lib.movies"), home.getProperty("lucent.lib.shows")
-    every = xbmc.getInfoLabel("Skin.String(lucent.lib.every)") or "6"
-    when = t("updates by itself every {0} hours", "werkt zichzelf om de {0} uur bij").format(every) if every != "0" \
-        else t("does not update by itself", "werkt niet vanzelf bij")
-    lists = xbmc.getInfoLabel("Skin.String(lucent.lib.lists)")
-    if lists:
-        when += t(f"  ·  lists: {lists}", f"  ·  lijsten: {lists}")
-    if movies or shows:
-        return "ok", t(f"{movies or 0} films, {shows or 0} series  ·  {when}", f"{movies or 0} films, {shows or 0} series  ·  {when}")
-    return "todo", t(f"Not filled yet  ·  {when}", f"Nog niet gevuld  ·  {when}")
+    if not has(LV):
+        return "info", t("Optional: Lucent Video can fill Kodi's library", "Optioneel: Lucent Video kan de bibliotheek van Kodi vullen")
+    on = setting(LV, "library_on") == "true"
+    return ("ok", t("Lucent Video fills the library", "Lucent Video vult de bibliotheek")) if on else \
+        ("info", t("Off  ·  switch it on in Lucent Video", "Uit  ·  zet het aan in Lucent Video"))
 
 
 def ac_library():
-    if not lib_on():
-        if not has(LV):
-            return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
-        base = "RunPlugin(plugin://plugin.video.lucent/?action="
-        return [(t("Choose what goes in the library", "Kiezen wat in de bibliotheek komt"), lambda: run(base + "library_choose)")),
-                (t("Update now", "Nu bijwerken"), lambda: run(base + "library_sync)")),
-                (t("Settings", "Instellingen"), lambda: run("Addon.OpenSettings(plugin.video.lucent)"))]
-    every = xbmc.getInfoLabel("Skin.String(lucent.lib.every)") or "6"
-    label = t("Automatic: off", "Automatisch: uit") if every == "0" else t(f"Automatic: every {every} h", f"Automatisch: om de {every} uur")
-    lists = xbmc.getInfoLabel("Skin.String(lucent.lib.lists)") or t("off", "uit")
-    return [(t("Update now", "Nu bijwerken"), lambda: run(f"RunScript({LIB},update)")),
-            (label, lambda: run(f'Skin.SetString(lucent.lib.every,{EVERY_NEXT.get(every, "6")})')),
-            (t(f"My lists as library: {lists}", f"Mijn lijsten als bibliotheek: {lists}"), lambda: run(f"RunScript({LIB},chooselists)"))]
+    if not has(LV):
+        return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
+    base = "RunPlugin(plugin://plugin.video.lucent/?action="
+    return [(t("Choose what goes in the library", "Kiezen wat in de bibliotheek komt"), lambda: run(base + "library_choose)")),
+            (t("Update now", "Nu bijwerken"), lambda: run(base + "library_sync)")),
+            (t("Settings", "Instellingen"), lambda: run("Addon.OpenSettings(plugin.video.lucent)"))]
 
 
 def st_look():
@@ -311,10 +262,6 @@ def ac_look():
                       run("RunScript(special://skin/scripts/settings.py,litebuild)"))),
             (t("Big posters: on", "Grote posters: aan") if not cond("Skin.HasSetting(lucent.posters.small)")
              else t("Big posters: off", "Grote posters: uit"), toggle_posters),
-            (t("Films and series only once you can watch them: on", "Films en series pas als je ze kunt kijken: aan")
-             if cond("Skin.HasSetting(lucent.hide.undigital)")
-             else t("Films and series only once you can watch them: off", "Films en series pas als je ze kunt kijken: uit"),
-             lambda: run("Skin.ToggleSetting(lucent.hide.undigital)")),
             (t("Menu and rows", "Menu en rijen"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
 
 
@@ -437,25 +384,23 @@ def ac_tabs():
 
 STEPS = [
     ("welcome", "icons/sparkle.png", ("Welcome", "Welkom"),
-     ("Welcome to Lucent. In a few steps we set up what matters most: Seren with your Trakt account (if you use it), a TMDb key for "
-      "pictures and information, your IPTV channels, subtitles and your own library.\n\nEvery step shows how it stands "
+     ("Welcome to Lucent. In a few steps we set up what matters most: the video add-on for films and series, a TMDb key "
+      "for pictures and information, your IPTV channels, subtitles and your own library.\n\nEvery step shows how it stands "
       "right now. Something you do not use, you simply skip. You can open this assistant again later: "
       "Settings > Lucent > Setup assistant.",
-      "Welkom bij Lucent. In een paar stappen zetten we het belangrijkste klaar: Seren met je Trakt-account (als je dat gebruikt), een "
+      "Welkom bij Lucent. In een paar stappen zetten we het belangrijkste klaar: de video-add-on voor films en series, een "
       "TMDb-sleutel voor plaatjes en informatie, je IPTV-zenders, ondertitels en je eigen bibliotheek.\n\nBij elke stap "
       "zie je meteen hoe het nu staat. Wat je niet gebruikt, sla je gewoon over. Je kunt deze assistent later opnieuw "
       "openen: Instellingen > Lucent > Setup-assistent."), st_welcome, ac_welcome),
-    ("seren", "icons/trakt.png", ("Do you use Seren?", "Gebruik je Seren?"),
-     ("Seren finds the streams and plays films and series. Your Trakt account keeps your lists, your collection and "
-      "what you watched - Lucent reads its rows, the calendar and 'Tonight for you' from it.\n\nLink Trakt: a code "
-      "appears, enter it on trakt.tv/activate (phone or computer).\n\nDon't use Seren? Choose 'No, without Seren'. Lucent then "
-      "works with your Kodi library and your own add-ons (Emby, Jellyfin, YouTube...) and leaves the Seren choices out. "
-      "Tip: long-press OK on a folder in any add-on and choose 'Add to Home as widget'.",
-      "Seren zoekt de bronnen en speelt films en series af. Je Trakt-account bewaart je lijsten, je collectie en wat "
-      "je gezien hebt - daar haalt Lucent zijn rijen, de kalender en 'Vanavond voor jou' uit.\n\nTrakt koppelen: er "
-      "verschijnt een code, vul die in op trakt.tv/activate (telefoon of computer).\n\nGebruik je geen Seren? Kies 'Nee, zonder "
-      "Seren'. Lucent werkt dan met je Kodi-bibliotheek en je eigen add-ons (Emby, Jellyfin, YouTube...) en laat de Seren-keuzes weg. "
-      "Tip: houd OK ingedrukt op een map in een add-on en kies 'Toevoegen aan Home als widget'."), st_seren, ac_seren),
+    ("video", "icons/play.png", ("Films and series", "Films en series"),
+     ("Lucent works with every video add-on: long-press OK on a folder in any add-on and choose 'Add to Home as widget'. "
+      "With Lucent Video it works best: its rows fill Home by themselves, and the buttons on the info page (play, "
+      "watched, lists, trailer, more) use it - also for titles from other add-ons.\n\nUse Seren? That works too; "
+      "Lucent then also offers Seren's rows.",
+      "Lucent werkt met elke video-add-on: houd OK ingedrukt op een map in een add-on en kies 'Toevoegen aan Home als "
+      "widget'. Met Lucent Video werkt het het best: de rijen op Home vullen zich vanzelf, en de knoppen op de "
+      "infopagina (afspelen, bekeken, lijsten, trailer, meer) gebruiken het - ook voor titels uit andere add-ons.\n\n"
+      "Gebruik je Seren? Dat kan ook; Lucent biedt dan ook de rijen van Seren aan."), st_video, ac_video),
     ("tmdb", "icons/movies.png", ("TMDb key", "TMDb-sleutel"),
      ("TMDb (The Movie Database) supplies posters, logos, cast, studios and trailers. A key of your own is free and "
       "makes everything faster and more complete.\n\nGet one: make an account on themoviedb.org, then Settings > API > "
@@ -494,14 +439,11 @@ STEPS = [
       "gesproken taal, vertaalt Engelse ondertitels met AI als je dat wilt, en slaat intro's over met TheIntroDB. "
       "Het werkt voor elke video, ook uit andere add-ons."), st_subskip, ac_subskip),
     ("library", "icons/library.png", ("Library", "Bibliotheek"),
-     ("Optional. Lucent Video (or the older Lucent Library) turns your Trakt collection into Kodi's own library: films and series with their own pages, "
-      "'Continue watching' and 'Next episode' rows, and scores. Trakt caps the collection: with 'My lists as library' your own "
-      "Trakt lists (for example a film list and a series list) come in too, without that limit.\n\nImportant: first load your whole collection in Seren "
-      "(Movies > My movies and TV shows > My shows) until everything is in, then press 'Update now'.",
-      "Optioneel. Lucent Video (of de oudere Lucent Bibliotheek) maakt van je Trakt-collectie de eigen bibliotheek van Kodi: films en series met eigen pagina's, "
-      "rijen 'Verder kijken' en 'Volgende aflevering', en scores. Trakt heeft een limiet op de collectie: met 'Mijn lijsten als "
-      "bibliotheek' komen ook je eigen Trakt-lijsten erbij (bijvoorbeeld een filmlijst en een serielijst), zonder die limiet.\n\nBelangrijk: laad eerst je hele collectie in Seren "
-      "(Films > Mijn films en Series > Mijn series) tot alles binnen is, en druk dan op 'Nu bijwerken'."), st_library, ac_library),
+     ("Optional. Lucent Video turns your Trakt (or Simkl) collection and lists into Kodi's own library: films and series "
+      "with their own pages, 'Continue watching' and 'Next episode' rows, and watched marks that stay in step.",
+      "Optioneel. Lucent Video maakt van je Trakt- (of Simkl-)collectie en lijsten de eigen bibliotheek van Kodi: films en "
+      "series met eigen pagina's, rijen 'Verder kijken' en 'Volgende aflevering', en bekeken-vinkjes die gelijk blijven."),
+     st_library, ac_library),
     ("tabs", "icons/layout.png", ("Tabs", "Tabbladen"),
      ("Solis Dashboard (for solar panels with Solis voor Homey) can get its own tab on Home: it shows the numbers of now - "
       "solar panels, house, grid, today and this month - and OK opens the dashboard.\n\nOther tabs you add, move or remove "
@@ -512,21 +454,19 @@ STEPS = [
     ("look", "icons/palette.png", ("Look", "Weergave"),
      ("Light mode keeps Lucent quick on boxes with 2 GB of memory or less (fewer rows, no poster glow) - Lucent switches "
       "it on by itself on such boxes. 'Tonight for you' is a row on Home with titles that fit the moment of the day.\n\n"
-      "Big posters fill the space under the information; switch them off for the smaller posters with names. "
-      "'Hide films until their digital release' keeps films that are only in cinemas out of the rows.\n\n"
+      "Big posters fill the space under the information; switch them off for the smaller posters with names.\n\n"
       "Colours, the menu and the rows on Home can be changed any time in Skin settings.",
       "Lichte modus houdt Lucent vlot op boxen met 2 GB geheugen of minder (minder rijen, geen postergloed) - op zulke "
       "boxen zet Lucent hem zelf aan. 'Vanavond voor jou' is een rij op het startscherm met titels die passen bij het "
-      "moment van de dag. Grote posters vullen de ruimte onder de informatie; zet ze uit voor de kleinere posters met namen. "
-      "'Films verbergen tot de digitale release' houdt films die alleen in de bioscoop draaien uit de rijen.\n\n"
+      "moment van de dag. Grote posters vullen de ruimte onder de informatie; zet ze uit voor de kleinere posters met namen.\n\n"
       "Kleuren, het menu en de rijen op het startscherm pas je altijd aan in Skin-instellingen."), st_look, ac_look),
     ("backup", "icons/cloud.png", ("Backup", "Back-up"),
      ("Save everything you set up in one file: Lucent's settings and menu, your favourites, the keys (TMDb, AI), the "
-      "settings of Seren, IPTV Simple and Lucent Library, and your sources. Put it on a USB stick or a network share, and "
+      "settings of your video add-ons and IPTV Simple, and your sources. Put it on a USB stick or a network share, and "
       "after a new installation (or on a second box) 'Restore' puts it all back.\n\nThe file holds your logins (Trakt, IPTV): "
       "keep it to yourself.",
       "Bewaar alles wat je hebt ingesteld in één bestand: de instellingen en het menu van Lucent, je favorieten, de sleutels "
-      "(TMDb, AI), de instellingen van Seren, IPTV Simple en Lucent Bibliotheek, en je bronnen. Zet het op een USB-stick of "
+      "(TMDb, AI), de instellingen van je video-add-ons en IPTV Simple, en je bronnen. Zet het op een USB-stick of "
       "netwerkmap; na een nieuwe installatie (of op een tweede box) zet 'Herstellen' alles terug.\n\nIn het bestand staan je "
       "inlogs (Trakt, IPTV): houd het voor jezelf."), st_backup, ac_backup),
 ]
@@ -534,8 +474,6 @@ STEPS = [
 
 if not cond(f"System.AddonIsEnabled({SOLIS})"):          # the Tabs step is only for the Solis add-on for now
     STEPS = [step for step in STEPS if step[0] != "tabs"]
-if no_seren():                                           # Lucent Library fills the library from Trakt / Seren
-    STEPS = [step for step in STEPS if step[0] != "library"]
 
 
 class Setup(xbmcgui.WindowXMLDialog):
@@ -644,8 +582,6 @@ def open_window():
     path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
     window = Setup("Lucent_Setup.xml", path, "Default", "1080i")
     try:
-        if lib_on():
-            xbmc.executebuiltin(f"RunScript({LIB},status)")   # film / series numbers for the library step
         window.doModal()
     finally:
         window.closing = True

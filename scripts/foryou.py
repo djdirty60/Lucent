@@ -87,7 +87,7 @@ def recommend(kinds):
     lang = "nl-NL" if _NL else "en-US"
     trakt = None
     try:
-        if xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
+        if info.trakt_available():
             trakt = info.Trakt()
             if not trakt.token:
                 trakt = None

@@ -14,7 +14,7 @@
     <onload condition="String.IsEmpty(Skin.String(lucent.posters.big))">Skin.SetString(lucent.posters.big,1)</onload>
     <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
     <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + String.IsEmpty(Skin.String(lucent.addonw4))">RunScript(special://skin/scripts/menu.py,addons)</onload>
-    <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + System.HasAddon(plugin.video.lucent) + [![String.IsEqual(Skin.String(lucent.lvrows),done2) | String.IsEqual(Skin.String(lucent.lvrows),done3)] | [String.IsEqual(Skin.String(lucent.lvrows),done2) + !System.AddonIsEnabled(script.lucent.library)]]">RunScript(special://skin/scripts/menu.py,lv)</onload>
+    <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + System.HasAddon(plugin.video.lucent) + !String.IsEqual(Skin.String(lucent.lvrows),done4)">RunScript(special://skin/scripts/menu.py,lv)</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
     <onload condition="!$EXP[NuvioAnyRow]">SetFocus(9000)</onload>

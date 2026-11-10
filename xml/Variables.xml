@@ -99,24 +99,6 @@
         <value condition="Integer.IsGreater(Container(5601).NumItems,0)">[B]$INFO[Container(56).ListItem.Label][/B]   [COLOR FF6F7C88]|[/COLOR]   $INFO[Container(5601).NumItems] $LOCALIZE[31563]</value>
         <value>[B]$INFO[Container(56).ListItem.Label][/B]</value>
     </variable>
-    <variable name="LucentLibStatus">
-        <value condition="!String.IsEmpty(Window(home).Property(lucent.lib.movies))">$INFO[Window(home).Property(lucent.lib.movies)] $LOCALIZE[31583]  ·  $INFO[Window(home).Property(lucent.lib.shows)] $LOCALIZE[31584]  ·  $LOCALIZE[31585] $INFO[Window(home).Property(lucent.lib.last)]</value>
-        <value>$LOCALIZE[31574]</value>
-    </variable>
-    <variable name="LucentLibEvery">
-        <value condition="String.IsEqual(Skin.String(lucent.lib.every),6) | String.IsEqual(Skin.String(lucent.lib.every),12) | String.IsEqual(Skin.String(lucent.lib.every),24)">$LOCALIZE[31587] $INFO[Skin.String(lucent.lib.every)] $LOCALIZE[31578]</value>
-        <value>$LOCALIZE[31577]</value>
-    </variable>
-    <variable name="LucentLibEveryNext">
-        <value condition="String.IsEqual(Skin.String(lucent.lib.every),6)">12</value>
-        <value condition="String.IsEqual(Skin.String(lucent.lib.every),12)">24</value>
-        <value condition="String.IsEqual(Skin.String(lucent.lib.every),24)">0</value>
-        <value>6</value>
-    </variable>
-    <variable name="LucentFilterType">
-        <value condition="Container.Content(tvshows)">tvshow</value>
-        <value>movie</value>
-    </variable>
     <variable name="LucentFilterNode">
         <value condition="Container.Content(tvshows)">tvshows</value>
         <value>movies</value>
@@ -687,18 +669,6 @@
         <value condition="Control.HasFocus(1220)">on_focus</value>
         <value>text4</value>
     </variable>
-    <variable name="SSF1221_text">
-        <value condition="Control.HasFocus(1221)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1221_text3">
-        <value condition="Control.HasFocus(1221)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1221_text4">
-        <value condition="Control.HasFocus(1221)">on_focus</value>
-        <value>text4</value>
-    </variable>
     <variable name="SSF1222_text">
         <value condition="Control.HasFocus(1222)">on_focus</value>
         <value>text</value>
@@ -890,70 +860,6 @@
     <variable name="SSF1509_text4">
         <value condition="Control.HasFocus(1509)">on_focus</value>
         <value>text4</value>
-    </variable>
-    <variable name="SSF1520_text">
-        <value condition="Control.HasFocus(1520)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1520_text3">
-        <value condition="Control.HasFocus(1520)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1520_text4">
-        <value condition="Control.HasFocus(1520)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1521_text">
-        <value condition="Control.HasFocus(1521)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1521_text3">
-        <value condition="Control.HasFocus(1521)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1521_text4">
-        <value condition="Control.HasFocus(1521)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1522_text">
-        <value condition="Control.HasFocus(1522)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1522_text3">
-        <value condition="Control.HasFocus(1522)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1522_text4">
-        <value condition="Control.HasFocus(1522)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1523_text">
-        <value condition="Control.HasFocus(1523)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1523_text3">
-        <value condition="Control.HasFocus(1523)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1523_text4">
-        <value condition="Control.HasFocus(1523)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1524_text">
-        <value condition="Control.HasFocus(1524)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1524_text3">
-        <value condition="Control.HasFocus(1524)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1524_text4">
-        <value condition="Control.HasFocus(1524)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="LucentLibLists">
-        <value condition="!String.IsEmpty(Skin.String(lucent.lib.lists))">$INFO[Skin.String(lucent.lib.lists)]</value>
-        <value>$LOCALIZE[31761]</value>
     </variable>
     <variable name="SSF1601_text">
         <value condition="Control.HasFocus(1601)">on_focus</value>
@@ -1183,18 +1089,6 @@
         <value condition="Control.HasFocus(2503)">on_focus</value>
         <value>text4</value>
     </variable>
-    <variable name="SSF2505_text">
-        <value condition="Control.HasFocus(2505)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF2505_text3">
-        <value condition="Control.HasFocus(2505)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF2505_text4">
-        <value condition="Control.HasFocus(2505)">on_focus</value>
-        <value>text4</value>
-    </variable>
     <!-- the streaming service pop-up (Lucent_Service.xml, generated by svc_xml.py) -->
     <variable name="SvcHeroArt"><value condition="!String.IsEmpty(Container(801).ListItem.Art(landscape))">$INFO[Container(801).ListItem.Art(landscape)]</value><value>$INFO[Container(801).ListItem.Art(fanart)]</value></variable>
     <variable name="SvcPillBg701"><value condition="String.IsEqual(Window.Property(svc.kind),movie)">FFFFFFFF</value><value>1FFFFFFF</value></variable>
@@ -1221,18 +1115,6 @@
     <variable name="MenuIconText">
         <value condition="String.StartsWith(ListItem.Icon,icons/)">text</value>
         <value>FFFFFFFF</value>
-    </variable>
-    <variable name="SSF1306_text">
-        <value condition="Control.HasFocus(1306)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1306_text3">
-        <value condition="Control.HasFocus(1306)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1306_text4">
-        <value condition="Control.HasFocus(1306)">on_focus</value>
-        <value>text4</value>
     </variable>
     <variable name="SSF1290_text">
         <value condition="Control.HasFocus(1290)">on_focus</value>

@@ -35,7 +35,6 @@ HOME = xbmcgui.Window(10000)
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 T = {
     "library": ("Seren library (Trakt collection)", "Seren-bibliotheek (Trakt-collectie)"),
-    "library_list": ("Library (Trakt · {0})", "Bibliotheek (Trakt · {0})"),
     "added_to": ("{0} added to your library ({1})", "{0} toegevoegd aan je bibliotheek ({1})"),
     "watchlist": ("Trakt · Watchlist", "Trakt · Kijklijst"),
     "list": ("Trakt · {0}", "Trakt · {0}"),
@@ -43,13 +42,14 @@ T = {
     "loading": ("Loading your Trakt lists…", "Je Trakt-lijsten laden…"),
     "saved": ("Saved", "Opgeslagen"),
     "nothing": ("Nothing changed", "Niets veranderd"),
-    "no_seren": ("Seren is not installed.", "Seren is niet geïnstalleerd."),
-    "no_login": ("You are not logged in to Trakt in Seren. Log in via Seren → Settings → Trakt.",
-                 "Je bent in Seren niet ingelogd bij Trakt. Log in via Seren → Instellingen → Trakt."),
-    "expired": ("Trakt does not accept Seren's login any more (Trakt code {0}). Seren could not renew it either, so "
-                "Seren has to be linked to Trakt again: you get a code that you enter on trakt.tv/activate.",
-                "Trakt accepteert de login van Seren niet meer (Trakt-code {0}). Seren kon hem ook niet vernieuwen, dus "
-                "Seren moet opnieuw aan Trakt gekoppeld worden: je krijgt een code die je invult op trakt.tv/activate."),
+    "no_video": ("Install a video add-on with a Trakt login (Lucent Video or Seren) to use this.",
+                 "Installeer een video-add-on met Trakt-login (Lucent Video of Seren) om dit te gebruiken."),
+    "no_login": ("Your video add-on is not logged in to Trakt. Log in to Trakt in its settings.",
+                 "Je video-add-on is niet ingelogd bij Trakt. Log in bij Trakt in de instellingen ervan."),
+    "expired": ("Trakt does not accept the login of your video add-on any more (Trakt code {0}). Link it to Trakt again: "
+                "you get a code that you enter on trakt.tv/activate.",
+                "Trakt accepteert de login van je video-add-on niet meer (Trakt-code {0}). Koppel hem opnieuw aan Trakt: "
+                "je krijgt een code die je invult op trakt.tv/activate."),
     "relink": ("Link again now", "Nu opnieuw koppelen"),
     "later": ("Later", "Later"),
     "failed": ("Trakt did not respond. Try again later.", "Trakt reageert niet. Probeer het later opnieuw."),
@@ -190,8 +190,80 @@ def seren_refresh_login(old_token, wait=20):
     return old_token
 
 
+LV_DATA = "special://profile/addon_data/plugin.video.lucent/"
+
+
+def _lv_json(name):
+    try:
+        with open(xbmcvfs.translatePath(LV_DATA + name), encoding="utf-8") as fh:
+            data = json.load(fh)
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def lv_trakt():
+    """(client id, login) of the Trakt login of the video add-on Lucent Video, or ("", "") when it is not logged in.
+    The add-on renews its own login whenever it talks to Trakt, so an expired one is simply not used."""
+    if not xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
+        return "", ""
+    account = _lv_json("trakt.json")
+    token = account.get("access_token") or ""
+    try:
+        if token and float(account.get("expires_at") or 0) < time.time() + 120:
+            token = ""
+    except (TypeError, ValueError):
+        pass
+    try:
+        client = xbmcaddon.Addon("plugin.video.lucent").getSetting("trakt_id").strip()
+    except Exception:  # noqa: BLE001
+        client = ""
+    client = client or (_lv_json("keys.json").get("trakt_client_id") or "")
+    return (client, token) if client and token else ("", "")
+
+
+def trakt_available():
+    """A video add-on whose Trakt login Lucent can use is installed (Lucent Video or Seren)."""
+    return xbmc.getCondVisibility(f"System.HasAddon(plugin.video.lucent) | System.HasAddon({SEREN_ID})")
+
+
+def relink_trakt():
+    """The Trakt link of your video add-on itself (a code you enter on trakt.tv/activate)."""
+    if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
+        xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=auth_trakt)")
+    else:
+        xbmc.executebuiltin(f"RunPlugin({SEREN}?action=authTrakt)")
+
+
+def lv_renew(wait=15):
+    """Lucent Video renews its Trakt login whenever it talks to Trakt: let it open your watchlist once and wait."""
+    old = _lv_json("trakt.json").get("access_token") or ""
+    if not old or not _lv_json("trakt.json").get("refresh_token"):
+        return
+    xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=list&name=watchlist_movie&widget=1)")
+    monitor = xbmc.Monitor()
+    for _ in range(int(wait * 2)):
+        if monitor.waitForAbort(0.5):
+            return
+        if (_lv_json("trakt.json").get("access_token") or "") != old:
+            log("Trakt login renewed by Lucent Video")
+            return
+
+
 class Trakt:
+    """Trakt with the login of your video add-on: Lucent Video when it is logged in, otherwise Seren."""
+
     def __init__(self):
+        self.client_id, self.token = lv_trakt()
+        if not self.token and _lv_json("trakt.json").get("access_token"):
+            lv_renew()
+            self.client_id, self.token = lv_trakt()
+        self.seren = not self.token
+        if not self.seren:
+            return
+        self.client_id = ""
+        if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})"):
+            return
         seren = xbmcaddon.Addon(SEREN_ID)
         self.client_id = seren_client_id(seren)
         self.token = seren.getSetting("trakt.auth")
@@ -212,7 +284,7 @@ class Trakt:
                 return http(TRAKT + path, headers=self.headers())
             return http(TRAKT + path, data=data, headers=self.headers(), method="POST")
         except urllib.error.HTTPError as error:
-            if error.code != 401 or not self.token:
+            if error.code != 401 or not self.token or not self.seren:
                 raise
             new = seren_refresh_login(self.token)          # rejected: let Seren renew it once, then try again
             if new == self.token:
@@ -242,8 +314,8 @@ class Trakt:
 
 
 def trakt_or_explain():
-    if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})"):
-        xbmcgui.Dialog().ok(HEADING, tr("no_seren"))
+    if not trakt_available():
+        xbmcgui.Dialog().ok(HEADING, tr("no_video"))
         return None
     trakt = Trakt()
     if not trakt.token:
@@ -291,7 +363,7 @@ def explain_error(error, where=""):
         return
     if isinstance(error, urllib.error.HTTPError) and error.code in (401, 403):
         if xbmcgui.Dialog().yesno(HEADING, tr("expired", error.code), nolabel=tr("later"), yeslabel=tr("relink")):
-            xbmc.executebuiltin(f"RunPlugin({SEREN}?action=authTrakt)")      # Seren's own Trakt link (code + activate)
+            relink_trakt()
     else:
         notify(tr("failed"), xbmcgui.NOTIFICATION_WARNING)
 
@@ -434,7 +506,7 @@ G_LV = {
 def library_show_ids(prefix="ListItem."):
     """{'trakt', 'tmdb', 'imdb', 'tvdb', 'title'} of the series a library season / episode belongs to.
 
-    Seasons in Kodi's library carry no ids of their own; the series (made by Lucent Bibliotheek) does,
+    Seasons in Kodi's library carry no ids of their own; the series (made by the video add-on) does,
     so ask Kodi for the series by its library number."""
     show_id = ""
     for label in (f"{prefix}TvShowDBID", "ListItem.TvShowDBID"):
@@ -467,7 +539,7 @@ def trakt_show_from(ids):
     """The Trakt number of a series from its tmdb / imdb / tvdb number (Trakt search, Seren's login)."""
     if str(ids.get("trakt", "")).isdigit():
         return str(ids["trakt"])
-    if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})"):
+    if not trakt_available():
         return ""
     trakt = Trakt()
     for kind in ("tmdb", "imdb", "tvdb"):
@@ -516,20 +588,7 @@ def choose_lists(container=""):
         rows = []  # (label, in_list, add_path, remove_paths, library row)
         collection = trakt.get_all(f"sync/collection/{kind}")
         in_coll = any(item.matches(e) for e in collection)
-        own, lib_ids = library_lists(item.kind)    # Lucent Library uses your own lists as the library
-        holding = []                               # the chosen lists this title is on
-        for lid in lib_ids:
-            try:
-                if any(item.matches(e) for e in trakt.get_all(f"users/me/lists/{lid}/items/{item.kind}")):
-                    holding.append(lid)
-            except Exception as error:  # noqa: BLE001
-                log(f"library list {lid}: {error}")
-        if own:
-            rows.append((tr("library_list", own.get("name", "")), in_coll or bool(holding), f"users/me/lists/{own['id']}/items",
-                         [f"users/me/lists/{lid}/items/remove" for lid in holding] + (["sync/collection/remove"] if in_coll else []),
-                         True))
-        else:
-            rows.append((tr("library"), in_coll, "sync/collection", ["sync/collection/remove"], True))
+        rows.append((tr("library"), in_coll, "sync/collection", ["sync/collection/remove"], True))
         progress.update(30)
         watchlist = trakt.get_all(f"sync/watchlist/{kind}")
         rows.append((tr("watchlist"), any(item.matches(e) for e in watchlist),
@@ -541,8 +600,6 @@ def choose_lists(container=""):
                 progress.close()
                 return
             slug = lst.get("ids", {}).get("trakt")
-            if slug in lib_ids:
-                continue                           # part of the library row
             try:
                 entries = trakt.get_all(f"users/me/lists/{slug}/items/{item.kind}")
             except Exception as error:  # noqa: BLE001 - skip this one list, show the rest
@@ -578,8 +635,6 @@ def choose_lists(container=""):
             explain_error(error, label)
             continue
         changes += 1
-        if is_library:
-            to_kodi_library(item, trakt, "add" if wanted else "remove")
     if changes:
         notify(tr("saved"))
         after_trakt_change()
@@ -588,7 +643,7 @@ def choose_lists(container=""):
 
 
 def quick_add():
-    """Long press > Add to my library: on your library list (Lucent Library) or in the Trakt collection, and in Kodi's library."""
+    """Long press > Add to my library: in the video add-on (when it is there), else in the Trakt collection (Seren's login)."""
     if use_lv():
         target = lv_target()
         if target and target["type"] in ("season", "episode"):
@@ -606,63 +661,13 @@ def quick_add():
     trakt = trakt_or_explain()
     if not trakt:
         return
-    own, _ids = library_lists(item.kind)
     try:
-        if own:
-            trakt.post(f"users/me/lists/{own['id']}/items", item.payload())
-        else:
-            trakt.post("sync/collection", item.payload())
+        trakt.post("sync/collection", item.payload())
     except Exception as error:  # noqa: BLE001
         explain_error(error)
         return
-    to_kodi_library(item, trakt, "add")
-    where = own.get("name", "") if own else tr("library")
-    notify(tr("added_to", item.title, where))
+    notify(tr("added_to", item.title, tr("library")))
     after_trakt_change()
-
-
-def library_lists(kind):
-    """(the list a new film ('movie') / series ('show') goes to, ids of every list Lucent Library uses) or (None, [])."""
-    try:
-        path = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/lists.json")
-        with open(path, encoding="utf-8") as fh:
-            data = json.load(fh) or {}
-    except (OSError, ValueError):
-        return None, []
-    if not isinstance(data, dict):
-        return None, []
-    ids = []
-    for entry in (data.get("lists") or []) + [data.get("movie"), data.get("show")]:
-        if isinstance(entry, dict) and entry.get("id") and entry["id"] not in ids:
-            ids.append(entry["id"])
-    target = data.get(kind)
-    if not (isinstance(target, dict) and target.get("id")):
-        target = next((e for e in (data.get("lists") or []) if isinstance(e, dict) and e.get("id")), None)
-    return target, ids
-
-
-def to_kodi_library(item, trakt, action):
-    """Library row: besides Trakt, write (or remove) the title in the Kodi library at once (Lucent Bibliotheek)."""
-    if not xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)"):
-        return
-    kind = "movie" if item.kind == "movie" else "show"
-    trakt_id = item.trakt if str(item.trakt).isdigit() else ""
-    if not trakt_id:
-        for name, value in (("tmdb", item.tmdb), ("imdb", item.imdb)):
-            if value and (value.isdigit() or value.startswith("tt")):
-                try:
-                    for hit in trakt.get(f"search/{name}/{value}?type={kind}") or []:
-                        trakt_id = str(((hit.get(kind) or {}).get("ids") or {}).get("trakt") or "")
-                        if trakt_id:
-                            break
-                except Exception as error:  # noqa: BLE001
-                    log(f"library: trakt search {name}: {error}")
-            if trakt_id:
-                break
-    if trakt_id:
-        xbmc.executebuiltin(f"RunScript(script.lucent.library,{action},{kind},{trakt_id})")
-    else:
-        log(f"library: no trakt id for {item.title}")
 
 
 # ----------------------------------------------------------------------------- watched
@@ -722,7 +727,6 @@ def toggle_watched():
     HOME.setProperty("nuvio.info.watched", "0" if watched else "1")
     dbid = info("DBID")
     if dbid.isdigit() and item.dbtype in ("movie", "episode"):     # Kodi's own library: the same mark at once
-        HOME.setProperty("lucent.lib.syncing", str(time.time()))   # Lucent Bibliotheek: Trakt knows already
         method = "VideoLibrary.SetMovieDetails" if item.dbtype == "movie" else "VideoLibrary.SetEpisodeDetails"
         key = "movieid" if item.dbtype == "movie" else "episodeid"
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method,
@@ -734,7 +738,6 @@ def toggle_watched():
 # ----------------------------------------------------------------------------- collection + studios
 TMDB_KEYFILES = (
     "special://profile/addon_data/skin.lucent/tmdb_key.txt",
-    "special://profile/addon_data/script.lucent.library/tmdb_key.txt",
 )
 
 
@@ -750,7 +753,7 @@ _KEY = {"value": "", "time": 0.0}
 
 
 def tmdb_key():
-    """Your own free TMDB key: from Seren's setting, else the key you entered in Skin settings (or in the Lucent library add-on).
+    """Your own free TMDB key: from Seren's setting, else the key you entered in Skin settings (or the video add-on's).
     Remembered for 10 minutes (the background helper asks for it hundreds of times)."""
     if _KEY["value"] and time.time() - _KEY["time"] < 600:
         return _KEY["value"]
@@ -1551,9 +1554,17 @@ def resume_show():
     if not trakt.isdigit():
         trakt = trakt_show_from(library_show_ids("Container(56).ListItem."))   # a series from Kodi's own library
     if not trakt.isdigit():
-        notify(tr("no_seren") if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID})") else tr("no_ids"))
+        notify(tr("no_video") if not trakt_available() else tr("no_ids"))
         return
     episode = next_episode(int(trakt))
+    tmdb_id = xbmc.getInfoLabel("Container(56).ListItem.Property(tmdb_id)") or xbmc.getInfoLabel("ListItem.Property(tmdb_id)")
+    if lv_open_with() and tmdb_id.isdigit():           # Lucent Video plays it (its own sources and subtitles)
+        if episode and episode.get("season") is not None:
+            xbmc.executebuiltin(f"PlayMedia({LVP}?action=play&type=episode&tmdb={tmdb_id}"
+                                f"&season={episode['season']}&episode={episode['number']})")
+        else:
+            xbmc.executebuiltin(f'ActivateWindow(Videos,"{lv_play_url("tv", tmdb_id)}",return)')
+        return
     if episode:
         log(f"continue {trakt}: season {episode['season']} episode {episode['number']} ({episode['why']})")
         args = urllib.parse.quote(json.dumps({"mediatype": "episode", "trakt_id": episode["trakt_id"],

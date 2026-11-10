@@ -3,8 +3,14 @@ Lucent – een cinematische glas-skin voor Kodi
 
 Voor Kodi 21 (Omega) en Kodi 22 (Piers).
 
-BETA 1: dit is de eerste beta. Alles zit erin, maar er kunnen nog kleine
-foutjes in zitten - meld ze gerust.
+BETA 4: alles zit erin, maar er kunnen nog kleine foutjes in zitten - meld
+ze gerust op https://github.com/djdirty60/Lucent/issues
+
+Lucent werkt met elke video-add-on. Elke map van elke add-on (Emby, Jellyfin,
+YouTube, een IPTV-add-on, Fen Light, TMDb Helper, Seren ...) of van je
+Kodi-bibliotheek kan een rij op Home worden. Een video-add-on die met Lucent
+samenwerkt vult Home vanzelf en bedient de knoppen op de infopagina; Seren
+wordt ook ondersteund.
 
 Installeren
 -----------
@@ -15,246 +21,131 @@ Installeren
    Uiterlijk > Skin > Lucent > Installeren.
 5. Kodi vraagt of je de nieuwe skin wilt gebruiken: kies Ja.
    (Of later: Instellingen > Interface > Skin > Lucent.)
-Kodi installeert er vanzelf de YouTube-add-on (trailers), de witte en
-gekleurde studiologo-pakketten en de Seren Nixgate-repository (de Seren-
-versie van minhgi, met zijn toestemming) bij. Daaruit installeert de
-setup-assistent Seren.
+Kodi installeert er vanzelf de YouTube-add-on (trailers), Lucent Subtitles en
+de witte en gekleurde studiologo-pakketten bij. Daarna opent de
+setup-assistent en helpt je een video-add-on te kiezen.
+
+Welke video-add-on?
+-------------------
+- Elke add-on: houd OK (of de menuknop) ingedrukt op een map in een add-on of
+  in je bibliotheek en kies "Toevoegen aan Home als widget". Kies het
+  tabblad, de naam en posters of liggend, en de rij staat erop.
+- Een video-add-on die met Lucent samenwerkt: de rijen vullen Home vanzelf,
+  en Afspelen, Meer, Bibliotheek en lijsten, Markeren als bekeken, de
+  kalender, trailers, ondertitels en intro overslaan gebruiken die add-on -
+  ook voor titels uit andere add-ons.
+- Seren: werkt ook. Lucent biedt dan ook de rijen en instellingen van Seren
+  aan. Gebruik je geen Seren? Kies "Ik gebruik geen Seren" in de
+  setup-assistent.
 
 Menu en widgets aanpassen
 -------------------------
-Instellingen > Skin-instellingen > "Menu en widgets aanpassen".
+Instellingen > Lucent > "Menu en widgets".
 - Kies een tab om de naam, het pictogram, wat hij opent (bij klikken) en zijn
-  widgets te veranderen. Widgets kunnen komen uit Seren, je Trakt-lijsten, je
-  Kodi-bibliotheek of uit elke map van elke video-add-on.
+  widgets te veranderen. Widgets kunnen komen uit je video-add-on, je
+  Kodi-bibliotheek of uit elke map van elke video-add-on, als posters of
+  liggende kaarten (maximaal 10 per tab).
 - "+ Tab toevoegen" voegt een tab toe (maximaal 12).
 - "Standaardmenu herstellen" zet alles terug.
 Een tab zonder widgets toont de widgets van de start-tab.
 
+Trailers op posters
+-------------------
+Instellingen > Kijken > "Trailer bij focus". Blijf 1, 2, 3, 5 of 8 seconden
+op een poster staan en de trailer speelt in een venster met een zachte rand,
+of de poster vouwt open tot een brede kaart met de trailer erin. Ga je naar
+een andere poster, dan stopt de trailer meteen. Terug maakt hem beeldvullend.
+
 Infopagina
 ----------
-Eén pagina met alles: knoppen, regisseur, beoordelingen, verhaal, details,
-en als je naar beneden gaat: tabs "Maker en cast | Vergelijkbare titels |
-Trailers" (links/rechts wisselen), de collectie
-(bijv. alle Toy Story-films) en de productie (met studiologo's).
-- "Bibliotheek en lijsten": zet de titel in je Seren-bibliotheek (Trakt-collectie),
-  je Trakt-kijklijst of je eigen Trakt-lijsten (vinkjes, dan OK).
-- "Markeren als bekeken": zet hem op Trakt op bekeken of niet bekeken.
-- Klik op een acteur of de regisseur: foto, geboortedatum, biografie en films.
-- Klik op een studio bij Productie: logo, waar hij vandaan komt en zijn
-  bekendste films en series.
-- Klik op een titel (vergelijkbare titels, collectie, acteur- of studiopagina):
-  de eigen infopagina van die titel opent. Afspelen gaat altijd via Seren.
-- Terug gaat de hele weg terug: film > acteur > film > Terug = acteur,
-  nog eens Terug = de film waar je begon.
-- De knop Trailer speelt de trailer en brengt je daarna terug op de pagina.
-De Trakt-onderdelen gebruiken je Trakt-login uit Seren. Cast, collecties,
-studio's en de pagina's die je daarvandaan opent hebben een gratis TMDB-sleutel
-nodig: Lucent gebruikt die uit Seren, of vul je eigen in bij Skin-instellingen >
+Eén pagina met alles: knoppen, regisseur, scores, verhaal, details, en als je
+naar beneden gaat: tabs "Maker en cast | Vergelijkbare titels | Trailers",
+de collectie (bijv. alle Toy Story-films) en de productie (met studiologo's).
+- Afspelen gaat via je video-add-on.
+- "Meer": alle opties van je video-add-on voor deze titel in één menu.
+- "Bibliotheek en lijsten": één venster met vinkjes - kijklijst, collectie
+  en je eigen Trakt-lijsten.
+- "Markeren als bekeken": op Trakt, via je video-add-on.
+- Klik op een acteur, de regisseur of een studio voor hun pagina; klik op
+  een titel voor zijn eigen infopagina. Terug gaat de hele weg terug.
+- De knop Trailer speelt de trailer en brengt je daarna terug.
+- "Opties" (titels in de Kodi-bibliotheek): titel, sorteertitel, plaatjes,
+  uit de bibliotheek halen.
+Cast, collecties en studio's hebben een gratis TMDB-sleutel nodig: Lucent
+gebruikt die van je video-add-on, of vul je eigen in bij Skin-instellingen >
 Integraties > "TMDB API-sleutel" (gratis aan te vragen op themoviedb.org).
-De studiologo's komen uit de studiologo-pakketten (worden met de skin
-geïnstalleerd); staat een studio er niet in, dan komt het logo van TMDB.
-
-Lucent Bibliotheek
-------------------
-Lucent Bibliotheek (script.lucent.library, wordt met de skin geinstalleerd)
-maakt van je Trakt-collectie de eigen bibliotheek van Kodi: films en series
-als kleine .strm-bestanden die via Seren afspelen, en houdt die bij.
-
-BELANGRIJK: laad eerst je HELE collectie in Seren. Open in Seren
-"Films > Mijn films (collectie)" en "Series > Mijn series (collectie)" en wacht
-tot alles binnen is. Lucent Bibliotheek neemt alleen over wat Seren al kent;
-titels die Seren nog niet geladen heeft, komen er pas bij een volgende ronde bij.
-
-Nieuwe afleveringen komen er een dag na uitzending bij (eerder is er vaak
-nog geen link). Films en series in de bibliotheek krijgen dezelfde IMDb-,
-Trakt- en TMDB-scores als in Seren.
-
-Instellingen: Skin-instellingen > Integraties > Lucent Bibliotheek (nu
-bijwerken, om de 6/12/24 uur bijwerken, gezien-vinkjes naar Trakt, Verras me).
-
-Setup-assistent
----------------
-De eerste keer dat Lucent opent, loopt een korte assistent langs Seren en
-Trakt, de TMDb-sleutel, live tv (IPTV Simple), afspelen (buffer, verversings-
-snelheid, surround doorgeven), ondertitels, Lucent Bibliotheek, de weergave en
-een back-up. Bij elke stap zie je hoe het staat en is er een knop om het te
-regelen. Later opnieuw: Skin-instellingen > Setup-assistent (of
-Instellingen > Over > Setup-assistent).
-
-Opties op de infopagina
------------------------
-Bij titels in de Kodi-bibliotheek staat op de infopagina een knop Opties:
-titel aanpassen, sorteertitel aanpassen, afbeelding kiezen en uit de
-bibliotheek verwijderen.
-
-Alfabetbalk
------------
-Onder de posterrijen van films en series (gesorteerd van A naar Z) staat
-# A B ... Z. De letter waar je bent licht op; druk omlaag, kies een letter en
-druk OK om erheen te springen.
-
-
-Slaaptimer
-----------
-In het spelermenu staat een maantje: kies "Na deze aflevering/film" of over
-15, 30, 45, 60 of 90 minuten. Dan stopt het afspelen (en start de volgende
-aflevering niet vanzelf). Onder de knop zie je hoeveel tijd er nog over is;
-nog een keer kiezen vervangt de timer, of zet hem uit.
-
-Kinderstand
------------
-Skin-instellingen > Kinderstand (of Instellingen > Over > Kinderstand). Je kiest
-een pincode en welke onderdelen van het zijmenu blijven staan (bijv. Home,
-Films, Series). In de kinderstand verdwijnt de knop Opties op de infopagina
-en vragen de instellingen om de pincode. Uitzetten: "Kinderstand uit" onderaan
-het zijmenu, met de pincode. Let op: het is een slot op het menu, geen filter
-op wat Seren laat zien.
-
-Back-up en herstel
-------------------
-Skin-instellingen > Back-up en herstel (of de setup-assistent). Bewaart in
-een zip-bestand (op een USB-stick of netwerkmap): de instellingen en het menu
-van Lucent, Kodi-favorieten en -bronnen, en de instellingen van Seren, IPTV
-Simple, Lucent Bibliotheek en Lucent Ondertitels. Terugzetten zet alles terug en
-start Kodi opnieuw. In de back-up staan je inlogs: houd hem voor jezelf.
-Bij Instellingen > Over > Back-up en herstel staat ook een automatische
-wekelijkse back-up naar een map die je kiest (liefst een USB-stick); de laatste
-vier blijven bewaard.
-
-Zelftest en veilig logboek
---------------------------
-Instellingen > Over > Zelftest controleert Seren, Lucent Bibliotheek, Lucent
-Ondertitels, IPTV Simple en de zenders en zegt in gewone taal wat er mist.
-Veilig logboek maakt een kopie van het Kodi-logboek met logins, wachtwoorden,
-tokens en het adres van je aanbieder weggehaald: veilig om mee te sturen bij een
-foutmelding.
-
-Lichte modus
-------------
-Voor kastjes met weinig geheugen (2 GB of minder krijgen hem vanzelf):
-Skin-instellingen > Geavanceerd > Lichte modus. Home bouwt dan maar 6 rijen
-(rij 7 t/m 10 worden helemaal niet aangemaakt), vraagt Seren om kleine
-afbeeldingen, en er is geen kleurgloed en sneeuw.
-Na aan- of uitzetten laadt de skin één keer opnieuw.
 
 Kalender
 --------
-Een tab "Kalender" in het zijmenu (Week | Lijst | Maand).
-- Wat erin staat: de series (die nog lopen) uit je Trakt-collectie (de
-  Seren-bibliotheek, zelfde Trakt-login als Seren) en de films uit je collectie
-  of kijklijst die net uit zijn of binnenkort uitkomen. Dit gaat vanzelf, de
-  lijst wordt elke 12 uur bijgewerkt. Een serie die je niet wilt zien: "Uit
-  kalender halen" (komt niet terug).
-- De bel: staat standaard UIT. Zet je hem aan bij een serie (in de kalender, of
-  op de infopagina via "Kalender-melding"), dan krijg je een pop-up zodra er een
-  nieuwe aflevering is, of bij een film zodra hij digitaal uit is. De pop-up
-  heeft "Nu kijken" (opent de serie direct op de seizoenen in Seren, een film in de zoekresultaten) en "Later". Alle meldingen
-  aan/uit: Skin-instellingen > Tracking.
-- Lijst: op volgorde van datum, met rechts de details.
-- Week: kies een dag bovenaan; filter op Alles, Series of Films.
-- Maand: maandoverzicht; kies een dag voor de afleveringen.
-Tijden komen van TVmaze (gratis), afleveringen, plaatjes en de digitale
-releasedatum van TMDB (de sleutel van Seren). Is de tijd nog niet bekend, dan
-staat alleen de datum.
+Een tab Kalender (Week, Lijst, Maand) met de series en films uit je
+Trakt-collectie. Zet de bel aan bij een titel en je krijgt een pop-up bij een
+nieuwe aflevering (Nu kijken / Later) of een digitale release. Gebruikt de
+Trakt-login van je video-add-on.
 
-Sport (alleen met IPTV-zenders)
--------------------------------
-Een tab "Sport" met wedstrijden uit bijna 200 competities (voetbal wereldwijd,
-NBA, NFL, NHL, MLB, rugby, Formule 1, IndyCar, NASCAR, golf, tennis, UFC en
-meer), opgehaald bij ESPN. De tab verschijnt alleen als Kodi TV-zenders heeft.
-- Mijn sport: een grote kaart met je volgende wedstrijd in de clubkleuren, een
-  klein live-tv-venster en een rij kaarten per team, land of competitie dat je volgt.
-- Alle wedstrijden en Standen: elke wedstrijd met zender, en de competitiestanden
-  met vorm en promotie/degradatie-kleuren.
-- Volgen: volg teams, landen of hele competities.
-- Wedstrijdpagina: score, LIVE-minuut, je zenders (uit je IPTV-gids), statistieken,
-  laatste doelpunten en de stand. Formule 1 heeft een eigen pagina met het circuit,
-  het weekendprogramma en de top 10 van elke afgelopen sessie.
-- Herinnering 5 minuten van tevoren, automatisch overschakelen, opnemen (1 tot 6
-  uur) en "Zender kiezen" per wedstrijd, competitie of team.
-- OK op een zender speelt hem in het kleine tv-venster, nog een keer OK is volledig scherm.
-- Doelpuntmeldingen: scoort een team dat je volgt, dan komt er een melding met de
-  stand en de minuut (niet als je die wedstrijd al kijkt). Uitzetten bij
-  Instellingen > Live tv.
-- De sportgids leest alleen de tv-gids van de sportzenders (herkend op naam: Ziggo
-  Sport, ESPN, Sky Sports, DAZN, Viaplay, beIN, Eurosport en veel meer) plus NPO 1,
-  2 en 3: veel lichter dan elke zender in je lijst.
+Sport (met IPTV-zenders)
+------------------------
+Een tab Sport met wedstrijden uit bijna 200 competities (ESPN): Mijn sport
+(live scorebord van je club), Alle wedstrijden, Standen, Clubpagina's,
+Volgen, een Wedstrijdpagina (ook Formule 1), herinneringen, automatisch
+omschakelen, opnemen en doelpuntmeldingen. In de tv-speler een scorebord
+bovenin. De tab verschijnt alleen als Kodi tv-zenders heeft.
 
-TV-gids en live-tv
+Tv-gids en live tv
 ------------------
-Een tab "TV" met je IPTV-zenders: groepen links, zenders met logo en nummer,
-een tijdlijn met programma's, een kop met het gekozen programma en een live
-voorbeeld. Een "Favoriete groep" opent steeds als eerste. De live-tv-speler heeft
-een eigen infobalk en een menu (zender omhoog/omlaag, pauze, opnemen, ondertitels,
-audio, recente zenders).
-Heb je een Xtream-login (serveradres, gebruikersnaam, wachtwoord)? Kies in de
-setup-assistent bij Live tv "Xtream-inlog" (of Instellingen > Live tv >
-Xtream-inlog). Lucent controleert de inlog bij de server en stelt IPTV Simple
-Client in: zenderlijst, gids en terugkijken.
-- Zenders verbergen (Instellingen > Live tv): kies de groepen die je wilt zien,
-  of typ een paar woorden (NL, BE, SPORT); verberg volwassen-groepen of de zender
-  die je kijkt. Lucent maakt een kortere zenderlijst voor IPTV Simple, bouwt hem
-  elke nacht opnieuw op, en "Alles weer tonen" zet het origineel terug.
-- Sterknop in het live-menu (naast de maan): de zender die je kijkt aan de
-  favorieten van Kodi toevoegen, of er weer uithalen.
-- Terugkijken: stop je een programma halverwege, dan vraagt Lucent de volgende
-  keer of je wilt verdergaan waar je bleef.
+Een tab TV met je IPTV-zenders, groepen als knoppen, logo's en een tijdlijn.
+- Xtream-login: vul server, gebruikersnaam en wachtwoord in (setup-assistent
+  > Live tv, of Instellingen > Live tv); Lucent controleert de login en
+  stelt IPTV Simple Client in.
+- Zenders verbergen: kies groepen of typ een paar woorden (NL, BE, SPORT).
+- Sterknop in het live-menu (favorieten) en terugkijken waar je stopte.
 
-Ondertitels en updates
-----------------------
-- Lucent Ondertitels: de eigen ondertitel-add-on van Lucent (wordt met de skin
-  geinstalleerd). Vraagt OpenSubtitles, SubDL en Podnapisi tegelijk, met een
-  tijdslimiet. Ondertitels die precies bij je video passen komen bovenaan,
-  seizoenspakketten worden herkend en alles wordt als UTF-8 bewaard.
-  Nodig: een gratis OpenSubtitles-account met API-sleutel (Profiel > API
-  consumers > New consumer) en een gratis SubDL-API-sleutel. Podnapisi werkt
-  zonder account. Invullen via de setup-assistent of Skin-instellingen >
-  Integraties > Instellingen ondertitel-add-on.
-- Een knop "Ondertitels zoeken" in het spelermenu en optioneel automatisch
-  zoeken als een film of aflevering zonder ondertitels in jouw taal start.
-- Update-melding: bij een nieuwe versie kies je "Nu bijwerken", "Later" of
-  "Deze versie overslaan" (Skin-instellingen > Integraties).
+Speler
+------
+Een strakke balk en spelermenu, een slaaptimer (maan-knop), een schoon beeld
+bij pauze, spelerinfo (Overzicht, Video, Audio) en een volumekaart.
 
-Add-ons en profielen
---------------------
-Het onderdeel Add-ons op Home toont rijen met je favorieten en je video-,
-programma- en muziekadd-ons. Het Profielenscherm heeft een icoon per profiel.
+Setup-assistent
+---------------
+Loopt langs: Films en series (je video-add-on of Seren), TMDb-sleutel, live
+tv, beeld en geluid, ondertitels en intro overslaan, bibliotheek, tabbladen,
+weergave en back-up. Elke stap laat zien hoe het staat en heeft knoppen om
+het in te stellen. Later opnieuw: Instellingen > Lucent > Setup-assistent.
 
-Afstandsbediening
------------------
-De Home-knop gaat vanuit bijna elk venster naar het startscherm (op de
-film- en seriepagina nog niet op elk apparaat). In lijsten met een
-schuifbalk (bestandsbrowser, instellingen): Rechts = op de balk, dan
-Omhoog/Omlaag scrollt per pagina.
+Instellingen
+------------
+Gegroepeerd in: Lucent (uiterlijk, menu, streamingdiensten, kindermodus,
+setup-assistent), Kijken (afspelen, trailers, ondertitels en intro
+overslaan), Seren (alleen als Seren erop staat), Live tv, Systeem, Add-ons,
+Bestanden en profielen, en Hulp en info (wat is er nieuw, updates,
+zelftest, veilig logboek).
 
-Beeld
------
-Kodi past de skin zelf aan elke resolutie aan (720p, 1080p, 4K). Zie je zwarte
-randen of valt het beeld buiten je tv: Skin-instellingen > "Beeld kalibreren".
-
-Skin-instellingen
------------------
-Ingedeeld in categorieën: Weergave (kleurthema, AMOLED, schaal, screensaver),
-Indeling (startscherm, kaarten, detailpagina, wat OK doet op een film of
-aflevering: eerst de pagina openen of meteen afspelen), Inhoud & ontdekken,
-Afspelen, Integraties (TMDB-sleutel, Lucent Ondertitels, update-melding), Tracking,
-Profielen, Geavanceerd en Over.
-Eigen beoordelingslogo's: zet imdb.png, tmdb.png en trakt.png in
-userdata/addon_data/skin.lucent/logos/ (zie Indeling > Detailpagina).
-
-Automatisch bijwerken
----------------------
-Installeer één keer repository.lucent.zip (Add-ons > Installeren vanuit
-zip-bestand). Daarna houdt Kodi de skin zelf up-to-date.
+Verder
+------
+- Kindermodus: pincode en een keuze van tabbladen.
+- Back-up en herstel: één zip met de instellingen van Lucent, het menu,
+  Kodi-favorieten en -bronnen en de instellingen van je video-add-ons en
+  IPTV Simple; ook elke week automatisch. Er staan logins in - houd hem
+  voor jezelf.
+- Lichte modus voor kastjes met weinig geheugen (vanzelf aan bij 2 GB of
+  minder).
+- Zelftest en veilig logboek (Instellingen > Hulp en info).
+- Letterbalk onder A-Z posterrijen, Solis Dashboard-tab (met die add-on) en
+  een update-pop-up (Nu bijwerken, Later, Deze versie overslaan).
+- Beoordelingslogo's: zet je eigen imdb.png, tmdb.png en trakt.png in
+  userdata/addon_data/skin.lucent/logos/.
 
 Terug naar de standaardskin
 ---------------------------
-Instellingen > Interface > Skin > Estuary.
+Instellingen > Systeem > Skin > Estuary.
 
-Niet opgemaakt
---------------
-Games en het weer. Die vensters openen niet in deze skin; schakel tijdelijk naar
-Estuary als je ze nodig hebt. Live TV heeft de gids en speler van deze skin; opnames
-en timers hebben nog Estuary nodig.
+Goed om te weten
+----------------
+- Past bij het Seren-thema "Lucent for Seren"
+  (https://github.com/djdirty60/Seren-Thema).
+- Kodi schaalt de skin naar elke resolutie. Zwarte randen of een afgesneden
+  beeld? Skin-instellingen > Beeld kalibreren.
+- Niet gestyled: games en weer. Opnames en timers van live tv hebben nog
+  Estuary nodig.
 
-Lettertype: Inter (SIL Open Font License 1.1, zie fonts/Inter-LICENSE.txt).
+Lucent gebruikt Trakt maar is niet goedgekeurd of gecertificeerd door Trakt.
+Lucent is niet verbonden aan Seren of Nuvio Arc.

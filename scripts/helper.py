@@ -17,12 +17,8 @@ The slow jobs (they ask the internet) run one after another in a worker thread, 
 never waits for them. A small heartbeat thread tells a new start that this helper is still alive,
 also while a job takes long. After a skin update (lucent.helper.stop) this helper stops so the new one can start.
 """
-import hashlib
-import json
-import os
 import threading
 import time
-import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -176,38 +172,6 @@ def run():
 
     lost = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
-    libdir = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/")
-
-    def cached(path):
-        """True / False: Lucent Library has a filled / no copy of this row. None: the row does not come from its copies."""
-        if not path.startswith("plugin://") or path.startswith("plugin://script.lucent.library/?action=lib") or \
-                cond("Skin.HasSetting(lucent.wcache.off) | !System.AddonIsEnabled(script.lucent.library)"):
-            return None
-        if path.startswith("plugin://script.lucent.library/?action=providers"):
-            file = os.path.join(libdir, "tmdb", "providers.json")        # the streaming services row
-        elif path.startswith("plugin://script.lucent.library/?action=tmdb"):
-            q = urllib.parse.parse_qs(path.split("?", 1)[1])
-            name = (q.get("list") or [""])[0]
-            if name == "tl":
-                name = f"tl_{(q.get('user') or [''])[0]}_{(q.get('id') or [''])[0]}"
-            file = os.path.join(libdir, "tmdb", f"{name}.json")
-        else:
-            file = os.path.join(libdir, "widgets", hashlib.md5(path.encode("utf-8")).hexdigest() + ".json")
-        try:
-            stamp = os.path.getmtime(file)
-        except OSError:
-            return False
-        memo = rowstate["memo"].get(file)
-        if memo and memo[0] == stamp:
-            return memo[1]
-        try:
-            with open(file, encoding="utf-8") as fh:
-                ok = bool(json.load(fh).get("items"))
-        except Exception:  # noqa: BLE001 - being written right now: keep what we knew
-            return memo[1] if memo else False
-        rowstate["memo"][file] = (stamp, ok)
-        return ok
-
     ROW_ORDER = [(8090, 9988), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
 
     def top_row():
@@ -222,9 +186,8 @@ def run():
 
     def rows_state(now):
         """lucent.rowok.N: show Home row N even while its list is empty. Kodi only reads the list of a VISIBLE row, so a
-        row hidden for being empty would never fill. A row from Lucent Library is shown when the library has a filled
-        copy; a row from elsewhere is shown for a few seconds after its path changed (a tab switch), long enough for
-        Kodi to read it. Nothing here pulses on a timer, so the rows do not jump."""
+        row hidden for being empty would never fill. A row is shown for a few seconds after its path changed (a tab
+        switch), long enough for Kodi to read it. Nothing here pulses on a timer, so the rows do not jump."""
         if not cond("Window.IsActive(home)"):
             return
         top_row()
@@ -235,8 +198,7 @@ def run():
             if rowstate["path"].get(n) != path:
                 rowstate["path"][n] = path
                 rowstate["fresh"][n] = now + 4.0
-            have = cached(path) if path else False
-            ok = bool(have) if have is not None else (bool(path) and now < rowstate["fresh"].get(n, 0))
+            ok = bool(path) and now < rowstate["fresh"].get(n, 0)
             if rowstate["ok"].get(n) != ok:
                 rowstate["ok"][n] = ok
                 if ok:

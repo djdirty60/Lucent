@@ -7,8 +7,8 @@
 
 One zip file with: Lucent's settings and menu (skin settings), its own files (keys, calendar, sport, favourites of the
 guide ...), Kodi's favourites, sources and advancedsettings, the keymaps Lucent writes, and the settings of Seren,
-IPTV Simple, Lucent Library, Lucent Subtitles and Lucent Video (with its keys and profiles). Not included: caches, databases and the library's .strm files (Lucent
-Library writes those again by itself).
+IPTV Simple, Lucent Subtitles and Lucent Video (with its keys and profiles). Not included: caches, databases and the library's .strm files (the
+video add-on writes those again by itself).
 
 Restoring: the skin settings are put back one by one with Kodi's own commands (Kodi keeps them in memory and would
 overwrite a file put back underneath it); everything else is copied back, after which Kodi restarts so add-ons read it.
@@ -37,7 +37,6 @@ FOLDERS = {
                                                or rel in ("sport_epg.json", "sport_cache.json") or rel.endswith(".tmp")),
     "addon_data/plugin.video.seren": lambda rel: rel == "settings.xml",
     "addon_data/pvr.iptvsimple": lambda rel: rel.endswith(".xml") and "/" not in rel,
-    "addon_data/script.lucent.library": lambda rel: rel.endswith(".json") and "/" not in rel and rel != "busy.lock",
     "addon_data/service.subtitles.lucent": lambda rel: rel == "settings.xml",
     "addon_data/screensaver.lucent": lambda rel: rel == "settings.xml",
     "addon_data/plugin.video.lucent": lambda rel: not (rel.startswith("library/") or rel == "library.lock" or rel.endswith(".tmp")),
