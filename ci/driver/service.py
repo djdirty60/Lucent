@@ -3478,6 +3478,41 @@ def fenlight_test():
 
 
 
+def sideclick_test():
+    """The side menu in an add-on folder: does every button do something when pressed?"""
+    out = {}
+    def fresh():
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Container.Update(plugin://plugin.video.fakefen/?mode=list,replace)")
+        mon.waitForAbort(2.5)
+    fresh()
+    key("Left")
+    mon.waitForAbort(1.2)
+    out["open_by_left"] = {"focus": lab("System.CurrentControlId"), "menu": cond("ControlGroup(9050).HasFocus")}
+    for cid in ("2", "3", "4", "19", "10", "9061", "20", "9069"):
+        fresh()
+        xbmc.executebuiltin("SetFocus(9050)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin(f"SetFocus({cid})")
+        mon.waitForAbort(0.8)
+        before = {"focus": lab("System.CurrentControlId"), "visible": cond(f"Control.IsVisible({cid})"), "enabled": cond(f"Control.IsEnabled({cid})"),
+                  "view": lab("Container.Viewmode"), "sort": lab("Container.SortMethod"), "order": cond("Container.SortDirection(ascending)"),
+                  "label": lab(f"Control.GetLabel({cid})")}
+        key("Return")
+        mon.waitForAbort(2)
+        after = {"focus": lab("System.CurrentControlId"), "window": lab("System.CurrentWindow"), "dialog": cond("System.HasModalDialog"),
+                 "view": lab("Container.Viewmode"), "sort": lab("Container.SortMethod"), "order": cond("Container.SortDirection(ascending)")}
+        shot(f"sideclick-{cid}")
+        out[cid] = {"before": before, "after": after}
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.8)
+    log("sideclick: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def views_pause_test():
     """1.34.14: the view per kind (issue #5) and the clean picture when paused (issue #4)."""
     xbmc.executebuiltin("Skin.Reset(lucent.view.remember.off)")
@@ -3995,6 +4030,7 @@ def main():
     readable_test()
     landseries_test()
     fenlight_test()
+    sideclick_test()
     views_pause_test()
     pct_test()
     ytfix_test()
