@@ -10,7 +10,17 @@ with open("/tmp/ci/fakefen.log", "a") as fh:
 params = dict(urllib.parse.parse_qsl(sys.argv[2].lstrip("?")))
 handle = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].lstrip("-").isdigit() else -1
 if handle >= 0:
-    if params.get("mode") == "list":
+    if params.get("mode") == "letters":                  # many films, for the alphabet bar (letters.py)
+        names = ["%s%s film %d" % (ch, "ab"[n % 2], n) for ch in "ABCDEFGHKLMNPRSTVW" for n in range(3)] + ["The Batman", "1917"]
+        for name in names:
+            li = xbmcgui.ListItem(name)
+            tag = li.getVideoInfoTag()
+            tag.setMediaType("movie"), tag.setTitle(name)
+            li.setProperty("IsPlayable", "true")
+            xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&t=" + urllib.parse.quote(name), li, False)
+        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_TITLE)
+        xbmcplugin.setContent(handle, "movies")
+    elif params.get("mode") == "list":
         li = xbmcgui.ListItem("The Episode")
         tag = li.getVideoInfoTag()
         tag.setMediaType("episode"), tag.setTitle("The Episode"), tag.setTvShowTitle("Fake Show")

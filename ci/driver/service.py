@@ -3854,6 +3854,34 @@ def _dir_guarded(path, wait=20):
             "paths": [f.get("file", "") for f in files or []][:20], "dialog": dialog, "error": str(res.get("error"))[:80] if res.get("error") else ""}
 
 
+def letters_test():
+    """The alphabet bar under the poster row (view 51): each letter jumps to the first title with it."""
+    out = {}
+    try:
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=letters,return)")
+        for _ in range(40):
+            if cond("Window.IsActive(videos) + Integer.IsGreater(Container.NumItems,20)"):
+                break
+            time.sleep(0.5)
+        xbmc.executebuiltin("Container.SetSortMethod(7)")
+        time.sleep(1)
+        xbmc.executebuiltin("Container.SetViewMode(51)")
+        time.sleep(2)
+        out["view"] = lab("Container.ViewMode")
+        out["n"] = lab("Container(51).NumItems")
+        out["abs_sortletter_5"] = lab("Container(51).ListItemAbsolute(5).SortLetter")
+        for letter in ("C", "M", "T", "B", "W", "#"):
+            xbmc.executebuiltin(f"RunScript(special://skin/scripts/letters.py,51,{letter})")
+            time.sleep(2.5)
+            out[letter] = lab("Container(51).ListItem.Label")
+        shot("letters-T")
+    except Exception as error:  # noqa: BLE001
+        out["error"] = repr(error)
+    log("letters: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    time.sleep(1)
+
+
 def lucentvideo_test():
     """Lucent Video 0.21.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
@@ -4060,6 +4088,7 @@ def main():
     mdblist_test()
     mediaflags_test()
     menumove_test()
+    letters_test()
     lucentvideo_test()
     music_fav_test()
     smallposter_test()
