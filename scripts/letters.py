@@ -52,16 +52,8 @@ def letter_at(cid, index):
     return text[:1]
 
 
-def first_index(cid, total, target):
-    """The first position whose letter is target or later (binary search on a sorted list)."""
-    lo, hi = 0, total
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if key(letter_at(cid, mid)) < target:
-            lo = mid + 1
-        else:
-            hi = mid
-    return min(lo, total - 1)
+def is_parent(cid, index):
+    return xbmc.getInfoLabel(f"Container({cid}).ListItemAbsolute({index}).Label") == ".."
 
 
 def jump(cid, letter):
@@ -70,10 +62,38 @@ def jump(cid, letter):
         return
     if xbmc.getCondVisibility(f"Container({cid}).SortDirection(descending)"):
         return                                            # the bar only shows for A-Z; nothing sensible to do
-    index = first_index(cid, total, 0 if letter == "#" else key(letter))
-    if letter_at(cid, 0) in ("", ".") and index == 0 and total > 1:
-        index = 1                                         # skip the '..' item (parent folder) at the top
+    start = 1 if total > 1 and is_parent(cid, 0) else 0   # skip the '..' item (parent folder) at the top
+    target = 0 if letter == "#" else key(letter)
+    index = start + first_index_from(cid, start, total, target)
+    found = key(letter_at(cid, index))
+    before = key(letter_at(cid, index - 1)) if index > start else -1
+    how = "halving"
+    if found != target or before >= target:               # not the letter, or not sorted the way it looks: walk the list once
+        index, how = start + first_by_walking_from(cid, start, total, target), "walking"
+    xbmc.log(f"[skin.lucent] letters: {letter} -> {index} of {total} ({how}, '{letter_at(cid, index)}')", xbmc.LOGINFO)
     xbmc.executebuiltin(f"SetFocus({cid},{index},absolute)")
+
+
+def first_index_from(cid, start, total, target):
+    lo, hi = start, total
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if key(letter_at(cid, mid)) < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return min(lo, total - 1) - start
+
+
+def first_by_walking_from(cid, start, total, target):
+    best = None
+    for index in range(start, total):
+        value = key(letter_at(cid, index))
+        if value == target:
+            return index - start
+        if value > target and best is None:
+            best = index
+    return (best if best is not None else total - 1) - start
 
 
 if __name__ == "__main__":
