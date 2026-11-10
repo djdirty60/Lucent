@@ -352,6 +352,13 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Calendar · New episodes", "Kalender · Nieuwe afleveringen"), LV + "calendar", "land"),
     (("For you", "Voor jou"), LV + "foryou", "poster"),
     (("Ready in top quality", "Klaar in topkwaliteit"), LV + "alerts", "land"),
+    (("Ready for tonight", "Klaargezet voor vanavond"), LV + "tonight", "land"),
+    (("Series · New seasons announced", "Series · Nieuwe seizoenen aangekondigd"), LV + "new_seasons", "poster"),
+    (("Films · Oscar: Best Picture", "Films · Oscar: beste film"), LV + "award&key=oscar_picture", "poster"),
+    (("Films · Oscar: Best Animated Feature", "Films · Oscar: beste animatiefilm"), LV + "award&key=oscar_animated", "poster"),
+    (("Films · Palme d'Or (Cannes)", "Films · Gouden Palm (Cannes)"), LV + "award&key=palme", "poster"),
+    (("Series · Emmy: Best Drama", "Series · Emmy: beste dramaserie"), LV + "award&key=emmy_drama", "poster"),
+    (("Series · Emmy: Best Comedy", "Series · Emmy: beste comedyserie"), LV + "award&key=emmy_comedy", "poster"),
 ]
 
 
@@ -423,6 +430,11 @@ def pick_lv_person():
 
 def has_lv():
     return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
+
+
+def has_lib():
+    """The older Lucent Library (no longer needed by the skin): its rows only fill when it is installed."""
+    return xbmc.getCondVisibility("System.HasAddon(script.lucent.library)")
 
 
 def log(text):
@@ -516,7 +528,7 @@ def lv_convert():
         log(f"rows moved to Lucent Video (seren={seren_too}, services={services_too}, library={lib_too})")
         xbmc.executebuiltin("Container.Refresh")
     if services_too:
-        put("lucent.lvrows", "done2")
+        put("lucent.lvrows", "done3" if lib_too else "done2")    # done2: again once Lucent Library is gone
 
 
 def pick_lv():
@@ -1015,6 +1027,8 @@ def pick_widget():
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
     order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
+    if not has_lib():                                   # the fast TMDb lists come from Lucent Library
+        order.remove(7)
     if has_lv():                                        # Lucent Video: its own rows, right after Seren / the add-on folders
         sources.append("Lucent Video")
         icons.append("icons/play.png")
@@ -1039,10 +1053,11 @@ def pick_widget():
             return None
         label, path = picked
     elif source == 2:
-        choice = select(tr("src_library"), [tr(k) for k, _p, _s in WIDGETS_LIBRARY])
+        rows = [r for r in WIDGETS_LIBRARY if has_lib() or not r[1].startswith("plugin://script.lucent.library/")]
+        choice = select(tr("src_library"), [tr(k) for k, _p, _s in rows])
         if choice < 0:
             return None
-        key, path, style = WIDGETS_LIBRARY[choice]
+        key, path, style = rows[choice]
         label = tr(key)
     elif source == 3:
         picked = browse(tr("src_browse"))

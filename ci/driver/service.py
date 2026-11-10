@@ -3924,6 +3924,45 @@ def lucentvideo_test():
         log(f"lucentvideo: log {e}")
 
 
+def nolib_test():
+    """1.36.0: the skin without Lucent Library (switched off here, only in the 'new' run): menus, setup step, diag."""
+    if not TAG.startswith("new"):
+        return
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Addons.SetAddonEnabled",
+                                    "params": {"addonid": "script.lucent.library", "enabled": False}}))
+    mon.waitForAbort(3)
+    out = {"has_lib": cond("System.HasAddon(script.lucent.library)"), "skin": lab("System.AddonVersion(skin.lucent)")}
+    try:
+        import sys as _s
+        import importlib
+        _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+        import menu as _menu
+        importlib.reload(_menu)
+        out["menu_has_lib"] = _menu.has_lib()
+        out["lib_rows"] = [r[1] for r in _menu.WIDGETS_LIBRARY if _menu.has_lib() or not r[1].startswith("plugin://script.lucent.library/")][:4]
+        out["lv_new_rows"] = [r[1].split("name=")[1] for r in _menu.WIDGETS_LV][-7:]
+        import setup as _setup
+        importlib.reload(_setup)
+        out["setup"] = [_setup.st_library(), [a[0] for a in _setup.ac_library()]]
+        import diag as _diag
+        out["diag_optional"] = [_diag.addon_state(a) for a in ("plugin.video.lucent", "script.lucent.library")]
+        import libtools as _lt
+        out["libtools"] = [callable(_lt.surprise), callable(_lt.next_in_set)]
+    except SystemExit:
+        pass
+    except Exception as _e:  # noqa: BLE001
+        out["error"] = repr(_e)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(4)
+    out["side_visible"] = cond("String.StartsWith(Container.FolderPath,videodb://)")
+    shot("nolib-movies")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    shot("nolib-home")
+    log("nolib: " + json.dumps(out))
+
+
 def music_fav_test():
     """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
     import sys as _s
@@ -4096,6 +4135,7 @@ def main():
     music_fav_test()
     smallposter_test()
     alwayson_test()
+    nolib_test()
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:

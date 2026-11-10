@@ -71,15 +71,14 @@
         <value>FFFFFFFF</value>
     </variable>
     <variable name="LucentShowInfoPath">
-        <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID)">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
-        <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItemAbsolute(1).TvShowDBID)">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItemAbsolute(1).TvShowDBID]</value>
+        <value></value>
     </variable>
     <variable name="LucentS56Bell">
         <value condition="String.IsEqual(Window(home).Property(lucent.s56.bell),1)">✓  $LOCALIZE[31228]</value>
         <value>$LOCALIZE[31227]</value>
     </variable>
     <variable name="LucentShowScoresPath">
-        <value condition="System.HasAddon(script.lucent.library) + !String.IsEmpty(Container(56).ListItem.TvShowDBID) + String.IsEmpty(Container(56).ListItem.Rating(imdb)) + String.IsEmpty(Container(56).ListItem.Rating(trakt))">plugin://script.lucent.library/?action=lib&amp;kind=showinfo&amp;dbid=$INFO[Container(56).ListItem.TvShowDBID]</value>
+        <value></value>
     </variable>
     <variable name="LucentS56Imdb">
         <value condition="!String.IsEmpty(Container(56).ListItem.Rating(imdb))">$INFO[Container(56).ListItem.Rating(imdb)]</value>
@@ -121,6 +120,14 @@
     <variable name="LucentFilterNode">
         <value condition="Container.Content(tvshows)">tvshows</value>
         <value>movies</value>
+    </variable>
+    <variable name="LucentFilterUnwatched">
+        <value condition="Container.Content(tvshows)">videodb://tvshows/titles/?xsp=%7B%22type%22%3A%22tvshows%22%2C%22rules%22%3A%7B%22and%22%3A%5B%7B%22field%22%3A%22playcount%22%2C%22operator%22%3A%22is%22%2C%22value%22%3A%5B%220%22%5D%7D%5D%7D%7D</value>
+        <value>videodb://movies/titles/?xsp=%7B%22type%22%3A%22movies%22%2C%22rules%22%3A%7B%22and%22%3A%5B%7B%22field%22%3A%22playcount%22%2C%22operator%22%3A%22is%22%2C%22value%22%3A%5B%220%22%5D%7D%5D%7D%7D</value>
+    </variable>
+    <variable name="LucentFilterRecent">
+        <value condition="Container.Content(tvshows)">videodb://tvshows/titles/?xsp=%7B%22type%22%3A%22tvshows%22%2C%22rules%22%3A%7B%22and%22%3A%5B%7B%22field%22%3A%22dateadded%22%2C%22operator%22%3A%22inthelast%22%2C%22value%22%3A%5B%2230%20days%22%5D%7D%5D%7D%2C%22order%22%3A%7B%22direction%22%3A%22descending%22%2C%22method%22%3A%22dateadded%22%7D%7D</value>
+        <value>videodb://movies/titles/?xsp=%7B%22type%22%3A%22movies%22%2C%22rules%22%3A%7B%22and%22%3A%5B%7B%22field%22%3A%22dateadded%22%2C%22operator%22%3A%22inthelast%22%2C%22value%22%3A%5B%2230%20days%22%5D%7D%5D%7D%2C%22order%22%3A%7B%22direction%22%3A%22descending%22%2C%22method%22%3A%22dateadded%22%7D%7D</value>
     </variable>
     <variable name="LucentFilterPick">
         <value condition="Container.Content(tvshows)">1</value>
