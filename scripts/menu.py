@@ -248,6 +248,7 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Next up", "Volgende afleveringen"), LV + "nextup", "land"),
     (("Watchlist · Films", "Kijklijst · Films"), LV + "watchlist_movie", "poster"),
     (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
+    (("Watchlist · Coming soon", "Kijklijst · Komt binnenkort uit"), LV + "coming_watchlist", "poster"),
     (("Collection · Films", "Collectie · Films"), LV + "collection_movie", "poster"),
     (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
     (("Calendar · New episodes", "Kalender · Nieuwe afleveringen"), LV + "calendar", "land"),
