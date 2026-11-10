@@ -437,8 +437,60 @@ def sync_state():
         resume = _resume_call("VideoLibrary.SetEpisodeDetails", "episodeid", episode, episode_percent.get((tmdb_id,) + pair))
         if resume:
             calls.append(resume)
-    rpc_batch(calls)
+    if len(calls) > BIG_SYNC:
+        _write_when_idle(calls)
+    else:
+        rpc_batch(calls)
     util.log("library: %d seen/resume changes" % len(calls))
+
+
+BIG_SYNC = 25          # more changes than this are written while nobody looks at the screen
+IDLE_SECONDS = 15 * 60  # without a screensaver: this long without a key press
+
+
+def _screensaver():
+    return xbmc.getCondVisibility("System.ScreenSaverActive")
+
+
+def _idle():
+    """Nobody looks: the screensaver is on (or, without one, no key for 15 minutes) and nothing plays. Kodi reloads
+    every row on the screen after each change in the library (with every add-on, Trakt's too); then you do not see it."""
+    if xbmc.Player().isPlaying():
+        return False
+    return _screensaver() or xbmc.getGlobalIdleTime() >= IDLE_SECONDS
+
+
+def _write_when_idle(calls):
+    """Every change in the library makes the skin reload its rows, which makes the screen jump. Many changes at once
+    (the first time your whole history comes in) are therefore written while nobody looks (see _idle), in small parts,
+    and the writing pauses as soon as you press a key. Without a screensaver a card at the top right shows how far it is."""
+    import progress
+    monitor = xbmc.Monitor()
+    card = progress.Progress(T("Bibliotheek bijwerken", "Updating the library"), T("titels afgevinkt", "titles marked"))
+    told = False
+    total = len(calls)
+    try:
+        for start in range(0, total, 10):
+            while not _idle():
+                card.hide()
+                if not told:
+                    told = True
+                    util.notify(T("%d titels worden in je bibliotheek afgevinkt als de schermbeveiliging aan staat",
+                                  "%d titles are marked in your library while the screensaver is on") % total)
+                if monitor.waitForAbort(10):
+                    return
+            if _screensaver():
+                card.hide()                     # nobody sees it, and a window could wake the screensaver
+            else:
+                card.show(start, total)
+            rpc_batch(calls[start:start + 10])
+            if monitor.waitForAbort(0.5):
+                return
+        if not _screensaver():
+            card.show(total, total)
+            monitor.waitForAbort(3)
+    finally:
+        card.hide()
 
 
 class Busy:

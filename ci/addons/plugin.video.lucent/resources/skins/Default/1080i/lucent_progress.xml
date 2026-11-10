@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window type="dialog">
+<zorder>2</zorder>
+<animation effect="slide" start="0,-40" end="0,0" time="250" tween="cubic" easing="out">WindowOpen</animation><animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
+<controls>
+<control type="group"><left>1252</left><top>36</top><width>620</width><height>124</height>
+<control type="image"><left>-36</left><top>-36</top><width>692</width><height>196</height><texture border="88">lucent/panel_shadow.png</texture><colordiffuse>B3000000</colordiffuse></control>
+<control type="image"><left>0</left><top>0</top><width>620</width><height>124</height><texture border="48">lucent/panel.png</texture><colordiffuse>panel</colordiffuse></control>
+<control type="image"><left>0</left><top>0</top><width>620</width><height>124</height><texture border="48">lucent/panel_edge.png</texture><colordiffuse>hairline</colordiffuse></control>
+<control type="image"><left>22</left><top>18</top><width>88</width><height>88</height><texture>lucent/ring_track.png</texture><colordiffuse>glass_strong</colordiffuse></control>
+<control type="image"><left>22</left><top>18</top><width>88</width><height>88</height><texture>lucent/ring_$INFO[Window.Property(ring)].png</texture><colordiffuse>focus</colordiffuse></control>
+<control type="label"><left>22</left><top>18</top><width>88</width><height>88</height><font>font_small_bold</font><textcolor>text</textcolor><align>center</align><aligny>center</aligny><label>$INFO[Window.Property(percent)]</label></control>
+<control type="label"><left>134</left><top>24</top><width>460</width><height>40</height><font>font_label_bold</font><textcolor>text</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window.Property(ptitle)]</label></control>
+<control type="label"><left>134</left><top>64</top><width>460</width><height>36</height><font>font_body</font><textcolor>text3</textcolor><align>left</align><aligny>center</aligny><label>$INFO[Window.Property(pline)]</label></control>
+</control>
+</controls>
+</window>
