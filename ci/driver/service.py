@@ -3965,6 +3965,47 @@ def nolib_test():
     log("nolib: " + json.dumps(out))
 
 
+def infobuttons_test():
+    """1.37.0: Library and lists / Mark as watched work with Lucent Video, also for titles of other video add-ons."""
+    out = {}
+    try:
+        import sys as _s
+        import importlib
+        _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+        import info as _i
+        importlib.reload(_i)
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=list,return)")
+        for _ in range(30):
+            if cond("Window.IsActive(videos) + Integer.IsGreater(Container.NumItems,0) + String.IsEqual(ListItem.DBType,episode)"):
+                break
+            mon.waitForAbort(0.5)
+        out["item"] = [lab("ListItem.Label"), lab("ListItem.DBType"), lab("ListItem.UniqueID(tmdb)")]
+        out["seren_login"] = _i.seren_login()
+        out["use_lv"] = _i.use_lv()
+        out["target"] = _i.lv_target()
+        out["lv_version"] = list(_i.lv_version())
+        out["play_movie"] = _i.lv_play_url("movie", 603)
+        out["play_tv"] = _i.lv_play_url("tv", 1399)
+        HOME_ = xbmcgui.Window(10000)
+        HOME_.clearProperty("nuvio.info.watched")
+        _i.toggle_watched()
+        mon.waitForAbort(5)
+        out["prop_after"] = HOME_.getProperty("nuvio.info.watched")
+        seen = ""
+        base = xbmcvfs.translatePath("special://profile/addon_data/plugin.video.lucent/")
+        for root, _d, files in os.walk(base):
+            if "watched.json" in files:
+                with open(os.path.join(root, "watched.json"), encoding="utf-8") as fh:
+                    seen += fh.read()
+        out["lv_seen_1399_2_3"] = '"1399"' in seen and '"2:3"' in seen
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+    except Exception as _e:  # noqa: BLE001
+        out["error"] = repr(_e)
+    log("infobuttons: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def music_fav_test():
     """1.34.5: sort on last watched, one favourite as widget, the Covers view and the bigger cover for albums."""
     import sys as _s
@@ -4138,6 +4179,7 @@ def main():
     smallposter_test()
     alwayson_test()
     nolib_test()
+    infobuttons_test()
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
