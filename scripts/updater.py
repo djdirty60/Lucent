@@ -114,10 +114,16 @@ def release_notes(news, installed, limit=4):
     return "\n".join(keep[:limit])
 
 
+# add-ons in the repository that this window leaves alone: Kodi keeps them up to date by itself, without a message
+SILENT = {"plugin.video.lucent"}
+
+
 def available_updates():
     available = fetch_available()
     out = []
     for addon_id in sorted(available):
+        if addon_id in SILENT:
+            continue                                     # updated quietly by Kodi itself, never in this window
         have = installed_version(addon_id)
         if not have:
             continue                                     # not installed here: never pushed on you

@@ -25,9 +25,9 @@
                 <height>460</height>
                 <control type="image">
                     <left>0</left>
-                    <top>0</top>
+                    <top>12</top>
                     <width>620</width>
-                    <height>200</height>
+                    <height>194</height>
                     <aspectratio align="left" aligny="bottom">keep</aspectratio>
                     <fadetime>250</fadetime>
                     <texture background="true">$VAR[ItemLogo]</texture>
@@ -63,7 +63,7 @@
                     </include>
                     <include content="InfoPill">
                         <param name="label">$VAR[ItemRating]</param>
-                        <param name="visible">!String.IsEmpty(ListItem.Rating)</param>
+                        <param name="visible">!String.IsEmpty(ListItem.Rating) + !$EXP[LucentScoreRow]</param>
                     </include>
                     <include content="InfoPill">
                         <param name="label">$VAR[ItemDuration]</param>
@@ -92,111 +92,154 @@
                     <itemgap>12</itemgap>
                     <visible>$EXP[LucentScoreRow]</visible>
                     <control type="group">
-                        <width>150</width>
+                        <width>124</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(ListItem.Rating)</visible>
+                        <control type="image">
+                            <width>124</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>13</top>
+                            <width>18</width>
+                            <height>18</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>FFE9B824</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>48</left>
+                            <width>70</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[ListItem.Rating]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>124</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.rt)) + !Skin.HasSetting(lucent.rate.hide.rt)</visible>
                         <control type="image">
-                            <width>150</width>
+                            <width>124</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
                         <control type="image">
-                            <left>20</left>
-                            <top>15</top>
-                            <width>14</width>
-                            <height>14</height>
+                            <left>18</left>
+                            <top>13</top>
+                            <width>18</width>
+                            <height>18</height>
                             <texture>mask_circle.png</texture>
-                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.rtc)]</colordiffuse>
+                            <colordiffuse>FFE5352B</colordiffuse>
                         </control>
                         <control type="label">
-                            <left>44</left>
-                            <width>94</width>
+                            <left>48</left>
+                            <width>70</width>
                             <height>44</height>
                             <font>font_small_bold</font>
-                            <textcolor>text2</textcolor>
+                            <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>RT  $INFO[Window(home).Property(lucent.omdbl.rt)]</label>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.rt)]</label>
                         </control>
                     </control>
                     <control type="group">
-                        <width>140</width>
-                        <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.mc)) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
-                        <control type="image">
-                            <width>140</width>
-                            <height>44</height>
-                            <texture border="22" colordiffuse="glass">pill44.png</texture>
-                        </control>
-                        <control type="image">
-                            <left>20</left>
-                            <top>15</top>
-                            <width>14</width>
-                            <height>14</height>
-                            <texture>mask_circle.png</texture>
-                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.mcc)]</colordiffuse>
-                        </control>
-                        <control type="label">
-                            <left>44</left>
-                            <width>84</width>
-                            <height>44</height>
-                            <font>font_small_bold</font>
-                            <textcolor>text2</textcolor>
-                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>MC  $INFO[Window(home).Property(lucent.omdbl.mc)]</label>
-                        </control>
-                    </control>
-                    <control type="group">
-                        <width>250</width>
+                        <width>124</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
                         <control type="image">
-                            <width>250</width>
+                            <width>124</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
                         <control type="image">
-                            <left>20</left>
-                            <top>15</top>
-                            <width>14</width>
-                            <height>14</height>
+                            <left>18</left>
+                            <top>13</top>
+                            <width>18</width>
+                            <height>18</height>
                             <texture>mask_circle.png</texture>
-                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.rtac)]</colordiffuse>
+                            <colordiffuse>FFF2A33A</colordiffuse>
                         </control>
                         <control type="label">
-                            <left>44</left>
-                            <width>194</width>
+                            <left>48</left>
+                            <width>70</width>
                             <height>44</height>
                             <font>font_small_bold</font>
-                            <textcolor>text2</textcolor>
+                            <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>$LOCALIZE[31825]  $INFO[Window(home).Property(lucent.omdbl.rta)]</label>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.rta)]</label>
                         </control>
                     </control>
                     <control type="group">
-                        <width>140</width>
+                        <width>124</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.mc)) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
                         <control type="image">
-                            <width>140</width>
+                            <width>124</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
                         <control type="image">
-                            <left>20</left>
-                            <top>15</top>
-                            <width>14</width>
-                            <height>14</height>
+                            <left>18</left>
+                            <top>13</top>
+                            <width>18</width>
+                            <height>18</height>
                             <texture>mask_circle.png</texture>
-                            <colordiffuse>$INFO[Window(home).Property(lucent.omdbl.lb.c)]</colordiffuse>
+                            <colordiffuse>FF66CC33</colordiffuse>
                         </control>
                         <control type="label">
-                            <left>44</left>
-                            <width>84</width>
+                            <left>48</left>
+                            <width>70</width>
                             <height>44</height>
                             <font>font_small_bold</font>
-                            <textcolor>text2</textcolor>
+                            <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>LB  $INFO[Window(home).Property(lucent.omdbl.lb)]</label>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.mc)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <width>124</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)</visible>
+                        <control type="image">
+                            <width>124</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>14</left>
+                            <top>17</top>
+                            <width>10</width>
+                            <height>10</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>FFFF8000</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>25</left>
+                            <top>17</top>
+                            <width>10</width>
+                            <height>10</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>FF00E054</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>36</left>
+                            <top>17</top>
+                            <width>10</width>
+                            <height>10</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>FF40BCF4</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>52</left>
+                            <width>70</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.lb)]</label>
                         </control>
                     </control>
                 </control>
@@ -205,20 +248,26 @@
                     <left>0</left>
                     <top>274</top>
                     <width>1200</width>
-                    <height>30</height>
+                    <height>40</height>
                     <orientation>horizontal</orientation>
-                    <itemgap>8</itemgap>
+                    <itemgap>10</itemgap>
                     <usecontrolwidth>true</usecontrolwidth>
                     <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <visible>!String.IsEmpty(Window(home).Property(lucent.mf.for))</visible>
-                    <control type="label"><width>auto</width><height>30</height><font>font_tiny</font><textcolor>FF9FB0BF</textcolor><aligny>center</aligny><label>[B]$LOCALIZE[31821][/B]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.most))</visible></control>
-                    <control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img1)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img1))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img2)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img2))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img3)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img3))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img4)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img4))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img5)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img5))</visible></control><control type="image"><width>78</width><height>30</height><aspectratio>keep</aspectratio><texture>$INFO[Window(home).Property(lucent.mf.img6)]</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.img6))</visible></control>
-                    <control type="label"><width>auto</width><height>30</height><font>font_tiny</font><aligny>center</aligny><textcolor>FFE6ECF0</textcolor><shadowcolor>$VAR[LucentTextShadow]</shadowcolor><label>   [COLOR FF9FB0BF][B]$LOCALIZE[31819][/B][/COLOR]  $INFO[Window(home).Property(lucent.mf.alang)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.alang))</visible></control><control type="label"><width>auto</width><height>30</height><font>font_tiny</font><aligny>center</aligny><textcolor>FFE6ECF0</textcolor><shadowcolor>$VAR[LucentTextShadow]</shadowcolor><label>   [COLOR FF9FB0BF][B]$LOCALIZE[31820][/B][/COLOR]  $INFO[Window(home).Property(lucent.mf.slang)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.slang))</visible></control>
+                    <control type="label"><width>auto</width><height>40</height><font>font_tiny</font><textcolor>FF9FB0BF</textcolor><aligny>center</aligny><label>[B]$LOCALIZE[31821][/B]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.most))</visible></control>
+                    <control type="button"><width>auto</width><height>40</height><font>font_pi_20b</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><texturenofocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c1)]">rr14.png</texturenofocus><texturefocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c1)]">rr14.png</texturefocus><enable>false</enable><label>[COLOR $INFO[Window(home).Property(lucent.mf.k1)]]$INFO[Window(home).Property(lucent.mf.t1)][/COLOR]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.t1))</visible></control>
+                    <control type="button"><width>auto</width><height>40</height><font>font_pi_20b</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><texturenofocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c2)]">rr14.png</texturenofocus><texturefocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c2)]">rr14.png</texturefocus><enable>false</enable><label>[COLOR $INFO[Window(home).Property(lucent.mf.k2)]]$INFO[Window(home).Property(lucent.mf.t2)][/COLOR]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.t2))</visible></control>
+                    <control type="button"><width>auto</width><height>40</height><font>font_pi_20b</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><texturenofocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c3)]">rr14.png</texturenofocus><texturefocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c3)]">rr14.png</texturefocus><enable>false</enable><label>[COLOR $INFO[Window(home).Property(lucent.mf.k3)]]$INFO[Window(home).Property(lucent.mf.t3)][/COLOR]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.t3))</visible></control>
+                    <control type="button"><width>auto</width><height>40</height><font>font_pi_20b</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><texturenofocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c4)]">rr14.png</texturenofocus><texturefocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c4)]">rr14.png</texturefocus><enable>false</enable><label>[COLOR $INFO[Window(home).Property(lucent.mf.k4)]]$INFO[Window(home).Property(lucent.mf.t4)][/COLOR]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.t4))</visible></control>
+                    <control type="button"><width>auto</width><height>40</height><font>font_pi_20b</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><texturenofocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c5)]">rr14.png</texturenofocus><texturefocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c5)]">rr14.png</texturefocus><enable>false</enable><label>[COLOR $INFO[Window(home).Property(lucent.mf.k5)]]$INFO[Window(home).Property(lucent.mf.t5)][/COLOR]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.t5))</visible></control>
+                    <control type="button"><width>auto</width><height>40</height><font>font_pi_20b</font><textoffsetx>16</textoffsetx><align>center</align><aligny>center</aligny><texturenofocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c6)]">rr14.png</texturenofocus><texturefocus border="14" colordiffuse="$INFO[Window(home).Property(lucent.mf.c6)]">rr14.png</texturefocus><enable>false</enable><label>[COLOR $INFO[Window(home).Property(lucent.mf.k6)]]$INFO[Window(home).Property(lucent.mf.t6)][/COLOR]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.t6))</visible></control>
+                    <control type="image"><width>34</width><height>40</height><aspectratio>keep</aspectratio><texture colordiffuse="FF7FE3E8">icons/audio.png</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.alang))</visible></control><control type="label"><width>auto</width><height>40</height><font>font_small_bold</font><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><shadowcolor>$VAR[LucentTextShadow]</shadowcolor><label>$INFO[Window(home).Property(lucent.mf.alang)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.alang))</visible></control>
+                    <control type="image"><width>34</width><height>40</height><aspectratio>keep</aspectratio><texture colordiffuse="FF7FE3E8">icons/subtitles.png</texture><visible>!String.IsEmpty(Window(home).Property(lucent.mf.slang))</visible></control><control type="label"><width>auto</width><height>40</height><font>font_small_bold</font><aligny>center</aligny><textcolor>FFFFFFFF</textcolor><shadowcolor>$VAR[LucentTextShadow]</shadowcolor><label>$INFO[Window(home).Property(lucent.mf.slang)]</label><visible>!String.IsEmpty(Window(home).Property(lucent.mf.slang))</visible></control>
                 </control>
                 <control type="label">
                     <left>0</left>
                     <top>282</top>
-                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
                     <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <width>1100</width>
                     <height>44</height>
@@ -230,7 +279,7 @@
                 <control type="textbox">
                     <left>0</left>
                     <top>334</top>
-                    <animation effect="slide" start="0,0" end="0,46" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="$EXP[LucentMFRow]">Conditional</animation>
                     <animation effect="slide" start="0,0" end="0,52" time="0" condition="$EXP[LucentScoreRow]">Conditional</animation>
                     <width>920</width>
                     <height>$PARAM[plotheight]</height>
