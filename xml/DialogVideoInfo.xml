@@ -116,6 +116,14 @@
                         <label>$LOCALIZE[40000]</label>
                         <visible>ListItem.HasVideoVersions</visible>
                     </control>
+                    <!-- More: every option of Lucent Video for this title in one menu (also for titles of other add-ons) -->
+                    <control type="button" id="25">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>•••  $LOCALIZE[31837]</label>
+                        <onclick>RunScript(special://skin/scripts/info.py,lvmenu)</onclick>
+                        <visible>System.AddonIsEnabled(plugin.video.lucent) + String.StartsWith(System.AddonVersion(plugin.video.lucent),0.3) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [!String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.DBID)]</visible>
+                    </control>
                     <!-- Options: edit title / sort title, choose art, remove from library (Kodi's Manage menu) -->
                     <control type="button" id="24">
                         <width>auto</width>

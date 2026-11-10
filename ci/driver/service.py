@@ -3990,8 +3990,22 @@ def infobuttons_test():
         HOME_ = xbmcgui.Window(10000)
         HOME_.clearProperty("nuvio.info.watched")
         _i.toggle_watched()
-        mon.waitForAbort(5)
+        mon.waitForAbort(10)
         out["prop_after"] = HOME_.getProperty("nuvio.info.watched")
+        try:
+            with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+                out["lv_log_marked"] = any("marked episode 1399 watched" in ln for ln in fh)
+        except OSError:
+            out["lv_log_marked"] = None
+        _i.lv_menu()                                         # 'More': Lucent Video's menu with all options
+        for _ in range(20):
+            if cond("Window.IsActive(contextmenu)"):
+                break
+            mon.waitForAbort(0.5)
+        out["more_menu"] = cond("Window.IsActive(contextmenu)")
+        shot("info-more-menu")
+        xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
+        mon.waitForAbort(1)
         seen = ""
         base = xbmcvfs.translatePath("special://profile/addon_data/plugin.video.lucent/")
         for root, _d, files in os.walk(base):

@@ -654,10 +654,11 @@ def _remove_from_kodi(folder_path):
     rpc_batch(calls)
 
 
-def remove_one(kind, tmdb_id):
+def remove_one(kind, tmdb_id, ask=True):
     movie = kind == "movie"
-    meta = tmdb.details("movie" if movie else "tvshow", tmdb_id) or {"kind": "movie" if movie else "tvshow", "tmdb": str(tmdb_id), "title": ""}
-    if not xbmcgui.Dialog().yesno("Lucent", T("%s uit je bibliotheek halen?", "Remove %s from your library?") % (meta.get("title") or T("Deze titel", "This title"))):
+    meta = (tmdb.details("movie" if movie else "tvshow", tmdb_id) if tmdb.key() else None) or \
+        {"kind": "movie" if movie else "tvshow", "tmdb": str(tmdb_id), "title": ""}
+    if ask and not xbmcgui.Dialog().yesno("Lucent", T("%s uit je bibliotheek halen?", "Remove %s from your library?") % (meta.get("title") or T("Deze titel", "This title"))):
         return False
     util.OVERRIDE_USER = users.MAIN
     try:

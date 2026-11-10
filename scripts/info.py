@@ -412,6 +412,15 @@ def lv_lists(prefix="ListItem."):
     lv_run(action, **dict(target, **extra))
 
 
+def lv_menu(prefix="ListItem."):
+    """'More' on the info page: all of Lucent Video's options for this title in one menu (Lucent Video 0.30.0)."""
+    target = lv_target(prefix)
+    if not target:
+        xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
+        return
+    lv_run("title_menu", **target)
+
+
 LV_LISTS = (0, 30, 0)       # the first Lucent Video with action=lists (asked for in the project; not in 0.29.x)
 G_LV = {
     "wl_add": ("Watchlist: add", "Kijklijst: toevoegen"),
@@ -1610,6 +1619,8 @@ if __name__ == "__main__":
         choose_lists(sys.argv[2] if len(sys.argv) > 2 else "")
     elif action == "watched":
         toggle_watched()
+    elif action == "lvmenu":
+        lv_menu()
     elif action == "studio":
         show_studio(HOME.getProperty("nuvio.open.studio"))
     elif action == "open":

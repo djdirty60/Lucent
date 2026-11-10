@@ -583,10 +583,46 @@ def _meta_for(params):
 
 
 def set_watched(params):
-    tracker.set_watched(_meta_for(params), params.get("value") == "1")
+    """Also for titles from other add-ons (the skin's info page): any TMDB id, movie, tvshow, season or episode."""
+    meta, watched = _meta_for(params), params.get("value") == "1"
+    if meta["kind"] in ("tvshow", "season") and not tracker.active() and not tmdb.key():
+        return util.notify(T("Zonder TMDB-sleutel weet Lucent niet welke afleveringen er zijn", "Without a TMDB key Lucent does not know the episodes"))
+    try:
+        tracker.set_watched(meta, watched)
+    except util.HttpError as error:
+        util.log("watched: %s" % error)
+        return util.notify(T("Je account is niet bereikbaar, er is niets gewijzigd", "Your account cannot be reached, nothing was changed"))
+    util.log("marked %s %s %s" % (meta["kind"], meta["tmdb"], "watched" if watched else "unwatched"))
+    util.notify(T("Gemarkeerd als bekeken", "Marked as watched") if watched else T("Gemarkeerd als niet bekeken", "Marked as unwatched"))
     import widgets
     widgets.mark_old(account_only=True)
     xbmc.executebuiltin("Container.Refresh")
+
+
+def title_menu(params):
+    """All of Lucent Video's options for one title, as one menu (for a '...' button on the skin's info page; works for
+    titles from other add-ons too): choose source, ready for tonight, watched, intro, library and lists, trailer, cast,
+    similar, rate."""
+    meta = _meta_for(params)
+    full = tmdb.details("movie" if meta["kind"] == "movie" else "tvshow", meta["tmdb"]) if tmdb.key() else None
+    if full:
+        meta = dict(full, kind=meta["kind"], season=meta.get("season"), episode=meta.get("episode"))
+    meta.setdefault("title", "")
+    if meta["kind"] == "movie":
+        seen = meta["tmdb"] in tracker.watched_movies()
+    elif meta["kind"] == "episode":
+        seen = (int(meta["season"]), int(meta["episode"])) in tracker.watched_episodes().get(str(meta["tmdb"]), {})
+    else:
+        seen = False
+    entries = items.context(meta, seen)
+    if meta["kind"] in ("movie", "tvshow"):
+        entries.insert(0, (T("Bibliotheek en lijsten", "Library and lists"), "RunPlugin(%s)" % util.url_for(action="lists", type=meta["kind"], tmdb=meta["tmdb"])))
+    picked = xbmcgui.Dialog().contextmenu([label for label, _command in entries])
+    if picked >= 0:
+        command = entries[picked][1]
+        if command.startswith("Container.Update("):          # from a dialog: open the list in the Videos window
+            command = "ActivateWindow(Videos,%s,return)" % command[len("Container.Update("):-1]
+        xbmc.executebuiltin(command)
 
 
 def set_watchlist(params):
@@ -802,6 +838,11 @@ def run(argv):
         if action == "formatcheck":
             import formatcheck
             return formatcheck.open_check()
+        if action == "title_menu":
+            return title_menu(params)
+        if action == "lists":
+            import lists
+            return lists.open_lists(params.get("type", "movie"), params["tmdb"])
         if action in SUBTITLE_ACTIONS:
             return subtitle_action(action)
         if action == "hide_languages":
