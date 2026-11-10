@@ -1039,9 +1039,8 @@ def audio_test():
                                                          "params": {"playerid": 1, "properties": ["currentaudiostream", "audiostreams"]}})))
         r = res.get("result") or {}
         cur = r.get("currentaudiostream") or {}
-        if run == 3:
+        if run == 3 and xbmcvfs.exists("special://skin/scripts/subtitles.py"):   # gone from the skin in 1.37.0
             import sys
-            import xbmcvfs
             sys.path.append(xbmcvfs.translatePath("special://skin/scripts"))
             import subtitles as subs
             log(f"audio direct: lang2(eng)={subs.lang2('eng')!r} lang1={lab('Skin.String(lucent.audio.lang1)')!r}")
@@ -3249,6 +3248,9 @@ def skipdup_test():
     """1.34.9: Seren and TheIntroDB both show Skip intro: the choice switches the other one off (fake add-on settings)."""
     import sys as _s
     import types as _t
+    if not xbmcvfs.exists("special://skin/scripts/skipdup.py"):        # moved out of the skin in 1.37.0
+        log("skipdup: not in this skin")
+        return
     _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
     import skipdup as _d
 
