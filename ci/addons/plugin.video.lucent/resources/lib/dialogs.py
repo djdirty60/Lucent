@@ -209,11 +209,35 @@ def busy_dialog(meta):
     return dialog
 
 
+def recap(meta):
+    """'Previous time': the story of the episode before this one (also across seasons); for a film or a first
+    episode, what this one is about."""
+    import tmdb
+    if meta.get("kind") == "episode":
+        season, episode = int(meta["season"]), int(meta["episode"])
+        try:
+            if episode > 1:
+                rows = tmdb.season(meta["tmdb"], season).get("episodes") or []
+                before = next((r for r in rows if r.get("episode_number") == episode - 1), None)
+            elif season > 1:
+                rows = tmdb.season(meta["tmdb"], season - 1).get("episodes") or []
+                before = rows[-1] if rows else None
+            else:
+                before = None
+        except Exception:          # no recap is never a reason not to resume
+            before = None
+        if before and before.get("overview"):
+            return (T("Vorige keer: S%d · E%d  %s", "Previous time: S%d · E%d  %s")
+                    % (before["season_number"], before["episode_number"], before.get("name") or ""), before["overview"])
+    return T("Waar het over gaat", "What it is about"), meta.get("plot") or ""
+
+
 class Resume(Base):
     def onInit(self):
         meta = self.args["meta"]
+        head, text = recap(meta)
         self.fill({"title": meta.get("show") or meta["title"], "fanart": meta.get("thumb") or meta.get("fanart"),
-                   "stopped": T("Gestopt bij %s", "Stopped at %s") % self.args["clock"]})
+                   "stopped": T("Gestopt bij %s", "Stopped at %s") % self.args["clock"], "recap_head": head, "recap": text})
         self.getControl(50).setPercent(self.args["percent"])
 
     def onClick(self, control):

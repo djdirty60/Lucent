@@ -113,6 +113,7 @@ def home(handle, _params):
         items.folder(T("Films", "Movies"), util.url_for(action="menu", type="movie"), "DefaultMovies.png"),
         items.folder(T("Series", "Shows"), util.url_for(action="menu", type="tvshow"), "DefaultTVShows.png"),
         items.folder(T("Voor jou", "For you"), util.url_for(action="list", name="foryou"), "DefaultRecentlyAddedMovies.png"),
+        _action(T("Wat zullen we kijken?", "What shall we watch?"), util.url_for(action="pick"), "DefaultAddonsRecentlyUpdated.png"),
         items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultNetwork.png"),
         items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultPlaylist.png"),
         items.folder(T("Zoeken", "Search"), util.url_for(action="searchmenu"), "DefaultAddonsSearch.png"),
@@ -164,6 +165,7 @@ def tools(handle, _params):
         _action(T("Volgorde van bronnen", "Order of sources"), util.url_for(action="ranking")),
         _action(T("Bibliotheek nu bijwerken", "Update the library now"), util.url_for(action="library_sync"), "DefaultAddonLibrary.png"),
         _action(T("Kiezen wat in de bibliotheek komt", "Choose what goes in the library"), util.url_for(action="library_choose"), "DefaultAddonLibrary.png"),
+        _action(T("Je kijkjaar", "Your year of watching"), util.url_for(action="year")),
         _action(T("Back-up maken of terugzetten", "Backup and restore"), util.url_for(action="backup")),
         _action(T("Foutrapport maken", "Make an error report"), util.url_for(action="report")),
         _action(T("Cache wissen", "Clear cache"), util.url_for(action="clear_cache")),
@@ -546,6 +548,12 @@ def run(argv):
         if action == "test_easynews":
             ok, text = usenet.check_easynews()
             return xbmcgui.Dialog().ok("Easynews" if ok else T("Niet gelukt", "Failed"), text)
+        if action == "pick":
+            import pick
+            return pick.open_pick()
+        if action == "year":
+            import year
+            return year.open_year()
         if action == "alerts_now":
             import alerts
             return alerts.run()
