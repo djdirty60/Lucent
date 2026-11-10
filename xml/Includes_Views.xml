@@ -57,6 +57,35 @@
                         <param name="color">text</param>
                         <param name="visible">!String.IsEmpty(ListItem.Season) + [String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season) | Integer.IsGreater(ListItem.Episode,0)]</param>
                     </include>
+                    <!-- series status (also for lists of other add-ons that pass it on, like Fen Light / Red Light / POV) -->
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31557]</param>
+                        <param name="bg">glass_strong</param>
+                        <param name="color">text</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.IsEqual(ListItem.DBType,tvshow) + String.Contains(ListItem.Status,ended)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31558]</param>
+                        <param name="bg">green</param>
+                        <param name="color">white</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.IsEqual(ListItem.DBType,tvshow) + [String.Contains(ListItem.Status,returning) | String.Contains(ListItem.Status,continuing)]</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31559]</param>
+                        <param name="bg">red</param>
+                        <param name="color">white</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.IsEqual(ListItem.DBType,tvshow) + String.Contains(ListItem.Status,cancel)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31560]</param>
+                        <param name="bg">amber</param>
+                        <param name="color">black</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.IsEqual(ListItem.DBType,tvshow) + [String.Contains(ListItem.Status,production) | String.Contains(ListItem.Status,planned) | String.Contains(ListItem.Status,upcoming) | String.Contains(ListItem.Status,pilot)]</param>
+                    </include>
                     <include content="InfoPill">
                         <param name="label">$INFO[ListItem.Year]</param>
                         <param name="visible">!String.IsEmpty(ListItem.Year)</param>
@@ -92,11 +121,11 @@
                     <itemgap>12</itemgap>
                     <visible>$EXP[LucentScoreRow]</visible>
                     <control type="group">
-                        <width>124</width>
+                        <width>176</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(ListItem.Rating)</visible>
                         <control type="image">
-                            <width>124</width>
+                            <width>176</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
@@ -110,20 +139,20 @@
                         </control>
                         <control type="label">
                             <left>48</left>
-                            <width>70</width>
+                            <width>122</width>
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>$INFO[ListItem.Rating]</label>
+                            <label>$VAR[LucentListRatingText]</label>
                         </control>
                     </control>
                     <control type="group">
-                        <width>124</width>
+                        <width>170</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.rt)) + !Skin.HasSetting(lucent.rate.hide.rt)</visible>
                         <control type="image">
-                            <width>124</width>
+                            <width>170</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
@@ -137,20 +166,20 @@
                         </control>
                         <control type="label">
                             <left>48</left>
-                            <width>70</width>
+                            <width>116</width>
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>$INFO[Window(home).Property(lucent.omdbl.rt)]</label>
+                            <label>RT  $INFO[Window(home).Property(lucent.omdbl.rt)]</label>
                         </control>
                     </control>
                     <control type="group">
-                        <width>124</width>
+                        <width>184</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
                         <control type="image">
-                            <width>124</width>
+                            <width>184</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
@@ -164,20 +193,20 @@
                         </control>
                         <control type="label">
                             <left>48</left>
-                            <width>70</width>
+                            <width>130</width>
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>$INFO[Window(home).Property(lucent.omdbl.rta)]</label>
+                            <label>RTA  $INFO[Window(home).Property(lucent.omdbl.rta)]</label>
                         </control>
                     </control>
                     <control type="group">
-                        <width>124</width>
+                        <width>154</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(Window(home).Property(lucent.omdbl.mc)) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
                         <control type="image">
-                            <width>124</width>
+                            <width>154</width>
                             <height>44</height>
                             <texture border="22" colordiffuse="glass">pill44.png</texture>
                         </control>
@@ -191,12 +220,12 @@
                         </control>
                         <control type="label">
                             <left>48</left>
-                            <width>70</width>
+                            <width>100</width>
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                            <label>$INFO[Window(home).Property(lucent.omdbl.mc)]</label>
+                            <label>MC  $INFO[Window(home).Property(lucent.omdbl.mc)]</label>
                         </control>
                     </control>
                     <control type="group">

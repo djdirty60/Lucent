@@ -281,6 +281,35 @@
                         </control>
                     </control>
                     <control type="group">
+                        <width>300</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
+                        <control type="image">
+                            <left>0</left>
+                            <top>0</top>
+                            <width>300</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>15</top>
+                            <width>14</width>
+                            <height>14</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.rtac)]</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>44</left>
+                            <top>0</top>
+                            <width>244</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$LOCALIZE[31816]  $INFO[Window(home).Property(lucent.omdb.rta)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
                         <width>214</width>
                         <height>44</height>
                         <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
@@ -319,42 +348,13 @@
 
                 <!-- MDBList scores (issue #8) on a row of their own, so the first row never gets cut off -->
                 <control type="grouplist">
-                    <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
+                    <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
                     <left>96</left>
                     <top>588</top>
                     <width>1600</width>
                     <height>44</height>
                     <orientation>horizontal</orientation>
                     <itemgap>12</itemgap>
-                    <control type="group">
-                        <width>300</width>
-                        <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
-                        <control type="image">
-                            <left>0</left>
-                            <top>0</top>
-                            <width>300</width>
-                            <height>44</height>
-                            <texture border="22" colordiffuse="glass">pill44.png</texture>
-                        </control>
-                        <control type="image">
-                            <left>20</left>
-                            <top>15</top>
-                            <width>14</width>
-                            <height>14</height>
-                            <texture>mask_circle.png</texture>
-                            <colordiffuse>$INFO[Window(home).Property(lucent.omdb.rtac)]</colordiffuse>
-                        </control>
-                        <control type="label">
-                            <left>44</left>
-                            <top>0</top>
-                            <width>244</width>
-                            <height>44</height>
-                            <font>font_small_bold</font>
-                            <textcolor>text2</textcolor>
-                            <label>$LOCALIZE[31816]  $INFO[Window(home).Property(lucent.omdb.rta)]</label>
-                        </control>
-                    </control>
                     <control type="group">
                         <width>280</width>
                         <height>44</height>
@@ -425,7 +425,7 @@
                     <textcolor>text</textcolor>
                     <label>$INFO[ListItem.Title]</label>
                     <visible>String.IsEqual(ListItem.DBType,episode)</visible>
-                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]">Conditional</animation>
+                    <animation effect="slide" start="0,0" end="0,56" time="0" condition="!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]">Conditional</animation>
                 </control>
 
                 <!-- Plot -->
@@ -438,7 +438,7 @@
                     <textcolor>text</textcolor>
                     <label>$INFO[ListItem.Plot]</label>
                     <include>TextAutoScroll</include>
-                    <visible>![!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]]</visible>
+                    <visible>![!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]]</visible>
                     <animation effect="slide" start="0,0" end="0,56" time="0" condition="String.IsEqual(ListItem.DBType,episode)">Conditional</animation>
                 </control>
                 <!-- the same plot one row lower, when the MDBList row shows -->
@@ -451,7 +451,7 @@
                     <textcolor>text</textcolor>
                     <label>$INFO[ListItem.Plot]</label>
                     <include>TextAutoScroll</include>
-                    <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
+                    <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
                     <animation effect="slide" start="0,0" end="0,56" time="0" condition="String.IsEqual(ListItem.DBType,episode)">Conditional</animation>
                 </control>
 
