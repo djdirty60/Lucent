@@ -347,7 +347,7 @@
             <height>34</height>
             <font>font10</font>
             <textcolor>text4</textcolor>
-            <label>$INFO[Container.NumItems,, $LOCALIZE[31036]]$INFO[Container.SortMethod,   ·   ,]</label>
+            <label>$INFO[Container.NumItems,, $LOCALIZE[31036]]$VAR[LucentSortSuffix]</label>
             <visible>!Control.IsVisible(56) + !Skin.HasSetting(lucent.hidetopbar) + ![String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)]</visible>
             <include>Anim_Window</include>
         </control>
