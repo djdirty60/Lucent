@@ -26,7 +26,7 @@
     </extension>
 </addon>
 
-<addon id="repository.lucent" name="Lucent Repository" version="1.0.1" provider-name="Claude">
+<addon id="repository.lucent" name="Lucent Repository" version="1.0.2" provider-name="Claude">
     <requires>
         <import addon="xbmc.addon" version="12.0.0"/>
     </requires>
@@ -37,12 +37,19 @@
             <datadir zip="true">https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/</datadir>
             <hashes>false</hashes>
         </dir>
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/djdirty60/Lucent-video/main/repo/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/djdirty60/Lucent-video/main/repo/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/djdirty60/Lucent-video/main/repo/zips/</datadir>
+            <hashes>false</hashes>
+        </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="en_GB">Updates for the Lucent skin</summary>
-        <summary lang="nl_NL">Updates voor de Lucent-skin</summary>
-        <description lang="en_GB">Install this once. Kodi then keeps the Lucent skin up to date by itself.</description>
-        <description lang="nl_NL">Installeer dit één keer. Kodi houdt de Lucent-skin daarna zelf up-to-date.</description>
+        <news>1.0.2: Also reads the separate folder of the video add-on.</news>
+        <summary lang="en_GB">Updates for the Lucent skin and its video add-on</summary>
+        <summary lang="nl_NL">Updates voor de Lucent-skin en de video add-on</summary>
+        <description lang="en_GB">Install this once. Kodi then keeps the Lucent skin and its video add-on up to date by itself.</description>
+        <description lang="nl_NL">Installeer dit één keer. Kodi houdt de Lucent-skin en de video add-on daarna zelf up-to-date.</description>
         <platform>all</platform>
         <license>GPL-2.0-or-later</license>
         <assets>
@@ -185,7 +192,7 @@ BELANGRIJK: laad eerst je hele collectie in Seren (Films > Mijn films (collectie
     </extension>
 </addon>
 
-<addon id="plugin.video.lucent" version="0.30.0" name="Lucent Video" provider-name="Claude">
+<addon id="plugin.video.lucent" version="0.31.2" name="Lucent Video" provider-name="Claude">
     <requires>
         <import addon="xbmc.python" version="3.0.1"/>
     </requires>
@@ -264,13 +271,11 @@ BELANGRIJK: laad eerst je hele collectie in Seren (Films > Mijn films (collectie
         <description lang="nl_NL">Bladeren met TMDB, afspelen via je eigen AIOStreams-adres en je voortgang bijhouden op Trakt. Werkt zonder Seren.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>0.30.0: Library and lists: one window with ticks shows where a film or series is (watchlist, Trakt collection, Kodi library, your own Trakt lists, Simkl status, own static MDBList lists). One menu with all options for a title, also for titles from other add-ons. Marking as watched gives a short message.
-0.29.2: Continue watching: the summary shows four lines and scrolls by itself, and a long title scrolls too.
-0.29.1: Watched marks: your whole Trakt history is read page by page (before, only the first 100 watched films and series were known).
-0.29.0: Subtitles, spoken language and skip intro now live in Lucent Video, for every video: a live subtitle list that asks every subtitle add-on at once, a quiet pick in the background, AI translation with your own key, syncing, a wish list, first and second spoken language, and TheIntroDB with one Skip button. Your settings from the Lucent skin are taken over once.
-0.28.0: Only what you can watch: discovery lists wait for the digital release. Hide languages you do not want.
-0.27.0: Format check: test clips show what your box really plays (Dolby Vision, HDR, 4K, AV1, TrueHD, DTS, DD+) and suggest the right settings. Type with your phone is safer.
-0.26.0: Kompas, your own film guide with a reason for every pick. Takes over Lucent Library for the Lucent skin: Add to Home, browse series, one title in or out of your library, fast Home rows.</news>
+        <news>0.31.2: Format check: clips now start on Android boxes that first switch to HDR or another refresh rate. When no clip starts at all, the check says so and changes nothing.
+0.31.1: Only show what you can watch already now also counts for your watchlist, collection and own lists. Coming soon, In cinemas, the calendar and Continue watching still show everything.
+0.31.0: Faster lists (fewer requests per page, Trakt score via MDBList). Menus tidied: Type with your phone is under Search, Ready for tonight under My lists, subtitle and skip intro setup under Settings and help. Setup assistant: format check in the Dolby Vision step and a new Extra step.
+0.30.0: Library and lists: one window with ticks shows where a film or series is. One menu with all options for a title, also for titles from other add-ons.
+0.29.0: Subtitles, spoken language and skip intro now live in Lucent Video, for every video.</news>
         <assets>
             <icon>icon.png</icon>
         </assets>
