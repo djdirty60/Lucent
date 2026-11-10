@@ -47,6 +47,37 @@ SS_LEVELS = [(60, ("Gentle – the screen stays clearly visible", "Zacht – sch
              (10, ("Strong – barely visible", "Sterk – nauwelijks zichtbaar"))]
 LANDSCAPE = [("", ("Off", "Uit")), ("home", ("Home only", "Alleen startscherm"))]
 WATCHED = [("", ("Show", "Tonen")), ("dim", ("Dim", "Dimmen"))]
+WATCHED_COLOURS = [("", ("Red", "Rood")), ("graphite", ("Graphite", "Grafiet")), ("white", ("White", "Wit")),
+                   ("green", ("Green", "Groen")), ("blue", ("Blue", "Blauw")), ("gold", ("Gold", "Goud"))]
+
+
+def watched_label():
+    """'Show  ·  check: Graphite' for the row in Skin settings."""
+    shown = tr(dict(WATCHED).get(skin_string("nuvio.watched"), WATCHED[0][1]))
+    colour = tr(dict(WATCHED_COLOURS).get(skin_string("lucent.watched.colour"), WATCHED_COLOURS[0][1]))
+    set_string("nuvio.watched.label", f"{shown}  ·  {tr(('check', 'vinkje'))}: {colour}")
+
+
+def pick_watched():
+    """Watched titles: show or dim them, and the colour of the check on the poster (issue #10)."""
+    while True:
+        colour = tr(dict(WATCHED_COLOURS).get(skin_string("lucent.watched.colour"), WATCHED_COLOURS[0][1]))
+        rows = [tr(n) for _v, n in WATCHED] + [tr(("Colour of the check: {0}", "Kleur van het vinkje: {0}")).format(colour)]
+        current = [v for v, _n in WATCHED].index(skin_string("nuvio.watched")) if skin_string("nuvio.watched") in ("", "dim") else 0
+        choice = choose(tr(("Watched titles", "Bekeken titels")), rows, current)
+        if choice < 0:
+            break
+        if choice < len(WATCHED):
+            set_string("nuvio.watched", WATCHED[choice][0])
+            watched_label()
+            break
+        values = [v for v, _n in WATCHED_COLOURS]
+        now = skin_string("lucent.watched.colour")
+        pick = choose(tr(("Colour of the check", "Kleur van het vinkje")), [tr(n) for _v, n in WATCHED_COLOURS],
+                      values.index(now) if now in values else 0)
+        if pick >= 0:
+            set_string("lucent.watched.colour", values[pick])
+        watched_label()
 PAUSE = [("3", ("After 3 seconds", "Na 3 seconden")), ("", ("After 5 seconds", "Na 5 seconden")),
          ("10", ("After 10 seconds", "Na 10 seconden")), ("15", ("After 15 seconds", "Na 15 seconden")),
          ("30", ("After 30 seconds", "Na 30 seconden")), ("60", ("After 1 minute", "Na 1 minuut")),
@@ -295,12 +326,13 @@ def sync():
                           ("nuvio.pauseinfo", PAUSE), ("nuvio.posterfocus", POSTERFOCUS),
                           ("nuvio.trailer.delay", TRAILER_DELAY)):
         set_string(name + ".label", tr(dict(options).get(skin_string(name), options[0][1])))
+    watched_label()
 
 
 def reset_all():
     if xbmcgui.Dialog().yesno(HEADING, tr(("Restore all skin settings? Your menu and widgets stay as they are.",
                                            "Alle skin-instellingen herstellen? Je menu en widgets blijven zoals ze zijn."))):
-        for name in ("nuvio.accent", "nuvio.accent.label", "nuvio.landscape", "nuvio.watched", "nuvio.glow",
+        for name in ("nuvio.accent", "nuvio.accent.label", "nuvio.landscape", "nuvio.watched", "lucent.watched.colour", "nuvio.glow",
                      "nuvio.pauseinfo", "nuvio.posterfocus", "nuvio.trailer.delay"):
             set_string(name, "")
         for name in ("nuvio.amoled", "nuvio.posterlabels.hide", "nuvio.sideicons.hide", "nuvio.fulldate",
@@ -387,7 +419,7 @@ if __name__ == "__main__":
         "sync": sync, "accent": pick_accent, "amoled": toggle_amoled, "zoom": pick_zoom,
         "ssdim": toggle_dim, "sstime": pick_time, "sslevel": pick_level, "logos": explain_logos,
         "landscape": lambda: pick_option("nuvio.landscape", LANDSCAPE, tr(("Landscape posters", "Liggende posters"))),
-        "watched": lambda: pick_option("nuvio.watched", WATCHED, tr(("Watched titles", "Bekeken titels"))),
+        "watched": pick_watched,
         "glow": lambda: pick_option("nuvio.glow", GLOW, tr(("Edge glow", "Randgloed"))),
         "pauseinfo": lambda: pick_option("nuvio.pauseinfo", PAUSE, tr(("Show info after", "Info tonen na"))),
         "flags": explain_flags,
