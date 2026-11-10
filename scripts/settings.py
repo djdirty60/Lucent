@@ -87,8 +87,9 @@ PAUSE = [("3", ("After 3 seconds", "Na 3 seconden")), ("", ("After 5 seconds", "
          ("clean10", ("Clean picture after 10 seconds (no bar, no info)", "Leeg beeld na 10 seconden (geen balk, geen info)"))]
 POSTERFOCUS = [("", ("Off", "Uit")), ("window", ("Trailer window with soft edge", "Trailervenster met zachte rand")),
                ("hero", ("Hero media", "Hero-media")), ("expand", ("Expanded card", "Uitgevouwen kaart"))]
-TRAILER_DELAY = [("2", ("After 2 seconds", "Na 2 seconden")), ("", ("After 3 seconds", "Na 3 seconden")),
-                 ("5", ("After 5 seconds", "Na 5 seconden")), ("8", ("After 8 seconds", "Na 8 seconden"))]
+TRAILER_DELAY = [("1", ("After 1 second", "Na 1 seconde")), ("", ("After 2 seconds", "Na 2 seconden")),
+                 ("3", ("After 3 seconds", "Na 3 seconden")), ("5", ("After 5 seconds", "Na 5 seconden")),
+                 ("8", ("After 8 seconds", "Na 8 seconden"))]
 GLOW = [("off", ("Off", "Uit")), ("subtle", ("Subtle", "Subtiel")), ("", ("Balanced", "Gebalanceerd")),
         ("bold", ("Bold", "Sterk"))]
 
