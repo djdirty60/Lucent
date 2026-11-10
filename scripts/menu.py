@@ -460,8 +460,22 @@ SEREN_TO_LV = [  # (part of a Seren row address, Lucent Video row name): the fir
 SEREN_TABS = [("action=searchMenu", "searchmenu"), ("action=moviesHome", "menu&type=movie"), ("action=showsHome", "menu&type=tvshow")]
 
 
-def lv_path(path, seren_too=True):
-    """The Lucent Video row for a Seren row or a Lucent Library streaming row, or '' when there is none."""
+LIB_TO_LV = [  # (part of a Lucent Library row address, Lucent Video row name): the first match wins
+    ("kind=continue&only=movie", "continue_movie"), ("kind=continue&only=tv", "continue_episode"), ("kind=continue", "continue"),
+    ("kind=nextup", "nextup"), ("kind=newepisodes", "nextup"), ("kind=newseasons", "nextup"),
+    ("kind=newin&only=tv", "collection_tv"), ("kind=newin", "collection_movie"),
+    ("list=trakt_watchlist_movie", "watchlist_movie"), ("list=trakt_watchlist_tv", "watchlist_tv"),
+    ("list=trakt_recommended", "foryou"), ("list=trakt_trending_movie", "trending_movie"), ("list=trakt_trending_tv", "trending_tv"),
+    ("list=trakt_anticipated_movie", "upcoming_movie"), ("list=trakt_anticipated_tv", "upcoming_tv"),
+    ("list=trending_movie", "trending_movie"), ("list=trending_tv", "trending_tv"), ("list=popular_movie", "popular_movie"),
+    ("list=popular_tv", "popular_tv"), ("list=toprated_movie", "toprated_movie"), ("list=toprated_tv", "toprated_tv"),
+    ("list=nowplaying_movie", "nowplaying_movie"), ("list=upcoming_movie", "upcoming_movie"), ("list=airing_tv", "airing_tv"),
+    ("_tv", "popular_tv"), ("", "popular_movie")]
+
+
+def lv_path(path, seren_too=True, lib_too=False):
+    """The Lucent Video row for a Seren row, a Lucent Library streaming row, or (lib_too: Lucent Library is not
+    installed) any other Lucent Library row; '' when there is none."""
     if seren_too and path.startswith(SEREN):
         return LV + next(name for part, name in SEREN_TO_LV if part in path)
     if path.startswith("plugin://script.lucent.library/?action=providers"):
@@ -469,6 +483,8 @@ def lv_path(path, seren_too=True):
     found = re.search(r"^plugin://script\.lucent\.library/\?action=tmdb\w*&list=prov_(\d+)_(\w+)$", path)
     if found:
         return LV + f"service_list&provider={found.group(1)}&kind={found.group(2)}"
+    if lib_too and path.startswith("plugin://script.lucent.library/"):
+        return LV + next(name for part, name in LIB_TO_LV if part in path)
     return ""
 
 
@@ -478,6 +494,7 @@ def lv_convert():
     if not has_lv():
         return
     seren_too, services_too = not uses_seren(), lv_ready()
+    lib_too = not xbmc.getCondVisibility("System.HasAddon(script.lucent.library)")      # its rows can never fill
     menu = Menu()
     changed = False
     for tab in menu.tabs:
@@ -489,17 +506,17 @@ def lv_convert():
             path = wd["path"]
             if path.startswith(SEREN) and not seren_too:
                 continue
-            if not path.startswith(SEREN) and not services_too:
+            if not path.startswith(SEREN) and not services_too and not lib_too:
                 continue
-            new = lv_path(path, seren_too)
+            new = lv_path(path, seren_too, lib_too)
             if new and new != path:
                 wd["path"], changed = new, True
     if changed:
         menu.save()
-        log(f"rows moved to Lucent Video (seren={seren_too}, services={services_too})")
+        log(f"rows moved to Lucent Video (seren={seren_too}, services={services_too}, library={lib_too})")
         xbmc.executebuiltin("Container.Refresh")
     if services_too:
-        put("lucent.lvrows", "done")
+        put("lucent.lvrows", "done2")
 
 
 def pick_lv():

@@ -3899,6 +3899,9 @@ def lucentvideo_test():
                          "plugin://plugin.video.seren/?action=genericEndpoint&mediatype=shows&endpoint=anticipated",
                          "plugin://plugin.video.seren/?action=moviesUpdated", "plugin://script.lucent.library/?action=providers",
                          "plugin://script.lucent.library/?action=tmdb&list=prov_8_newtv", "videodb://movies/titles/")}
+        out["libmap"] = {p: _menu.lv_path(p, True, True) for p in ("plugin://script.lucent.library/?action=lib&kind=continue&only=movie",
+                         "plugin://script.lucent.library/?action=lib&kind=nextup", "plugin://script.lucent.library/?action=tmdb&list=trakt_watchlist_tv",
+                         "plugin://script.lucent.library/?action=tmdb&list=toprated_tv", "plugin://script.lucent.library/?action=providers")}
         _tabs = _menu.lv_tabs()[0]
         out["lvtabs"] = [[tb["action"], [w["path"].split("name=")[-1] for w in tb["widgets"]]] for tb in _tabs[:5]]
         out["use_lv"] = _menu.use_lv()
