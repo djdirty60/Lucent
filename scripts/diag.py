@@ -8,12 +8,9 @@
 The log copy removes: user names / passwords in links (?username=, /live/user/pass/), the Xtream login saved by Lucent,
 tokens / API keys, and the server address of the provider. Nothing is sent anywhere; the file stays on the box.
 """
-import hashlib
 import json
 import re
 import sys
-import time
-import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -51,47 +48,18 @@ def addon_line(addon_id, name, fix_missing, fix_off=None):
     return line(st, f"{name}: {note}", fix_missing if st == 0 else (fix_off or t("Switch it on in Add-ons.", "Zet hem aan bij Add-ons.")))
 
 
-LIBDATA = "special://profile/addon_data/script.lucent.library/"
-
-
-def read_json(path):
-    try:
-        with xbmcvfs.File(xbmcvfs.translatePath(path)) as fh:
-            return json.loads(fh.read() or "null")
-    except Exception:  # noqa: BLE001
-        return None
-
-
 def row_state(path):
-    """(state 2/1/0, text) for one Home row: has the library fetched it yet?"""
-    base = "plugin://script.lucent.library/?"
-    if path.startswith(base + "action=tmdb"):
-        q = urllib.parse.parse_qs(path.split("?", 1)[1])
-        name = (q.get("list") or [""])[0]
-        if name == "tl":
-            name = f"tl_{(q.get('user') or [''])[0]}_{(q.get('id') or [''])[0]}"
-        saved = read_json(f"{LIBDATA}tmdb/{name}.json") or {}
-        reg = (read_json(f"{LIBDATA}tmdb/registry.json") or {}).get(name) or {}
-        n = len(saved.get("items") or [])
-        if n:
-            age = int((time.time() - saved.get("time", 0)) / 60)
-            return 2, t(f"{n} titles, fetched {age} min ago", f"{n} titels, {age} min geleden opgehaald")
-        if reg.get("why"):
-            return 0, t("nothing: ", "niets: ") + str(reg["why"])
-        return 1, t("not fetched yet (the service does one row at a time)", "nog niet opgehaald (de service doet één rij tegelijk)")
-    key = hashlib.md5(path.encode("utf-8")).hexdigest()
-    saved = read_json(f"{LIBDATA}widgets/{key}.json") or {}
-    reg = read_json(f"{LIBDATA}widgets/reg/{key}.json") or {}
-    n = len(saved.get("items") or [])
-    if n:
-        age = int((time.time() - saved.get("time", 0)) / 60)
-        return 2, t(f"{n} titles, fetched {age} min ago", f"{n} titels, {age} min geleden opgehaald")
-    if reg.get("retry", 0) > time.time():
-        wait = int((reg["retry"] - time.time()) / 60) + 1
-        return 0, t(f"the last try failed, trying again in {wait} min", f"de vorige poging mislukte, opnieuw over {wait} min")
-    if reg:
-        return 1, t("waiting to be fetched (one row at a time, Seren can be slow)", "wacht om opgehaald te worden (één rij tegelijk, Seren kan traag zijn)")
-    return 1, t("the library has not seen this row yet", "de bibliotheek heeft deze rij nog niet gezien")
+    """(state 2/1/0, text) for one Home row: where it comes from (Kodi reads it when the row is on screen)."""
+    if path.startswith("plugin://plugin.video.lucent/"):
+        return 2, t("from the video add-on", "uit de video-add-on")
+    if path.startswith("plugin://script.lucent.library/"):
+        return 0, t("from Lucent Library, which is no longer used: choose the row again", "uit Lucent Library, die niet meer gebruikt wordt: kies de rij opnieuw")
+    if path.startswith("plugin://"):
+        addon = path.split("/")[2]
+        if not cond(f"System.AddonIsEnabled({addon})"):
+            return 0, t(f"{addon} is not installed or switched off", f"{addon} is niet geïnstalleerd of uitgezet")
+        return 2, t(f"from {addon}", f"uit {addon}")
+    return 2, t("from Kodi", "uit Kodi")
 
 
 def home_rows():
@@ -121,12 +89,11 @@ def home_rows():
 
 def test():
     rows = [
-        addon_line("plugin.video.seren", "Seren", t("Settings > Lucent > Install Seren (or run the setup assistant).",
-                                                    "Instellingen > Lucent > Seren installeren (of start de setup-assistent).")),
-        addon_line("service.subtitles.lucent", "Lucent Subtitles", t("Install it from the Lucent repository.", "Installeer hem vanuit de Lucent-repository.")),
+        addon_line("plugin.video.lucent", "Lucent Video", t("Install it from the Lucent repository (or run the setup assistant).",
+                                                            "Installeer hem vanuit de Lucent-repository (of start de setup-assistent).")),
         addon_line("pvr.iptvsimple", "IPTV Simple", t("Install it: Add-ons > PVR clients.", "Installeer hem: Add-ons > PVR-clients.")),
     ]
-    for optional, name in (("plugin.video.lucent", "Lucent Video"), ("script.lucent.library", "Lucent Library")):
+    for optional, name in (("plugin.video.seren", "Seren"), ("service.subtitles.lucent", "Lucent Subtitles")):
         if addon_state(optional):                     # optional: only shown when it is there
             rows.append(addon_line(optional, name, ""))
     if addon_state("pvr.iptvsimple") == 2:

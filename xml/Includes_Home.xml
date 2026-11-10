@@ -357,7 +357,6 @@
         <value>$INFO[Container(9000).ListItem.Property(w10.path)]</value>
     </variable>
     <variable name="NuvioW1Src">
-        <value condition="$EXP[NuvioW1Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w1.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w1.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=1&amp;r=$INFO[Window(home).Property(lucent.wr.1)]&amp;path=$VAR[NuvioW1Path]</value>
         <value>$VAR[NuvioW1Path]</value>
     </variable>
     <variable name="NuvioW1PathPoster">
@@ -367,7 +366,6 @@
         <value condition="$EXP[NuvioW1Land]">$VAR[NuvioW1Src]</value>
     </variable>
     <variable name="NuvioW2Src">
-        <value condition="$EXP[NuvioW2Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w2.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w2.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=2&amp;r=$INFO[Window(home).Property(lucent.wr.2)]&amp;path=$VAR[NuvioW2Path]</value>
         <value>$VAR[NuvioW2Path]</value>
     </variable>
     <variable name="NuvioW2PathPoster">
@@ -377,7 +375,6 @@
         <value condition="$EXP[NuvioW2Land]">$VAR[NuvioW2Src]</value>
     </variable>
     <variable name="NuvioW3Src">
-        <value condition="$EXP[NuvioW3Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w3.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w3.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=3&amp;r=$INFO[Window(home).Property(lucent.wr.3)]&amp;path=$VAR[NuvioW3Path]</value>
         <value>$VAR[NuvioW3Path]</value>
     </variable>
     <variable name="NuvioW3PathPoster">
@@ -389,7 +386,6 @@
     <expression name="LucentLazyWait4">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.4))</expression>
     <variable name="NuvioW4Src">
         <value condition="$EXP[LucentLazyWait4]"></value>
-        <value condition="$EXP[NuvioW4Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w4.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w4.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=4&amp;r=$INFO[Window(home).Property(lucent.wr.4)]&amp;path=$VAR[NuvioW4Path]</value>
         <value>$VAR[NuvioW4Path]</value>
     </variable>
     <variable name="NuvioW4PathPoster">
@@ -401,7 +397,6 @@
     <expression name="LucentLazyWait5">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.5))</expression>
     <variable name="NuvioW5Src">
         <value condition="$EXP[LucentLazyWait5]"></value>
-        <value condition="$EXP[NuvioW5Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w5.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w5.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=5&amp;r=$INFO[Window(home).Property(lucent.wr.5)]&amp;path=$VAR[NuvioW5Path]</value>
         <value>$VAR[NuvioW5Path]</value>
     </variable>
     <variable name="NuvioW5PathPoster">
@@ -413,7 +408,6 @@
     <expression name="LucentLazyWait6">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.6))</expression>
     <variable name="NuvioW6Src">
         <value condition="$EXP[LucentLazyWait6]"></value>
-        <value condition="$EXP[NuvioW6Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w6.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w6.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=6&amp;r=$INFO[Window(home).Property(lucent.wr.6)]&amp;path=$VAR[NuvioW6Path]</value>
         <value>$VAR[NuvioW6Path]</value>
     </variable>
     <variable name="NuvioW6PathPoster">
@@ -425,7 +419,6 @@
     <expression name="LucentLazyWait7">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.7))</expression>
     <variable name="NuvioW7Src">
         <value condition="$EXP[LucentLazyWait7]"></value>
-        <value condition="$EXP[NuvioW7Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w7.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w7.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=7&amp;r=$INFO[Window(home).Property(lucent.wr.7)]&amp;path=$VAR[NuvioW7Path]</value>
         <value>$VAR[NuvioW7Path]</value>
     </variable>
     <variable name="NuvioW7PathPoster">
@@ -437,7 +430,6 @@
     <expression name="LucentLazyWait8">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.8))</expression>
     <variable name="NuvioW8Src">
         <value condition="$EXP[LucentLazyWait8]"></value>
-        <value condition="$EXP[NuvioW8Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w8.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w8.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=8&amp;r=$INFO[Window(home).Property(lucent.wr.8)]&amp;path=$VAR[NuvioW8Path]</value>
         <value>$VAR[NuvioW8Path]</value>
     </variable>
     <variable name="NuvioW8PathPoster">
@@ -449,7 +441,6 @@
     <expression name="LucentLazyWait9">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.9))</expression>
     <variable name="NuvioW9Src">
         <value condition="$EXP[LucentLazyWait9]"></value>
-        <value condition="$EXP[NuvioW9Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w9.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w9.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=9&amp;r=$INFO[Window(home).Property(lucent.wr.9)]&amp;path=$VAR[NuvioW9Path]</value>
         <value>$VAR[NuvioW9Path]</value>
     </variable>
     <variable name="NuvioW9PathPoster">
@@ -461,7 +452,6 @@
     <expression name="LucentLazyWait10">!Skin.HasSetting(lucent.lazy.off) + String.IsEmpty(Window(home).Property(lucent.load.10))</expression>
     <variable name="NuvioW10Src">
         <value condition="$EXP[LucentLazyWait10]"></value>
-        <value condition="$EXP[NuvioW10Has] + !Skin.HasSetting(lucent.wcache.off) + System.AddonIsEnabled(script.lucent.library) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w10.path),plugin://)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w10.path),plugin://)]]">plugin://script.lucent.library/?action=widget&amp;row=10&amp;r=$INFO[Window(home).Property(lucent.wr.10)]&amp;path=$VAR[NuvioW10Path]</value>
         <value>$VAR[NuvioW10Path]</value>
     </variable>
     <variable name="NuvioW10PathPoster">

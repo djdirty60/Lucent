@@ -2,8 +2,8 @@
 
   RunScript(special://skin/scripts/service.py,<TMDb provider id>,<name>,<logo url>[,lucentvideo])
 
-The lists come from Lucent Library (TMDb, saved copies), or from Lucent Video when the fourth argument is lucentvideo
-(or Lucent Library is not installed). OK on a title opens its page, Back closes the pop-up.
+Opened by the video add-on (its streaming service rows); the lists come from that add-on. OK on a title opens its
+page, Back closes the pop-up.
 """
 import sys
 import threading
@@ -28,7 +28,6 @@ def t(en, nl):
 class Service(xbmcgui.WindowXMLDialog):
     def setup(self, pid, name, logo, source=""):
         self.pid, self.name, self.logo = pid, name, logo
-        self.lv = source == "lucentvideo" or not xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)")
         self.closed = False
 
     def onInit(self):
@@ -58,10 +57,7 @@ class Service(xbmcgui.WindowXMLDialog):
         key = f"{cat}{kind}"
         label = next((t(en, nl) for k, en, nl in KINDS if k == key), "")
         self.setProperty("svc.rowlabel", label)
-        if self.lv:
-            self.setProperty("row", f"plugin://plugin.video.lucent/?action=list&name=service_list&provider={self.pid}&kind={key}&widget=1")
-        else:
-            self.setProperty("row", f"plugin://script.lucent.library/?action=tmdbbrowse&list=prov_{self.pid}_{key}")
+        self.setProperty("row", f"plugin://plugin.video.lucent/?action=list&name=service_list&provider={self.pid}&kind={key}&widget=1")
         threading.Thread(target=self.to_start, daemon=True).start()
 
     def to_start(self):
@@ -131,7 +127,7 @@ class Service(xbmcgui.WindowXMLDialog):
     def watch(self):
         """While the pop-up is open: when a title page opened from it is left with Play, the pop-up goes away.
         It sits above everything, so the seasons of a series opened behind it and it looked as if Play did nothing.
-        (A title in the lists opens its page through Lucent Library, so this watches instead of hooking the click.)"""
+        (A title in the lists opens its page through the video add-on, so this watches instead of hooking the click.)"""
         mon = xbmc.Monitor()
         page = False
         HOME.clearProperty("lucent.svc.folder")

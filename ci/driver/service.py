@@ -4089,6 +4089,15 @@ def trailerlayer_test():
     path = os.path.join(base, "hevc4k.mp4")
     player = xbmc.Player()
     xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    full = cond("Skin.HasSetting(nuvio.fullbackdrop)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")         # 1.38.6: the soft edge of the picture at the top right
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(8101)")
+    mon.waitForAbort(2)
+    shot("home-picture-edge")
+    if full:
+        xbmc.executebuiltin("Skin.SetBool(nuvio.fullbackdrop)")
     for mode in ("expand", "window", "hero"):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.posterfocus,{mode})")
         xbmc.executebuiltin("ActivateWindow(home)")
@@ -4116,6 +4125,7 @@ def trailerlayer_test():
     mv = ((r.get("result") or {}).get("movies") or [{}])[0].get("movieid")
     if mv:
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Playlist.Add", "params": {"playlistid": 1, "item": {"movieid": mv}}}))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
     mon.waitForAbort(3)
     xbmc.executebuiltin("SetFocus(9070)")
@@ -4128,6 +4138,38 @@ def trailerlayer_test():
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Playlist.Clear", "params": {"playlistid": 1}}))
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
+
+
+def lvtrakt_test():
+    """1.39.0: the Trakt login of the video add-on is used (calendar, lists, watched) before Seren's."""
+    import importlib
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    data = xbmcvfs.translatePath("special://profile/addon_data/plugin.video.lucent/")
+    os.makedirs(data, exist_ok=True)
+    keep = {}
+    for name in ("trakt.json", "keys.json"):
+        p = os.path.join(data, name)
+        keep[name] = open(p).read() if os.path.exists(p) else None
+    try:
+        json.dump({"access_token": "ci-token", "refresh_token": "ci-refresh", "expires_at": time.time() + 86400}, open(os.path.join(data, "trakt.json"), "w"))
+        json.dump({"trakt_client_id": "ci-client"}, open(os.path.join(data, "keys.json"), "w"))
+        import info
+        importlib.reload(info)
+        tr = info.Trakt()
+        log(f"lvtrakt: lv client={tr.client_id == 'ci-client'} token={tr.token == 'ci-token'} seren={tr.seren} available={info.trakt_available()}")
+        json.dump({"access_token": "ci-token", "expires_at": time.time() - 10}, open(os.path.join(data, "trakt.json"), "w"))
+        log(f"lvtrakt: expired -> lv={info.lv_trakt() != ('', '')}")
+    except Exception as error:  # noqa: BLE001
+        log(f"lvtrakt: error {type(error).__name__}: {error}")
+    finally:
+        for name, text in keep.items():
+            p = os.path.join(data, name)
+            if text is None:
+                if os.path.exists(p):
+                    os.remove(p)
+            else:
+                open(p, "w").write(text)
 
 
 def music_fav_test():
@@ -4362,6 +4404,7 @@ def main():
     progress_colour_test()
     formatclips_test()
     trailerlayer_test()
+    lvtrakt_test()
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:

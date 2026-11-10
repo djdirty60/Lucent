@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Lucent: pop-up when a new version of anything from Lucent is in the repository (the skin, Lucent Bibliotheek,
-the screensaver, the repository add-on, and whatever is added there later - when it is installed here).
+"""Lucent: pop-up when a new version of anything from Lucent is in the repository (the skin, the screensaver,
+ the repository add-on, and whatever is added there later - when it is installed here).
 
 The Lucent helper (helper.py) calls check() every 6 hours.
 RunScript(special://skin/scripts/updater.py,check)     look now (Skin settings > Add-ons > Check for updates)
@@ -23,7 +23,6 @@ ADDONS_XML = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addon
 ZIPS_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/"
 # every add-on in the Lucent repository that is installed here is kept up to date (also the ones installed from a
 # zip, which Kodi itself does not update from this repository), whatever its name
-LIBRARY_LOCK = "special://profile/addon_data/script.lucent.library/busy.lock"
 STATE_PATH = "special://profile/addon_data/skin.lucent/update_state.json"
 HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
@@ -240,7 +239,7 @@ def rpc(method, params):
 
 
 def restart(addon_id, monitor):
-    """Switch an add-on off and on again, so a background part (like the service of Lucent Bibliotheek) starts with
+    """Switch an add-on off and on again, so a background part (like the service of the video add-on) starts with
     the new code right away instead of after a Kodi restart. Only for add-ons that have such a background part."""
     try:
         folder = xbmcvfs.translatePath(f"special://home/addons/{addon_id}/addon.xml")
@@ -252,15 +251,6 @@ def restart(addon_id, monitor):
     rpc("Addons.SetAddonEnabled", {"addonid": addon_id, "enabled": False})
     monitor.waitForAbort(1)
     rpc("Addons.SetAddonEnabled", {"addonid": addon_id, "enabled": True})
-
-
-def library_busy():
-    """Lucent Bibliotheek is writing the library right now: do not replace its files in the middle of that."""
-    try:
-        path = xbmcvfs.translatePath(LIBRARY_LOCK)
-        return os.path.exists(path) and time.time() - os.path.getmtime(path) < 2 * 3600
-    except Exception:  # noqa: BLE001
-        return False
 
 
 def check(manual=False):
@@ -286,10 +276,6 @@ def check(manual=False):
     choice = ask(updates)
     for update in updates:
         if choice == "now":
-            if update["id"] == "script.lucent.library" and library_busy():
-                log("Lucent Bibliotheek is busy: its update waits until the next check")
-                state.setdefault("later", {})[update["id"]] = time.time() + 15 * 60
-                continue
             install(update, monitor)
         elif choice == "skip":
             state.setdefault("skip", {})[update["id"]] = update["version"]

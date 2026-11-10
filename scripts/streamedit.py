@@ -5,7 +5,8 @@ RunScript(special://skin/scripts/streamedit.py)          open the editor
 RunScript(special://skin/scripts/streamedit.py,reset)    back to Lucent's standard list
 
 Add a service (every service TMDb knows for your country and the US), remove one, change the order, or give a
-service your own picture. Stored in Lucent Library's folder (tmdb/services.json), which builds the row from it.
+service your own picture. Stored in the video add-on's folder (services.json); its streaming services row is built
+from it.
 """
 import json
 import os
@@ -17,10 +18,11 @@ import xbmcgui
 import xbmcvfs
 
 HEADING = "Lucent"
-LIB = "script.lucent.library"
-DIR = xbmcvfs.translatePath(f"special://profile/addon_data/{LIB}/tmdb/")
+LV = "plugin.video.lucent"
+DIR = xbmcvfs.translatePath(f"special://profile/addon_data/{LV}/")
 OWN = os.path.join(DIR, "services.json")
-STANDARD = os.path.join(DIR, "providers.json")
+STANDARD = os.path.join(DIR, "providers.json")             # the add-on's standard list, made when the row is first shown
+OLD_CHOICE = xbmcvfs.translatePath("special://profile/addon_data/script.lucent.library/tmdb/services.json")   # Lucent Library
 IMG = "https://image.tmdb.org/t/p/"
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 
@@ -48,8 +50,8 @@ T = {
     "std": ("Use the standard logo", "Standaardlogo gebruiken"),
     "rename": ("Name", "Naam"),
     "already": ("{0} is already in the row.", "{0} staat al in de rij."),
-    "none": ("No services found. Lucent Library needs the TMDb key (Skin settings).",
-             "Geen diensten gevonden. Lucent Bibliotheek heeft de TMDb-sleutel nodig (Skin-instellingen)."),
+    "none": ("No services found. The video add-on needs its TMDb key.",
+             "Geen diensten gevonden. De video-add-on heeft zijn TMDb-sleutel nodig."),
     "us": ("US", "VS"),
 }
 
@@ -85,12 +87,13 @@ def reload_rows():
 
 
 def current():
-    own = read(OWN).get("items")
+    own = read(OWN).get("items") or read(OLD_CHOICE).get("items")      # a choice made before still counts
     if own:
         return own
-    if not read(STANDARD).get("items"):             # the row was never shown yet: let Lucent Library make the list now
+    if not read(STANDARD).get("items"):             # the row was never shown yet: let the video add-on make the list now
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                                        "params": {"directory": f"plugin://{LIB}/?action=providers", "media": "files"}}))
+                                        "params": {"directory": f"plugin://{LV}/?action=list&name=service_row&widget=1",
+                                                   "media": "files"}}))
     return [dict(p) for p in read(STANDARD).get("items") or []]
 
 
@@ -99,16 +102,17 @@ def catalog():
     try:
         result = json.loads(xbmc.executeJSONRPC(json.dumps({
             "jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-            "params": {"directory": f"plugin://{LIB}/?action=provcatalog", "media": "files"}})))
+            "params": {"directory": f"plugin://{LV}/?action=list&name=service_catalog&widget=1", "media": "files",
+                       "properties": ["customproperties"]}})))
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
-    import urllib.parse
     out = []
     for f in (result.get("result") or {}).get("files") or []:
-        q = urllib.parse.parse_qs((f.get("file") or "").split("?", 1)[-1])
-        get = lambda k: (q.get(k) or [""])[0]  # noqa: E731
-        if get("id").isdigit():
-            out.append({"id": int(get("id")), "name": get("name"), "logo": get("logo"), "region": get("region")})
+        props = f.get("customproperties") or {}
+        pid = str(props.get("provider_id") or "")
+        if pid.isdigit():
+            out.append({"id": int(pid), "name": props.get("provider_name") or f.get("label") or "",
+                        "logo": props.get("logo_path") or "", "region": props.get("provider_region") or ""})
     return out
 
 

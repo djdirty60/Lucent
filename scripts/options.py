@@ -5,8 +5,8 @@
 
 The same choices as Kodi's own Manage menu (which Kodi only offers from a list's context menu):
   Edit title  ·  Edit sort title  ·  Choose art  ·  Remove from library
-A title from Lucent Bibliotheek is removed through it (and from your Trakt collection), otherwise it would simply
-come back at the next library run.
+A title the video add-on put in the library is removed through that add-on (and from your account's collection),
+otherwise it would simply come back at its next library run.
 """
 import json
 import time
@@ -15,7 +15,7 @@ import xbmc
 import xbmcgui
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
-LIB_ID = "script.lucent.library"
+LV = "plugin.video.lucent"          # its library: special://profile/addon_data/plugin.video.lucent/library/
 
 T = {
     "options": ("Options", "Opties"),
@@ -23,15 +23,11 @@ T = {
     "none": ("None (remove this picture)", "Geen (deze afbeelding weghalen)"),
     "nothing": ("No pictures found for this type", "Geen afbeeldingen gevonden voor dit soort"),
     "remove_q": ("Remove [B]{0}[/B] from the library?", "[B]{0}[/B] uit de bibliotheek halen?"),
-    "remove_lucent": ("Remove [B]{0}[/B] from the library?\n\nIt is also taken out of your Trakt collection, otherwise it "
-                      "would come back at the next update of Lucent Library.",
-                      "[B]{0}[/B] uit de bibliotheek halen?\n\nHij gaat ook uit je Trakt-collectie, anders komt hij bij "
-                      "de volgende ronde van Lucent Bibliotheek gewoon terug."),
     "removed": ("Removed from the library", "Uit de bibliotheek gehaald"),
-    "remove_part": ("Remove [B]{0}[/B] of {1} from the library?\n\nIt stays out, also after the next update of Lucent Library. "
-                    "Nothing changes on Trakt. Adding the series again (Library and lists) brings it back.",
-                    "[B]{0}[/B] van {1} uit de bibliotheek halen?\n\nHij blijft weg, ook na de volgende ronde van Lucent Bibliotheek. "
-                    "Op Trakt verandert niets. Zet je de serie opnieuw in de bibliotheek (Bibliotheek en lijsten), dan komt alles terug."),
+    "remove_part": ("Remove [B]{0}[/B] of {1} from the library?\n\nIt stays out, also after the next library update of the video add-on. "
+                    "Nothing changes on your account.",
+                    "[B]{0}[/B] van {1} uit de bibliotheek halen?\n\nHij blijft weg, ook na de volgende bibliotheekronde van de video-add-on. "
+                    "Op je account verandert niets."),
     "season_word": ("season {0}", "seizoen {0}"),
 }
 ART = {"poster": ("Poster", "Poster"), "fanart": ("Background", "Achtergrond"), "clearlogo": ("Logo", "Logo"),
@@ -88,7 +84,7 @@ class Item:
         self.episode = int(info("Episode") or 0) if self.kind == "episode" else 0
         self.show_dbid = int(info("TvShowDBID") or 0)
         self.show_title = info("TVShowTitle")
-        self.trakt = info("UniqueID(trakt)")
+        self.tmdb = info("UniqueID(tmdb)")
         self.file = (info("FileNameAndPath") or info("Path")).replace("\\", "/")
 
     @property
@@ -99,12 +95,12 @@ class Item:
         return {KIND[self.kind][0]: self.dbid}
 
     def lucent(self):
-        """Written by Lucent Bibliotheek (then removing must go through it)."""
-        if LIB_ID in self.file and self.trakt.isdigit():
+        """Written by the video add-on's library (then removing must go through it)."""
+        if LV in self.file and self.tmdb.isdigit():
             return True
-        if self.kind == "tvshow" and self.trakt.isdigit():
+        if self.kind == "tvshow" and self.tmdb.isdigit():
             details = rpc(KIND["tvshow"][1], {"tvshowid": self.dbid, "properties": ["file"]}) or {}
-            return LIB_ID in (details.get("tvshowdetails") or {}).get("file", "")
+            return LV in (details.get("tvshowdetails") or {}).get("file", "")
         return False
 
     def choices(self):
@@ -118,13 +114,13 @@ class Item:
             out.append(("remove", loc(REMOVE)))
         return out
 
-    def show_trakt(self):
-        """For an episode or season of a Lucent series: the Trakt id of the series ('' for anything else)."""
+    def show_tmdb(self):
+        """For an episode or season of a series from the video add-on's library: the TMDB id of the series ('' else)."""
         if not self.show_dbid:
             return ""
         details = (rpc("VideoLibrary.GetTVShowDetails", {"tvshowid": self.show_dbid, "properties": ["file", "uniqueid"]}) or {}).get("tvshowdetails") or {}
-        trakt = str((details.get("uniqueid") or {}).get("trakt") or "")
-        return trakt if LIB_ID in details.get("file", "") and trakt.isdigit() else ""
+        tmdb = str((details.get("uniqueid") or {}).get("tmdb") or "")
+        return tmdb if LV in details.get("file", "") and tmdb.isdigit() else ""
 
     def code(self):
         return f"S{self.season:02d}E{self.episode:02d}" if self.kind == "episode" else f"S{self.season:02d}"
@@ -185,33 +181,33 @@ def choose_art(item):
 def remove(item):
     if item.kind in ("episode", "season"):
         return remove_part(item)
-    lucent = item.lucent()
-    question = tr("remove_lucent" if lucent else "remove_q", item.title)
-    if not xbmcgui.Dialog().yesno(loc(REMOVE), question):
+    if item.lucent():                                            # the video add-on asks and removes it (also from the account)
+        xbmc.executebuiltin("Dialog.Close(movieinformation)")
+        kind = "movie" if item.kind == "movie" else "tvshow"
+        xbmc.executebuiltin(f"RunPlugin(plugin://{LV}/?action=library_remove&type={kind}&tmdb={item.tmdb})")
+        return True
+    if not xbmcgui.Dialog().yesno(loc(REMOVE), tr("remove_q", item.title)):
         return False
     xbmc.executebuiltin("Dialog.Close(movieinformation)")
-    if lucent:
-        kind = "movie" if item.kind == "movie" else "show"
-        xbmc.executebuiltin(f"RunScript({LIB_ID},remove,{kind},{item.trakt},trakt)")
-    else:
-        rpc(KIND[item.kind][3], item.ref())
-        xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)
+    rpc(KIND[item.kind][3], item.ref())
+    xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)
     xbmc.sleep(500)
     xbmc.executebuiltin("Container.Refresh")
     return True
 
 
 def remove_part(item):
-    """One episode or a whole season. Of a Lucent series it goes through Lucent Bibliotheek, which keeps it out for good
-    (otherwise the next run would simply bring it back); of any other series Kodi forgets the episode(s)."""
+    """One episode or a whole season. Of a series from the video add-on's library it goes through that add-on, which
+    keeps it out for good (otherwise its next run would bring it back); of any other series Kodi forgets the episode(s)."""
     what = item.code() if item.kind == "episode" else tr("season_word", item.season)
     show = item.show_title or item.title
     if not xbmcgui.Dialog().yesno(loc(REMOVE), tr("remove_part", what, show)):
         return False
     xbmc.executebuiltin("Dialog.Close(movieinformation)")
-    trakt = item.show_trakt()
-    if trakt:
-        xbmc.executebuiltin(f"RunScript({LIB_ID},skip,{trakt},{item.code()})")
+    tmdb = item.show_tmdb()
+    if tmdb:
+        part = f"&episode={item.episode}" if item.kind == "episode" else ""
+        xbmc.executebuiltin(f"RunPlugin(plugin://{LV}/?action=library_skip&tmdb={tmdb}&season={item.season}{part})")
     elif item.kind == "episode":
         rpc("VideoLibrary.RemoveEpisode", {"episodeid": item.dbid})
         xbmcgui.Dialog().notification(tr("options"), tr("removed"), xbmcgui.NOTIFICATION_INFO, 2500)

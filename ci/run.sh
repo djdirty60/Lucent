@@ -31,6 +31,8 @@ cp -r ci/fakerealseren $K/addons/plugin.video.seren
 mkdir -p /tmp/ci/serentheme && cp -r ci/serentheme/resources /tmp/ci/serentheme/ && mkdir -p $K/addons/plugin.video.seren/resources/language && cp -r ci/serentheme/resources/language/* $K/addons/plugin.video.seren/resources/language/
 cp -r ci/packs/* $K/addons/
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/script.lucent.library/tmdbwidgets.py
+# since 1.39.0 the skin no longer uses Lucent Library: the new variant runs without it, like a fresh install
+if [ "$VARIANT" = new ]; then rm -rf $K/addons/script.lucent.library; fi
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
 sed -i 's#https://www.omdbapi.com/?#http://127.0.0.1:8765/omdb/?#' $K/addons/skin.lucent/scripts/omdb.py
 sed -i 's#https://api.mdblist.com/#http://127.0.0.1:8765/mdblist/#' $K/addons/skin.lucent/scripts/omdb.py
@@ -39,6 +41,9 @@ python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
 cp -r ci/addons/script.solis.dashboard $K/addons/
 cp -r ci/addons/plugin.video.fakefen $K/addons/
 cp -r ci/addons/plugin.video.lucent $K/addons/
+# a short clip as stand-in trailer (the real add-on ships its format-test clips, the CI copy does not)
+mkdir -p $K/addons/plugin.video.lucent/resources/formattest
+ffmpeg -v error -y -f lavfi -i testsrc=size=1280x720:rate=25 -f lavfi -i sine=f=440 -t 40 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac $K/addons/plugin.video.lucent/resources/formattest/hevc4k.mp4
 mkdir -p $K/userdata/addon_data/script.solis.dashboard
 printf '<settings version="2">\n    <setting id="host">127.0.0.1</setting>\n    <setting id="port">8791</setting>\n    <setting id="notify_enabled">false</setting>\n</settings>\n' > $K/userdata/addon_data/script.solis.dashboard/settings.xml
 python3 ci/fakesolis.py > /tmp/ci/fakesolis.txt 2>&1 &

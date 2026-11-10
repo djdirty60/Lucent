@@ -206,17 +206,7 @@ WIDGETS_SEREN = [
     (("Shows in progress", "Series die je kijkt"), seren("action=showsMyProgress"), "poster"),
     (("Watched movies", "Bekeken films"), seren("action=myWatchedMovies"), "poster"),
 ]
-LIB = "plugin://script.lucent.library/?action=lib&kind="
-WIDGETS_LIBRARY = [
-    (("Continue watching (library)", "Verder kijken (bibliotheek)"), LIB + "continue", "land"),
-    (("Next episode (library)", "Volgende aflevering (bibliotheek)"), LIB + "nextup", "land"),
-    (("Series with new episodes", "Series met nieuwe afleveringen"), LIB + "newepisodes", "poster"),
-    (("New seasons", "Nieuwe seizoenen"), LIB + "newseasons", "poster"),
-    (("New in your collection", "Nieuw in je collectie"), LIB + "newin", "poster"),
-    (("Continue watching: movies (library)", "Verder kijken: films (bibliotheek)"), LIB + "continue&only=movie", "land"),
-    (("Continue watching: episodes (library)", "Verder kijken: afleveringen (bibliotheek)"), LIB + "continue&only=tv", "land"),
-    (("New in your collection: movies", "Nieuw in je collectie: films"), LIB + "newin&only=movie", "poster"),
-    (("New in your collection: series", "Nieuw in je collectie: series"), LIB + "newin&only=tv", "poster"),
+WIDGETS_LIBRARY = [                               # the Kodi library (works with every add-on that fills it)
     ("w_recent_m", "videodb://recentlyaddedmovies/", "poster"),
     ("w_recent_e", "videodb://recentlyaddedepisodes/", "land"),
     ("w_inprog_s", "videodb://inprogresstvshows/", "poster"),
@@ -239,95 +229,6 @@ WIDGETS_LIBRARY = [
     (("Artists", "Artiesten"), "musicdb://artists/", "poster"),
     (("Video sources", "Videobronnen"), "sources://video/", "land"),
 ]
-TMDB = "plugin://script.lucent.library/?action=tmdb&list="
-WIDGETS_TMDB = [                                  # Lucent's own rows, straight from TMDb (fast, no other add-on involved)
-    (("Trending movies", "Trending films"), TMDB + "trending_movie", "poster"),
-    (("Trending shows", "Trending series"), TMDB + "trending_tv", "poster"),
-    (("Popular movies", "Populaire films"), TMDB + "popular_movie", "poster"),
-    (("Popular shows", "Populaire series"), TMDB + "popular_tv", "poster"),
-    (("Top rated movies", "Best beoordeelde films"), TMDB + "toprated_movie", "poster"),
-    (("Top rated shows", "Best beoordeelde series"), TMDB + "toprated_tv", "poster"),
-    (("In cinemas now", "Nu in de bioscoop"), TMDB + "nowplaying_movie", "poster"),
-    (("Coming soon (movies)", "Binnenkort (films)"), TMDB + "upcoming_movie", "poster"),
-    (("Series on air", "Series die nu lopen"), TMDB + "airing_tv", "poster"),
-]
-WIDGETS_TRAKT = [                                 # Trakt lists, fast too (your Seren login; pictures come from TMDb)
-    (("My watchlist (movies)", "Mijn watchlist (films)"), TMDB + "trakt_watchlist_movie", "poster"),
-    (("My watchlist (shows)", "Mijn watchlist (series)"), TMDB + "trakt_watchlist_tv", "poster"),
-    (("Recommended for you (movies)", "Aanbevolen voor jou (films)"), TMDB + "trakt_recommended_movie", "poster"),
-    (("Recommended for you (shows)", "Aanbevolen voor jou (series)"), TMDB + "trakt_recommended_tv", "poster"),
-    (("Trakt trending (movies)", "Trakt trending (films)"), TMDB + "trakt_trending_movie", "poster"),
-    (("Trakt trending (shows)", "Trakt trending (series)"), TMDB + "trakt_trending_tv", "poster"),
-    (("Trakt anticipated (movies)", "Trakt verwacht (films)"), TMDB + "trakt_anticipated_movie", "poster"),
-    (("Trakt anticipated (shows)", "Trakt verwacht (series)"), TMDB + "trakt_anticipated_tv", "poster"),
-]
-
-
-PROV_KINDS = [("newmovie", ("New movies", "Nieuwe films")), ("newtv", ("New series", "Nieuwe series")),
-              ("popmovie", ("Popular movies", "Populaire films")), ("poptv", ("Popular series", "Populaire series")),
-              ("topmovie", ("Top rated movies", "Best beoordeelde films")), ("toptv", ("Top rated series", "Best beoordeelde series"))]
-
-
-def pick_streaming():
-    """The row of streaming services (a click opens the service), or one list of one service."""
-    row = tr(G("All streaming services (a row of services)", "Alle streamingdiensten (een rij met diensten)"))
-    one = tr(G("One service: one of its lists…", "Eén dienst: een van zijn lijsten…"))
-    choice = select(tr(G("Streaming services", "Streamingdiensten")), [row, one])
-    lv = lv_ready()                                     # Lucent Video has the same rows (since 0.18.0)
-    source = LV + "service_row" if lv else "plugin://script.lucent.library/?action=providers"
-    if choice == 0:
-        return tr(G("Streaming services", "Streamingdiensten")), source, "land"
-    if choice != 1:
-        return None
-    busy(True)
-    entries = jsonrpc("Files.GetDirectory", {"directory": source,
-                                             "media": "files", "properties": ["title"]}).get("files", []) or []
-    busy(False)
-    entries = [e for e in entries if e.get("file")]
-    if not entries:
-        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Lucent needs the TMDb key (Skin settings).",
-                                          "Geen diensten gevonden. Lucent heeft de TMDb-sleutel nodig (Skin-instellingen).")))
-        return None
-    pick = select(tr(G("Streaming services", "Streamingdiensten")), [clean(e.get("label") or e.get("title")) for e in entries])
-    if pick < 0:
-        return None
-    import urllib.parse
-    q = urllib.parse.parse_qs(entries[pick]["file"].split("?", 1)[1])
-    pid = (q.get("provider") or q.get("id") or [""])[0]
-    pname = (q.get("name") or [""])[0] or clean(entries[pick].get("label") or "")
-    k = select(pname, [tr(lab) for _k, lab in PROV_KINDS])
-    if k < 0 or not pid:
-        return None
-    kind, lab = PROV_KINDS[k]
-    if lv:
-        return f"{pname} · {tr(lab)}", LV + f"service_list&provider={pid}&kind={kind}", "poster"
-    return f"{pname} · {tr(lab)}", TMDB + f"prov_{pid}_{kind}", "poster"
-
-
-def pick_trakt_fast():
-    """Fixed Trakt rows, or one of your own / liked Trakt lists (asked from Trakt at this moment)."""
-    mine = tr(G("My own and liked lists…", "Mijn eigen en gelikete lijsten…"))
-    choice = select(tr(G("Trakt (fast)", "Trakt (snel)")), [tr(n) for n, _p, _s in WIDGETS_TRAKT] + [mine])
-    if choice < 0:
-        return None
-    if choice < len(WIDGETS_TRAKT):
-        key, path, style = WIDGETS_TRAKT[choice]
-        return tr(key), path, style
-    busy(True)
-    entries = jsonrpc("Files.GetDirectory", {"directory": "plugin://script.lucent.library/?action=traktlists",
-                                             "media": "files", "properties": ["title"]}).get("files", []) or []
-    busy(False)
-    entries = [e for e in entries if e.get("file")]
-    if not entries:
-        xbmcgui.Dialog().ok(HEADING, tr(G("No Trakt lists found. Log in to Trakt in Seren first (and make or like a list on trakt.tv).",
-                                          "Geen Trakt-lijsten gevonden. Log eerst in op Trakt in Seren (en maak of like een lijst op trakt.tv).")))
-        return None
-    pick = select(mine, [clean(e.get("label") or e.get("title")) for e in entries], True, ["icons/trakt.png"] * len(entries))
-    if pick < 0:
-        return None
-    return clean(entries[pick].get("label") or entries[pick].get("title")), entries[pick]["file"], "poster"
-
-
 LV = "plugin://plugin.video.lucent/?action=list&widget=1&name="
 WIDGETS_LV = [                                      # Lucent Video (plugin.video.lucent): rows without a 'next page' item
     (("Films · Trending", "Films · Trending"), LV + "trending_movie", "poster"),
@@ -432,11 +333,6 @@ def has_lv():
     return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
 
 
-def has_lib():
-    """The older Lucent Library (no longer needed by the skin): its rows only fill when it is installed."""
-    return xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)")
-
-
 def log(text):
     xbmc.log(f"[skin.lucent] menu: {text}", xbmc.LOGINFO)
 
@@ -506,7 +402,7 @@ def lv_convert():
     if not has_lv():
         return
     seren_too, services_too = not uses_seren(), lv_ready()
-    lib_too = not xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)")      # its rows can never fill
+    lib_too = True                                      # Lucent Library is no longer used: its rows never fill
     menu = Menu()
     changed = False
     for tab in menu.tabs:
@@ -528,7 +424,7 @@ def lv_convert():
         log(f"rows moved to Lucent Video (seren={seren_too}, services={services_too}, library={lib_too})")
         xbmc.executebuiltin("Container.Refresh")
     if services_too:
-        put("lucent.lvrows", "done3" if lib_too else "done2")    # done2: again once Lucent Library is gone
+        put("lucent.lvrows", "done4")                       # done4: Lucent Library rows converted too (1.39.0)
 
 
 def pick_lv():
@@ -694,11 +590,11 @@ def plain_tabs():
 
     by_en = {(n if isinstance(n, tuple) else T[n])[0]: p for n, p, _s in WIDGETS_LIBRARY}
     pick = by_en.__getitem__                          # a library row by its English name
-    home = [row(LIB + "continue"), row(LIB + "nextup"), row("videodb://recentlyaddedmovies/"),
+    home = [row(pick("Movies in progress")), row("videodb://inprogresstvshows/"), row("videodb://recentlyaddedmovies/"),
             row("videodb://recentlyaddedepisodes/"), row(pick("Random movies"))]
     movies = [row("videodb://recentlyaddedmovies/"), row(pick("Movies in progress")), row(pick("Unwatched movies")),
               row(pick("Top rated movies")), row("videodb://movies/genres/")]
-    shows = [row(LIB + "nextup"), row("videodb://recentlyaddedepisodes/"), row("videodb://inprogresstvshows/"),
+    shows = [row("videodb://inprogresstvshows/"), row("videodb://recentlyaddedepisodes/"),
              row(pick("Unwatched shows")), row("videodb://tvshows/genres/")]
 
     def tab(key, icon, action, widgets=None):
@@ -1027,8 +923,7 @@ def pick_widget():
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
     order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
-    if not has_lib():                                   # the fast TMDb lists come from Lucent Library
-        order.remove(7)
+    order.remove(7)                                     # the fast TMDb lists of Lucent Library: the video add-on has them now
     if has_lv():                                        # Lucent Video: its own rows, right after Seren / the add-on folders
         sources.append("Lucent Video")
         icons.append("icons/play.png")
@@ -1053,7 +948,7 @@ def pick_widget():
             return None
         label, path = picked
     elif source == 2:
-        rows = [r for r in WIDGETS_LIBRARY if has_lib() or not r[1].startswith("plugin://script.lucent.library/")]
+        rows = WIDGETS_LIBRARY
         choice = select(tr("src_library"), [tr(k) for k, _p, _s in rows])
         if choice < 0:
             return None
@@ -1080,28 +975,6 @@ def pick_widget():
         if not picked:
             return None
         label, path = picked
-    elif source == 7:
-        trakt_entry = tr(G("Trakt lists (fast)…", "Trakt-lijsten (snel)…"))
-        stream_entry = tr(G("Streaming services…", "Streamingdiensten…"))
-        extra = [trakt_entry, stream_entry] if uses_seren() else [stream_entry]
-        choice = select(sources[7], [tr(n) for n, _p, _s in WIDGETS_TMDB] + extra)
-        if choice < 0:
-            return None
-        if choice >= len(WIDGETS_TMDB) and not uses_seren():
-            choice += 1                                   # no Trakt entry: the next one is the streaming services
-        if choice == len(WIDGETS_TMDB) + 1:
-            picked = pick_streaming()
-            if not picked:
-                return None
-            label, path, style = picked
-        elif choice == len(WIDGETS_TMDB):
-            picked = pick_trakt_fast()
-            if not picked:
-                return None
-            label, path, style = picked
-        else:
-            key, path, style = WIDGETS_TMDB[choice]
-            label = tr(key)
     elif source == 4:
         path = keyboard(tr("src_type"), "plugin://")
         if not path:
@@ -1281,10 +1154,8 @@ def source_page(wd):
                 have, want)):
             ser.setSetting("item.limit", str(want))
             notify(tr(G("Seren now gives {0} titles per list", "Seren geeft nu {0} titels per lijst"), want))
-            if xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)"):
-                xbmc.executebuiltin("RunScript(script.lucent.library,widgets_stale)")   # the saved copies of 20: again
-    elif path.startswith("plugin://script.lucent.library/"):
-        return                                      # Lucent's own rows give up to 60 (TMDb) or 100 (Trakt) titles
+    elif path.startswith("plugin://plugin.video.lucent/"):
+        return                                      # the video add-on has its own setting for the number of titles
     elif path.startswith("plugin://") and want > 25:
         notify(tr(G("The add-on decides how many titles it gives per page",
                     "De add-on bepaalt zelf hoeveel titels hij per pagina geeft")))
@@ -1492,7 +1363,7 @@ def editor():
 
 
 def add_here():
-    """Context menu "Add to Home as widget" (Lucent Library): the folder under the cursor becomes a widget on a tab you pick.
+    """Context menu "Add to Home as widget" (from the video add-on): the folder under the cursor becomes a widget on a tab you pick.
     The folder comes in Window(home).Property(lucent.addw.path / .label)."""
     home = xbmcgui.Window(10000)
     path, label = home.getProperty("lucent.addw.path"), clean(home.getProperty("lucent.addw.label"))
