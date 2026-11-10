@@ -23,6 +23,9 @@ HOME_ID = 10000
 HOME = xbmcgui.Window(HOME_ID)
 RUNNING = "nuvio.trailer.service"   # heartbeat: time of the last loop round
 PLAYING = "nuvio.trailer.playing"
+ACTIVE = "nuvio.trailer.active"     # "1" from asking YouTube until the player has really stopped: a video add-on can
+                                    # wait for it to be empty before it starts a film
+QUIET = 10                          # seconds after a film (or another video) before a trailer may start again
 TICK = 0.25
 YT = "plugin://plugin.video.youtube/play/?video_id="
 TYPES = ["Trailer", "Teaser", "Clip"]
@@ -136,13 +139,18 @@ class Trailers(xbmc.Player):
         self.cancelled_at = 0.0    # when we gave up a trailer that YouTube was still resolving
         self.spare = []            # other trailers of the same title, for when YouTube is slow with the first
         self.spare_label = ""
+        self.film_until = 0.0      # a film or another video of someone else plays (or just stopped): hands off
+        self.stopping_since = 0.0  # we asked the player to stop our trailer and it has not stopped yet
 
     # -- player callbacks: anything we did not start is not ours
     def onAVStarted(self):
         # the YouTube add-on needs a few seconds to resolve; anything that starts much
         # later than our request was started by someone else
         if not (self.ours or self.requested):
-            if time.time() - self.cancelled_at < 45 and self.is_youtube():
+            if not self.is_youtube():
+                self.hands_off("a video of someone else started")
+                return
+            if time.time() - self.cancelled_at < 45 and time.time() > self.film_until:
                 # the trailer of a card you already left: YouTube only now got it going. Stop it at once,
                 # instead of letting it play (and hold the screen) behind Home
                 log("late trailer of a card you left: stop")
@@ -162,6 +170,18 @@ class Trailers(xbmc.Player):
         self.av_started = True
         self.failures = 0
         HOME.setProperty(PLAYING, "1")
+
+    def hands_off(self, why):
+        """A film (or any video we did not start) plays: the trailers do nothing at all until it is over, so nothing
+        stops or starts the player while the TV switches to Dolby Vision / HDR."""
+        if time.time() > self.film_until:
+            log(f"{why}: trailers wait")
+        self.film_until = time.time() + QUIET
+        self.spare = []
+        self.ours = self.requested = self.av_started = False
+        HOME.clearProperty(PLAYING)
+        HOME.clearProperty(ACTIVE)
+        self.stopping_since = 0.0
 
     def onPlayBackStopped(self):
         self.ended("stopped")
@@ -210,6 +230,8 @@ class Trailers(xbmc.Player):
         self.requested = False
         self.av_started = False
         HOME.clearProperty(PLAYING)
+        if not self.stopping_since:
+            HOME.clearProperty(ACTIVE)
 
     def stop_ours(self):
         self.spare = []
@@ -218,6 +240,8 @@ class Trailers(xbmc.Player):
             if not self.av_started:
                 self.cancelled_at = time.time()
             playing = self.av_started or self.isPlayingVideo()
+            if playing:
+                self.stopping_since = time.time()               # ACTIVE stays set until the player has stopped
             self.let_go()                   # the skin hides the video at once
             if playing:
                 xbmc.executebuiltin("PlayerControl(Stop)")      # does not wait for the player
@@ -249,6 +273,7 @@ class Trailers(xbmc.Player):
         self.ours = True
         self.requested = True
         self.av_started = False
+        HOME.setProperty(ACTIVE, "1")
         item = xbmcgui.ListItem(label_text)
         item.setProperty("nuvio.trailer", "1")
         self.play(YT + video_id, item, windowed=True)
@@ -267,9 +292,21 @@ class Trailers(xbmc.Player):
                 break
         self.stop_ours()
         HOME.clearProperty(RUNNING)
+        HOME.clearProperty(ACTIVE)
 
     def tick(self):
         mode = skin("nuvio.posterfocus")
+        if self.stopping_since and (not self.isPlaying() or time.time() - self.stopping_since > 10):
+            self.stopping_since = 0.0
+            if not (self.ours or self.requested):
+                HOME.clearProperty(ACTIVE)
+        # a film or another video that is not our trailer: do nothing at all while it plays and shortly after
+        if self.isPlayingVideo() and not (self.ours or self.requested) and not self.is_youtube():
+            self.hands_off("a video of someone else plays")
+            return
+        if time.time() < self.film_until:
+            dbg("a film played just now: waiting")
+            return
         if self.close_error_dialog():
             return
         window = xbmcgui.getCurrentWindowId()
