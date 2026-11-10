@@ -217,6 +217,26 @@ def run():
         if wait and cond(f"System.IdleTime({wait})"):
             xbmc.executebuiltin("Dialog.Close(videoosd)")
 
+    settings_state = {"open": False}
+
+    def addon_settings():
+        """Add-on settings in three columns: remember which group is chosen (Kodi switches the group when its button
+        gets the focus; the buttons have the ids -200, -199, ...), so the skin can show its tile and picture."""
+        if xbmcgui.getCurrentWindowDialogId() != 10140:
+            if settings_state["open"]:
+                settings_state["open"] = False
+                HOME.clearProperty("lucent.as.cat")
+            return
+        if not settings_state["open"]:
+            settings_state["open"] = True
+            HOME.setProperty("lucent.as.cat", "0")
+        try:
+            fid = xbmcgui.Window(10140).getFocusId()
+        except RuntimeError:
+            return
+        if -200 <= fid < -150 and HOME.getProperty("lucent.as.cat") != str(fid + 200):
+            HOME.setProperty("lucent.as.cat", str(fid + 200))
+
     def home_focus():
         """Home without any focus (for example OK on the Home tab while it has no rows yet, or after closing the setup
         assistant on a new installation): nothing reacts to the remote any more. Give the focus back to the menu."""
@@ -281,6 +301,10 @@ def run():
                 mediaflags.tick()                    # flags of the title under the cursor in the lists (issue #9)
             except Exception as error:  # noqa: BLE001
                 log(f"media flags: {error}")
+            try:
+                addon_settings()                     # the chosen group in the add-on settings (three columns)
+            except Exception as error:  # noqa: BLE001
+                log(f"add-on settings: {error}")
             try:
                 pause_clean()                        # "Clean picture" when paused: the player menu goes too (issue #4)
             except Exception as error:  # noqa: BLE001

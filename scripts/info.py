@@ -505,6 +505,13 @@ def lv_menu(prefix="ListItem."):
     if not target:
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
         return
+    # Lucent Video 0.33.3 leaves out what the page has a button for; ask for everything when one of those is missing
+    on_page = xbmc.getCondVisibility(
+        "Control.IsVisible(21) + Control.IsVisible(22)"
+        " + [Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)]"
+        " + Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube)")
+    if not on_page:
+        target = dict(target, all="1")
     lv_run("title_menu", **target)
 
 

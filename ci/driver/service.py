@@ -4143,6 +4143,38 @@ def trailerlayer_test():
     mon.waitForAbort(2)
 
 
+def addonsettings_test():
+    """1.40.0: add-on settings in three columns, with the group tiles and picture for Lucent Video."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    for addon in ("plugin.video.lucent", "service.subtitles.lucent"):
+        xbmc.executebuiltin(f"Addon.OpenSettings({addon})")
+        for _ in range(40):
+            if mon.waitForAbort(0.1) or xbmcgui.getCurrentWindowDialogId() == 10140:
+                break
+        mon.waitForAbort(2)
+        tag = "lv" if "lucent" in addon and "video" in addon else "other"
+        log(f"addonsettings {tag}: open={xbmcgui.getCurrentWindowDialogId() == 10140} heading={lab('Control.GetLabel(2)')!r} "
+            f"cat0={lab('Control.GetLabel(-200)')!r} cat3={lab('Control.GetLabel(-197)')!r} vis-192={cond('Control.IsVisible(-192)')} "
+            f"lv={cond('$EXP[LucentAddonSettingsLV]')} cat={HOME.getProperty('lucent.as.cat')!r}")
+        shot(f"addonsettings-{tag}")
+        if tag == "lv":
+            xbmc.executebuiltin("SetFocus(-197)")
+            mon.waitForAbort(2.5)
+            log(f"addonsettings lv after focus -197: focus={xbmcgui.Window(10140).getFocusId()} cat={HOME.getProperty('lucent.as.cat')!r} "
+                f"current={lab('System.CurrentControl')!r}")
+            shot("addonsettings-lv-play")
+            xbmc.executebuiltin("SetFocus(5)")
+            mon.waitForAbort(2)
+            shot("addonsettings-lv-setting")
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(2)
+        if xbmcgui.getCurrentWindowDialogId() == 10140:
+            xbmc.executebuiltin("Dialog.Close(addonsettings,true)")
+            mon.waitForAbort(1)
+
+
 def lvtrakt_test():
     """1.39.0: the Trakt login of the video add-on is used (calendar, lists, watched) before Seren's."""
     import importlib
@@ -4417,6 +4449,7 @@ def main():
     safe(formatclips_test)
     safe(trailerlayer_test)
     safe(lvtrakt_test)
+    safe(addonsettings_test)
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:

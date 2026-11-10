@@ -126,4 +126,375 @@
 </control>
         </definition>
     </include>
+    <!-- ===== Add-on settings in three columns (DialogAddonSettings.xml) ===== -->
+    <expression name="LucentAddonSettingsLV">String.Contains(Control.GetLabel(2),Lucent Video) + System.HasAddon(plugin.video.lucent)</expression>
+    <variable name="LucentAddonSettingsCard">
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),0)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_gear.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),1)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_user.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),2)">special://home/addons/plugin.video.lucent/resources/media/menu/discover_cast.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),3)">special://home/addons/plugin.video.lucent/resources/media/menu/watch_play.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),4)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_cc.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),5)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_skip.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),6)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_books.jpg</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),7)">special://home/addons/plugin.video.lucent/resources/media/menu/lists_list.jpg</value>
+        <value>special://home/addons/plugin.video.lucent/resources/media/menu/tools_gear.jpg</value>
+    </variable>
+    <include name="SettingsPanel">
+        <param name="left">0</param>
+        <param name="width">400</param>
+        <param name="top">160</param>
+        <param name="height">800</param>
+        <definition>
+            <control type="image">
+                <left>$PARAM[left]</left>
+                <top>$PARAM[top]</top>
+                <width>$PARAM[width]</width>
+                <height>$PARAM[height]</height>
+                <texture border="20" colordiffuse="panel_night">rr20.png</texture>
+            </control>
+            <control type="image">
+                <left>$PARAM[left]</left>
+                <top>$PARAM[top]</top>
+                <width>$PARAM[width]</width>
+                <height>$PARAM[height]</height>
+                <texture border="20" colordiffuse="hairline">rr20_edge.png</texture>
+            </control>
+        </definition>
+    </include>
+    <include name="SettingsCategoryTiles">
+        <definition>
+        <control type="group">
+            <left>80</left>
+            <top>200</top>
+            <visible>Control.IsVisible(-200) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/tools_gear_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),0)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>284</top>
+            <visible>Control.IsVisible(-199) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/tools_user_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),1)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>368</top>
+            <visible>Control.IsVisible(-198) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/discover_cast_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),2)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>452</top>
+            <visible>Control.IsVisible(-197) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/watch_play_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),3)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>536</top>
+            <visible>Control.IsVisible(-196) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/tools_cc_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),4)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>620</top>
+            <visible>Control.IsVisible(-195) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/tools_skip_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),5)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>704</top>
+            <visible>Control.IsVisible(-194) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/tools_books_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),6)</visible>
+            </control>
+        </control>
+        <control type="group">
+            <left>80</left>
+            <top>788</top>
+            <visible>Control.IsVisible(-193) + !Control.IsVisible(-192)</visible>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture diffuse="mask_square.png">special://home/addons/plugin.video.lucent/resources/media/menu/lists_list_sq.jpg</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>44</width>
+                    <height>44</height>
+                    <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+                </control>
+                <control type="image">
+                    <left>10</left>
+                    <top>10</top>
+                    <width>24</width>
+                    <height>24</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <width>44</width>
+                <height>44</height>
+                <texture border="14" colordiffuse="bg_70">rr14.png</texture>
+                <visible>String.IsEqual(Window(home).Property(lucent.as.cat),7)</visible>
+            </control>
+        </control>
+        </definition>
+    </include>
+    <include name="AddonCategoryTemplate">
+        <definition>
+            <control type="button" id="10">
+                <width>424</width>
+                <height>76</height>
+                <font>font_label</font>
+                <textcolor>text3</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <selectedcolor>on_focus</selectedcolor>
+                <textoffsetx>84</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus colordiffuse="transparent">catsel.png</texturenofocus>
+                <alttexturefocus border="20" colordiffuse="focus">rr20.png</alttexturefocus>
+                <alttexturenofocus border="20" colordiffuse="focus">rr20.png</alttexturenofocus>
+            </control>
+        </definition>
+    </include>
+    <include name="AddonSettingTemplates">
+        <definition>
+            <control type="button" id="7">
+                <width>852</width>
+                <height>76</height>
+                <font>font_label</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>32</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus border="20">card_soft.png</texturenofocus>
+                <label2></label2>
+            </control>
+            <control type="radiobutton" id="8">
+                <width>852</width>
+                <height>76</height>
+                <textureradioonnofocus colordiffuse="lavender">toggle_on.png</textureradioonnofocus>
+            </control>
+            <control type="spincontrolex" id="9">
+                <width>852</width>
+                <height>76</height>
+            </control>
+            <control type="image" id="11">
+                <width>852</width>
+                <height>2</height>
+                <texture>white.png</texture>
+                <colordiffuse>separator</colordiffuse>
+            </control>
+            <control type="edit" id="12">
+                <width>852</width>
+                <height>76</height>
+            </control>
+            <control type="sliderex" id="13">
+                <width>852</width>
+                <height>76</height>
+            </control>
+            <control type="label" id="14">
+                <width>852</width>
+                <height>60</height>
+                <font>font_caps</font>
+                <textcolor>lavender</textcolor>
+                <textoffsetx>8</textoffsetx>
+                <aligny>bottom</aligny>
+                <label></label>
+            </control>
+            <control type="colorbutton" id="15">
+                <width>852</width>
+                <colorposx>772</colorposx>
+            </control>
+        </definition>
+    </include>
 </includes>
