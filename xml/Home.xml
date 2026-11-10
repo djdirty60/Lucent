@@ -139,22 +139,47 @@
         </control>
         <control type="group">
             <visible>!Skin.HasSetting(nuvio.fullbackdrop) + [!String.IsEqual(Skin.String(nuvio.posterfocus),window) | !$EXP[NuvioTrailerBg]]</visible>
-            <!-- left edge of the picture melts into the background -->
+            <!-- left edge of the picture melts into the background: a long soft fade, and a second one close to the edge
+                 so no line of the picture shows there -->
             <control type="image">
                 <left>624</left>
                 <top>0</top>
-                <width>640</width>
+                <width>820</width>
                 <height>730</height>
                 <texture>grad_left.png</texture>
                 <colordiffuse>bg</colordiffuse>
             </control>
-            <!-- bottom edge of the picture melts into the background -->
+            <control type="image">
+                <left>624</left>
+                <top>0</top>
+                <width>360</width>
+                <height>730</height>
+                <texture>grad_left.png</texture>
+                <colordiffuse>bg</colordiffuse>
+            </control>
+            <!-- bottom edge of the picture melts into the background, the same way -->
             <control type="image">
                 <left>640</left>
-                <top>300</top>
+                <top>180</top>
                 <width>1280</width>
-                <height>420</height>
+                <height>544</height>
                 <texture>grad_bottom.png</texture>
+                <colordiffuse>bg</colordiffuse>
+            </control>
+            <control type="image">
+                <left>640</left>
+                <top>470</top>
+                <width>1280</width>
+                <height>254</height>
+                <texture>grad_bottom.png</texture>
+                <colordiffuse>bg</colordiffuse>
+            </control>
+            <control type="image">
+                <left>640</left>
+                <top>718</top>
+                <width>1280</width>
+                <height>8</height>
+                <texture>white.png</texture>
                 <colordiffuse>bg</colordiffuse>
             </control>
             <control type="image">
