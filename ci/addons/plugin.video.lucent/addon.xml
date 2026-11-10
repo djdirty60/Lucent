@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.lucent" version="0.25.0" name="Lucent Video" provider-name="Claude">
+<addon id="plugin.video.lucent" version="0.29.1" name="Lucent Video" provider-name="Claude">
     <requires>
         <import addon="xbmc.python" version="3.0.1"/>
     </requires>
@@ -41,6 +41,34 @@
                 <label>32137</label>
                 <visible>String.Contains(ListItem.Path,plugin.video.lucent/library) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </item>
+            <item library="context.py" args="addwidget">
+                <label>32175</label>
+                <visible>ListItem.IsFolder + !ListItem.IsParentFolder + !Window.IsVisible(home) + System.HasAddon(skin.lucent) + !String.IsEmpty(Skin.String(nuvio.tab1.label)) + [String.StartsWith(ListItem.FolderPath,plugin://) | String.StartsWith(ListItem.Path,plugin://) | String.StartsWith(ListItem.FolderPath,videodb://) | String.StartsWith(ListItem.Path,videodb://) | String.StartsWith(ListItem.FolderPath,musicdb://) | String.StartsWith(ListItem.Path,musicdb://) | String.StartsWith(ListItem.FolderPath,library://) | String.StartsWith(ListItem.Path,library://) | String.StartsWith(ListItem.FolderPath,special://) | String.StartsWith(ListItem.Path,special://) | String.StartsWith(ListItem.FolderPath,addons://) | String.StartsWith(ListItem.Path,addons://) | String.StartsWith(ListItem.FolderPath,pvr://) | String.StartsWith(ListItem.Path,pvr://) | String.StartsWith(ListItem.FolderPath,sources://) | String.StartsWith(ListItem.Path,sources://)]</visible>
+            </item>
+            <item library="context.py" args="browseshow">
+                <label>32176</label>
+                <visible>String.IsEqual(ListItem.DBType,episode) + System.HasAddon(skin.lucent) + [!String.IsEmpty(ListItem.TvShowDBID) | [[String.StartsWith(ListItem.FileNameAndPath,plugin://) | String.StartsWith(ListItem.Path,plugin://)] + !String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/) + [!String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.Property(tmdb_id))]]]</visible>
+            </item>
+            <item library="context.py" args="browseeps">
+                <label>32177</label>
+                <visible>String.IsEqual(ListItem.DBType,episode) + System.HasAddon(skin.lucent) + [!String.IsEmpty(ListItem.TvShowDBID) | [[String.StartsWith(ListItem.FileNameAndPath,plugin://) | String.StartsWith(ListItem.Path,plugin://)] + !String.StartsWith(ListItem.FileNameAndPath,plugin://plugin.video.seren/) + [!String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.Property(tmdb_id))]]] + !String.IsEmpty(ListItem.Season)</visible>
+            </item>
+            <item library="context.py" args="addlib">
+                <label>32178</label>
+                <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + String.IsEmpty(ListItem.DBID) + [!String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb))] + String.IsEmpty(ListItem.Property(lucent_video)) + System.HasAddon(skin.lucent)</visible>
+            </item>
+            <item library="context.py" args="removelib">
+                <label>32179</label>
+                <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + [String.Contains(ListItem.Path,plugin.video.lucent/library) | String.Contains(ListItem.FolderPath,plugin.video.lucent/library)]</visible>
+            </item>
+            <item library="context.py" args="skiplib">
+                <label>32186</label>
+                <visible>[String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)] + [String.Contains(ListItem.Path,plugin.video.lucent/library) | String.Contains(ListItem.FolderPath,plugin.video.lucent/library) | String.Contains(ListItem.FileNameAndPath,plugin.video.lucent/library)]</visible>
+            </item>
+            <item library="context.py" args="rate">
+                <label>32180</label>
+                <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)] + [String.Contains(ListItem.Path,plugin.video.lucent/library) | String.Contains(ListItem.FolderPath,plugin.video.lucent/library)]</visible>
+            </item>
         </menu>
     </extension>
     <extension point="xbmc.addon.metadata">
@@ -50,13 +78,13 @@
         <description lang="nl_NL">Bladeren met TMDB, afspelen via je eigen AIOStreams-adres en je voortgang bijhouden op Trakt. Werkt zonder Seren.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>0.25.0: Type with your phone: scan the QR code on the TV to search and send a film or series to the TV. Bedtime per profile: a time and/or a number of titles per day.
-0.24.0: Start at once: sources for what you will most likely watch are looked up beforehand. Ready for tonight. A lighter version when the video keeps buffering. Sound and subtitle remembered per series. Skip intros per series. Message when a new season is announced. Browse by studio, network, decade and award.
-0.23.0: Account information for Trakt, Simkl, debrid services, Easynews and MDBList.
-0.22.0: What you watch in the Kodi library is marked as watched on Trakt too.
-0.21.0: The cast opens as a pop-up with round portraits, with the film still visible behind it; OK shows everything with that actor.
-0.20.0: What shall we watch? Tick who watches and what you feel like, and get three titles none of you saw yet. Your year of watching: hours, films, episodes, most watched series and favourite kinds. Previous time: the resume window tells what happened in the episode before.
-0.19.0: Ready in top quality: a message when a film on your watchlist or a new episode can be played in the quality you want (off by default). Sources that keep failing on this device move down, ones that play well move up. Watch together: tick who watches along and it is marked as watched for them too. Offer to open your own subscription app (Android). Subtitles in your language checked beforehand with Lucent Subtitles.</news>
+        <news>0.29.1: Watched marks: your whole Trakt history is read page by page (before, only the first 100 watched films and series were known).
+0.29.0: Subtitles, spoken language and skip intro now live in Lucent Video, for every video: a live subtitle list that asks every subtitle add-on at once, a quiet pick in the background, AI translation with your own key, syncing, a wish list, first and second spoken language, and TheIntroDB with one Skip button. Your settings from the Lucent skin are taken over once.
+0.28.0: Only what you can watch: discovery lists wait for the digital release. Hide languages you do not want.
+0.27.0: Format check: test clips show what your box really plays (Dolby Vision, HDR, 4K, AV1, TrueHD, DTS, DD+) and suggest the right settings. Type with your phone is safer.
+0.26.0: Kompas, your own film guide with a reason for every pick. Takes over Lucent Library for the Lucent skin: Add to Home, browse series, one title in or out of your library, fast Home rows.
+0.25.0: Type with your phone: scan the QR code on the TV to search and send a film or series to the TV. Bedtime per profile: a time and/or a number of titles per day.
+0.24.0: Start at once: sources for what you will most likely watch are looked up beforehand. Ready for tonight. A lighter version when the video keeps buffering. Sound and subtitle remembered per series. Skip intros per series. Message when a new season is announced. Browse by studio, network, decade and award.</news>
         <assets>
             <icon>icon.png</icon>
         </assets>

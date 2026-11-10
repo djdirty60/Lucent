@@ -108,9 +108,13 @@ def on_notification(method, data):
         if time.time() - _recent.get(key, 0) < 600 or _sent.get(key) == (count > 0, int(time.time() // 30)):
             return                                       # just played with Lucent, or this very change was already sent
         _sent[key] = (count > 0, int(time.time() // 30))
+        import users
+        util.OVERRIDE_USER = users.MAIN           # the library follows the first profile, so its account gets it
         try:
             tracker.set_watched(meta, count > 0)
             util.log("library -> account: %s %s" % (key, "watched" if count > 0 else "unwatched"))
         except util.HttpError as error:
             util.log("library -> account failed: %s" % error)
+        finally:
+            util.OVERRIDE_USER = None
     threading.Thread(target=send, daemon=True).start()

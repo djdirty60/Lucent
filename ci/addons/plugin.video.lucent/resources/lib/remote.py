@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Your phone as keyboard: a small web page, served by Lucent Video on your own network, to search and send a title
 to the TV. The TV shows a QR code with the address and a 4-digit code; without the code the page does nothing.
-It only runs after you opened 'Type with your phone' once, and only inside your home network."""
+It only runs after you opened 'Type with your phone', and only inside your home network. After 5 wrong codes from one
+device that device waits a minute, and after three such pauses there is a new code. The page stops by itself when it
+was not used for 30 minutes."""
 import json
 import os
 import random
@@ -20,7 +22,31 @@ PORT = 8742
 WANT = "lucent.video.remote.want"
 CODE = "lucent.video.remote.code"
 LAST = "lucent.video.remote.last"
+SEEN = "lucent.video.remote.seen"
+IDLE = 30 * 60
+TRIES, PAUSE, NEW_CODE_AFTER = 5, 60, 3
 _server = {"http": None}
+_fails = {}              # ip -> {"count", "until", "pauses"}
+
+
+def touch():
+    util.HOME.setProperty(SEEN, str(int(time.time())))
+
+
+def _blocked(ip):
+    entry = _fails.get(ip)
+    return bool(entry and entry.get("until", 0) > time.time())
+
+
+def _wrong(ip):
+    entry = _fails.setdefault(ip, {"count": 0, "until": 0, "pauses": 0})
+    entry["count"] += 1
+    if entry["count"] >= TRIES:
+        entry.update(count=0, until=time.time() + PAUSE, pauses=entry["pauses"] + 1)
+        if entry["pauses"] >= NEW_CODE_AFTER:
+            util.HOME.clearProperty(CODE)              # a new code: the TV screen shows it next time
+            entry["pauses"] = 0
+            util.log("phone keyboard: too many wrong codes, new code made")
 
 
 def address():
@@ -102,7 +128,18 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def _ok(self, query):
-        return (query.get("code") or [""])[0] == code()
+        return self._check((query.get("code") or [""])[0])
+
+    def _check(self, given):
+        ip = self.client_address[0]
+        if _blocked(ip):
+            return False
+        if str(given) == code():
+            _fails.pop(ip, None)
+            touch()
+            return True
+        _wrong(ip)
+        return False
 
     def do_GET(self):
         parts = urllib.parse.urlsplit(self.path)
@@ -111,6 +148,8 @@ class Handler(BaseHTTPRequestHandler):
             with open(PAGE, encoding="utf-8") as handle:
                 page = handle.read().replace("{{LANG}}", "nl" if util.NL else "en")
             return self._send(200, page, "text/html")
+        if _blocked(self.client_address[0]):
+            return self._send(429, json.dumps({"error": "wait"}))
         if not self._ok(query):
             return self._send(403, json.dumps({"error": "code"}))
         try:
@@ -129,7 +168,9 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(length).decode("utf-8") or "{}")
         except ValueError:
             body = {}
-        if parts.path != "/api/do" or str(body.get("code")) != code():
+        if _blocked(self.client_address[0]):
+            return self._send(429, json.dumps({"error": "wait"}))
+        if parts.path != "/api/do" or not self._check(body.get("code")):
             return self._send(403, json.dumps({"error": "code"}))
         ok = _do(body.get("type"), str(body.get("id")), body.get("what"), body.get("title"))
         return self._send(200 if ok else 400, json.dumps({"ok": ok}))
@@ -159,11 +200,26 @@ def stop():
         _server["http"] = None
 
 
+def tidy():
+    """Called every second by the service: stop the page when nobody used it for 30 minutes."""
+    if not _server["http"]:
+        return
+    try:
+        seen = int(util.HOME.getProperty(SEEN) or 0)
+    except ValueError:
+        seen = 0
+    if time.time() - seen > IDLE:
+        util.HOME.clearProperty(WANT)
+        stop()
+        util.log("phone keyboard is off (not used)")
+
+
 # ------------------------------------------------------------------ the TV screen
 def open_screen():
     import dialogs
     import ranking_ui
     util.HOME.setProperty(WANT, "1")
+    touch()
     url = "%s/?code=%s" % (address(), code())
     picture = os.path.join(util.PROFILE, "remote_qr.png")
     try:

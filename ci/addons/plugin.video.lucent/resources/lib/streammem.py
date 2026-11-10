@@ -34,6 +34,10 @@ def remember(meta, snap):
     util.save_json(FILE, data)
 
 
+def has_memory(meta):
+    return meta.get("kind") == "episode" and util.flag("remember_streams") and bool(util.load_json(FILE, {}).get(str(meta["tmdb"])))
+
+
 def apply(meta):
     """Sets the remembered sound and subtitle for this series, when they are in this episode."""
     if meta.get("kind") != "episode" or not util.flag("remember_streams"):

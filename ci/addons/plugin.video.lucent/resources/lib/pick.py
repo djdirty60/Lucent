@@ -67,7 +67,8 @@ def suggestions(user_ids, minutes, kind, genre, for_kids, count=3):
     out = []
     for pair in list(dict.fromkeys(pool)):
         meta = tmdb.details(*pair)
-        if meta and meta.get("fanart") and kids.allowed(meta) and (not for_kids or meta["kind"] != "movie" or (kids.age_of(meta) or 99) <= 6):
+        import hide
+        if meta and meta.get("fanart") and kids.allowed(meta) and hide.keep([meta], "foryou") and (not for_kids or meta["kind"] != "movie" or (kids.age_of(meta) or 99) <= 6):
             out.append(meta)
         if len(out) >= count:
             break

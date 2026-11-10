@@ -112,7 +112,7 @@ def home(handle, _params):
         items.folder(T("Volgende afleveringen", "Next up"), util.url_for(action="list", name="nextup"), "DefaultTVShows.png"),
         items.folder(T("Films", "Movies"), util.url_for(action="menu", type="movie"), "DefaultMovies.png"),
         items.folder(T("Series", "Shows"), util.url_for(action="menu", type="tvshow"), "DefaultTVShows.png"),
-        items.folder(T("Voor jou", "For you"), util.url_for(action="list", name="foryou"), "DefaultRecentlyAddedMovies.png"),
+        items.folder(T("Kompas", "Kompas"), util.url_for(action="kompasmenu"), "DefaultAddonsRecentlyUpdated.png"),
         _action(T("Wat zullen we kijken?", "What shall we watch?"), util.url_for(action="pick"), "DefaultAddonsRecentlyUpdated.png"),
         items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultNetwork.png"),
         items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultPlaylist.png"),
@@ -121,6 +121,28 @@ def home(handle, _params):
         _action(T("Profiel: %s", "Profile: %s") % users.current()["name"], util.url_for(action="who"), "DefaultUser.png"),
         items.folder(T("Instellingen en hulp", "Settings and help"), util.url_for(action="tools"), "DefaultAddonProgram.png"),
     ]
+    send(handle, rows)
+
+
+def kompas_menu(handle, _params):
+    """Kompas: the page, its rows (each can go on Home with 'Add to Home') and your taste."""
+    import kompas
+    if not kompas.on():
+        return send(handle, [items.folder(T("Voor jou", "For you"), util.url_for(action="list", name="foryou"), "DefaultRecentlyAddedMovies.png")])
+    data = util.load_json(kompas.ROWS, {})
+    because = data.get("because")
+    rows = [_action(T("Kompas: kies wat je wilt kijken", "Kompas: choose what to watch"), util.url_for(action="kompas_page"), "DefaultAddonsRecentlyUpdated.png"),
+            items.folder(T("Voor jou gekozen", "Picked for you"), util.url_for(action="list", name="kompas_foryou"), "DefaultRecentlyAddedMovies.png")]
+    if because:
+        rows.append(items.folder(T("Omdat je %s keek", "Because you watched %s") % because, util.url_for(action="list", name="kompas_because"), "DefaultRecentlyAddedMovies.png"))
+    rows += [items.folder(T("Verborgen parels", "Hidden gems"), util.url_for(action="list", name="kompas_gems"), "DefaultRecentlyAddedMovies.png"),
+             items.folder(T("Nieuw voor jou", "New for you"), util.url_for(action="list", name="kompas_new"), "DefaultRecentlyAddedMovies.png"),
+             items.folder(T("Trending voor jou", "Trending for you"), util.url_for(action="list", name="kompas_trending"), "DefaultRecentlyAddedMovies.png")]
+    for saved in kompas.saved_rows():
+        url, item, folder = items.folder(saved["label"], util.url_for(action="list", name="kompas_saved", id=saved["id"]), "DefaultPlaylist.png")
+        item.addContextMenuItems([(T("Deze rij verwijderen", "Remove this row"), "RunPlugin(%s)" % util.url_for(action="kompas_unsave", id=saved["id"]))])
+        rows.append((url, item, folder))
+    rows.append(_action(T("Jouw smaak", "Your taste"), util.url_for(action="kompas_taste"), "DefaultUser.png"))
     send(handle, rows)
 
 
@@ -194,6 +216,7 @@ def tools(handle, _params):
         _action(T("Instellingen openen", "Open settings"), util.url_for(action="settings")),
         _action(T("Installatie-assistent", "Setup assistant"), util.url_for(action="setup")),
         _action(T("Volgorde van bronnen", "Order of sources"), util.url_for(action="ranking")),
+        _action(T("Formaattest: wat kan dit apparaat?", "Format check: what can this box play?"), util.url_for(action="formatcheck")),
         _action(T("Bibliotheek nu bijwerken", "Update the library now"), util.url_for(action="library_sync"), "DefaultAddonLibrary.png"),
         _action(T("Kiezen wat in de bibliotheek komt", "Choose what goes in the library"), util.url_for(action="library_choose"), "DefaultAddonLibrary.png"),
         _action(T("Je kijkjaar", "Your year of watching"), util.url_for(action="year")),
@@ -392,6 +415,45 @@ def cast(handle, params):
 
 
 def list_titles(handle, params):
+    """A list of titles. A row on Home (&widget=1) is served from its saved copy at once and refreshed after."""
+    import widgets
+    name = params.get("name", "")
+    if name == "service_row":
+        import services
+        return send(handle, services.tiles())
+    if name == "service_catalog":
+        import services
+        return send(handle, services.catalog_tiles())
+    if name in ("lib_newseasons", "lib_newepisodes"):
+        import librows
+        return librows.send_row(handle, name)
+    page = int(params.get("page") or 1)
+    import hide
+    cached = widgets.get(params) if widgets.wanted(params) else None
+    if cached:
+        send_titles(handle, hide.keep(cached.get("titles") or [], name), cached.get("content") or "")
+        if widgets.is_old(params, cached):
+            try:
+                titles, content, _more = gather(params)
+            except Exception as error:      # noqa: BLE001 - the copy stays; try again next time
+                util.log("row %s not refreshed: %s" % (name, type(error).__name__))
+                return None
+            changed = not widgets.same(cached, titles, content)
+            if titles or not cached.get("titles"):
+                widgets.put(params, titles, content)
+            if changed and titles:
+                widgets.bump()
+        return None
+    titles, content, more = gather(params)
+    if widgets.wanted(params) and titles:
+        widgets.put(params, titles, content)
+    next_url = util.url_for(**dict(params, page=page + 1)) if more and params.get("widget") != "1" else None     # a Home row has no next page
+    send_titles(handle, hide.keep(titles, name), content, next_url)
+    return None
+
+
+def gather(params):
+    """(titles, content, more pages?) of one list."""
     name = params.get("name", "")
     page = int(params.get("page") or 1)
     more = False
@@ -424,9 +486,9 @@ def list_titles(handle, params):
     elif name == "alerts":
         import alerts
         titles = alerts.titles()
-    elif name == "service_row":
-        import services
-        return send(handle, services.tiles())
+    elif name.startswith("kompas"):
+        import kompas
+        titles = kompas.row_titles(name, params)
     elif name == "service_list":
         import services
         titles, more = services.titles(params["provider"], params.get("kind", "newmovie"), page)
@@ -475,8 +537,7 @@ def list_titles(handle, params):
         content = "tvshows"
     elif titles and all(t["kind"] == "episode" for t in titles):
         content = "episodes"
-    next_url = util.url_for(**dict(params, page=page + 1)) if more and params.get("widget") != "1" else None     # a Home row has no next page
-    send_titles(handle, titles, content, next_url)
+    return titles, content, more
 
 
 def search(handle, params):
@@ -523,11 +584,15 @@ def _meta_for(params):
 
 def set_watched(params):
     tracker.set_watched(_meta_for(params), params.get("value") == "1")
+    import widgets
+    widgets.mark_old(account_only=True)
     xbmc.executebuiltin("Container.Refresh")
 
 
 def set_watchlist(params):
     tracker.set_watchlist(_meta_for(params), params.get("value") == "1")
+    import widgets
+    widgets.mark_old(account_only=True)
     util.notify(T("Kijklijst bijgewerkt", "Watchlist updated"))
 
 
@@ -538,7 +603,57 @@ def title(handle, params):
     send_titles(handle, [meta] if meta else [], "movies" if kind == "movie" else "tvshows")
 
 
-SECTIONS = {"general": -100, "account": -99, "trakt": -99, "sources": -98, "conn": -98, "play": -97, "library": -96, "services": -95}
+SECTIONS = {"general": -100, "account": -99, "trakt": -99, "sources": -98, "conn": -98, "play": -97, "subs": -96, "skip": -95,
+            "library": -94, "services": -93}
+SUBTITLE_ACTIONS = ("subtitles", "subs_auto", "subs_background", "subs_prefetch", "subs_key", "subs_mode", "subs_audio", "subs_default",
+                    "subs_settings", "skip_settings", "subs_setup", "skip_setup", "skip_install", "skip_auto", "skip_choose")
+
+
+def _once(name, job):
+    """Only one at a time (the service and Kodi's search can ask within seconds)."""
+    if util.HOME.getProperty(name):
+        return None
+    util.HOME.setProperty(name, "1")
+    try:
+        return job()
+    finally:
+        util.HOME.clearProperty(name)
+
+
+def subtitle_action(action):
+    """Subtitles, spoken language and skip intro (taken over from the Lucent skin)."""
+    import subs_live
+    if action == "subtitles":
+        return subs_live.open_once(auto=False)
+    if action == "subs_auto":
+        return subs_live.open_once(auto=True)
+    if action == "subs_background":
+        return _once("lucent.subs.bg", subs_live.background)
+    if action == "subs_prefetch":
+        import subs_extra
+        return _once("lucent.subs.prefetch", subs_extra.prefetch)
+    if action == "subs_key":
+        return subs_live.enter_key()
+    if action == "subs_mode":
+        return subs_live.choose_mode()
+    if action == "subs_audio":
+        return subs_live.choose_audio()
+    if action == "subs_default":
+        import subwatch
+        return subwatch.set_default()
+    if action in ("subs_settings", "skip_settings"):
+        return open_settings({"section": action.split("_")[0]})
+    import subsetup
+    if action == "skip_install":
+        return subsetup.install_skip()
+    if action == "skip_auto":
+        subsetup.toggle_skip_auto()
+        return util.notify(subsetup.skip_state())
+    if action == "skip_choose":
+        import skipdup
+        skipdup.choose()
+        return subsetup.subconf.publish()
+    return subsetup.wizard(action.split("_")[0])
 
 
 def open_settings(params):
@@ -565,7 +680,7 @@ def test():
     xbmcgui.Dialog().ok("AIOStreams" if ok else T("Niet gelukt", "Failed"), text)
 
 
-FOLDERS = {"": home, "menu": menu, "tools": tools, "studios": studios, "decades": decades, "awards": awards, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
+FOLDERS = {"kompasmenu": kompas_menu, "": home, "menu": menu, "tools": tools, "studios": studios, "decades": decades, "awards": awards, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
            "searchmenu": search_menu, "cast": cast, "publiclists": public_lists, "floppylists": floppy_lists, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
 
 
@@ -574,6 +689,9 @@ def run(argv):
     params = dict(urllib.parse.parse_qsl((argv[2] if len(argv) > 2 else "").lstrip("?")))
     action = params.get("action", "")
     try:
+        if action in ("play", "seasons") and params.get("tmdb"):
+            import kompas
+            kompas.opened(params.get("type") or "tvshow", params["tmdb"])
         if action == "play":
             return player.play(params, handle)
         if action == "auth_trakt":
@@ -681,6 +799,28 @@ def run(argv):
             if trakt.choose_library() and xbmcgui.Dialog().yesno("Lucent", T("Bibliotheek nu bijwerken?", "Update the library now?")):
                 return library.run(manual=True)
             return None
+        if action == "formatcheck":
+            import formatcheck
+            return formatcheck.open_check()
+        if action in SUBTITLE_ACTIONS:
+            return subtitle_action(action)
+        if action == "hide_languages":
+            import hide
+            return hide.choose()
+        if action == "widgets_refresh":
+            import widgets
+            return widgets.refresh_all()
+        if action == "library_add":
+            return library.add_one(params.get("type", "movie"), params["tmdb"])
+        if action == "library_remove":
+            return library.remove_one(params.get("type", "movie"), params["tmdb"])
+        if action == "library_skip":
+            return library.skip(params["tmdb"], params["season"], params.get("episode"))
+        if action == "library_status":
+            return library.publish_counts()
+        if action.startswith("kompas_"):
+            import kompas
+            return kompas.action(action, params)
         if action == "library_sync":
             return library.run(manual=True)
         if action == "clear_cache":

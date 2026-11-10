@@ -85,10 +85,15 @@ def call(path, data=None, method=None, auth=True, retry=True):
         raise
 
 
+PAGED = ("sync/watched/movies", "sync/watched/shows", "sync/playback")
+
+
 def cached(path, ttl=300):
+    """A Trakt answer kept for a few minutes. Watched lists and playback are read page by page: Trakt gives at
+    most 100 items per request, so with only the first page most of your history was missing."""
     value = util.cache_get("trakt" + path, ttl)
     if value is None:
-        value = call(path)[0]
+        value = all_pages(path, limit=1000) if path in PAGED else call(path)[0]
         util.cache_set("trakt" + path, value)
     return value
 
@@ -207,6 +212,29 @@ def library_rows(kind):
             row.setdefault("collected_at", row.get("listed_at"))
             out.append(row)
     return out
+
+
+def library_list(meta, add):
+    key = "movies" if meta["kind"] == "movie" else "shows"
+    body = {key: [{"ids": {"tmdb": int(meta["tmdb"])}}]}
+    chosen = library_sources()
+    end = "" if add else "/remove"
+    done = False
+    if chosen["collection"]:
+        call("sync/collection" + end, data=body)
+        done = True
+    if chosen["watchlist"] and not (add and done):
+        call("sync/watchlist" + end, data=body)
+        done = True
+    for owner, list_id, _name in chosen["lists"]:
+        if add and done:
+            break
+        if str(owner) in ("me", account().get("user", "")):
+            call("users/me/lists/%s/items%s" % (list_id, end), data=body)
+            done = True
+    if add and not done:                 # the library follows nothing you can add to: use the collection
+        call("sync/collection", data=body)
+    forget_lists()
 
 
 def choose_library():

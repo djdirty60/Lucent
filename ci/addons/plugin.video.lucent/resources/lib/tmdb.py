@@ -75,6 +75,30 @@ def _mpaa(raw, movie):
     return ""
 
 
+def _digital(raw):
+    """The first day a film could be streamed, rented or bought (digital, disc or TV release), as YYYY-MM-DD.
+    Without such a date: the cinema date plus 120 days, because older films often have no digital date on TMDB."""
+    found, cinema = [], []
+    for country in (raw.get("release_dates") or {}).get("results") or []:
+        for entry in country.get("release_dates") or []:
+            day = (entry.get("release_date") or "")[:10]
+            if not day:
+                continue
+            if entry.get("type") in (4, 5, 6):
+                found.append(day)
+            elif entry.get("type") in (2, 3):
+                cinema.append(day)
+    if found:
+        return min(found)
+    first = min(cinema) if cinema else (raw.get("release_date") or "")
+    if not first:
+        return ""
+    try:
+        return (datetime.date.fromisoformat(first) + datetime.timedelta(days=120)).isoformat()
+    except ValueError:
+        return ""
+
+
 def _trailer(raw):
     videos = [v for v in (raw.get("videos") or {}).get("results") or [] if v.get("site") == "YouTube" and v.get("key")]
     videos.sort(key=lambda v: v.get("type") != "Trailer")
@@ -125,6 +149,8 @@ def details(kind, tmdb_id):
         "mpaa": _mpaa(raw, movie),
         "trailer": _trailer(raw),
         "set": (raw.get("belongs_to_collection") or {}).get("name") or "",
+        "lang": raw.get("original_language") or "",
+        "digital": _digital(raw) if movie else date,
         "cast": [{"id": c.get("id"), "name": c["name"], "role": c.get("character") or "", "thumb": image(c.get("profile_path"), "w185")}
                  for c in crew.get("cast") or []][:25],
         "directors": [c["name"] for c in crew.get("crew") or [] if c.get("job") == "Director"],

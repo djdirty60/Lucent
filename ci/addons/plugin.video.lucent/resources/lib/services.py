@@ -5,8 +5,11 @@ Rows for the skin (all with &widget=1):
   action=list&name=service_row                         the services as tiles; a click opens the service
   action=list&name=service_list&provider=<id>&kind=<k>  k: newmovie newtv popmovie poptv topmovie toptv
 
-The services are the ones chosen in the skin (Lucent Library's services.json) when there is such a choice, otherwise
-Lucent's standard list. A service your country does not have (Hulu, Peacock ... outside the US) is read for the US.
+  action=list&name=service_catalog                     every service of your country (and the US), for the skin's editor:
+                                                       properties provider_id, provider_name and logo_path
+
+The services are the ones chosen in the skin: first addon_data/plugin.video.lucent/services.json, then Lucent Library's
+old services.json; without a choice Lucent's standard list. A service your country does not have (Hulu, Peacock ... outside the US) is read for the US.
 """
 import os
 import time
@@ -22,6 +25,7 @@ T = util.T
 FILE = "providers.json"
 VERSION = 1
 KEEP = 7 * 86400
+OWN_CHOICE = "special://profile/addon_data/plugin.video.lucent/services.json"
 LIBRARY_CHOICE = "special://profile/addon_data/script.lucent.library/tmdb/services.json"
 SKIN_ART = "special://skin/media/services/"
 PACKS = {"white": "resource.images.studios.white", "coloured": "resource.images.studios.coloured"}
@@ -126,13 +130,17 @@ def wide_logo(name, key=""):
 
 
 def _chosen_in_skin():
-    try:
-        with open(xbmcvfs.translatePath(LIBRARY_CHOICE), encoding="utf-8") as handle:
-            import json
-            own = json.load(handle).get("items") or []
-    except (OSError, ValueError):
-        return []
-    return [p for p in own if not p.get("off") and p.get("id")]
+    """{"items": [{id, name, logo, region, key, off, image?}]} written by the skin's editor; an empty file is no choice."""
+    import json
+    for path in (OWN_CHOICE, LIBRARY_CHOICE):
+        try:
+            with open(xbmcvfs.translatePath(path), encoding="utf-8") as handle:
+                own = json.load(handle).get("items") or []
+        except (OSError, ValueError, AttributeError):
+            continue
+        if own:
+            return [p for p in own if not p.get("off") and p.get("id")]
+    return []
 
 
 def chosen():
@@ -225,3 +233,37 @@ def open_service(params):
                             % (quote(params.get("provider")), quote(params.get("name")), quote(params.get("logo"))))
         return
     xbmc.executebuiltin("ActivateWindow(Videos,%s,return)" % util.url_for(action="service", provider=params.get("provider"), name=params.get("name")))
+
+
+def catalog():
+    """[{id, name, logo, region}] of every service in your country, then the US ones your country does not have."""
+    region = tmdb.region()
+    out, names = [], set()
+    for country in ([region, "US"] if region != "US" else ["US"]):
+        try:
+            rows = sorted(_catalog(country).values(), key=lambda r: (r.get("display_priorities") or {}).get(country, r.get("display_priority", 999)))
+        except util.HttpError:
+            continue
+        for row in rows:
+            name = row["provider_name"].strip()
+            if name.lower() in names:
+                continue
+            names.add(name.lower())
+            out.append({"id": row["provider_id"], "name": name, "logo": row["logo_path"], "region": country})
+    return out
+
+
+def catalog_tiles():
+    import xbmcgui
+    rows = []
+    for entry in catalog():
+        logo = tmdb.image(entry["logo"], "w500")
+        item = xbmcgui.ListItem(entry["name"], offscreen=True)
+        item.setLabel2(entry["region"])
+        item.setArt({"icon": logo, "thumb": logo, "poster": logo})
+        for key, value in (("provider_id", str(entry["id"])), ("provider_name", entry["name"]), ("logo_path", entry["logo"]),
+                           ("provider_region", entry["region"]), ("provider_key", key_of(entry["name"]))):
+            item.setProperty(key, value)
+        item.setProperty("IsPlayable", "false")
+        rows.append((util.url_for(action="service_open", provider=entry["id"], name=entry["name"]), item, False))
+    return rows

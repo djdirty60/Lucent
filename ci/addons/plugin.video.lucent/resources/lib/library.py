@@ -30,6 +30,7 @@ SHOWS_SPECIAL = "special://profile/addon_data/%s/library/tvshows/" % util.ADDON_
 MOVIES = xbmcvfs.translatePath(MOVIES_SPECIAL)
 SHOWS = xbmcvfs.translatePath(SHOWS_SPECIAL)
 FOLDERS = "library_folders.json"
+SKIPS = "library_skip.json"
 MISSING = "library_missing.json"
 LAST = "library_last.json"
 LOCK = os.path.join(util.PROFILE, "library.lock")
@@ -192,6 +193,20 @@ def remove_gone(kind, base, wanted, total, manual):
     return removed, held
 
 
+def write_movie(tmdb_id, meta, folder, added):
+    path = os.path.join(MOVIES, folder)
+    os.makedirs(path, exist_ok=True)
+    strm = util.url_for(action="play", type="movie", tmdb=tmdb_id, lib=1) + "\n"
+    changed = write_if_changed(os.path.join(path, folder + ".strm"), strm)
+    nfo = os.path.join(path, folder + ".nfo")
+    existed = os.path.exists(nfo)
+    if write_if_changed(nfo, movie_nfo(meta, added)):
+        changed += 1
+        if existed:
+            REFRESH.add(path)
+    return changed
+
+
 def export_movies(manual, folders):
     collection = tracker.library_rows("movies")
     metas = {}
@@ -208,17 +223,7 @@ def export_movies(manual, folders):
         meta = metas.get(tmdb_id)
         if not meta:                     # TMDB failed: leave what is there and try again next time
             continue
-        folder = names[tmdb_id]
-        path = os.path.join(MOVIES, folder)
-        os.makedirs(path, exist_ok=True)
-        strm = util.url_for(action="play", type="movie", tmdb=tmdb_id, lib=1) + "\n"
-        changed += write_if_changed(os.path.join(path, folder + ".strm"), strm)
-        nfo = os.path.join(path, folder + ".nfo")
-        existed = os.path.exists(nfo)
-        if write_if_changed(nfo, movie_nfo(meta, stamp(row.get("collected_at")))):
-            changed += 1
-            if existed:
-                REFRESH.add(path)
+        changed += write_movie(tmdb_id, meta, names[tmdb_id], stamp(row.get("collected_at")))
     removed, held = remove_gone("movies", MOVIES, wanted, len(collection), manual)
     return len(collection), changed, removed, held
 
@@ -238,6 +243,42 @@ def _load_show(row):
     return tmdb_id, show, seasons
 
 
+def kept_out(skips, tmdb_id, season, episode):
+    entry = skips.get(str(tmdb_id)) or {}
+    return int(season) in entry.get("seasons", []) or "%d:%d" % (int(season), int(episode)) in entry.get("episodes", [])
+
+
+def write_show(tmdb_id, show, episodes, folder, added, skips):
+    changed = 0
+    root = os.path.join(SHOWS, folder)
+    os.makedirs(root, exist_ok=True)
+    existed = os.path.exists(os.path.join(root, "tvshow.nfo"))
+    if write_if_changed(os.path.join(root, "tvshow.nfo"), show_nfo(show)):
+        changed += 1
+        if existed:
+            REFRESH.add(root)
+    keep = {"tvshow.nfo"}
+    for raw in episodes:
+        if kept_out(skips, tmdb_id, raw["season_number"], raw["episode_number"]):
+            continue
+        season_dir = "Season %02d" % raw["season_number"]
+        name = "%s - S%02dE%02d" % (folder, raw["season_number"], raw["episode_number"])
+        os.makedirs(os.path.join(root, season_dir), exist_ok=True)
+        strm = util.url_for(action="play", type="episode", tmdb=tmdb_id, season=raw["season_number"],
+                            episode=raw["episode_number"], lib=1) + "\n"
+        changed += write_if_changed(os.path.join(root, season_dir, name + ".strm"), strm)
+        changed += write_if_changed(os.path.join(root, season_dir, name + ".nfo"), episode_nfo(show, raw, added))
+        keep |= {os.path.join(season_dir, name + ".strm"), os.path.join(season_dir, name + ".nfo")}
+    if show.get("complete"):         # only tidy up when every season came back
+        for directory, _subdirs, files in os.walk(root):
+            for file_name in files:
+                full = os.path.join(directory, file_name)
+                if os.path.relpath(full, root) not in keep and file_name.endswith((".strm", ".nfo")):
+                    os.remove(full)
+                    changed += 1
+    return changed
+
+
 def export_shows(manual, folders):
     collection = tracker.library_rows("shows")
     with ThreadPoolExecutor(max_workers=6) as pool:
@@ -245,37 +286,13 @@ def export_shows(manual, folders):
     rows = [(str(r["show"]["ids"]["tmdb"]), r["show"].get("title") or "serie", r["show"].get("year")) for r in collection]
     names = plan("show", rows, folders)
     wanted, changed = set(names.values()), 0
+    skips = util.load_json(SKIPS, {})
     for row in collection:
         tmdb_id = str(row["show"]["ids"]["tmdb"])
         show, episodes = loaded.get(tmdb_id, (None, []))
         if not show:
             continue
-        folder = names[tmdb_id]
-        root = os.path.join(SHOWS, folder)
-        os.makedirs(root, exist_ok=True)
-        existed = os.path.exists(os.path.join(root, "tvshow.nfo"))
-        if write_if_changed(os.path.join(root, "tvshow.nfo"), show_nfo(show)):
-            changed += 1
-            if existed:
-                REFRESH.add(root)
-        keep = {"tvshow.nfo"}
-        added = stamp(row.get("last_collected_at"))
-        for raw in episodes:
-            season_dir = "Season %02d" % raw["season_number"]
-            name = "%s - S%02dE%02d" % (folder, raw["season_number"], raw["episode_number"])
-            os.makedirs(os.path.join(root, season_dir), exist_ok=True)
-            strm = util.url_for(action="play", type="episode", tmdb=tmdb_id, season=raw["season_number"],
-                                episode=raw["episode_number"], lib=1) + "\n"
-            changed += write_if_changed(os.path.join(root, season_dir, name + ".strm"), strm)
-            changed += write_if_changed(os.path.join(root, season_dir, name + ".nfo"), episode_nfo(show, raw, added))
-            keep |= {os.path.join(season_dir, name + ".strm"), os.path.join(season_dir, name + ".nfo")}
-        if show.get("complete"):         # only tidy up when every season came back
-            for directory, _subdirs, files in os.walk(root):
-                for file_name in files:
-                    full = os.path.join(directory, file_name)
-                    if os.path.relpath(full, root) not in keep and file_name.endswith((".strm", ".nfo")):
-                        os.remove(full)
-                        changed += 1
+        changed += write_show(tmdb_id, show, episodes, names[tmdb_id], stamp(row.get("last_collected_at")), skips)
     removed, held = remove_gone("shows", SHOWS, wanted, len(collection), manual)
     return len(collection), changed, removed, held
 
@@ -508,6 +525,7 @@ def run(manual=False):
         finally:
             if progress:
                 progress.close()
+    publish_counts()
     xbmc.executebuiltin("Container.Refresh")
     if manual:
         if missing_sources:
@@ -537,3 +555,170 @@ def publish_status():
 def due():
     hours = util.number("library_hours", 12)
     return util.flag("library_on") and time.time() - util.load_json(LAST, {}).get("at", 0) >= hours * 3600
+
+
+# ------------------------------------------------------------------ one title at a time (the skin's 'In your library')
+_OURS = {"at": None, "set": set()}
+
+
+def ours():
+    """{'movie:<tmdb>', 'show:<tmdb>'} of the titles that have a folder in Lucent Video's library."""
+    try:
+        stamp_now = os.path.getmtime(os.path.join(util.PROFILE, FOLDERS))
+    except OSError:
+        return set()
+    if _OURS["at"] != stamp_now:
+        found = set()
+        for key, folder in util.load_json(FOLDERS, {}).items():
+            base = MOVIES if key.startswith("movie:") else SHOWS
+            if os.path.isdir(os.path.join(base, folder)):
+                found.add(key)
+        _OURS.update(at=stamp_now, set=found)
+    return _OURS["set"]
+
+
+def has(kind, tmdb_id):
+    return ("movie:%s" if kind == "movie" else "show:%s") % tmdb_id in ours()
+
+
+def _touch_folders():
+    path = os.path.join(util.PROFILE, FOLDERS)
+    if os.path.exists(path):
+        os.utime(path, None)
+
+
+def _make_scannable(special, word, content):
+    path = source_path(special)
+    if path:
+        return path
+    import libsources
+    scannable, _changed = libsources.ensure(special, "Lucent Video %s" % word, content)
+    return special if scannable else ""
+
+
+def add_one(kind, tmdb_id):
+    """In your account's library list and at once in the Kodi library: files written, that one folder scanned."""
+    movie = kind == "movie"
+    if not tmdb.key():
+        return xbmcgui.Dialog().ok("Lucent", T("Vul eerst je TMDB-sleutel in.", "Enter your TMDB key first."))
+    util.OVERRIDE_USER = users.MAIN            # the library follows the first profile
+    try:
+        meta = tmdb.details("movie" if movie else "tvshow", tmdb_id)
+        if not meta:
+            return util.notify(T("Ophalen is niet gelukt", "Could not load this"))
+        try:
+            tracker.library_list(meta, True)
+        except util.HttpError as error:
+            util.log("library add: account %s" % error)
+            return util.notify(T("Je account is niet bereikbaar, probeer het later nog eens", "Your account cannot be reached, try again later"))
+        folders = util.load_json(FOLDERS, {})
+        prefix = "movie" if movie else "show"
+        name = plan(prefix, [(str(tmdb_id), meta["title"], meta.get("year"))], folders)[str(tmdb_id)]
+        os.makedirs(MOVIES if movie else SHOWS, exist_ok=True)
+        if movie:
+            write_movie(str(tmdb_id), meta, name, time.strftime("%Y-%m-%d %H:%M:%S"))
+        else:
+            _id, show, episodes = _load_show({"show": {"ids": {"tmdb": tmdb_id}}})
+            if not show:
+                return util.notify(T("Ophalen is niet gelukt", "Could not load this"))
+            write_show(str(tmdb_id), show, episodes, name, time.strftime("%Y-%m-%d %H:%M:%S"), util.load_json(SKIPS, {}))
+        util.save_json(FOLDERS, folders)
+    finally:
+        util.OVERRIDE_USER = None
+    _OURS["at"] = None
+    if not util.flag("library_on"):
+        util.ADDON.setSetting("library_on", "true")
+    util.notify(T("In je bibliotheek: %s", "In your library: %s") % meta["title"])
+    special, word, content = (MOVIES_SPECIAL, T("Films", "Movies"), "movies") if movie else (SHOWS_SPECIAL, T("Series", "TV shows"), "tvshows")
+    root = _make_scannable(special, word, content)
+    if root:
+        scan(root.rstrip("/") + "/" + name + "/")
+    else:
+        xbmcgui.Dialog().textviewer("Lucent", HOW_TO % (special, word))
+    publish_counts()
+    xbmc.executebuiltin("Container.Refresh")
+    return True
+
+
+def _remove_from_kodi(folder_path):
+    """Takes the titles in this folder out of Kodi's library."""
+    real = os.path.normcase(os.path.normpath(folder_path))
+    calls = []
+    for method, key, id_name, remove in (("VideoLibrary.GetMovies", "movies", "movieid", "VideoLibrary.RemoveMovie"),
+                                         ("VideoLibrary.GetTVShows", "tvshows", "tvshowid", "VideoLibrary.RemoveTVShow"),
+                                         ("VideoLibrary.GetEpisodes", "episodes", "episodeid", "VideoLibrary.RemoveEpisode")):
+        for item in rpc(method, {"properties": ["file"]}).get(key, []):
+            path = os.path.normcase(os.path.normpath(xbmcvfs.translatePath(item.get("file", ""))))
+            if util.ADDON_ID in path and (path == real or path.startswith(real + os.sep)):
+                calls.append((remove, {id_name: item[id_name]}))
+    rpc_batch(calls)
+
+
+def remove_one(kind, tmdb_id):
+    movie = kind == "movie"
+    meta = tmdb.details("movie" if movie else "tvshow", tmdb_id) or {"kind": "movie" if movie else "tvshow", "tmdb": str(tmdb_id), "title": ""}
+    if not xbmcgui.Dialog().yesno("Lucent", T("%s uit je bibliotheek halen?", "Remove %s from your library?") % (meta.get("title") or T("Deze titel", "This title"))):
+        return False
+    util.OVERRIDE_USER = users.MAIN
+    try:
+        tracker.library_list(meta, False)
+    except util.HttpError as error:
+        util.log("library remove: account %s" % error)
+        return util.notify(T("Je account is niet bereikbaar, er is niets gewijzigd", "Your account cannot be reached, nothing was changed"))
+    finally:
+        util.OVERRIDE_USER = None
+    folder = util.load_json(FOLDERS, {}).get(("movie:%s" if movie else "show:%s") % tmdb_id)
+    if folder:
+        path = os.path.join(MOVIES if movie else SHOWS, folder)
+        shutil.rmtree(path, ignore_errors=True)
+        _remove_from_kodi(path)
+        _touch_folders()
+    _OURS["at"] = None
+    util.notify(T("Uit je bibliotheek gehaald", "Removed from your library"))
+    publish_counts()
+    xbmc.executebuiltin("Container.Refresh")
+    return True
+
+
+def skip(tmdb_id, season, episode=None):
+    """One episode or a whole season stays out of the library for good (nothing changes on the account)."""
+    skips = util.load_json(SKIPS, {})
+    entry = skips.setdefault(str(tmdb_id), {"seasons": [], "episodes": []})
+    season = int(season)
+    if episode not in (None, ""):
+        entry["episodes"] = sorted(set(entry["episodes"]) | {"%d:%d" % (season, int(episode))})
+    else:
+        entry["seasons"] = sorted(set(entry["seasons"]) | {season})
+    util.save_json(SKIPS, skips)
+    folder = util.load_json(FOLDERS, {}).get("show:%s" % tmdb_id)
+    if folder:
+        season_dir = os.path.join(SHOWS, folder, "Season %02d" % season)
+        if episode in (None, ""):
+            shutil.rmtree(season_dir, ignore_errors=True)
+            _remove_from_kodi(season_dir)
+        else:
+            base = os.path.join(season_dir, "%s - S%02dE%02d" % (folder, season, int(episode)))
+            for end in (".strm", ".nfo"):
+                try:
+                    os.remove(base + end)
+                except OSError:
+                    pass
+            _remove_from_kodi(base + ".strm")
+    util.notify(T("Blijft voortaan uit je bibliotheek", "Stays out of your library from now on"))
+    publish_counts()
+    xbmc.executebuiltin("Container.Refresh")
+
+
+def publish_counts():
+    """Home properties lucent.video.lib.movies / .shows / .episodes / .last for the skin's settings."""
+    try:
+        films = [m for m in rpc("VideoLibrary.GetMovies", {"properties": ["file"]}).get("movies", []) if _ours(m)]
+        shows = [s for s in rpc("VideoLibrary.GetTVShows", {"properties": ["file"]}).get("tvshows", []) if util.ADDON_ID in s.get("file", "")]
+        episodes = [e for e in rpc("VideoLibrary.GetEpisodes", {"properties": ["file"]}).get("episodes", []) if _ours(e)]
+    except (ValueError, RuntimeError):
+        return
+    last = util.load_json(LAST, {}).get("at")
+    util.HOME.setProperty("lucent.video.lib.movies", str(len(films)))
+    util.HOME.setProperty("lucent.video.lib.shows", str(len(shows)))
+    util.HOME.setProperty("lucent.video.lib.episodes", str(len(episodes)))
+    util.HOME.setProperty("lucent.video.lib.last", time.strftime("%d-%m-%Y %H:%M", time.localtime(last)) if last else "")

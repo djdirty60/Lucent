@@ -272,6 +272,20 @@ def library_rows(kind):
     return out
 
 
+def library_list(meta, add):
+    """Simkl has no collection: the library follows everything except 'dropped'. In = plan to watch (when it is not in
+    your lists yet), out = dropped."""
+    bucket = "movies" if meta["kind"] == "movie" else "shows"
+    if add:
+        known = {_id(e): r.get("status") for r, e in _rows(_library(), bucket)}
+        if known.get(str(meta["tmdb"])) not in (None, "dropped"):
+            return
+        call("sync/add-to-list", data={bucket: [{"to": "plantowatch", "ids": _ids(meta)}]})
+    else:
+        call("sync/add-to-list", data={bucket: [{"to": "dropped", "ids": _ids(meta)}]})
+    forget_lists()
+
+
 def _ids(meta):
     out = {"tmdb": str(meta["tmdb"])}
     if meta.get("imdb"):

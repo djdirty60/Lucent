@@ -203,6 +203,17 @@ def set_watchlist(meta, add):
     util.save_json(LISTED, ([entry] + listed) if add else listed)
 
 
+def library_list(meta, add):
+    """Puts one title in (or takes it out of) what the Kodi library follows: the Trakt collection (or the watchlist or
+    a chosen list), the Simkl list, or this device's watchlist."""
+    account = active()
+    if account:
+        account.library_list(meta, add)
+    else:
+        set_watchlist(meta, add)
+    util.cache_drop("nextup")
+
+
 def library_rows(kind):
     """kind: movies or shows. What belongs in the Kodi library, with title and year."""
     account = active()

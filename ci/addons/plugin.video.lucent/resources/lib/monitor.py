@@ -47,6 +47,7 @@ class Watcher(xbmc.Player):
             threading.Thread(target=tracker.scrobble, args=(state, meta, value, self.position, self.total), daemon=True).start()
 
     def onAVStarted(self):
+        util.HOME.clearProperty("lucent.video.memory")
         raw = util.HOME.getProperty(player.HANDOFF)
         if not raw:
             self.current = None
@@ -65,13 +66,14 @@ class Watcher(xbmc.Player):
             self.seekTime(float(now["resume"]))
             self.position = float(now["resume"])
         self._scrobble("start")
-        threading.Thread(target=self._subtitles, args=(now,), daemon=True).start()
         self.streams = None
         threading.Thread(target=self._series_streams, args=(now,), daemon=True).start()
 
     def _series_streams(self, meta):
         import streammem
         import introskip
+        if streammem.has_memory(meta):
+            util.HOME.setProperty("lucent.video.memory", "1")      # the general language rules (subwatch.py) step aside
         try:
             introskip.prepare(meta)
         except Exception as error:      # noqa: BLE001
@@ -109,14 +111,6 @@ class Watcher(xbmc.Player):
         if not player.resume_elsewhere(meta, position, lighter=True):
             util.notify(util.T("Geen lichtere versie gevonden", "No lighter version found"))
 
-    def _subtitles(self, meta):
-        import subs
-        if not xbmc.Monitor().waitForAbort(4) and self.current is meta:
-            try:
-                subs.check(self, meta)
-            except Exception as error:      # never break playback
-                util.log("subtitle check: %s" % type(error).__name__)
-
     def onPlayBackPaused(self):
         self._scrobble("pause")
 
@@ -153,6 +147,11 @@ class Watcher(xbmc.Player):
         libwatch.played(meta)
         libwatch.sync_soon()
         tracker.forget_lists()
+        import widgets
+        threading.Timer(15, widgets.mark_old, args=(True,)).start()     # the account knows it a few seconds later
+        if percent >= WATCHED_AT and meta.get("kind") == "movie":
+            import kompas
+            kompas.after_film(meta)
         xbmc.executebuiltin("Container.Refresh")
 
     def play_next(self, meta):
@@ -294,17 +293,80 @@ class Events(xbmc.Monitor):
                 util.log("library event: %s" % type(error).__name__)
 
 
+class SubtitleJobs:
+    """Subtitles, spoken language and skip intro for every video (taken over from the Lucent skin)."""
+
+    def __init__(self):
+        import subconf
+        import subwatch
+        self.swap_at = 0.0
+        for job in (subconf.migrate, self.switch_once, subconf.publish):
+            try:
+                job()
+            except Exception as error:      # noqa: BLE001 - the service must start anyway
+                util.log("subtitles start: %s" % type(error).__name__)
+        self.watcher = subwatch.Watcher()      # a player listener: looks when any video starts
+
+    @staticmethod
+    def switch_once():
+        import subwatch
+        if util.setting("subs_switched") != "true" and xbmc.getCondVisibility("System.HasAddon(service.subtitles.lucent)"):
+            subwatch.switch_once()
+
+    def swap(self):
+        """Kodi's own subtitle search opened (for example by another add-on's auto-search): Lucent's list instead."""
+        import subconf
+        now = time.time()
+        if now - self.swap_at < 8 or not xbmc.getCondVisibility("Window.IsActive(subtitlesearch)"):
+            return
+        if subconf.on("lucent.subs.native.off") or not xbmc.getCondVisibility("Player.HasVideo"):
+            return
+        self.swap_at = now
+        xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
+        try:
+            started = float(util.HOME.getProperty("lucent.play.start") or 0)
+        except ValueError:
+            started = 0
+        if subconf.text("lucent.subs.mode") == "background" and now - started < 90:
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=subs_background)")
+            util.log("Kodi's subtitle search -> Lucent background pick")
+        else:
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=subs_auto)")
+            util.log("Kodi's subtitle search -> Lucent live list")
+
+    def tick(self, seconds, playing):
+        try:
+            self.swap()
+            if seconds % 3600 == 1800 and not playing:
+                import subs_extra
+                threading.Thread(target=subs_extra.check_wanted, daemon=True).start()
+            if seconds % 600 == 300 and not playing and xbmc.getCondVisibility(
+                    "System.HasAddon(plugin.video.seren) + System.HasAddon(plugin.video.tidb) + Window.IsVisible(home)"):
+                import skipdup
+                util.log("skip twice: %s" % skipdup.check())
+                import subconf
+                subconf.publish()
+        except Exception as error:      # noqa: BLE001
+            util.log("subtitle jobs: %s" % type(error).__name__)
+
+
 def run():
     monitor = Events()
     watcher = Watcher()
     seconds = 0
     library.publish_status()
+    threading.Thread(target=library.publish_counts, daemon=True).start()
+    import kompas
+    kompas.publish()
+    subtitle_jobs = SubtitleJobs()
     while not monitor.waitForAbort(1):
         seconds += 1
         try:
             watcher.tick()
             if remote.wanted():
                 remote.start()
+            remote.tidy()
+            subtitle_jobs.tick(seconds, watcher.isPlayingVideo())
             # first check two minutes after starting, then every minute; never during a video
             if seconds >= 120 and seconds % 60 == 0 and not watcher.isPlaying() and library.due():
                 threading.Thread(target=library.run, daemon=True).start()
@@ -314,6 +376,8 @@ def run():
                 threading.Thread(target=newseason.run, daemon=True).start()
             if seconds >= 240 and seconds % 60 == 0 and not watcher.isPlaying() and prefetch.due():
                 threading.Thread(target=prefetch.run, daemon=True).start()
+            if seconds >= 150 and seconds % 600 == 150 and not watcher.isPlaying() and kompas.due():
+                threading.Thread(target=kompas.run, daemon=True).start()
             if seconds >= 300 and seconds % 300 == 0 and not watcher.isPlaying() and alerts.due():
                 threading.Thread(target=alerts.run, daemon=True).start()
         except Exception as error:  # noqa: BLE001  a failing tick must never stop the service

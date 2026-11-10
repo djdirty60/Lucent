@@ -26,7 +26,7 @@ def fill_tag(item, meta, playcount=None, resume=None, last_played="", default_id
     tag.setMediaType({"movie": "movie", "tvshow": "tvshow", "season": "season", "episode": "episode"}[kind])
     tag.setTitle(_plain(meta.get("title")))
     tag.setPlot(_plain(meta.get("plot")))
-    tag.setTagLine(_plain(meta.get("tagline")))
+    tag.setTagLine(_plain(meta.get("reason") or meta.get("tagline")))
     tag.setMpaa(_plain(meta.get("mpaa")))
     tag.setTrailer(_plain(meta.get("trailer")))
     if meta.get("year"):
@@ -98,6 +98,12 @@ def context(meta, watched):
         entries.append((util.T("Acteurs", "Cast"), "RunPlugin(%s)" % util.url_for(action="cast_popup", type=meta["kind"], tmdb=meta["tmdb"])))
         entries.append((util.T("Vergelijkbare titels", "Similar titles"), "Container.Update(%s)" % util.url_for(
             action="list", name="similar", type=meta["kind"], tmdb=meta["tmdb"])))
+        import library
+        if library.has(meta["kind"], meta["tmdb"]):
+            run(util.T("Uit je bibliotheek halen", "Remove from your library"), action="library_remove", type=meta["kind"], tmdb=meta["tmdb"])
+        else:
+            run(util.T("Toevoegen aan je bibliotheek", "Add to your library"), action="library_add", type=meta["kind"], tmdb=meta["tmdb"])
+        run(util.T("Beoordelen", "Rate"), action="kompas_rate", type=meta["kind"], tmdb=meta["tmdb"])
     return entries
 
 
@@ -109,6 +115,12 @@ def title_item(meta, watched=False, resume=None, last_played="", counts=None):
     fill_tag(item, meta, 1 if watched else 0, resume, last_played)
     item.setProperty("tmdb_id", str(meta["tmdb"]))
     item.setProperty("lucent_video", "1")
+    if kind in ("movie", "tvshow"):
+        import library
+        if library.has(kind, meta["tmdb"]):
+            item.setProperty("lucent_inlibrary", "1")
+    if meta.get("reason"):
+        item.setProperty("kompas_reason", meta["reason"])
     if meta.get("trakt_id"):
         item.setProperty("trakt_id", meta["trakt_id"])
     if meta.get("tmdb_episode"):

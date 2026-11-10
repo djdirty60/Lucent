@@ -33,7 +33,7 @@ let code = params.get("code") || localStorage.getItem("lucent.code") || "";
 const app = document.getElementById("app");
 const esc = s => String(s || "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 function toast(text) { const t = document.getElementById("toast"); t.textContent = text; t.style.display = "block"; setTimeout(() => t.style.display = "none", 2200); }
-async function api(path) { const r = await fetch(path + (path.includes("?") ? "&" : "?") + "code=" + encodeURIComponent(code)); if (r.status === 403) { askCode(); throw new Error("code"); } return r.json(); }
+async function api(path) { const r = await fetch(path + (path.includes("?") ? "&" : "?") + "code=" + encodeURIComponent(code)); if (r.status === 429) { toast(L("Te vaak een foute code. Wacht een minuut.", "Too many wrong codes. Wait a minute.")); throw new Error("wait"); } if (r.status === 403) { askCode(); throw new Error("code"); } return r.json(); }
 function askCode() {
   app.innerHTML = `<h1>Lucent</h1><div class="sub">${L("Vul de code in die op de tv staat.", "Enter the code shown on the TV.")}</div>
     <input id="c" inputmode="numeric" maxlength="4" placeholder="1234"><br><br><button class="btn f" id="go">${L("Verbinden", "Connect")}</button>`;
@@ -67,7 +67,7 @@ async function title(row, back) {
   document.getElementById("back").onclick = () => search(back);
   app.querySelectorAll("[data-w]").forEach(b => b.onclick = async () => {
     const r = await fetch("/api/do", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({code, type: row.type, id: row.id, what: b.dataset.w, title: t.title})});
-    toast(r.ok ? L("Verstuurd naar de tv", "Sent to the TV") : L("Niet gelukt", "Did not work"));
+    toast(r.ok ? L("Verstuurd naar de tv", "Sent to the TV") : r.status === 429 ? L("Te vaak een foute code. Wacht een minuut.", "Too many wrong codes. Wait a minute.") : L("Niet gelukt", "Did not work"));
   });
 }
 if (params.get("code")) { try { localStorage.setItem("lucent.code", code); } catch (e) {} }
