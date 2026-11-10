@@ -89,11 +89,13 @@ def first_working(sources, index):
 
 
 def _first(sources, index):
+    import learn
     for position in range(index, min(index + 5, len(sources))):
         if link_works(sources[position]):
             if position != index:
                 util.notify(util.T("Link werkte niet, volgende bron gekozen", "Link failed, using the next source"))
             return sources[position]
+        learn.record(learn.key(sources[position]), False)
     for source in sources[index:]:
         if scrapers.ready(source):
             return source
@@ -136,10 +138,12 @@ def build(meta, source):
     return item
 
 
-def handoff(meta, resume, source, alternates=None):
+def handoff(meta, resume, source, alternates=None, others=None):
     keep = ("kind", "tmdb", "imdb", "season", "episode", "title", "runtime")
     now = {k: meta.get(k) for k in keep}
-    now.update(resume=resume, started=time.time(), alternates=alternates or [], url=source.get("url"), size=source.get("size") or 0)
+    import learn
+    now.update(resume=resume, started=time.time(), alternates=alternates or [], url=source.get("url"), size=source.get("size") or 0,
+               learn=learn.key(source), together=others or [])
     util.HOME.setProperty(HANDOFF, json.dumps(now))
     return now
 
@@ -187,7 +191,9 @@ def resume_elsewhere(now, position):
         full = full or title_meta(now["kind"], now["tmdb"], now.get("season"), now.get("episode"))
         if not full:
             return False
-        handoff(full, position, source, alternates)
+        handoff(full, position, source, alternates, now.get("together"))
+        import learn
+        learn.record(now.get("learn"), False)          # the one that broke
         util.notify(util.T("Link viel weg, verder met een andere bron", "Link dropped, continuing with another source"))
         xbmc.Player().play(source["url"], build(full, source))
         return True
@@ -247,6 +253,16 @@ def play(params, handle):
             check = tmdb.details("movie" if params["type"] == "movie" else "tvshow", params["tmdb"])
             if not check or not kids.allowed(check):
                 return _fail(handle, util.T("Dit profiel mag deze titel niet kijken", "This profile may not watch this title"))
+    if not autoplay and params.get("select") != "1" and params.get("type") in ("movie", "episode"):
+        import abo
+        try:
+            first_meta = title_meta(params["type"], params["tmdb"], params.get("season") and int(params["season"]), params.get("episode") and int(params["episode"]))
+        except util.HttpError:
+            first_meta = None
+        if first_meta and abo.offer(first_meta):
+            return _fail(handle)
+    import together
+    others = together.ask(params)
     meta, sources = search_with_screen(params)
     if meta is None:
         if sources == "cancelled":
@@ -281,7 +297,7 @@ def play(params, handle):
         return _fail(handle, util.T("Deze bron kon niet worden gestart", "This source could not be started"))
     item = build(meta, source)
     remember_release(meta, source)
-    handoff(meta, resume, source, [s for s in order if s is not source][:4])
+    handoff(meta, resume, source, [s for s in order if s is not source][:4], others)
     util.log("playing %s" % progress_key(meta))
     if handle >= 0:
         xbmcplugin.setResolvedUrl(handle, True, item)

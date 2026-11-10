@@ -134,7 +134,12 @@ USERS = "users.json"
 PER_USER = {"search_history.json", "trakt.json", "simkl.json", "simkl_state.json", "watched.json", "watchlist.json", "progress.json", "last_release.json"}
 
 
+OVERRIDE_USER = None      # set for a moment while marking a title for someone who watched along
+
+
 def current_user():
+    if OVERRIDE_USER:
+        return OVERRIDE_USER
     try:
         with open(os.path.join(PROFILE, USERS), encoding="utf-8") as handle:
             return json.load(handle).get("current") or "main"

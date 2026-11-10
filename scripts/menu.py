@@ -351,6 +351,7 @@ WIDGETS_LV = [                                      # Lucent Video (plugin.video
     (("Collection · Series", "Collectie · Series"), LV + "collection_tv", "poster"),
     (("Calendar · New episodes", "Kalender · Nieuwe afleveringen"), LV + "calendar", "land"),
     (("For you", "Voor jou"), LV + "foryou", "poster"),
+    (("Ready in top quality", "Klaar in topkwaliteit"), LV + "alerts", "land"),
 ]
 
 

@@ -3855,12 +3855,12 @@ def _dir_guarded(path, wait=20):
 
 
 def lucentvideo_test():
-    """Lucent Video 0.18.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
+    """Lucent Video 0.19.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
     out = {"root": _dir_guarded("plugin://plugin.video.lucent/")}
     out["tools"] = _dir_guarded("plugin://plugin.video.lucent/?action=tools")
     out["service_row"] = _dir_guarded("plugin://plugin.video.lucent/?action=list&name=service_row&widget=1", 15)
-    for nm in ("calendar", "foryou", "person&id=287", "trending_movie", "upcoming_movie", "upcoming_tv", "new_tv"):
+    for nm in ("calendar", "foryou", "person&id=287", "trending_movie", "upcoming_movie", "upcoming_tv", "new_tv", "alerts"):
         out["row_" + nm] = _dir_guarded("plugin://plugin.video.lucent/?action=list&widget=1&name=" + nm, 15)
     try:
         import sys as _s

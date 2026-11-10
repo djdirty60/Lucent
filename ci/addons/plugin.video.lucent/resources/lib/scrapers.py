@@ -60,6 +60,8 @@ def ready(source):
 
 def search(meta):
     """Returns (ranked sources, None) or (None, 'address' or 'failed')."""
+    import subcheck
+    subtitles = subcheck.start(meta) if not meta.get("no_subcheck") else None
     profile = ranking.active()
     per = profile["scrapers"].get("per") or {}
     order = [n for n in names(profile) if not per.get(n, {}).get("off")]
@@ -71,4 +73,7 @@ def search(meta):
         found, answered = extra, answered or answered_spare
     if not answered and not found:
         return None, "address" if unset else "failed"
-    return ranking.apply(found, profile, meta["kind"], order), None
+    import learn
+    fitting = subcheck.mark(subtitles, found)          # before ranking, so the order of sources can use NL-SUBS
+    ranked = learn.adjust(ranking.apply(found, profile, meta["kind"], order))
+    return subcheck.first(ranked, fitting), None

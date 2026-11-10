@@ -6,7 +6,9 @@ import time
 
 import xbmc
 
+import alerts
 import dialogs
+import learn
 import library
 import player
 import scrapers
@@ -52,6 +54,7 @@ class Watcher(xbmc.Player):
         util.HOME.clearProperty(player.HANDOFF)
         self.current, self.asked_next, self.following, self.auto_next, self.prefetched = now, False, None, False, False
         self.position = 0.0
+        self.learned = False
         self.total = self.getTotalTime() or 0.0
         if now.get("resume"):
             self.seekTime(float(now["resume"]))
@@ -94,6 +97,9 @@ class Watcher(xbmc.Player):
         util.save_json(player.LOCAL, progress)
         if percent >= WATCHED_AT and not tracker.logged_in():
             tracker.mark_local(meta, True)
+        if percent >= WATCHED_AT and meta.get("together"):
+            import together
+            threading.Thread(target=together.mark, args=(dict(meta), meta["together"]), daemon=True).start()
         self._scrobble("stop", meta, percent)
         tracker.forget_lists()
         xbmc.executebuiltin("Container.Refresh")
@@ -102,7 +108,7 @@ class Watcher(xbmc.Player):
         following, self.following = self.following, None
         self.auto_next = False
         xbmc.executebuiltin("RunPlugin(%s)" % util.url_for(action="play", type="episode", tmdb=meta["tmdb"], season=following["season"],
-                                                           episode=following["episode"], autoplay=1))
+                                                           episode=following["episode"], autoplay=1, **{"with": ",".join(meta.get("together") or [])}))
 
     def onPlayBackStopped(self):
         meta = self.current
@@ -119,6 +125,7 @@ class Watcher(xbmc.Player):
 
     def onPlayBackError(self):
         now, position = self.current, self.position
+        learn.record((now or json.loads(util.HOME.getProperty(player.HANDOFF) or "{}")).get("learn"), False)
         if not now:                  # it did not even start
             raw = util.HOME.getProperty(player.HANDOFF)
             if not raw:
@@ -196,6 +203,9 @@ class Watcher(xbmc.Player):
         except RuntimeError:
             return
         meta = self.current
+        if not getattr(self, "learned", True) and self.position - float(meta.get("resume") or 0) >= learn.GOOD_AFTER:
+            self.learned = True
+            learn.record(meta.get("learn"), True)
         if meta["kind"] == "episode" and not self.prefetched and util.flag("next_episode") and self.total and self.total - self.position <= PREFETCH_BEFORE_END:
             self.prefetched = True
             threading.Thread(target=self.prefetch, args=(meta,), daemon=True).start()
@@ -227,5 +237,7 @@ def run():
             # first check two minutes after starting, then every minute; never during a video
             if seconds >= 120 and seconds % 60 == 0 and not watcher.isPlaying() and library.due():
                 threading.Thread(target=library.run, daemon=True).start()
+            if seconds >= 300 and seconds % 300 == 0 and not watcher.isPlaying() and alerts.due():
+                threading.Thread(target=alerts.run, daemon=True).start()
         except Exception as error:  # noqa: BLE001  a failing tick must never stop the service
             util.log("tick: %s" % type(error).__name__, xbmc.LOGERROR)

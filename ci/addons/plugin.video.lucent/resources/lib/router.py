@@ -370,6 +370,9 @@ def list_titles(handle, params):
         kind = params.get("type")
         titles, more = tmdb.listing("discover/" + ("movie" if kind == "movie" else "tv"), kind, page,
                                     with_genres=params["genre"], sort_by="popularity.desc")
+    elif name == "alerts":
+        import alerts
+        titles = alerts.titles()
     elif name == "service_row":
         import services
         return send(handle, services.tiles())
@@ -543,6 +546,15 @@ def run(argv):
         if action == "test_easynews":
             ok, text = usenet.check_easynews()
             return xbmcgui.Dialog().ok("Easynews" if ok else T("Niet gelukt", "Failed"), text)
+        if action == "alerts_now":
+            import alerts
+            return alerts.run()
+        if action == "abo_choose":
+            import abo
+            return abo.choose()
+        if action == "learn_forget":
+            import learn
+            return learn.forget()
         if action == "service_open":
             import services
             return services.open_service(params)
