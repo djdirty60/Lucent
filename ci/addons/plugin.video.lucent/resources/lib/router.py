@@ -219,7 +219,6 @@ def tools(handle, _params):
         _action(T("Ondertitels en geluid instellen", "Set up subtitles and sound"), util.url_for(action="subs_setup")),
         _action(T("Intro overslaan instellen", "Set up skip intro"), util.url_for(action="skip_setup")),
         _action(T("Volgorde van bronnen", "Order of sources"), util.url_for(action="ranking")),
-        _action(T("Formaattest: wat kan dit apparaat?", "Format check: what can this box play?"), util.url_for(action="formatcheck")),
         _action(T("Bibliotheek nu bijwerken", "Update the library now"), util.url_for(action="library_sync"), "DefaultAddonLibrary.png"),
         _action(T("Kiezen wat in de bibliotheek komt", "Choose what goes in the library"), util.url_for(action="library_choose"), "DefaultAddonLibrary.png"),
         _action(T("Je kijkjaar", "Your year of watching"), util.url_for(action="year")),
@@ -839,9 +838,6 @@ def run(argv):
             if trakt.choose_library() and xbmcgui.Dialog().yesno("Lucent", T("Bibliotheek nu bijwerken?", "Update the library now?")):
                 return library.run(manual=True)
             return None
-        if action == "formatcheck":
-            import formatcheck
-            return formatcheck.open_check()
         if action == "title_menu":
             return title_menu(params)
         if action == "lists":

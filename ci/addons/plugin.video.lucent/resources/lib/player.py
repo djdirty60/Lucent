@@ -160,14 +160,7 @@ def cannot_play(source):
     """Does this device, by the setting 'Dolby Vision on this device', not handle this source?"""
     support = util.number("dv_support", 0)
     tags = ranking.tags_of(source)
-    return (support == 1 and bool(tags & {"fel", "p7"})) or (support == 2 and "dv" in tags) or is_hidden(source, tags)
-
-
-def is_hidden(source, tags=None):
-    """A format hidden after the format check: left out of the source list, autoplay and the next episode."""
-    import formatcheck
-    gone = formatcheck.hidden()
-    return bool(gone and (tags or ranking.tags_of(source)) & gone)
+    return (support == 1 and bool(tags & {"fel", "p7"})) or (support == 2 and "dv" in tags)
 
 
 def same_release_first(meta, sources):
@@ -307,8 +300,6 @@ def play(params, handle):
     for source in sources:
         source["cannot"] = cannot_play(source)
     usable = [s for s in usable if not s["cannot"]] or usable
-    shown = [s for s in sources if not is_hidden(s)]
-    sources = shown or sources
     if params.get("select") == "1" or (util.number("play_mode", 0) == 1 and not autoplay):
         chosen = dialogs.choose_source(meta, sources, util.flag("include_uncached"))
         if not chosen:

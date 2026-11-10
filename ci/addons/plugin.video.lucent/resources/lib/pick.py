@@ -34,6 +34,20 @@ def seen_by(user_ids):
     return films, shows
 
 
+def fits(meta, minutes, for_kids):
+    """Checked again on the details: TMDB's discover filters are not always right (a film without a Dutch rating, a
+    runtime TMDB did not have yet)."""
+    if minutes and meta["kind"] == "movie" and not 0 < int(meta.get("runtime") or 0) <= minutes:
+        return False
+    if minutes and meta["kind"] == "tvshow" and int(meta.get("runtime") or 0) > minutes:
+        return False
+    if for_kids:
+        age = kids.age_of(meta)                 # unknown: TMDB's own children's filter already chose it
+        if age is not None and age > 6:
+            return False
+    return True
+
+
 def suggestions(user_ids, minutes, kind, genre, for_kids, count=3):
     films, shows = seen_by(user_ids)
     wanted = ["movie", "tvshow"] if kind == "both" else [kind]
@@ -68,7 +82,7 @@ def suggestions(user_ids, minutes, kind, genre, for_kids, count=3):
     for pair in list(dict.fromkeys(pool)):
         meta = tmdb.details(*pair)
         import hide
-        if meta and meta.get("fanart") and kids.allowed(meta) and hide.keep([meta], "foryou") and (not for_kids or meta["kind"] != "movie" or (kids.age_of(meta) or 99) <= 6):
+        if meta and meta.get("fanart") and kids.allowed(meta) and hide.keep([meta], "foryou") and fits(meta, minutes, for_kids):
             out.append(meta)
         if len(out) >= count:
             break
@@ -81,6 +95,7 @@ class Pick(dialogs.Base):
         self.with_ids = {users.current_id()}
         self.time, self.kind, self.genre, self.kids = 2, 0, 0, bool(kids.limit())
         self.found = []
+        self.search = 0
         self.fill({"ptitle": T("Wat zullen we kijken?", "What shall we watch?"), "again": T("Drie nieuwe voorstellen", "Three new suggestions")})
         self.faces()
         self.chips()
@@ -112,13 +127,18 @@ class Pick(dialogs.Base):
     def refresh(self):
         self.fill({"empty": T("Even zoeken...", "Searching...")})
         self.getControl(200).reset()
-        threading.Thread(target=self._load, daemon=True).start()
+        self.search += 1
+        threading.Thread(target=self._load, args=(self.search, list(self.with_ids), TIMES[self.time][1], KINDS[self.kind][1],
+                                                  GENRES[self.genre], self.kids), daemon=True).start()
 
-    def _load(self):
+    def _load(self, number, people, minutes, kind, genre, for_kids):
         try:
-            self.found = suggestions(list(self.with_ids), TIMES[self.time][1], KINDS[self.kind][1], GENRES[self.genre], self.kids)
+            found = suggestions(people, minutes, kind, genre, for_kids)
         except util.HttpError:
-            self.found = []
+            found = []
+        if number != self.search:
+            return                              # you changed a choice meanwhile: a newer search shows its own titles
+        self.found = found
         row = self.getControl(200)
         row.reset()
         for meta in self.found:

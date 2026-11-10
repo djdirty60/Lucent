@@ -47,7 +47,6 @@ These actions are public: any add-on or skin may call them with `RunPlugin(plugi
 | Kompas page, Your taste | `action=kompas_page`, `action=kompas_taste` |
 | What shall we watch? / Your year of watching | `action=pick`, `action=year` |
 | Type with your phone | `action=remote` |
-| Format check | `action=formatcheck` |
 | Settings on a category | `action=settings&section=general\|account\|sources\|play\|subs\|skip\|library\|services` |
 | Subtitles or skip intro, step by step | `action=subs_setup`, `action=skip_setup` |
 

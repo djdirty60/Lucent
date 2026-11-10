@@ -350,8 +350,34 @@ class SubtitleJobs:
             util.log("subtitle jobs: %s" % type(error).__name__)
 
 
+def forget_format_check():
+    """The format check was removed (0.31.6). Its results (formats.json) hid formats when playing, and when not one
+    clip started on a box it could have set 'Dolby Vision on this device' to none: undo that once, then the file goes."""
+    import os
+    path = os.path.join(util.PROFILE, "formats.json")
+    if not os.path.exists(path):
+        return
+    try:
+        with open(path, encoding="utf-8") as handle:
+            results = (json.load(handle) or {}).get("results") or {}
+    except (OSError, ValueError):
+        results = {}
+    states = [entry.get("state") for entry in results.values() if entry.get("state")]
+    if states and all(state == "fail" for state in states) and util.setting("dv_support") == "2":
+        util.ADDON.setSetting("dv_support", "0")
+        util.log("format check removed: Dolby Vision setting put back (no clip had started)")
+    try:
+        os.remove(path)
+    except OSError:
+        pass
+
+
 def run():
     monitor = Events()
+    try:
+        forget_format_check()
+    except Exception as error:      # noqa: BLE001 - the service must start anyway
+        util.log("format check cleanup: %s" % type(error).__name__)
     watcher = Watcher()
     seconds = 0
     library.publish_status()
