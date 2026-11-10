@@ -21,7 +21,8 @@ DONE = "lucent.setup.done"
 SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
 SUBS = "service.subtitles.lucent"
-LIB = "script.lucent.library"
+LIB = "script.lucent.library"     # old library add-on; still used when it is installed
+LV = "plugin.video.lucent"        # Lucent Video: has its own library (optional)
 SKIP = "plugin.video.tidb"          # TheIntroDB: skip intro, recap, credits and preview
 SKIP_REPO = "repository.tidb.repo"  # its repository; in the Lucent repository, installed by the setup assistant
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
@@ -57,6 +58,11 @@ def setting(addon_id, key):
 
 def has(addon_id):
     return cond(f"System.HasAddon({addon_id})")
+
+
+def lib_on():
+    """The older Lucent Library is installed and switched on."""
+    return cond(f"System.AddonIsEnabled({LIB})")
 
 
 def install(addon_id):
@@ -364,8 +370,12 @@ EVERY_NEXT = {"6": "12", "12": "24", "24": "0"}
 
 
 def st_library():
-    if not has(LIB):
-        return "todo", t("Lucent Library is not installed", "Lucent Bibliotheek is niet geïnstalleerd")
+    if not lib_on():
+        if not has(LV):
+            return "info", t("Optional: Lucent Video can fill Kodi's library", "Optioneel: Lucent Video kan de bibliotheek van Kodi vullen")
+        on = setting(LV, "library_on") == "true"
+        return ("ok", t("Lucent Video fills the library", "Lucent Video vult de bibliotheek")) if on else \
+            ("info", t("Off  ·  switch it on in Lucent Video", "Uit  ·  zet het aan in Lucent Video"))
     home = xbmcgui.Window(10000)
     movies, shows = home.getProperty("lucent.lib.movies"), home.getProperty("lucent.lib.shows")
     every = xbmc.getInfoLabel("Skin.String(lucent.lib.every)") or "6"
@@ -380,8 +390,13 @@ def st_library():
 
 
 def ac_library():
-    if not has(LIB):
-        return [(t("Install", "Installeren"), lambda: install(LIB))]
+    if not lib_on():
+        if not has(LV):
+            return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
+        base = "RunPlugin(plugin://plugin.video.lucent/?action="
+        return [(t("Choose what goes in the library", "Kiezen wat in de bibliotheek komt"), lambda: run(base + "library_choose)")),
+                (t("Update now", "Nu bijwerken"), lambda: run(base + "library_sync)")),
+                (t("Settings", "Instellingen"), lambda: run("Addon.OpenSettings(plugin.video.lucent)"))]
     every = xbmc.getInfoLabel("Skin.String(lucent.lib.every)") or "6"
     label = t("Automatic: off", "Automatisch: uit") if every == "0" else t(f"Automatic: every {every} h", f"Automatisch: om de {every} uur")
     lists = xbmc.getInfoLabel("Skin.String(lucent.lib.lists)") or t("off", "uit")
@@ -616,12 +631,12 @@ STEPS = [
       "1. opensubtitles.com: aanmelden, dan Profiel > API consumers > New consumer (de API-sleutel) - plus je gebruikersnaam en wachtwoord.\n"
       "2. subdl.com: aanmelden, dan Account > API-sleutel.\nOptioneel: een AI-sleutel (Gemini is gratis, of OpenRouter / Claude) vertaalt Engelse ondertitels. "
       "Bij 'Gesproken taal' kies je met welk geluid een film start (eerste en tweede keuze)."), st_subs, ac_subs),
-    ("library", "icons/library.png", ("Lucent Library", "Lucent Bibliotheek"),
-     ("Lucent Library turns your Trakt collection into Kodi's own library: films and series with their own pages, "
+    ("library", "icons/library.png", ("Library", "Bibliotheek"),
+     ("Optional. Lucent Video (or the older Lucent Library) turns your Trakt collection into Kodi's own library: films and series with their own pages, "
       "'Continue watching' and 'Next episode' rows, and scores. Trakt caps the collection: with 'My lists as library' your own "
       "Trakt lists (for example a film list and a series list) come in too, without that limit.\n\nImportant: first load your whole collection in Seren "
       "(Movies > My movies and TV shows > My shows) until everything is in, then press 'Update now'.",
-      "Lucent Bibliotheek maakt van je Trakt-collectie de eigen bibliotheek van Kodi: films en series met eigen pagina's, "
+      "Optioneel. Lucent Video (of de oudere Lucent Bibliotheek) maakt van je Trakt-collectie de eigen bibliotheek van Kodi: films en series met eigen pagina's, "
       "rijen 'Verder kijken' en 'Volgende aflevering', en scores. Trakt heeft een limiet op de collectie: met 'Mijn lijsten als "
       "bibliotheek' komen ook je eigen Trakt-lijsten erbij (bijvoorbeeld een filmlijst en een serielijst), zonder die limiet.\n\nBelangrijk: laad eerst je hele collectie in Seren "
       "(Films > Mijn films en Series > Mijn series) tot alles binnen is, en druk dan op 'Nu bijwerken'."), st_library, ac_library),
@@ -767,7 +782,7 @@ def open_window():
     path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
     window = Setup("Lucent_Setup.xml", path, "Default", "1080i")
     try:
-        if has(LIB):
+        if lib_on():
             xbmc.executebuiltin(f"RunScript({LIB},status)")   # film / series numbers for the library step
         window.doModal()
     finally:

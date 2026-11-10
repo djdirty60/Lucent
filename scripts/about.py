@@ -9,7 +9,7 @@ lines = [
     "",
     f"Kodi {xbmc.getInfoLabel('System.BuildVersionShort')}",
     "Skin: Lucent " + xbmc.getInfoLabel("System.AddonVersion(skin.lucent)"),
-    "Lucent Bibliotheek: " + (xbmc.getInfoLabel("System.AddonVersion(script.lucent.library)") or "-"),
+    "Lucent Video: " + (xbmc.getInfoLabel("System.AddonVersion(plugin.video.lucent)") or "-"),
     "",
     ("Code, nieuws en hulp: " if nl else "Code, news and help: ") + "https://github.com/djdirty60/Lucent",
     "",

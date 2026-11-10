@@ -123,10 +123,12 @@ def test():
     rows = [
         addon_line("plugin.video.seren", "Seren", t("Settings > Lucent > Install Seren (or run the setup assistant).",
                                                     "Instellingen > Lucent > Seren installeren (of start de setup-assistent).")),
-        addon_line("script.lucent.library", "Lucent Library", t("Install it from the Lucent repository.", "Installeer hem vanuit de Lucent-repository.")),
         addon_line("service.subtitles.lucent", "Lucent Subtitles", t("Install it from the Lucent repository.", "Installeer hem vanuit de Lucent-repository.")),
         addon_line("pvr.iptvsimple", "IPTV Simple", t("Install it: Add-ons > PVR clients.", "Installeer hem: Add-ons > PVR-clients.")),
     ]
+    for optional, name in (("plugin.video.lucent", "Lucent Video"), ("script.lucent.library", "Lucent Library")):
+        if addon_state(optional):                     # optional: only shown when it is there
+            rows.append(addon_line(optional, name, ""))
     if addon_state("pvr.iptvsimple") == 2:
         ch = cond("Pvr.HasTVChannels")
         rows.append(line(2 if ch else 0, t("TV channels: ", "Tv-zenders: ") + (t("loaded", "ingelezen") if ch else t("none loaded", "geen ingelezen")),

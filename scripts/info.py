@@ -501,7 +501,7 @@ def library_lists(kind):
 
 def to_kodi_library(item, trakt, action):
     """Library row: besides Trakt, write (or remove) the title in the Kodi library at once (Lucent Bibliotheek)."""
-    if not xbmc.getCondVisibility("System.HasAddon(script.lucent.library)"):
+    if not xbmc.getCondVisibility("System.AddonIsEnabled(script.lucent.library)"):
         return
     kind = "movie" if item.kind == "movie" else "show"
     trakt_id = item.trakt if str(item.trakt).isdigit() else ""

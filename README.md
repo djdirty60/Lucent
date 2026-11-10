@@ -141,7 +141,7 @@ A **TV** tab with your IPTV channels: the playing channel on the left of the hea
 - **Update pop-up** – when a new version is out you can choose *Update now*, *Later* or *Skip this version* (switch in Skin settings → Integrations).
 
 ### Lucent Library (your collection as a Kodi library)
-**Lucent Library** (`script.lucent.library`, installed with the skin) turns your Trakt collection into Kodi's own library: films and series as small `.strm` files that play through Seren, kept up to date in the background.
+**Lucent Library** (`script.lucent.library`, optional: since Lucent 1.36.0 the skin no longer needs it and does not install it) turns your Trakt collection into Kodi's own library: films and series as small `.strm` files that play through Seren, kept up to date in the background.
 
 > **Important:** first load your **whole collection in Seren** – open *Movies > My movies (collection)* and *TV shows > My shows (collection)* in Seren and wait until everything is in. Lucent Library only takes over what Seren already knows; titles Seren has not loaded yet are added on a later run.
 
