@@ -133,20 +133,6 @@
         <value condition="Container.Content(tvshows)">1</value>
         <value>0</value>
     </variable>
-    <variable name="LucentGeminiState">
-        <value condition="String.IsEqual(Skin.String(lucent.ai.provider),openrouter) + !String.IsEmpty(Skin.String(lucent.openrouter.key))">OpenRouter</value>
-        <value condition="String.IsEqual(Skin.String(lucent.ai.provider),claude) + !String.IsEmpty(Skin.String(lucent.claude.key))">Claude</value>
-        <value condition="!String.IsEmpty(Skin.String(lucent.gemini.key))">Gemini</value>
-        <value condition="!String.IsEmpty(Skin.String(lucent.openrouter.key))">OpenRouter</value>
-        <value condition="!String.IsEmpty(Skin.String(lucent.claude.key))">Claude</value>
-        <value>$LOCALIZE[31604]</value>
-    </variable>
-    <variable name="LucentAutoSubsState">
-        <value condition="!Skin.HasSetting(nuvio.autosubs)">$LOCALIZE[31662]</value>
-        <value condition="String.IsEqual(Skin.String(lucent.subs.mode),background) + Skin.HasSetting(lucent.subs.bg.ai)">$LOCALIZE[31665]</value>
-        <value condition="String.IsEqual(Skin.String(lucent.subs.mode),background)">$LOCALIZE[31664]</value>
-        <value>$LOCALIZE[31663]</value>
-    </variable>
     <!-- "Readable text on light pictures" (Settings > Lucent): a thin dark edge around hero texts, like subtitles -->
     <!-- the grey lines over a big picture (genres, plot) a shade lighter when "Readable text" is on -->
     <variable name="LucentHeroText3">
@@ -893,18 +879,6 @@
         <value condition="Control.HasFocus(1507)">on_focus</value>
         <value>text4</value>
     </variable>
-    <variable name="SSF1508_text">
-        <value condition="Control.HasFocus(1508)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1508_text3">
-        <value condition="Control.HasFocus(1508)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1508_text4">
-        <value condition="Control.HasFocus(1508)">on_focus</value>
-        <value>text4</value>
-    </variable>
     <variable name="SSF1509_text">
         <value condition="Control.HasFocus(1509)">on_focus</value>
         <value>text</value>
@@ -915,58 +889,6 @@
     </variable>
     <variable name="SSF1509_text4">
         <value condition="Control.HasFocus(1509)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1510_text">
-        <value condition="Control.HasFocus(1510)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1510_text3">
-        <value condition="Control.HasFocus(1510)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1510_text4">
-        <value condition="Control.HasFocus(1510)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1511_text">
-        <value condition="Control.HasFocus(1511)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1511_text3">
-        <value condition="Control.HasFocus(1511)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1511_text4">
-        <value condition="Control.HasFocus(1511)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="SSF1513_text">
-        <value condition="Control.HasFocus(1513)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1513_text3">
-        <value condition="Control.HasFocus(1513)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1513_text4">
-        <value condition="Control.HasFocus(1513)">on_focus</value>
-        <value>text4</value>
-    </variable>
-    <variable name="LucentAudioState">
-        <value condition="!String.IsEmpty(Skin.String(lucent.audio.label))">$INFO[Skin.String(lucent.audio.label)]</value>
-        <value>$LOCALIZE[31604]</value>
-    </variable>
-    <variable name="SSF1512_text">
-        <value condition="Control.HasFocus(1512)">on_focus</value>
-        <value>text</value>
-    </variable>
-    <variable name="SSF1512_text3">
-        <value condition="Control.HasFocus(1512)">on_focus</value>
-        <value>text3</value>
-    </variable>
-    <variable name="SSF1512_text4">
-        <value condition="Control.HasFocus(1512)">on_focus</value>
         <value>text4</value>
     </variable>
     <variable name="SSF1520_text">

@@ -497,27 +497,6 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31774]</label>
-                        <label2>$LOCALIZE[31775]</label2>
-                        <icon>icons/search.png</icon>
-                        <onclick>RunScript(special://skin/scripts/subs_live.py,mode)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31799]</label>
-                        <label2>$LOCALIZE[31800]</label2>
-                        <icon>icons/subtitles.png</icon>
-                        <onclick>Skin.ToggleSetting(lucent.subs.alwayson)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + !Skin.HasSetting(lucent.subs.alwayson)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31799]</label>
-                        <label2>$LOCALIZE[31801]</label2>
-                        <icon>icons/subtitles.png</icon>
-                        <onclick>Skin.ToggleSetting(lucent.subs.alwayson)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + Skin.HasSetting(lucent.subs.alwayson)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[287]</label>
                         <label2>$LOCALIZE[31262]</label2>
                         <icon>icons/subtitles.png</icon>
@@ -532,13 +511,6 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31667]</label>
-                        <label2>$LOCALIZE[31777]</label2>
-                        <icon>icons/audio.png</icon>
-                        <onclick>RunScript(special://skin/scripts/subs_live.py,audio)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[31791]</label>
                         <label2>$INFO[Skin.String(lucent.ytfix.state),,  ·  ]$LOCALIZE[31792]</label2>
                         <icon>icons/trailer.png</icon>
@@ -546,18 +518,11 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.youtube)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31802]</label>
-                        <label2>$INFO[Skin.String(lucent.skipby.label),,  ·  ]$LOCALIZE[31803]</label2>
-                        <icon>icons/play.png</icon>
-                        <onclick>RunScript(special://skin/scripts/skipdup.py,choose)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.seren) + System.HasAddon(plugin.video.tidb)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31778]</label>
-                        <label2>$LOCALIZE[31779]</label2>
-                        <icon>icons/play.png</icon>
-                        <onclick>Addon.OpenSettings(plugin.video.tidb)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.tidb)</visible>
+                        <label>$LOCALIZE[31835]</label>
+                        <label2>$INFO[Window(Home).Property(lucent.video.subs.state),,  ·  ]$LOCALIZE[31836]</label2>
+                        <icon>icons/subtitles.png</icon>
+                        <onclick>RunPlugin(plugin://plugin.video.lucent/?action=subs_settings)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.AddonIsEnabled(plugin.video.lucent)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31323]</label>

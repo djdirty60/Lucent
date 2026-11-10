@@ -243,8 +243,8 @@
                 <label></label>
                 <texturefocus>buttons/subtitles_fo.png</texturefocus>
                 <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
-                <onclick condition="!Skin.HasSetting(lucent.subs.native.off)">RunScript(special://skin/scripts/subs_live.py)</onclick>
-                <onclick condition="Skin.HasSetting(lucent.subs.native.off)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
                 <visible>true</visible>
             </control>
             <control type="button" id="118">
@@ -253,9 +253,8 @@
                 <label></label>
                 <texturefocus>buttons/search_fo.png</texturefocus>
                 <texturenofocus>buttons/search_nf.png</texturenofocus>
-                <onclick condition="!Skin.HasSetting(lucent.subs.native.off)">RunScript(special://skin/scripts/subs_live.py)</onclick>
-                <onclick condition="Skin.HasSetting(lucent.subs.native.off)">ActivateWindow(subtitlesearch)</onclick>
-                <visible>Skin.HasSetting(lucent.subs.native.off)</visible>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>!System.AddonIsEnabled(plugin.video.lucent)</visible>
             </control>
             <control type="button" id="112">
                 <width>84</width>

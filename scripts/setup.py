@@ -20,11 +20,8 @@ NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DONE = "lucent.setup.done"
 SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
-SUBS = "service.subtitles.lucent"
 LIB = "script.lucent.library"     # old library add-on; still used when it is installed
 LV = "plugin.video.lucent"        # Lucent Video: has its own library (optional)
-SKIP = "plugin.video.tidb"          # TheIntroDB: skip intro, recap, credits and preview
-SKIP_REPO = "repository.tidb.repo"  # its repository; in the Lucent repository, installed by the setup assistant
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
 
 
@@ -230,140 +227,22 @@ def ac_iptv():
     return out
 
 
-def subs_default():
-    value = (rpc("Settings.GetSettingValue", {"setting": "subtitles.movie"}) or {}).get("value")
-    return value == SUBS
+def st_subskip():
+    """1.37.0: subtitles, spoken language and skip intro are in Lucent Video now."""
+    if not cond(f"System.AddonIsEnabled({LV})"):
+        return "info", t("Optional: Lucent Video does subtitles and skip intro", "Optioneel: Lucent Video doet ondertitels en intro overslaan")
+    home = xbmcgui.Window(10000)
+    parts = [p for p in (home.getProperty("lucent.video.subs.state"), home.getProperty("lucent.video.skip.state")) if p]
+    return "ok", "  ·  ".join(parts) or t("In Lucent Video", "In Lucent Video")
 
 
-def subs_keys():
-    """(OpenSubtitles key + login filled in, SubDL key filled in) of Lucent Ondertitels."""
-    try:
-        import xbmcaddon
-        addon = xbmcaddon.Addon(SUBS)
-        return (bool(addon.getSetting("os_key").strip() and addon.getSetting("os_user").strip() and addon.getSetting("os_pass")),
-                bool(addon.getSetting("subdl_key").strip()))
-    except Exception:  # noqa: BLE001
-        return False, False
-
-
-def st_subs():
-    if not has(SUBS):
-        return "todo", t("Lucent Subtitles is not installed", "Lucent Ondertitels is niet geïnstalleerd")
-    os_ok, subdl_ok = subs_keys()
-    parts = [t("Lucent Subtitles is the default", "Lucent Ondertitels is de standaard") if subs_default()
-             else t("Lucent Subtitles is not the default yet", "Lucent Ondertitels is nog niet de standaard"),
-             "OpenSubtitles ✓" if os_ok else t("OpenSubtitles: no account", "OpenSubtitles: geen account"),
-             "SubDL ✓" if subdl_ok else t("SubDL: no key", "SubDL: geen sleutel")]
-    if not cond("Skin.HasSetting(nuvio.autosubs)"):
-        parts.append(t("not searching automatically", "zoekt niet automatisch"))
-    elif xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background":
-        parts.append(t("picks one by itself", "kiest er zelf een"))
-    else:
-        parts.append(t("searching automatically", "zoekt automatisch"))
-    return ("ok" if subs_default() and (os_ok or subdl_ok) else "todo"), "  ·  ".join(parts)
-
-
-def ac_subs():
-    if not has(SUBS):
-        return [(t("Install Lucent Subtitles", "Lucent Ondertitels installeren"), lambda: install(SUBS))]
-    out = [(t("Accounts and keys", "Accounts en sleutels"), lambda: run(f"Addon.OpenSettings({SUBS})"))]
-    if not subs_default():
-        out.append((t("Make it the default", "Als standaard instellen"), lambda: run("RunScript(special://skin/scripts/subtitles.py,default)")))
-    if not cond("Skin.HasSetting(nuvio.autosubs)"):
-        mode = t("off", "uit")
-    elif xbmc.getInfoLabel("Skin.String(lucent.subs.mode)") == "background":
-        mode = t("in the background", "op de achtergrond") + (" + AI" if cond("Skin.HasSetting(lucent.subs.bg.ai)") else "")
-    else:
-        mode = t("show the list", "lijst laten zien")
-    out.append((t(f"Automatic search: {mode}", f"Automatisch zoeken: {mode}"),
-                lambda: run("RunScript(special://skin/scripts/subs_live.py,mode)")))
-    spoken = xbmc.getInfoLabel("Skin.String(lucent.audio.label)") or t("Kodi decides", "Kodi beslist")
-    out.append((t(f"Spoken language: {spoken}", f"Gesproken taal: {spoken}"),
-                lambda: run("RunScript(special://skin/scripts/subs_live.py,audio)")))
-    out.append((t("AI translation", "AI-vertaling"),       # the window has room for four buttons: this one goes first
-                lambda: run("RunScript(special://skin/scripts/subs_live.py,key)")))
-    return out
-
-
-# ----------------------------------------------------------------------------- skip intro (TheIntroDB)
-SKIP_KINDS = ("intro", "recap", "preview")   # credits: Seren shows 'Playing next' there itself
-
-
-def skip_auto():
-    """True when TheIntroDB skips intro, recap and preview by itself (no button)."""
-    try:
-        addon = xbmcaddon.Addon(SKIP)
-        return all(addon.getSetting(f"auto_skip_{kind}") == "true" for kind in SKIP_KINDS)
-    except Exception:  # noqa: BLE001 - not installed
-        return False
-
-
-def toggle_skip_auto():
-    try:
-        addon = xbmcaddon.Addon(SKIP)
-        value = "false" if skip_auto() else "true"
-        for kind in SKIP_KINDS:
-            addon.setSetting(f"auto_skip_{kind}", value)
-    except Exception as error:  # noqa: BLE001
-        log(f"skip auto: {error}")
-
-
-def install_skip():
-    """TheIntroDB is not in Kodi's own repository: first its repository (comes with the skin from the Lucent
-    repository), then the add-on from there. Runs in the background; Kodi asks to confirm."""
-    def go():
-        monitor = xbmc.Monitor()
-        if not has(SKIP_REPO):
-            install(SKIP_REPO)
-            for _ in range(120):
-                if has(SKIP_REPO) or monitor.waitForAbort(1):
-                    break
-            if not has(SKIP_REPO):
-                xbmcgui.Dialog().ok("TheIntroDB", t("The TheIntroDB repository could not be installed. Update the Lucent "
-                                                    "repository (Add-ons > Check for updates) and try again.",
-                                                    "De repository van TheIntroDB kon niet worden geïnstalleerd. Werk de "
-                                                    "Lucent-repository bij (Add-ons > Controleren op updates) en probeer het opnieuw."))
-                return
-            run("UpdateAddonRepos")
-            monitor.waitForAbort(6)
-        install(SKIP)
-    threading.Thread(target=go, daemon=True).start()
-
-
-def skip_key():
-    """The optional API key of TheIntroDB. It is not needed; a wrong one makes every lookup fail (401), so no button."""
-    return setting(SKIP, "introdb_api_key").strip()
-
-
-def clear_skip_key():
-    try:
-        addon = xbmcaddon.Addon(SKIP)
-        addon.setSetting("introdb_api_key", "")
-        addon.setSetting("test_api_key_now", "false")
-    except Exception as error:  # noqa: BLE001
-        log(f"skip key: {error}")
-
-
-def st_skip():
-    if not has(SKIP):
-        return "todo", t("TheIntroDB is not installed", "TheIntroDB is nog niet geïnstalleerd")
-    if skip_key():
-        return "todo", t("An API key is filled in. TheIntroDB does not need one, and a wrong key stops the button: remove it",
-                         "Er staat een API-sleutel ingevuld. TheIntroDB heeft die niet nodig, en een verkeerde sleutel houdt "
-                         "de knop tegen: haal hem weg")
-    if skip_auto():
-        return "ok", t("Skips intro, recap and preview by itself", "Slaat intro, terugblik en preview zelf over")
-    return "ok", t("Shows a 'Skip' button", "Laat een knop 'Overslaan' zien")
-
-
-def ac_skip():
-    if not has(SKIP):
-        return [(t("Install TheIntroDB", "TheIntroDB installeren"), install_skip)]
-    out = [(t("Remove API key", "API-sleutel weghalen"), clear_skip_key)] if skip_key() else []
-    out += [(t("Skip by itself: on", "Zelf overslaan: aan") if skip_auto() else t("Skip by itself: off", "Zelf overslaan: uit"),
-             toggle_skip_auto),
-            (t("TheIntroDB settings", "TheIntroDB-instellingen"), lambda: run(f"Addon.OpenSettings({SKIP})"))]
-    return out
+def ac_subskip():
+    if not cond(f"System.AddonIsEnabled({LV})"):
+        return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
+    base = "RunPlugin(plugin://plugin.video.lucent/?action="
+    return [(t("Subtitles", "Ondertitels"), lambda: run(base + "subs_setup)")),
+            (t("Skip intro", "Intro overslaan"), lambda: run(base + "skip_setup)")),
+            (t("Settings", "Instellingen"), lambda: run(base + "subs_settings)"))]
 
 
 EVERY_NEXT = {"6": "12", "12": "24", "24": "0"}
@@ -607,30 +486,13 @@ STEPS = [
       "gemaakt met 24 beelden per seconde; schakelt de tv naar 23,976/24 Hz, dan lopen pannende beelden zonder schokjes. Geluid naar "
       "de versterker (passthrough): Dolby, DTS en Atmos gaan onbewerkt naar je soundbar of receiver - zet dit alleen aan als je die hebt."
       "\n\nHDR en Dolby Vision geeft CoreELEC vanzelf door."), st_play, ac_play),
-    ("skip", "icons/play.png", ("Skip intro", "Intro overslaan"),
-     ("TheIntroDB knows where the intro, the recap ('previously on...') and the preview of an episode start and end. "
-      "When one comes along, a 'Skip' button appears at the bottom right: press OK to jump past it, or Back to keep watching. "
-      "Switch on 'Skip by itself' and it jumps without asking.\n\nAt the credits Seren shows 'Playing next' itself. "
-      "TheIntroDB is made by other people: it works for episodes of most well-known series (not for films), not yet for "
-      "everything. It needs no API key - leave that field empty. In its settings you can switch off the anonymous usage "
-      "statistics it sends.",
-      "TheIntroDB weet waar de intro, de terugblik ('eerder in...') en de preview van een aflevering beginnen en eindigen. "
-      "Komt er een langs, dan verschijnt rechtsonder een knop 'Overslaan': druk op OK om erover te springen, of op Terug om "
-      "verder te kijken. Zet 'Zelf overslaan' aan en hij springt zonder te vragen.\n\nBij de aftiteling laat Seren zelf "
-      "'Volgende aflevering' zien. TheIntroDB is gemaakt door anderen: het werkt voor afleveringen van de meeste bekende series "
-      "(niet voor films), nog niet voor alles. Een API-sleutel is niet nodig - laat dat vakje leeg. In de instellingen kun je "
-      "de anonieme gebruiksstatistieken uitzetten die het verstuurt."), st_skip, ac_skip),
-    ("subs", "icons/subtitles.png", ("Subtitles", "Ondertitels"),
-     ("Lucent Subtitles asks OpenSubtitles, SubDL and Podnapisi at the same time and puts the subtitles that fit your "
-      "video exactly first. Make two free accounts and fill them in under 'Accounts and keys':\n"
-      "1. opensubtitles.com: sign up, then Profile > API consumers > New consumer (the API key) - plus your user name and password.\n"
-      "2. subdl.com: sign up, then Account > API key.\nOptional: an AI key (Gemini is free, or OpenRouter / Claude) translates English subtitles. "
-      "Under 'Spoken language' you choose which sound a film starts with (first and second choice).",
-      "Lucent Ondertitels vraagt OpenSubtitles, SubDL en Podnapisi tegelijk en zet de ondertitels die precies bij je video "
-      "passen bovenaan. Maak twee gratis accounts en vul ze in bij 'Accounts en sleutels':\n"
-      "1. opensubtitles.com: aanmelden, dan Profiel > API consumers > New consumer (de API-sleutel) - plus je gebruikersnaam en wachtwoord.\n"
-      "2. subdl.com: aanmelden, dan Account > API-sleutel.\nOptioneel: een AI-sleutel (Gemini is gratis, of OpenRouter / Claude) vertaalt Engelse ondertitels. "
-      "Bij 'Gesproken taal' kies je met welk geluid een film start (eerste en tweede keuze)."), st_subs, ac_subs),
+    ("subs", "icons/subtitles.png", ("Subtitles and skip intro", "Ondertitels en intro overslaan"),
+     ("Optional. Lucent Video finds subtitles in your language (it asks every subtitle add-on at the same time), chooses the "
+      "spoken language, translates English subtitles with AI when you want, and skips intros with TheIntroDB. "
+      "It works for every video, also from other add-ons.",
+      "Optioneel. Lucent Video zoekt ondertitels in jouw taal (het vraagt alle ondertitel-add-ons tegelijk), kiest de "
+      "gesproken taal, vertaalt Engelse ondertitels met AI als je dat wilt, en slaat intro's over met TheIntroDB. "
+      "Het werkt voor elke video, ook uit andere add-ons."), st_subskip, ac_subskip),
     ("library", "icons/library.png", ("Library", "Bibliotheek"),
      ("Optional. Lucent Video (or the older Lucent Library) turns your Trakt collection into Kodi's own library: films and series with their own pages, "
       "'Continue watching' and 'Next episode' rows, and scores. Trakt caps the collection: with 'My lists as library' your own "

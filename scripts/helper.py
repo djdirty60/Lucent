@@ -9,12 +9,12 @@ subtitles). Each one costs memory, so now this single helper does all the jobs i
   every 60 s      Tonight for you (works from its saved list; asks TMDB a few times a day)
   every 120 s     calendar pop-ups
   every 6 h       check for a new version of Lucent
-  always          automatic subtitle search when a video starts (only when switched on)
+  (subtitles and skip intro moved to Lucent Video in 1.37.0)
 
 Started from Home.xml; a second start does nothing while the first one is running.
 
-The slow jobs (they ask the internet) run one after another in a worker thread, so the poster colour and the
-subtitle swap never wait for them. A small heartbeat thread tells a new start that this helper is still alive,
+The slow jobs (they ask the internet) run one after another in a worker thread, so the poster colour
+never waits for them. A small heartbeat thread tells a new start that this helper is still alive,
 also while a job takes long. After a skin update (lucent.helper.stop) this helper stops so the new one can start.
 """
 import hashlib
@@ -135,25 +135,6 @@ def run():
         ytfix.check()
         xbmc.executebuiltin(f'Skin.SetString(lucent.ytfix.state,"{ytfix.label()}")')
 
-    def skip_twice():
-        import skipdup
-        log(f"skip twice: {skipdup.check()}")
-        xbmc.executebuiltin(f'Skin.SetString(lucent.skipby.label,"{skipdup.label()}")')
-
-    def subtitle_wishes():
-        import subs_extra
-        subs_extra.check_wanted()                   # every hour; each video on the list at most every 6 hours
-
-    def subtitles():
-        # the watcher also switches off a film's subtitle in a language you did not ask for (subtitles.py), so it
-        # runs when that is wanted too, not only for the automatic search
-        if cond("Skin.HasSetting(nuvio.autosubs) | Skin.HasSetting(lucent.subs.alwayson) | !Skin.HasSetting(lucent.subs.langfix.off) | !String.IsEmpty(Skin.String(lucent.audio.lang1))"):
-            if subs["watcher"] is None:
-                import subtitles as s
-                subs["watcher"] = s.Watcher()       # a Kodi player listener: looks when a video starts
-        else:
-            subs["watcher"] = None
-
     slow = [                                        # network work: in the worker thread
         Job("sport", 30, 15, sport, lambda: cond("Pvr.HasTVChannels")),
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
@@ -161,8 +142,6 @@ def run():
         Job("tab panels", 60, 6, tab_panels),
         Job("solis", 3, 4, solis_tab, lambda: cond("System.AddonIsEnabled(script.solis.dashboard) + Window.IsVisible(home)")),
         Job("live sport", 20, 8, live_sport, lambda: cond("Pvr.IsPlayingTV") or bool(HOME.getProperty("live.sc.on"))),   # the score in the TV player               # Calendar / Sport / TV tabs on Home without rows of their own
-        Job("subtitle wish list", 3600, 900, subtitle_wishes, lambda: cond("System.HasAddon(service.subtitles.lucent)")),
-        Job("skip twice", 600, 40, skip_twice, lambda: cond("System.HasAddon(plugin.video.seren) + System.HasAddon(plugin.video.tidb) + Window.IsVisible(home)")),   # Seren and TheIntroDB both show Skip intro (skipdup.py)
         Job("youtube fix", 3 * 3600, 25, youtube_fix, lambda: cond("System.HasAddon(plugin.video.youtube)")),   # trailers stopped at ~1:05 (ytfix.py)
         Job("update", 6 * 3600, 90, updater.check, lambda: not cond("Skin.HasSetting(nuvio.update.off)")),
         Job("auto backup", 3600, 600, auto_backup),         # a weekly backup into the folder you chose (checked every hour)
@@ -174,7 +153,7 @@ def run():
         import live
         live.check_reminders()
 
-    quick = [Job("tv reminders", 20, 15, tv_reminders), Job("subtitles", 30, 5, subtitles), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
+    quick = [Job("tv reminders", 20, 15, tv_reminders), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
     stop = threading.Event()
 
     def beat():
@@ -193,25 +172,7 @@ def run():
     HOME.clearProperty(STOP)
     threading.Thread(target=beat, daemon=True).start()
     threading.Thread(target=worker, daemon=True).start()
-    swap = {"t": 0.0}
 
-    def subtitle_window(now):
-        """Kodi's own subtitle search opened (for example by another add-on's auto-search): show Lucent's live list instead."""
-        if now - swap["t"] < 8 or not cond("Window.IsActive(subtitlesearch)"):
-            return
-        if cond("Skin.HasSetting(lucent.subs.native.off)") or not cond("Player.HasVideo"):
-            return
-        if cond("String.IsEqual(Skin.String(lucent.subs.mode),background)") and now - float(HOME.getProperty("lucent.play.start") or 0) < 90:
-            # another add-on's automatic search right after the start: Lucent picks one quietly instead
-            swap["t"] = now
-            xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
-            xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,background)")
-            log("Kodi's subtitle search -> Lucent background pick")
-            return
-        swap["t"] = now
-        xbmc.executebuiltin("Dialog.Close(subtitlesearch,true)")
-        xbmc.executebuiltin("RunScript(special://skin/scripts/subs_live.py,auto)")
-        log("Kodi's subtitle search -> Lucent live list")
 
     lost = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
@@ -336,10 +297,6 @@ def run():
             now = time.time()
             for job in quick:
                 job.maybe(now)
-            try:
-                subtitle_window(now)
-            except Exception as error:  # noqa: BLE001
-                log(f"subtitles: {error}")
             try:
                 rows_state(now)
             except Exception as error:  # noqa: BLE001
