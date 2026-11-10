@@ -93,22 +93,27 @@ def youtube_id(path):
 
 
 def tmdb_trailer(focus):
+    found = tmdb_trailers(focus)
+    return found[0] if found else ""
+
+
+def tmdb_trailers(focus):
     kind = "movie" if focus.dbtype == "movie" else "tv" if focus.dbtype in ("tvshow", "season", "episode") else ""
     tmdb_id = focus.tmdb
     if focus.dbtype in ("season", "episode") and focus.show_tmdb:
         tmdb_id = focus.show_tmdb
     if not kind or not tmdb_id.isdigit():
-        return ""
+        return []
     lang = "nl" if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else "en"
     try:
         videos = info.tmdb(f"{kind}/{tmdb_id}/videos", include_video_language=f"{lang},en,null").get("results") or []
     except Exception as error:  # noqa: BLE001
         log(f"tmdb: {error}")
-        return ""
+        return []
     videos = [v for v in videos if v.get("site") == "YouTube" and v.get("key")]
     videos.sort(key=lambda v: (TYPES.index(v.get("type")) if v.get("type") in TYPES else 99,
                                not v.get("official"), v.get("iso_639_1") != "en"))
-    return videos[0]["key"] if videos else ""
+    return [v["key"] for v in videos[:3]]
 
 
 class Trailers(xbmc.Player):
@@ -129,6 +134,8 @@ class Trailers(xbmc.Player):
         self.lost_since = 0.0      # since when the focused card is not readable
         self.pause_until = 0.0     # after repeated failures we stop trying for a while
         self.cancelled_at = 0.0    # when we gave up a trailer that YouTube was still resolving
+        self.spare = []            # other trailers of the same title, for when YouTube is slow with the first
+        self.spare_label = ""
 
     # -- player callbacks: anything we did not start is not ours
     def onAVStarted(self):
@@ -205,6 +212,7 @@ class Trailers(xbmc.Player):
         HOME.clearProperty(PLAYING)
 
     def stop_ours(self):
+        self.spare = []
         if self.ours or self.requested:
             log("stop")
             if not self.av_started:
@@ -221,10 +229,29 @@ class Trailers(xbmc.Player):
 
         def find():
             try:
-                self.cache[focus.key] = youtube_id(focus.trailer) or tmdb_trailer(focus)
+                self.cache[focus.key] = self.candidates(focus)
             except Exception as error:  # noqa: BLE001
                 log(f"prefetch: {error}")
         threading.Thread(target=find, daemon=True).start()
+
+    def candidates(self, focus):
+        """The trailers of a title: the one of the list item first, then up to three from TMDB."""
+        found = [youtube_id(focus.trailer)] if youtube_id(focus.trailer) else []
+        for key in tmdb_trailers(focus):
+            if key not in found:
+                found.append(key)
+        return found
+
+    def start(self, video_id, label_text):
+        log(f"play {video_id} for {label_text}")
+        self.video_id = video_id
+        self.started_at = time.time()
+        self.ours = True
+        self.requested = True
+        self.av_started = False
+        item = xbmcgui.ListItem(label_text)
+        item.setProperty("nuvio.trailer", "1")
+        self.play(YT + video_id, item, windowed=True)
 
     # -- main loop
     def run(self):
@@ -296,6 +323,12 @@ class Trailers(xbmc.Player):
         if (self.requested or self.ours) and not HOME.getProperty(PLAYING) and self.isPlayingVideo():
             # the callback was missed (it is on some boxes): a video is playing and we asked for it, so it is ours
             self.adopt()
+        if busy and not self.av_started and self.spare and time.time() - self.started_at > 12:
+            # YouTube is slow or stuck with this video: try the next trailer of the same title
+            log(f"no picture after 12s, next trailer ({len(self.spare)} left)")
+            self.cancelled_at = time.time()
+            self.start(self.spare.pop(0), self.spare_label)
+            return
         if busy and not HOME.getProperty(PLAYING) and time.time() - self.started_at > 45:
             log("YouTube did not start the trailer")
             self.let_go()
@@ -320,22 +353,22 @@ class Trailers(xbmc.Player):
         self.tried = focus.key
         dbg("starting")
         test = xbmc.getCondVisibility("Skin.HasSetting(nuvio.trailer.test)")
-        video_id = "live-test" if test else self.cache.get(focus.key)
-        if video_id is None:
-            video_id = youtube_id(focus.trailer) or tmdb_trailer(focus)
-            self.cache[focus.key] = video_id
+        found = ["live-test"] if test else self.cache.get(focus.key)
+        if found is None:
+            found = self.candidates(focus)
+            self.cache[focus.key] = found
+        video_id = found[0] if found else ""
         if not video_id:
             log(f"no trailer found for {focus.label} (tmdb {focus.tmdb or '-'}, {focus.dbtype or '-'})")
         # the user may have moved on while TMDB answered
         if not video_id or Focus().key != focus.key or xbmcgui.getCurrentWindowId() != HOME_ID:
             return
-        log(f"play {video_id} for {focus.label}")
-        self.video_id = video_id
-        self.started_at = time.time()
-        self.ours = True
-        self.requested = True
-        self.av_started = False
         if test:
+            self.video_id = video_id
+            self.started_at = time.time()
+            self.ours = True
+            self.requested = True
+            self.av_started = False
             # TEST: a live channel in the same place instead of a YouTube trailer
             import sport_epg as epg  # only for the test mode
             found = epg.channels()
@@ -347,9 +380,8 @@ class Trailers(xbmc.Player):
             if not epg.play_windowed(found[0]["channelid"]):
                 epg.play(found[0]["channelid"])
             return
-        item = xbmcgui.ListItem(focus.label)
-        item.setProperty("nuvio.trailer", "1")
-        self.play(YT + video_id, item, windowed=True)
+        self.spare, self.spare_label = list(found[1:]), focus.label
+        self.start(video_id, focus.label)
 
 
 def running():
