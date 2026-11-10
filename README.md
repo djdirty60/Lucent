@@ -398,3 +398,9 @@ screenshots/         images for this README
 - Sport data comes from ESPN; stadium photos from [TheSportsDB](https://www.thesportsdb.com); channel logos from [tv-logos](https://github.com/tv-logo/tv-logos) (CC BY-SA / BY-NC-SA, the logos belong to their owners). This skin is not affiliated with Seren either.
 - Font: [Inter](https://github.com/rsms/inter) by Rasmus Andersson, SIL Open Font License 1.1 (see `fonts/Inter-LICENSE.txt`).
 - Icons and badges are original designs. The badges are not official Dolby or DTS logos.
+
+## Trakt
+
+Lucent uses Trakt but is not endorsed or certified by Trakt.
+
+Privacy: see [PRIVACY.md](PRIVACY.md).
