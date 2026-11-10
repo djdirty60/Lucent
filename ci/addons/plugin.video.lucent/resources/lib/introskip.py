@@ -48,6 +48,3 @@ def toggle(show):
     util.notify(T("Intro's van deze serie worden vanzelf overgeslagen", "Intros of this series are skipped by themselves") if now
                 else T("Intro's van deze serie niet meer vanzelf overslaan", "Intros of this series are no longer skipped by themselves"))
 
-
-def is_on(show):
-    return bool(util.load_json(FILE, {}).get("series", {}).get(str(show)))

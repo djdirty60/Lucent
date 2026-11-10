@@ -151,6 +151,3 @@ def clock(seconds):
     seconds = int(seconds)
     return "%d:%02d:%02d" % (seconds // 3600, seconds % 3600 // 60, seconds % 60)
 
-
-def is_playing_video():
-    return xbmc.Player().isPlayingVideo()

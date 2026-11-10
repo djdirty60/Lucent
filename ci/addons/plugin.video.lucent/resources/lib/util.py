@@ -158,7 +158,8 @@ def _path(name):
 def _user_key(key):
     """Account answers are cached per person; TMDB answers are shared."""
     user = current_user()
-    return "%s|%s" % (user, key) if user != "main" and key.startswith(("trakt", "simkl", "nextup")) else key
+    return "%s|%s" % (user, key) if user != "main" and key.startswith(("trakt", "simkl", "nextup")) \
+        and not key.startswith("traktsearch/") else key
 
 
 def load_json(name, default):

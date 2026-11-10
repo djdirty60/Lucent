@@ -10,7 +10,7 @@ API = "https://api.mdblist.com/"
 WEEK = 7 * 86400
 BATCH = 200
 SOURCES = {"imdb": "imdb", "metacritic": "metacritic", "metacriticuser": "metacriticuser", "tomatoes": "tomatoes", "popcorn": "popcorn",
-           "letterboxd": "letterboxd", "rogerebert": "rogerebert", "myanimelist": "myanimelist"}
+           "letterboxd": "letterboxd", "trakt": "trakt", "rogerebert": "rogerebert", "myanimelist": "myanimelist"}
 
 
 def key():
@@ -57,7 +57,7 @@ def _parse(entry):
             value = float(value) * 10 if value is not None and source == "imdb" else value
         if source and value:
             scores[source] = (round(float(value) / 10.0, 1), int(rating.get("votes") or 0))
-    return {"scores": scores, "average": entry.get("score_average") or 0}
+    return {"scores": scores, "average": entry.get("score_average") or 0, "trakt": str((entry.get("ids") or {}).get("trakt") or "")}
 
 
 def _fetch(kind, ids):
@@ -93,6 +93,8 @@ def enrich(titles):
         if found:
             meta["scores"] = {k: tuple(v) for k, v in found["scores"].items()}
             meta["mdb_average"] = found["average"]
+            if found.get("trakt"):
+                meta["trakt_id"] = found["trakt"]
 
 
 def check():

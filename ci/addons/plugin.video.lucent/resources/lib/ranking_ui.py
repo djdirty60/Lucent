@@ -9,7 +9,6 @@ import xbmcvfs
 import dialogs
 import ranking
 import scrapers
-import streams
 import util
 
 T = util.T

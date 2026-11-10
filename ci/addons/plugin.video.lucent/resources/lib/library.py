@@ -517,7 +517,7 @@ def run(manual=False):
                     continue
                 if progress:
                     progress.update(80, message=word)
-                if result[1] or fresh or util.flag("library_force_scan"):
+                if result[1] or fresh:
                     scan(path)
             refresh_changed()
             prune()

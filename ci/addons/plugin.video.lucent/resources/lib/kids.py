@@ -43,8 +43,6 @@ def _hash(pin):
     return hashlib.sha256(("lucent-video:" + pin).encode("utf-8")).hexdigest()
 
 
-def pin_set():
-    return bool(users.settings_value("pin"))
 
 
 def ask_pin(reason):

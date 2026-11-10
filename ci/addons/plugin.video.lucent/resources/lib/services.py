@@ -11,7 +11,6 @@ Rows for the skin (all with &widget=1):
 The services are the ones chosen in the skin: first addon_data/plugin.video.lucent/services.json, then Lucent Library's
 old services.json; without a choice Lucent's standard list. A service your country does not have (Hulu, Peacock ... outside the US) is read for the US.
 """
-import os
 import time
 import urllib.parse
 

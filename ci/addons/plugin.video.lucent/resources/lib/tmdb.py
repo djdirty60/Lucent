@@ -105,19 +105,28 @@ def _trailer(raw):
     return "plugin://plugin.video.youtube/play/?video_id=%s" % videos[0]["key"] if videos else ""
 
 
+def _english(raw, field):
+    for row in (raw.get("translations") or {}).get("translations") or []:
+        if row.get("iso_639_1") == "en" and (row.get("data") or {}).get(field):
+            return row["data"][field]
+    return ""
+
+
 def details(kind, tmdb_id):
     """kind: movie or tvshow. Returns the normalised title, or None."""
     api_kind = "movie" if kind == "movie" else "tv"
-    extra = {"append_to_response": "external_ids,images,credits,release_dates,content_ratings,videos", "include_image_language": "nl,en,null,de,fr,es,it"}
+    extra = {"append_to_response": "external_ids,images,credits,release_dates,content_ratings,videos,translations",
+             "include_image_language": "nl,en,null,de,fr,es,it"}
     try:
         raw = get("%s/%s" % (api_kind, tmdb_id), ttl=7 * DAY, **extra)
-        if not raw.get("overview") and util.NL:
-            english = get("%s/%s" % (api_kind, tmdb_id), ttl=7 * DAY, language="en-US", **extra)
-            raw["overview"] = english.get("overview", "")
     except util.HttpError as error:
         util.log("details failed: %s" % error)
         return None
     movie = kind == "movie"
+    if not raw.get("overview"):
+        raw["overview"] = _english(raw, "overview")       # in the same answer: no second request
+    if not raw.get("tagline"):
+        raw["tagline"] = _english(raw, "tagline")
     crew = raw.get("credits") or {}
     date = raw.get("release_date" if movie else "first_air_date") or ""
     runtimes = raw.get("episode_run_time") or [0]

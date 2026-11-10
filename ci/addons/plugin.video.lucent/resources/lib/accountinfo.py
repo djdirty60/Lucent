@@ -171,7 +171,6 @@ def show(service):
 
 def publish_names():
     """Puts the linked account names in the settings, so the settings can show 'Linked as ...' (first profile only)."""
-    import tracker
     import users
     if users.current_id() != users.MAIN:
         return

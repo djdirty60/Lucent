@@ -44,8 +44,8 @@ def ask(heading, name, hidden=False):
 CODE_IN = T("Testercode invoeren", "Enter tester code")
 KEY_FILE = T("Sleutelbestand kiezen…", "Choose key file…")
 CODE_OUT = T("Testercode maken", "Make tester code")
-STEPS = [("welcome", T("Welkom", "Welcome")), ("account", "Account"), ("keys", T("Sleutels", "Keys")), ("scrapers", "Scrapers"),
-         ("order", T("Volgorde", "Order")), ("dv", "Dolby Vision"), ("done", T("Klaar", "Done"))]
+STEPS = [("welcome", T("Welkom", "Welcome")), ("account", "Account"), ("keys", T("Sleutels", "Keys")), ("scrapers", T("Bronnen", "Sources")),
+         ("order", T("Volgorde", "Order")), ("dv", "Dolby Vision"), ("extra", T("Extra", "Extra")), ("done", T("Klaar", "Done"))]
 TEXT = {
     "welcome": (T("Welkom bij Lucent Video", "Welcome to Lucent Video"),
                 T("In een paar stappen is alles klaar: je account, je sleutels en waar de films en series vandaan komen. Je kunt alles later veranderen bij de instellingen.",
@@ -56,7 +56,9 @@ TEXT = {
     "scrapers": (T("Waar komen de bronnen vandaan?", "Where do the sources come from?"), T("Vul er minstens één in. Lege regels worden overgeslagen.", "Fill in at least one. Empty rows are skipped.")),
     "order": (T("Welke bron komt bovenaan?", "Which source comes first?"), T("Kies een profiel, of laat het staan: dan verandert er niets aan de volgorde.", "Pick a profile or leave it: then the order does not change.")),
     "dv": (T("Wat kan je apparaat?", "What can your device do?"), T("Hiermee slaat de add-on bronnen over die je apparaat niet goed kan afspelen. Weet je het niet? Laat het op Speelt alles af staan.", "The add-on then skips sources your device cannot play properly. Not sure? Leave it on Plays everything.")),
-    "done": (T("Je bent klaar", "You are done"), T("Veel kijkplezier. Dit scherm vind je terug bij de instellingen, onder Verbindingen.", "Enjoy. You can find this screen again in the settings, under Connections.")),
+    "extra": (T("Nog een paar extra's", "A few extras"), T("Niet nodig om te beginnen. Je kunt dit ook later doen via Instellingen en hulp.",
+                                                          "Not needed to start. You can also do this later under Settings and help.")),
+    "done": (T("Je bent klaar", "You are done"), T("Veel kijkplezier. Dit scherm vind je terug bij de instellingen, onder Algemeen.", "Enjoy. You can find this screen again in the settings, under General.")),
 }
 
 
@@ -105,7 +107,15 @@ class Setup(dialogs.Base):
             return [(T("Volgorde van bronnen openen", "Open the order of sources"), ranking.active()["name"], None)]
         if key == "dv":
             now = util.number("dv_support", 0)
-            return [(label, "", now == number) for number, label in enumerate((T("Speelt alles af", "Plays everything"), T("Geen P7 / FEL", "No P7 / FEL"), T("Geen Dolby Vision", "No Dolby Vision")))]
+            return [(T("Formaattest: laat Lucent het uitzoeken", "Format check: let Lucent find out"), "", None)] + \
+                [(label, "", now == number) for number, label in enumerate((T("Speelt alles af", "Plays everything"), T("Geen P7 / FEL", "No P7 / FEL"), T("Geen Dolby Vision", "No Dolby Vision")))]
+        if key == "extra":
+            import subconf
+            import skipdup
+            subconf.publish()
+            return [(T("Ondertitels en geluid", "Subtitles and sound"), util.HOME.getProperty("lucent.video.subs.state"), None),
+                    (T("Intro overslaan", "Skip intro"), skipdup.state_line(), None),
+                    (T("MDBList-sleutel (scores en lijsten)", "MDBList key (scores and lists)"), state("mdblist_key"), None)]
         return []
 
     def show(self):
@@ -180,7 +190,17 @@ class Setup(dialogs.Base):
         elif key == "order":
             ranking_ui.open_main()
         elif key == "dv":
-            put("dv_support", str(at))
+            if at == 0:
+                import formatcheck
+                formatcheck.open_check()
+            else:
+                put("dv_support", str(at - 1))
+        elif key == "extra":
+            import subsetup
+            if at == 2:
+                ask("MDBList", "mdblist_key", True)
+            else:
+                subsetup.wizard("subs" if at == 0 else "skip")
         return None
 
     def test(self):

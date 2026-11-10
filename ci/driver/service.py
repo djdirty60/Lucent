@@ -4083,15 +4083,31 @@ def formatclips_test():
 
 
 def trailerlayer_test():
-    """1.38.2: the test option for poster trailers on CoreELEC: the variable and Home still work with each layer."""
+    """1.38.3: poster trailers on Home: trailer window, hero media and the expanded card (an overlay over the row)."""
     out = {}
-    for layer in ("", "late", "clear"):
-        xbmc.executebuiltin(f"Skin.SetString(lucent.trailer.layer,{layer})")
+    base = xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/formattest/")
+    path = os.path.join(base, "hevc4k.mp4")
+    player = xbmc.Player()
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    for mode in ("expand", "window", "hero"):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.posterfocus,{mode})")
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(2)
-        out[layer or "A"] = {"clear": lab("$VAR[LucentHomeClear]"), "home": cond("Window.IsActive(home)")}
-    shot("home-layer-clear")
-    xbmc.executebuiltin("Skin.SetString(lucent.trailer.layer,)")
+        xbmc.executebuiltin("SetFocus(8101)")
+        mon.waitForAbort(1)
+        player.play(path, xbmcgui.ListItem("trailer", path=path), windowed=True)
+        for _ in range(60):
+            if mon.waitForAbort(0.1) or player.isPlayingVideo():
+                break
+        xbmc.executebuiltin("SetProperty(nuvio.trailer.playing,1,home)")
+        mon.waitForAbort(0.8)
+        out[mode] = {"home": cond("Window.IsActive(home)"), "playing": cond("Player.HasVideo"),
+                     "focus8101": cond("Control.HasFocus(8101)"), "fullscreen": cond("Window.IsActive(fullscreenvideo)")}
+        shot(f"home-trailer-{mode}")
+        player.stop()
+        xbmc.executebuiltin("ClearProperty(nuvio.trailer.playing,home)")
+        mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
     log("trailerlayer: " + json.dumps(out))
 
 

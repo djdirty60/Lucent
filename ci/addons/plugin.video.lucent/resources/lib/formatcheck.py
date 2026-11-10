@@ -14,6 +14,7 @@ import time
 
 import xbmc
 import xbmcgui
+import xbmcvfs
 
 import dialogs
 import util
@@ -21,6 +22,8 @@ import util
 T = util.T
 FILE = "formats.json"
 CLIPS = os.path.join(dialogs.PATH, "resources", "formattest")
+START_WAIT = 20          # seconds a clip may take to start (TVs switching to HDR or another refresh rate can be slow)
+SECOND_TRY = 8           # after this many seconds without a start: try Kodi's PlayMedia instead
 # id, label, file (None = your own file), question kind, tags hidden when it does not work
 TESTS = [
     ("dv5", "Dolby Vision profiel 5", "dv5.mp4", "dv", []),
@@ -129,8 +132,70 @@ def _own_fel(ask=True):
     return picked or ""
 
 
+def _special(path):
+    """special://home/... for a file in Kodi's home folder: some Android boxes play that more reliably than the long
+    /storage/... or /data/... path."""
+    home = xbmcvfs.translatePath("special://home/")
+    if home and path.startswith(home):
+        return "special://home/" + path[len(home):].replace(os.sep, "/")
+    return path
+
+
 def clip_path(test, ask=True):
-    return os.path.join(CLIPS, test[2]) if test[2] else _own_fel(ask)
+    return _special(os.path.join(CLIPS, test[2])) if test[2] else _own_fel(ask)
+
+
+class Watch(xbmc.Player):
+    """Listens to the player, so a start is seen even when the clip already ended or is paused for the TV to switch."""
+
+    def __init__(self):
+        xbmc.Player.__init__(self)
+        self.reset()
+
+    def reset(self):
+        self.started = False
+        self.error = False
+        self.ended = False
+
+    def onAVStarted(self):
+        self.started = True
+
+    def onPlayBackError(self):
+        self.error = True
+
+    def onPlayBackEnded(self):
+        self.ended = True
+
+    def onPlayBackStopped(self):
+        self.ended = True
+
+
+def start_clip(player, path, label, monitor=None):
+    """Starts a clip in the video window. Returns '' when it started, otherwise the reason (for the log)."""
+    monitor = monitor or xbmc.Monitor()
+    player.reset()
+    player.play(path, xbmcgui.ListItem(label, path=path), windowed=True)
+    tried_builtin = False
+    for tick in range(START_WAIT * 10):
+        if monitor.waitForAbort(0.1):
+            return "Kodi is closing"
+        if player.started or player.isPlayingVideo():
+            return ""
+        if player.error:
+            break
+        if not tried_builtin and tick >= SECOND_TRY * 10:
+            tried_builtin = True
+            util.log("formattest: %s not started after %ds, trying PlayMedia" % (label, SECOND_TRY))
+            xbmc.executebuiltin('PlayMedia("%s",1)' % path)
+    if player.error:
+        return "playback error"
+    return "no start after %ds (playing=%s, ended=%s)" % (START_WAIT, player.isPlaying(), player.ended)
+
+
+def all_failed(results):
+    """True when every clip that was tried did not even start: then it is the box or Kodi, not the formats."""
+    tried = [entry.get("state") for key, entry in (results or {}).items() if entry.get("state")]
+    return bool(tried) and all(state == "fail" for state in tried)
 
 
 class Test(dialogs.Base):
@@ -144,8 +209,9 @@ class Test(dialogs.Base):
                    "b_unsure": T("Weet ik niet", "Not sure"), "b_again": T("Nog eens tonen", "Show it again"),
                    "waiting": T("Even wachten, het filmpje start...", "One moment, the clip is starting...")})
         self.done = []
+        self.fails, self.starts = 0, 0
         self.current = None
-        self.player = xbmc.Player()
+        self.player = Watch()
         self.rows()
         self.next()
 
@@ -183,25 +249,26 @@ class Test(dialogs.Base):
         return None
 
     def play(self, path):
-        item = xbmcgui.ListItem(self.current[1], path=path)
-        self.player.play(path, item, windowed=True)
         monitor = xbmc.Monitor()
-        started = False
-        for _ in range(100):                      # up to 10 seconds to start
-            if monitor.waitForAbort(0.1):
-                return
-            if self.player.isPlayingVideo() and self.player.getTime() > 0.2:
-                started = True
-                break
-        if not started:
-            self.results[self.current[0]] = {"state": "fail", "at": time.time(), "kodi": ""}
+        test = self.current
+        reason = start_clip(self.player, path, test[1], monitor)
+        if self.current is not test:
+            return None
+        if reason:
+            util.log("formattest: %s did not start (%s)" % (test[0], reason))
+            self.results[test[0]] = {"state": "fail", "at": time.time(), "kodi": ""}
+            self.fails += 1
+            if self.fails >= 3 and not self.starts:     # nothing starts at all: no use waiting for every clip
+                util.log("formattest: the first %d clips did not start, stopping" % self.fails)
+                self.queue = []
             self.fill({"asking": ""})
             return self.next()
+        util.log("formattest: %s started" % test[0])
+        self.starts += 1
         self.kodi_saw = xbmc.getInfoLabel("VideoPlayer.HdrType")
         monitor.waitForAbort(1.5)                  # give the TV time to switch
         self.fill({"asking": "1"})
         self.setFocusId(10)
-        test = self.current
         while self.current is test and not monitor.abortRequested():       # the clip keeps playing until you answer
             if not self.player.isPlaying() and self.current is test:
                 self.player.play(path, xbmcgui.ListItem(test[1], path=path), windowed=True)
@@ -274,7 +341,13 @@ class Result(dialogs.Base):
         row.selectItem(at)
         self.setFocusId(100)
         _dv, _hide, lines = advice(results)
-        self.fill({"rtitle": T("Wat je kastje kan", "What your box can do"), "advhead": T("VOORSTEL", "SUGGESTION"),
+        failed = all_failed(results)
+        if failed:
+            lines = [T("De filmpjes starten niet op dit apparaat. Dat zegt niets over de formaten, dus Lucent verandert niets.",
+                       "The clips do not start on this device. That says nothing about the formats, so Lucent changes nothing."),
+                     T("Maak een foutrapport (Instellingen en hulp) en stuur het op, dan kijken we waarom.",
+                       "Make an error report (Settings and help) and send it, then we can see why.")]
+        self.fill({"noapply": "1" if failed else "","rtitle": T("Wat je kastje kan", "What your box can do"), "advhead": T("VOORSTEL", "SUGGESTION"),
                    "advtitle": T("Zo past Lucent zich aan", "This is how Lucent adapts"), "advice": "[CR]".join(lines[:8]),
                    "b_apply": T("Toepassen", "Apply"), "b_all": T("Alles opnieuw testen", "Test everything again"), "b_done": T("Klaar", "Done"),
                    "hint": T("Druk op een uitslag om alleen die opnieuw te testen.", "Press a result to test just that one again.")})
@@ -287,6 +360,8 @@ class Result(dialogs.Base):
             run_tests([test])
             self.show()
         elif control == 20:
+            if all_failed(self.results):
+                return
             apply(self.results)
             self.close()
         elif control == 21:

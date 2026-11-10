@@ -233,6 +233,6 @@ def scrobble(state, meta, percent, position=0, total=0):
 
 def enrich(titles):
     """Adds Trakt and MDBList scores where those are available."""
+    mdblist.enrich(titles)                  # one request for 50 titles, the Trakt score included
     if active() is trakt:
-        trakt.enrich(titles)
-    mdblist.enrich(titles)
+        trakt.enrich([t for t in titles if "trakt" not in (t.get("scores") or {})])

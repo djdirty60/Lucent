@@ -117,7 +117,6 @@ def home(handle, _params):
         items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultNetwork.png"),
         items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultPlaylist.png"),
         items.folder(T("Zoeken", "Search"), util.url_for(action="searchmenu"), "DefaultAddonsSearch.png"),
-        _action(T("Typ met je telefoon", "Type with your phone"), util.url_for(action="remote"), "DefaultAddonsSearch.png"),
         _action(T("Profiel: %s", "Profile: %s") % users.current()["name"], util.url_for(action="who"), "DefaultUser.png"),
         items.folder(T("Instellingen en hulp", "Settings and help"), util.url_for(action="tools"), "DefaultAddonProgram.png"),
     ]
@@ -170,7 +169,9 @@ def menu(handle, params):
 
 def trakt_menu(handle, _params):
     """Everything that is yours: watchlists, collection and lists of every service you use."""
-    entries = [(T("Kijklijst films", "Watchlist movies"), "watchlist_movie"), (T("Kijklijst series", "Watchlist shows"), "watchlist_tv")]
+    import prefetch
+    entries = [(T("Klaar voor vanavond", "Ready for tonight"), "tonight")] if prefetch.tonight() else []
+    entries += [(T("Kijklijst films", "Watchlist movies"), "watchlist_movie"), (T("Kijklijst series", "Watchlist shows"), "watchlist_tv")]
     if tracker.logged_in():
         entries += [(T("Collectie films", "Collection movies"), "collection_movie"), (T("Collectie series", "Collection shows"), "collection_tv")]
     rows = [items.folder(label, util.url_for(action="list", name=name)) for label, name in entries]
@@ -215,6 +216,8 @@ def tools(handle, _params):
     rows = [
         _action(T("Instellingen openen", "Open settings"), util.url_for(action="settings")),
         _action(T("Installatie-assistent", "Setup assistant"), util.url_for(action="setup")),
+        _action(T("Ondertitels en geluid instellen", "Set up subtitles and sound"), util.url_for(action="subs_setup")),
+        _action(T("Intro overslaan instellen", "Set up skip intro"), util.url_for(action="skip_setup")),
         _action(T("Volgorde van bronnen", "Order of sources"), util.url_for(action="ranking")),
         _action(T("Formaattest: wat kan dit apparaat?", "Format check: what can this box play?"), util.url_for(action="formatcheck")),
         _action(T("Bibliotheek nu bijwerken", "Update the library now"), util.url_for(action="library_sync"), "DefaultAddonLibrary.png"),
@@ -298,7 +301,8 @@ HISTORY = "search_history.json"
 
 def search_menu(handle, _params):
     rows = [items.folder(T("Films zoeken", "Search movies"), util.url_for(action="search", type="movie"), "DefaultAddonsSearch.png"),
-            items.folder(T("Series zoeken", "Search shows"), util.url_for(action="search", type="tvshow"), "DefaultAddonsSearch.png")]
+            items.folder(T("Series zoeken", "Search shows"), util.url_for(action="search", type="tvshow"), "DefaultAddonsSearch.png"),
+            _action(T("Typ met je telefoon", "Type with your phone"), util.url_for(action="remote"), "DefaultAddonsSearch.png")]
     history = util.load_json(HISTORY, [])
     for kind, query in history:
         word = T("Film", "Movie") if kind == "movie" else T("Serie", "Show")
