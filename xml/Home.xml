@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Lucent: home screen -->
 <window>
-    <backgroundcolor>$VAR[LucentHomeClear]</backgroundcolor>
     <defaultcontrol always="true">9100</defaultcontrol>
     <!-- First time: write the default menu; once per session: select the start tab -->
     <!-- boxes with 2 GB memory or less get the light mode once (Skin settings > Advanced) -->
@@ -43,7 +42,7 @@
             <top>0</top>
             <width>1920</width>
             <height>1080</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + Skin.HasSetting(nuvio.fullbackdrop) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + Skin.HasSetting(nuvio.fullbackdrop)</visible>
         </control>
         <control type="videowindow">
             <depth>-0.80</depth>
@@ -51,15 +50,15 @@
             <top>0</top>
             <width>1280</width>
             <height>720</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + !Skin.HasSetting(nuvio.fullbackdrop) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + !Skin.HasSetting(nuvio.fullbackdrop)</visible>
         </control>
         <control type="videowindow">
             <depth>-0.80</depth>
-            <left>820</left>
-            <top>30</top>
-            <width>1080</width>
-            <height>608</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+            <left>960</left>
+            <top>60</top>
+            <width>880</width>
+            <height>495</height>
+            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
         </control>
         <!-- ============ Backdrop ============ -->
         <control type="image">
@@ -93,34 +92,34 @@
             <left>0</left>
             <top>0</top>
             <width>1920</width>
-            <height>30</height>
+            <height>60</height>
             <texture>white.png</texture>
             <colordiffuse>bg</colordiffuse>
             <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
         </control>
         <control type="image">
             <left>0</left>
-            <top>638</top>
+            <top>555</top>
             <width>1920</width>
-            <height>442</height>
+            <height>525</height>
             <texture>white.png</texture>
             <colordiffuse>bg</colordiffuse>
             <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
         </control>
         <control type="image">
             <left>0</left>
-            <top>30</top>
-            <width>820</width>
-            <height>608</height>
+            <top>60</top>
+            <width>960</width>
+            <height>495</height>
             <texture>white.png</texture>
             <colordiffuse>bg</colordiffuse>
             <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
         </control>
         <control type="image">
-            <left>1900</left>
-            <top>30</top>
-            <width>20</width>
-            <height>608</height>
+            <left>1840</left>
+            <top>60</top>
+            <width>80</width>
+            <height>495</height>
             <texture>white.png</texture>
             <colordiffuse>bg</colordiffuse>
             <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
@@ -167,65 +166,40 @@
                 <colordiffuse>bg_60</colordiffuse>
             </control>
         </control>
-        <!-- Trailer layer B/C (test for CoreELEC): the video is drawn after the backdrops, so nothing opaque is drawn on top of it -->
-        <control type="videowindow">
-            <depth>-0.80</depth>
-            <left>0</left>
-            <top>0</top>
-            <width>1920</width>
-            <height>1080</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + Skin.HasSetting(nuvio.fullbackdrop) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-        </control>
-        <control type="videowindow">
-            <depth>-0.80</depth>
-            <left>640</left>
-            <top>0</top>
-            <width>1280</width>
-            <height>720</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),hero) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + !Skin.HasSetting(nuvio.fullbackdrop) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-        </control>
-        <control type="videowindow">
-            <depth>-0.80</depth>
-            <left>820</left>
-            <top>30</top>
-            <width>1080</width>
-            <height>608</height>
-            <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-        </control>
         <!-- Poster focus "trailer window with soft edge" -->
         <control type="group">
             <visible>String.IsEqual(Skin.String(nuvio.posterfocus),window) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</visible>
             <animation effect="fade" start="0" end="100" time="600">Visible</animation>
             <animation effect="fade" start="100" end="0" time="300">Hidden</animation>
             <control type="image">
-                <left>818</left>
-                <top>30</top>
-                <width>300</width>
-                <height>608</height>
+                <left>958</left>
+                <top>60</top>
+                <width>360</width>
+                <height>495</height>
                 <texture>grad_left.png</texture>
                 <colordiffuse>bg</colordiffuse>
             </control>
             <control type="image">
-                <left>1740</left>
-                <top>30</top>
-                <width>162</width>
-                <height>608</height>
+                <left>1640</left>
+                <top>60</top>
+                <width>202</width>
+                <height>495</height>
                 <texture flipx="true">grad_left.png</texture>
                 <colordiffuse>bg</colordiffuse>
             </control>
             <control type="image">
-                <left>820</left>
-                <top>28</top>
-                <width>1080</width>
-                <height>140</height>
+                <left>960</left>
+                <top>58</top>
+                <width>880</width>
+                <height>170</height>
                 <texture>grad_top.png</texture>
                 <colordiffuse>bg</colordiffuse>
             </control>
             <control type="image">
-                <left>820</left>
-                <top>398</top>
-                <width>1080</width>
-                <height>242</height>
+                <left>960</left>
+                <top>297</top>
+                <width>880</width>
+                <height>260</height>
                 <texture>grad_bottom.png</texture>
                 <colordiffuse>bg</colordiffuse>
             </control>

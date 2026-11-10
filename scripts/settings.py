@@ -297,30 +297,13 @@ def explain_flags():
 
 
 def pick_posterfocus():
+    set_bool("nuvio.trailers.menu", True)          # poster trailers are back (they were switched off while they did not work on CoreELEC)
     pick_option("nuvio.posterfocus", POSTERFOCUS, tr(("Trailer on focus", "Trailer bij focus")))
     if skin_string("nuvio.posterfocus"):
         if not xbmc.getCondVisibility("System.HasAddon(plugin.video.youtube)"):
             xbmc.executebuiltin("InstallAddon(plugin.video.youtube)", True)
         # the trailer helper runs from the Home screen; start it now (it quits if it already runs)
         xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
-
-
-TRAILER_LAYERS = [("", ("A: as before (video drawn first)", "A: zoals eerst (video als eerste getekend)")),
-                  ("late", ("B: video drawn after the background", "B: video na de achtergrond getekend")),
-                  ("clear", ("C: like B, and the screen not cleared to black", "C: zoals B, en het scherm niet zwart gemaakt"))]
-
-
-def trailer_test():
-    """Test on CoreELEC: poster trailers on Home with the three ways of drawing the video layer."""
-    set_bool("nuvio.trailers.menu", True)
-    pick_posterfocus()
-    if not skin_string("nuvio.posterfocus"):
-        return
-    pick_option("lucent.trailer.layer", TRAILER_LAYERS, tr(("Trailer test: video layer", "Trailertest: videolaag")))
-    xbmcgui.Dialog().ok(HEADING, tr(("Go to Home, keep a poster selected for a few seconds and watch whether the trailer is visible. "
-                                     "Then try the next letter (A, B, C) here.",
-                                     "Ga naar Home, laat een poster een paar seconden geselecteerd en kijk of je de trailer ziet. "
-                                     "Probeer daarna hier de volgende letter (A, B, C).")))
 
 
 # ----------------------------------------------------------------------------- sync + reset
@@ -440,7 +423,6 @@ if __name__ == "__main__":
         "watched": pick_watched,
         "glow": lambda: pick_option("nuvio.glow", GLOW, tr(("Edge glow", "Randgloed"))),
         "pauseinfo": lambda: pick_option("nuvio.pauseinfo", PAUSE, tr(("Show info after", "Info tonen na"))),
-        "trailertest": trailer_test,
         "flags": explain_flags,
         "posterfocus": pick_posterfocus,
         "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),

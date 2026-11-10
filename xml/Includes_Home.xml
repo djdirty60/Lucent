@@ -8098,13 +8098,6 @@
                     <visible>Container(8101).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8101) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8101">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -8240,60 +8233,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -8423,12 +8362,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW1Limit]" browse="never" sortby="$VAR[NuvioW1Sort]" sortorder="$VAR[NuvioW1Order]">$VAR[NuvioW1PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8101) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8101)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 1 (land) -->
@@ -8865,13 +8862,6 @@
                     <visible>Container(8102).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8102) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8102">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -9007,60 +8997,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -9190,12 +9126,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW2Limit]" browse="never" sortby="$VAR[NuvioW2Sort]" sortorder="$VAR[NuvioW2Order]">$VAR[NuvioW2PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8102) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8102)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 2 (land) -->
@@ -9632,13 +9626,6 @@
                     <visible>Container(8103).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8103) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8103">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -9774,60 +9761,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -9957,12 +9890,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW3Limit]" browse="never" sortby="$VAR[NuvioW3Sort]" sortorder="$VAR[NuvioW3Order]">$VAR[NuvioW3PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8103) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8103)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 3 (land) -->
@@ -10399,13 +10390,6 @@
                     <visible>Container(8104).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8104) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8104">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -10541,60 +10525,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -10724,12 +10654,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW4Limit]" browse="never" sortby="$VAR[NuvioW4Sort]" sortorder="$VAR[NuvioW4Order]">$VAR[NuvioW4PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8104) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8104)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 4 (land) -->
@@ -11166,13 +11154,6 @@
                     <visible>Container(8105).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8105) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8105">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -11308,60 +11289,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -11491,12 +11418,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW5Limit]" browse="never" sortby="$VAR[NuvioW5Sort]" sortorder="$VAR[NuvioW5Order]">$VAR[NuvioW5PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8105) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8105)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 5 (land) -->
@@ -11933,13 +11918,6 @@
                     <visible>Container(8106).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8106) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8106">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -12075,60 +12053,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -12258,12 +12182,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW6Limit]" browse="never" sortby="$VAR[NuvioW6Sort]" sortorder="$VAR[NuvioW6Order]">$VAR[NuvioW6PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8106) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8106)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 6 (land) -->
@@ -12705,13 +12687,6 @@
                     <visible>Container(8107).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8107) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8107">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -12847,60 +12822,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -13030,12 +12951,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW7Limit]" browse="never" sortby="$VAR[NuvioW7Sort]" sortorder="$VAR[NuvioW7Order]">$VAR[NuvioW7PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8107) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8107)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 7 (land) -->
@@ -13472,13 +13451,6 @@
                     <visible>Container(8108).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8108) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8108">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -13614,60 +13586,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -13797,12 +13715,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW8Limit]" browse="never" sortby="$VAR[NuvioW8Sort]" sortorder="$VAR[NuvioW8Order]">$VAR[NuvioW8PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8108) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8108)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 8 (land) -->
@@ -14239,13 +14215,6 @@
                     <visible>Container(8109).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8109) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8109">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -14381,60 +14350,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -14564,12 +14479,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW9Limit]" browse="never" sortby="$VAR[NuvioW9Sort]" sortorder="$VAR[NuvioW9Order]">$VAR[NuvioW9PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8109) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8109)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 9 (land) -->
@@ -15006,13 +14979,6 @@
                     <visible>Container(8110).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
-                <control type="videowindow">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8110) + ![String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
-                </control>
                 <control type="fixedlist" id="8110">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -15148,60 +15114,6 @@
             </control>
                         </control>
                     </itemlayout>
-                    <focusedlayout width="615" height="370" condition="String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn]">
-                        <control type="group">
-                            <left>40</left>
-            <control type="group">
-                <left>0</left>
-                <top>16</top>
-                <width>587</width>
-                <height>330</height>
-                <animation effect="fade" start="0" end="100" time="300">Focus</animation>
-                <control type="image">
-                    <left>-24</left>
-                    <top>-24</top>
-                    <width>635</width>
-                    <height>378</height>
-                    <texture border="38">rr14_glow_ring.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>165</top>
-                    <width>587</width>
-                    <height>165</height>
-                    <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
-                    <colordiffuse>dim_strong</colordiffuse>
-                </control>
-                <control type="image">
-                    <left>22</left>
-                    <top>218</top>
-                    <width>293</width>
-                    <height>88</height>
-                    <aspectratio align="left" aligny="bottom">keep</aspectratio>
-                    <texture background="true">$VAR[ItemClearlogo]</texture>
-                </control>
-                <control type="label">
-                    <left>22</left>
-                    <top>254</top>
-                    <width>543</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <selectedcolor>text</selectedcolor>
-                    <label>$INFO[ListItem.Label]</label>
-                    <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
-                </control>
-                <control type="image">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>587</width>
-                    <height>330</height>
-                    <texture border="14">rr14_edge.png</texture>
-                    <colordiffuse>text</colordiffuse>
-                </control>
-            </control>
-                        </control>
-                    </focusedlayout>
                     <focusedlayout width="248" height="370">
                         <control type="group">
                             <left>40</left>
@@ -15331,12 +15243,70 @@
                     </focusedlayout>
                     <content target="videos" limit="$VAR[NuvioW10Limit]" browse="never" sortby="$VAR[NuvioW10Sort]" sortorder="$VAR[NuvioW10Order]">$VAR[NuvioW10PathPoster]</content>
                 </control>
-                <control type="videowindow">
+                <!-- Poster focus "expanded card": drawn over the row (the row itself keeps its shape, so nothing is laid out again while the video starts) -->
+                <control type="group">
                     <left>0</left>
                     <top>56</top>
                     <width>587</width>
                     <height>330</height>
-                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8110) + [String.IsEqual(Skin.String(lucent.trailer.layer),late) | String.IsEqual(Skin.String(lucent.trailer.layer),clear)]</visible>
+                    <visible>String.IsEqual(Skin.String(nuvio.posterfocus),expand) + $EXP[NuvioTrailerOn] + Control.HasFocus(8110)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <control type="image">
+                        <left>-24</left>
+                        <top>-24</top>
+                        <width>635</width>
+                        <height>378</height>
+                        <texture border="38">rr14_glow_ring.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture diffuse="mask_landscape.png">white.png</texture>
+                        <colordiffuse>FF000000</colordiffuse>
+                    </control>
+                    <control type="videowindow">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>165</top>
+                        <width>587</width>
+                        <height>165</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>dim_strong</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>22</left>
+                        <top>218</top>
+                        <width>293</width>
+                        <height>88</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$VAR[ItemClearlogo]</texture>
+                    </control>
+                    <control type="label">
+                        <left>22</left>
+                        <top>254</top>
+                        <width>543</width>
+                        <height>56</height>
+                        <font>font27_title</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                        <visible>String.IsEmpty(ListItem.Art(clearlogo)) + String.IsEmpty(ListItem.Art(tvshow.clearlogo))</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left>
+                        <top>0</top>
+                        <width>587</width>
+                        <height>330</height>
+                        <texture border="14">rr14_edge.png</texture>
+                        <colordiffuse>text</colordiffuse>
+                    </control>
                 </control>
             </control>
             <!-- Widget 10 (land) -->
