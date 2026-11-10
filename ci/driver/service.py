@@ -3989,7 +3989,8 @@ def infobuttons_test():
         out["play_tv"] = _i.lv_play_url("tv", 1399)
         HOME_ = xbmcgui.Window(10000)
         HOME_.clearProperty("nuvio.info.watched")
-        _i.toggle_watched()
+        out["fen_light"] = _i.fen_light_id()                 # the stand-in is a Fen Light clone: toggle_watched lets Fen mark it
+        _i.lv_watched()                                      # so call the Lucent Video route itself
         mon.waitForAbort(10)
         out["prop_after"] = HOME_.getProperty("nuvio.info.watched")
         try:
