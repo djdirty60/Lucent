@@ -117,6 +117,7 @@ def home(handle, _params):
         items.folder(T("Streamingdiensten", "Streaming services"), util.url_for(action="services"), "DefaultNetwork.png"),
         items.folder(T("Mijn lijsten", "My lists"), util.url_for(action="traktmenu"), "DefaultPlaylist.png"),
         items.folder(T("Zoeken", "Search"), util.url_for(action="searchmenu"), "DefaultAddonsSearch.png"),
+        _action(T("Typ met je telefoon", "Type with your phone"), util.url_for(action="remote"), "DefaultAddonsSearch.png"),
         _action(T("Profiel: %s", "Profile: %s") % users.current()["name"], util.url_for(action="who"), "DefaultUser.png"),
         items.folder(T("Instellingen en hulp", "Settings and help"), util.url_for(action="tools"), "DefaultAddonProgram.png"),
     ]
@@ -133,9 +134,13 @@ def menu(handle, params):
         entries = [(T("Trending", "Trending"), "trending_tv"), (T("Populair", "Popular"), "popular_tv"),
                    (T("Nieuwe series", "New series"), "new_tv"),
                    (T("Best beoordeeld", "Top rated"), "toprated_tv"), (T("Lopende series", "On the air"), "airing_tv"),
-                   (T("Binnenkort", "Coming soon"), "upcoming_tv"), (T("Kalender: nieuwe afleveringen", "Calendar: new episodes"), "calendar")]
+                   (T("Binnenkort", "Coming soon"), "upcoming_tv"), (T("Kalender: nieuwe afleveringen", "Calendar: new episodes"), "calendar"),
+                   (T("Nieuwe seizoenen aangekondigd", "New seasons announced"), "new_seasons")]
     rows = [items.folder(label, util.url_for(action="list", name=name)) for label, name in entries]
     rows.append(items.folder(T("Genres", "Genres"), util.url_for(action="genres", type=params.get("type"))))
+    rows.append(items.folder(T("Studio's", "Studios") if movie else T("Netwerken", "Networks"), util.url_for(action="studios", type=params.get("type"))))
+    rows.append(items.folder(T("Per decennium", "By decade"), util.url_for(action="decades", type=params.get("type"))))
+    rows.append(items.folder(T("Prijswinnaars", "Award winners"), util.url_for(action="awards", type=params.get("type"))))
     rows.append(items.folder(T("Films zoeken", "Search movies") if movie else T("Series zoeken", "Search shows"),
                              util.url_for(action="search", type="movie" if movie else "tvshow"), "DefaultAddonsSearch.png"))
     send(handle, rows)
@@ -156,6 +161,32 @@ def trakt_menu(handle, _params):
     if floppy.available():
         rows.append(items.folder("Floppy", util.url_for(action="floppylists")))
     send(handle, rows)
+
+
+def studios(handle, params):
+    import browse
+    kind = params.get("type", "movie")
+    rows = []
+    for number, name, logo in browse.companies(kind):
+        url, item, folder = items.folder(name, util.url_for(action="list", name="company", type=kind, id=number))
+        if logo:
+            item.setArt({"icon": logo, "thumb": logo, "clearlogo": logo})
+        rows.append((url, item, folder))
+    send(handle, rows)
+
+
+def decades(handle, params):
+    import browse
+    kind = params.get("type", "movie")
+    send(handle, [items.folder(T("Jaren '%02d", "%ds") % (start % 100) if start < 2000 else "%ds" % start,
+                               util.url_for(action="list", name="decade", type=kind, start=start)) for start in browse.DECADES])
+
+
+def awards(handle, params):
+    import browse
+    kind = params.get("type", "movie")
+    send(handle, [items.folder(label, util.url_for(action="list", name="award", key=key))
+                  for key, (label, what, _w) in browse.AWARDS.items() if what == kind])
 
 
 def tools(handle, _params):
@@ -372,6 +403,24 @@ def list_titles(handle, params):
         kind = params.get("type")
         titles, more = tmdb.listing("discover/" + ("movie" if kind == "movie" else "tv"), kind, page,
                                     with_genres=params["genre"], sort_by="popularity.desc")
+    elif name == "new_seasons":
+        import newseason
+        titles, content = newseason.titles(), "tvshows"
+    elif name == "tonight":
+        import prefetch
+        titles = prefetch.tonight_titles()
+    elif name == "company":
+        import browse
+        titles, more = browse.company_titles(params.get("type", "movie"), params["id"], page)
+        content = "movies" if params.get("type") == "movie" else "tvshows"
+    elif name == "decade":
+        import browse
+        titles, more = browse.decade_titles(params.get("type", "movie"), params["start"], page)
+        content = "movies" if params.get("type") == "movie" else "tvshows"
+    elif name == "award":
+        import browse
+        titles, more = browse.award_titles(params["key"], page)
+        content = "movies" if browse.AWARDS[params["key"]][1] == "movie" else "tvshows"
     elif name == "alerts":
         import alerts
         titles = alerts.titles()
@@ -516,7 +565,7 @@ def test():
     xbmcgui.Dialog().ok("AIOStreams" if ok else T("Niet gelukt", "Failed"), text)
 
 
-FOLDERS = {"": home, "menu": menu, "tools": tools, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
+FOLDERS = {"": home, "menu": menu, "tools": tools, "studios": studios, "decades": decades, "awards": awards, "traktmenu": trakt_menu, "traktlists": trakt_lists, "genres": genres,
            "searchmenu": search_menu, "cast": cast, "publiclists": public_lists, "floppylists": floppy_lists, "services": services, "service": service, "mdblistmenu": mdblist_menu, "mdblists": mdblists, "title": title, "list": list_titles, "search": search, "seasons": seasons, "episodes": episodes}
 
 
@@ -580,6 +629,24 @@ def run(argv):
             if meta and meta.get("trailer"):
                 return xbmc.executebuiltin("PlayMedia(%s)" % meta["trailer"])
             return util.notify(T("Geen trailer gevonden", "No trailer found"))
+        if action == "remote":
+            import remote
+            return remote.open_screen()
+        if action == "prefetch_now":
+            import prefetch
+            return prefetch.run()
+        if action == "newseason_now":
+            import newseason
+            return newseason.run()
+        if action == "introskip":
+            import introskip
+            return introskip.toggle(params["tmdb"])
+        if action == "tonight_add":
+            import prefetch
+            return prefetch.add_tonight(params)
+        if action == "account_info":
+            import accountinfo
+            return accountinfo.show(params.get("service", ""))
         if action == "test_debrid":
             import debrid
             ok, text = debrid.check(params.get("service", ""))

@@ -85,8 +85,11 @@ def context(meta, watched):
     target = {"type": meta["kind"], "tmdb": meta["tmdb"], "season": meta.get("season"), "episode": meta.get("episode")}
     if meta["kind"] in ("movie", "episode"):
         entries.append((util.T("Bron kiezen", "Choose source"), "PlayMedia(%s)" % play_url(meta, select=1)))
+        run(util.T("Klaarzetten voor vanavond", "Get ready for tonight"), action="tonight_add", **target)
     run(util.T("Markeer als niet bekeken", "Mark as unwatched") if watched else
         util.T("Markeer als bekeken", "Mark as watched"), action="watched", value=0 if watched else 1, **target)
+    if meta["kind"] in ("tvshow", "episode", "season"):
+        run(util.T("Intro vanzelf overslaan: aan/uit", "Skip intro by itself: on/off"), action="introskip", tmdb=meta["tmdb"])
     if meta["kind"] in ("movie", "tvshow"):
         run(util.T("Op kijklijst", "Add to watchlist"), action="watchlist", value=1, **target)
         run(util.T("Van kijklijst af", "Remove from watchlist"), action="watchlist", value=0, **target)

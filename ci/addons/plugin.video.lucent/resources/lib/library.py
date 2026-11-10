@@ -286,6 +286,9 @@ def rpc(method, params=None):
 
 
 def rpc_batch(calls):
+    if calls:
+        import libwatch
+        libwatch.quiet(30 + len(calls) // 10)     # our own changes must not go back to the account
     for start in range(0, len(calls), BATCH):
         xbmc.executeJSONRPC(json.dumps([{"jsonrpc": "2.0", "id": i, "method": m, "params": p}
                                         for i, (m, p) in enumerate(calls[start:start + BATCH])]))
@@ -517,8 +520,13 @@ def run(manual=False):
 
 
 def publish_status():
-    """Home window properties for the skin."""
+    """Home window properties for the skin, and the linked account names in the settings."""
     linked = tracker.logged_in()
+    try:
+        import accountinfo
+        accountinfo.publish_names()
+    except Exception as error:      # noqa: BLE001 - a name in the settings is never worth an error
+        util.log("account names: %s" % type(error).__name__)
     util.HOME.setProperty("lucent.video.account", tracker.name())
     util.HOME.setProperty("lucent.video.account.user", tracker.user())
     util.HOME.setProperty("lucent.video.trakt", "1" if tracker.name() == "Trakt" else "")

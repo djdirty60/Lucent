@@ -272,7 +272,8 @@ class Who(dialogs.Base):
     def options(self, key):
         if kids.limit() and not kids.ask_pin(T("Pincode", "PIN")):
             return
-        labels = [T("Naam wijzigen", "Rename"), T("Verwijderen", "Delete"), T("Leeftijdsgrens (kinderprofiel)", "Age limit (kids profile)"), T("Pincode instellen", "Set PIN")]
+        labels = [T("Naam wijzigen", "Rename"), T("Verwijderen", "Delete"), T("Leeftijdsgrens (kinderprofiel)", "Age limit (kids profile)"), T("Pincode instellen", "Set PIN"),
+                  T("Bedtijd", "Bedtime")]
         if key == users.MAIN:
             labels[1] = None
         shown = [label for label in labels if label]
@@ -283,6 +284,9 @@ class Who(dialogs.Base):
             kids.choose_limit(key)
         elif choice == 3:
             kids.set_pin()
+        elif choice == 4:
+            import bedtime
+            bedtime.choose(key)
         if choice == 0:
             name = xbmcgui.Dialog().input(T("Naam", "Name"), person["name"])
             if name:

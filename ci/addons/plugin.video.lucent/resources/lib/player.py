@@ -138,12 +138,20 @@ def build(meta, source):
     return item
 
 
-def handoff(meta, resume, source, alternates=None, others=None):
+def lighter_than(source, order):
+    """Up to three sources that are much smaller than the one playing, for when it keeps buffering."""
+    size = source.get("size") or 0
+    if not size:
+        return []
+    return [s for s in order if s is not source and s.get("cached") and 0 < (s.get("size") or 0) < size * 0.55][:3]
+
+
+def handoff(meta, resume, source, alternates=None, others=None, lighter=None, last=False):
     keep = ("kind", "tmdb", "imdb", "season", "episode", "title", "runtime")
     now = {k: meta.get(k) for k in keep}
     import learn
     now.update(resume=resume, started=time.time(), alternates=alternates or [], url=source.get("url"), size=source.get("size") or 0,
-               learn=learn.key(source), together=others or [])
+               learn=learn.key(source), together=others or [], lighter=lighter or [], bedtime_last=bool(last))
     util.HOME.setProperty(HANDOFF, json.dumps(now))
     return now
 
@@ -180,9 +188,9 @@ def link_is_dead(now, position, total):
     return not _answers({"url": now["url"]}, int((now.get("size") or 0) * position / total))
 
 
-def resume_elsewhere(now, position):
-    """The link broke. Starts the next source at the same place. True when one was started."""
-    alternates = now.get("alternates") or []
+def resume_elsewhere(now, position, lighter=False):
+    """The link broke (or kept buffering: lighter=True). Starts the next source at the same place. True when one was started."""
+    alternates = (now.get("lighter") if lighter else now.get("alternates")) or []
     full = None
     while alternates:
         source = alternates.pop(0)
@@ -194,7 +202,8 @@ def resume_elsewhere(now, position):
         handoff(full, position, source, alternates, now.get("together"))
         import learn
         learn.record(now.get("learn"), False)          # the one that broke
-        util.notify(util.T("Link viel weg, verder met een andere bron", "Link dropped, continuing with another source"))
+        util.notify(util.T("Verder met een lichtere versie", "Continuing with a lighter version") if lighter else
+                    util.T("Link viel weg, verder met een andere bron", "Link dropped, continuing with another source"))
         xbmc.Player().play(source["url"], build(full, source))
         return True
     return False
@@ -261,9 +270,23 @@ def play(params, handle):
             first_meta = None
         if first_meta and abo.offer(first_meta):
             return _fail(handle)
+    import bedtime
+    if params.get("type") in ("movie", "episode"):
+        try:
+            planned = title_meta(params["type"], params["tmdb"], params.get("season") and int(params["season"]), params.get("episode") and int(params["episode"]))
+        except util.HttpError:
+            planned = None
+        allowed, last = bedtime.check(planned or {})
+        if not allowed:
+            return _fail(handle)
+    else:
+        last = False
     import together
     others = together.ask(params)
-    meta, sources = search_with_screen(params)
+    import prefetch
+    meta, sources = prefetch.take(params) if params.get("select") != "1" else (None, None)
+    if meta is None:
+        meta, sources = search_with_screen(params)
     if meta is None:
         if sources == "cancelled":
             return _fail(handle)
@@ -297,7 +320,8 @@ def play(params, handle):
         return _fail(handle, util.T("Deze bron kon niet worden gestart", "This source could not be started"))
     item = build(meta, source)
     remember_release(meta, source)
-    handoff(meta, resume, source, [s for s in order if s is not source][:4], others)
+    handoff(meta, resume, source, [s for s in order if s is not source][:4], others, lighter_than(source, order), last)
+    bedtime.counted()
     util.log("playing %s" % progress_key(meta))
     if handle >= 0:
         xbmcplugin.setResolvedUrl(handle, True, item)

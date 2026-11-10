@@ -10,7 +10,11 @@ import alerts
 import dialogs
 import learn
 import library
+import libwatch
 import player
+import newseason
+import prefetch
+import remote
 import scrapers
 import tmdb
 import tracker
@@ -55,12 +59,55 @@ class Watcher(xbmc.Player):
         self.current, self.asked_next, self.following, self.auto_next, self.prefetched = now, False, None, False, False
         self.position = 0.0
         self.learned = False
+        self.buffering, self.stalls, self.asked_lighter = 0, [], False
         self.total = self.getTotalTime() or 0.0
         if now.get("resume"):
             self.seekTime(float(now["resume"]))
             self.position = float(now["resume"])
         self._scrobble("start")
         threading.Thread(target=self._subtitles, args=(now,), daemon=True).start()
+        self.streams = None
+        threading.Thread(target=self._series_streams, args=(now,), daemon=True).start()
+
+    def _series_streams(self, meta):
+        import streammem
+        import introskip
+        try:
+            introskip.prepare(meta)
+        except Exception as error:      # noqa: BLE001
+            util.log("intro skip: %s" % type(error).__name__)
+        if not xbmc.Monitor().waitForAbort(7) and self.current is meta:
+            try:
+                streammem.apply(meta)
+            except Exception as error:      # noqa: BLE001 - never break playback
+                util.log("series sound/subtitle: %s" % type(error).__name__)
+
+    def watch_buffering(self, meta):
+        """Keeps loading? Offer once to continue with a much smaller version of the same title, at the same place."""
+        if getattr(self, "asked_lighter", True) or not meta.get("lighter") or not util.flag("lighter"):
+            return
+        if xbmc.getCondVisibility("Player.Caching"):
+            self.buffering += 1
+            return
+        if self.buffering >= 2 and self.position > 30:
+            self.stalls = [t for t in self.stalls if time.time() - t < 180] + [time.time()]
+        long_stall = self.buffering >= 12 and self.position > 30
+        self.buffering = 0
+        if long_stall or len(self.stalls) >= 3:
+            self.asked_lighter = True
+            threading.Thread(target=self._offer_lighter, args=(meta,), daemon=True).start()
+
+    def _offer_lighter(self, meta):
+        import xbmcgui
+        if not xbmcgui.Dialog().yesno("Lucent", util.T("De video blijft haperen. Verder kijken met een lichtere versie, op dezelfde plek?",
+                                                      "The video keeps buffering. Continue with a lighter version, at the same place?")):
+            return
+        if self.current is not meta:
+            return
+        position, self.current = self.position, None
+        self.close_dialog()
+        if not player.resume_elsewhere(meta, position, lighter=True):
+            util.notify(util.T("Geen lichtere versie gevonden", "No lighter version found"))
 
     def _subtitles(self, meta):
         import subs
@@ -101,6 +148,10 @@ class Watcher(xbmc.Player):
             import together
             threading.Thread(target=together.mark, args=(dict(meta), meta["together"]), daemon=True).start()
         self._scrobble("stop", meta, percent)
+        import streammem
+        streammem.remember(meta, getattr(self, "streams", None))
+        libwatch.played(meta)
+        libwatch.sync_soon()
         tracker.forget_lists()
         xbmc.executebuiltin("Container.Refresh")
 
@@ -143,8 +194,11 @@ class Watcher(xbmc.Player):
             self.close_dialog()
             self._try_elsewhere(meta, position)
             return
-        go = bool(meta and self.following and self.auto_next)
+        go = bool(meta and self.following and self.auto_next) and not (meta or {}).get("bedtime_last")
         self.finish()
+        if meta and meta.get("bedtime_last"):
+            import bedtime
+            threading.Thread(target=bedtime.after_last, daemon=True).start()
         if go:
             util.HOME.setProperty(player.RUN, str(run_count() + 1))
             self.play_next(meta)
@@ -160,6 +214,8 @@ class Watcher(xbmc.Player):
             pass
 
     def open_next(self, meta):
+        if meta.get("bedtime_last"):          # the last one for today: no next episode
+            return
         try:
             step = tmdb.next_episode(meta["tmdb"], int(meta["season"]), int(meta["episode"]))
             self.following = step and player.title_meta("episode", meta["tmdb"], step["season"], step["episode"])
@@ -203,6 +259,10 @@ class Watcher(xbmc.Player):
         except RuntimeError:
             return
         meta = self.current
+        self.watch_buffering(meta)
+        if meta.get("kind") == "episode" and int(self.position) % 20 == 0 and self.position > 15:
+            import streammem
+            self.streams = streammem.snapshot() or getattr(self, "streams", None)
         if not getattr(self, "learned", True) and self.position - float(meta.get("resume") or 0) >= learn.GOOD_AFTER:
             self.learned = True
             learn.record(meta.get("learn"), True)
@@ -225,8 +285,17 @@ def run_count():
         return 0
 
 
+class Events(xbmc.Monitor):
+    def onNotification(self, sender, method, data):
+        if method == "VideoLibrary.OnUpdate":
+            try:
+                libwatch.on_notification(method, data)
+            except Exception as error:      # noqa: BLE001
+                util.log("library event: %s" % type(error).__name__)
+
+
 def run():
-    monitor = xbmc.Monitor()
+    monitor = Events()
     watcher = Watcher()
     seconds = 0
     library.publish_status()
@@ -234,9 +303,17 @@ def run():
         seconds += 1
         try:
             watcher.tick()
+            if remote.wanted():
+                remote.start()
             # first check two minutes after starting, then every minute; never during a video
             if seconds >= 120 and seconds % 60 == 0 and not watcher.isPlaying() and library.due():
                 threading.Thread(target=library.run, daemon=True).start()
+            if seconds >= 180 and seconds % 60 == 0 and not watcher.isPlaying() and libwatch.sync_due() and not library.due():
+                threading.Thread(target=libwatch.periodic, daemon=True).start()
+            if seconds >= 600 and seconds % 600 == 0 and not watcher.isPlaying() and newseason.due():
+                threading.Thread(target=newseason.run, daemon=True).start()
+            if seconds >= 240 and seconds % 60 == 0 and not watcher.isPlaying() and prefetch.due():
+                threading.Thread(target=prefetch.run, daemon=True).start()
             if seconds >= 300 and seconds % 300 == 0 and not watcher.isPlaying() and alerts.due():
                 threading.Thread(target=alerts.run, daemon=True).start()
         except Exception as error:  # noqa: BLE001  a failing tick must never stop the service
