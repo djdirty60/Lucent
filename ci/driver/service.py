@@ -3491,6 +3491,17 @@ def sideclick_test():
     key("Left")
     mon.waitForAbort(1.2)
     out["open_by_left"] = {"focus": lab("System.CurrentControlId"), "menu": cond("ControlGroup(9050).HasFocus")}
+    path = [lab("System.CurrentControlId")]
+    for _ in range(9):
+        key("Down")
+        mon.waitForAbort(0.4)
+        path.append(lab("System.CurrentControlId"))
+    for _ in range(3):
+        key("Up")
+        mon.waitForAbort(0.4)
+        path.append(lab("System.CurrentControlId"))
+    out["nav_path"] = path
+    shot("sideclick-nav")
     for cid in ("2", "3", "4", "19", "10", "9061", "20", "9069"):
         fresh()
         xbmc.executebuiltin("SetFocus(9050)")
