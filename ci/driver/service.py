@@ -3984,6 +3984,7 @@ def infobuttons_test():
         out["use_lv"] = _i.use_lv()
         out["target"] = _i.lv_target()
         out["lv_version"] = list(_i.lv_version())
+        out["lists_by_lv"] = _i.lv_version() >= _i.LV_LISTS      # False until Lucent Video has action=lists
         out["play_movie"] = _i.lv_play_url("movie", 603)
         out["play_tv"] = _i.lv_play_url("tv", 1399)
         HOME_ = xbmcgui.Window(10000)
