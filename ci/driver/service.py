@@ -4095,6 +4095,8 @@ def trailerlayer_test():
         mon.waitForAbort(2)
         xbmc.executebuiltin("SetFocus(8101)")
         mon.waitForAbort(1)
+        if mode == "expand":
+            shot("home-expand-card")
         player.play(path, xbmcgui.ListItem("trailer", path=path), windowed=True)
         for _ in range(60):
             if mon.waitForAbort(0.1) or player.isPlayingVideo():
