@@ -295,6 +295,19 @@ def run():
                 log("skin updated - making way for the new helper")
                 break
             now = time.time()
+            if cond("Player.HasVideo"):
+                # a video plays: keep the box as quiet as possible (Dolby Vision FEL on small boxes needs all of it).
+                # Only the score in the TV player and closing the player menu; everything else waits until it stops.
+                for job in quick:
+                    if job.name == "live sport":
+                        job.maybe(now)
+                try:
+                    pause_clean()
+                except Exception as error:  # noqa: BLE001
+                    log(f"pause clean: {error}")
+                if monitor.waitForAbort(1):
+                    break
+                continue
             for job in quick:
                 job.maybe(now)
             try:
