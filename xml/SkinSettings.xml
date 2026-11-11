@@ -84,68 +84,7 @@
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                 </control>
-                <!-- the tools (setup assistant, backup, kids mode): a card that says what OK does, instead of an empty page -->
-            <control type="group">
-                <left>620</left>
-                <top>300</top>
-                <visible>[String.IsEqual(Container(9000).ListItem.Property(cat),setup) | String.IsEqual(Container(9000).ListItem.Property(cat),backup) | String.IsEqual(Container(9000).ListItem.Property(cat),kids)]</visible>
-                <control type="image">
-                    <width>1220</width>
-                    <height>360</height>
-                    <texture border="20" colordiffuse="card">rr20.png</texture>
-                </control>
-                <control type="image">
-                    <left>60</left>
-                    <top>60</top>
-                    <width>120</width>
-                    <height>120</height>
-                    <texture border="20" colordiffuse="glass_strong">rr20.png</texture>
-                </control>
-                <control type="image">
-                    <left>90</left>
-                    <top>90</top>
-                    <width>60</width>
-                    <height>60</height>
-                    <texture colordiffuse="lavender">$INFO[Container(9000).ListItem.Icon]</texture>
-                </control>
-                <control type="label">
-                    <left>220</left>
-                    <top>60</top>
-                    <width>940</width>
-                    <height>56</height>
-                    <font>font27_title</font>
-                    <textcolor>text</textcolor>
-                    <label>$INFO[Container(9000).ListItem.Label]</label>
-                </control>
-                <control type="textbox">
-                    <left>220</left>
-                    <top>124</top>
-                    <width>940</width>
-                    <height>100</height>
-                    <font>font12</font>
-                    <textcolor>text3</textcolor>
-                    <label>$INFO[Container(9000).ListItem.Property(sub)]</label>
-                </control>
-                <control type="image">
-                    <left>220</left>
-                    <top>250</top>
-                    <width>260</width>
-                    <height>60</height>
-                    <texture border="30" colordiffuse="focus">pill60.png</texture>
-                </control>
-                <control type="label">
-                    <left>220</left>
-                    <top>250</top>
-                    <width>260</width>
-                    <height>60</height>
-                    <font>font12_bold</font>
-                    <textcolor>on_focus</textcolor>
-                    <align>center</align>
-                    <aligny>center</aligny>
-                    <label>$LOCALIZE[31869]</label>
-                </control>
-            </control>
-            <control type="group">
+                <control type="group">
                     <visible>!Control.HasFocus(9000)</visible>
                     <control type="image">
                         <left>16</left>
@@ -249,7 +188,20 @@
             <control type="image"><left>560</left><top>160</top><width>2</width><height>860</height>
                     <texture>white.png</texture><colordiffuse>separator</colordiffuse></control><control type="label"><left>620</left><top>150</top><width>1200</width><height>60</height>
                     <font>font37</font><textcolor>text</textcolor><label>$INFO[Container(9000).ListItem.Label]</label></control><control type="label"><left>620</left><top>208</top><width>1200</width><height>36</height>
-                    <font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(9000).ListItem.Property(sub)]</label></control><control type="image"><left>620</left><top>254</top><width>48</width><height>5</height>
+                    <font>font10</font><textcolor>text3</textcolor><label>$INFO[Container(9000).ListItem.Property(sub)]</label></control>
+            <!-- the tools (setup assistant, backup, kids mode): a card that says what OK does, instead of an empty page -->
+            <control type="group">
+                <left>620</left>
+                <top>300</top>
+                <visible>[String.IsEqual(Container(9000).ListItem.Property(cat),setup) | String.IsEqual(Container(9000).ListItem.Property(cat),backup) | String.IsEqual(Container(9000).ListItem.Property(cat),kids)]</visible>
+                <control type="image"><width>1220</width><height>360</height><texture border="20" colordiffuse="card">rr20.png</texture></control>
+                <control type="image"><left>60</left><top>60</top><width>120</width><height>120</height><texture border="20" colordiffuse="glass_strong">rr20.png</texture></control>
+                <control type="image"><left>90</left><top>90</top><width>60</width><height>60</height><texture colordiffuse="lavender">$INFO[Container(9000).ListItem.Icon]</texture></control>
+                <control type="label"><left>220</left><top>60</top><width>940</width><height>56</height><font>font27_title</font><textcolor>text</textcolor><label>$INFO[Container(9000).ListItem.Label]</label></control>
+                <control type="textbox"><left>220</left><top>124</top><width>940</width><height>100</height><font>font12</font><textcolor>text3</textcolor><label>$INFO[Container(9000).ListItem.Property(sub)]</label></control>
+                <control type="image"><left>220</left><top>250</top><width>260</width><height>60</height><texture border="30" colordiffuse="focus">pill60.png</texture></control>
+                <control type="label"><left>220</left><top>250</top><width>260</width><height>60</height><font>font12_bold</font><textcolor>on_focus</textcolor><align>center</align><aligny>center</aligny><label>$LOCALIZE[31869]</label></control>
+            </control><control type="image"><left>620</left><top>254</top><width>48</width><height>5</height>
                     <texture border="2">white.png</texture><colordiffuse>focus</colordiffuse></control><control type="grouplist" id="9101">
                 <onright condition="Control.IsVisible(60)">60</onright>
                 <onright>9101</onright>
