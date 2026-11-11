@@ -3188,7 +3188,8 @@
                         <label>+  $LOCALIZE[31114]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,lists,56)</onclick>
                     </control>
-                    <!-- calendar notification: only for series that still get new seasons (not ended or cancelled) -->
+                    <!-- calendar notification: only for series that still get new seasons (not ended or cancelled). The TMDB status the season page
+                         looks up decides (Seren lists have no show title or status); without it, the list itself decides -->
                     <control type="button" id="5614">
                         <onback>SetFocus(56)</onback>
                         <width>auto</width>
@@ -3202,7 +3203,7 @@
                         <label>$VAR[LucentS56Bell]</label>
                         <onfocus>RunScript(special://skin/scripts/agenda.py,state56)</onfocus>
                         <onclick>RunScript(special://skin/scripts/agenda.py,follow56)</onclick>
-                        <visible>!String.Contains(Container(5698).ListItem.Status,ended) + !String.Contains(Container(5698).ListItem.Status,cancel) + !String.Contains(Container(56).ListItem.Status,ended) + !String.Contains(Container(56).ListItem.Status,cancel) + !String.IsEmpty(Container.ShowTitle)</visible>
+                        <visible>String.IsEqual(Window(home).Property(lucent.s56.status),Continuing) | String.IsEqual(Window(home).Property(lucent.s56.status),In production) | [String.IsEmpty(Window(home).Property(lucent.s56.status)) + !String.Contains(Container(5698).ListItem.Status,ended) + !String.Contains(Container(5698).ListItem.Status,cancel) + !String.Contains(Container(56).ListItem.Status,ended) + !String.Contains(Container(56).ListItem.Status,cancel) + !String.IsEmpty(Container.ShowTitle)]</visible>
                     </control>
                     <control type="button" id="5613">
                         <onback>SetFocus(56)</onback>
