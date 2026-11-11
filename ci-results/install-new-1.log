@@ -1,19 +1,4 @@
 Traceback (most recent call last):
-  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1404, in _conn_request
-    response = conn.getresponse()
-               ^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/http/client.py", line 1457, in getresponse
-    response.begin()
-  File "/usr/lib/python3.12/http/client.py", line 336, in begin
-    version, status, reason = self._read_status()
-                              ^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/http/client.py", line 305, in _read_status
-    raise RemoteDisconnected("Remote end closed connection without"
-http.client.RemoteDisconnected: Remote end closed connection without response
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
   File "/usr/bin/add-apt-repository", line 452, in <module>
     sys.exit(0 if addaptrepo.main() else 1)
                   ^^^^^^^^^^^^^^^^^
@@ -64,7 +49,7 @@ Traceback (most recent call last):
   File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1452, in _request
     (response, content) = self._conn_request(conn, request_uri, method, body, headers)
                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1413, in _conn_request
+  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1374, in _conn_request
     conn.connect()
   File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1139, in connect
     sock.connect((self.host, self.port))
@@ -121,8 +106,14 @@ Traceback (most recent call last):
   File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1452, in _request
     (response, content) = self._conn_request(conn, request_uri, method, body, headers)
                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1374, in _conn_request
-    conn.connect()
-  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1139, in connect
-    sock.connect((self.host, self.port))
-TimeoutError: [Errno 110] Connection timed out
+  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1404, in _conn_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 1457, in getresponse
+    response.begin()
+  File "/usr/lib/python3.12/http/client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 305, in _read_status
+    raise RemoteDisconnected("Remote end closed connection without"
+http.client.RemoteDisconnected: Remote end closed connection without response
