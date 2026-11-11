@@ -4156,7 +4156,7 @@ def addonsettings_test():
         mon.waitForAbort(2)
         tag = "lv" if "lucent" in addon and "video" in addon else "other"
         log(f"addonsettings {tag}: open={xbmcgui.getCurrentWindowDialogId() == 10140} heading={lab('Control.GetLabel(2)')!r} "
-            f"cat0={lab('Control.GetLabel(-200)')!r} cat3={lab('Control.GetLabel(-197)')!r} vis-192={cond('Control.IsVisible(-192)')} "
+            f"count={HOME.getProperty('lucent.as.count')!r} "
             f"cat={HOME.getProperty('lucent.as.cat')!r}")
         shot(f"addonsettings-{tag}")
         if tag == "lv":
