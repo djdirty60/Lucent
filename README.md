@@ -230,7 +230,7 @@ A tab without widgets shows the widgets of the start tab.
 
 **Settings → Lucent → Skin settings** has categories on the left and options on the right: **Appearance** (colour themes, AMOLED black, scale, font, clock, screensaver), **Layout** (menu and widgets, what OK does, poster labels, watched titles, the details page) and **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** (shortcuts to the matching settings of your video add-on and of Kodi; Integrations also has your TMDB key, Lucent Subtitles and the update pop-up).
 
-**Rating logos:** the skin does not ship logos of IMDb, TMDB or Trakt. Put your own `imdb.png`, `tmdb.png` and `trakt.png` in `userdata/addon_data/skin.lucent/logos/` and the info page shows them instead of the names.
+**Rating logos:** *Skin settings → Rating logos → Fetch* copies the logos of the `logos` folder of this page to your box; the lists and the info page then show IMDb, TMDB, Trakt, Rotten Tomatoes (fresh or rotten), the RT audience (full or spilt popcorn), Metacritic and Letterboxd with their logo instead of a coloured dot and name. You can also put your own `imdb.png`, `tmdb.png`, `trakt.png`, `rt.png`, `rt_rotten.png`, `rta.png`, `rta_spilt.png`, `mc.png`, `mcu.png` and `lb.png` in `userdata/addon_data/skin.lucent/logos/`. The logos are trademarks of their owners; Lucent is not affiliated with or endorsed by them.
 
 ### Back to the default skin
 

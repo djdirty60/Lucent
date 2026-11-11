@@ -1180,6 +1180,23 @@
         <value condition="Container.SortMethod(0)"></value>
         <value>$INFO[Container.SortMethod,   ·   ,]</value>
     </variable>
+    <!-- Rotten Tomatoes: fresh / rotten tomato, full / spilt popcorn (own rating logos) -->
+    <variable name="LucentLogoRtList">
+        <value condition="String.IsEqual(Window(home).Property(lucent.omdbl.rtc),FFE5484D) + !String.IsEmpty(Window(home).Property(nuvio.logo.rt_rotten))">$INFO[Window(home).Property(nuvio.logo.rt_rotten)]</value>
+        <value>$INFO[Window(home).Property(nuvio.logo.rt)]</value>
+    </variable>
+    <variable name="LucentLogoRtaList">
+        <value condition="String.IsEqual(Window(home).Property(lucent.omdbl.rtac),FFE5484D) + !String.IsEmpty(Window(home).Property(nuvio.logo.rta_spilt))">$INFO[Window(home).Property(nuvio.logo.rta_spilt)]</value>
+        <value>$INFO[Window(home).Property(nuvio.logo.rta)]</value>
+    </variable>
+    <variable name="LucentLogoRtPage">
+        <value condition="String.IsEqual(Window(home).Property(lucent.omdb.rtc),FFE5484D) + !String.IsEmpty(Window(home).Property(nuvio.logo.rt_rotten))">$INFO[Window(home).Property(nuvio.logo.rt_rotten)]</value>
+        <value>$INFO[Window(home).Property(nuvio.logo.rt)]</value>
+    </variable>
+    <variable name="LucentLogoRtaPage">
+        <value condition="String.IsEqual(Window(home).Property(lucent.omdb.rtac),FFE5484D) + !String.IsEmpty(Window(home).Property(nuvio.logo.rta_spilt))">$INFO[Window(home).Property(nuvio.logo.rta_spilt)]</value>
+        <value>$INFO[Window(home).Property(nuvio.logo.rta)]</value>
+    </variable>
     <variable name="LucentListRatingText">
         <value condition="!String.IsEmpty(ListItem.Rating(imdb))">IMDb  $INFO[ListItem.Rating(imdb)]</value>
         <value>★  $INFO[ListItem.Rating]</value>

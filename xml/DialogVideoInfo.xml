@@ -254,7 +254,7 @@
                     <control type="group">
                         <width>316</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rt)</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rt) + ![!String.IsEmpty(Window(home).Property(nuvio.logo.rt))]</visible>
                         <control type="image">
                             <left>0</left>
                             <top>0</top>
@@ -281,9 +281,35 @@
                         </control>
                     </control>
                     <control type="group">
+                        <width>150</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rt)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rt) + !String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
+                        <control type="image">
+                            <width>150</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>7</top>
+                            <width>48</width>
+                            <height>30</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$VAR[LucentLogoRtPage]</texture>
+                        </control>
+                        <control type="label">
+                            <left>76</left>
+                            <width>62</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.rt)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
                         <width>300</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rta) + ![!String.IsEmpty(Window(home).Property(nuvio.logo.rta))]</visible>
                         <control type="image">
                             <left>0</left>
                             <top>0</top>
@@ -310,9 +336,35 @@
                         </control>
                     </control>
                     <control type="group">
+                        <width>150</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.rta)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.rta) + !String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
+                        <control type="image">
+                            <width>150</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>7</top>
+                            <width>48</width>
+                            <height>30</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$VAR[LucentLogoRtaPage]</texture>
+                        </control>
+                        <control type="label">
+                            <left>76</left>
+                            <width>62</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.rta)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
                         <width>214</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc) + ![!String.IsEmpty(Window(home).Property(nuvio.logo.mc))]</visible>
                         <control type="image">
                             <left>0</left>
                             <top>0</top>
@@ -338,6 +390,32 @@
                             <label>Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</label>
                         </control>
                     </control>
+                    <control type="group">
+                        <width>150</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mc)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mc) + !String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
+                        <control type="image">
+                            <width>150</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>7</top>
+                            <width>48</width>
+                            <height>30</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.mc)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>76</left>
+                            <width>62</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.mc)]</label>
+                        </control>
+                    </control>
                     <include content="InfoPill">
                         <param name="label">★  $INFO[ListItem.Rating]</param>
                         <param name="bg">glass</param>
@@ -345,7 +423,6 @@
                         <param name="visible">!Skin.HasSetting(nuvio.info.hideratings) + String.IsEmpty(ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(lucent.omdb.imdb)) + String.IsEmpty(ListItem.Rating(tmdb)) + String.IsEmpty(ListItem.Rating(trakt)) + !String.IsEmpty(ListItem.Rating)</param>
                     </include>
                 </control>
-
                 <!-- MDBList scores (issue #8) on a row of their own, so the first row never gets cut off -->
                 <control type="grouplist">
                     <visible>!Skin.HasSetting(nuvio.info.hideratings) + [[!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(lucent.rate.hide.mcu)] | [!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)]]</visible>
@@ -358,7 +435,7 @@
                     <control type="group">
                         <width>280</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mcu)</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mcu) + ![!String.IsEmpty(Window(home).Property(nuvio.logo.mcu))]</visible>
                         <control type="image">
                             <left>0</left>
                             <top>0</top>
@@ -385,9 +462,35 @@
                         </control>
                     </control>
                     <control type="group">
+                        <width>150</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.mcu)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.mcu) + !String.IsEmpty(Window(home).Property(nuvio.logo.mcu))</visible>
+                        <control type="image">
+                            <width>150</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>7</top>
+                            <width>48</width>
+                            <height>30</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.mcu)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>76</left>
+                            <width>62</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.mcu)]</label>
+                        </control>
+                    </control>
+                    <control type="group">
                         <width>230</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.lb)</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.lb) + ![!String.IsEmpty(Window(home).Property(nuvio.logo.lb))]</visible>
                         <control type="image">
                             <left>0</left>
                             <top>0</top>
@@ -413,8 +516,33 @@
                             <label>Letterboxd  $INFO[Window(home).Property(lucent.omdb.lb)]</label>
                         </control>
                     </control>
+                    <control type="group">
+                        <width>150</width>
+                        <height>44</height>
+                        <visible>!String.IsEmpty(Window(home).Property(lucent.omdb.lb)) + !Skin.HasSetting(nuvio.info.hideratings) + !Skin.HasSetting(lucent.rate.hide.lb) + !String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
+                        <control type="image">
+                            <width>150</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>7</top>
+                            <width>48</width>
+                            <height>30</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.lb)]</texture>
+                        </control>
+                        <control type="label">
+                            <left>76</left>
+                            <width>62</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.lb)]</label>
+                        </control>
+                    </control>
                 </control>
-
                 <!-- Episode title -->
                 <control type="label">
                     <left>96</left>
