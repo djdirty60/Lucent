@@ -568,13 +568,13 @@
                         <textcolor>text3</textcolor>
                         <label>$INFO[ListItem.Year]$INFO[ListItem.Rating,  ·  ★ ]$INFO[ListItem.Duration(hh:mm),  ·  ]$INFO[ListItem.Genre,  ·  ]</label>
                     </control>
-                    <control type="label">
-                        <top>132</top>
+                    <!-- a textbox: a label in a list scrolls sideways when it is too long -->
+                    <control type="textbox">
+                        <top>130</top>
                         <width>760</width>
-                        <height>56</height>
-                        <font>font12</font>
+                        <height>64</height>
+                        <font>font10</font>
                         <textcolor>text4</textcolor>
-                        <wrapmultiline>true</wrapmultiline>
                         <label>$INFO[ListItem.Plot]</label>
                     </control>
                 </focusedlayout>
