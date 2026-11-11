@@ -7,37 +7,43 @@ permissions:
   contents: write
 jobs:
   home:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
+    # Kodi 21 from Debian (deb.debian.org, a CDN): no Launchpad, and not the Ubuntu mirrors of the runners,
+    # which were unreachable for hours on 2026-11-11
+    container: debian:trixie
     strategy:
       fail-fast: false
       matrix:
         variant: [old, new]
         run: [1]
     steps:
-      - uses: actions/checkout@v4
-      # Kodi 21 comes from Ubuntu 26.04 itself: no Launchpad PPA (retired, and very slow). Every apt step has a time limit,
-      # because apt on Ubuntu can wait forever after a failed name lookup.
       - name: Install Kodi
         timeout-minutes: 20
         run: |
-          mkdir -p ci-results
+          mkdir -p /tmp/install
           {
             ok=""
             for try in 1 2 3; do
-              # an unreachable extra source (today security.ubuntu.com) must not stop the install: the mirror has Kodi
-              timeout 180 sudo apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=2 || echo "update not complete - going on"
-              timeout 600 sudo apt-get install -y -q -o Acquire::http::Timeout=20 -o Acquire::Retries=3 \
-                     kodi kodi-bin kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool mesa-utils libgl1-mesa-dri \
+              timeout 180 apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=2 || echo "update not complete - going on"
+              timeout 900 env DEBIAN_FRONTEND=noninteractive apt-get install -y -q -o Acquire::http::Timeout=20 -o Acquire::Retries=3 \
+                     git ca-certificates python3 kodi kodi-pvr-iptvsimple xvfb xauth rsync ffmpeg xdotool procps \
                 && { ok=1; break; }
               echo "apt try $try failed - again in 20 s"; sleep 20
             done
             [ -n "$ok" ] || echo "Kodi could not be installed"
-            apt-cache policy kodi kodi-bin
+            dpkg -l kodi kodi-bin | tail -2
             kodi --version 2>&1 | head -3
-          } > ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log 2>&1
-          tail -40 ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log
+          } > /tmp/install/log.txt 2>&1
+          tail -40 /tmp/install/log.txt
           which kodi
+      - uses: actions/checkout@v4
+        if: always()
+      - name: Keep the install log
+        if: always()
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          mkdir -p ci-results; cp /tmp/install/log.txt ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log 2>/dev/null || true
       - name: Run
         run: bash ci/run.sh ${{ matrix.variant }} ${{ matrix.run }}
       - name: Save results
