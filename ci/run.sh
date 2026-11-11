@@ -51,6 +51,9 @@ cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/driver $K/addons/service.lucent.cidriver
 mkdir -p /tmp/ci && cp ci/data/yt744_player_client.py /tmp/ci/
 for n in 1 2 3; do mkdir -p "/tmp/ci/music/CI Artist $n/CI Album $n"; ffmpeg -loglevel error -y -f lavfi -i "sine=frequency=$((300*n)):duration=3" -metadata title="Song $n" -metadata artist="CI Artist $n" -metadata album="CI Album $n" -metadata date=202$n "/tmp/ci/music/CI Artist $n/CI Album $n/01.mp3"; ffmpeg -loglevel error -y -f lavfi -i "color=c=0x$((n*3))06090:s=300x300" -frames:v 1 "/tmp/ci/music/CI Artist $n/CI Album $n/folder.jpg"; done
+# posters and backgrounds for the view screenshots (fakefen mode=showcase)
+mkdir -p /tmp/ci/art; cols=(1d3557 e63946 2a9d8f f4a261 6d597a 264653 b5838d 588157 3a86ff 8338ec bc6c25 457b9d)
+for n in $(seq 0 11); do c=${cols[$n]}; ffmpeg -loglevel error -y -f lavfi -i "gradients=s=600x900:c0=0x$c:c1=0x0b0f19:x0=0:y0=0:x1=600:y1=900:seed=$n" -frames:v 1 /tmp/ci/art/poster$n.jpg; ffmpeg -loglevel error -y -f lavfi -i "gradients=s=1920x1080:c0=0x$c:c1=0x101418:x0=1900:y0=0:x1=200:y1=1000:seed=$n" -frames:v 1 /tmp/ci/art/fanart$n.jpg; done
 ffmpeg -loglevel error -y -f lavfi -i "gradients=s=1920x1080:c0=0xfff4e6:c1=0xd8c4a8:x0=300:y0=200:x1=1700:y1=900" -frames:v 1 /tmp/ci/bright.jpg
 printf '1\n00:00:01,000 --> 00:01:50,000\nHallo dit is Nederlands\n' > /tmp/ci/nl.srt
 printf '1\n00:00:01,000 --> 00:01:50,000\nUkrainian forced\n' > /tmp/ci/uk.srt

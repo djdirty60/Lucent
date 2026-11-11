@@ -4208,10 +4208,10 @@ def osdclose_test():
 
 
 def newviews_test():
-    """1.41.0: the new views (Spotlight, Wall with info panel, Carousel, Title card) in the film library."""
+    """1.41.0: the new views (Spotlight, Wall with info panel, Carousel, Title card) with films that have art and plots."""
     out = {}
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase,return)")
     for _ in range(30):
         if mon.waitForAbort(0.3) or (cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0):
             break
