@@ -4157,13 +4157,18 @@ def addonsettings_test():
         tag = "lv" if "lucent" in addon and "video" in addon else "other"
         log(f"addonsettings {tag}: open={xbmcgui.getCurrentWindowDialogId() == 10140} heading={lab('Control.GetLabel(2)')!r} "
             f"cat0={lab('Control.GetLabel(-200)')!r} cat3={lab('Control.GetLabel(-197)')!r} vis-192={cond('Control.IsVisible(-192)')} "
-            f"lv={cond('$EXP[LucentAddonSettingsLV]')} cat={HOME.getProperty('lucent.as.cat')!r}")
+            f"cat={HOME.getProperty('lucent.as.cat')!r}")
         shot(f"addonsettings-{tag}")
         if tag == "lv":
-            xbmc.executebuiltin("SetFocus(-197)")
-            mon.waitForAbort(2.5)
-            log(f"addonsettings lv after focus -197: focus={xbmcgui.Window(10140).getFocusId()} cat={HOME.getProperty('lucent.as.cat')!r} "
-                f"current={lab('System.CurrentControl')!r}")
+            xbmc.executebuiltin("SetFocus(3)")
+            mon.waitForAbort(1)
+            ids = []
+            for _ in range(4):
+                fid = xbmcgui.Window(10140).getFocusId()
+                ids.append((fid, lab(f"Control.GetLabel({fid})"), cond(f"Control.IsVisible({fid})"), cond(f"Control.HasFocus({fid})")))
+                xbmc.executebuiltin("Action(Down)")
+                mon.waitForAbort(1.5)
+            log(f"addonsettings lv category ids: {ids} cat={HOME.getProperty('lucent.as.cat')!r} current={lab('System.CurrentControl')!r}")
             shot("addonsettings-lv-play")
             xbmc.executebuiltin("SetFocus(5)")
             mon.waitForAbort(2)
