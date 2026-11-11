@@ -1,162 +1,205 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Add-on settings in three columns: the groups, the settings, and a card that explains the focused setting.
+     Kodi fills: 2 heading, 3 groups (buttons -200, -199, ... from template 10), 5 settings (templates 7-15),
+     6 help text of the focused setting, 20 settings level, 28 OK, 29 Cancel, 30 Defaults.
+     For Lucent Video the groups get their own tiles and picture (scripts/helper.py keeps the chosen group in
+     Window(home).Property(lucent.as.cat)); every other add-on gets the same look without pictures. -->
 <window>
     <defaultcontrol always="true">5</defaultcontrol>
     <include>Anim_Dialog</include>
     <controls>
-        <include>DialogDim</include>
-        <control type="group">
-            <left>80</left>
-            <top>60</top>
-            <width>1760</width>
-            <height>960</height>
-            <include content="GlassPanel">
-                <param name="left">0</param>
-                <param name="top">0</param>
-                <param name="width">1760</param>
-                <param name="height">960</param>
-                <param name="body">modal</param>
-            </include>
+        <control type="image">
+            <width>1920</width>
+            <height>1080</height>
+            <texture>settings_bg.jpg</texture>
+        </control>
 
-            <!-- Header -->
-            <control type="label" id="2">
-                <left>56</left>
-                <top>34</top>
-                <width>1300</width>
-                <height>56</height>
-                <font>font32</font>
-                <label></label>
+        <!-- Header -->
+        <control type="label" id="2">
+            <left>64</left>
+            <top>44</top>
+            <width>1400</width>
+            <height>60</height>
+            <font>font32</font>
+            <textcolor>text</textcolor>
+            <label></label>
+        </control>
+        <control type="label">
+            <left>64</left>
+            <top>102</top>
+            <width>1400</width>
+            <height>36</height>
+            <font>font10</font>
+            <textcolor>text4</textcolor>
+            <label>$INFO[Window(addonsettings).Property(Addon.Version),v,]</label>
+        </control>
+
+        <!-- 1. Groups -->
+        <include content="SettingsPanel"><param name="left">48</param><param name="width">456</param></include>
+        <control type="grouplist" id="3">
+            <pagecontrol>61</pagecontrol>
+            <left>64</left>
+            <top>184</top>
+            <width>424</width>
+            <height>700</height>
+            <itemgap>8</itemgap>
+            <onright>5</onright>
+            <onup>3</onup>
+            <ondown>20</ondown>
+            <usecontrolcoords>true</usecontrolcoords>
+        </control>
+        <control type="scrollbar" id="61">
+            <left>492</left>
+            <top>184</top>
+            <width>6</width>
+            <height>700</height>
+            <onleft>3</onleft>
+            <onright>5</onright>
+            <visible>Control.IsVisible(3)</visible>
+        </control>
+        <include content="SettingsCategoryTiles"/>
+        <control type="button" id="20">
+            <left>64</left>
+            <top>900</top>
+            <width>424</width>
+            <height>60</height>
+            <font>font12_bold</font>
+            <textcolor>text3</textcolor>
+            <focusedcolor>on_focus</focusedcolor>
+            <textoffsetx>28</textoffsetx>
+            <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+            <texturenofocus border="30" colordiffuse="glass">pill60.png</texturenofocus>
+            <onup>3</onup>
+            <ondown>3</ondown>
+            <onright>9000</onright>
+        </control>
+
+        <!-- 2. Settings -->
+        <include content="SettingsPanel"><param name="left">520</param><param name="width">904</param></include>
+        <control type="grouplist" id="5">
+            <left>540</left>
+            <top>184</top>
+            <width>852</width>
+            <height>776</height>
+            <itemgap>8</itemgap>
+            <pagecontrol>60</pagecontrol>
+            <onleft>3</onleft>
+            <onright condition="Control.IsVisible(60)">60</onright>
+            <onright>9000</onright>
+            <onup>5</onup>
+            <ondown>5</ondown>
+        </control>
+        <control type="scrollbar" id="60">
+            <left>1404</left>
+            <top>184</top>
+            <width>6</width>
+            <height>776</height>
+            <onleft>5</onleft>
+            <onright>9000</onright>
+        </control>
+
+        <!-- 3. Info card -->
+        <include content="SettingsPanel"><param name="left">1440</param><param name="width">432</param><param name="height">760</param></include>
+        <control type="group">
+            <left>1464</left>
+            <top>184</top>
+            <!-- picture of the group (Lucent Video) or a quiet card (other add-ons) -->
+            <control type="image">
+                <width>384</width>
+                <height>216</height>
+                <texture diffuse="mask_landscape.png">$VAR[LucentAddonSettingsCard]</texture>
+                <aspectratio>scale</aspectratio>
+                <visible>$EXP[LucentAddonSettingsLV]</visible>
+            </control>
+            <control type="group">
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
+                <control type="image">
+                    <width>384</width>
+                    <height>216</height>
+                    <texture border="20" colordiffuse="glass">rr20.png</texture>
+                </control>
+                <control type="image">
+                    <left>152</left>
+                    <top>68</top>
+                    <width>80</width>
+                    <height>80</height>
+                    <texture colordiffuse="lavender">icons/settings.png</texture>
+                </control>
+            </control>
+            <control type="image">
+                <top>236</top>
+                <width>48</width>
+                <height>4</height>
+                <texture border="2">rr14.png</texture>
+                <colordiffuse>lavender</colordiffuse>
+                <visible>!$EXP[LucentAddonSettingsLV]</visible>
             </control>
             <control type="label">
-                <left>1360</left>
-                <top>34</top>
-                <width>344</width>
-                <height>56</height>
-                <align>right</align>
-                <font>font10</font>
-                <textcolor>text4</textcolor>
-                <label>$INFO[Window(addonsettings).Property(Addon.Version),v,]</label>
-            </control>
-            <control type="image">
-                <left>56</left>
-                <top>104</top>
-                <width>1648</width>
-                <height>1</height>
-                <texture>white.png</texture>
-                <colordiffuse>separator</colordiffuse>
-            </control>
-
-            <!-- Categories -->
-            <control type="grouplist" id="3">
-                <pagecontrol>61</pagecontrol>
-                <left>40</left>
-                <top>128</top>
-                <width>400</width>
-                <height>680</height>
-                <itemgap>4</itemgap>
-                <onright>5</onright>
-                <onup>3</onup>
-                <ondown>20</ondown>
-                <usecontrolcoords>true</usecontrolcoords>
-            </control>
-            <control type="scrollbar" id="61">
-                <left>452</left>
-                <top>128</top>
-                <height>680</height>
-                <onleft>3</onleft>
-                <onright>5</onright>
-                <visible>Control.IsVisible(3)</visible>
-            </control>
-            <include content="CategoryTemplate"><param name="width">400</param></include>
-            <control type="button" id="20">
-                <left>40</left>
-                <top>860</top>
-                <width>400</width>
-                <height>60</height>
+                <top>256</top>
+                <width>384</width>
+                <height>96</height>
                 <font>font12_bold</font>
-                <textoffsetx>28</textoffsetx>
-                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
-                <texturenofocus border="30" colordiffuse="glass">pill60.png</texturenofocus>
-                <onup>3</onup>
-                <ondown>3</ondown>
-                <onright>9000</onright>
+                <textcolor>text</textcolor>
+                <wrapmultiline>true</wrapmultiline>
+                <aligny>top</aligny>
+                <label>$INFO[System.CurrentControl]</label>
             </control>
-            <control type="image">
-                <left>468</left>
-                <top>128</top>
-                <width>1</width>
-                <height>792</height>
-                <texture>white.png</texture>
-                <colordiffuse>separator</colordiffuse>
-            </control>
-
-            <!-- Settings -->
-            <control type="grouplist" id="5">
-                <onright condition="Control.IsVisible(60)">60</onright>
-                <left>496</left>
-                <top>128</top>
-                <width>1196</width>
-                <height>680</height>
-                <itemgap>8</itemgap>
-                <pagecontrol>60</pagecontrol>
-                <onleft>3</onleft>
-                <onright>28</onright>
-                <onup>5</onup>
-                <ondown>5</ondown>
-            </control>
-            <control type="scrollbar" id="60">
-                <onright>28</onright>
-                <left>1712</left>
-                <top>128</top>
-                <height>680</height>
-                <onleft>5</onleft>
-            </control>
-
-            <!-- Description + buttons -->
             <control type="textbox" id="6">
-                <left>500</left>
-                <top>820</top>
-                <width>1190</width>
-                <height>34</height>
+                <top>360</top>
+                <width>384</width>
+                <height>360</height>
                 <font>font10</font>
-                <textcolor>text4</textcolor>
-<include>TextAutoScroll</include>
-</control>
-            <control type="grouplist" id="9000">
-                <left>496</left>
-                <top>860</top>
-                <width>1208</width>
-                <height>60</height>
-                <orientation>horizontal</orientation>
-                <align>right</align>
-                <itemgap>12</itemgap>
-                <onup>5</onup>
-                <onleft>20</onleft>
-                <control type="button" id="30">
-                    <label>409</label>
-                    <width>auto</width>
-                    <height>60</height>
-                    <font>font12_bold</font>
-                    <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
-                    <texturenofocus border="30" colordiffuse="glass">pill60.png</texturenofocus>
-                </control>
-                <control type="button" id="29">
-                    <label>222</label>
-                    <width>auto</width>
-                    <height>60</height>
-                    <font>font12_bold</font>
-                    <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
-                    <texturenofocus border="30" colordiffuse="glass">pill60.png</texturenofocus>
-                </control>
-                <control type="button" id="28">
-                    <label>186</label>
-                    <width>auto</width>
-                    <height>60</height>
-                    <font>font12_bold</font>
-                    <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
-                    <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
-                </control>
+                <textcolor>text3</textcolor>
+                <include>TextAutoScroll</include>
             </control>
         </control>
-        <include content="SettingTemplates"><param name="width">1196</param><param name="cpos">1106</param></include>
+
+        <!-- Buttons -->
+        <control type="grouplist" id="9000">
+            <left>1000</left>
+            <top>986</top>
+            <width>872</width>
+            <height>60</height>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <itemgap>12</itemgap>
+            <onup>5</onup>
+            <onleft>20</onleft>
+            <control type="button" id="30">
+                <label>409</label>
+                <width>auto</width>
+                <height>60</height>
+                <font>font12_bold</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>32</textoffsetx>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass">pill60.png</texturenofocus>
+            </control>
+            <control type="button" id="29">
+                <label>222</label>
+                <width>auto</width>
+                <height>60</height>
+                <font>font12_bold</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>32</textoffsetx>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass">pill60.png</texturenofocus>
+            </control>
+            <control type="button" id="28">
+                <label>186</label>
+                <width>auto</width>
+                <height>60</height>
+                <font>font12_bold</font>
+                <textcolor>on_focus</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>40</textoffsetx>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="lavender">pill60.png</texturenofocus>
+            </control>
+        </control>
+        <include content="AddonSettingTemplates"/>
+        <include content="AddonCategoryTemplate"/>
     </controls>
 </window>

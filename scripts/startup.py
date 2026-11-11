@@ -38,9 +38,37 @@ def season_page():
     xbmc.executebuiltin("Skin.SetString(lucent.flattenset,1)")
 
 
+LUCENT_ADDONS = ("skin.lucent", "plugin.video.lucent", "service.subtitles.lucent", "repository.lucent", "screensaver.lucent")
+
+
+def fresh_icons():
+    """Kodi keeps a copy of every add-on icon and only looks at the file again after a day, so a new icon showed in
+    the info window but not in the lists. After an update of a Lucent add-on, its old copies are thrown away."""
+    import json
+
+    def rpc(method, params):
+        return json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
+    for addon in LUCENT_ADDONS:
+        version = xbmc.getInfoLabel(f"System.AddonVersion({addon})")
+        key = f"lucent.iconver.{addon}"
+        if not version or xbmc.getInfoLabel(f"Skin.String({key})") == version:
+            continue
+        found = (rpc("Textures.GetTextures", {"properties": ["url"], "filter": {"field": "url", "operator": "contains",
+                                                                                "value": f"/addons/{addon}/"}})
+                 .get("result") or {}).get("textures") or []
+        gone = 0
+        for tex in found:
+            if any(tex.get("url", "").lower().endswith(name) for name in ("icon.png", "fanart.jpg", "fanart.png")):
+                rpc("Textures.RemoveTexture", {"textureid": tex["textureid"]})
+                gone += 1
+        log(f"{addon} {version}: {gone} old icon copies removed")
+        xbmc.executebuiltin(f"Skin.SetString({key},{version})")
+
+
 def run():
     xbmc.executebuiltin("Skin.Reset(nuvio.osdstats)")      # the old player-info overlay: now its own window (playerinfo.py)
     step("season page", season_page)
+    step("fresh icons", fresh_icons)
     import keymap
     step("keymap", keymap.main)
     import settings

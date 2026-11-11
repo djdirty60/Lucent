@@ -217,6 +217,37 @@ def run():
         if wait and cond(f"System.IdleTime({wait})"):
             xbmc.executebuiltin("Dialog.Close(videoosd)")
 
+    settings_state = {"open": False}
+
+    def addon_settings():
+        """Add-on settings in three columns: remember which group is chosen and how many groups there are, for the
+        tiles and the picture (Kodi switches the group when its button gets the focus; the group buttons have the
+        ids -100, -99, ... and the settings -80, -79, ...; the skin cannot ask for negative ids itself)."""
+        if xbmcgui.getCurrentWindowDialogId() != 10140:
+            if settings_state["open"]:
+                settings_state["open"] = False
+                HOME.clearProperty("lucent.as.cat")
+                HOME.clearProperty("lucent.as.count")
+            return
+        win = xbmcgui.Window(10140)
+        if not settings_state["open"]:
+            settings_state["open"] = True
+            HOME.setProperty("lucent.as.cat", "0")
+            count = 0
+            for n in range(20):
+                try:
+                    win.getControl(-100 + n)
+                except (RuntimeError, TypeError):
+                    break
+                count += 1
+            HOME.setProperty("lucent.as.count", str(count))
+        try:
+            fid = win.getFocusId()
+        except RuntimeError:
+            return
+        if -100 <= fid < -80 and HOME.getProperty("lucent.as.cat") != str(fid + 100):
+            HOME.setProperty("lucent.as.cat", str(fid + 100))
+
     def home_focus():
         """Home without any focus (for example OK on the Home tab while it has no rows yet, or after closing the setup
         assistant on a new installation): nothing reacts to the remote any more. Give the focus back to the menu."""
@@ -282,10 +313,14 @@ def run():
             except Exception as error:  # noqa: BLE001
                 log(f"media flags: {error}")
             try:
+                addon_settings()                     # the chosen group in the add-on settings (three columns)
+            except Exception as error:  # noqa: BLE001
+                log(f"add-on settings: {error}")
+            try:
                 pause_clean()                        # "Clean picture" when paused: the player menu goes too (issue #4)
             except Exception as error:  # noqa: BLE001
                 log(f"pause clean: {error}")
-            fast = colour.tick()
+            fast = colour.tick() or settings_state["open"]      # quick while the add-on settings are open
             if monitor.waitForAbort(0.25 if fast else 1):
                 break
     finally:
