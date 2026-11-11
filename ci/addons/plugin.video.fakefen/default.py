@@ -34,6 +34,7 @@ if handle >= 0:
             tag.setPlot("A CI test film. %s is about people who find out more than they wanted to know, told across one long night "
                         "in a city that never sleeps. Made up for the screenshots." % name)
             tag.setDuration(6000 + n * 300), tag.setUniqueIDs({"tmdb": str(1000 + n)})
+            tag.setDateAdded("2026-%02d-%02d 20:00:00" % (11 - n // 4, 28 - n * 2))
             li.setArt({"poster": "/tmp/ci/art/poster%d.jpg" % n, "fanart": "/tmp/ci/art/fanart%d.jpg" % n,
                        "landscape": "/tmp/ci/art/fanart%d.jpg" % n, "thumb": "/tmp/ci/art/poster%d.jpg" % n})
             li.setProperty("IsPlayable", "true")
@@ -82,6 +83,15 @@ if handle >= 0:
             xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&t=" + urllib.parse.quote(name), li, False)
         xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
         xbmcplugin.setContent(handle, "episodes")
+    elif params.get("mode") == "showcase_sets":          # film series (view 86)
+        for n, (name, total, seen) in enumerate([("Harbor Saga", 3, 1), ("Neon Files", 4, 4), ("Winter Tales", 2, 0), ("Orbit Trilogy", 3, 2)]):
+            li = xbmcgui.ListItem(name)
+            tag = li.getVideoInfoTag()
+            tag.setMediaType("set"), tag.setTitle(name), tag.setPlot("A CI test film series.")
+            li.setProperty("TotalCount", str(total)), li.setProperty("WatchedCount", str(seen))
+            li.setArt({"poster": "/tmp/ci/art/poster%d.jpg" % (n + 4), "fanart": "/tmp/ci/art/fanart%d.jpg" % (n + 4)})
+            xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=showcase", li, True)
+        xbmcplugin.setContent(handle, "sets")
     elif params.get("mode") == "progress":               # like Fen Light: a resume point without total time + WatchedProgress
         li = xbmcgui.ListItem("Half Film")
         tag = li.getVideoInfoTag()

@@ -4208,25 +4208,49 @@ def osdclose_test():
 
 
 def newviews_test():
-    """1.41.0 / 1.42.0: the newer views with films, series and episodes that have art, plots and flags."""
+    """1.41.0 / 1.42.0: the newer views (films, series, episodes, music, sets, recently added) and the side menu in each."""
     out = {}
-    for mode, views in (("showcase", (70, 71, 72, 73)), ("showcase_tv", (74, 75, 78)), ("showcase_ep", (76, 77, 79, 80))):
+    if int(xbmc.executeJSONRPC('{"jsonrpc":"2.0","id":1,"method":"AudioLibrary.GetAlbums","params":{"limits":{"end":1}}}').count('"albumid"')) == 0:
+        xbmc.executebuiltin("UpdateLibrary(music,/tmp/ci/music/)")
+        for _ in range(60):
+            if mon.waitForAbort(1) or not cond("Library.IsScanningMusic"):
+                break
+    runs = (("Videos", "plugin://plugin.video.fakefen/?mode=showcase", (70, 71, 72, 73, 87)),
+            ("Videos", "plugin://plugin.video.fakefen/?mode=showcase_tv", (74, 75, 78)),
+            ("Videos", "plugin://plugin.video.fakefen/?mode=showcase_ep", (76, 77, 79, 80)),
+            ("Videos", "plugin://plugin.video.fakefen/?mode=showcase_sets", (86,)),
+            ("Music", "musicdb://albums/", (81, 84, 85)),
+            ("Music", "musicdb://artists/", (82,)),
+            ("Music", "musicdb://songs/", (83,)))
+    for window, path, views in runs:
         xbmc.executebuiltin("Dialog.Close(all,true)")
-        xbmc.executebuiltin(f"ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode={mode},return)")
+        xbmc.executebuiltin(f"ActivateWindow({window},{path},return)")
         for _ in range(30):
-            if mon.waitForAbort(0.3) or (cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0):
+            if mon.waitForAbort(0.3) or (cond(f"Window.IsActive({window.lower()})") and int(lab("Container.NumItems") or 0) > 0):
                 break
         mon.waitForAbort(1)
         for view in views:
             xbmc.executebuiltin(f"Container.SetViewMode({view})")
             mon.waitForAbort(2)
             xbmc.executebuiltin(f"SetFocus({view})")
-            xbmc.executebuiltin("Action(Down)" if view in (73, 74, 77, 79, 80) else "Action(Right)")
+            xbmc.executebuiltin("Action(Down)" if view in (73, 74, 77, 79, 80, 83, 87) else "Action(Right)")
             mon.waitForAbort(2.5)
-            out[view] = {"visible": cond(f"Control.IsVisible({view})"), "focus": cond(f"Control.HasFocus({view})"),
-                         "mode": lab("Container.Viewmode"), "item": lab("ListItem.Label"), "content": lab("Container.Content")}
+            row = {"visible": cond(f"Control.IsVisible({view})"), "focus": cond(f"Control.HasFocus({view})"),
+                   "mode": lab("Container.Viewmode"), "item": lab("ListItem.Label"), "content": lab("Container.Content")}
             shot(f"view-{view}")
-        xbmc.executebuiltin("Container.SetViewMode(51)")
+            # the side menu: Left on the first item opens it, Right brings you back to the view
+            xbmc.executebuiltin(f"SetFocus({view},0,absolute)")
+            mon.waitForAbort(0.8)
+            xbmc.executebuiltin("Action(Left)")
+            mon.waitForAbort(1.2)
+            row["menu_open"] = cond("ControlGroup(9050).HasFocus")
+            if view in (72, 81):
+                shot(f"view-{view}-menu")
+            xbmc.executebuiltin("Action(Right)")
+            mon.waitForAbort(1)
+            row["menu_back"] = cond(f"Control.HasFocus({view})")
+            out[view] = row
+        xbmc.executebuiltin("Container.SetViewMode(50)" if window == "Music" else "Container.SetViewMode(51)")
         mon.waitForAbort(1)
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1)
