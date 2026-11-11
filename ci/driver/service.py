@@ -4208,28 +4208,29 @@ def osdclose_test():
 
 
 def newviews_test():
-    """1.41.0: the new views (Spotlight, Wall with info panel, Carousel, Title card) with films that have art and plots."""
+    """1.41.0 / 1.42.0: the newer views with films, series and episodes that have art, plots and flags."""
     out = {}
-    xbmc.executebuiltin("Dialog.Close(all,true)")
-    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase,return)")
-    for _ in range(30):
-        if mon.waitForAbort(0.3) or (cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0):
-            break
-    for view in (70, 71, 72, 73):
-        xbmc.executebuiltin(f"Container.SetViewMode({view})")
-        mon.waitForAbort(2)
-        xbmc.executebuiltin(f"SetFocus({view})")
-        xbmc.executebuiltin("Action(Right)" if view != 73 else "Action(Down)")
-        mon.waitForAbort(2.5)
-        out[view] = {"visible": cond(f"Control.IsVisible({view})"), "focus": cond(f"Control.HasFocus({view})"),
-                     "mode": lab("Container.Viewmode"), "item": lab("ListItem.Label")}
-        shot(f"view-{view}")
-    xbmc.executebuiltin("Container.SetViewMode(51)")
-    mon.waitForAbort(1)
+    for mode, views in (("showcase", (70, 71, 72, 73)), ("showcase_tv", (74, 75, 78)), ("showcase_ep", (76, 77, 79, 80))):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin(f"ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode={mode},return)")
+        for _ in range(30):
+            if mon.waitForAbort(0.3) or (cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0):
+                break
+        mon.waitForAbort(1)
+        for view in views:
+            xbmc.executebuiltin(f"Container.SetViewMode({view})")
+            mon.waitForAbort(2)
+            xbmc.executebuiltin(f"SetFocus({view})")
+            xbmc.executebuiltin("Action(Down)" if view in (73, 74, 77, 79, 80) else "Action(Right)")
+            mon.waitForAbort(2.5)
+            out[view] = {"visible": cond(f"Control.IsVisible({view})"), "focus": cond(f"Control.HasFocus({view})"),
+                         "mode": lab("Container.Viewmode"), "item": lab("ListItem.Label"), "content": lab("Container.Content")}
+            shot(f"view-{view}")
+        xbmc.executebuiltin("Container.SetViewMode(51)")
+        mon.waitForAbort(1)
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1)
     log("newviews: " + json.dumps(out))
-
 
 def lvtrakt_test():
     """1.39.0: the Trakt login of the video add-on is used (calendar, lists, watched) before Seren's."""

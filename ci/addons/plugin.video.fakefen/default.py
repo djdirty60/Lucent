@@ -40,6 +40,48 @@ if handle >= 0:
             xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&t=" + urllib.parse.quote(name), li, False)
         xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
         xbmcplugin.setContent(handle, "movies")
+    elif params.get("mode") == "showcase_tv":            # series with status and how much was watched (views 74, 75, 78)
+        shows = [("Harbor Lights", "Returning Series", 10, 4), ("The Long Road", "Ended", 24, 24), ("Signal Lost", "Canceled", 8, 2),
+                 ("Copper Town", "In Production", 0, 0), ("Night Shift", "Returning Series", 16, 15), ("Echo Valley", "Ended", 30, 9),
+                 ("Blue Hour", "Returning Series", 12, 0), ("Paper Crowns", "Ended", 20, 20)]
+        for n, (name, status, total, seen) in enumerate(shows):
+            li = xbmcgui.ListItem(name)
+            tag = li.getVideoInfoTag()
+            tag.setMediaType("tvshow"), tag.setTitle(name), tag.setTvShowTitle(name), tag.setYear(2018 + n), tag.setRating(6.5 + n / 5)
+            tag.setTvShowStatus(status), tag.setGenres(["Drama", "Mystery"]), tag.setUniqueIDs({"tmdb": str(2000 + n)})
+            tag.setPlot("A CI test series. %s follows a small town where every season opens a new door. Made up for the screenshots." % name)
+            li.setProperty("TotalEpisodes", str(total)), li.setProperty("WatchedEpisodes", str(seen))
+            li.setProperty("UnWatchedEpisodes", str(total - seen))
+            if total:
+                li.setProperty("WatchedProgress", str(int(round(100 * seen / total))))
+            li.setArt({"poster": "/tmp/ci/art/poster%d.jpg" % n, "fanart": "/tmp/ci/art/fanart%d.jpg" % n,
+                       "landscape": "/tmp/ci/art/fanart%d.jpg" % n, "thumb": "/tmp/ci/art/poster%d.jpg" % n})
+            xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=x", li, True)
+        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
+        xbmcplugin.setContent(handle, "tvshows")
+    elif params.get("mode") == "showcase_ep":            # episodes with stills, stream flags, watched and resume (views 76, 77, 79, 80)
+        import xbmc
+        for n in range(1, 9):
+            name = ["The Arrival", "Low Tide", "Old Friends", "The Map", "Static", "Crossing", "Small Hours", "Homecoming"][n - 1]
+            li = xbmcgui.ListItem(name)
+            tag = li.getVideoInfoTag()
+            tag.setMediaType("episode"), tag.setTitle(name), tag.setTvShowTitle("Harbor Lights"), tag.setSeason(2), tag.setEpisode(n)
+            tag.setPlot("Episode %d of a CI test series. Someone comes back to town and nothing stays the way it was. Made up for the screenshots." % n)
+            tag.setDuration(2700 + n * 60), tag.setPremiered("2026-10-%02d" % (n + 1)), tag.setDateAdded("2026-11-%02d 21:00:00" % (n + 1))
+            if n <= 3:
+                tag.setPlaycount(1)
+            if n == 4:
+                tag.setResumePoint(1200.0, 2940.0)
+            tag.addVideoStream(xbmc.VideoStreamDetail(width=3840 if n % 2 else 1920, height=2160 if n % 2 else 1080, codec="hevc",
+                                                      hdrType="dolbyvision" if n % 3 == 0 else "hdr10"))
+            tag.addAudioStream(xbmc.AudioStreamDetail(channels=6 if n % 2 else 2, codec="eac3", language="en"))
+            tag.addSubtitleStream(xbmc.SubtitleStreamDetail(language="nl"))
+            k = n % 8
+            li.setArt({"thumb": "/tmp/ci/art/fanart%d.jpg" % k, "fanart": "/tmp/ci/art/fanart0.jpg", "tvshow.poster": "/tmp/ci/art/poster0.jpg"})
+            li.setProperty("IsPlayable", "true")
+            xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&t=" + urllib.parse.quote(name), li, False)
+        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
+        xbmcplugin.setContent(handle, "episodes")
     elif params.get("mode") == "progress":               # like Fen Light: a resume point without total time + WatchedProgress
         li = xbmcgui.ListItem("Half Film")
         tag = li.getVideoInfoTag()
