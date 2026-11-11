@@ -322,12 +322,9 @@ def ac_play():
         set_kodi("filecache.memorysize", advice)
         set_kodi("filecache.readfactor", 400)                  # fill the buffer 4x faster than the video plays
 
-    def toggle_rate():
-        if rate in (1, 2, 3) and coreelec() and not xbmcgui.Dialog().yesno("Lucent", t(
-                "On CoreELEC Dolby Vision needs this: without it the picture turns pink / green. Switch it off anyway?",
-                "Op CoreELEC heeft Dolby Vision dit nodig: zonder wordt het beeld roze / groen. Toch uitzetten?")):
-            return
-        set_kodi("videoplayer.adjustrefreshrate", 0 if rate in (1, 2, 3) else 2)   # 2: on start and stop
+    def rate_on():
+        set_kodi("videoplayer.adjustrefreshrate", 2)        # 2: on start and stop; switching it off is only done in
+                                                            # Kodi's own player settings (Dolby Vision on CoreELEC needs it)
 
     def toggle_pass():
         on = not passthrough
@@ -338,7 +335,8 @@ def ac_play():
     out = []
     if (kodi_setting("filecache.memorysize") or 0) < advice:
         out.append((t(f"Buffer {advice} MB (advice)", f"Buffer {advice} MB (advies)"), buffer))
-    out.append((t("Frame rate: follows video", "Beeldfrequentie: volgt video") if rate in (1, 2, 3) else t("Frame rate: fixed", "Beeldfrequentie: vast"), toggle_rate))
+    if rate not in (1, 2, 3):                               # only a button to switch it ON (it used to toggle it off too)
+        out.append((t("Let the frame rate follow the video (advice)", "Beeldfrequentie de video laten volgen (advies)"), rate_on))
     out.append((t("Sound to amplifier: on", "Geluid naar versterker: aan") if passthrough else t("Sound to amplifier: off", "Geluid naar versterker: uit"), toggle_pass))
     out.append((t("Player settings", "Spelerinstellingen"), lambda: run("ActivateWindow(PlayerSettings)")))
     return out
