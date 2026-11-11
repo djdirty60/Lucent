@@ -4180,6 +4180,33 @@ def addonsettings_test():
             mon.waitForAbort(1)
 
 
+def osdclose_test():
+    """1.40.2: the player menu closes by itself while a video plays (issue #4)."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.SetString(lucent.osdclose,3)")
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    for _ in range(60):
+        if mon.waitForAbort(0.2) or cond("Player.HasVideo"):
+            break
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(1)
+    out["open"] = cond("Window.IsActive(videoosd)")
+    mon.waitForAbort(6)
+    out["closed_after_6s"] = not cond("Window.IsActive(videoosd)")
+    xbmc.executebuiltin("Skin.Reset(lucent.osdclose)")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(6)
+    out["stays_when_off"] = cond("Window.IsActive(videoosd)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.Player().stop()
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("osdclose: " + json.dumps(out))
+
+
 def lvtrakt_test():
     """1.39.0: the Trakt login of the video add-on is used (calendar, lists, watched) before Seren's."""
     import importlib
@@ -4455,6 +4482,7 @@ def main():
     safe(trailerlayer_test)
     safe(lvtrakt_test)
     safe(addonsettings_test)
+    safe(osdclose_test)
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:

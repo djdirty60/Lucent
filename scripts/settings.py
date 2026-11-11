@@ -85,6 +85,9 @@ PAUSE = [("3", ("After 3 seconds", "Na 3 seconden")), ("", ("After 5 seconds", "
          ("clean3", ("Info first, clean picture after 3 seconds", "Eerst info, leeg beeld na 3 seconden")),
          ("clean5", ("Info first, clean picture after 5 seconds", "Eerst info, leeg beeld na 5 seconden")),
          ("clean10", ("Info first, clean picture after 10 seconds", "Eerst info, leeg beeld na 10 seconden"))]
+OSDCLOSE = [("", ("Never (Back closes it)", "Nooit (Terug sluit het)")), ("3", ("After 3 seconds", "Na 3 seconden")),
+            ("5", ("After 5 seconds", "Na 5 seconden")), ("8", ("After 8 seconds", "Na 8 seconden")),
+            ("10", ("After 10 seconds", "Na 10 seconden")), ("15", ("After 15 seconds", "Na 15 seconden"))]
 POSTERFOCUS = [("", ("Off", "Uit")), ("window", ("Trailer window with soft edge", "Trailervenster met zachte rand")),
                ("hero", ("Hero media", "Hero-media")), ("expand", ("Expanded card", "Uitgevouwen kaart"))]
 TRAILER_DELAY = [("1", ("After 1 second", "Na 1 seconde")), ("", ("After 2 seconds", "Na 2 seconden")),
@@ -328,7 +331,7 @@ def sync():
     set_string("nuvio.accent.label", tr(dict(ACCENTS).get(accent, ACCENTS[0][1])))
     scan_flags()
     for name, options in (("nuvio.landscape", LANDSCAPE), ("nuvio.watched", WATCHED), ("nuvio.glow", GLOW),
-                          ("nuvio.pauseinfo", PAUSE), ("nuvio.posterfocus", POSTERFOCUS),
+                          ("nuvio.pauseinfo", PAUSE), ("nuvio.posterfocus", POSTERFOCUS), ("lucent.osdclose", OSDCLOSE),
                           ("nuvio.trailer.delay", TRAILER_DELAY)):
         set_string(name + ".label", tr(dict(options).get(skin_string(name), options[0][1])))
     watched_label()
@@ -338,7 +341,7 @@ def reset_all():
     if xbmcgui.Dialog().yesno(HEADING, tr(("Restore all skin settings? Your menu and widgets stay as they are.",
                                            "Alle skin-instellingen herstellen? Je menu en widgets blijven zoals ze zijn."))):
         for name in ("nuvio.accent", "nuvio.accent.label", "nuvio.landscape", "nuvio.watched", "lucent.watched.colour", "nuvio.glow",
-                     "nuvio.pauseinfo", "nuvio.posterfocus", "nuvio.trailer.delay"):
+                     "nuvio.pauseinfo", "nuvio.posterfocus", "nuvio.trailer.delay", "lucent.osdclose"):
             set_string(name, "")
         for name in ("nuvio.amoled", "nuvio.posterlabels.hide", "nuvio.sideicons.hide", "nuvio.fulldate",
                      "nuvio.fullbackdrop", "nuvio.info.hideratings", "nuvio.info.hidetrailer", "nuvio.hideclock",
@@ -427,6 +430,7 @@ if __name__ == "__main__":
         "watched": pick_watched,
         "glow": lambda: pick_option("nuvio.glow", GLOW, tr(("Edge glow", "Randgloed"))),
         "pauseinfo": lambda: pick_option("nuvio.pauseinfo", PAUSE, tr(("Show info after", "Info tonen na"))),
+        "osdclose": lambda: pick_option("lucent.osdclose", OSDCLOSE, tr(("Close the player menu by itself", "Spelermenu vanzelf sluiten"))),
         "flags": explain_flags,
         "posterfocus": pick_posterfocus,
         "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),
