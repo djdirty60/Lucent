@@ -2995,14 +2995,28 @@
                         <param name="bg">green</param>
                         <param name="color">white</param>
                         <param name="font">font10_bold</param>
-                        <param name="visible">String.Contains(Container(56).ListItem.Status,returning) | String.Contains(Container(56).ListItem.Status,continuing)</param>
+                        <param name="visible">String.Contains(Container(56).ListItem.Status,returning) | String.Contains(Window(home).Property(lucent.s56.status),returning) | String.Contains(Container(56).ListItem.Status,continuing) | String.Contains(Window(home).Property(lucent.s56.status),continuing)</param>
                     </include>
                     <include content="InfoPill">
                         <param name="label">$LOCALIZE[31557]</param>
                         <param name="bg">glass_strong</param>
                         <param name="color">text</param>
                         <param name="font">font10_bold</param>
-                        <param name="visible">String.Contains(Container(56).ListItem.Status,ended)</param>
+                        <param name="visible">String.Contains(Container(56).ListItem.Status,ended) | String.Contains(Window(home).Property(lucent.s56.status),ended)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31559]</param>
+                        <param name="bg">red</param>
+                        <param name="color">white</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.Contains(Container(56).ListItem.Status,cancel) | String.Contains(Window(home).Property(lucent.s56.status),cancel)</param>
+                    </include>
+                    <include content="InfoPill">
+                        <param name="label">$LOCALIZE[31560]</param>
+                        <param name="bg">amber</param>
+                        <param name="color">black</param>
+                        <param name="font">font10_bold</param>
+                        <param name="visible">String.Contains(Container(56).ListItem.Status,production) | String.Contains(Window(home).Property(lucent.s56.status),production) | String.Contains(Container(56).ListItem.Status,planned) | String.Contains(Window(home).Property(lucent.s56.status),planned) | String.Contains(Container(56).ListItem.Status,upcoming) | String.Contains(Window(home).Property(lucent.s56.status),upcoming) | String.Contains(Container(56).ListItem.Status,pilot) | String.Contains(Window(home).Property(lucent.s56.status),pilot)</param>
                     </include>
                     <control type="label">
                         <width>auto</width>
@@ -3100,7 +3114,7 @@
                 <height>80</height>
                 <font>font_body</font>
                 <textcolor>text3</textcolor>
-                <label>$INFO[Container(56).ListItem.Plot]</label>
+                <label>$VAR[LucentS56Plot]</label>
 <include>TextAutoScroll</include>
 </control>
             <!-- season summary: its own dark capsule at the right; the capsule grows and shrinks with the text -->
