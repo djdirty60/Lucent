@@ -79,3 +79,4 @@ grep -iE "lucent|cidriver|fakeseren|error|CDirectoryProvider|exception|traceback
 cp /tmp/ci/first.txt ci-results/$VARIANT-$RUN-first.txt; cp /tmp/ci/second.txt ci-results/$VARIANT-$RUN-second.txt
 tail -300 $K/temp/kodi.log > ci-results/$VARIANT-$RUN-tail.log 2>/dev/null
 ls -la ci-results
+# rerun 1794430986
