@@ -68,22 +68,22 @@ httplib2.error.ServerNotFoundError: Unable to find the server at api.launchpad.n
 PPA failed - trying Ubuntu's own Kodi
 Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
 Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
-Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [760 kB]
-Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [690 kB]
-Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [693 kB]
+Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [764 kB]
 Ign:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
 Ign:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease
 Ign:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease
 Ign:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease
 Ign:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
-Ign:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease
 Ign:2 https://archive.ubuntu.com/ubuntu noble InRelease
-Ign:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease
-Ign:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease
+Ign:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease
 Err:2 https://security.ubuntu.com/ubuntu noble InRelease
   Temporary failure resolving 'azure.archive.ubuntu.com'
-Ign:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease
+Ign:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease
+Ign:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease
 Ign:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease
+Ign:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease
 Err:3 https://security.ubuntu.com/ubuntu noble-updates InRelease
   Temporary failure resolving 'azure.archive.ubuntu.com'
 Ign:5 https://archive.ubuntu.com/ubuntu noble-security InRelease
@@ -92,7 +92,7 @@ Err:4 https://security.ubuntu.com/ubuntu noble-backports InRelease
 Ign:5 https://archive.ubuntu.com/ubuntu noble-security InRelease
 Err:5 https://security.ubuntu.com/ubuntu noble-security InRelease
   Temporary failure resolving 'azure.archive.ubuntu.com'
-Fetched 1467 kB in 3min 20s (7320 B/s)
+Fetched 1473 kB in 3min 20s (7369 B/s)
 Reading package lists...
 W: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/dists/noble/InRelease  Temporary failure resolving 'azure.archive.ubuntu.com'
 W: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/dists/noble-updates/InRelease  Temporary failure resolving 'azure.archive.ubuntu.com'
@@ -201,61 +201,3 @@ Ign:18 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libshine3 amd
 Ign:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libspeex1 amd64 1.2.1-2ubuntu2.24.04.1
 Ign:20 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsvtav1enc1d1 amd64 1.7.0+dfsg-2build1
 Ign:21 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsoxr0 amd64 0.1.3-4build3
-Ign:22 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswresample4 amd64 7:6.1.1-3ubuntu5
-Ign:23 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtheora0 amd64 1.1.1+dfsg.1-16.1build3
-Ign:24 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtwolame0 amd64 0.4.0-2build3
-Ign:25 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvorbisenc2 amd64 1.3.7-1build3
-Ign:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libvpx9 amd64 1.14.0-1ubuntu2.3
-Ign:27 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx264-164 amd64 2:0.164.3108+git31e19f9-1
-Ign:28 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx265-199 amd64 3.5-2build1
-Ign:29 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libxvidcore4 amd64 2:1.3.7-1build1
-Ign:30 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi-common all 0.2.42-2
-Ign:31 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi0t64 amd64 0.2.42-2
-Ign:32 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavcodec60 amd64 7:6.1.1-3ubuntu5
-Ign:33 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libraw1394-11 amd64 2.1.2-2build3
-Ign:34 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libavc1394-0 amd64 0.5.4-5build3
-Ign:35 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libunibreak5 amd64 5.1-2build1
-Ign:36 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libass9 amd64 1:0.17.1-2build1
-Ign:37 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libudfread0 amd64 1.1.2-1build1
-Ign:38 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbluray2 amd64 1:1.3.4-1build1
-Ign:39 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libchromaprint1 amd64 1.5.1-5
-Ign:40 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgme0 amd64 0.6.3-7build1
-Ign:41 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libmpg123-0t64 amd64 1.32.5-1ubuntu1.1
-Ign:42 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenmpt0t64 amd64 0.7.3-1.1build3
-Ign:43 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcjson1 amd64 1.7.17-1
-Ign:44 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmbedcrypto7t64 amd64 2.28.8-1
-Ign:45 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librist4 amd64 0.2.10+dfsg-2
-Ign:46 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsrt1.5-gnutls amd64 1.5.3-1build2
-Ign:47 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libssh-gcrypt-4 amd64 0.10.6-2ubuntu0.5
-Ign:48 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavformat60 amd64 7:6.1.1-3ubuntu5
-Ign:49 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbs2b0 amd64 3.1.0+dfsg-7build1
-Ign:50 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libflite1 amd64 2.2-6build3
-Ign:51 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libserd-0-0 amd64 0.32.2-1
-Ign:52 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzix-0-0 amd64 0.4.2-2build1
-Ign:53 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsord-0-0 amd64 0.16.16-2build1
-Ign:54 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsratom-0-0 amd64 0.6.16-1build1
-Ign:55 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 liblilv-0-0 amd64 0.24.22-1build1
-Ign:56 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmysofa1 amd64 1.3.2+dfsg-2ubuntu2
-Ign:57 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libplacebo338 amd64 6.338.2-2build1
-Ign:58 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libblas3 amd64 3.12.0-3build1.1
-Ign:59 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 liblapack3 amd64 3.12.0-3build1.1
-Ign:60 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libasyncns0 amd64 0.8-6build4
-Ign:61 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libflac12t64 amd64 1.4.3+ds-2.1ubuntu2
-Ign:62 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsndfile1 amd64 1.2.2-1ubuntu5.24.04.1
-Ign:63 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libpulse0 amd64 1:16.1+dfsg1-2ubuntu10.1
-Ign:64 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsphinxbase3t64 amd64 0.8+5prealpha+1-17build2
-Ign:65 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpocketsphinx3 amd64 0.8.0+real5prealpha+1-15ubuntu5
-Ign:66 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpostproc57 amd64 7:6.1.1-3ubuntu5
-Ign:67 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libsamplerate0 amd64 0.2.2-4build1
-Ign:68 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librubberband2 amd64 3.3.0+dfsg-2build1
-Ign:69 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswscale7 amd64 7:6.1.1-3ubuntu5
-Ign:70 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvidstab1.1 amd64 1.1.0-2build1
-Ign:71 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzimg2 amd64 3.0.5+ds1-1build1
-Ign:72 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavfilter9 amd64 7:6.1.1-3ubuntu5
-Ign:73 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcaca0 amd64 0.99.beta20-4ubuntu0.2
-Ign:74 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcdio19t64 amd64 2.1.0-4.1ubuntu1.2
-Ign:75 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-cdda2t64 amd64 10.2+2.0.1-1.1build2
-Ign:76 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-paranoia2t64 amd64 10.2+2.0.1-1.1build2
-Ign:77 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdc1394-25 amd64 2.2.6-4build1
-Ign:78 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libiec61883-0 amd64 1.2.0-6build1
-Ign:79 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libjack-jackd2-0 amd64 1.9.21~dfsg-3ubuntu3
