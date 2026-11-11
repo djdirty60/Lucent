@@ -141,6 +141,7 @@ class Trailers(xbmc.Player):
         self.spare_label = ""
         self.film_until = 0.0      # a film or another video of someone else plays (or just stopped): hands off
         self.stopping_since = 0.0  # we asked the player to stop our trailer and it has not stopped yet
+        self.played = set()        # cards whose trailer already played since Kodi started: not again
 
     # -- player callbacks: anything we did not start is not ours
     def onAVStarted(self):
@@ -166,6 +167,8 @@ class Trailers(xbmc.Player):
         """The trailer we asked for is playing: the skin shows the video (and expands the card) from now on."""
         if not self.av_started:
             log("trailer is playing")
+            if self.focus_key:
+                self.played.add(self.focus_key)     # once per title: coming back to this card does not start it again
         self.ours = True
         self.av_started = True
         self.failures = 0
@@ -374,7 +377,7 @@ class Trailers(xbmc.Player):
             self.let_go()
             busy = False
         dbg(f"busy={busy} req={self.requested} ours={self.ours} av={self.av_started} playing={self.isPlayingVideo()} tried={focus.key == self.tried}")
-        if busy or focus.key == self.tried:
+        if busy or focus.key == self.tried or focus.key in self.played:
             return
         if time.time() < self.pause_until:
             dbg(f"PAUSED {int(self.pause_until - time.time())}s (YouTube failed 3 times)")
