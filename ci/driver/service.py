@@ -4207,6 +4207,29 @@ def osdclose_test():
     log("osdclose: " + json.dumps(out))
 
 
+def menus_test():
+    """2.0 RC: every category of Settings and Skin settings, for a look at all menus."""
+    out = {}
+    for window, prefix in (("Settings", "set"), ("SkinSettings", "skin")):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin(f"ActivateWindow({window})")
+        mon.waitForAbort(2.5)
+        n = int(lab("Container(9000).NumItems") or 0)
+        out[prefix] = [lab(f"Container(9000).ListItemAbsolute({i}).Label") for i in range(n)]
+        for i in range(n):
+            xbmc.executebuiltin(f"SetFocus(9000,{i},absolute)")
+            mon.waitForAbort(1.3)
+            shot(f"menus-{prefix}-{i}")
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(9000)")
+    mon.waitForAbort(1)
+    shot("menus-home")
+    log("menus: " + json.dumps(out))
+
+
 def s56eps_test():
     """1.43.0: the season page shows its episodes as a row, a timeline, cards or a list with flags (side menu)."""
     out = {}
@@ -4596,6 +4619,7 @@ def main():
     safe(trailerlayer_test)
     safe(lvtrakt_test)
     safe(addonsettings_test)
+    safe(menus_test)
     safe(s56eps_test)
     safe(wnitem_test)
     safe(osdclose_test)
