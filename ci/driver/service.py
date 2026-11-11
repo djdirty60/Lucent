@@ -4207,6 +4207,69 @@ def osdclose_test():
     log("osdclose: " + json.dumps(out))
 
 
+def s56eps_test():
+    """1.43.0: the season page shows its episodes as a row, a timeline, cards or a list with flags (side menu)."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase_seasons,return)")
+    for _ in range(40):
+        if mon.waitForAbort(0.3) or (cond("Control.IsVisible(56)") and int(lab("Container(5601).NumItems") or 0) > 0):
+            break
+    out["page"] = cond("Control.IsVisible(56)")
+    out["episodes"] = lab("Container(5601).NumItems")
+    for style in ("timeline", "cards", "flags", ""):
+        xbmc.executebuiltin(f"Skin.SetString(lucent.s56.eps,{style})" if style else "Skin.Reset(lucent.s56.eps)")
+        xbmc.executebuiltin("SetFocus(5601)")
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(2)
+        shot(f"s56-{style or 'row'}")
+    xbmc.executebuiltin("SetFocus(56)")
+    xbmc.executebuiltin("Action(Left)")
+    mon.waitForAbort(1)
+    out["menu"] = cond("ControlGroup(9050).HasFocus")
+    out["button"] = cond("Control.IsVisible(9072)")
+    xbmc.executebuiltin("SetFocus(9072)")
+    mon.waitForAbort(0.8)
+    shot("s56-menu")
+    xbmc.executebuiltin("Action(Back)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("s56eps: " + json.dumps(out))
+
+
+def wnitem_test():
+    """1.43.0: What's new - OK on a change opens it on its own with a picture, the explanation and steps."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/whatsnew.py)")
+    for _ in range(30):
+        if mon.waitForAbort(0.3) or cond("Control.IsVisible(200)"):
+            break
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("SetFocus(200)")
+    mon.waitForAbort(0.8)
+    shot("wn-list")
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(20):
+        if mon.waitForAbort(0.3) or cond("Window.IsVisible(Lucent_WhatsNewItem.xml)"):
+            break
+    mon.waitForAbort(1)
+    out["open"] = cond("Window.IsVisible(Lucent_WhatsNewItem.xml)")
+    shot("wn-item")
+    xbmc.executebuiltin("SetFocus(12)")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1)
+    shot("wn-item-next")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(0.5)
+    out["back_to_list"] = cond("Control.IsVisible(200)")
+    xbmc.executebuiltin("Action(Back)")
+    xbmc.executebuiltin("Action(Back)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("wnitem: " + json.dumps(out))
+
+
 def newviews_test():
     """1.41.0 / 1.42.0: the newer views (films, series, episodes, music, sets, recently added) and the side menu in each."""
     out = {}
@@ -4531,6 +4594,8 @@ def main():
     safe(trailerlayer_test)
     safe(lvtrakt_test)
     safe(addonsettings_test)
+    safe(s56eps_test)
+    safe(wnitem_test)
     safe(osdclose_test)
     safe(newviews_test)
 

@@ -622,4 +622,36 @@
             </control>
         </definition>
     </include>
+    <!-- What's new, one change: a numbered step (Lucent_WhatsNewItem.xml) -->
+    <include name="WhatsNewStep">
+        <control type="group">
+            <width>630</width>
+            <height>50</height>
+            <visible>!String.IsEmpty(Window.Property(wi.step$PARAM[n]))</visible>
+            <control type="image">
+                <top>4</top>
+                <width>40</width>
+                <height>40</height>
+                <texture colordiffuse="FFC9B8FF">mask_circle.png</texture>
+            </control>
+            <control type="label">
+                <top>4</top>
+                <width>40</width>
+                <height>40</height>
+                <font>font_wn_h</font>
+                <textcolor>FF0B0F17</textcolor>
+                <align>center</align>
+                <aligny>center</aligny>
+                <label>$PARAM[n]</label>
+            </control>
+            <control type="textbox">
+                <left>58</left>
+                <width>572</width>
+                <height>50</height>
+                <font>font_wn_p</font>
+                <textcolor>FFFFFFFF</textcolor>
+                <label>$INFO[Window.Property(wi.step$PARAM[n])]</label>
+            </control>
+        </control>
+    </include>
 </includes>

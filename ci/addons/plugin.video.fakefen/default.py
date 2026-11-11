@@ -92,6 +92,15 @@ if handle >= 0:
             li.setArt({"poster": "/tmp/ci/art/poster%d.jpg" % (n + 4), "fanart": "/tmp/ci/art/fanart%d.jpg" % (n + 4)})
             xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=showcase", li, True)
         xbmcplugin.setContent(handle, "sets")
+    elif params.get("mode") == "showcase_seasons":       # a series with seasons: Lucent's season page (view 56)
+        for s in (1, 2):
+            li = xbmcgui.ListItem("Season %d" % s)
+            tag = li.getVideoInfoTag()
+            tag.setMediaType("season"), tag.setSeason(s), tag.setTvShowTitle("Harbor Lights"), tag.setTitle("Season %d" % s)
+            tag.setPlot("Season %d of a CI test series." % s), tag.setTvShowStatus("Returning Series")
+            li.setArt({"poster": "/tmp/ci/art/poster0.jpg", "fanart": "/tmp/ci/art/fanart0.jpg", "tvshow.poster": "/tmp/ci/art/poster0.jpg"})
+            xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=showcase_ep&season=%d" % s, li, True)
+        xbmcplugin.setContent(handle, "seasons")
     elif params.get("mode") == "progress":               # like Fen Light: a resume point without total time + WatchedProgress
         li = xbmcgui.ListItem("Half Film")
         tag = li.getVideoInfoTag()

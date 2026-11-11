@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent: What's new, one change explained (scripts/whatsnew.py, OK on a change). A picture of how it looks, the
+     explanation, how to use it in steps and the buttons Try it now / Previous / Next / Close. -->
+<window type="dialog">
+    <defaultcontrol always="true">9000</defaultcontrol>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="zoom" start="96" end="100" center="auto" time="220" tween="cubic" easing="out">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="160">WindowClose</animation>
+    <controls>
+        <control type="image">
+            <width>1920</width>
+            <height>1080</height>
+            <texture>white.png</texture>
+            <colordiffuse>B805080E</colordiffuse>
+        </control>
+        <control type="group">
+            <left>230</left>
+            <top>110</top>
+            <control type="image">
+                <width>1460</width>
+                <height>860</height>
+                <texture border="32">wn/panel.png</texture>
+                <colordiffuse>FA16213F</colordiffuse>
+            </control>
+            <control type="image">
+                <width>1460</width>
+                <height>860</height>
+                <texture border="32">wn/panel_edge.png</texture>
+                <colordiffuse>1AFFFFFF</colordiffuse>
+            </control>
+            <!-- left: the picture (or the icon big when there is none) -->
+            <control type="group">
+                <left>56</left>
+                <top>60</top>
+                <control type="image">
+                    <width>660</width>
+                    <height>371</height>
+                    <aspectratio>scale</aspectratio>
+                    <texture diffuse="mask_landscape.png">$INFO[Window.Property(wi.image)]</texture>
+                    <visible>!String.IsEmpty(Window.Property(wi.image))</visible>
+                </control>
+                <control type="group">
+                    <visible>String.IsEmpty(Window.Property(wi.image))</visible>
+                    <control type="image">
+                        <width>660</width>
+                        <height>371</height>
+                        <texture border="16">wn/rr16.png</texture>
+                        <colordiffuse>297CC4FF</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>270</left>
+                        <top>125</top>
+                        <width>120</width>
+                        <height>120</height>
+                        <texture colordiffuse="C9B8FF">$INFO[Window.Property(wi.icon)]</texture>
+                    </control>
+                </control>
+                <control type="label">
+                    <top>390</top>
+                    <width>660</width>
+                    <height>30</height>
+                    <font>font_wn_sub</font>
+                    <textcolor>8CFFFFFF</textcolor>
+                    <label>$INFO[Window.Property(wi.caption)]</label>
+                </control>
+            </control>
+            <!-- right: version, heading, explanation, steps -->
+            <control type="group">
+                <left>770</left>
+                <top>56</top>
+                <control type="label">
+                    <width>630</width>
+                    <height>30</height>
+                    <font>font_wn_sub</font>
+                    <textcolor>FFC9B8FF</textcolor>
+                    <label>$INFO[Window.Property(wi.ver)]</label>
+                </control>
+                <control type="textbox">
+                    <top>36</top>
+                    <width>630</width>
+                    <height>120</height>
+                    <font>font_wn_big</font>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <label>$INFO[Window.Property(wi.head)]</label>
+                </control>
+                <control type="textbox">
+                    <top>164</top>
+                    <width>630</width>
+                    <height>320</height>
+                    <font>font_wn_p</font>
+                    <textcolor>E6FFFFFF</textcolor>
+                    <autoscroll delay="6000" time="3000" repeat="8000">true</autoscroll>
+                    <label>$INFO[Window.Property(wi.text)]</label>
+                </control>
+            </control>
+            <control type="grouplist">
+                <left>770</left>
+                <top>500</top>
+                <width>630</width>
+                <height>230</height>
+                <itemgap>10</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <include content="WhatsNewStep"><param name="n">1</param></include>
+                <include content="WhatsNewStep"><param name="n">2</param></include>
+                <include content="WhatsNewStep"><param name="n">3</param></include>
+                <include content="WhatsNewStep"><param name="n">4</param></include>
+            </control>
+            <control type="label">
+                <left>56</left>
+                <top>770</top>
+                <width>300</width>
+                <height>60</height>
+                <font>font_wn_sub</font>
+                <textcolor>66FFFFFF</textcolor>
+                <aligny>center</aligny>
+                <label>$INFO[Window.Property(wi.pos)]</label>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>356</left>
+                <top>770</top>
+                <width>1048</width>
+                <height>60</height>
+                <orientation>horizontal</orientation>
+                <align>right</align>
+                <itemgap>14</itemgap>
+                <onup>9000</onup>
+                <ondown>9000</ondown>
+                <control type="button" id="10">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font_wn_h</font>
+                    <textoffsetx>34</textoffsetx>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>FF0B0F17</focusedcolor>
+                    <texturefocus border="30" colordiffuse="FFFFFFFF">pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="33C9B8FF">pill60.png</texturenofocus>
+                    <label>$INFO[Window.Property(wi.try)]</label>
+                    <visible>!String.IsEmpty(Window.Property(wi.go))</visible>
+                </control>
+                <control type="button" id="11">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font_wn_h</font>
+                    <textoffsetx>30</textoffsetx>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>FF0B0F17</focusedcolor>
+                    <texturefocus border="30" colordiffuse="FFFFFFFF">pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="1FFFFFFF">pill60.png</texturenofocus>
+                    <label>‹  $INFO[Window.Property(wi.prev)]</label>
+                    <visible>!String.IsEmpty(Window.Property(wi.hasprev))</visible>
+                </control>
+                <control type="button" id="12">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font_wn_h</font>
+                    <textoffsetx>30</textoffsetx>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>FF0B0F17</focusedcolor>
+                    <texturefocus border="30" colordiffuse="FFFFFFFF">pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="1FFFFFFF">pill60.png</texturenofocus>
+                    <label>$INFO[Window.Property(wi.next)]  ›</label>
+                    <visible>!String.IsEmpty(Window.Property(wi.hasnext))</visible>
+                </control>
+                <control type="button" id="13">
+                    <width>auto</width>
+                    <height>60</height>
+                    <font>font_wn_h</font>
+                    <textoffsetx>30</textoffsetx>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <focusedcolor>FF0B0F17</focusedcolor>
+                    <texturefocus border="30" colordiffuse="FFFFFFFF">pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="1FFFFFFF">pill60.png</texturenofocus>
+                    <label>$INFO[Window.Property(wi.close)]</label>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>

@@ -1,4 +1,6 @@
 """What's new (example A): the versions on the left, the chosen version with every change under its own heading on the right.
+OK on a change opens it on its own (example B): a picture, the whole explanation, how to use it in steps and a button
+that takes you there.
 
 The newest versions come from resources/whatsnew.json (a heading and an icon per change, Dutch and English).
 Older versions come from addon.xml's <news> (English) or resources/changelog_nl.txt (Dutch); their text is split
@@ -58,7 +60,7 @@ def split_items(text):
             cut = body[:280].rsplit(". ", 1)[0]
             body = (cut + "." if len(cut) > 120 else body[:277].rsplit(" ", 1)[0]) + " …"
         if body:
-            items.append((icon_for(head), head[:1].upper() + head[1:], body[:1].upper() + body[1:]))
+            items.append((icon_for(head), head[:1].upper() + head[1:], body[:1].upper() + body[1:], {}))
     return items
 
 
@@ -79,7 +81,8 @@ def versions():
     except ValueError:
         data = {}
     for entry in data.get("versions") or []:
-        items = [(it[0], it[1] if NL else it[3], it[2] if NL else it[4]) for it in entry.get("items") or [] if len(it) >= 5]
+        items = [(it[0], it[1] if NL else it[3], it[2] if NL else it[4], it[5] if len(it) > 5 and isinstance(it[5], dict) else {})
+                 for it in entry.get("items") or [] if len(it) >= 5]
         short, long = nice_date(entry.get("date", ""))
         out.append({"v": entry["v"], "tag": entry.get("tag", "") if NL else entry.get("tag_en", entry.get("tag", "")),
                     "short": short, "long": long, "items": items})
@@ -127,6 +130,8 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
         lst.addItems(rows)
         self.setProperty("wn.hint", t("Up / down: choose a version  ·  Right: read  ·  Back: close",
                                       "Omhoog / omlaag: versie kiezen  ·  Rechts: lezen  ·  Terug: sluiten"))
+        self.setProperty("wn.hint2", t("OK: more explanation and a picture  ·  Left: versions  ·  Back: close",
+                                       "OK: meer uitleg en een afbeelding  ·  Links: versies  ·  Terug: sluiten"))
         self.show_version(0)
         self.setFocusId(100)
         threading.Thread(target=self.follow, daemon=True).start()
@@ -153,13 +158,31 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
         self.setProperty("wn.tag", e["tag"])
         self.setProperty("wn.sub", " · ".join(x for x in (e["long"], count_word(len(e["items"]))) if x))
         items = []
-        for icon, head, text in e["items"]:
+        for icon, head, text, extra in e["items"]:
             li = xbmcgui.ListItem(head, text)
             li.setArt({"icon": f"icons/{icon}.png"})
+            li.setProperty("more", "1")                  # OK: the change on its own, with more explanation
             items.append(li)
         lst = self.getControl(200)
         lst.reset()
         lst.addItems(items)
+
+    def onClick(self, control_id):
+        if control_id == 200:
+            pos = self.getControl(200).getSelectedPosition()
+            e = self.data[self.shown] if 0 <= self.shown < len(self.data) else None
+            if not e or not 0 <= pos < len(e["items"]):
+                return
+            item = Item("Lucent_WhatsNewItem.xml", xbmcvfs.translatePath(SKIN), "Default", "1080i", version=e, pos=pos)
+            item.doModal()
+            go, last = item.go, item.pos
+            del item
+            if go:                                   # 'Try it now': close What's new and go there
+                self.closing = True
+                self.close()
+                xbmc.executebuiltin(go)
+            else:
+                self.getControl(200).selectItem(last)
 
     def onAction(self, action):
         if action.getId() in CLOSE:
@@ -167,6 +190,56 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
                 self.setFocusId(100)                 # Back from the changes: to the versions first
                 return
             self.closing = True
+            self.close()
+
+
+class Item(xbmcgui.WindowXMLDialog):
+    """One change on its own: picture, whole text, steps; Previous / Next go through the changes of this version."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
+        self.version, self.pos, self.go = kwargs["version"], kwargs["pos"], ""
+
+    def onInit(self):
+        self.setProperty("wi.try", t("Try it now", "Nu proberen"))
+        self.setProperty("wi.close", t("Close", "Sluiten"))
+        self.setProperty("wi.prev", t("Previous", "Vorige"))
+        self.setProperty("wi.next", t("Next", "Volgende"))
+        self.fill()
+        self.setFocusId(9000)
+
+    def fill(self):
+        items = self.version["items"]
+        icon, head, text, extra = items[self.pos]
+        more = extra.get("more_nl" if NL else "more_en") or text
+        steps = extra.get("steps_nl" if NL else "steps_en") or []
+        self.setProperty("wi.ver", f"Lucent {self.version['v']}" + (f"  ·  {self.version['long']}" if self.version.get("long") else ""))
+        self.setProperty("wi.head", head)
+        self.setProperty("wi.text", more)
+        self.setProperty("wi.icon", f"icons/{icon}.png")
+        self.setProperty("wi.image", extra.get("image", ""))
+        self.setProperty("wi.caption", "")
+        for n in range(1, 5):
+            self.setProperty(f"wi.step{n}", steps[n - 1] if n <= len(steps) else "")
+        self.setProperty("wi.go", extra.get("go", ""))
+        self.setProperty("wi.pos", f"{self.pos + 1} / {len(items)}" if len(items) > 1 else "")
+        self.setProperty("wi.hasprev", "1" if self.pos > 0 else "")
+        self.setProperty("wi.hasnext", "1" if self.pos < len(items) - 1 else "")
+
+    def onClick(self, control_id):
+        if control_id == 10:
+            self.go = self.getProperty("wi.go")
+            self.close()
+        elif control_id in (11, 12):
+            self.pos = max(0, min(len(self.version["items"]) - 1, self.pos + (1 if control_id == 12 else -1)))
+            self.fill()
+            if not self.getProperty("wi.hasnext" if control_id == 12 else "wi.hasprev"):
+                self.setFocusId(13)                  # the button just went away: keep the cursor on a button
+        elif control_id == 13:
+            self.close()
+
+    def onAction(self, action):
+        if action.getId() in CLOSE:
             self.close()
 
 
