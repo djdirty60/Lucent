@@ -624,6 +624,8 @@
     </include>
     <!-- What's new, one change: a numbered step (Lucent_WhatsNewItem.xml) -->
     <include name="WhatsNewStep">
+        <param name="n">1</param>
+        <definition>
         <control type="group">
             <width>630</width>
             <height>50</height>
@@ -653,5 +655,6 @@
                 <label>$INFO[Window.Property(wi.step$PARAM[n])]</label>
             </control>
         </control>
+        </definition>
     </include>
 </includes>

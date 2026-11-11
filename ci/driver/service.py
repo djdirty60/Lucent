@@ -4215,6 +4215,8 @@ def s56eps_test():
     for _ in range(40):
         if mon.waitForAbort(0.3) or (cond("Control.IsVisible(56)") and int(lab("Container(5601).NumItems") or 0) > 0):
             break
+    xbmc.executebuiltin("SetFocus(56,1,absolute)")         # the first season, not '..'
+    mon.waitForAbort(2.5)
     out["page"] = cond("Control.IsVisible(56)")
     out["episodes"] = lab("Container(5601).NumItems")
     for style in ("timeline", "cards", "flags", ""):
