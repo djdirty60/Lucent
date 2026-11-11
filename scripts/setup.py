@@ -291,6 +291,15 @@ PASS = ("audiooutput.ac3passthrough", "audiooutput.eac3passthrough", "audiooutpu
         "audiooutput.truehdpassthrough", "audiooutput.dtshdpassthrough")
 
 
+def coreelec():
+    """CoreELEC (and other Amlogic Linux builds): Dolby Vision needs Kodi to switch the TV to the video's mode."""
+    try:
+        with open("/etc/os-release", encoding="utf-8") as fh:
+            return "coreelec" in fh.read().lower()
+    except OSError:
+        return False
+
+
 def st_play():
     size, advice = kodi_setting("filecache.memorysize"), buffer_advice()
     rate = kodi_setting("videoplayer.adjustrefreshrate")
@@ -298,6 +307,9 @@ def st_play():
     parts = [t(f"Buffer {size} MB", f"Buffer {size} MB") + ("" if (size or 0) >= advice else t(f" (advice {advice})", f" (advies {advice})")),
              t("frame rate follows the video", "beeldfrequentie volgt de video") if rate in (1, 2, 3) else t("frame rate fixed", "beeldfrequentie vast"),
              t("sound to amplifier", "geluid naar versterker") if passthrough else t("Kodi decodes the sound", "Kodi zet het geluid om")]
+    if rate not in (1, 2, 3) and coreelec():
+        parts.insert(0, t("Switch on 'frame rate follows the video': without it Dolby Vision shows pink / green",
+                          "Zet 'beeldfrequentie volgt de video' aan: zonder dat geeft Dolby Vision roze / groen beeld"))
     return ("ok" if (size or 0) >= advice and rate in (1, 2, 3) else "todo"), "  ·  ".join(parts)
 
 
@@ -311,6 +323,10 @@ def ac_play():
         set_kodi("filecache.readfactor", 400)                  # fill the buffer 4x faster than the video plays
 
     def toggle_rate():
+        if rate in (1, 2, 3) and coreelec() and not xbmcgui.Dialog().yesno("Lucent", t(
+                "On CoreELEC Dolby Vision needs this: without it the picture turns pink / green. Switch it off anyway?",
+                "Op CoreELEC heeft Dolby Vision dit nodig: zonder wordt het beeld roze / groen. Toch uitzetten?")):
+            return
         set_kodi("videoplayer.adjustrefreshrate", 0 if rate in (1, 2, 3) else 2)   # 2: on start and stop
 
     def toggle_pass():
