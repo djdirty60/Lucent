@@ -53,7 +53,7 @@ A slim icon rail that opens when you press left. Out of the box it has Search, H
 
 ![Sidebar](screenshots/sidebar.jpg)
 
-### Five views for lists and add-on menus
+### Views for lists and add-on menus
 
 | View | Best for |
 | --- | --- |
@@ -62,6 +62,16 @@ A slim icon rail that opens when you press left. Out of the box it has Search, H
 | **Episodes** | Episode list with thumbnail, date and plot |
 | **Landscape** | Hero info and one row of 16:9 cards |
 | **List** | Menus and folders, with artwork and plot on the right |
+
+More views (side menu → **View**):
+
+| For | Views |
+| --- | --- |
+| Films | Spotlight, Wall with info panel, Carousel, Title card |
+| Series | Banner list, Progress rings, Mosaic |
+| Episodes | Timeline, Episode cards, Up next stack, List with flags |
+| Music | Vinyl, Artist wall, Album with track list, Coverflow, Discography timeline |
+| Other | Collection shelf (film series), Recently added |
 
 The skin picks a fitting view automatically; change it with the **View** button at the top right. A view you pick for episodes (or films, series, seasons, albums) is remembered for every folder of that kind.
 
