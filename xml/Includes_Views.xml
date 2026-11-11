@@ -2960,7 +2960,7 @@
         </control>
     </include>
 
-    <!-- View 56: a series page - the seasons as tabs, the episodes of the chosen season below (Seren seasons list) -->
+    <!-- View 56: a series page - the seasons as tabs, the episodes of the chosen season below (an add-on season list) -->
     <include name="View_56">
         <control type="group">
             <visible>Control.IsVisible(56)</visible>
@@ -3189,7 +3189,7 @@
                         <onclick>RunScript(special://skin/scripts/info.py,lists,56)</onclick>
                     </control>
                     <!-- calendar notification: only for series that still get new seasons (not ended or cancelled). The TMDB status the season page
-                         looks up decides (Seren lists have no show title or status); without it, the list itself decides -->
+                         looks up decides (add-on lists often have no show title or status); without it, the list itself decides -->
                     <control type="button" id="5614">
                         <onback>SetFocus(56)</onback>
                         <width>auto</width>

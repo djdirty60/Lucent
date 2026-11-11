@@ -6,7 +6,7 @@
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font.
 
-Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyfin, YouTube, an IPTV add-on, Fen Light and its clones, TMDb Helper, Seren …) or of your Kodi library can become a row on Home. A video add-on that works together with Lucent fills Home by itself and drives the buttons on the info page; Seren is supported as well.
+Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyfin, YouTube, an IPTV add-on, Fen Light and its clones, TMDb Helper …) or of your Kodi library can become a row on Home. A video add-on that works together with Lucent fills Home by itself and drives the buttons on the info page.
 
 ![Home screen](screenshots/home.jpg)
 
@@ -31,7 +31,7 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 <details>
 <summary><b>New in Beta 4</b></summary>
 
-- **Lucent without Seren** – a standard menu without Seren, and any add-on or library folder can be added to Home as a row (long press OK → *Add to Home as widget*).
+- **Works without a special add-on** – a standard menu with your Kodi library, and any add-on or library folder can be added to Home as a row (long press OK → *Add to Home as widget*).
 - **Scores everywhere** – with your own free key: IMDb, Rotten Tomatoes and Metacritic from **OMDb**, plus Letterboxd, the Rotten Tomatoes audience score and the Metacritic user score from **MDBList**. On the info page and, without opening it, in the lists (*Settings → Lucent → Scores*).
 - **Media flags in the lists** – the same flags as the player (4K, Dolby Vision, HEVC, Atmos, 7.1 …) and the languages of sound and subtitles.
 - **Readable text on light pictures**, **remember view per kind**, **percentage watched**, **episodes in landscape rows**, **clean picture when paused**, a *Covers* view for music, and sorting rows on *Last watched* or *Most watched*.
@@ -45,7 +45,7 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 ### Home screen
 - A big hero area with the backdrop, logo (or title), info pills and plot of the focused item.
 - Rows are **widgets** that you choose yourself (see *Customising the menu and widgets* below). Empty rows hide themselves.
-- Out of the box Home starts with your Kodi library (*Continue watching*, *Recently added* …). When a video add-on that works with Lucent is installed, its rows (continue watching, trending, your watchlist and lists, streaming services …) are put on Home for you. With Seren, Seren's rows are offered too.
+- Out of the box Home starts with your Kodi library (*Continue watching*, *Recently added* …). When a video add-on that works with Lucent is installed, its rows (continue watching, trending, your watchlist and lists, streaming services …) are put on Home for you.
 - **Trailers on posters** and **unfolding cards** (see above).
 
 ### Sidebar
@@ -104,10 +104,10 @@ A **TV** tab with your IPTV channels: the playing channel in the header, the gro
 The *Streaming services* row opens a pop-up per service: the title under the cursor as a big landscape picture with *Watch*, *Trailer* and *My list*, and New, Popular and Top lists for films and series. Which services you see is set in *Settings → Lucent → Streaming services*.
 
 ### Setup assistant
-The first time Lucent opens, a short assistant walks through **Films and series** (your video add-on, or Seren), the TMDb key, live TV, picture and sound, subtitles and skip intro, the library, the tabs, the look and a backup – each step shows how it stands and has buttons to set it up. Open it again via *Settings → Lucent → Setup assistant*.
+The first time Lucent opens, a short assistant walks through **Films and series** (your video add-on), the TMDb key, live TV, picture and sound, subtitles and skip intro, the library, the tabs, the look and a backup – each step shows how it stands and has buttons to set it up. Open it again via *Settings → Lucent → Setup assistant*.
 
 ### Settings
-Lucent's settings are grouped in categories: **Lucent** (look, menu, streaming services, kids mode, setup assistant), **Watching** (playback, trailers, subtitles and skip intro), **Seren** (only when Seren is installed), **Live TV**, **System**, **Add-ons**, **Files and profiles** and **Help and info** (what's new, updates, self-test, safe log). Kodi pages you rarely need are under *System → More Kodi settings*.
+Lucent's settings are grouped in categories: **Lucent** (look, menu, streaming services, kids mode, setup assistant), **Watching** (playback, trailers, subtitles and skip intro), **Live TV**, **System**, **Add-ons**, **Files and profiles** and **Help and info** (what's new, updates, self-test, safe log). Kodi pages you rarely need are under *System → More Kodi settings*.
 
 ### Also
 - **Kids mode** – a PIN and a choice of side-menu items; the settings ask for the PIN.
@@ -213,7 +213,6 @@ Because the skin is installed from the **Lucent Repository**, Kodi keeps it up t
 
 - **Any add-on:** long-press OK (or the menu button) on a folder in any add-on – or in your library – and choose **Add to Home as widget**. Pick the tab, the name and posters or landscape, and the row is there. The info page, flags, scores and views work for every add-on.
 - **A video add-on that works together with Lucent:** its rows fill Home by themselves, and *Play*, *More*, *Library and lists*, *Mark as watched*, the calendar, trailers, subtitles and skip intro use it – also for titles that come from other add-ons.
-- **Seren:** works too. Lucent then also offers Seren's rows and settings. Don't use Seren? Choose *I don't use Seren* in the setup assistant and its choices stay out of the menus.
 
 ### Customising the menu and widgets
 
@@ -240,7 +239,6 @@ A tab without widgets shows the widgets of the start tab.
 
 ## Good to know
 
-- **Pairs with the Seren theme** [Lucent for Seren](https://github.com/djdirty60/Seren-Thema), so Seren's source select, scraping and playing-next windows match the skin.
 - **Remote:** the Home button of the remote goes to the Home screen from almost every window. In lists with a scroll bar press Right to get on the bar, then Up/Down scroll a page at a time.
 - **Screen size:** Kodi scales the skin to any resolution (720p, 1080p, 4K). If you see black edges or the picture is cut off, use **Skin settings → Calibrate the picture**.
 - **Not styled:** games and weather. Recordings and timers of live TV still need Estuary.
@@ -276,7 +274,6 @@ screenshots/         images for this README
 ## Credits and licences
 
 - Inspired by the design of [Nuvio Arc](https://github.com/ysosrs123/NuvioTV-Fork). This skin is not affiliated with it.
-- Works with [Seren](https://github.com/nixgates/plugin.video.seren) by Nixgates (and forks of it); this skin is not affiliated with Seren.
 - Sport data comes from ESPN; stadium photos from [TheSportsDB](https://www.thesportsdb.com); channel logos from [tv-logos](https://github.com/tv-logo/tv-logos) (CC BY-SA / BY-NC-SA, the logos belong to their owners).
 - Font: [Inter](https://github.com/rsms/inter) by Rasmus Andersson, SIL Open Font License 1.1 (see `fonts/Inter-LICENSE.txt`).
 - Icons and badges are original designs. The badges are not official Dolby or DTS logos.

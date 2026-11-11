@@ -53,7 +53,7 @@ T = {
     "unfollowed": ("Notification off for {0}", "Melding uit voor {0}"),
     "no_id": ("This title has no TMDB number, so it cannot be followed.", "Deze titel heeft geen TMDB-nummer en kan niet gevolgd worden."),
     "failed": ("Could not load the calendar data. Try again later.", "Kalendergegevens laden is niet gelukt. Probeer het later opnieuw."),
-    "no_seren": ("No video add-on to open it with (Lucent Video or Seren).", "Geen video-add-on om het mee te openen (Lucent Video of Seren)."),
+    "no_seren": ("No video add-on to open it with (Lucent Video).", "Geen video-add-on om het mee te openen (Lucent Video)."),
     "cinema": ("In cinemas", "In de bioscoop"),
     "cinema_soon": ("Coming to cinemas", "Binnenkort in de bioscoop"),
     "film": ("Film", "Film"),

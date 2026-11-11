@@ -18,7 +18,6 @@ import xbmcgui
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DONE = "lucent.setup.done"
-SEREN = "plugin.video.seren"
 IPTV = "pvr.iptvsimple"
 LV = "plugin.video.lucent"        # Lucent Video: works best with the skin (rows, info page, library, subtitles)
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
@@ -75,46 +74,12 @@ def ac_welcome():
     return []
 
 
-def no_seren():
-    return cond("Skin.HasSetting(lucent.noseren)")
-
-
-def choose_menu(question):
-    """Offer the default menu that fits the choice (with or without Seren)."""
-    if xbmcgui.Dialog().yesno("Lucent", question):
-        import menu
-        m = menu.Menu()
-        m.set_defaults()
-        m.save()
-        xbmcgui.Dialog().notification("Lucent", t("Menu set up", "Menu klaargezet"), "", 3000, False)
-
-
-def seren_off():
-    """'No, without Seren': the Seren choices leave the menu editor and the setup, and the menu can go without Seren."""
-    run("Skin.SetBool(lucent.noseren)")
-    xbmc.sleep(200)
-    choose_menu(t("Lucent now leaves out the Seren choices.\n\nAlso set up the menu without Seren (your Kodi library, search, "
-                  "add-ons and favourites)? Your own tabs and widgets are replaced.",
-                  "Lucent laat de Seren-keuzes nu weg.\n\nOok het menu zonder Seren klaarzetten (je Kodi-bibliotheek, zoeken, "
-                  "add-ons en favorieten)? Je eigen tabs en widgets worden vervangen."))
-
-
-def seren_on():
-    run("Skin.Reset(lucent.noseren)")
-    xbmc.sleep(200)
-    if has(SEREN):
-        choose_menu(t("Also set up the menu with Seren (search, movies and series from Seren)? Your own tabs and widgets are replaced.",
-                      "Ook het menu met Seren klaarzetten (zoeken, films en series uit Seren)? Je eigen tabs en widgets worden vervangen."))
-
-
 def st_video():
-    """Which video add-on fills the rows and plays: Lucent Video works best, Seren and any other add-on work too."""
+    """Which video add-on fills the rows and plays: Lucent Video works best, any other add-on works too."""
     if has(LV):
         account = setting(LV, "trakt_user") or setting(LV, "simkl_user")
         return "ok", t(f"Lucent Video is installed{'  ·  account: ' + account if account else ''}",
                        f"Lucent Video staat erop{'  ·  account: ' + account if account else ''}")
-    if has(SEREN) and not no_seren():
-        return "ok", t("Seren is installed", "Seren staat erop")
     return "info", t("No video add-on for films and series yet", "Nog geen video-add-on voor films en series")
 
 
@@ -126,12 +91,6 @@ def ac_video():
         out.append((t("Lucent Video settings", "Instellingen van Lucent Video"), lambda: run(f"Addon.OpenSettings({LV})")))
     else:
         out.append((t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV)))
-    if has(SEREN):
-        if no_seren():
-            out.append((t("Use Seren after all", "Toch Seren gebruiken"), seren_on))
-        else:
-            out.append((t("Seren settings", "Seren-instellingen"), lambda: run(f"Addon.OpenSettings({SEREN})")))
-            out.append((t("I don't use Seren", "Ik gebruik geen Seren"), seren_off))
     out.append((t("Menu and widgets", "Menu en widgets"), lambda: run("RunScript(special://skin/scripts/menu.py)")))
     return out
 
@@ -409,12 +368,10 @@ STEPS = [
     ("video", "icons/play.png", ("Films and series", "Films en series"),
      ("Lucent works with every video add-on: long-press OK on a folder in any add-on and choose 'Add to Home as widget'. "
       "With Lucent Video it works best: its rows fill Home by themselves, and the buttons on the info page (play, "
-      "watched, lists, trailer, more) use it - also for titles from other add-ons.\n\nUse Seren? That works too; "
-      "Lucent then also offers Seren's rows.",
+      "watched, lists, trailer, more) use it - also for titles from other add-ons.",
       "Lucent werkt met elke video-add-on: houd OK ingedrukt op een map in een add-on en kies 'Toevoegen aan Home als "
       "widget'. Met Lucent Video werkt het het best: de rijen op Home vullen zich vanzelf, en de knoppen op de "
-      "infopagina (afspelen, bekeken, lijsten, trailer, meer) gebruiken het - ook voor titels uit andere add-ons.\n\n"
-      "Gebruik je Seren? Dat kan ook; Lucent biedt dan ook de rijen van Seren aan."), st_video, ac_video),
+      "infopagina (afspelen, bekeken, lijsten, trailer, meer) gebruiken het - ook voor titels uit andere add-ons."), st_video, ac_video),
     ("tmdb", "icons/movies.png", ("TMDb key", "TMDb-sleutel"),
      ("TMDb (The Movie Database) supplies posters, logos, cast, studios and trailers. A key of your own is free and "
       "makes everything faster and more complete.\n\nGet one: make an account on themoviedb.org, then Settings > API > "

@@ -16,7 +16,6 @@ DATA = [
     ("tv-logos", 31674, "https://github.com/tv-logo/tv-logos"),
 ]
 SOFTWARE = [
-    ("Seren", 31518, "https://github.com/nixgates/plugin.video.seren"),
     ("YouTube", 31519, "https://github.com/anxdpanic/plugin.video.youtube"),
     ("OpenSubtitles", 31520, "https://www.opensubtitles.com"),
     ("SubDL", 31520, "https://subdl.com"),
