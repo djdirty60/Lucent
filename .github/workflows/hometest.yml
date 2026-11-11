@@ -25,8 +25,9 @@ jobs:
           {
             ok=""
             for try in 1 2 3; do
-              timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=3 \
-                && timeout 600 sudo apt-get install -y -q -o Acquire::http::Timeout=20 -o Acquire::Retries=3 \
+              # an unreachable extra source (today security.ubuntu.com) must not stop the install: the mirror has Kodi
+              timeout 180 sudo apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=2 || echo "update not complete - going on"
+              timeout 600 sudo apt-get install -y -q -o Acquire::http::Timeout=20 -o Acquire::Retries=3 \
                      kodi kodi-bin kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool mesa-utils libgl1-mesa-dri \
                 && { ok=1; break; }
               echo "apt try $try failed - again in 20 s"; sleep 20
