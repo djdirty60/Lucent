@@ -17,7 +17,7 @@ import os,re
 p=os.path.expanduser("~/.kodi/addons/skin.lucent/addon.xml")
 s=open(p).read()
 s=re.sub(r'\s*<import addon="(plugin.video.youtube|resource.images.studios.white|resource.images.studios.coloured)"[^>]*/>','',s)
-s=s.replace('<import addon="xbmc.gui" version="5.17.0"/>','<import addon="xbmc.gui" version="5.15.0"/>')
+# Kodi 21 (Debian) knows xbmc.gui 5.17.0: the skin's own version stays
 open(p,"w").write(s)
 PY
 cp -r ci/addons/script.lucent.library ci/addons/service.subtitles.lucent $K/addons/
