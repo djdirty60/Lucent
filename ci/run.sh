@@ -59,6 +59,8 @@ ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -f lavfi -i sine=f=300
 printf '1\n00:00:01,000 --> 00:01:50,000\nEnglish subtitle\n' > /tmp/ci/en.srt
 for a in eng rus; do ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -f lavfi -i sine=f=400 -i /tmp/ci/en.srt -t 60 -map 0 -map 1 -map 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -c:s srt -metadata:s:a:0 language=$a -metadata:s:s:0 language=eng -disposition:s:0 default /tmp/ci/same-$a.mkv; done
 ffmpeg -v error -f lavfi -i testsrc=size=1280x720:rate=25 -f lavfi -i sine=f=400 -i /tmp/ci/en.srt -t 60 -map 0 -map 1 -map 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -c:s srt -metadata:s:a:0 language=eng -metadata:s:s:0 language=eng -disposition:s:0 0 /tmp/ci/nodef-eng.mkv
+# stand-in rating logos (plain coloured blocks, no real logos) in the new variant, to see the logo pills
+if [ "$VARIANT" = new ]; then mkdir -p $K/userdata/addon_data/skin.lucent/logos; for l in imdb:f5c518 rt:fa320a rta:fa320a mc:66cc33 lb:40bcf4; do ffmpeg -v error -y -f lavfi -i "color=c=0x${l#*:}:s=96x32" -frames:v 1 $K/userdata/addon_data/skin.lucent/logos/${l%%:*}.png; done; fi
 # live TV: IPTV Simple with six channels (the test video) and a guide around the current time
 python3 ci/pvr.py
 # 1st start (Estuary): Kodi registers the add-ons, then stops

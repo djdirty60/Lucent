@@ -268,6 +268,7 @@
                             <width>14</width>
                             <height>14</height>
                             <texture>mask_circle.png</texture>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
                             <colordiffuse>$INFO[Window(home).Property(lucent.omdb.rtc)]</colordiffuse>
                         </control>
                         <control type="label">
@@ -278,6 +279,26 @@
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
                             <label>Rotten Tomatoes  $INFO[Window(home).Property(lucent.omdb.rt)]</label>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>9</top>
+                            <width>72</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.rt)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
+                        </control>
+                        <control type="label">
+                            <left>100</left>
+                            <top>0</top>
+                            <width>120</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.rt)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -297,6 +318,7 @@
                             <width>14</width>
                             <height>14</height>
                             <texture>mask_circle.png</texture>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
                             <colordiffuse>$INFO[Window(home).Property(lucent.omdb.rtac)]</colordiffuse>
                         </control>
                         <control type="label">
@@ -307,6 +329,26 @@
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
                             <label>$LOCALIZE[31816]  $INFO[Window(home).Property(lucent.omdb.rta)]</label>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>9</top>
+                            <width>72</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.rta)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
+                        </control>
+                        <control type="label">
+                            <left>100</left>
+                            <top>0</top>
+                            <width>120</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.rta)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -326,6 +368,7 @@
                             <width>14</width>
                             <height>14</height>
                             <texture>mask_circle.png</texture>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
                             <colordiffuse>$INFO[Window(home).Property(lucent.omdb.mcc)]</colordiffuse>
                         </control>
                         <control type="label">
@@ -336,6 +379,26 @@
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
                             <label>Metacritic  $INFO[Window(home).Property(lucent.omdb.mc)]</label>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>9</top>
+                            <width>72</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.mc)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
+                        </control>
+                        <control type="label">
+                            <left>100</left>
+                            <top>0</top>
+                            <width>120</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.mc)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
                         </control>
                     </control>
                     <include content="InfoPill">
@@ -372,6 +435,7 @@
                             <width>14</width>
                             <height>14</height>
                             <texture>mask_circle.png</texture>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.mcu))</visible>
                             <colordiffuse>$INFO[Window(home).Property(lucent.omdb.mcu.c)]</colordiffuse>
                         </control>
                         <control type="label">
@@ -382,6 +446,26 @@
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
                             <label>$LOCALIZE[31817]  $INFO[Window(home).Property(lucent.omdb.mcu)]</label>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.mcu))</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>9</top>
+                            <width>72</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.mcu)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.mcu))</visible>
+                        </control>
+                        <control type="label">
+                            <left>100</left>
+                            <top>0</top>
+                            <width>120</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.mcu)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.mcu))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -401,6 +485,7 @@
                             <width>14</width>
                             <height>14</height>
                             <texture>mask_circle.png</texture>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
                             <colordiffuse>$INFO[Window(home).Property(lucent.omdb.lb.c)]</colordiffuse>
                         </control>
                         <control type="label">
@@ -411,6 +496,26 @@
                             <font>font_small_bold</font>
                             <textcolor>text2</textcolor>
                             <label>Letterboxd  $INFO[Window(home).Property(lucent.omdb.lb)]</label>
+                            <visible>!!String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>9</top>
+                            <width>72</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.lb)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
+                        </control>
+                        <control type="label">
+                            <left>100</left>
+                            <top>0</top>
+                            <width>120</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text2</textcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdb.lb)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
                         </control>
                     </control>
                 </control>

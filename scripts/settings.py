@@ -224,7 +224,7 @@ def pick_option(name, options, heading):
 
 # ----------------------------------------------------------------------------- logos
 LOGO_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/logos/"
-LOGO_NAMES = ("imdb", "tmdb", "trakt", "rt")
+LOGO_NAMES = ("imdb", "tmdb", "trakt", "rt", "rta", "mc", "mcu", "lb")
 
 
 def scan_logos():
@@ -267,10 +267,13 @@ def explain_logos():
         return
     real = xbmcvfs.translatePath(LOGO_DIR)
     xbmcgui.Dialog().ok(HEADING, tr((
-        "Put your own logos in this folder as imdb.png, tmdb.png and trakt.png:[CR][B]{0}[/B][CR]"
-        "The info page then shows the logo instead of the name.",
-        "Zet je eigen logo's als imdb.png, tmdb.png en trakt.png in deze map:[CR][B]{0}[/B][CR]"
-        "De infopagina toont dan het logo in plaats van de naam."), real))
+        "Put your own logos (PNG, best about 3:1 wide) in this folder:[CR][B]{0}[/B][CR]"
+        "imdb, tmdb, trakt, rt (Rotten Tomatoes), rta (RT audience), mc (Metacritic), mcu (Metacritic users) and "
+        "lb (Letterboxd), each as name.png. The lists and the info page then show the logo instead of the dot and name.",
+        "Zet je eigen logo's (PNG, het liefst ongeveer 3:1 breed) in deze map:[CR][B]{0}[/B][CR]"
+        "imdb, tmdb, trakt, rt (Rotten Tomatoes), rta (RT-publiek), mc (Metacritic), mcu (Metacritic-gebruikers) en "
+        "lb (Letterboxd), elk als naam.png. De lijsten en de infopagina tonen dan het logo in plaats van het bolletje en "
+        "de naam."), real))
 
 
 def scan_flags():

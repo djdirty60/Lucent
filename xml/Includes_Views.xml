@@ -135,6 +135,7 @@
                             <width>18</width>
                             <height>18</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + !String.IsEmpty(ListItem.Rating(imdb))]</visible>
                             <colordiffuse>FFE9B824</colordiffuse>
                         </control>
                         <control type="label">
@@ -145,6 +146,26 @@
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>$VAR[LucentListRatingText]</label>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + !String.IsEmpty(ListItem.Rating(imdb))]</visible>
+                        </control>
+                        <control type="image">
+                            <left>16</left>
+                            <top>9</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + !String.IsEmpty(ListItem.Rating(imdb))</visible>
+                        </control>
+                        <control type="label">
+                            <left>88</left>
+                            <width>90</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[ListItem.Rating(imdb)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + !String.IsEmpty(ListItem.Rating(imdb))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -162,6 +183,7 @@
                             <width>18</width>
                             <height>18</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.rt))]</visible>
                             <colordiffuse>FFE5352B</colordiffuse>
                         </control>
                         <control type="label">
@@ -172,6 +194,26 @@
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>RT  $INFO[Window(home).Property(lucent.omdbl.rt)]</label>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.rt))]</visible>
+                        </control>
+                        <control type="image">
+                            <left>16</left>
+                            <top>9</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.rt)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
+                        </control>
+                        <control type="label">
+                            <left>88</left>
+                            <width>90</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.rt)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -189,6 +231,7 @@
                             <width>18</width>
                             <height>18</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.rta))]</visible>
                             <colordiffuse>FFF2A33A</colordiffuse>
                         </control>
                         <control type="label">
@@ -199,6 +242,26 @@
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>RTA  $INFO[Window(home).Property(lucent.omdbl.rta)]</label>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.rta))]</visible>
+                        </control>
+                        <control type="image">
+                            <left>16</left>
+                            <top>9</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.rta)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
+                        </control>
+                        <control type="label">
+                            <left>88</left>
+                            <width>90</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.rta)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -216,6 +279,7 @@
                             <width>18</width>
                             <height>18</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.mc))]</visible>
                             <colordiffuse>FF66CC33</colordiffuse>
                         </control>
                         <control type="label">
@@ -226,6 +290,26 @@
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>MC  $INFO[Window(home).Property(lucent.omdbl.mc)]</label>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.mc))]</visible>
+                        </control>
+                        <control type="image">
+                            <left>16</left>
+                            <top>9</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.mc)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
+                        </control>
+                        <control type="label">
+                            <left>88</left>
+                            <width>90</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.mc)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -243,6 +327,7 @@
                             <width>10</width>
                             <height>10</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.lb))]</visible>
                             <colordiffuse>FFFF8000</colordiffuse>
                         </control>
                         <control type="image">
@@ -251,6 +336,7 @@
                             <width>10</width>
                             <height>10</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.lb))]</visible>
                             <colordiffuse>FF00E054</colordiffuse>
                         </control>
                         <control type="image">
@@ -259,6 +345,7 @@
                             <width>10</width>
                             <height>10</height>
                             <texture>mask_circle.png</texture>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.lb))]</visible>
                             <colordiffuse>FF40BCF4</colordiffuse>
                         </control>
                         <control type="label">
@@ -269,6 +356,26 @@
                             <textcolor>text</textcolor>
                             <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                             <label>$INFO[Window(home).Property(lucent.omdbl.lb)]</label>
+                            <visible>![!String.IsEmpty(Window(home).Property(nuvio.logo.lb))]</visible>
+                        </control>
+                        <control type="image">
+                            <left>16</left>
+                            <top>9</top>
+                            <width>64</width>
+                            <height>26</height>
+                            <aspectratio align="left">keep</aspectratio>
+                            <texture>$INFO[Window(home).Property(nuvio.logo.lb)]</texture>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
+                        </control>
+                        <control type="label">
+                            <left>88</left>
+                            <width>90</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>$INFO[Window(home).Property(lucent.omdbl.lb)]</label>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
                         </control>
                     </control>
                 </control>
