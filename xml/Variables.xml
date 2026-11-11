@@ -77,6 +77,12 @@
         <value condition="String.IsEqual(Window(home).Property(lucent.s56.bell),1)">✓  $LOCALIZE[31228]</value>
         <value>$LOCALIZE[31227]</value>
     </variable>
+    <!-- season page: what the chosen episode is about (bold title first); on the season tabs the season text, else the first episode -->
+    <variable name="LucentS56Plot">
+        <value condition="Control.HasFocus(5601) + !String.IsEmpty(Container(5601).ListItem.Plot)">[B]$INFO[Container(5601).ListItem.Title][/B]  ·  $INFO[Container(5601).ListItem.Plot]</value>
+        <value condition="!String.IsEmpty(Container(56).ListItem.Plot)">$INFO[Container(56).ListItem.Plot]</value>
+        <value condition="!String.IsEmpty(Container(5601).ListItem.Plot)">[B]$INFO[Container(5601).ListItem.Title][/B]  ·  $INFO[Container(5601).ListItem.Plot]</value>
+    </variable>
     <variable name="LucentShowScoresPath">
         <value></value>
     </variable>

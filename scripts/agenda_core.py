@@ -559,6 +559,30 @@ def season_state():
         HOME.setProperty("lucent.s56.bell", "1")
     else:
         HOME.clearProperty("lucent.s56.bell")
+    season_status(ref)
+
+
+SHOW_STATUS = {"ended": "Ended", "returning series": "Continuing", "canceled": "Cancelled", "cancelled": "Cancelled",
+               "in production": "In production", "planned": "In production", "pilot": "In production"}
+
+
+def season_status(ref):
+    """Window(home) lucent.s56.status = Ended / Continuing / Cancelled / In production for the series on the season page.
+    Many season lists (Seren, the Kodi library) do not pass the status of the series; TMDB does. Remembered per series."""
+    if not ref or ref.get("kind") != "tv":
+        HOME.clearProperty("lucent.s56.status")
+        return
+    key = "lucent.s56.status.%s" % ref["tmdb"]
+    status = HOME.getProperty(key)
+    if not status:
+        try:
+            status = SHOW_STATUS.get(str((info.tmdb(f"tv/{ref['tmdb']}") or {}).get("status") or "").strip().lower(), "-")
+        except Exception as error:  # noqa: BLE001 - no key or no network: just no label
+            log(f"status: {error}")
+            status = ""
+        if status:
+            HOME.setProperty(key, status)
+    HOME.setProperty("lucent.s56.status", "" if status == "-" else status)
 
 
 def season_follow():
