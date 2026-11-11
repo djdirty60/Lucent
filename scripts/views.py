@@ -57,3 +57,24 @@ def tick():
         if now - STATE["since"] > 0.8:                        # the user picked another view: remember it for this kind
             xbmc.executebuiltin(f"Skin.SetString({key},{view})")
             xbmc.log(f"[skin.lucent] views: {key} = {view}", xbmc.LOGINFO)
+
+
+def choose_s56_episodes():
+    """Season page: how the episodes are shown - a row (as before), a timeline, cards or a list with flags."""
+    import xbmcgui
+    names = [xbmc.getLocalizedString(n) for n in (31868, 31850, 31851, 31854)]
+    keys = ["", "timeline", "cards", "flags"]
+    now = label("Skin.String(lucent.s56.eps)")
+    pick = xbmcgui.Dialog().select(xbmc.getLocalizedString(31867), names, preselect=keys.index(now) if now in keys else 0)
+    if pick < 0:
+        return
+    if keys[pick]:
+        xbmc.executebuiltin(f"Skin.SetString(lucent.s56.eps,{keys[pick]})")
+    else:
+        xbmc.executebuiltin("Skin.Reset(lucent.s56.eps)")
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "s56eps":
+        choose_s56_episodes()

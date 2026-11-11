@@ -1401,4 +1401,11 @@
         <value condition="Integer.IsGreater(Container(8210).ListItem.PercentPlayed,0)">$INFO[Container(8210).ListItem.PercentPlayed]</value>
         <value>$INFO[Container(8210).ListItem.Property(WatchedProgress)]</value>
     </variable>
+    <!-- season page: how the episodes are shown (side menu > Episodes as) -->
+    <variable name="LucentS56EpsLabel">
+        <value condition="String.IsEqual(Skin.String(lucent.s56.eps),timeline)">$LOCALIZE[31850]</value>
+        <value condition="String.IsEqual(Skin.String(lucent.s56.eps),cards)">$LOCALIZE[31851]</value>
+        <value condition="String.IsEqual(Skin.String(lucent.s56.eps),flags)">$LOCALIZE[31854]</value>
+        <value>$LOCALIZE[31868]</value>
+    </variable>
 </includes>

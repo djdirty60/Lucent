@@ -607,6 +607,21 @@
                     <texturenofocus/>
                     <label>$LOCALIZE[31022]: $INFO[Container.Viewmode]</label>
                 <onback condition="Control.IsVisible(50)">50</onback><onback condition="Control.IsVisible(51)">51</onback><onback condition="Control.IsVisible(52)">52</onback><onback condition="Control.IsVisible(53)">53</onback><onback condition="Control.IsVisible(55)">55</onback><onback condition="Control.IsVisible(56)">56</onback><onback condition="Control.IsVisible(57)">57</onback><onback condition="Control.IsVisible(54)">54</onback><onback condition="Control.IsVisible(70)">70</onback><onback condition="Control.IsVisible(71)">71</onback><onback condition="Control.IsVisible(72)">72</onback><onback condition="Control.IsVisible(73)">73</onback><onback condition="Control.IsVisible(74)">74</onback><onback condition="Control.IsVisible(75)">75</onback><onback condition="Control.IsVisible(76)">76</onback><onback condition="Control.IsVisible(77)">77</onback><onback condition="Control.IsVisible(78)">78</onback><onback condition="Control.IsVisible(79)">79</onback><onback condition="Control.IsVisible(80)">80</onback><onback condition="Control.IsVisible(81)">81</onback><onback condition="Control.IsVisible(82)">82</onback><onback condition="Control.IsVisible(83)">83</onback><onback condition="Control.IsVisible(84)">84</onback><onback condition="Control.IsVisible(85)">85</onback><onback condition="Control.IsVisible(86)">86</onback><onback condition="Control.IsVisible(87)">87</onback><visible>!Window.IsActive(addonbrowser)</visible></control>
+                <control type="button" id="9072">
+                    <width>556</width>
+                    <height>68</height>
+                    <font>font_label</font>
+                    <textcolor>text2</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <textoffsetx>70</textoffsetx>
+                    <aligny>center</aligny>
+                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                    <texturenofocus/>
+                    <label>$LOCALIZE[31867]: $VAR[LucentS56EpsLabel]</label>
+                    <onclick>RunScript(special://skin/scripts/views.py,s56eps)</onclick>
+                    <onback>56</onback>
+                    <visible>Control.IsVisible(56)</visible>
+                </control>
                 <control type="button" id="3">
                     <width>556</width>
                     <height>68</height>
@@ -913,7 +928,7 @@
                     <orientation>vertical</orientation>
                     <itemgap>4</itemgap>
                     <usecontrolcoords>false</usecontrolcoords>
-                    <control type="label"><width>40</width><height>58</height><label></label><visible>true</visible></control><control type="group"><width>40</width><height>68</height><visible>!Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/view.png</texture><visible>Control.HasFocus(2)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/view.png</texture><visible>!Control.HasFocus(2)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>true</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/list.png</texture><visible>Control.HasFocus(3)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/list.png</texture><visible>!Control.HasFocus(3)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>true</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/arrow_up.png</texture><visible>Control.HasFocus(4)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/arrow_up.png</texture><visible>!Control.HasFocus(4)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Container.CanFilter</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/search.png</texture><visible>Control.HasFocus(19)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/search.png</texture><visible>!Control.HasFocus(19)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/movies.png</texture><visible>Control.HasFocus(10)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/movies.png</texture><visible>!Control.HasFocus(10)</visible></control></control><control type="label"><width>40</width><height>58</height><label></label><visible>Window.IsActive(addonbrowser) | [Window.IsActive(videos) | Window.IsActive(music)]</visible></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/download.png</texture><visible>Control.HasFocus(9)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/download.png</texture><visible>!Control.HasFocus(9)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/settings.png</texture><visible>Control.HasFocus(5)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/settings.png</texture><visible>!Control.HasFocus(5)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(7)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(7)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(8)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(8)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/search.png</texture><visible>Control.HasFocus(9061)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/search.png</texture><visible>!Control.HasFocus(9061)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>[Window.IsActive(videos) | Window.IsActive(music)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/refresh.png</texture><visible>Control.HasFocus(20)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/refresh.png</texture><visible>!Control.HasFocus(20)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>[Window.IsActive(videos) | Window.IsActive(music)] + !String.IsEmpty(Container.PluginName) + String.StartsWith(Container.FolderPath,plugin://)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/settings.png</texture><visible>Control.HasFocus(9069)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/settings.png</texture><visible>!Control.HasFocus(9069)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Integer.IsGreater(Container.TotalUnWatched,0) + String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/play.png</texture><visible>Control.HasFocus(9068)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/play.png</texture><visible>!Control.HasFocus(9068)</visible></control></control><control type="label"><width>40</width><height>58</height><label></label><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(9062)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(9062)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/list.png</texture><visible>Control.HasFocus(9063)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/list.png</texture><visible>!Control.HasFocus(9063)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/calendar.png</texture><visible>Control.HasFocus(9064)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/calendar.png</texture><visible>!Control.HasFocus(9064)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + Container.Content(movies) + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/clock.png</texture><visible>Control.HasFocus(9065)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/clock.png</texture><visible>!Control.HasFocus(9065)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/sparkle.png</texture><visible>Control.HasFocus(9066)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/sparkle.png</texture><visible>!Control.HasFocus(9066)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/star.png</texture><visible>Control.HasFocus(9067)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/star.png</texture><visible>!Control.HasFocus(9067)</visible></control></control>
+                    <control type="label"><width>40</width><height>58</height><label></label><visible>true</visible></control><control type="group"><width>40</width><height>68</height><visible>!Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/view.png</texture><visible>Control.HasFocus(2)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/view.png</texture><visible>!Control.HasFocus(2)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Control.IsVisible(56)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/layout.png</texture><visible>Control.HasFocus(9072)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/layout.png</texture><visible>!Control.HasFocus(9072)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>true</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/list.png</texture><visible>Control.HasFocus(3)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/list.png</texture><visible>!Control.HasFocus(3)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>true</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/arrow_up.png</texture><visible>Control.HasFocus(4)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/arrow_up.png</texture><visible>!Control.HasFocus(4)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Container.CanFilter</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/search.png</texture><visible>Control.HasFocus(19)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/search.png</texture><visible>!Control.HasFocus(19)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/movies.png</texture><visible>Control.HasFocus(10)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/movies.png</texture><visible>!Control.HasFocus(10)</visible></control></control><control type="label"><width>40</width><height>58</height><label></label><visible>Window.IsActive(addonbrowser) | [Window.IsActive(videos) | Window.IsActive(music)]</visible></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/download.png</texture><visible>Control.HasFocus(9)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/download.png</texture><visible>!Control.HasFocus(9)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/settings.png</texture><visible>Control.HasFocus(5)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/settings.png</texture><visible>!Control.HasFocus(5)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(7)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(7)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(addonbrowser)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(8)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(8)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/search.png</texture><visible>Control.HasFocus(9061)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/search.png</texture><visible>!Control.HasFocus(9061)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>[Window.IsActive(videos) | Window.IsActive(music)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/refresh.png</texture><visible>Control.HasFocus(20)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/refresh.png</texture><visible>!Control.HasFocus(20)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>[Window.IsActive(videos) | Window.IsActive(music)] + !String.IsEmpty(Container.PluginName) + String.StartsWith(Container.FolderPath,plugin://)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/settings.png</texture><visible>Control.HasFocus(9069)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/settings.png</texture><visible>!Control.HasFocus(9069)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Integer.IsGreater(Container.TotalUnWatched,0) + String.StartsWith(Container.FolderPath,videodb://movies/sets/) + !String.IsEqual(Container.FolderPath,videodb://movies/sets/)</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/play.png</texture><visible>Control.HasFocus(9068)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/play.png</texture><visible>!Control.HasFocus(9068)</visible></control></control><control type="label"><width>40</width><height>58</height><label></label><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/eye.png</texture><visible>Control.HasFocus(9062)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/eye.png</texture><visible>!Control.HasFocus(9062)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/list.png</texture><visible>Control.HasFocus(9063)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/list.png</texture><visible>!Control.HasFocus(9063)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/calendar.png</texture><visible>Control.HasFocus(9064)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/calendar.png</texture><visible>!Control.HasFocus(9064)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + Container.Content(movies) + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/clock.png</texture><visible>Control.HasFocus(9065)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/clock.png</texture><visible>!Control.HasFocus(9065)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/sparkle.png</texture><visible>Control.HasFocus(9066)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/sparkle.png</texture><visible>!Control.HasFocus(9066)</visible></control></control><control type="group"><width>40</width><height>68</height><visible>Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]</visible><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="on_focus">icons/star.png</texture><visible>Control.HasFocus(9067)</visible></control><control type="image"><left>0</left><top>21</top><width>26</width><height>26</height><texture colordiffuse="text3">icons/star.png</texture><visible>!Control.HasFocus(9067)</visible></control></control>
                 </control>
             </control>
         </control>
@@ -3302,6 +3317,8 @@
                 <preloaditems>1</preloaditems>
                 <itemlayout width="446" height="340">
                     <control type="group">
+                        <visible>String.IsEmpty(Skin.String(lucent.s56.eps))</visible>
+                    <control type="group">
                         <left>24</left><top>14</top>                            <control type="image">
                                 <left>0</left><top>0</top><width>420</width><height>236</height>
                                 <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
@@ -3372,8 +3389,128 @@
                                 <label>$INFO[ListItem.Duration(mins),, min]$INFO[ListItem.Premiered,  ·  ,]</label>
                             </control>
                     </control>
+                                    </control>
+                    <control type="group">
+                        <visible>String.IsEqual(Skin.String(lucent.s56.eps),timeline)</visible>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png">white.png</texture>
+                            <colordiffuse>80000000</colordiffuse>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>38</left><top>232</top><width>392</width><height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>398</left><top>26</top><width>34</width><height>34</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left><top>270</top><width>446</width><height>4</height>
+                            <texture>white.png</texture><colordiffuse>separator</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>220</left><top>260</top><width>24</width><height>24</height>
+                            <texture colordiffuse="glass_strong">mask_circle.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>220</left><top>260</top><width>24</width><height>24</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">mask_circle.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>292</top><width>420</width><height>32</height>
+                            <font>font12</font><textcolor>text3</textcolor>
+                            <align>center</align>
+                            <label>E$INFO[ListItem.Episode]  ·  $INFO[ListItem.Title]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <visible>String.IsEqual(Skin.String(lucent.s56.eps),cards)</visible>
+                        <control type="image">
+                            <left>14</left><top>4</top><width>440</width><height>334</height>
+                            <texture border="20" colordiffuse="card">rr20.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>180</height>
+                            <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>180</height>
+                            <texture diffuse="mask_landscape.png">white.png</texture>
+                            <colordiffuse>80000000</colordiffuse>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>38</left><top>176</top><width>392</width><height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>398</left><top>26</top><width>34</width><height>34</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>36</left><top>200</top><width>400</width><height>34</height>
+                            <font>font12_bold</font><textcolor>text</textcolor>
+                            <label>E$INFO[ListItem.Episode]  ·  $INFO[ListItem.Title]</label>
+                        </control>
+                        <control type="label">
+                            <left>36</left><top>234</top><width>400</width><height>28</height>
+                            <font>font10</font><textcolor>text4</textcolor>
+                            <label>$INFO[ListItem.Duration(mins),, min]$INFO[ListItem.Premiered,  ·  ,]</label>
+                        </control>
+                        <control type="textbox">
+                            <left>36</left><top>266</top><width>400</width><height>64</height>
+                            <font>font10</font><textcolor>text3</textcolor>
+                            <label>$INFO[ListItem.Plot]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <visible>String.IsEqual(Skin.String(lucent.s56.eps),flags)</visible>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png">white.png</texture>
+                            <colordiffuse>80000000</colordiffuse>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>38</left><top>232</top><width>392</width><height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>398</left><top>26</top><width>34</width><height>34</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>258</top><width>420</width><height>34</height>
+                            <font>font12_bold</font><textcolor>text</textcolor>
+                            <label>E$INFO[ListItem.Episode]  ·  $INFO[ListItem.Title]</label>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>292</top><width>420</width><height>30</height>
+                            <font>font10_bold</font><textcolor>text3</textcolor>
+                            <label>$INFO[ListItem.VideoResolution]$INFO[ListItem.HdrType,  ·  ]$INFO[ListItem.AudioChannels,  ·  , ch]$INFO[ListItem.SubtitleLanguage,  ·  CC ]</label>
+                        </control>
+                    </control>
                 </itemlayout>
                 <focusedlayout width="446" height="340">
+                    <control type="group">
+                        <visible>String.IsEmpty(Skin.String(lucent.s56.eps))</visible>
                     <control type="group">
                         <left>24</left><top>14</top>
                         <animation effect="zoom" start="100" end="104" center="210,118" time="200" tween="cubic" easing="out">Focus</animation>
@@ -3457,6 +3594,142 @@
                                 <font>font10</font><textcolor>text3</textcolor>
                                 <label>$INFO[ListItem.Duration(mins),, min]$INFO[ListItem.Premiered,  ·  ,]</label>
                             </control>
+                    </control>
+                                    </control>
+                    <control type="group">
+                        <visible>String.IsEqual(Skin.String(lucent.s56.eps),timeline)</visible>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png">white.png</texture>
+                            <colordiffuse>80000000</colordiffuse>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>38</left><top>232</top><width>392</width><height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>398</left><top>26</top><width>34</width><height>34</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture border="20">rr20_ring.png</texture>
+                            <colordiffuse>focus</colordiffuse>
+                            <visible>Control.HasFocus(5601)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left><top>270</top><width>446</width><height>4</height>
+                            <texture>white.png</texture><colordiffuse>separator</colordiffuse>
+                        </control>
+                        <control type="image">
+                            <left>220</left><top>260</top><width>24</width><height>24</height>
+                            <texture colordiffuse="focus">mask_circle.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>220</left><top>260</top><width>24</width><height>24</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">mask_circle.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>292</top><width>420</width><height>32</height>
+                            <font>font12_bold</font><textcolor>text</textcolor>
+                            <align>center</align>
+                            <label>E$INFO[ListItem.Episode]  ·  $INFO[ListItem.Title]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <visible>String.IsEqual(Skin.String(lucent.s56.eps),cards)</visible>
+                        <control type="image">
+                            <left>14</left><top>4</top><width>440</width><height>334</height>
+                            <texture border="20" colordiffuse="panel">rr20.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>180</height>
+                            <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>180</height>
+                            <texture diffuse="mask_landscape.png">white.png</texture>
+                            <colordiffuse>80000000</colordiffuse>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>38</left><top>176</top><width>392</width><height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>398</left><top>26</top><width>34</width><height>34</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>180</height>
+                            <texture border="20">rr20_ring.png</texture>
+                            <colordiffuse>focus</colordiffuse>
+                            <visible>Control.HasFocus(5601)</visible>
+                        </control>
+                        <control type="label">
+                            <left>36</left><top>200</top><width>400</width><height>34</height>
+                            <font>font12_bold</font><textcolor>text</textcolor>
+                            <label>E$INFO[ListItem.Episode]  ·  $INFO[ListItem.Title]</label>
+                        </control>
+                        <control type="label">
+                            <left>36</left><top>234</top><width>400</width><height>28</height>
+                            <font>font10</font><textcolor>text4</textcolor>
+                            <label>$INFO[ListItem.Duration(mins),, min]$INFO[ListItem.Premiered,  ·  ,]</label>
+                        </control>
+                        <control type="textbox">
+                            <left>36</left><top>266</top><width>400</width><height>64</height>
+                            <font>font10</font><textcolor>text3</textcolor>
+                            <label>$INFO[ListItem.Plot]</label>
+                        </control>
+                    </control>
+                    <control type="group">
+                        <visible>String.IsEqual(Skin.String(lucent.s56.eps),flags)</visible>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture diffuse="mask_landscape.png">white.png</texture>
+                            <colordiffuse>80000000</colordiffuse>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="progress">
+                            <left>38</left><top>232</top><width>392</width><height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0) + Integer.IsLess(ListItem.PercentPlayed,100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>398</left><top>26</top><width>34</width><height>34</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>24</left><top>14</top><width>420</width><height>236</height>
+                            <texture border="20">rr20_ring.png</texture>
+                            <colordiffuse>focus</colordiffuse>
+                            <visible>Control.HasFocus(5601)</visible>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>258</top><width>420</width><height>34</height>
+                            <font>font12_bold</font><textcolor>text</textcolor>
+                            <label>E$INFO[ListItem.Episode]  ·  $INFO[ListItem.Title]</label>
+                        </control>
+                        <control type="label">
+                            <left>24</left><top>292</top><width>420</width><height>30</height>
+                            <font>font10_bold</font><textcolor>focus</textcolor>
+                            <label>$INFO[ListItem.VideoResolution]$INFO[ListItem.HdrType,  ·  ]$INFO[ListItem.AudioChannels,  ·  , ch]$INFO[ListItem.SubtitleLanguage,  ·  CC ]</label>
+                        </control>
                     </control>
                 </focusedlayout>
                 <content target="videos" browse="never">$INFO[Container(56).ListItem.FolderPath]</content>
