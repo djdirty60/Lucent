@@ -93,7 +93,7 @@ def test():
                                                             "Installeer hem vanuit de Lucent-repository (of start de setup-assistent).")),
         addon_line("pvr.iptvsimple", "IPTV Simple", t("Install it: Add-ons > PVR clients.", "Installeer hem: Add-ons > PVR-clients.")),
     ]
-    for optional, name in (("plugin.video.seren", "Seren"), ("service.subtitles.lucent", "Lucent Subtitles")):
+    for optional, name in (("service.subtitles.lucent", "Lucent Subtitles"),):
         if addon_state(optional):                     # optional: only shown when it is there
             rows.append(addon_line(optional, name, ""))
     if addon_state("pvr.iptvsimple") == 2:

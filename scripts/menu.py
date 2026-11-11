@@ -587,8 +587,8 @@ def tr_pair(pair):
 
 
 def uses_seren():
-    """Seren is installed and not switched off in the setup assistant ("Do you use Seren? No")."""
-    return xbmc.getCondVisibility("System.HasAddon(plugin.video.seren) + !Skin.HasSetting(lucent.noseren)")
+    """Lucent no longer offers Seren's rows and choices (2026-11-11)."""
+    return False
 
 
 def plain_tabs():

@@ -100,7 +100,7 @@
                         <height>72</height>
                         <label>$VAR[NuvioInfoWatched]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,watched)</onclick>
-                        <!-- with Seren (its Trakt login), or for an add-on item: Fen Light and its clones (Red Light) mark it themselves -->
+                        <!-- with a Trakt login, or for an add-on item: Fen Light and its clones (Red Light) mark it themselves -->
                         <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb)) | !String.IsEmpty(ListItem.Property(tmdb_id))] + [System.HasAddon(plugin.video.seren) | System.AddonIsEnabled(plugin.video.lucent) | [String.StartsWith(ListItem.FileNameAndPath,plugin://) + !String.IsEmpty(ListItem.UniqueID(tmdb))]]</visible>
                     </control>
                     <control type="button" id="23">

@@ -34,7 +34,7 @@ HOME = xbmcgui.Window(10000)
 
 _NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 T = {
-    "library": ("Seren library (Trakt collection)", "Seren-bibliotheek (Trakt-collectie)"),
+    "library": ("Trakt collection", "Trakt-collectie"),
     "added_to": ("{0} added to your library ({1})", "{0} toegevoegd aan je bibliotheek ({1})"),
     "watchlist": ("Trakt · Watchlist", "Trakt · Kijklijst"),
     "list": ("Trakt · {0}", "Trakt · {0}"),
@@ -42,8 +42,8 @@ T = {
     "loading": ("Loading your Trakt lists…", "Je Trakt-lijsten laden…"),
     "saved": ("Saved", "Opgeslagen"),
     "nothing": ("Nothing changed", "Niets veranderd"),
-    "no_video": ("Install a video add-on with a Trakt login (Lucent Video or Seren) to use this.",
-                 "Installeer een video-add-on met Trakt-login (Lucent Video of Seren) om dit te gebruiken."),
+    "no_video": ("Install a video add-on with a Trakt login (Lucent Video) to use this.",
+                 "Installeer een video-add-on met Trakt-login (Lucent Video) om dit te gebruiken."),
     "no_login": ("Your video add-on is not logged in to Trakt. Log in to Trakt in its settings.",
                  "Je video-add-on is niet ingelogd bij Trakt. Log in bij Trakt in de instellingen ervan."),
     "expired": ("Trakt does not accept the login of your video add-on any more (Trakt code {0}). Link it to Trakt again: "
@@ -61,8 +61,8 @@ T = {
     "born": ("Born: {0}", "Geboren: {0}"),
     "died": ("Died: {0}", "Overleden: {0}"),
     "years": ("{0} years", "{0} jaar"),
-    "no_tmdb": ("No TMDB key yet. Enter your own free key in Skin settings > Integrations (or in Seren).",
-                "Nog geen TMDB-sleutel. Vul je eigen gratis sleutel in bij Skin-instellingen > Integraties (of in Seren)."),
+    "no_tmdb": ("No TMDB key yet. Enter your own free key in Skin settings > Integrations (or in your video add-on).",
+                "Nog geen TMDB-sleutel. Vul je eigen gratis sleutel in bij Skin-instellingen > Integraties (of in je video-add-on)."),
     "failed_tmdb": ("TMDB did not respond. Try again later.", "TMDB reageert niet. Probeer het later opnieuw."),
 }
 
@@ -406,13 +406,8 @@ def lv_version():
 
 
 def seren_login():
-    """Seren is used (not switched off in the setup assistant) and logged in to Trakt."""
-    if not xbmc.getCondVisibility(f"System.HasAddon({SEREN_ID}) + !Skin.HasSetting(lucent.noseren)"):
-        return False
-    try:
-        return bool(xbmcaddon.Addon(SEREN_ID).getSetting("trakt.auth"))
-    except Exception:  # noqa: BLE001
-        return False
+    """Lucent no longer uses Seren's Trakt login (2026-11-11)."""
+    return False
 
 
 def use_lv(prefix="ListItem."):
