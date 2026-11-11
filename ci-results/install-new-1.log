@@ -123,14 +123,6 @@ Traceback (most recent call last):
                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1374, in _conn_request
     conn.connect()
-  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1141, in connect
-    self.sock = self._context.wrap_socket(sock, server_hostname=self.host)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/ssl.py", line 455, in wrap_socket
-    return self.sslsocket_class._create(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/ssl.py", line 1042, in _create
-    self.do_handshake()
-  File "/usr/lib/python3.12/ssl.py", line 1320, in do_handshake
-    self._sslobj.do_handshake()
+  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1139, in connect
+    sock.connect((self.host, self.port))
 TimeoutError: [Errno 110] Connection timed out
