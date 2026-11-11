@@ -1,60 +1,68 @@
-Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
-Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
-Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
-Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
-Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
-Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
-Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1444 kB]
-Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [315 kB]
-Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1711 kB]
-Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [344 kB]
-Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1879 kB]
-Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [429 kB]
-Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [50.7 kB]
-Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
-Get:15 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1160 kB]
-Get:16 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [234 kB]
-Get:23 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [760 kB]
-Get:24 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
-Get:17 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1228 kB]
-Get:25 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [690 kB]
-Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [248 kB]
-Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1729 kB]
-Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [396 kB]
-Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [45.4 kB]
-Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.4 kB]
-Ign:26 https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu noble InRelease
-Err:27 https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu noble Release
-  404  Not Found [IP: 185.125.189.188 443]
-Reading package lists...
-E: The repository 'https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu noble Release' does not have a Release file.
-Repository: 'Types: deb
-URIs: https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu/
-Suites: noble
-Components: main
-'
-Description:
-Official Team Kodi stable releases
-More info: https://launchpad.net/~team-xbmc/+archive/ubuntu/ppa
-Adding repository.
-Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
-Hit:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease
-Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
-Hit:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease
-Hit:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease
-Hit:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease
-Ign:7 https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu noble InRelease
-Err:8 https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu noble Release
-  404  Not Found [IP: 185.125.189.187 443]
-Reading package lists...
-E: The repository 'https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu noble Release' does not have a Release file.
+Traceback (most recent call last):
+  File "/usr/bin/add-apt-repository", line 452, in <module>
+    sys.exit(0 if addaptrepo.main() else 1)
+                  ^^^^^^^^^^^^^^^^^
+  File "/usr/bin/add-apt-repository", line 435, in main
+    shortcut = handler(source, **shortcut_params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/softwareproperties/shortcuts.py", line 40, in shortcut_handler
+    return handler(shortcut, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/softwareproperties/ppa.py", line 89, in __init__
+    if self.lpppa.publish_debug_symbols:
+       ^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/softwareproperties/ppa.py", line 133, in lpppa
+    self._lpppa = self.lpteam.getPPAByName(name=self.ppaname)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/lazr/restfulclient/resource.py", line 642, in __call__
+    response, content = self.root._browser._request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/lazr/restfulclient/_browser.py", line 484, in _request
+    raise error
+lazr.restfulclient.errors.ServerError: HTTP Error 503: Service Unavailable
+Response headers:
+---
+-content-encoding: gzip
+connection: close
+content-length: 2043
+content-type: text/html
+date: Wed, 11 Nov 2026 11:53:33 GMT
+server: Apache/2.4.41 (Ubuntu)
+status: 503
+vary: Accept-Encoding
+---
+Response body:
+---
+b'<!DOCTYPE html>\n<html\n  xmlns="http://www.w3.org/1999/xhtml"\n  xml:lang="en"\n  lang="en"\n>\n<head>\n  <title>Launchpad is temporarily unavailable</title>\n  <link\n    type="text/css" rel="stylesheet" media="screen, print"\n    href="https://launchpad.net/+icing/basic-error.css" />\n</head>\n<body>\n  <div class="page-center-wrap">\n    <div class="page-center">\n      <div class="page-center-content">\n        <div id="header">\n          <div class="graphic">\n            :(\n          </div>\n          <div class="content">\n            <!-- Before editing, please see\n                https://bugs.launchpad.net/bugs/475371, especially comment #2,\n                for details on this file. In particular, please maintain the\n                \\r\\n line endings, at least for the HTTP header lines. -->\n            <h1>Uh oh!</h1>\n            <h2>Something has gone wrong. We\'re sorry!</h2>\n            <p>\n              If we are in the middle of an update, Launchpad will be\n              back in a couple of minutes.  Otherwise, we are working to\n              fix the unexpected problems. Check\n              <a href="https://ubuntu.social/@launchpadstatus">@launchpadstatus@ubuntu.social</a>\n              on Mastodon for updates.\n            </p>\n            <p>\n              If the problem persists, let us know in\n              <a href="https://matrix.to/#/#launchpad:ubuntu.com"\n              >the #launchpad Matrix channel</a>.\n            </p>\n            <p class="sub">\n              Technically, the load balancer took too long to connect to\n              an application server.\n            </p>\n            <p><a href="javascript:window.location.reload()">Reload</a>\n              this page or try again in a few minutes</p>\n          </div>\n        </div>\n        <div id="footer">\n          <a href="https://launchpad.net/">\n            <img src="https://launchpad.net/@@/launchpad-logo-and-name.png"\n            width="100"\n            alt="Launchpad" />\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n</body>\n</html>\n'
+---
+
 PPA failed - trying Ubuntu's own Kodi
 Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
 Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
-Hit:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease
-Hit:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease
-Hit:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease
-Hit:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease
+Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [760 kB]
+Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1444 kB]
+Get:16 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+Get:17 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [690 kB]
+Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [315 kB]
+Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1711 kB]
+Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [344 kB]
+Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1879 kB]
+Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [429 kB]
+Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [50.7 kB]
+Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1160 kB]
+Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [234 kB]
+Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1228 kB]
+Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [248 kB]
+Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1729 kB]
+Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [396 kB]
+Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [45.4 kB]
+Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.4 kB]
+Fetched 13.1 MB in 1s (9331 kB/s)
 Reading package lists...
 Repository: 'Types: deb
 URIs: https://ppa.launchpadcontent.net/team-xbmc/ppa/ubuntu/
@@ -65,7 +73,6 @@ Description:
 Official Team Kodi stable releases
 More info: https://launchpad.net/~team-xbmc/+archive/ubuntu/ppa
 Removing repository.
-Removing entry from /etc/apt/sources.list.d/team-xbmc-ubuntu-ppa-noble.sources
 Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
 Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
 Hit:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease
@@ -320,7 +327,7 @@ Get:163 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 kodi-visuali
 Get:164 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libxdo3 amd64 1:3.20160805.1-5build1 [22.2 kB]
 Get:165 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 pocketsphinx-en-us all 0.8.0+real5prealpha+1-15ubuntu5 [27.4 MB]
 Get:166 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xdotool amd64 1:3.20160805.1-5build1 [42.6 kB]
-Fetched 155 MB in 7s (21.0 MB/s)
+Fetched 155 MB in 17s (9207 kB/s)
 Selecting previously unselected package libva2:amd64.
 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 215960 files and directories currently installed.)
 Preparing to unpack .../000-libva2_2.20.0-2ubuntu0.2_amd64.deb ...
