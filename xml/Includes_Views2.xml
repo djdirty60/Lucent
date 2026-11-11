@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The newer views (gen_views2.py): Spotlight, Wall with info panel, Carousel, Title card -->
+<includes>
+    <!-- View 70: Spotlight - the picture over the whole screen, the info big on the left, a thin row of small posters -->
+    <include name="View_70">
+        <control type="group">
+            <visible>Control.IsVisible(70)</visible>
+            <include content="ListHero"><param name="top">170</param><param name="plotheight">140</param></include>
+        </control>
+        <control type="group" id="9270">
+            <control type="fixedlist" id="70">
+                <onback>ClearProperty(nuvio.back,home)</onback>
+                <onback condition="Integer.IsGreater(Container(70).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
+                <onback condition="Integer.IsGreater(Container(70).CurrentItem,1)">SetFocus(70,0,absolute)</onback>
+                <onback condition="!String.IsEmpty(Window(home).Property(nuvio.back))">9270</onback>
+                <left>72</left>
+                <top>800</top>
+                <width>1848</width>
+                <height>260</height>
+                <orientation>horizontal</orientation>
+                <focusposition>0</focusposition>
+                <preloaditems>2</preloaditems>
+                <onup>9050</onup>
+                <onleft>9050</onleft>
+                <ondown>noop</ondown>
+                <pagecontrol>60</pagecontrol>
+                <viewtype label="$LOCALIZE[31843]">bigwrap</viewtype>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(videos) | Container.Content(musicvideos)</visible>
+                <include>Anim_SlideUp</include>
+                <scrolltime tween="cubic" easing="out">220</scrolltime>
+                <itemlayout width="164" height="250">
+                <control type="group">
+                    <left>24</left>
+                    <top>24</top>
+                    <control type="group">
+                        <width>140</width>
+                        <height>210</height>
+                        <control type="image">
+                            <width>140</width>
+                            <height>210</height>
+                            <texture diffuse="mask_poster.png">default_poster.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>140</width>
+                            <height>210</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>65</top>
+                            <width>120</width>
+                            <height>80</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <wrapmultiline>true</wrapmultiline>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(thumb))</visible>
+                        </control>
+                        <control type="progress">
+                            <left>12</left>
+                            <top>192</top>
+                            <width>116</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>96</left>
+                            <top>8</top>
+                            <width>36</width>
+                            <height>36</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <width>140</width>
+                            <height>210</height>
+                            <texture diffuse="mask_poster.png">white.png</texture>
+                            <colordiffuse>66000000</colordiffuse>
+                        </control>
+                    </control>
+                </control>
+                </itemlayout>
+                <focusedlayout width="164" height="250">
+                <control type="group">
+                    <left>24</left>
+                    <top>24</top>
+                    <control type="group">
+                        <width>140</width>
+                        <height>210</height>
+                        <control type="image">
+                            <width>140</width>
+                            <height>210</height>
+                            <texture diffuse="mask_poster.png">default_poster.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>140</width>
+                            <height>210</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>65</top>
+                            <width>120</width>
+                            <height>80</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <wrapmultiline>true</wrapmultiline>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(thumb))</visible>
+                        </control>
+                        <control type="progress">
+                            <left>12</left>
+                            <top>192</top>
+                            <width>116</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>96</left>
+                            <top>8</top>
+                            <width>36</width>
+                            <height>36</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>-6</left>
+                            <top>-6</top>
+                            <width>152</width>
+                            <height>222</height>
+                            <texture border="20" colordiffuse="focus">rr20_ring.png</texture>
+                        </control>
+                    </control>
+                </control>
+                </focusedlayout>
+            </control>
+        </control>
+    </include>
+    <!-- View 71: Wall with info panel - a grid of posters on the left, a fixed glass panel with the details on the right -->
+    <include name="View_71">
+        <control type="group" id="9271">
+            <control type="panel" id="71">
+                <onback>ClearProperty(nuvio.back,home)</onback>
+                <onback condition="Integer.IsGreater(Container(71).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
+                <onback condition="Integer.IsGreater(Container(71).CurrentItem,1)">SetFocus(71,0,absolute)</onback>
+                <onback condition="!String.IsEmpty(Window(home).Property(nuvio.back))">9271</onback>
+                <left>72</left>
+                <top>150</top>
+                <width>1170</width>
+                <height>910</height>
+                <orientation>vertical</orientation>
+                <preloaditems>2</preloaditems>
+                <onup>9050</onup>
+                <onleft>9050</onleft>
+                <onright>60</onright>
+                <pagecontrol>60</pagecontrol>
+                <viewtype label="$LOCALIZE[31844]">icon</viewtype>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(videos) | Container.Content(musicvideos)</visible>
+                <include>Anim_SlideUp</include>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <itemlayout width="194" height="296">
+                <control type="group">
+                    <left>14</left>
+                    <top>14</top>
+                    <control type="group">
+                        <width>168</width>
+                        <height>252</height>
+                        <control type="image">
+                            <width>168</width>
+                            <height>252</height>
+                            <texture diffuse="mask_poster.png">default_poster.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>168</width>
+                            <height>252</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>86</top>
+                            <width>148</width>
+                            <height>80</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <wrapmultiline>true</wrapmultiline>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(thumb))</visible>
+                        </control>
+                        <control type="progress">
+                            <left>12</left>
+                            <top>234</top>
+                            <width>144</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>124</left>
+                            <top>8</top>
+                            <width>36</width>
+                            <height>36</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                    </control>
+                </control>
+                </itemlayout>
+                <focusedlayout width="194" height="296">
+                <control type="group">
+                    <left>14</left>
+                    <top>14</top>
+                    <control type="group">
+                        <width>168</width>
+                        <height>252</height>
+                        <control type="image">
+                            <width>168</width>
+                            <height>252</height>
+                            <texture diffuse="mask_poster.png">default_poster.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>168</width>
+                            <height>252</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>86</top>
+                            <width>148</width>
+                            <height>80</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <wrapmultiline>true</wrapmultiline>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(thumb))</visible>
+                        </control>
+                        <control type="progress">
+                            <left>12</left>
+                            <top>234</top>
+                            <width>144</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>124</left>
+                            <top>8</top>
+                            <width>36</width>
+                            <height>36</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>-6</left>
+                            <top>-6</top>
+                            <width>180</width>
+                            <height>264</height>
+                            <texture border="20" colordiffuse="focus">rr20_ring.png</texture>
+                        </control>
+                    </control>
+                </control>
+                </focusedlayout>
+            </control>
+        </control>
+        <control type="group">
+            <left>1270</left>
+            <top>150</top>
+            <visible>Control.IsVisible(71)</visible>
+            <control type="image">
+                <width>600</width>
+                <height>880</height>
+                <texture border="20" colordiffuse="panel">rr20.png</texture>
+            </control>
+            <control type="image">
+                <width>600</width>
+                <height>880</height>
+                <texture border="20" colordiffuse="hairline">rr20_edge.png</texture>
+            </control>
+            <control type="image">
+                <left>24</left>
+                <top>24</top>
+                <width>552</width>
+                <height>310</height>
+                <aspectratio scalediffuse="false">scale</aspectratio>
+                <fadetime>200</fadetime>
+                <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
+            </control>
+            <control type="textbox">
+                <left>24</left>
+                <top>354</top>
+                <width>552</width>
+                <height>100</height>
+                <font>font27_title</font>
+                <textcolor>text</textcolor>
+                <label>$VAR[ItemTitle]</label>
+            </control>
+            <control type="group">
+                <left>24</left>
+                <top>462</top>
+                    <control type="grouplist">
+                        <width>900</width>
+                        <height>44</height>
+                        <orientation>horizontal</orientation>
+                        <itemgap>12</itemgap>
+                        <include content="InfoPill"><param name="label">$INFO[ListItem.Year]</param><param name="visible">!String.IsEmpty(ListItem.Year)</param></include>
+                        <include content="InfoPill"><param name="label">★ $INFO[ListItem.Rating]</param><param name="visible">!String.IsEmpty(ListItem.Rating)</param></include>
+                        <include content="InfoPill"><param name="label">$INFO[ListItem.Duration(hh:mm)]</param><param name="visible">Integer.IsGreater(ListItem.Duration(mins),0)</param></include>
+                        <include content="InfoPill"><param name="label">$INFO[ListItem.MPAA]</param><param name="visible">!String.IsEmpty(ListItem.MPAA)</param></include>
+                    </control>
+            </control>
+            <control type="label">
+                <left>24</left>
+                <top>518</top>
+                <width>552</width>
+                <height>36</height>
+                <font>font12</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[ListItem.Genre]</label>
+            </control>
+            <control type="textbox">
+                <left>24</left>
+                <top>566</top>
+                <width>552</width>
+                <height>290</height>
+                <font>font_body</font>
+                <textcolor>text2</textcolor>
+                <label>$INFO[ListItem.Plot]</label>
+                <include>TextAutoScroll</include>
+            </control>
+        </control>
+    </include>
+    <!-- View 72: Carousel - the chosen poster big in the middle, the others smaller and dimmed beside it -->
+    <include name="View_72">
+        <control type="group" id="9272">
+            <control type="fixedlist" id="72">
+                <onback>ClearProperty(nuvio.back,home)</onback>
+                <onback condition="Integer.IsGreater(Container(72).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
+                <onback condition="Integer.IsGreater(Container(72).CurrentItem,1)">SetFocus(72,0,absolute)</onback>
+                <onback condition="!String.IsEmpty(Window(home).Property(nuvio.back))">9272</onback>
+                <left>-40</left>
+                <top>170</top>
+                <width>2000</width>
+                <height>620</height>
+                <orientation>horizontal</orientation>
+                <focusposition>4</focusposition>
+                <movement>4</movement>
+                <preloaditems>2</preloaditems>
+                <onup>9050</onup>
+                <onleft>noop</onleft>
+                <ondown>noop</ondown>
+                <pagecontrol>60</pagecontrol>
+                <viewtype label="$LOCALIZE[31845]">bigwrap</viewtype>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(videos) | Container.Content(musicvideos)</visible>
+                <include>Anim_SlideUp</include>
+                <scrolltime tween="cubic" easing="out">260</scrolltime>
+                <itemlayout width="220" height="620">
+                <control type="group">
+                    <left>20</left>
+                    <top>130</top>
+                    <control type="group">
+                        <width>180</width>
+                        <height>270</height>
+                        <control type="image">
+                            <width>180</width>
+                            <height>270</height>
+                            <texture diffuse="mask_poster.png">default_poster.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>180</width>
+                            <height>270</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>95</top>
+                            <width>160</width>
+                            <height>80</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <wrapmultiline>true</wrapmultiline>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(thumb))</visible>
+                        </control>
+                        <control type="progress">
+                            <left>12</left>
+                            <top>252</top>
+                            <width>156</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>136</left>
+                            <top>8</top>
+                            <width>36</width>
+                            <height>36</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <width>180</width>
+                            <height>270</height>
+                            <texture diffuse="mask_poster.png">white.png</texture>
+                            <colordiffuse>66000000</colordiffuse>
+                        </control>
+                    </control>
+                </control>
+                </itemlayout>
+                <focusedlayout width="440" height="620">
+                <control type="group">
+                    <left>30</left>
+                    <top>20</top>
+                    <control type="group">
+                        <width>380</width>
+                        <height>570</height>
+                        <control type="image">
+                            <width>380</width>
+                            <height>570</height>
+                            <texture diffuse="mask_poster.png">default_poster.png</texture>
+                        </control>
+                        <control type="image">
+                            <width>380</width>
+                            <height>570</height>
+                            <aspectratio scalediffuse="false">scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
+                        </control>
+                        <control type="label">
+                            <left>10</left>
+                            <top>245</top>
+                            <width>360</width>
+                            <height>80</height>
+                            <font>font12_bold</font>
+                            <align>center</align>
+                            <aligny>center</aligny>
+                            <wrapmultiline>true</wrapmultiline>
+                            <label>$INFO[ListItem.Label]</label>
+                            <visible>String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(thumb))</visible>
+                        </control>
+                        <control type="progress">
+                            <left>12</left>
+                            <top>552</top>
+                            <width>356</width>
+                            <height>6</height>
+                            <info>ListItem.PercentPlayed</info>
+                            <visible>Integer.IsGreater(ListItem.PercentPlayed,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>336</left>
+                            <top>8</top>
+                            <width>36</width>
+                            <height>36</height>
+                            <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
+                            <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                        </control>
+                        <control type="image">
+                            <left>-6</left>
+                            <top>-6</top>
+                            <width>392</width>
+                            <height>582</height>
+                            <texture border="20" colordiffuse="focus">rr20_ring.png</texture>
+                        </control>
+                    </control>
+                </control>
+                </focusedlayout>
+            </control>
+        </control>
+        <control type="group">
+            <top>820</top>
+            <visible>Control.IsVisible(72)</visible>
+            <control type="label">
+                <left>160</left>
+                <width>1600</width>
+                <height>60</height>
+                <align>center</align>
+                <font>font32</font>
+                <textcolor>text</textcolor>
+                <label>$VAR[ItemTitle]</label>
+            </control>
+            <control type="label">
+                <left>160</left>
+                <top>62</top>
+                <width>1600</width>
+                <height>40</height>
+                <align>center</align>
+                <font>font12</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[ListItem.Year]$INFO[ListItem.Genre,  ·  ]$INFO[ListItem.Rating,  ·  ★ ]$INFO[ListItem.Duration(hh:mm),  ·  ]</label>
+            </control>
+            <control type="textbox">
+                <left>360</left>
+                <top>108</top>
+                <width>1200</width>
+                <height>110</height>
+                <align>center</align>
+                <font>font_body</font>
+                <textcolor>text3</textcolor>
+                <label>$INFO[ListItem.Plot]</label>
+            </control>
+        </control>
+    </include>
+    <!-- View 73: Title card - only the names in big letters on the left, the chosen one bright; the picture on the right -->
+    <include name="View_73">
+        <control type="image">
+            <width>1300</width>
+            <height>1080</height>
+            <texture>grad_left.png</texture>
+            <colordiffuse>bg</colordiffuse>
+            <visible>Control.IsVisible(73)</visible>
+        </control>
+        <control type="group" id="9273">
+            <control type="fixedlist" id="73">
+                <onback>ClearProperty(nuvio.back,home)</onback>
+                <onback condition="Integer.IsGreater(Container(73).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
+                <onback condition="Integer.IsGreater(Container(73).CurrentItem,1)">SetFocus(73,0,absolute)</onback>
+                <onback condition="!String.IsEmpty(Window(home).Property(nuvio.back))">9273</onback>
+                <left>96</left>
+                <top>150</top>
+                <width>900</width>
+                <height>880</height>
+                <orientation>vertical</orientation>
+                <focusposition>3</focusposition>
+                <movement>3</movement>
+                <preloaditems>2</preloaditems>
+                <onleft>9050</onleft>
+                <onright>60</onright>
+                <pagecontrol>60</pagecontrol>
+                <viewtype label="$LOCALIZE[31846]">list</viewtype>
+                <visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(sets) | Container.Content(videos) | Container.Content(musicvideos)</visible>
+                <include>Anim_SlideUp</include>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <itemlayout width="900" height="84">
+                    <control type="label">
+                        <width>880</width>
+                        <height>84</height>
+                        <font>font27</font>
+                        <textcolor>66FFFFFF</textcolor>
+                        <aligny>center</aligny>
+                        <label>$VAR[ItemTitle]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="900" height="200">
+                    <control type="label">
+                        <top>10</top>
+                        <width>880</width>
+                        <height>80</height>
+                        <font>font45_title</font>
+                        <textcolor>text</textcolor>
+                        <aligny>center</aligny>
+                        <scroll>true</scroll>
+                        <label>$VAR[ItemTitle]</label>
+                    </control>
+                    <control type="label">
+                        <top>92</top>
+                        <width>880</width>
+                        <height>36</height>
+                        <font>font12</font>
+                        <textcolor>text3</textcolor>
+                        <label>$INFO[ListItem.Year]$INFO[ListItem.Rating,  ·  ★ ]$INFO[ListItem.Duration(hh:mm),  ·  ]$INFO[ListItem.Genre,  ·  ]</label>
+                    </control>
+                    <control type="label">
+                        <top>132</top>
+                        <width>760</width>
+                        <height>56</height>
+                        <font>font12</font>
+                        <textcolor>text4</textcolor>
+                        <wrapmultiline>true</wrapmultiline>
+                        <label>$INFO[ListItem.Plot]</label>
+                    </control>
+                </focusedlayout>
+            </control>
+        </control>
+    </include>
+    <include name="MediaViews2">
+        <include>View_70</include>
+        <include>View_71</include>
+        <include>View_72</include>
+        <include>View_73</include>
+    </include>
+</includes>

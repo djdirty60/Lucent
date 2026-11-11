@@ -4207,6 +4207,30 @@ def osdclose_test():
     log("osdclose: " + json.dumps(out))
 
 
+def newviews_test():
+    """1.41.0: the new views (Spotlight, Wall with info panel, Carousel, Title card) in the film library."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    for _ in range(30):
+        if mon.waitForAbort(0.3) or (cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0):
+            break
+    for view in (70, 71, 72, 73):
+        xbmc.executebuiltin(f"Container.SetViewMode({view})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({view})")
+        xbmc.executebuiltin("Action(Right)" if view != 73 else "Action(Down)")
+        mon.waitForAbort(2.5)
+        out[view] = {"visible": cond(f"Control.IsVisible({view})"), "focus": cond(f"Control.HasFocus({view})"),
+                     "mode": lab("Container.Viewmode"), "item": lab("ListItem.Label")}
+        shot(f"view-{view}")
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("newviews: " + json.dumps(out))
+
+
 def lvtrakt_test():
     """1.39.0: the Trakt login of the video add-on is used (calendar, lists, watched) before Seren's."""
     import importlib
@@ -4483,6 +4507,7 @@ def main():
     safe(lvtrakt_test)
     safe(addonsettings_test)
     safe(osdclose_test)
+    safe(newviews_test)
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
