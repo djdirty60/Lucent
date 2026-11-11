@@ -108,6 +108,8 @@ Traceback (most recent call last):
                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1374, in _conn_request
     conn.connect()
+  File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1185, in connect
+    raise socket_err
   File "/usr/lib/python3/dist-packages/httplib2/__init__.py", line 1139, in connect
     sock.connect((self.host, self.port))
-TimeoutError: [Errno 110] Connection timed out
+OSError: [Errno 101] Network is unreachable
