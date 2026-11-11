@@ -6,7 +6,7 @@
     RunScript(special://skin/scripts/backup.py,restore)    put one back
 
 One zip file with: Lucent's settings and menu (skin settings), its own files (keys, calendar, sport, favourites of the
-guide ...), Kodi's favourites, sources and advancedsettings, the keymaps Lucent writes, and the settings of Seren,
+guide ...), Kodi's favourites, sources and advancedsettings, the keymaps Lucent writes, and the settings of
 IPTV Simple, Lucent Subtitles and Lucent Video (with its keys and profiles). Not included: caches, databases and the library's .strm files (the
 video add-on writes those again by itself).
 
@@ -35,7 +35,6 @@ FOLDERS = {
     "keymaps": lambda rel: rel.startswith("lucent-") and rel.endswith(".xml"),
     "addon_data/skin.lucent": lambda rel: not (rel.endswith("_cache.json") or rel.startswith("subs_ai/")
                                                or rel in ("sport_epg.json", "sport_cache.json") or rel.endswith(".tmp")),
-    "addon_data/plugin.video.seren": lambda rel: rel == "settings.xml",
     "addon_data/pvr.iptvsimple": lambda rel: rel.endswith(".xml") and "/" not in rel,
     "addon_data/service.subtitles.lucent": lambda rel: rel == "settings.xml",
     "addon_data/screensaver.lucent": lambda rel: rel == "settings.xml",

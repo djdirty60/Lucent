@@ -4,7 +4,7 @@
     RunScript(special://skin/scripts/sleep.py)
 
 Choices: after this episode / film, after 15, 30, 45, 60 or 90 minutes, or switch the timer off.
-When the time is there, playback stops (and what was queued next - Seren's next episode - is cleared, so nothing
+When the time is there, playback stops (and what was queued next - the next episode - is cleared, so nothing
 starts by itself). The timer runs in this script; Window(home).Property(lucent.sleep.label) shows what is set
 (the player menu shows it under the moon button). Choosing again replaces the running timer.
 """

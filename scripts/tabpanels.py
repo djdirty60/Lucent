@@ -3,7 +3,7 @@
 
 The helper calls update() every minute. It writes Window(home).Property(lucent.pc.N.*) (Calendar: coming up) and
 lucent.ps.N.* (Sport: today), N = 1..8; Home.xml shows them as cards with the first (or focused) one big above them.
-    RunScript(special://skin/scripts/tabpanels.py,open,cal,N)     OK on a calendar card: open it in Seren
+    RunScript(special://skin/scripts/tabpanels.py,open,cal,N)     OK on a calendar card: open it in the video add-on
 """
 import datetime
 import sys
@@ -181,7 +181,7 @@ def open_calendar(n):
     p = f"lucent.pc.{n}."
     name, kind, tmdb = HOME.getProperty(p + "title"), HOME.getProperty(p + "kind") or "tv", HOME.getProperty(p + "tmdb")
     if name:
-        ac.open_in_seren(name, kind, int(tmdb) if tmdb.isdigit() else None)
+        ac.open_title(name, kind, int(tmdb) if tmdb.isdigit() else None)
 
 
 if __name__ == "__main__":

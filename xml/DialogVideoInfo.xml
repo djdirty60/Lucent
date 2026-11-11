@@ -93,7 +93,7 @@
                         <height>72</height>
                         <label>+  $LOCALIZE[31114]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,lists)</onclick>
-                        <visible>[[[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)]] | [[String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)] + [!String.IsEmpty(ListItem.Property(trakt_show_id)) | !String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.DBID) | !String.IsEmpty(ListItem.UniqueID(tmdb))]]] + [System.HasAddon(plugin.video.seren) | System.AddonIsEnabled(plugin.video.lucent)]</visible>
+                        <visible>[[[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)]] | [[String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)] + [!String.IsEmpty(ListItem.Property(trakt_show_id)) | !String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.DBID) | !String.IsEmpty(ListItem.UniqueID(tmdb))]]] + System.AddonIsEnabled(plugin.video.lucent)</visible>
                     </control>
                     <control type="button" id="22">
                         <width>auto</width>
@@ -101,7 +101,7 @@
                         <label>$VAR[NuvioInfoWatched]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,watched)</onclick>
                         <!-- with a Trakt login, or for an add-on item: Fen Light and its clones (Red Light) mark it themselves -->
-                        <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb)) | !String.IsEmpty(ListItem.Property(tmdb_id))] + [System.HasAddon(plugin.video.seren) | System.AddonIsEnabled(plugin.video.lucent) | [String.StartsWith(ListItem.FileNameAndPath,plugin://) + !String.IsEmpty(ListItem.UniqueID(tmdb))]]</visible>
+                        <visible>[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb)) | !String.IsEmpty(ListItem.Property(tmdb_id))] + [System.AddonIsEnabled(plugin.video.lucent) | [String.StartsWith(ListItem.FileNameAndPath,plugin://) + !String.IsEmpty(ListItem.UniqueID(tmdb))]]</visible>
                     </control>
                     <control type="button" id="23">
                         <width>auto</width>
@@ -1198,7 +1198,7 @@
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
                     <onup>6002</onup>
                     <ondown>5200</ondown>
-                    <!-- a similar title opens its own page (it used to start playing at once): openpage.py opens the list and presses Info -->
+                    <!-- a similar title opens its own page (info.py open) -->
                     <onclick>SetProperty(nuvio.open.pos,$INFO[Container(5100).CurrentItem],home)</onclick>
                     <onclick>SetProperty(nuvio.open.tmdb,$INFO[Container(5100).ListItem.UniqueID(tmdb)],home)</onclick>
                     <onclick condition="String.IsEqual(Container(5100).ListItem.DBType,tvshow)">SetProperty(nuvio.open.type,tv,home)</onclick>
@@ -1693,8 +1693,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.1.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.1.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.1.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.1.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.1.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.1.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1706,8 +1704,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.2.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.2.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.2.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.2.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.2.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.2.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1719,8 +1715,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.3.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.3.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.3.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.3.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.3.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.3.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1732,8 +1726,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.4.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.4.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.4.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.4.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.4.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.4.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1745,8 +1737,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.5.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.5.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.5.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.5.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.5.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.5.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1758,8 +1748,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.6.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.6.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.6.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.6.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.6.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.6.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1771,8 +1759,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.7.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.7.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.7.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.7.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.7.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.7.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1784,8 +1770,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.8.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.8.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.8.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.8.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.8.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.8.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1797,8 +1781,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.9.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.9.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.9.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.9.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.9.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.9.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1810,8 +1792,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.10.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.10.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.10.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.10.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.10.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.10.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1823,8 +1803,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.11.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.11.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.11.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.11.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.11.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.11.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>
@@ -1836,8 +1814,6 @@
                             <label2>$INFO[Window(home).Property(nuvio.info.coll.12.year)]</label2>
                             <icon>$INFO[Window(home).Property(nuvio.info.coll.12.art)]</icon>
                             <property name="current">$INFO[Window(home).Property(nuvio.info.coll.12.current)]</property>
-                            <onclick>SetProperty(nuvio.open.path,"$INFO[Window(home).Property(nuvio.info.coll.12.path)]",home)</onclick>
-                            <onclick>SetProperty(nuvio.open.year,"$INFO[Window(home).Property(nuvio.info.coll.12.year)]",home)</onclick>
                             <onclick>SetProperty(nuvio.open.tmdb,$INFO[Window(home).Property(nuvio.info.coll.12.id)],home)</onclick>
                             <onclick>SetProperty(nuvio.open.type,movie,home)</onclick>
                             <onclick>ClearProperty(nuvio.open.trakt,home)</onclick>

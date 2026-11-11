@@ -96,8 +96,6 @@ class Service(xbmcgui.WindowXMLDialog):
         kind = "tv" if xbmc.getInfoLabel(base + "DBType") == "tvshow" else "movie"
         HOME.setProperty("nuvio.open.tmdb", tmdb_id)
         HOME.setProperty("nuvio.open.type", kind)
-        HOME.setProperty("nuvio.open.year", xbmc.getInfoLabel(base + "Year"))
-        HOME.setProperty("nuvio.open.path", "")
         HOME.clearProperty("nuvio.open.trakt")
         xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
 

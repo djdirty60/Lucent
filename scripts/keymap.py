@@ -123,7 +123,7 @@ def sync(path, text, wanted):
 
 def main():
     changed = sync(PATH, KEYMAP, xbmc.getInfoLabel("Skin.String(nuvio.backstop)") != "off")
-    # OK opens the page first for films / episodes in the Kodi video lists (Seren folders): only when chosen in Skin settings
+    # OK opens the page first for films / episodes in the Kodi video lists (add-on folders): only when chosen in Skin settings
     ok_wanted = xbmc.getCondVisibility("Skin.HasSetting(nuvio.ok.movie.page) | Skin.HasSetting(nuvio.ok.episode.page)")
     changed = sync(OK_PATH, OK_KEYMAP, ok_wanted) or changed
     # the Home button of the remote goes to the Home screen from every window (switch off: Skin.String(nuvio.homekey) = off)

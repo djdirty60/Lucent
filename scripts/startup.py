@@ -5,7 +5,7 @@
 
 Before this, Home started five or six separate scripts at the same time (key maps, rating logos, the Calendar and
 Sport tabs, the helper). Every one of them is its own Python interpreter, and on a small box they all compete with
-Seren and the widgets that load at that moment. Now the quick jobs run here after each other, and the long-running
+the video add-on and the widgets that load at that moment. Now the quick jobs run here after each other, and the long-running
 helper is started last, in this same interpreter.
 """
 import xbmc
