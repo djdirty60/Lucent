@@ -256,6 +256,17 @@
                 <onclick>ActivateWindow(subtitlesearch)</onclick>
                 <visible>!System.AddonIsEnabled(plugin.video.lucent)</visible>
             </control>
+            <!-- "What did they say?": the video add-on goes 10 s back with the subtitles on for a moment -->
+            <control type="button" id="120">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/replay_fo.png</texturefocus>
+                <texturenofocus>buttons/replay_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd)</onclick>
+                <onclick>RunPlugin(plugin://plugin.video.lucent/?action=replay)</onclick>
+                <visible>System.AddonIsEnabled(plugin.video.lucent) + String.IsEqual(Window(Home).Property(lucent.lv.replay),1) + !VideoPlayer.Content(livetv)</visible>
+            </control>
             <control type="button" id="112">
                 <width>84</width>
                 <height>84</height>

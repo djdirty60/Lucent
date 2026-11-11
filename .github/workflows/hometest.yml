@@ -19,8 +19,8 @@ jobs:
         run: |
           mkdir -p ci-results
           {
-            timeout 180 sudo add-apt-repository -y ppa:team-xbmc/ppa && sudo apt-get update -q && sudo apt-get install -y -q kodi kodi-bin kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool \
-            || { echo "PPA failed - trying Ubuntu's own Kodi"; sudo rm -f /etc/apt/sources.list.d/*xbmc* /etc/apt/sources.list.d/*kodi*; sudo apt-get update -q; sudo apt-get install -y -q kodi kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool; }
+            timeout 180 sudo add-apt-repository -y ppa:team-xbmc/ppa && timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=1 && timeout 600 sudo apt-get install -y -q kodi kodi-bin kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool \
+            || { echo "PPA failed - trying Ubuntu's own Kodi"; sudo rm -f /etc/apt/sources.list.d/*xbmc* /etc/apt/sources.list.d/*kodi*; timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20; sudo apt-get install -y -q kodi kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool; }
             apt-cache policy kodi kodi-bin
             kodi --version 2>&1 | head -3
           } > ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log 2>&1

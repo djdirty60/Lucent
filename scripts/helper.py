@@ -149,7 +149,21 @@ def run():
         import live
         live.check_reminders()
 
-    quick = [Job("tv reminders", 20, 15, tv_reminders), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
+    def lv_features():
+        """What the installed Lucent Video can do (it can go back to an older version too): its code is checked, the
+        player menu shows a button only when the add-on knows it."""
+        try:
+            with open(xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/lib/router.py"), encoding="utf-8") as fh:
+                code = fh.read()
+        except OSError:
+            code = ""
+        for action, prop in (("replay", "lucent.lv.replay"),):
+            if f'"{action}"' in code:
+                HOME.setProperty(prop, "1")
+            else:
+                HOME.clearProperty(prop)
+
+    quick = [Job("video add-on", 300, 6, lv_features), Job("tv reminders", 20, 15, tv_reminders), Job("replay position", 10, 12, catchup_tick, lambda: cond("Pvr.HasTVChannels"))]
     stop = threading.Event()
 
     def beat():
