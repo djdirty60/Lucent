@@ -224,7 +224,7 @@ def pick_option(name, options, heading):
 
 # ----------------------------------------------------------------------------- logos
 LOGO_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/logos/"
-LOGO_NAMES = ("imdb", "tmdb", "trakt", "rt", "rta", "mc", "mcu", "lb")
+LOGO_NAMES = ("imdb", "tmdb", "trakt", "rt", "rt_rotten", "rta", "rta_spilt", "mc", "mcu", "lb")
 
 
 def scan_logos():
