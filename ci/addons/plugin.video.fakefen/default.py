@@ -74,7 +74,7 @@ if handle >= 0:
             if n == 4:
                 tag.setResumePoint(1200.0, 2940.0)
             tag.addVideoStream(xbmc.VideoStreamDetail(width=3840 if n % 2 else 1920, height=2160 if n % 2 else 1080, codec="hevc",
-                                                      hdrType="dolbyvision" if n % 3 == 0 else "hdr10"))
+                                                      hdrtype="dolbyvision" if n % 3 == 0 else "hdr10"))
             tag.addAudioStream(xbmc.AudioStreamDetail(channels=6 if n % 2 else 2, codec="eac3", language="en"))
             tag.addSubtitleStream(xbmc.SubtitleStreamDetail(language="nl"))
             k = n % 8

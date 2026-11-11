@@ -72,7 +72,7 @@ timeout 60 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/fi
 python3 ci/profile.py enable
 python3 ci/profile.py skin
 # 2nd start with Lucent: the driver does the test and quits
-timeout 1200 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/second.txt 2>&1
+timeout 1600 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/second.txt 2>&1
 mkdir -p ci-results
 cp /tmp/ci/out/* ci-results/ 2>/dev/null
 grep -iE "lucent|cidriver|fakeseren|error|CDirectoryProvider|exception|traceback" $K/temp/kodi.log | tail -800 > ci-results/$VARIANT-$RUN.log

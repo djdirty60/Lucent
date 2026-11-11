@@ -655,7 +655,7 @@
                             <font>font12</font>
                             <textcolor>text3</textcolor>
                             <aligny>center</aligny>
-                            <label>$INFO[ListItem.Property(WatchedEpisodes)]$INFO[ListItem.Property(TotalEpisodes), / ,]$INFO[ListItem.Property(TotalEpisodes),  ·  $LOCALIZE[31116],]</label>
+                            <label>$VAR[LucentShowProgress]</label>
                         </control>
                         <control type="label">
                             <left>340</left>
@@ -753,7 +753,7 @@
                             <font>font12</font>
                             <textcolor>text3</textcolor>
                             <aligny>center</aligny>
-                            <label>$INFO[ListItem.Property(WatchedEpisodes)]$INFO[ListItem.Property(TotalEpisodes), / ,]$INFO[ListItem.Property(TotalEpisodes),  ·  $LOCALIZE[31116],]</label>
+                            <label>$VAR[LucentShowProgress]</label>
                         </control>
                         <control type="label">
                             <left>340</left>
@@ -2047,6 +2047,13 @@
                             <top>10</top>
                             <width>220</width>
                             <height>220</height>
+                            <texture colordiffuse="card">mask_circle.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>20</left>
+                            <top>10</top>
+                            <width>220</width>
+                            <height>220</height>
                             <texture diffuse="mask_circle.png">DefaultAlbumCover.png</texture>
                         </control>
                         <control type="image">
@@ -2930,6 +2937,10 @@
         <value condition="String.Contains(ListItem.Status,cancel)">red</value>
         <value condition="String.Contains(ListItem.Status,production) | String.Contains(ListItem.Status,planned) | String.Contains(ListItem.Status,upcoming) | String.Contains(ListItem.Status,pilot)">amber</value>
         <value>text3</value>
+    </variable>
+    <!-- banner list: "4 / 10  ·  Watched" -->
+    <variable name="LucentShowProgress">
+        <value condition="Integer.IsGreater(ListItem.Property(TotalEpisodes),0)">$INFO[ListItem.Property(WatchedEpisodes)] / $INFO[ListItem.Property(TotalEpisodes)]  ·  $LOCALIZE[31116]</value>
     </variable>
     <!-- up-next stack: why this episode is here -->
     <variable name="LucentNextReason">
