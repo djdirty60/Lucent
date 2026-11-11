@@ -15,17 +15,50 @@ jobs:
         run: [1]
     steps:
       - uses: actions/checkout@v4
+      # Kodi's own packages (team-xbmc PPA, often slow) are kept by GitHub after one good install: later runs skip the PPA
+      - name: Kodi packages from GitHub's cache
+        id: kodicache
+        uses: actions/cache/restore@v4
+        with:
+          path: kodi-debs
+          key: kodi-debs-ubuntu-24.04-v1
       - name: Install Kodi
+        timeout-minutes: 30
         run: |
-          mkdir -p ci-results
+          mkdir -p ci-results kodi-debs
           {
-            timeout 180 sudo add-apt-repository -y ppa:team-xbmc/ppa && timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=1 && timeout 600 sudo apt-get install -y -q kodi kodi-bin kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool \
-            || { echo "PPA failed - trying Ubuntu's own Kodi"; sudo rm -f /etc/apt/sources.list.d/*xbmc* /etc/apt/sources.list.d/*kodi*; timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20; sudo apt-get install -y -q kodi kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool; }
+            from_ppa() {
+              sudo rm -f /var/cache/apt/archives/*.deb
+              timeout 180 sudo add-apt-repository -y ppa:team-xbmc/ppa \
+                && timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20 -o Acquire::Retries=1 \
+                && timeout 900 sudo apt-get install -y -q kodi kodi-bin kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool \
+                && { rm -f kodi-debs/*.deb; for d in /var/cache/apt/archives/*.deb; do case "$(dpkg-deb -f "$d" Maintainer Version)" in *[Kk]odi*|*xbmc*|*ppa*) cp "$d" kodi-debs/;; esac; done; ls kodi-debs; }
+            }
+            from_cache() {
+              ls kodi-debs/kodi-bin_*.deb >/dev/null 2>&1 || return 1
+              echo "Kodi from GitHub's cache:"; ls kodi-debs
+              timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20 || true
+              timeout 600 sudo apt-get install -y -q ./kodi-debs/*.deb xvfb rsync ffmpeg xdotool
+            }
+            from_ubuntu() {
+              echo "PPA failed - trying Ubuntu's own Kodi"
+              rm -f kodi-debs/*.deb
+              sudo rm -f /etc/apt/sources.list.d/*xbmc* /etc/apt/sources.list.d/*kodi*
+              timeout 300 sudo apt-get update -q -o Acquire::http::Timeout=20
+              sudo apt-get install -y -q kodi kodi-pvr-iptvsimple xvfb rsync ffmpeg xdotool
+            }
+            from_cache || from_ppa || from_ubuntu
             apt-cache policy kodi kodi-bin
             kodi --version 2>&1 | head -3
           } > ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log 2>&1
           tail -40 ci-results/install-${{ matrix.variant }}-${{ matrix.run }}.log
           which kodi
+      - name: Keep Kodi's packages for the next runs
+        if: steps.kodicache.outputs.cache-hit != 'true' && hashFiles('kodi-debs/kodi-bin_*.deb') != '' && matrix.variant == 'new'
+        uses: actions/cache/save@v4
+        with:
+          path: kodi-debs
+          key: kodi-debs-ubuntu-24.04-v1
       - name: Run
         run: bash ci/run.sh ${{ matrix.variant }} ${{ matrix.run }}
       - name: Save results
