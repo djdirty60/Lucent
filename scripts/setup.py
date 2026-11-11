@@ -291,6 +291,15 @@ PASS = ("audiooutput.ac3passthrough", "audiooutput.eac3passthrough", "audiooutpu
         "audiooutput.truehdpassthrough", "audiooutput.dtshdpassthrough")
 
 
+def coreelec():
+    """CoreELEC (and other Amlogic Linux builds): Dolby Vision needs Kodi to switch the TV to the video's mode."""
+    try:
+        with open("/etc/os-release", encoding="utf-8") as fh:
+            return "coreelec" in fh.read().lower()
+    except OSError:
+        return False
+
+
 def st_play():
     size, advice = kodi_setting("filecache.memorysize"), buffer_advice()
     rate = kodi_setting("videoplayer.adjustrefreshrate")
@@ -298,6 +307,9 @@ def st_play():
     parts = [t(f"Buffer {size} MB", f"Buffer {size} MB") + ("" if (size or 0) >= advice else t(f" (advice {advice})", f" (advies {advice})")),
              t("frame rate follows the video", "beeldfrequentie volgt de video") if rate in (1, 2, 3) else t("frame rate fixed", "beeldfrequentie vast"),
              t("sound to amplifier", "geluid naar versterker") if passthrough else t("Kodi decodes the sound", "Kodi zet het geluid om")]
+    if rate not in (1, 2, 3) and coreelec():
+        parts.insert(0, t("Switch on 'frame rate follows the video': without it Dolby Vision shows pink / green",
+                          "Zet 'beeldfrequentie volgt de video' aan: zonder dat geeft Dolby Vision roze / groen beeld"))
     return ("ok" if (size or 0) >= advice and rate in (1, 2, 3) else "todo"), "  ·  ".join(parts)
 
 
@@ -310,8 +322,9 @@ def ac_play():
         set_kodi("filecache.memorysize", advice)
         set_kodi("filecache.readfactor", 400)                  # fill the buffer 4x faster than the video plays
 
-    def toggle_rate():
-        set_kodi("videoplayer.adjustrefreshrate", 0 if rate in (1, 2, 3) else 2)   # 2: on start and stop
+    def rate_on():
+        set_kodi("videoplayer.adjustrefreshrate", 2)        # 2: on start and stop; switching it off is only done in
+                                                            # Kodi's own player settings (Dolby Vision on CoreELEC needs it)
 
     def toggle_pass():
         on = not passthrough
@@ -322,7 +335,8 @@ def ac_play():
     out = []
     if (kodi_setting("filecache.memorysize") or 0) < advice:
         out.append((t(f"Buffer {advice} MB (advice)", f"Buffer {advice} MB (advies)"), buffer))
-    out.append((t("Frame rate: follows video", "Beeldfrequentie: volgt video") if rate in (1, 2, 3) else t("Frame rate: fixed", "Beeldfrequentie: vast"), toggle_rate))
+    if rate not in (1, 2, 3):                               # only a button to switch it ON (it used to toggle it off too)
+        out.append((t("Let the frame rate follow the video (advice)", "Beeldfrequentie de video laten volgen (advies)"), rate_on))
     out.append((t("Sound to amplifier: on", "Geluid naar versterker: aan") if passthrough else t("Sound to amplifier: off", "Geluid naar versterker: uit"), toggle_pass))
     out.append((t("Player settings", "Spelerinstellingen"), lambda: run("ActivateWindow(PlayerSettings)")))
     return out
