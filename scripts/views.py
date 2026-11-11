@@ -10,7 +10,7 @@ import time
 import xbmc
 
 OFF = "Skin.HasSetting(lucent.view.remember.off)"
-WINDOWS = {"videos": (56, 51, 52, 57, 55, 53, 50, 70, 71, 72, 73), "music": (50, 54, 52)}
+WINDOWS = {"videos": (56, 51, 52, 57, 55, 53, 50, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 86, 87), "music": (50, 54, 52, 81, 82, 83, 84, 85)}
 STATE = {"key": "", "path": "", "since": 0.0, "view": 0, "applied": 0, "until": 0.0}
 
 
