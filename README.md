@@ -1,12 +1,12 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (Beta 4)
+# Lucent – Kodi skin (2.0 RC 1)
 
-> **Beta 4:** the fourth public beta. Everything is in place, but expect small bugs – please report them on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
+> **Release candidate 1:** everything is in place and has been checked and tidied up. From now on only fixes are added. Found something odd? Please report it on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font.
 
-Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyfin, YouTube, an IPTV add-on, Fen Light and its clones, TMDb Helper …) or of your Kodi library can become a row on Home. A video add-on that works together with Lucent fills Home by itself and drives the buttons on the info page.
+Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyfin, YouTube, an IPTV add-on, Fen Light and its clones, TMDb Helper …) or of your Kodi library can become a row on Home. With **Lucent Video** (its own video add-on) Home fills by itself and the buttons on the info page, the calendar, subtitles and skip intro use it.
 
 ![Home screen](screenshots/home.jpg)
 
@@ -16,7 +16,15 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 
 ---
 
-## New since Beta 4
+## New in 2.0 RC 1
+
+- **Checked and tidied up** – only Lucent Video and your own add-on folders; the code for one older video add-on is gone (its old rows turn into Lucent Video rows by themselves). Similar titles on the info page come from Lucent Video. The skin no longer installs Lucent Subtitles by itself (Lucent Video does subtitles); it stays in the Lucent repository for who only wants a subtitle add-on.
+- **New views** – Spotlight, Wall with info panel, Carousel, Title card, Banner list, Progress rings, Mosaic, Timeline, Episode cards, Up next stack, List with flags, Vinyl, Artist wall, Album with track list, Coverflow, Discography timeline, Collection shelf and Recently added. On the series page you choose how the episodes look (side menu → *Episodes as*).
+- **What's new** – OK on a change gives a picture, the whole explanation, steps and a *Try it now* button.
+
+<details>
+<summary><b>New since Beta 4</b></summary>
+
 
 - **Trailers on posters** (*Settings → Watching → Trailer on focus*) – stay on a poster for 1, 2, 3, 5 or 8 seconds and its trailer plays in a soft-edged window, or the poster unfolds into a wide card with the trailer inside. The trailer is looked up while you wait, stops as soon as you move on, and tries the next trailer of the same title when YouTube gives no picture. Back makes it full screen.
 - **Unfolding cards** – the focused poster opens into a wide card with its backdrop and info, and the posters next to it slide along.
@@ -27,6 +35,8 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 - **Go to playlist** in the side menu of a list when something is queued (like Estuary).
 - **Watched tick** in a colour of your choice; the watched percentage also works for add-ons that only pass on their progress (Fen Light, Red Light …).
 - **Cleaned up** – the old Lucent Library add-on and everything built for it are gone; the menus, settings and the setup assistant only show what works with the add-ons you have.
+
+</details>
 
 <details>
 <summary><b>New in Beta 4</b></summary>
@@ -213,7 +223,7 @@ Lucent's settings are grouped in categories: **Lucent** (look, menu, streaming s
 5. Kodi asks whether you want to use the new skin. Choose **Yes**.
    (Later: **Settings → Interface → Skin → Lucent**.)
 
-Kodi also installs the YouTube add-on (for trailers), Lucent Subtitles and the white and coloured studio logo packs. Then the setup assistant opens and helps you pick a video add-on.
+Kodi also installs the YouTube add-on (for trailers) and the white and coloured studio logo packs. Then the setup assistant opens and helps you pick a video add-on.
 
 ### Automatic updates
 
@@ -237,7 +247,7 @@ A tab without widgets shows the widgets of the start tab.
 
 ### Skin settings
 
-**Settings → Lucent → Skin settings** has categories on the left and options on the right: **Appearance** (colour themes, AMOLED black, scale, font, clock, screensaver), **Layout** (menu and widgets, what OK does, poster labels, watched titles, the details page) and **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** (shortcuts to the matching settings of your video add-on and of Kodi; Integrations also has your TMDB key, Lucent Subtitles and the update pop-up).
+**Settings → Lucent → Skin settings** has categories on the left and options on the right: **Appearance** (colour themes, AMOLED black, scale, font, clock, screensaver), **Layout** (menu and widgets, what OK does, poster labels, watched titles, the details page) and **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** (shortcuts to the matching settings of your video add-on and of Kodi; Integrations also has your TMDB key and the update pop-up).
 
 **Rating logos:** *Skin settings → Rating logos → Fetch* copies the logos of the `logos` folder of this page to your box; the lists and the info page then show IMDb, TMDB, Trakt, Rotten Tomatoes (fresh or rotten), the RT audience (full or spilt popcorn), Metacritic and Letterboxd with their logo instead of a coloured dot and name. You can also put your own `imdb.png`, `tmdb.png`, `trakt.png`, `rt.png`, `rt_rotten.png`, `rta.png`, `rta_spilt.png`, `mc.png`, `mcu.png` and `lb.png` in `userdata/addon_data/skin.lucent/logos/`. The logos are trademarks of their owners; Lucent is not affiliated with or endorsed by them.
 

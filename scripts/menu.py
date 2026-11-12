@@ -20,7 +20,7 @@ import xbmcvfs
 VERSION = "1"
 NTABS = 12
 NWIDGETS = 10
-SEREN = "plugin://plugin.video.seren/"
+SEREN = "plugin://plugin.video.seren/"         # only to turn old Seren rows (before 2.0) into Lucent Video rows
 HEADING = "Lucent"
 
 # ----------------------------------------------------------------------------- texts
@@ -64,16 +64,12 @@ T = {
     "poster": ("Posters", "Posters"),
     "land": ("Landscape", "Liggend"),
     "remove_widget": ("Remove this widget", "Deze widget verwijderen"),
-    "src_seren": ("Seren", "Seren"),
     "src_trakt": ("Trakt lists (liked or your own)", "Trakt-lijsten (leuk gevonden of eigen)"),
     "src_library": ("Kodi library", "Kodi-bibliotheek"),
     "src_browse": ("Browse an add-on…", "Bladeren in een add-on…"),
     "src_type": ("Type a path…", "Pad zelf typen…"),
     "use_folder": ("✔ Use this folder: {0}", "✔ Deze map gebruiken: {0}"),
     "empty_folder": ("This folder is empty or could not be opened.", "Deze map is leeg of kon niet worden geopend."),
-    "no_seren": ("Seren is not installed.", "Seren is niet geïnstalleerd."),
-    "no_lists": ("No Trakt lists found. Are you logged in to Trakt in Seren?",
-                 "Geen Trakt-lijsten gevonden. Ben je in Seren ingelogd bij Trakt?"),
     "loading": ("Loading…", "Laden…"),
     "act_widgets": ("Show the widgets of this tab", "De widgets van deze tab tonen"),
     "act_window": ("Open a Kodi screen…", "Een Kodi-scherm openen…"),
@@ -129,11 +125,6 @@ T = {
     "k_music": ("Music", "Muziek"),
     "k_pictures": ("Pictures", "Foto's"),
     "k_power": ("Power menu", "Afsluitmenu"),
-    "k_seren_search": ("Seren · Search", "Seren · Zoeken"),
-    "k_seren_movies": ("Seren · Movies", "Seren · Films"),
-    "k_seren_shows": ("Seren · TV shows", "Seren · Series"),
-    "k_seren_mymovies": ("Seren · My movies", "Seren · Mijn films"),
-    "k_seren_myshows": ("Seren · My shows", "Seren · Mijn series"),
 }
 
 
@@ -155,10 +146,6 @@ def put(name, value):
         xbmc.executebuiltin(f"Skin.Reset({name})", True)
 
 
-def seren(query):
-    return f"{SEREN}?{query}"
-
-
 def videos(path):
     return f"ActivateWindow(Videos,{path},return)"
 
@@ -172,40 +159,6 @@ def xsp(content, rules=None, order="title"):
     return urllib.parse.quote(json.dumps(data, separators=(",", ":")))
 
 
-WIDGETS_SEREN = [
-    ("w_nextup", seren("action=showsNextUp"), "land"),
-    ("w_ondeck", seren("action=onDeckMovies"), "land"),
-    ("w_trend_m", seren("action=genericEndpoint&mediatype=movies&endpoint=trending"), "poster"),
-    ("w_trend_s", seren("action=genericEndpoint&mediatype=shows&endpoint=trending"), "poster"),
-    ("w_pop_m", seren("action=genericEndpoint&mediatype=movies&endpoint=popular"), "poster"),
-    ("w_pop_s", seren("action=genericEndpoint&mediatype=shows&endpoint=popular"), "poster"),
-    ("w_ant_m", seren("action=genericEndpoint&mediatype=movies&endpoint=anticipated"), "poster"),
-    ("w_ant_s", seren("action=genericEndpoint&mediatype=shows&endpoint=anticipated"), "poster"),
-    ("w_box", seren("action=genericEndpoint&mediatype=movies&endpoint=boxoffice"), "poster"),
-    ("w_new_s", seren("action=showsNew"), "poster"),
-    ("w_wl_m", seren("action=moviesMyWatchlist"), "poster"),
-    ("w_wl_s", seren("action=showsMyWatchlist"), "poster"),
-    ("w_upcoming", seren("action=myUpcomingEpisodes"), "land"),
-    (("Trending movies (recent)", "Trending films (recent)"), seren("action=movieTrendingRecent"), "poster"),
-    (("Popular movies (recent)", "Populaire films (recent)"), seren("action=moviePopularRecent"), "poster"),
-    (("Trending shows (recent)", "Trending series (recent)"), seren("action=showsTrendingRecent"), "poster"),
-    (("Popular shows (recent)", "Populaire series (recent)"), seren("action=showsPopularRecent"), "poster"),
-    (("Recommended movies", "Aanbevolen films"), seren("action=moviesRecommended"), "poster"),
-    (("Recommended shows", "Aanbevolen series"), seren("action=showsRecommended"), "poster"),
-    (("Most played movies", "Meest afgespeelde films"), seren("action=genericEndpoint&mediatype=movies&endpoint=played"), "poster"),
-    (("Most watched movies", "Meest bekeken films"), seren("action=genericEndpoint&mediatype=movies&endpoint=watched"), "poster"),
-    (("Most collected movies", "Meest verzamelde films"), seren("action=genericEndpoint&mediatype=movies&endpoint=collected"), "poster"),
-    (("Most played shows", "Meest afgespeelde series"), seren("action=genericEndpoint&mediatype=shows&endpoint=played"), "poster"),
-    (("Most watched shows", "Meest bekeken series"), seren("action=genericEndpoint&mediatype=shows&endpoint=watched"), "poster"),
-    (("Updated movies", "Bijgewerkte films"), seren("action=moviesUpdated"), "poster"),
-    (("Updated shows", "Bijgewerkte series"), seren("action=showsUpdated"), "poster"),
-    (("My movies (collection)", "Mijn films (collectie)"), seren("action=moviesMyCollection"), "poster"),
-    (("My shows (collection)", "Mijn series (collectie)"), seren("action=showsMyCollection"), "poster"),
-    (("Recently watched shows", "Recent bekeken series"), seren("action=showsRecentlyWatched"), "poster"),
-    (("My recent episodes", "Mijn recente afleveringen"), seren("action=showsMyRecentEpisodes"), "land"),
-    (("Shows in progress", "Series die je kijkt"), seren("action=showsMyProgress"), "poster"),
-    (("Watched movies", "Bekeken films"), seren("action=myWatchedMovies"), "poster"),
-]
 WIDGETS_LIBRARY = [                               # the Kodi library (works with every add-on that fills it)
     ("w_recent_m", "videodb://recentlyaddedmovies/", "poster"),
     ("w_recent_e", "videodb://recentlyaddedepisodes/", "land"),
@@ -351,8 +304,8 @@ def lv_ready():
 
 
 def use_lv():
-    """The default rows come from Lucent Video: it is installed and Seren is not used."""
-    return has_lv() and not uses_seren()
+    """The default rows come from Lucent Video: it is installed."""
+    return has_lv()
 
 
 LVA = "plugin://plugin.video.lucent/?action="
@@ -398,11 +351,11 @@ def lv_path(path, seren_too=True, lib_too=False):
 
 
 def lv_convert():
-    """Rows of Seren (when Seren is not used) and the streaming rows of Lucent Library become Lucent Video rows.
+    """Old Seren rows and the streaming rows of Lucent Library become Lucent Video rows.
     Runs from Home until there is nothing left to change and Lucent Video has its key."""
     if not has_lv():
         return
-    seren_too, services_too = not uses_seren(), lv_ready()
+    seren_too, services_too = True, lv_ready()        # old Seren rows (from before 2.0) become Lucent Video rows
     lib_too = True                                      # Lucent Library is no longer used: its rows never fill
     menu = Menu()
     changed = False
@@ -492,16 +445,6 @@ WIDGETS_OTHER = [
 ]
 G = lambda en, nl: (en, nl)  # noqa: E731 - inline translation
 ACTION_GROUPS = [
-    (G("Seren", "Seren"), "icons/play.png", [
-        ("k_seren_search", "icons/search.png", videos(seren("action=searchMenu"))),
-        ("k_seren_movies", "icons/movies.png", videos(seren("action=moviesHome"))),
-        ("k_seren_shows", "icons/tv.png", videos(seren("action=showsHome"))),
-        ("k_seren_mymovies", "icons/movies.png", videos(seren("action=myMovies"))),
-        ("k_seren_myshows", "icons/tv.png", videos(seren("action=myShows"))),
-        (G("Seren · Trakt lists", "Seren · Trakt-lijsten"), "icons/trakt.png", videos(seren("action=myTraktLists&mediatype=movies"))),
-        (G("Seren · Tools", "Seren · Gereedschap"), "icons/settings.png", videos(seren("action=toolsMenu"))),
-        (G("Seren · Settings", "Seren · Instellingen"), "icons/settings.png", "Addon.OpenSettings(plugin.video.seren)"),
-    ]),
     (G("Video library", "Videobibliotheek"), "icons/library.png", [
         ("k_library", "icons/library.png", videos("videodb://")),
         (G("Search the library", "Bibliotheek doorzoeken"), "icons/search.png", "VideoLibrary.Search"),
@@ -586,13 +529,8 @@ def tr_pair(pair):
     return pair[1] if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else pair[0]
 
 
-def uses_seren():
-    """Lucent no longer offers Seren's rows and choices (2026-11-11)."""
-    return False
-
-
 def plain_tabs():
-    """The default menu without Seren: the Kodi library, search, add-ons and favourites."""
+    """The default menu without a video add-on: the Kodi library, search, add-ons and favourites."""
     rows = {p: (n, st) for n, p, st in WIDGETS_LIBRARY}
 
     def row(path):
@@ -624,7 +562,7 @@ def plain_tabs():
 
 
 def lv_tabs():
-    """The default menu with Lucent Video instead of Seren: its rows on the tabs, its search and menus behind them."""
+    """The default menu with Lucent Video: its rows on the tabs, its search and menus behind them."""
     lib_by_key = {k: (p, s) for k, p, s in WIDGETS_LIBRARY}
     names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV}
     names["new_tv"] = (("Series · New", "Series · Nieuw"), "poster")
@@ -657,44 +595,8 @@ def lv_tabs():
 
 
 def default_tabs():
-    """The menu of version 1.0, plus the rows and Trakt lists the user had chosen there (without Seren: Lucent Video's
-    rows when it is installed, else plain_tabs)."""
-    if not uses_seren():
-        return lv_tabs() if has_lv() else plain_tabs()
-    home = []
-    old_rows = [("w_nextup", 8001), ("w_ondeck", 8002), ("w_trend_m", 8003), ("w_trend_s", 8004)]
-    seren_by_key = {k: (p, s) for k, p, s in WIDGETS_SEREN}
-    lib_by_key = {k: (p, s) for k, p, s in WIDGETS_LIBRARY}
-    for key, rid in old_rows:
-        if not xbmc.getCondVisibility(f"Skin.HasSetting(nuvio.hide.{rid})"):
-            home.append(widget(key, *seren_by_key[key]))
-    for key, rid in (("w_recent_m", 8005), ("w_recent_e", 8006)):
-        if not xbmc.getCondVisibility(f"Skin.HasSetting(nuvio.hide.{rid})"):
-            home.append(widget(key, *lib_by_key[key]))
-    for n in range(1, 7):
-        path, label = get(f"nuvio.list{n}.path"), get(f"nuvio.list{n}.label")
-        if path and len(home) < NWIDGETS:
-            home.append({"label": label or tr("src_trakt"), "path": path, "style": "poster"})
-
-    movies = [widget(k, *seren_by_key[k]) for k in ("w_ondeck", "w_trend_m", "w_pop_m", "w_ant_m", "w_box")]
-    shows = [widget(k, *seren_by_key[k]) for k in ("w_nextup", "w_trend_s", "w_pop_s", "w_new_s", "w_upcoming")]
-    library = [widget(k, *lib_by_key[k]) for k in ("w_recent_m", "w_recent_e", "w_inprog_s")]
-
-    def tab(key, icon, action, widgets=None):
-        return {"label": tr(key), "icon": f"icons/{icon}.png", "action": action, "widgets": widgets or []}
-
-    return [
-        tab("t_search", "search", videos(seren("action=searchMenu"))),
-        tab("t_home", "home", SHOW_WIDGETS, home),
-        tab("t_movies", "movies", videos(seren("action=moviesHome")), movies),
-        tab("t_shows", "tv", videos(seren("action=showsHome")), shows),
-        tab("t_library", "library", videos("videodb://"), library),
-        tab("t_addons", "addons", "ActivateWindow(AddonBrowser)", addon_widgets()),
-        tab("t_favourites", "favourites", "ActivateWindow(favouritesbrowser)"),
-        tab("t_calendar", "calendar", "RunScript(special://skin/scripts/agenda.py)"),
-        tab("t_settings", "settings", "ActivateWindow(Settings)"),
-        tab("t_power", "power", "ActivateWindow(ShutdownMenu)"),
-    ], 2
+    """The default menu: Lucent Video's rows when it is installed, else the Kodi library (plain_tabs)."""
+    return lv_tabs() if has_lv() else plain_tabs()
 
 
 # ----------------------------------------------------------------------------- load / save
@@ -902,43 +804,20 @@ def pick_playlist():
     return found[choice] if choice >= 0 else None
 
 
-def trakt_lists():
-    if not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
-        xbmcgui.Dialog().ok(HEADING, tr("no_seren"))
-        return None
-    options = []
-    busy(True)
-    for action in ("myLikedLists", "myTraktLists"):
-        for mediatype, type_key in (("movies", "t_movies"), ("shows", "t_shows")):
-            entries = jsonrpc("Files.GetDirectory", {"directory": seren(f"action={action}&mediatype={mediatype}"),
-                                                     "media": "files", "properties": ["title"]}).get("files", []) or []
-            for entry in entries:
-                path, name = entry.get("file", ""), clean(entry.get("label") or entry.get("title"))
-                if path and name and "action=traktList" in path and path not in [o[1] for o in options]:
-                    options.append((name, path, tr(type_key)))
-    busy(False)
-    if not options:
-        xbmcgui.Dialog().ok(HEADING, tr("no_lists"))
-        return None
-    choice = select(tr("src_trakt"), [o[0] for o in options], True, ["icons/trakt.png"] * len(options),
-                    [o[2] for o in options])
-    return (options[choice][0], options[choice][1]) if choice >= 0 else None
-
-
 # ----------------------------------------------------------------------------- editors
 def pick_widget():
-    sources = [tr("src_seren"), tr("src_trakt"), tr("src_library"), tr("src_browse"), tr("src_type"),
+    sources = ["", "", tr("src_library"), tr("src_browse"), tr("src_type"),
                tr(G("Favourites and add-ons", "Favorieten en add-ons")), tr(G("A playlist…", "Een afspeellijst…")),
                tr(G("Lucent fast lists (TMDb)", "Lucent snelle lijsten (TMDb)")), tr(G("One of your favourites…", "Een van je favorieten…"))]
     icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png",
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
-    # an add-on folder first (what you know from other skins); Seren and Trakt only for who uses Seren
-    order = [3, 2, 8, 5, 6, 7, 4] if not uses_seren() else [0, 1, 2, 3, 7, 8, 5, 6, 4]
+    # an add-on folder first (what you know from other skins); 0 and 1 were Seren's rows and lists (gone in 2.0)
+    order = [3, 2, 8, 5, 6, 7, 4]
     order.remove(7)                                     # the fast TMDb lists of Lucent Library: the video add-on has them now
-    if has_lv():                                        # Lucent Video: its own rows, right after Seren / the add-on folders
+    if has_lv():                                        # Lucent Video: its own rows first
         sources.append("Lucent Video")
         icons.append("icons/play.png")
-        order.insert(1 if uses_seren() else 0, 9)
+        order.insert(0, 9)
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])
     source = order[pick] if pick >= 0 else -1
     style = "poster"
@@ -947,17 +826,6 @@ def pick_widget():
         if not picked:
             return None
         label, path, style = picked
-    elif source == 0:
-        choice = select(tr("src_seren"), [tr(k) for k, _p, _s in WIDGETS_SEREN])
-        if choice < 0:
-            return None
-        key, path, style = WIDGETS_SEREN[choice]
-        label = tr(key)
-    elif source == 1:
-        picked = trakt_lists()
-        if not picked:
-            return None
-        label, path = picked
     elif source == 2:
         rows = WIDGETS_LIBRARY
         choice = select(tr("src_library"), [tr(k) for k, _p, _s in rows])
@@ -1124,7 +992,7 @@ def pick_image(heading, current=""):
 
 
 def SORTS():
-    """(Kodi sort method for the Home row, name). Empty = the order of the source (Seren, Trakt ...)."""
+    """(Kodi sort method for the Home row, name). Empty = the order of the source."""
     return [("", tr(G("As the source gives it", "Zoals de bron het geeft"))),
             ("title", tr(G("A–Z (title)", "A–Z (titel)"))),
             ("year", tr(G("Year (newest first)", "Jaar (nieuwste eerst)"))),
@@ -1142,49 +1010,18 @@ def LIMITS():
 
 
 def source_page(wd):
-    """The skin can only show what the source gives. Seren gives one page of 'Page Item Limit' titles (20 by
-    default), so a row of 50 or 100 stays at 20 unless Seren gives more: offer to raise it. Other add-ons decide
-    their own page size; say so."""
+    """The skin can only show what the source gives. Add-ons decide their own page size; say so."""
     want = {"": 25, "0": 100}.get(wd.get("limit", ""))
     try:
         want = want or int(wd.get("limit"))
     except (TypeError, ValueError):
         return
     path = wd.get("path", "")
-    if path.startswith(SEREN[:-1]):
-        try:
-            import xbmcaddon
-            ser = xbmcaddon.Addon("plugin.video.seren")
-            have = int(ser.getSetting("item.limit") or 20)
-        except Exception:  # noqa: BLE001 - Seren not installed
-            return
-        want = min(want, 100)
-        if want > have and xbmcgui.Dialog().yesno(HEADING, tr(G(
-                "Seren gives {0} titles per list. Raise Seren's 'Page Item Limit' to {1}?[CR](This counts for all Seren lists.)",
-                "Seren geeft {0} titels per lijst. Seren's 'Page Item Limit' verhogen naar {1}?[CR](Dit geldt voor alle Seren-lijsten.)"),
-                have, want)):
-            ser.setSetting("item.limit", str(want))
-            notify(tr(G("Seren now gives {0} titles per list", "Seren geeft nu {0} titels per lijst"), want))
-    elif path.startswith("plugin://plugin.video.lucent/"):
+    if path.startswith("plugin://plugin.video.lucent/"):
         return                                      # the video add-on has its own setting for the number of titles
     elif path.startswith("plugin://") and want > 25:
         notify(tr(G("The add-on decides how many titles it gives per page",
                     "De add-on bepaalt zelf hoeveel titels hij per pagina geeft")))
-
-
-def limit_check():
-    """Once after the update to 1.32.4: rows set to 50 / 100 / All before, while Seren still gives 20 per list."""
-    if get("lucent.limitcheck"):
-        return
-    put("lucent.limitcheck", "1")
-    best = 0
-    for t in range(1, NTABS + 1):
-        for w in range(1, NWIDGETS + 1):
-            if get(f"nuvio.tab{t}.w{w}.path").startswith(SEREN[:-1]):
-                value = get(f"nuvio.tab{t}.w{w}.limit")
-                best = max(best, 100 if value == "0" else int(value) if value.isdigit() else 0)
-    if best > 25:
-        source_page({"limit": str(best), "path": SEREN})
 
 
 def limit_name(key):
@@ -1231,7 +1068,7 @@ def pick_action():
     if choice == 0:
         return SHOW_WIDGETS, None
     while choice == 1:
-        groups = ACTION_GROUPS if uses_seren() else ACTION_GROUPS[1:]
+        groups = ACTION_GROUPS
         group = select(tr("act_window"), [tr(g) for g, _i, _e in groups], True, [i for _g, i, _e in groups])
         if group < 0:
             return None, None
@@ -1457,8 +1294,6 @@ if __name__ == "__main__":
         lv_convert()
     elif arg == "addwidget":
         add_here()
-    elif arg == "limitcheck":
-        limit_check()
     elif arg == "reset":
         if xbmcgui.Dialog().yesno(HEADING, tr("reset_q")):
             m = Menu()

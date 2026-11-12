@@ -5,7 +5,7 @@
     RunScript(special://skin/scripts/kids.py,guard)    a settings window opened in kids mode: PIN, or back home
 
 In kids mode the side menu only shows the items you chose (plus "Kids mode off"), the Options button on the info
-page is gone, and the settings windows ask for the PIN. It is a lock on the menu, not a filter on what Seren shows.
+page is gone, and the settings windows ask for the PIN. It is a lock on the menu, not a filter on what the add-ons show.
 Skin settings: lucent.kids (on/off), lucent.kids.pin, lucent.kids.tab1 … tab12 (which menu items stay).
 """
 import sys

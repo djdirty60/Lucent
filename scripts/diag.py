@@ -155,7 +155,7 @@ def _short_url(m):
     return m.group(1) + host + ("/…" if m.group(3) and m.group(3) != "/" else "")
 
 
-KEEP = re.compile(r"(?i)lucent|seren|iptvsimple|pvr|error|exception|traceback|warning|youtube|inputstream|videoplayer"
+KEEP = re.compile(r"(?i)lucent|iptvsimple|pvr|error|exception|traceback|warning|youtube|inputstream|videoplayer"
                   r"|ccurlfile|curl|ffmpeg|dash|cplayer|playlistplayer|onplayback|avstarted")
 SHOW = re.compile(r"(?i)youtube|inputstream|ccurlfile|videoplayer|error|onplayback|trailer")
 

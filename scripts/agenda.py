@@ -368,7 +368,7 @@ class Agenda(xbmcgui.WindowXML):
             name, kind = item.getLabel(), item.getProperty("kind") or "tv"
             tmdb = item.getProperty("tmdb")
         self.close()
-        core.open_in_seren(name, kind, int(tmdb) if str(tmdb).isdigit() else None)
+        core.open_title(name, kind, int(tmdb) if str(tmdb).isdigit() else None)
 
     def toggle_bell(self, control_id):
         item = self.current(control_id)

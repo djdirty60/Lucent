@@ -2,20 +2,19 @@
 """Lucent: "Tonight for you" - a row on Home that fits the moment of the day.
 
 Run by the Lucent helper (helper.py) once a minute. Every few hours, and whenever the part of
-the day changes, it looks at what you watched last on Trakt (through Seren's login), asks TMDB for titles like
+the day changes, it looks at what you watched last on Trakt (through the video add-on's login), asks TMDB for titles like
 those, leaves out what you have seen and fills Window(home).Property(lucent.fy.*):
 
   morning   series            afternoon  series and films      evening / night  films
   weekend daytime: series to binge
 
 Without Trakt it falls back to what is trending this week on TMDB. A click opens the title's own page
-(info.py open), Play there goes to Seren.
+(info.py open), Play there goes to the video add-on.
 """
 import datetime
 import json
 import random
 import time
-import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -176,8 +175,6 @@ def publish(part, items):
             "year": (date or "")[:4], "plot": r.get("overview") or "", "tmdb": str(r.get("id")),
             "type": "movie" if movie else "tv", "rating": f"{r.get('vote_average') or 0:.1f}",
             "because": t("because", r["because"]) if r.get("because") else t("trending"),
-            "path": f"{info.SEREN}?action={'moviesSearchResults' if movie else 'showsSearchResults'}&action_args="
-                    + urllib.parse.quote(title or ""),
         }
         for k, v in values.items():
             HOME.setProperty(f"{P}{n}.{k}", v)
@@ -228,8 +225,6 @@ def open_item():
     n = xbmc.getInfoLabel("Container(8091).ListItem.Property(n)")
     HOME.setProperty("nuvio.open.tmdb", HOME.getProperty(f"{P}{n}.tmdb"))
     HOME.setProperty("nuvio.open.type", HOME.getProperty(f"{P}{n}.type"))
-    HOME.setProperty("nuvio.open.path", HOME.getProperty(f"{P}{n}.path"))
-    HOME.setProperty("nuvio.open.year", HOME.getProperty(f"{P}{n}.year"))
     HOME.clearProperty("nuvio.open.trakt")
     xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
 

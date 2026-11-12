@@ -482,13 +482,6 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
-                        <label>$LOCALIZE[31772]</label>
-                        <label2>$LOCALIZE[31773]</label2>
-                        <icon>icons/subtitles.png</icon>
-                        <onclick>Addon.OpenSettings(service.subtitles.lucent)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
-                    </item>
-                    <item>
                         <label>$LOCALIZE[287]</label>
                         <label2>$LOCALIZE[31262]</label2>
                         <icon>icons/subtitles.png</icon>
@@ -496,18 +489,18 @@
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
                     </item>
                     <item>
+                        <label>$LOCALIZE[31772]</label>
+                        <label2>$LOCALIZE[31773]</label2>
+                        <icon>icons/subtitles.png</icon>
+                        <onclick>Addon.OpenSettings(service.subtitles.lucent)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(service.subtitles.lucent)</visible>
+                    </item>
+                    <item>
                         <label>$LOCALIZE[14218]</label>
                         <label2>$LOCALIZE[31263]</label2>
                         <icon>icons/globe.png</icon>
                         <onclick>ActivateWindow(PlayerSettings,language)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch)</visible>
-                    </item>
-                    <item>
-                        <label>$LOCALIZE[31791]</label>
-                        <label2>$INFO[Skin.String(lucent.ytfix.state),,  ·  ]$LOCALIZE[31792]</label2>
-                        <icon>icons/trailer.png</icon>
-                        <onclick>RunScript(special://skin/scripts/ytfix.py,toggle)</onclick>
-                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),watch) + System.HasAddon(plugin.video.youtube)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31842]</label>
@@ -1035,6 +1028,13 @@
                         <icon>icons/lock.png</icon>
                         <onclick>RunScript(special://skin/scripts/diag.py,log)</onclick>
                         <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about)</visible>
+                    </item>
+                    <item>
+                        <label>$LOCALIZE[31791]</label>
+                        <label2>$INFO[Skin.String(lucent.ytfix.state),,  ·  ]$LOCALIZE[31792]</label2>
+                        <icon>icons/trailer.png</icon>
+                        <onclick>RunScript(special://skin/scripts/ytfix.py,toggle)</onclick>
+                        <visible>String.IsEqual(Container(9000).ListItem.Property(cat),about) + System.HasAddon(plugin.video.youtube)</visible>
                     </item>
                     <item>
                         <label>$LOCALIZE[31644]</label>

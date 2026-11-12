@@ -342,7 +342,7 @@ class Trailers(xbmc.Player):
             return
         focus = Focus()
         if not focus.valid():
-            # the row refreshes now and then (Seren reloads widgets): the card is gone for a moment.
+            # the row refreshes now and then (add-ons reload widgets): the card is gone for a moment.
             # Only let go when it stays gone.
             if not self.lost_since:
                 self.lost_since = time.time()

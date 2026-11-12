@@ -8,7 +8,7 @@ The screen itself is scripts/agenda.py; this file holds everything that has no s
   new episode     a pop-up "Watch now / Later", from the background helper (run_service)
 
 What the calendar shows: the series (still running) of your Trakt collection and the films of your collection /
-watchlist that are about to come out; the Trakt login of your video add-on (Lucent Video, else Seren). The bell of a title is OFF
+watchlist that are about to come out; the Trakt login of your video add-on (Lucent Video). The bell of a title is OFF
 until you switch it on; with the bell on you get a pop-up for a new episode / the digital release of a film.
 Episodes, artwork and plots come from TMDB (the key of your video add-on, like the info page). The air time
 comes from TVmaze (free, no key) when it knows the show; otherwise only the date is known.
@@ -35,7 +35,6 @@ PAST_DAYS = 45              # how far back the calendar looks
 FUTURE_DAYS = 200
 IMG = "https://image.tmdb.org/t/p/"
 TVMAZE = "https://api.tvmaze.com/"
-SEREN = "plugin://plugin.video.seren/"
 HOME = xbmcgui.Window(10000)
 HEADING = "Lucent"
 
@@ -53,7 +52,7 @@ T = {
     "unfollowed": ("Notification off for {0}", "Melding uit voor {0}"),
     "no_id": ("This title has no TMDB number, so it cannot be followed.", "Deze titel heeft geen TMDB-nummer en kan niet gevolgd worden."),
     "failed": ("Could not load the calendar data. Try again later.", "Kalendergegevens laden is niet gelukt. Probeer het later opnieuw."),
-    "no_seren": ("No video add-on to open it with (Lucent Video).", "Geen video-add-on om het mee te openen (Lucent Video)."),
+    "no_addon": ("No video add-on to open it with (Lucent Video).", "Geen video-add-on om het mee te openen (Lucent Video)."),
     "cinema": ("In cinemas", "In de bioscoop"),
     "cinema_soon": ("Coming to cinemas", "Binnenkort in de bioscoop"),
     "film": ("Film", "Film"),
@@ -180,7 +179,7 @@ def current_ref():
     if dbtype == "movie":
         kind, tmdb, name = "movie", li("UniqueID(tmdb)") or li("Property(tmdb_id)"), li("Title") or li("Label")
     elif dbtype in ("tvshow", "season", "episode"):
-        # for Seren episodes and seasons the tmdb id on the item is the one of the show
+        # for add-on episodes and seasons the tmdb id on the item is the one of the show
         kind = "tv"
         tmdb = li("Property(tvshow.tmdb_id)") or li("UniqueID(tmdb)") or li("Property(tmdb_id)")
         name = li("TVShowTitle") or li("Title") or li("Label")
@@ -534,7 +533,7 @@ def state():
 
 
 def season_page_ref():
-    """The series of Lucent's season page (view 56): from the Kodi library (its ids) or from the Seren item itself."""
+    """The series of Lucent's season page (view 56): from the Kodi library (its ids) or from the add-on item itself."""
     dbid = next((v for v in (xbmc.getInfoLabel(f"Container(56).{n}.TvShowDBID") for n in ("ListItem", "ListItemAbsolute(1)", "ListItemAbsolute(0)"))
                  if v.isdigit()), "")                  # the cursor may be on '..' (no series of its own)
     if dbid.isdigit():
@@ -568,7 +567,7 @@ SHOW_STATUS = {"ended": "Ended", "returning series": "Continuing", "canceled": "
 
 def season_status(ref):
     """Window(home) lucent.s56.status = Ended / Continuing / Cancelled / In production for the series on the season page.
-    Many season lists (Seren, the Kodi library) do not pass the status of the series; TMDB does. Remembered per series."""
+    Many season lists (add-ons, the Kodi library) do not pass the status of the series; TMDB does. Remembered per series."""
     if not ref or ref.get("kind") != "tv":
         HOME.clearProperty("lucent.s56.status")
         return
@@ -610,44 +609,14 @@ def follow_button():
                                   xbmcgui.NOTIFICATION_INFO, 4000)
 
 
-# ----------------------------------------------------------------------------- opening a show in Seren
-def trakt_show_id(tmdb):
-    """Trakt id of a series (what Seren's own series menu needs). Remembered in the calendar list."""
-    key = show_key("tv", tmdb)
-    store = load_follow()
-    rec = store["shows"].get(key)
-    if rec and rec.get("trakt"):
-        return rec["trakt"]
-    found = info.Trakt().get(f"search/tmdb/{tmdb}?type=show") or []
-    trakt = ((found[0].get("show") or {}).get("ids") or {}).get("trakt") if found else None
-    if trakt and rec:
-        rec["trakt"] = trakt
-        write_json(FOLLOW_PATH, store)
-    return trakt
-
-
-def open_in_seren(name, kind, tmdb=None):
-    """Opens the title in your video add-on. Lucent Video: its seasons or the film. Seren: a series straight on its
-    seasons; a film (and a series Trakt does not know) on the search results."""
+# ----------------------------------------------------------------------------- opening a title
+def open_title(name, kind, tmdb=None):
+    """Opens the title in your video add-on (Lucent Video): the seasons of a series, or the film."""
     if tmdb and info.lv_open_with():
         url = info.lv_play_url(kind, tmdb)
         xbmc.executebuiltin(f"PlayMedia({url})" if kind == "movie" else f'ActivateWindow(Videos,"{url}",return)')
         return
-    if not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)"):
-        xbmcgui.Dialog().notification(HEADING, tr("no_seren"), xbmcgui.NOTIFICATION_WARNING, 3000)
-        return
-    if kind == "tv" and tmdb:
-        try:
-            trakt = trakt_show_id(tmdb)
-        except Exception as error:  # noqa: BLE001 - fall back to the search
-            log(f"trakt id of {tmdb}: {error}")
-            trakt = None
-        if trakt:
-            args = urllib.parse.quote(json.dumps({"mediatype": "tvshow", "trakt_id": int(trakt)}, sort_keys=True))
-            xbmc.executebuiltin(f'ActivateWindow(Videos,"{SEREN}?action=showSeasons&action_args={args}",return)')
-            return
-    action = "moviesSearchResults" if kind == "movie" else "showsSearchResults"
-    xbmc.executebuiltin(f'ActivateWindow(Videos,"{SEREN}?action={action}&action_args={urllib.parse.quote(name)}",return)')
+    xbmcgui.Dialog().notification(HEADING, tr("no_addon"), xbmcgui.NOTIFICATION_WARNING, 3000)
 
 
 # ----------------------------------------------------------------------------- the pop-up for new episodes
@@ -716,34 +685,13 @@ def announce(ev):
                                autoclose=60000)   # no answer within a minute counts as "later"
 
 
-SEREN_DB = "special://profile/addon_data/plugin.video.seren/traktSync.db"
-
-
 def already_watched(ev):
-    """True when you already saw this episode / film: in Seren's Trakt copy or in the Kodi library. Then there is no
-    pop-up for it (you may have watched it elsewhere, or right after it came out)."""
+    """True when you already saw this episode / film in the Kodi library. Then there is no pop-up for it (you may
+    have watched it elsewhere, or right after it came out)."""
     tmdb, season, number = ev.get("tmdb"), ev.get("season") or 0, ev.get("episode") or 0
     if not tmdb:
         return False
     movie = ev["kind"] == "movie"
-    try:
-        import sqlite3
-        path = xbmcvfs.translatePath(SEREN_DB)
-        if xbmcvfs.exists(path):
-            con = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=5)
-            try:
-                if movie:
-                    row = con.execute("SELECT watched FROM movies WHERE tmdb_id=?", (int(tmdb),)).fetchone()
-                else:
-                    row = con.execute("SELECT e.watched FROM episodes e JOIN shows s ON s.trakt_id = e.trakt_show_id "
-                                      "WHERE s.tmdb_id=? AND e.season=? AND e.number=?",
-                                      (int(tmdb), int(season), int(number))).fetchone()
-            finally:
-                con.close()
-            if row and (row[0] or 0) > 0:
-                return True
-    except Exception as error:  # noqa: BLE001
-        log(f"watched (Seren): {error}")
     try:
         def rpc(method, params):
             res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
@@ -793,7 +741,7 @@ def check_notifications():
         if announce(ev):
             store["notified"][ev["key"]] = "done"
             write_json(FOLLOW_PATH, store)
-            open_in_seren(ev["name"], ev["kind"], ev["tmdb"])
+            open_title(ev["name"], ev["kind"], ev["tmdb"])
             break
         count = (store["snooze"].get(ev["key"]) or [0, 0])[1] + 1
         if count >= 3:
