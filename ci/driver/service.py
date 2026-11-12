@@ -15,6 +15,9 @@ T0 = time.time()
 samples, events = [], []
 
 
+HOME_READY = {}
+
+
 def log(t):
     xbmc.log(f"[cidriver] {t}", xbmc.LOGINFO)
     events.append([round(time.time() - T0, 1), t])
@@ -4362,6 +4365,58 @@ def cwrow_test():
     log("cwrow: " + json.dumps(out))
 
 
+def perf_test():
+    """Speed and memory (lucent-performance): Kodi's memory on Home, after opening windows and after 2 minutes idle;
+    how long Kodi ran before Home was ready; how many scripts were started and how many log errors there are."""
+    import re as _re
+    out = {}
+    def rss():
+        try:
+            for ln in open("/proc/self/status"):
+                if ln.startswith("VmRSS:"):
+                    return int(ln.split()[1]) // 1024
+        except OSError:
+            return -1
+    def uptime():
+        try:
+            ticks = os.sysconf(os.sysconf_names["SC_CLK_TCK"])
+            start = int(open("/proc/self/stat").read().rsplit(")", 1)[1].split()[19]) / ticks
+            return round(float(open("/proc/uptime").read().split()[0]) - start, 1)
+        except Exception:  # noqa: BLE001
+            return -1
+    out["kodi_seconds_at_home_ready"] = HOME_READY.get("uptime")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(5)
+    out["mb_home"] = rss()
+    for win in ("Videos,videodb://movies/titles/,return", "Settings", "SkinSettings", "home"):
+        xbmc.executebuiltin(f"ActivateWindow({win})")
+        mon.waitForAbort(4)
+    out["mb_after_windows"] = rss()
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(120)
+    out["mb_after_2min_idle"] = rss()
+    out["kodi_seconds_total"] = uptime()
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            text = fh.read()
+        starts = [ln for ln in text.splitlines() if "CPythonInvoker" in ln and "the source file to load is" in ln]
+        out["scripts_started"] = len(starts)
+        out["skin_scripts_started"] = len([ln for ln in starts if "special://skin/" in ln or "skin.lucent" in ln])
+        names = {}
+        for ln in starts:
+            m = _re.search(r"scripts/(\w+)\.py", ln)
+            if m:
+                names[m.group(1)] = names.get(m.group(1), 0) + 1
+        out["per_script"] = dict(sorted(names.items(), key=lambda kv: -kv[1])[:12])
+        out["unknown_addon_id"] = text.count("Unknown addon id")
+        out["parse_errors"] = text.count("Error parsing boolean expression")
+        out["log_errors"] = len([ln for ln in text.splitlines() if " error <" in ln])
+    except OSError as error:
+        out["log"] = str(error)
+    log("perf: " + json.dumps(out))
+
+
 def mousehome_test():
     """Issue #13: with a mouse, the first posters of a Home row must not open the side menu."""
     import subprocess
@@ -4869,6 +4924,12 @@ def main():
         mon.waitForAbort(1)
     log(f"deps: tidb repo={cond('System.HasAddon(repository.tidb.repo)')} tidb={cond('System.HasAddon(plugin.video.tidb)')}")
     log(f"deps: seren-nixgate={cond('System.HasAddon(repository.seren-nixgate)')} enabled={cond('System.AddonIsEnabled(repository.seren-nixgate)')}")
+    try:
+        _ticks = os.sysconf(os.sysconf_names["SC_CLK_TCK"])
+        _start = int(open("/proc/self/stat").read().rsplit(")", 1)[1].split()[19]) / _ticks
+        HOME_READY["uptime"] = round(float(open("/proc/uptime").read().split()[0]) - _start, 1)
+    except Exception:  # noqa: BLE001
+        pass
     log(f"home ready skin={lab('Skin.CurrentTheme')} {lab('System.AddonVersion(skin.lucent)')} "
         f"lib={lab('System.AddonVersion(script.lucent.library)')} helper={HOME.getProperty('lucent.helper.running')}")
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -4876,6 +4937,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(mousehome_test)
+    safe(perf_test)
     safe(cwrow_test)
     safe(litesetup_test)
     safe(owntrakt_test)
