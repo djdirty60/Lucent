@@ -1349,10 +1349,6 @@ def stale_days(entry, now, first, last, force=False):
     return out
 
 
-def is_stale(entry, now, first, last):
-    return bool(stale_days(entry, now, first, last))
-
-
 def _refresh(force=False, keys=None, progress=None):
     now = int(time.time())
     first_d, last_d = window()

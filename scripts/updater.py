@@ -21,6 +21,10 @@ import xbmcvfs
 HEADING = "Lucent"
 ADDONS_XML = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/addons.xml"
 ZIPS_URL = "https://raw.githubusercontent.com/djdirty60/Lucent/main/repo/zips/"
+# 2.1.0: the second source of the Lucent repository (the video add-on publishes itself there)
+SOURCES = [(ADDONS_XML, ZIPS_URL),
+           ("https://raw.githubusercontent.com/djdirty60/Lucent-video/main/repo/addons.xml",
+            "https://raw.githubusercontent.com/djdirty60/Lucent-video/main/repo/zips/")]
 # every add-on in the Lucent repository that is installed here is kept up to date (also the ones installed from a
 # zip, which Kodi itself does not update from this repository), whatever its name
 STATE_PATH = "special://profile/addon_data/skin.lucent/update_state.json"
@@ -94,16 +98,24 @@ def installed_version(addon_id):
 
 
 def fetch_available():
-    """{addon id: (version, news)} from the repository."""
-    # a new address every time: GitHub's cache could otherwise give the list of a few minutes ago
-    request = urllib.request.Request(f"{ADDONS_XML}?t={int(time.time())}",
-                                     headers={"User-Agent": "skin.lucent (Kodi)", "Cache-Control": "no-cache"})
-    with urllib.request.urlopen(request, timeout=20) as response:
-        xml = response.read().decode("utf-8")
+    """{addon id: (version, news, address of its zips)} from the sources of the Lucent repository. The first source
+    (the skin) must answer; a second source that does not answer is skipped."""
     found = {}
-    for block in re.finditer(r'<addon\s[^>]*?id="([^"]+)"[^>]*?version="([^"]+)".*?</addon>', xml, re.S):
-        news = re.search(r"<news>(.*?)</news>", block.group(0), re.S)
-        found[block.group(1)] = (block.group(2), (news.group(1).strip() if news else ""))
+    for n, (addons_xml, zips) in enumerate(SOURCES):
+        try:
+            # a new address every time: GitHub's cache could otherwise give the list of a few minutes ago
+            request = urllib.request.Request(f"{addons_xml}?t={int(time.time())}",
+                                             headers={"User-Agent": "skin.lucent (Kodi)", "Cache-Control": "no-cache"})
+            with urllib.request.urlopen(request, timeout=20) as response:
+                xml = response.read().decode("utf-8")
+        except Exception as error:  # noqa: BLE001
+            if n == 0:
+                raise
+            log(f"source {n + 1}: {error}")
+            continue
+        for block in re.finditer(r'<addon\s[^>]*?id="([^"]+)"[^>]*?version="([^"]+)".*?</addon>', xml, re.S):
+            news = re.search(r"<news>(.*?)</news>", block.group(0), re.S)
+            found.setdefault(block.group(1), (block.group(2), (news.group(1).strip() if news else ""), zips))
     return found
 
 
@@ -120,7 +132,7 @@ def release_notes(news, installed, limit=4):
 
 
 # add-ons in the repository that this window leaves alone: Kodi keeps them up to date by itself, without a message
-SILENT = {"plugin.video.lucent"}
+SILENT = set()                                           # 2.1.0: the video add-on is in this window too
 
 
 def available_updates():
@@ -132,9 +144,9 @@ def available_updates():
         have = installed_version(addon_id)
         if not have:
             continue                                     # not installed here: never pushed on you
-        version, news = available[addon_id]
+        version, news, zips = available[addon_id]
         if version_key(version) > version_key(have):
-            out.append({"id": addon_id, "name": xbmcaddon.Addon(addon_id).getAddonInfo("name"), "have": have, "version": version,
+            out.append({"id": addon_id, "name": xbmcaddon.Addon(addon_id).getAddonInfo("name"), "have": have, "version": version, "zips": zips,
                         "notes": release_notes(news, have, limit=4 if addon_id == "skin.lucent" else 2)})
     # the skin last: installing it reloads the skin
     return sorted(out, key=lambda u: u["id"] == "skin.lucent")
@@ -164,7 +176,7 @@ def ask(updates):
 
 def download_zip(update):
     """Download the new version to a temporary file and return its path."""
-    url = f"{ZIPS_URL}{update['id']}/{update['id']}-{update['version']}.zip"
+    url = f"{update.get('zips') or ZIPS_URL}{update['id']}/{update['id']}-{update['version']}.zip"
     target = xbmcvfs.translatePath(f"special://temp/{update['id']}-{update['version']}.zip")
     request = urllib.request.Request(f"{url}?t={int(time.time())}", headers={"User-Agent": "skin.lucent (Kodi)", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(request, timeout=60) as response, open(target, "wb") as out:

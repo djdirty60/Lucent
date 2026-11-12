@@ -95,11 +95,6 @@ def youtube_id(path):
     return ""
 
 
-def tmdb_trailer(focus):
-    found = tmdb_trailers(focus)
-    return found[0] if found else ""
-
-
 def tmdb_trailers(focus):
     kind = "movie" if focus.dbtype == "movie" else "tv" if focus.dbtype in ("tvshow", "season", "episode") else ""
     tmdb_id = focus.tmdb
