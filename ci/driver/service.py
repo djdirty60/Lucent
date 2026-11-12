@@ -4336,9 +4336,12 @@ def mousehome_test():
     xbmc.executebuiltin("SetFocus(9100)")
     mon.waitForAbort(1.5)
     out["rows_focus"] = not cond("Control.HasFocus(9000)")
-    for name, x, y in (("poster1", 250, 820), ("poster2", 380, 820), ("rowtitle", 300, 600)):
+    for name, x, y in (("poster1", 250, 820), ("poster2", 380, 820), ("rowtitle", 300, 600),
+                       ("band_sport", 300, 640), ("band_cal", 220, 470), ("band_cal_icon", 90, 470)):
+        out[name + "_before"] = lab("System.CurrentControlID")
         move(x, y)
         out[name + "_menu"] = cond("Control.HasFocus(9000)")
+        out[name + "_after"] = lab("System.CurrentControlID")
         shot(f"mouse-{name}")
         xbmc.executebuiltin("SetFocus(9100)")
         move(1700, 100)
