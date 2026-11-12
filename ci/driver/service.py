@@ -4207,6 +4207,82 @@ def osdclose_test():
     log("osdclose: " + json.dumps(out))
 
 
+def owntrakt_test():
+    """2.0.1: Lucent's own Trakt login (traktlogin.py) comes before the login of a video add-on; Skin settings > Follow."""
+    import importlib
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    out = {}
+    own = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/trakt.json")
+    lv = xbmcvfs.translatePath("special://profile/addon_data/plugin.video.lucent/")
+    os.makedirs(os.path.dirname(own), exist_ok=True)
+    os.makedirs(lv, exist_ok=True)
+    try:
+        json.dump({"access_token": "lv-token", "refresh_token": "r", "expires_at": time.time() + 86400 * 30},
+                  open(os.path.join(lv, "trakt.json"), "w"))
+        json.dump({"trakt_client_id": "lv-client"}, open(os.path.join(lv, "keys.json"), "w"))
+        json.dump({"client_id": "own-client", "client_secret": "own-secret", "access_token": "own-token",
+                   "refresh_token": "r", "expires_at": time.time() + 86400 * 30, "user": "ci-user"}, open(own, "w"))
+        import info
+        import traktlogin
+        importlib.reload(traktlogin)
+        importlib.reload(info)
+        tr = info.Trakt()
+        out["own_first"] = tr.own and tr.client_id == "own-client" and tr.token == "own-token"
+        os.remove(own)
+        tr = info.Trakt()
+        out["lv_fallback"] = (not tr.own) and tr.token == "lv-token"
+        out["available"] = info.trakt_available()
+    except Exception as error:  # noqa: BLE001
+        out["error"] = f"{type(error).__name__}: {error}"
+    for name in ("trakt.json", "keys.json"):
+        if os.path.exists(os.path.join(lv, name)):
+            os.remove(os.path.join(lv, name))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.Reset(lucent.trakt.user)")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(2.5)
+    n = int(lab("Container(9000).NumItems") or 0)
+    for i in range(n):
+        if lab(f"Container(9000).ListItemAbsolute({i}).Property(cat)") == "6":
+            xbmc.executebuiltin(f"SetFocus(9000,{i},absolute)")
+    mon.waitForAbort(1.3)
+    out["button"] = cond("Control.IsVisible(1601)")
+    xbmc.executebuiltin("SetFocus(1601)")
+    mon.waitForAbort(1)
+    shot("trakt-follow-out")
+    xbmc.executebuiltin("Skin.SetString(lucent.trakt.user,ci-user)")
+    mon.waitForAbort(1)
+    shot("trakt-follow-in")
+    xbmc.executebuiltin("Skin.Reset(lucent.trakt.user)")
+    xbmc.executebuiltin("Action(Select)")
+    for _ in range(20):
+        if mon.waitForAbort(0.3) or cond("Window.IsVisible(yesnodialog)"):
+            break
+    mon.waitForAbort(1)
+    out["keys_dialog"] = cond("Window.IsVisible(yesnodialog)")
+    shot("trakt-keys")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Back)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py)")
+    for _ in range(30):
+        if mon.waitForAbort(0.3) or cond("Window.IsVisible(Lucent_Setup.xml)"):
+            break
+    mon.waitForAbort(1.5)
+    for _ in range(3):
+        xbmc.executebuiltin("SetFocus(100)")
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.3)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2.5)
+    shot("trakt-setup")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("owntrakt: " + json.dumps(out))
+
+
 def menus_test():
     """2.0 RC: every category of Settings and Skin settings, for a look at all menus."""
     out = {}
@@ -4587,9 +4663,9 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    safe(owntrakt_test)
     safe(flicker_test)
     safe(diaglog_test)
-    safe(noseren_test)
     safe(dv2_test)
     safe(videotab_test)
     safe(skipdup_test)

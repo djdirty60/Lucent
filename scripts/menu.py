@@ -230,8 +230,8 @@ def pick_lv_list():
                 found.append((clean(f.get("label")), path, tag))
     busy(False)
     if not found:
-        xbmcgui.Dialog().ok(HEADING, tr(G("No lists found. Log in to Trakt or set your MDBList key or Floppy in Lucent Video.",
-                                          "Geen lijsten gevonden. Log in bij Trakt of vul je MDBList-sleutel of Floppy in bij Lucent Video.")))
+        xbmcgui.Dialog().ok(HEADING, tr(G("No lists found. Log in to Trakt or set your MDBList key or Floppy in your video add-on.",
+                                          "Geen lijsten gevonden. Log in bij Trakt of vul je MDBList-sleutel of Floppy in bij je video-add-on.")))
         return None
     pick = select(tr(G("Your lists", "Je lijsten")), [f[0] for f in found], True, ["icons/list.png"] * len(found), [f[2] for f in found])
     if pick < 0:
@@ -397,7 +397,7 @@ def pick_lv():
     actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
     rows = [r for r in WIDGETS_LV if "coming_watchlist" not in r[1] or lv_knows("coming_watchlist")]
     labels = [tr(k) for k, _p, _s in rows] + [own, actor, service]
-    choice = select("Lucent Video", labels)
+    choice = select(tr(G("Your video add-on", "Je video-add-on")), labels)
     if choice < 0:
         return None
     if choice < len(rows):
@@ -413,8 +413,8 @@ def pick_lv():
     busy(False)
     entries = [e for e in entries if "provider=" in e.get("file", "")]
     if not entries:
-        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Lucent Video needs its TMDb key.",
-                                          "Geen diensten gevonden. Lucent Video heeft zijn TMDb-sleutel nodig.")))
+        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Your video add-on needs its TMDb key.",
+                                          "Geen diensten gevonden. Je video-add-on heeft zijn TMDb-sleutel nodig.")))
         return None
     pick = select(tr(G("Streaming services", "Streamingdiensten")), [clean(e.get("label") or e.get("title")) for e in entries],
                   True, [e.get("thumbnail", "") for e in entries])
@@ -815,7 +815,7 @@ def pick_widget():
     order = [3, 2, 8, 5, 6, 7, 4]
     order.remove(7)                                     # the fast TMDb lists of Lucent Library: the video add-on has them now
     if has_lv():                                        # Lucent Video: its own rows first
-        sources.append("Lucent Video")
+        sources.append(tr(G("Your video add-on", "Je video-add-on")))
         icons.append("icons/play.png")
         order.insert(0, 9)
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])

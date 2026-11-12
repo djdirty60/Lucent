@@ -78,19 +78,19 @@ def st_video():
     """Which video add-on fills the rows and plays: Lucent Video works best, any other add-on works too."""
     if has(LV):
         account = setting(LV, "trakt_user") or setting(LV, "simkl_user")
-        return "ok", t(f"Lucent Video is installed{'  ·  account: ' + account if account else ''}",
-                       f"Lucent Video staat erop{'  ·  account: ' + account if account else ''}")
+        return "ok", t(f"Your video add-on is installed{'  ·  account: ' + account if account else ''}",
+                       f"Je video-add-on staat erop{'  ·  account: ' + account if account else ''}")
     return "info", t("No video add-on for films and series yet", "Nog geen video-add-on voor films en series")
 
 
 def ac_video():
     out = []
     if has(LV):
-        out.append((t("Lucent Video: setup assistant", "Lucent Video: installatie-assistent"),
+        out.append((t("Video add-on: setup assistant", "Video-add-on: installatie-assistent"),
                     lambda: run("RunPlugin(plugin://plugin.video.lucent/?action=setup)")))
-        out.append((t("Lucent Video settings", "Instellingen van Lucent Video"), lambda: run(f"Addon.OpenSettings({LV})")))
+        out.append((t("Video add-on settings", "Instellingen van de video-add-on"), lambda: run(f"Addon.OpenSettings({LV})")))
     else:
-        out.append((t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV)))
+        out.append((t("Install the video add-on of the Lucent repository", "Video-add-on uit de Lucent-repository installeren"), lambda: install(LV)))
     out.append((t("Menu and widgets", "Menu en widgets"), lambda: run("RunScript(special://skin/scripts/menu.py)")))
     return out
 
@@ -160,15 +160,15 @@ def ac_iptv():
 def st_subskip():
     """1.37.0: subtitles, spoken language and skip intro are in Lucent Video now."""
     if not cond(f"System.AddonIsEnabled({LV})"):
-        return "info", t("Optional: Lucent Video does subtitles and skip intro", "Optioneel: Lucent Video doet ondertitels en intro overslaan")
+        return "info", t("Optional: a video add-on can do subtitles and skip intro", "Optioneel: een video-add-on kan ondertitels en intro overslaan doen")
     home = xbmcgui.Window(10000)
     parts = [p for p in (home.getProperty("lucent.video.subs.state"), home.getProperty("lucent.video.skip.state")) if p]
-    return "ok", "  ·  ".join(parts) or t("In Lucent Video", "In Lucent Video")
+    return "ok", "  ·  ".join(parts) or t("In your video add-on", "In je video-add-on")
 
 
 def ac_subskip():
     if not cond(f"System.AddonIsEnabled({LV})"):
-        return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
+        return [(t("Install the video add-on of the Lucent repository", "Video-add-on uit de Lucent-repository installeren"), lambda: install(LV))]
     base = "RunPlugin(plugin://plugin.video.lucent/?action="
     return [(t("Subtitles", "Ondertitels"), lambda: run(base + "subs_setup)")),
             (t("Skip intro", "Intro overslaan"), lambda: run(base + "skip_setup)")),
@@ -177,17 +177,29 @@ def ac_subskip():
 
 
 
+def st_trakt():
+    import traktlogin
+    data = traktlogin.load()
+    if data.get("access_token"):
+        return "ok", t(f"Logged in as {data.get('user', '')}", f"Ingelogd als {data.get('user', '')}")
+    return "info", t("Optional: not logged in to Trakt", "Optioneel: niet ingelogd bij Trakt")
+
+
+def ac_trakt():
+    return [(t("Trakt login", "Trakt-login"), lambda: run("RunScript(special://skin/scripts/traktlogin.py)"))]
+
+
 def st_library():
     if not has(LV):
-        return "info", t("Optional: Lucent Video can fill Kodi's library", "Optioneel: Lucent Video kan de bibliotheek van Kodi vullen")
+        return "info", t("Optional: a video add-on can fill Kodi's library", "Optioneel: een video-add-on kan de bibliotheek van Kodi vullen")
     on = setting(LV, "library_on") == "true"
-    return ("ok", t("Lucent Video fills the library", "Lucent Video vult de bibliotheek")) if on else \
-        ("info", t("Off  ·  switch it on in Lucent Video", "Uit  ·  zet het aan in Lucent Video"))
+    return ("ok", t("Your video add-on fills the library", "Je video-add-on vult de bibliotheek")) if on else \
+        ("info", t("Off  ·  switch it on in your video add-on", "Uit  ·  zet het aan in je video-add-on"))
 
 
 def ac_library():
     if not has(LV):
-        return [(t("Install Lucent Video", "Lucent Video installeren"), lambda: install(LV))]
+        return [(t("Install the video add-on of the Lucent repository", "Video-add-on uit de Lucent-repository installeren"), lambda: install(LV))]
     base = "RunPlugin(plugin://plugin.video.lucent/?action="
     return [(t("Choose what goes in the library", "Kiezen wat in de bibliotheek komt"), lambda: run(base + "library_choose)")),
             (t("Update now", "Nu bijwerken"), lambda: run(base + "library_sync)")),
@@ -367,11 +379,12 @@ STEPS = [
       "openen: Instellingen > Lucent > Setup-assistent."), st_welcome, ac_welcome),
     ("video", "icons/play.png", ("Films and series", "Films en series"),
      ("Lucent works with every video add-on: long-press OK on a folder in any add-on and choose 'Add to Home as widget'. "
-      "With Lucent Video it works best: its rows fill Home by themselves, and the buttons on the info page (play, "
-      "watched, lists, trailer, more) use it - also for titles from other add-ons.",
+      "With the video add-on of the Lucent repository it works best: its rows fill Home by themselves, and the buttons "
+      "on the info page (play, watched, lists, trailer, more) use it - also for titles from other add-ons.",
       "Lucent werkt met elke video-add-on: houd OK ingedrukt op een map in een add-on en kies 'Toevoegen aan Home als "
-      "widget'. Met Lucent Video werkt het het best: de rijen op Home vullen zich vanzelf, en de knoppen op de "
-      "infopagina (afspelen, bekeken, lijsten, trailer, meer) gebruiken het - ook voor titels uit andere add-ons."), st_video, ac_video),
+      "widget'. Met de video-add-on uit de Lucent-repository werkt het het best: de rijen op Home vullen zich "
+      "vanzelf, en de knoppen op de infopagina (afspelen, bekeken, lijsten, trailer, meer) gebruiken hem - ook voor "
+      "titels uit andere add-ons."), st_video, ac_video),
     ("tmdb", "icons/movies.png", ("TMDb key", "TMDb-sleutel"),
      ("TMDb (The Movie Database) supplies posters, logos, cast, studios and trailers. A key of your own is free and "
       "makes everything faster and more complete.\n\nGet one: make an account on themoviedb.org, then Settings > API > "
@@ -379,6 +392,17 @@ STEPS = [
       "TMDb (The Movie Database) levert posters, logo's, acteurs, studio's en trailers. Een eigen sleutel is gratis en "
       "maakt alles sneller en vollediger.\n\nZo krijg je er een: maak een account op themoviedb.org, dan Instellingen > "
       "API > 'Aanmaken' (persoonlijk gebruik). Kopieer de 'API-sleutel' (de korte, 32 tekens)."), st_tmdb, ac_tmdb),
+    ("trakt", "icons/trakt.png", ("Trakt", "Trakt"),
+     ("Optional. With a Trakt login Lucent keeps your watch history, watchlist and lists, and the calendar shows the series "
+      "and films of your collection. It works with every video add-on.\n\nTrakt wants your own free API app once: on "
+      "trakt.tv go to Settings > Your API Apps > New application, name it Lucent and use the redirect uri "
+      "urn:ietf:wg:oauth:2.0:oob. Press 'Trakt login', type its Client ID and Client Secret, and enter the code you get "
+      "on trakt.tv/activate.",
+      "Optioneel. Met een Trakt-login houdt Lucent je kijkgeschiedenis, kijklijst en lijsten bij, en toont de kalender de "
+      "series en films uit je collectie. Het werkt met elke video-add-on.\n\nTrakt wil één keer je eigen gratis API-app: "
+      "ga op trakt.tv naar Settings > Your API Apps > New application, noem hem Lucent en gebruik als redirect uri "
+      "urn:ietf:wg:oauth:2.0:oob. Druk op 'Trakt-login', typ de Client ID en Client Secret, en vul de code in die je "
+      "krijgt op trakt.tv/activate."), st_trakt, ac_trakt),
     ("iptv", "icons/tv.png", ("Live TV (IPTV)", "Live tv (IPTV)"),
      ("For live TV Kodi uses IPTV Simple Client. Have an Xtream login (server address, user name, password)? "
       "Press 'Xtream login': Lucent checks it with the server and sets up IPTV Simple for you - channels, guide and replay. "
@@ -403,16 +427,16 @@ STEPS = [
       "de versterker (passthrough): Dolby, DTS en Atmos gaan onbewerkt naar je soundbar of receiver - zet dit alleen aan als je die hebt."
       "\n\nHDR en Dolby Vision geeft CoreELEC vanzelf door."), st_play, ac_play),
     ("subs", "icons/subtitles.png", ("Subtitles and skip intro", "Ondertitels en intro overslaan"),
-     ("Optional. Lucent Video finds subtitles in your language (it asks every subtitle add-on at the same time), chooses the "
+     ("Optional. A video add-on that can do it finds subtitles in your language (it asks every subtitle add-on at the same time), chooses the "
       "spoken language, translates English subtitles with AI when you want, and skips intros with TheIntroDB. "
       "It works for every video, also from other add-ons.",
-      "Optioneel. Lucent Video zoekt ondertitels in jouw taal (het vraagt alle ondertitel-add-ons tegelijk), kiest de "
+      "Optioneel. Een video-add-on die dat kan, zoekt ondertitels in jouw taal (hij vraagt alle ondertitel-add-ons tegelijk), kiest de "
       "gesproken taal, vertaalt Engelse ondertitels met AI als je dat wilt, en slaat intro's over met TheIntroDB. "
       "Het werkt voor elke video, ook uit andere add-ons."), st_subskip, ac_subskip),
     ("library", "icons/library.png", ("Library", "Bibliotheek"),
-     ("Optional. Lucent Video turns your Trakt (or Simkl) collection and lists into Kodi's own library: films and series "
+     ("Optional. A video add-on that can do it turns your Trakt (or Simkl) collection and lists into Kodi's own library: films and series "
       "with their own pages, 'Continue watching' and 'Next episode' rows, and watched marks that stay in step.",
-      "Optioneel. Lucent Video maakt van je Trakt- (of Simkl-)collectie en lijsten de eigen bibliotheek van Kodi: films en "
+      "Optioneel. Een video-add-on die dat kan, maakt van je Trakt- (of Simkl-)collectie en lijsten de eigen bibliotheek van Kodi: films en "
       "series met eigen pagina's, rijen 'Verder kijken' en 'Volgende aflevering', en bekeken-vinkjes die gelijk blijven."),
      st_library, ac_library),
     ("tabs", "icons/layout.png", ("Tabs", "Tabbladen"),

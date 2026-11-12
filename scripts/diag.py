@@ -89,7 +89,7 @@ def home_rows():
 
 def test():
     rows = [
-        addon_line("plugin.video.lucent", "Lucent Video", t("Install it from the Lucent repository (or run the setup assistant).",
+        addon_line("plugin.video.lucent", t("Video add-on", "Video-add-on"), t("Install it from the Lucent repository (or run the setup assistant).",
                                                             "Installeer hem vanuit de Lucent-repository (of start de setup-assistent).")),
         addon_line("pvr.iptvsimple", "IPTV Simple", t("Install it: Add-ons > PVR clients.", "Installeer hem: Add-ons > PVR-clients.")),
     ]

@@ -5,7 +5,7 @@ RunScript(special://skin/scripts/info.py,load)      fill the collection row and 
 RunScript(special://skin/scripts/info.py,lists)     choose: Trakt collection, watchlist, own Trakt lists
 RunScript(special://skin/scripts/info.py,watched)   mark as watched / unwatched on Trakt
 
-Trakt calls use the Trakt login of the video add-on (the same account, nothing new to set up).
+Trakt calls use Lucent's own Trakt login (traktlogin.py); without it, the Trakt login of a video add-on that shares it.
 Everything shown on the page goes through Window(home) properties named nuvio.info.*.
 """
 import json
@@ -40,15 +40,15 @@ T = {
     "loading": ("Loading your Trakt lists…", "Je Trakt-lijsten laden…"),
     "saved": ("Saved", "Opgeslagen"),
     "nothing": ("Nothing changed", "Niets veranderd"),
-    "no_video": ("Install a video add-on with a Trakt login (Lucent Video) to use this.",
-                 "Installeer een video-add-on met Trakt-login (Lucent Video) om dit te gebruiken."),
-    "no_login": ("Your video add-on is not logged in to Trakt. Log in to Trakt in its settings.",
-                 "Je video-add-on is niet ingelogd bij Trakt. Log in bij Trakt in de instellingen ervan."),
-    "expired": ("Trakt does not accept the login of your video add-on any more (Trakt code {0}). Link it to Trakt again: "
+    "no_video": ("You are not logged in to Trakt. Log in at Skin settings > Follow > Trakt login.",
+                 "Je bent niet ingelogd bij Trakt. Log in bij Skin-instellingen > Volgen > Trakt-login."),
+    "no_login": ("You are not logged in to Trakt. Log in at Skin settings > Follow > Trakt login.",
+                 "Je bent niet ingelogd bij Trakt. Log in bij Skin-instellingen > Volgen > Trakt-login."),
+    "expired": ("Trakt does not accept the login any more (Trakt code {0}). Log in again: "
                 "you get a code that you enter on trakt.tv/activate.",
-                "Trakt accepteert de login van je video-add-on niet meer (Trakt-code {0}). Koppel hem opnieuw aan Trakt: "
+                "Trakt accepteert de login niet meer (Trakt-code {0}). Log opnieuw in: "
                 "je krijgt een code die je invult op trakt.tv/activate."),
-    "relink": ("Link again now", "Nu opnieuw koppelen"),
+    "relink": ("Log in again now", "Nu opnieuw inloggen"),
     "later": ("Later", "Later"),
     "failed": ("Trakt did not respond. Try again later.", "Trakt reageert niet. Probeer het later opnieuw."),
     "no_ids": ("This title has no Trakt or TMDB id.", "Deze titel heeft geen Trakt- of TMDB-nummer."),
@@ -182,14 +182,15 @@ def lv_trakt():
 
 
 def trakt_available():
-    """A video add-on whose Trakt login Lucent can use is installed (Lucent Video)."""
-    return xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
+    """Lucent has its own Trakt login, or a video add-on whose login Lucent can share is installed."""
+    import traktlogin
+    return traktlogin.has_login() or xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)")
 
 
 def relink_trakt():
-    """The Trakt link of your video add-on itself (a code you enter on trakt.tv/activate)."""
-    if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
-        xbmc.executebuiltin("RunPlugin(plugin://plugin.video.lucent/?action=auth_trakt)")
+    """Log in to Trakt again (a code you enter on trakt.tv/activate)."""
+    import traktlogin
+    traktlogin.login()
 
 
 def lv_supports(action):
@@ -223,9 +224,14 @@ def lv_renew(wait=15):
 
 
 class Trakt:
-    """Trakt with the login of your video add-on (Lucent Video)."""
+    """Trakt with Lucent's own login, else the shared login of a video add-on."""
 
     def __init__(self):
+        import traktlogin
+        self.own = traktlogin.has_login()
+        if self.own:
+            self.client_id, self.token = traktlogin.credentials()
+            return
         self.client_id, self.token = lv_trakt()
         if not self.token and _lv_json("trakt.json").get("access_token"):
             lv_renew()
@@ -243,8 +249,13 @@ class Trakt:
         except urllib.error.HTTPError as error:
             if error.code != 401 or not self.token:
                 raise
-            lv_renew()                                   # rejected: let the video add-on renew it once, then try again
-            client, token = lv_trakt()
+            if self.own:                                 # rejected: renew it once, then try again
+                import traktlogin
+                client, token = (traktlogin.load().get("client_id", ""), traktlogin.load().get("access_token", "")) \
+                    if traktlogin.renew() else ("", "")
+            else:
+                lv_renew()                               # let the video add-on renew it once, then try again
+                client, token = lv_trakt()
             if not token or token == self.token:
                 raise
             self.client_id, self.token = client, token

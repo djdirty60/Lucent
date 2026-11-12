@@ -1,4 +1,5 @@
 #!/bin/bash
+# trigger 2.0.1
 # One CI run: VARIANT=old|new  RUN=1..3
 set -x
 VARIANT=$1; RUN=$2

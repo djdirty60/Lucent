@@ -42,11 +42,11 @@ TX = {
     "none_day": ("Nothing on this day", "Niets op deze dag"),
     "aired_on": ("Aired on {0}", "Uitgezonden op {0}"), "airs_on": ("Airs on {0}", "Verschijnt op {0}"),
     "empty_title": ("Nothing to show yet", "Nog niets om te tonen"),
-    "empty_text": ("The calendar shows the series and films of your Trakt collection. Log in to Trakt in your video "
-                   "add-on and add series to your collection; they show up here by themselves. Or open a series or film and "
+    "empty_text": ("The calendar shows the series and films of your Trakt collection. Log in to Trakt in Skin settings "
+                   "> Follow and add series to your collection; they show up here by themselves. Or open a series or film and "
                    "choose the bell on its info page.",
-                   "De kalender toont de series en films uit je Trakt-collectie. Log in bij Trakt in je video-add-on en "
-                   "zet series in je collectie; ze komen dan vanzelf hier te staan. Of open een serie of film en "
+                   "De kalender toont de series en films uit je Trakt-collectie. Log in bij Trakt via Skin-instellingen "
+                   "> Volgen en zet series in je collectie; ze komen dan vanzelf hier te staan. Of open een serie of film en "
                    "kies de bel op de infopagina."),
     "loading": ("Loading the calendar…", "Kalender laden…"),
 }
