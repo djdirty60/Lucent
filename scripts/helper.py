@@ -301,6 +301,9 @@ def run():
             if row.isdigit() and cond(f"Control.IsVisible({row}) + Integer.IsGreater(Container({row}).NumItems,0)"):
                 xbmc.executebuiltin(f"SetFocus({row})")
                 log(f"Home had no focus - back to row {row}")
+            elif cond("Control.IsVisible(9991)"):              # Home has rows: the rows, not the side menu
+                xbmc.executebuiltin("SetFocus(9100)")
+                log(f"Home had no focus - back to the rows (last row {row or '-'})")
             else:
                 xbmc.executebuiltin("SetFocus(9000)")
                 log("Home had no focus - back to the menu")
