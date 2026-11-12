@@ -4235,6 +4235,7 @@ def osdintro_test():
 
 def mousehome_test():
     """Issue #13: with a mouse, the first posters of a Home row must not open the side menu."""
+    import subprocess
     out = {}
     def move(x, y):
         try:
