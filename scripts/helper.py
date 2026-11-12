@@ -69,6 +69,7 @@ def run():
 
     import agenda_core
     import foryou
+    import continuerow
     import tint
     import omdb
     import views
@@ -135,6 +136,7 @@ def run():
     slow = [                                        # network work: in the worker thread
         Job("sport", 30, 15, sport, lambda: cond("Pvr.HasTVChannels")),
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
+        Job("continue row", 60, 8, continuerow.update),   # one row: films/episodes in progress + next episodes (library)
         Job("calendar", 120, 60, calendar),
         Job("tab panels", 60, 6, tab_panels),
         Job("solis", 3, 4, solis_tab, lambda: cond("System.AddonIsEnabled(script.solis.dashboard) + Window.IsVisible(home)")),
@@ -187,7 +189,7 @@ def run():
 
     lost = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
-    ROW_ORDER = [(8090, 9988), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
+    ROW_ORDER = [(8090, 9988), (8092, 9987), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
 
     def top_row():
         """lucent.toprow: the highest Home row on screen - Back from a row goes there (then to the menu)."""
@@ -262,10 +264,12 @@ def run():
                     break
                 count += 1
             HOME.setProperty("lucent.as.count", str(count))
-            try:                                       # the settings of the video add-on of the Lucent repository?
-                name = xbmcaddon.Addon("plugin.video.lucent").getAddonInfo("name")
-            except Exception:  # noqa: BLE001 - not installed
-                name = ""
+            name = ""                                  # the settings of the video add-on of the Lucent repository?
+            if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
+                try:
+                    name = xbmcaddon.Addon("plugin.video.lucent").getAddonInfo("name")
+                except Exception:  # noqa: BLE001
+                    name = ""
             if name and name in xbmc.getInfoLabel("Control.GetLabel(2)"):
                 HOME.setProperty("lucent.as.lv", "1")
             else:
@@ -291,8 +295,18 @@ def run():
         lost["n"] = lost["n"] + 1 if stuck else 0
         if lost["n"] >= 2:
             lost["n"] = 0
-            xbmc.executebuiltin("SetFocus(9000)")
-            log("Home had no focus - back to the menu")
+            row = HOME.getProperty("nuvio.row")
+            # a mouse or a tap on an empty spot also leaves Home without focus (issue #13): then go back to the row you
+            # were on, so the side menu does not open by itself; only without such a row back to the menu
+            if row.isdigit() and cond(f"Control.IsVisible({row}) + Integer.IsGreater(Container({row}).NumItems,0)"):
+                xbmc.executebuiltin(f"SetFocus({row})")
+                log(f"Home had no focus - back to row {row}")
+            elif cond("Control.IsVisible(9991)"):              # Home has rows: the rows, not the side menu
+                xbmc.executebuiltin("SetFocus(9100)")
+                log(f"Home had no focus - back to the rows (last row {row or '-'})")
+            else:
+                xbmc.executebuiltin("SetFocus(9000)")
+                log("Home had no focus - back to the menu")
 
     import xbmcaddon
     started_as = {"v": xbmcaddon.Addon("skin.lucent").getAddonInfo("version"), "t": time.time()}

@@ -45,6 +45,8 @@ def rpc(method, params=None):
 
 
 def setting(addon_id, key):
+    if not cond(f"System.HasAddon({addon_id})"):
+        return ""
     try:
         return xbmcaddon.Addon(addon_id).getSetting(key)
     except Exception:  # noqa: BLE001 - not installed
@@ -203,22 +205,31 @@ def st_look():
                                t("big posters", "grote posters") if big else t("small posters", "kleine posters")])
 
 
+# the skin must not reload while this window is open (Kodi can hang on a reload under a script window):
+# what needs a reload is done when the assistant closes
+RELOAD = {"lite": False, "skin": False}
+
+
 def toggle_posters():
-    """Big posters (no names) or the old, smaller posters (with names); the skin reloads to get the new row height."""
+    """Big posters (no names) or the old, smaller posters (with names); the skin reloads (when the assistant closes)
+    to get the new row height."""
     if cond("Skin.HasSetting(lucent.posters.small)"):
         run("Skin.SetBool(nuvio.posterlabels.hide)")
     else:
         run("Skin.Reset(nuvio.posterlabels.hide)")
     run("Skin.ToggleSetting(lucent.posters.small)")
-    xbmc.sleep(300)
-    run("ReloadSkin()")
+    RELOAD["skin"] = True
+
+
+def toggle_lite():
+    run("Skin.ToggleSetting(lucent.lite)")
+    RELOAD["lite"] = True
 
 
 def ac_look():
     lite = cond("Skin.HasSetting(lucent.lite)")
     return [(t("Light mode: on", "Lichte modus: aan") if lite else t("Light mode: off", "Lichte modus: uit"),
-             lambda: (run("Skin.ToggleSetting(lucent.lite)"), xbmc.sleep(400),
-                      run("RunScript(special://skin/scripts/settings.py,litebuild)"))),
+             toggle_lite),
             (t("Big posters: on", "Grote posters: aan") if not cond("Skin.HasSetting(lucent.posters.small)")
              else t("Big posters: off", "Grote posters: uit"), toggle_posters),
             (t("Menu and rows", "Menu en rijen"), lambda: run("RunScript(special://skin/scripts/menu.py)"))]
@@ -558,6 +569,13 @@ def open_window():
     finally:
         window.closing = True
         del window
+    if RELOAD["lite"] or RELOAD["skin"]:
+        xbmc.sleep(500)                                       # the window is gone: now the skin may reload
+        if RELOAD["lite"]:
+            run("RunScript(special://skin/scripts/settings.py,litebuild)")   # reloads when light mode really changed
+        if RELOAD["skin"]:
+            xbmc.sleep(800)
+            run("ReloadSkin()")
 
 
 if __name__ == "__main__":

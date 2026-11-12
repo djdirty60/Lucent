@@ -199,6 +199,7 @@ WIDGETS_LV = [                                      # the video add-on (plugin.v
     (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
     (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
     (("Next up", "Volgende afleveringen"), LV + "nextup", "land"),
+    (("Continue watching and next up", "Verder kijken en volgende afleveringen"), LV + "watching", "land"),
     (("Watchlist · Films", "Kijklijst · Films"), LV + "watchlist_movie", "poster"),
     (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
     (("Watchlist · Coming soon", "Kijklijst · Komt binnenkort uit"), LV + "coming_watchlist", "poster"),
@@ -253,7 +254,8 @@ def pick_lv_person():
     key = info.tmdb_key()
     if not key:
         try:
-            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
+            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip() \
+                if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)") else ""
         except Exception:  # noqa: BLE001
             key = ""
     if not key:
@@ -296,7 +298,8 @@ def lv_ready():
     if not has_lv():
         return False
     try:
-        if xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key"):
+        if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)") and \
+                xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key"):
             return True
     except Exception:  # noqa: BLE001
         return False
@@ -395,7 +398,9 @@ def pick_lv():
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
     own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
     actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
-    rows = [r for r in WIDGETS_LV if "coming_watchlist" not in r[1] or lv_knows("coming_watchlist")]
+    newer = ("coming_watchlist", "watching")                   # rows only newer versions of the video add-on know
+    rows = [r for r in WIDGETS_LV if not any(r[1].endswith("name=" + n) for n in newer) or
+            any(r[1].endswith("name=" + n) and lv_knows(n) for n in newer)]
     labels = [tr(k) for k, _p, _s in rows] + [own, actor, service]
     choice = select(tr(G("Your video add-on", "Je video-add-on")), labels)
     if choice < 0:

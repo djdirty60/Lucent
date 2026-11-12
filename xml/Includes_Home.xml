@@ -506,6 +506,7 @@
     <expression name="NuvioW10Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8110">$EXP[NuvioW10Has] + !$EXP[NuvioW10Land] + [Integer.IsGreater(Container(8110).NumItems,0) | Container(8110).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.10))]</expression>
     <expression name="NuvioRow8210">$EXP[NuvioW10Has] + $EXP[NuvioW10Land] + [Integer.IsGreater(Container(8210).NumItems,0) | Container(8210).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.10))]</expression>
+    <expression name="LucentCWRow">Integer.IsGreater(Window(home).Property(lucent.cw.count),0) + Skin.HasSetting(lucent.cw.on)</expression>
     <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off)</expression>
     <expression name="LucentSportRow">!String.IsEmpty(Window(home).Property(lucent.hs.show)) + !Skin.HasSetting(lucent.hs.off)</expression>
     <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
@@ -537,7 +538,8 @@
         <control type="group" id="9920"><visible>$EXP[NuvioRow8210]</visible></control>
         <control type="group" id="9988"><visible>$EXP[LucentSportRow]</visible></control>
         <control type="group" id="9989"><visible>$EXP[LucentForYouRow]</visible></control>
-        <control type="group" id="9990"><visible>[String.IsEqual(Window(home).Property(nuvio.row),8091) + $EXP[LucentForYouRow]] | [String.IsEqual(Window(home).Property(nuvio.row),8090) + $EXP[LucentSportRow]] | [String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(9901)] | [String.IsEqual(Window(home).Property(nuvio.row),8201) + Control.IsVisible(9911)] | [String.IsEqual(Window(home).Property(nuvio.row),8102) + Control.IsVisible(9902)] | [String.IsEqual(Window(home).Property(nuvio.row),8202) + Control.IsVisible(9912)] | [String.IsEqual(Window(home).Property(nuvio.row),8103) + Control.IsVisible(9903)] | [String.IsEqual(Window(home).Property(nuvio.row),8203) + Control.IsVisible(9913)] | [String.IsEqual(Window(home).Property(nuvio.row),8104) + Control.IsVisible(9904)] | [String.IsEqual(Window(home).Property(nuvio.row),8204) + Control.IsVisible(9914)] | [String.IsEqual(Window(home).Property(nuvio.row),8105) + Control.IsVisible(9905)] | [String.IsEqual(Window(home).Property(nuvio.row),8205) + Control.IsVisible(9915)] | [String.IsEqual(Window(home).Property(nuvio.row),8106) + Control.IsVisible(9906)] | [String.IsEqual(Window(home).Property(nuvio.row),8206) + Control.IsVisible(9916)] | [String.IsEqual(Window(home).Property(nuvio.row),8107) + Control.IsVisible(9907)] | [String.IsEqual(Window(home).Property(nuvio.row),8207) + Control.IsVisible(9917)] | [String.IsEqual(Window(home).Property(nuvio.row),8108) + Control.IsVisible(9908)] | [String.IsEqual(Window(home).Property(nuvio.row),8208) + Control.IsVisible(9918)] | [String.IsEqual(Window(home).Property(nuvio.row),8109) + Control.IsVisible(9909)] | [String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(9919)] | [String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(9910)] | [String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(9920)]</visible></control>
+        <control type="group" id="9987"><visible>$EXP[LucentCWRow]</visible></control>
+        <control type="group" id="9990"><visible>[String.IsEqual(Window(home).Property(nuvio.row),8092) + $EXP[LucentCWRow]] | [String.IsEqual(Window(home).Property(nuvio.row),8091) + $EXP[LucentForYouRow]] | [String.IsEqual(Window(home).Property(nuvio.row),8090) + $EXP[LucentSportRow]] | [String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(9901)] | [String.IsEqual(Window(home).Property(nuvio.row),8201) + Control.IsVisible(9911)] | [String.IsEqual(Window(home).Property(nuvio.row),8102) + Control.IsVisible(9902)] | [String.IsEqual(Window(home).Property(nuvio.row),8202) + Control.IsVisible(9912)] | [String.IsEqual(Window(home).Property(nuvio.row),8103) + Control.IsVisible(9903)] | [String.IsEqual(Window(home).Property(nuvio.row),8203) + Control.IsVisible(9913)] | [String.IsEqual(Window(home).Property(nuvio.row),8104) + Control.IsVisible(9904)] | [String.IsEqual(Window(home).Property(nuvio.row),8204) + Control.IsVisible(9914)] | [String.IsEqual(Window(home).Property(nuvio.row),8105) + Control.IsVisible(9905)] | [String.IsEqual(Window(home).Property(nuvio.row),8205) + Control.IsVisible(9915)] | [String.IsEqual(Window(home).Property(nuvio.row),8106) + Control.IsVisible(9906)] | [String.IsEqual(Window(home).Property(nuvio.row),8206) + Control.IsVisible(9916)] | [String.IsEqual(Window(home).Property(nuvio.row),8107) + Control.IsVisible(9907)] | [String.IsEqual(Window(home).Property(nuvio.row),8207) + Control.IsVisible(9917)] | [String.IsEqual(Window(home).Property(nuvio.row),8108) + Control.IsVisible(9908)] | [String.IsEqual(Window(home).Property(nuvio.row),8208) + Control.IsVisible(9918)] | [String.IsEqual(Window(home).Property(nuvio.row),8109) + Control.IsVisible(9909)] | [String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(9919)] | [String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(9910)] | [String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(9920)]</visible></control>
         <control type="group" id="9991"><visible>Control.IsVisible(9901) | Control.IsVisible(9911) | Control.IsVisible(9902) | Control.IsVisible(9912) | Control.IsVisible(9903) | Control.IsVisible(9913) | Control.IsVisible(9904) | Control.IsVisible(9914) | Control.IsVisible(9905) | Control.IsVisible(9915) | Control.IsVisible(9906) | Control.IsVisible(9916) | Control.IsVisible(9907) | Control.IsVisible(9917) | Control.IsVisible(9908) | Control.IsVisible(9918) | Control.IsVisible(9909) | Control.IsVisible(9919) | Control.IsVisible(9910) | Control.IsVisible(9920)</visible></control>
     </include>
     <variable name="LucentHomeFanart">
@@ -561,6 +563,7 @@
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(9919) + $EXP[NuvioW9HasBg]">$VAR[NuvioW9Bg]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(9910) + $EXP[NuvioW10HasBg]">$VAR[NuvioW10Bg]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(9920) + $EXP[NuvioW10HasBg]">$VAR[NuvioW10Bg]</value>
+        <value condition="String.IsEqual(Window(home).Property(nuvio.row),8092) + $EXP[LucentCWRow]">$INFO[Container(8092).ListItem.Property(fanart)]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8091) + $EXP[LucentForYouRow]">$INFO[Container(8091).ListItem.Property(fanart)]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(9901) + !String.IsEmpty(Container(8101).ListItem.Art(fanart))">$INFO[Container(8101).ListItem.Art(fanart)]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(9901)">$INFO[Container(8101).ListItem.Art(tvshow.fanart)]</value>
@@ -656,6 +659,69 @@
         </control>
     </include>
     <include name="HomeHeroes">
+        <!-- Continue watching (library, scripts/continuerow.py) focused -->
+        <control type="group">
+            <left>160</left>
+            <top>100</top>
+            <width>1100</width>
+            <height>460</height>
+            <visible>String.IsEqual(Window(home).Property(nuvio.row),8092) + $EXP[LucentCWRow]</visible>
+            <animation effect="fade" start="0" end="100" time="300">Visible</animation>
+            <animation effect="fade" start="100" end="0" time="150">Hidden</animation>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>620</width>
+                <height>210</height>
+                <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                <fadetime>250</fadetime>
+                <texture background="true">$INFO[Container(8092).ListItem.Property(logo)]</texture>
+                <visible>!String.IsEmpty(Container(8092).ListItem.Property(logo))</visible>
+            </control>
+            <control type="textbox">
+                <left>0</left>
+                <top>0</top>
+                <width>1100</width>
+                <height>210</height>
+                <font>font60</font>
+                <textcolor>text</textcolor>
+                <aligny>bottom</aligny>
+                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                <label>$INFO[Container(8092).ListItem.Label]</label>
+                <visible>String.IsEmpty(Container(8092).ListItem.Property(logo))</visible>
+            </control>
+            <control type="grouplist">
+                <left>0</left>
+                <top>232</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>12</itemgap>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8092).ListItem.Label2]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">text</param>
+                    <param name="visible">!String.IsEmpty(Container(8092).ListItem.Label2)</param>
+                </include>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Container(8092).ListItem.Property(percent)]%</param>
+                    <param name="bg">glass</param>
+                    <param name="color">text2</param>
+                    <param name="visible">Integer.IsGreater(Container(8092).ListItem.Property(percent),0)</param>
+                </include>
+            </control>
+            <control type="textbox">
+                <left>0</left>
+                <top>300</top>
+                <width>880</width>
+                <height>120</height>
+                <font>font_body</font>
+                <textcolor>text2</textcolor>
+                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                <label>$INFO[Container(8092).ListItem.Property(plot)]</label>
+<include>TextAutoScroll</include>
+</control>
+        </control>
         <!-- Tonight for you focused -->
         <control type="group">
             <left>160</left>
@@ -7672,7 +7738,7 @@
                     <onback condition="Integer.IsGreater(Container(8090).CurrentItem,1)">SetFocus(8090,0,absolute)</onback>
                     <onback condition="!Integer.IsGreater(Container(8090).CurrentItem,1) + !String.IsEmpty(Window(home).Property(lucent.toprow)) + !String.IsEqual(Window(home).Property(lucent.toprow),8090)">SetFocus($INFO[Window(home).Property(lucent.toprow)])</onback>
                     <onback condition="!Integer.IsGreater(Container(8090).CurrentItem,1) + [String.IsEmpty(Window(home).Property(lucent.toprow)) | String.IsEqual(Window(home).Property(lucent.toprow),8090)]">SetFocus(9000)</onback>
-                    <ondown>8091</ondown>
+                    <ondown>8092</ondown>
                     <onup condition="Skin.HasSetting(lucent.lite)">8206</onup>
                     <onup>8210</onup>
                     <onfocus>SetProperty(nuvio.row,8090,home)</onfocus>
@@ -7825,6 +7891,290 @@
                     </content>
                 </control>
             </control>
+            <!-- Continue watching: films and episodes in progress + next episodes, from the Kodi library (scripts/continuerow.py) -->
+            <control type="group">
+                <width>1760</width>
+                <height>370</height>
+                <visible>$EXP[LucentCWRow]</visible>
+                <control type="label">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>1300</width>
+                    <height>48</height>
+                    <font>font_mainmenu_small</font>
+                    <textcolor>text</textcolor>
+                    <label>$LOCALIZE[31873]</label>
+                </control>
+                <control type="fixedlist" id="8092">
+                    <left>-40</left>
+                    <top>40</top>
+                    <width>1800</width>
+                    <height>320</height>
+                    <orientation>horizontal</orientation>
+                    <focusposition>0</focusposition>
+                    <scrolltime tween="cubic" easing="out">260</scrolltime>
+                    <onleft>9000</onleft>
+                    <onback condition="Integer.IsGreater(Container(8092).CurrentItem,1)">SetFocus(8092,0,absolute)</onback>
+                    <onback condition="!Integer.IsGreater(Container(8092).CurrentItem,1) + !String.IsEmpty(Window(home).Property(lucent.toprow)) + !String.IsEqual(Window(home).Property(lucent.toprow),8092)">SetFocus($INFO[Window(home).Property(lucent.toprow)])</onback>
+                    <onback condition="!Integer.IsGreater(Container(8092).CurrentItem,1) + [String.IsEmpty(Window(home).Property(lucent.toprow)) | String.IsEqual(Window(home).Property(lucent.toprow),8092)]">SetFocus(9000)</onback>
+                    <onup>8090</onup>
+                    <ondown>8091</ondown>
+                    <onfocus>SetProperty(nuvio.row,8092,home)</onfocus>
+                    <itemlayout width="428" height="310">
+                        <control type="group">
+                            <left>40</left><top>16</top>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>400</width><height>225</height>
+                                <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>400</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Thumb]</texture>
+                            </control>
+                            <control type="progress">
+                                <left>16</left><top>205</top><width>368</width><height>6</height>
+                                <info>ListItem.Property(percent)</info>
+                                <visible>Integer.IsGreater(ListItem.Property(percent),0)</visible>
+                            </control>
+                            <control type="label">
+                                <left>4</left><top>239</top><width>392</width><height>34</height>
+                                <font>font12</font><textcolor>text</textcolor>
+                                <label>$INFO[ListItem.Label]</label>
+                            </control>
+                            <control type="label">
+                                <left>4</left><top>271</top><width>392</width><height>30</height>
+                                <font>font_tiny</font><textcolor>text3</textcolor>
+                                <label>$INFO[ListItem.Label2]</label>
+                            </control>
+                        </control>
+                    </itemlayout>
+                    <focusedlayout width="428" height="310">
+                        <control type="group">
+                            <left>40</left><top>16</top>
+                            <animation effect="zoom" start="100" end="105" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                            <control type="image">
+                                <left>-24</left><top>-24</top><width>448</width><height>273</height>
+                                <texture border="44">rr20_glow.png</texture>
+                                <colordiffuse>glow</colordiffuse>
+                                <visible>Control.HasFocus(8092)</visible>
+                            </control>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>400</width><height>225</height>
+                                <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                            </control>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>400</width><height>225</height>
+                                <aspectratio scalediffuse="false">scale</aspectratio>
+                                <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Thumb]</texture>
+                            </control>
+                            <control type="progress">
+                                <left>16</left><top>205</top><width>368</width><height>6</height>
+                                <info>ListItem.Property(percent)</info>
+                                <visible>Integer.IsGreater(ListItem.Property(percent),0)</visible>
+                            </control>
+                            <control type="image">
+                                <left>0</left><top>0</top><width>400</width><height>225</height>
+                                <texture border="20">rr20_ring.png</texture>
+                                <colordiffuse>focus</colordiffuse>
+                                <visible>Control.HasFocus(8092)</visible>
+                            </control>
+                            <control type="label">
+                                <left>4</left><top>239</top><width>392</width><height>34</height>
+                                <font>font12</font><textcolor>text</textcolor>
+                                <label>$INFO[ListItem.Label]</label>
+                            </control>
+                            <control type="label">
+                                <left>4</left><top>271</top><width>392</width><height>30</height>
+                                <font>font_tiny</font><textcolor>text3</textcolor>
+                                <label>$INFO[ListItem.Label2]</label>
+                            </control>
+                        </control>
+                    </focusedlayout>
+                    <content>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.1.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.1.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.1.thumb)]</thumb>
+                            <property name="n">$NUMBER[1]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.1.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.1.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.1.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.1.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.1.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.2.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.2.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.2.thumb)]</thumb>
+                            <property name="n">$NUMBER[2]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.2.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.2.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.2.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.2.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.2.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.3.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.3.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.3.thumb)]</thumb>
+                            <property name="n">$NUMBER[3]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.3.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.3.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.3.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.3.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.3.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.4.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.4.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.4.thumb)]</thumb>
+                            <property name="n">$NUMBER[4]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.4.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.4.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.4.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.4.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.4.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.5.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.5.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.5.thumb)]</thumb>
+                            <property name="n">$NUMBER[5]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.5.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.5.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.5.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.5.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.5.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.6.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.6.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.6.thumb)]</thumb>
+                            <property name="n">$NUMBER[6]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.6.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.6.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.6.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.6.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.6.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.7.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.7.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.7.thumb)]</thumb>
+                            <property name="n">$NUMBER[7]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.7.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.7.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.7.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.7.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.7.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.8.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.8.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.8.thumb)]</thumb>
+                            <property name="n">$NUMBER[8]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.8.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.8.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.8.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.8.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.8.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.9.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.9.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.9.thumb)]</thumb>
+                            <property name="n">$NUMBER[9]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.9.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.9.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.9.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.9.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.9.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.10.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.10.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.10.thumb)]</thumb>
+                            <property name="n">$NUMBER[10]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.10.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.10.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.10.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.10.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.10.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.11.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.11.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.11.thumb)]</thumb>
+                            <property name="n">$NUMBER[11]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.11.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.11.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.11.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.11.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.11.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.12.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.12.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.12.thumb)]</thumb>
+                            <property name="n">$NUMBER[12]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.12.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.12.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.12.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.12.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.12.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.13.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.13.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.13.thumb)]</thumb>
+                            <property name="n">$NUMBER[13]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.13.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.13.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.13.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.13.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.13.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.14.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.14.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.14.thumb)]</thumb>
+                            <property name="n">$NUMBER[14]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.14.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.14.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.14.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.14.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.14.title))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(lucent.cw.15.title)]</label>
+                            <label2>$INFO[Window(home).Property(lucent.cw.15.sub)]</label2>
+                            <thumb>$INFO[Window(home).Property(lucent.cw.15.thumb)]</thumb>
+                            <property name="n">$NUMBER[15]</property>
+                            <property name="fanart">$INFO[Window(home).Property(lucent.cw.15.fanart)]</property>
+                            <property name="logo">$INFO[Window(home).Property(lucent.cw.15.logo)]</property>
+                            <property name="plot">$INFO[Window(home).Property(lucent.cw.15.plot)]</property>
+                            <property name="percent">$INFO[Window(home).Property(lucent.cw.15.percent)]</property>
+                            <onclick>RunScript(special://skin/scripts/continuerow.py,play)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.cw.15.title))</visible>
+                        </item>
+                    </content>
+                </control>
+            </control>
             <!-- Tonight for you (scripts/foryou.py) -->
             <control type="group">
                 <width>1760</width>
@@ -7851,7 +8201,7 @@
                     <onback condition="Integer.IsGreater(Container(8091).CurrentItem,1)">SetFocus(8091,0,absolute)</onback>
                     <onback condition="!Integer.IsGreater(Container(8091).CurrentItem,1) + !String.IsEmpty(Window(home).Property(lucent.toprow)) + !String.IsEqual(Window(home).Property(lucent.toprow),8091)">SetFocus($INFO[Window(home).Property(lucent.toprow)])</onback>
                     <onback condition="!Integer.IsGreater(Container(8091).CurrentItem,1) + [String.IsEmpty(Window(home).Property(lucent.toprow)) | String.IsEqual(Window(home).Property(lucent.toprow),8091)]">SetFocus(9000)</onback>
-                    <onup>8090</onup>
+                    <onup>8092</onup>
                     <ondown>8101</ondown>
                     <onfocus>SetProperty(nuvio.row,8091,home)</onfocus>
                     <itemlayout width="248" height="370">
