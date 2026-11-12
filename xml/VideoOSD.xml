@@ -267,6 +267,16 @@
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=replay)</onclick>
                 <visible>System.AddonIsEnabled(plugin.video.lucent) + String.IsEqual(Window(Home).Property(lucent.lv.replay),1) + !VideoPlayer.Content(livetv)</visible>
             </control>
+            <!-- "Mark intro": press at the start and at the end of a missing intro; the video add-on sends it to TheIntroDB -->
+            <control type="button" id="121">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/intromark_fo.png</texturefocus>
+                <texturenofocus>buttons/intromark_nf.png</texturenofocus>
+                <onclick>RunPlugin(plugin://plugin.video.lucent/?action=intro_mark)</onclick>
+                <visible>System.AddonIsEnabled(plugin.video.lucent) + String.IsEqual(Window(Home).Property(lucent.lv.intromark),1) + !VideoPlayer.Content(livetv)</visible>
+            </control>
             <control type="button" id="112">
                 <width>84</width>
                 <height>84</height>

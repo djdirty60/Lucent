@@ -8,7 +8,7 @@ The screen itself is scripts/agenda.py; this file holds everything that has no s
   new episode     a pop-up "Watch now / Later", from the background helper (run_service)
 
 What the calendar shows: the series (still running) of your Trakt collection and the films of your collection /
-watchlist that are about to come out; the Trakt login of your video add-on (Lucent Video). The bell of a title is OFF
+watchlist that are about to come out; the Trakt login of your video add-on. The bell of a title is OFF
 until you switch it on; with the bell on you get a pop-up for a new episode / the digital release of a film.
 Episodes, artwork and plots come from TMDB (the key of your video add-on, like the info page). The air time
 comes from TVmaze (free, no key) when it knows the show; otherwise only the date is known.
@@ -611,7 +611,7 @@ def follow_button():
 
 # ----------------------------------------------------------------------------- opening a title
 def open_title(name, kind, tmdb=None):
-    """Opens the title in your video add-on (Lucent Video): the seasons of a series, or the film."""
+    """Opens the title in your video add-on: the seasons of a series, or the film."""
     if tmdb and info.lv_open_with():
         url = info.lv_play_url(kind, tmdb)
         xbmc.executebuiltin(f"PlayMedia({url})" if kind == "movie" else f'ActivateWindow(Videos,"{url}",return)')

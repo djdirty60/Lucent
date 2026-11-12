@@ -7,7 +7,7 @@
 
 One zip file with: Lucent's settings and menu (skin settings), its own files (keys, calendar, sport, favourites of the
 guide ...), Kodi's favourites, sources and advancedsettings, the keymaps Lucent writes, and the settings of
-IPTV Simple, Lucent Subtitles and Lucent Video (with its keys and profiles). Not included: caches, databases and the library's .strm files (the
+IPTV Simple, Lucent Subtitles and the video add-on (with its keys and profiles). Not included: caches, databases and the library's .strm files (the
 video add-on writes those again by itself).
 
 Restoring: the skin settings are put back one by one with Kodi's own commands (Kodi keeps them in memory and would

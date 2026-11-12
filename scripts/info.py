@@ -162,7 +162,7 @@ def _lv_json(name):
 
 
 def lv_trakt():
-    """(client id, login) of the Trakt login of the video add-on Lucent Video, or ("", "") when it is not logged in.
+    """(client id, login) of the Trakt login of the video add-on, or ("", "") when it is not logged in.
     The add-on renews its own login whenever it talks to Trakt, so an expired one is simply not used."""
     if not xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
         return "", ""
@@ -194,7 +194,7 @@ def relink_trakt():
 
 
 def lv_supports(action):
-    """True when the installed Lucent Video knows this action or row name (versions can go back as well as forward,
+    """True when the installed the video add-on knows this action or row name (versions can go back as well as forward,
     so its code is checked instead of its version number)."""
     try:
         path = xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/lib/router.py")
@@ -205,7 +205,7 @@ def lv_supports(action):
 
 
 def lv_renew(wait=15):
-    """Lucent Video renews its Trakt login itself: ask it (0.32.4+: action=trakt_refresh, older: open the watchlist once)
+    """The video add-on renews its Trakt login itself: ask it (0.32.4+: action=trakt_refresh, older: open the watchlist once)
     and wait for the new login."""
     old = _lv_json("trakt.json").get("access_token") or ""
     if not old or not _lv_json("trakt.json").get("refresh_token"):
@@ -219,7 +219,7 @@ def lv_renew(wait=15):
         if monitor.waitForAbort(0.5):
             return
         if (_lv_json("trakt.json").get("access_token") or "") != old:
-            log("Trakt login renewed by Lucent Video")
+            log("Trakt login renewed by the video add-on")
             return
 
 
@@ -342,7 +342,7 @@ def after_trakt_change():
     xbmc.executebuiltin("Container.Refresh")
 
 
-# ----------------------------------------------------------------------------- Lucent Video (1.37.0)
+# ----------------------------------------------------------------------------- the video add-on (1.37.0)
 LV_ID = "plugin.video.lucent"
 LVP = "plugin://plugin.video.lucent/"
 
@@ -359,13 +359,13 @@ def lv_version():
 
 
 def use_lv(prefix="ListItem."):
-    """Who does Library and lists / Mark as watched: Lucent Video, for its own titles and for titles of other video
+    """Who does Library and lists / Mark as watched: the video add-on, for its own titles and for titles of other video
     add-ons."""
     return lv_on()
 
 
 def lv_target(prefix="ListItem."):
-    """{type, tmdb[, season, episode]} of the item in Lucent Video's words, or None without a TMDB number.
+    """{type, tmdb[, season, episode]} of the item in the video add-on's words, or None without a TMDB number.
     Episodes and seasons use the number of their series (from the item, or from Kodi's library)."""
     def get(label):
         return xbmc.getInfoLabel(f"{prefix}{label}")
@@ -401,7 +401,7 @@ def lv_watched(prefix="ListItem."):
         return
     state = HOME.getProperty("nuvio.info.watched")
     watched = (state == "1") if state in ("0", "1") else int(xbmc.getInfoLabel(f"{prefix}PlayCount") or 0) > 0
-    lv_run("watched", value=0 if watched else 1, **target)          # Lucent Video tells Trakt / Simkl (or keeps it itself)
+    lv_run("watched", value=0 if watched else 1, **target)          # the video add-on tells Trakt / Simkl (or keeps it itself)
     HOME.setProperty("nuvio.info.watched", "0" if watched else "1")
     dbid = xbmc.getInfoLabel(f"{prefix}DBID")
     dbtype = xbmc.getInfoLabel(f"{prefix}DBType")
@@ -414,14 +414,14 @@ def lv_watched(prefix="ListItem."):
 
 
 def lv_lists(prefix="ListItem."):
-    """Library and lists through Lucent Video (its own account: Trakt, Simkl or this device)."""
+    """Library and lists through the video add-on (its own account: Trakt, Simkl or this device)."""
     target = lv_target(prefix)
     if target and target["type"] in ("season", "episode"):
         target = {"type": "tvshow", "tmdb": target["tmdb"]}          # a season or episode: the whole series goes on the list
     if not target:
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
         return
-    if lv_version() >= LV_LISTS:                                      # Lucent Video's own chooser (knows what is on which list)
+    if lv_version() >= LV_LISTS:                                      # the video add-on's own chooser (knows what is on which list)
         lv_run("lists", **target)
         return
     title = xbmc.getInfoLabel(f"{prefix}Title") or xbmc.getInfoLabel(f"{prefix}Label")
@@ -436,12 +436,12 @@ def lv_lists(prefix="ListItem."):
 
 
 def lv_menu(prefix="ListItem."):
-    """'More' on the info page: all of Lucent Video's options for this title in one menu (Lucent Video 0.30.0)."""
+    """'More' on the info page: all of the video add-on's options for this title in one menu (the video add-on 0.30.0)."""
     target = lv_target(prefix)
     if not target:
         xbmcgui.Dialog().ok(HEADING, tr("no_ids"))
         return
-    # Lucent Video 0.33.3 leaves out what the page has a button for; ask for everything when one of those is missing
+    # the video add-on 0.33.3 leaves out what the page has a button for; ask for everything when one of those is missing
     on_page = xbmc.getCondVisibility(
         "Control.IsVisible(21) + Control.IsVisible(22)"
         " + [Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)]"
@@ -451,7 +451,7 @@ def lv_menu(prefix="ListItem."):
     lv_run("title_menu", **target)
 
 
-LV_LISTS = (0, 30, 0)       # the first Lucent Video with action=lists (asked for in the project; not in 0.29.x)
+LV_LISTS = (0, 30, 0)       # the first the video add-on with action=lists (asked for in the project; not in 0.29.x)
 G_LV = {
     "wl_add": ("Watchlist: add", "Kijklijst: toevoegen"),
     "wl_remove": ("Watchlist: remove", "Kijklijst: weghalen"),
@@ -720,7 +720,7 @@ def tmdb_key():
         if key:
             break
         key = _read_key(path)
-    if not key:                                         # Lucent Video: its own setting, or the tester code's keys.json
+    if not key:                                         # the video add-on: its own setting, or the tester code's keys.json
         try:
             key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
         except Exception:  # noqa: BLE001 - not installed
@@ -1234,7 +1234,7 @@ def _overlay_open():
 
 
 def lv_open_with():
-    """Titles opened by Lucent itself (actor, collection, similar): played with Lucent Video."""
+    """Titles opened by Lucent itself (actor, collection, similar): played with the video add-on."""
     return lv_on()
 
 
@@ -1417,7 +1417,7 @@ def open_seasons():
     """A series in a TMDb row (streaming services ...): straight to its seasons and episodes in the video add-on, like a
     series in the library. Without one its page opens instead."""
     tmdb_id = HOME.getProperty("nuvio.open.tmdb")
-    if lv_open_with() and tmdb_id.isdigit():                 # Lucent Video: its seasons, no Trakt number needed
+    if lv_open_with() and tmdb_id.isdigit():                 # the video add-on: its seasons, no Trakt number needed
         folder = lv_play_url("tv", tmdb_id)
         if xbmc.getCondVisibility("Window.IsVisible(Lucent_Service.xml)"):
             HOME.setProperty("lucent.svc.folder", folder)    # the pop-up closes and opens it (it is on top of everything)

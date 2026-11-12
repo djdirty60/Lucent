@@ -19,7 +19,7 @@ import xbmcgui
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 DONE = "lucent.setup.done"
 IPTV = "pvr.iptvsimple"
-LV = "plugin.video.lucent"        # Lucent Video: works best with the skin (rows, info page, library, subtitles)
+LV = "plugin.video.lucent"        # the video add-on: works best with the skin (rows, info page, library, subtitles)
 GREEN, ORANGE, GREY = "FF4CC38A", "FFE8A33D", "FF8A96A3"
 
 
@@ -75,7 +75,7 @@ def ac_welcome():
 
 
 def st_video():
-    """Which video add-on fills the rows and plays: Lucent Video works best, any other add-on works too."""
+    """Which video add-on fills the rows and plays: the video add-on works best, any other add-on works too."""
     if has(LV):
         account = setting(LV, "trakt_user") or setting(LV, "simkl_user")
         return "ok", t(f"Your video add-on is installed{'  ·  account: ' + account if account else ''}",
@@ -158,7 +158,7 @@ def ac_iptv():
 
 
 def st_subskip():
-    """1.37.0: subtitles, spoken language and skip intro are in Lucent Video now."""
+    """1.37.0: subtitles, spoken language and skip intro are in the video add-on now."""
     if not cond(f"System.AddonIsEnabled({LV})"):
         return "info", t("Optional: a video add-on can do subtitles and skip intro", "Optioneel: een video-add-on kan ondertitels en intro overslaan doen")
     home = xbmcgui.Window(10000)
@@ -175,18 +175,6 @@ def ac_subskip():
             (t("Settings", "Instellingen"), lambda: run(base + "subs_settings)"))]
 
 
-
-
-def st_trakt():
-    import traktlogin
-    data = traktlogin.load()
-    if data.get("access_token"):
-        return "ok", t(f"Logged in as {data.get('user', '')}", f"Ingelogd als {data.get('user', '')}")
-    return "info", t("Optional: not logged in to Trakt", "Optioneel: niet ingelogd bij Trakt")
-
-
-def ac_trakt():
-    return [(t("Trakt login", "Trakt-login"), lambda: run("RunScript(special://skin/scripts/traktlogin.py)"))]
 
 
 def st_library():
@@ -392,17 +380,6 @@ STEPS = [
       "TMDb (The Movie Database) levert posters, logo's, acteurs, studio's en trailers. Een eigen sleutel is gratis en "
       "maakt alles sneller en vollediger.\n\nZo krijg je er een: maak een account op themoviedb.org, dan Instellingen > "
       "API > 'Aanmaken' (persoonlijk gebruik). Kopieer de 'API-sleutel' (de korte, 32 tekens)."), st_tmdb, ac_tmdb),
-    ("trakt", "icons/trakt.png", ("Trakt", "Trakt"),
-     ("Optional. With a Trakt login Lucent keeps your watch history, watchlist and lists, and the calendar shows the series "
-      "and films of your collection. It works with every video add-on.\n\nTrakt wants your own free API app once: on "
-      "trakt.tv go to Settings > Your API Apps > New application, name it Lucent and use the redirect uri "
-      "urn:ietf:wg:oauth:2.0:oob. Press 'Trakt login', type its Client ID and Client Secret, and enter the code you get "
-      "on trakt.tv/activate.",
-      "Optioneel. Met een Trakt-login houdt Lucent je kijkgeschiedenis, kijklijst en lijsten bij, en toont de kalender de "
-      "series en films uit je collectie. Het werkt met elke video-add-on.\n\nTrakt wil één keer je eigen gratis API-app: "
-      "ga op trakt.tv naar Settings > Your API Apps > New application, noem hem Lucent en gebruik als redirect uri "
-      "urn:ietf:wg:oauth:2.0:oob. Druk op 'Trakt-login', typ de Client ID en Client Secret, en vul de code in die je "
-      "krijgt op trakt.tv/activate."), st_trakt, ac_trakt),
     ("iptv", "icons/tv.png", ("Live TV (IPTV)", "Live tv (IPTV)"),
      ("For live TV Kodi uses IPTV Simple Client. Have an Xtream login (server address, user name, password)? "
       "Press 'Xtream login': Lucent checks it with the server and sets up IPTV Simple for you - channels, guide and replay. "

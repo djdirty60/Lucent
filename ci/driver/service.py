@@ -3885,7 +3885,7 @@ def letters_test():
 
 
 def lucentvideo_test():
-    """Lucent Video 0.21.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
+    """the video add-on 0.21.0 (plugin.video.lucent): installs, its menus answer (without a TMDB key: a dialog, closed here)."""
     log(f"lucentvideo: addon={cond('System.HasAddon(plugin.video.lucent)')} version={lab('System.AddonVersion(plugin.video.lucent)')}")
     out = {"root": _dir_guarded("plugin://plugin.video.lucent/")}
     out["tools"] = _dir_guarded("plugin://plugin.video.lucent/?action=tools")
@@ -3918,7 +3918,7 @@ def lucentvideo_test():
     mon.waitForAbort(2)
     try:
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
-            lines = [ln for ln in fh if "plugin.video.lucent" in ln or "Lucent-Video" in ln or "lucent video" in ln.lower()]
+            lines = [ln for ln in fh if "plugin.video.lucent" in ln or "lucent-video" in ln.lower()]
         errs = [ln.strip()[24:200] for ln in lines if " error " in ln.lower() or "Traceback" in ln]
         secrets = [ln.strip()[24:120] for ln in lines if "api_key=" in ln or "Authorization" in ln]
         log(f"lucentvideo: log lines={len(lines)} errors={len(errs)} secrets={len(secrets)} {json.dumps(errs[:6])}")
@@ -3966,7 +3966,7 @@ def nolib_test():
 
 
 def infobuttons_test():
-    """1.37.0: Library and lists / Mark as watched work with Lucent Video, also for titles of other video add-ons."""
+    """1.37.0: Library and lists / Mark as watched work with the video add-on, also for titles of other video add-ons."""
     out = {}
     try:
         import sys as _s
@@ -3984,13 +3984,13 @@ def infobuttons_test():
         out["use_lv"] = _i.use_lv()
         out["target"] = _i.lv_target()
         out["lv_version"] = list(_i.lv_version())
-        out["lists_by_lv"] = _i.lv_version() >= _i.LV_LISTS      # False until Lucent Video has action=lists
+        out["lists_by_lv"] = _i.lv_version() >= _i.LV_LISTS      # False until the video add-on has action=lists
         out["play_movie"] = _i.lv_play_url("movie", 603)
         out["play_tv"] = _i.lv_play_url("tv", 1399)
         HOME_ = xbmcgui.Window(10000)
         HOME_.clearProperty("nuvio.info.watched")
         out["fen_light"] = _i.fen_light_id()                 # the stand-in is a Fen Light clone: toggle_watched lets Fen mark it
-        _i.lv_watched()                                      # so call the Lucent Video route itself
+        _i.lv_watched()                                      # so call the the video add-on route itself
         mon.waitForAbort(10)
         out["prop_after"] = HOME_.getProperty("nuvio.info.watched")
         try:
@@ -3998,7 +3998,7 @@ def infobuttons_test():
                 out["lv_log_marked"] = any("marked episode 1399 watched" in ln for ln in fh)
         except OSError:
             out["lv_log_marked"] = None
-        _i.lv_menu()                                         # 'More': Lucent Video's menu with all options
+        _i.lv_menu()                                         # 'More': the video add-on's menu with all options
         for _ in range(20):
             if cond("Window.IsActive(contextmenu)"):
                 break
@@ -4052,7 +4052,7 @@ def progress_colour_test():
 
 
 def formatclips_test():
-    """Lucent Video's format check: do its clips start in Kodi (windowed, like the check does)?"""
+    """the video add-on's format check: do its clips start in Kodi (windowed, like the check does)?"""
     out = {}
     base = xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/formattest/")
     player = xbmc.Player()
@@ -4144,7 +4144,7 @@ def trailerlayer_test():
 
 
 def addonsettings_test():
-    """1.40.0: add-on settings in three columns, with the group tiles and picture for Lucent Video."""
+    """1.40.0: add-on settings in three columns, with the group tiles and picture for the video add-on."""
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1)
@@ -4157,7 +4157,7 @@ def addonsettings_test():
         tag = "lv" if "lucent" in addon and "video" in addon else "other"
         log(f"addonsettings {tag}: open={xbmcgui.getCurrentWindowDialogId() == 10140} heading={lab('Control.GetLabel(2)')!r} "
             f"count={HOME.getProperty('lucent.as.count')!r} "
-            f"cat={HOME.getProperty('lucent.as.cat')!r}")
+            f"cat={HOME.getProperty('lucent.as.cat')!r} lvexp={cond('$EXP[LucentAddonSettingsLV]')}")
         shot(f"addonsettings-{tag}")
         if tag == "lv":
             xbmc.executebuiltin("SetFocus(3)")
@@ -4205,6 +4205,32 @@ def osdclose_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1)
     log("osdclose: " + json.dumps(out))
+
+
+def osdintro_test():
+    """2.0.1: 'Mark intro' in the player menu when the video add-on knows action=intro_mark."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    HOME.setProperty("lucent.lv.intromark", "1")
+    HOME.setProperty("lucent.lv.replay", "1")
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    for _ in range(60):
+        if mon.waitForAbort(0.2) or cond("Player.HasVideo"):
+            break
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(1.5)
+    out["button"] = cond("Control.IsVisible(121)")
+    xbmc.executebuiltin("SetFocus(121)")
+    mon.waitForAbort(1)
+    out["focus"] = cond("Control.HasFocus(121)")
+    shot("osd-intromark")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.Player().stop()
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("osdintro: " + json.dumps(out))
 
 
 def owntrakt_test():
@@ -4588,7 +4614,7 @@ def omdblist_test():
 
 
 def flicker_test():
-    """Lucent Video marks many titles watched: does the focus jump to the side menu while the library changes?"""
+    """the video add-on marks many titles watched: does the focus jump to the side menu while the library changes?"""
     import threading
     r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {"properties": ["playcount"]}})))
     movies = (r.get("result") or {}).get("movies") or []
@@ -4641,7 +4667,16 @@ def flicker_test():
     log("flicker: " + json.dumps(out))
 
 
+ONLY = None
+try:
+    ONLY = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "only.txt")).read().split()
+except OSError:
+    pass
+
+
 def safe(test):
+    if ONLY is not None and test.__name__ not in ONLY:
+        return
     """One test that fails (for example because Lucent Library is no longer there) does not stop the others."""
     try:
         test()
@@ -4664,6 +4699,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(owntrakt_test)
+    safe(osdintro_test)
     safe(flicker_test)
     safe(diaglog_test)
     safe(dv2_test)
