@@ -21,6 +21,7 @@ import threading
 import time
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
@@ -247,6 +248,7 @@ def run():
                 settings_state["open"] = False
                 HOME.clearProperty("lucent.as.cat")
                 HOME.clearProperty("lucent.as.count")
+                HOME.clearProperty("lucent.as.lv")
             return
         win = xbmcgui.Window(10140)
         if not settings_state["open"]:
@@ -260,6 +262,14 @@ def run():
                     break
                 count += 1
             HOME.setProperty("lucent.as.count", str(count))
+            try:                                       # the settings of the video add-on of the Lucent repository?
+                name = xbmcaddon.Addon("plugin.video.lucent").getAddonInfo("name")
+            except Exception:  # noqa: BLE001 - not installed
+                name = ""
+            if name and name in xbmc.getInfoLabel("Control.GetLabel(2)"):
+                HOME.setProperty("lucent.as.lv", "1")
+            else:
+                HOME.clearProperty("lucent.as.lv")
         try:
             fid = win.getFocusId()
         except RuntimeError:

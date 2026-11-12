@@ -127,7 +127,7 @@
         </definition>
     </include>
     <!-- ===== Add-on settings in three columns (DialogAddonSettings.xml) ===== -->
-    <expression name="LucentAddonSettingsLV">String.Contains(Control.GetLabel(2),$INFO[System.AddonTitle(plugin.video.lucent)]) + System.HasAddon(plugin.video.lucent)</expression>
+    <expression name="LucentAddonSettingsLV">String.IsEqual(Window(Home).Property(lucent.as.lv),1) + System.HasAddon(plugin.video.lucent)</expression>
     <variable name="LucentAddonSettingsCard">
         <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),0)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_gear.jpg</value>
         <value condition="String.IsEqual(Window(home).Property(lucent.as.cat),1)">special://home/addons/plugin.video.lucent/resources/media/menu/tools_user.jpg</value>
