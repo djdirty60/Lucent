@@ -123,7 +123,7 @@
                         <height>72</height>
                         <label>•••  $LOCALIZE[31837]</label>
                         <onclick>RunScript(special://skin/scripts/info.py,lvmenu)</onclick>
-                        <visible>System.AddonIsEnabled(plugin.video.lucent) + String.StartsWith(System.AddonVersion(plugin.video.lucent),0.3) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [!String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.DBID)]</visible>
+                        <visible>System.AddonIsEnabled(plugin.video.lucent) + !String.StartsWith(System.AddonVersion(plugin.video.lucent),0.1) + !String.StartsWith(System.AddonVersion(plugin.video.lucent),0.2) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [!String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.Property(tmdb_id)) | !String.IsEmpty(ListItem.DBID)]</visible>
                     </control>
                     <!-- Options: edit title / sort title, choose art, remove from library (Kodi's Manage menu) -->
                     <control type="button" id="24">

@@ -65,7 +65,42 @@ def fresh_icons():
         xbmc.executebuiltin(f"Skin.SetString({key},{version})")
 
 
+def _skin(key):
+    return xbmc.getInfoLabel(f"Skin.String({key})")
+
+
+def first_start():
+    """A new installation: the one-time jobs one after the other (they used to start as six scripts at the same time
+    from Home, which made small boxes hang). Returns True when the skin reloads for the light mode."""
+    import settings
+    if not _skin("lucent.lite.checked"):
+        step("light mode check", settings.lite_check)
+    if not _skin("nuvio.migrated"):
+        import migrate
+        step("settings of Nuvio Arc", migrate.migrate)
+        xbmc.executebuiltin('Skin.SetString(nuvio.migrated,"1")', True)
+        if _skin("nuvio.menu.version"):
+            step("settings", settings.sync)
+    if not _skin("nuvio.menu.version"):
+        import menu
+        step("menu", menu.init)
+    elif not _skin("lucent.addonw4"):
+        import menu
+        step("add-ons row", menu.addons_once)
+    if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)") and _skin("lucent.lvrows") != "done4" \
+            and _skin("nuvio.menu.version"):
+        import menu
+        step("rows of the video add-on", menu.lv_convert)
+    lite = xbmc.getCondVisibility("Skin.HasSetting(lucent.lite)")
+    if lite != bool(_skin("lucent.lite.built")):
+        step("light mode", settings.lite_build)      # reloads the skin: Home starts this script again
+        return True
+    return False
+
+
 def run():
+    if first_start():
+        return
     xbmc.executebuiltin("Skin.Reset(nuvio.osdstats)")      # the old player-info overlay: now its own window (playerinfo.py)
     step("season page", season_page)
     step("fresh icons", fresh_icons)
@@ -78,6 +113,8 @@ def run():
     if xbmc.getCondVisibility("Pvr.HasTVChannels"):
         import sport
         step("sport tab", sport.ensure_tab)
+    if not _skin("lucent.setup.done") and not xbmc.getInfoLabel("Window(home).Property(lucent.setup.shown)"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py,first)")   # the very first time, after the jobs above
     import helper
     helper.run()                                     # keeps running until Kodi stops or the skin is updated
 

@@ -377,7 +377,9 @@ def run():
             except Exception as error:  # noqa: BLE001
                 log(f"pause clean: {error}")
             fast = colour.tick() or settings_state["open"]      # quick while the add-on settings are open
-            if monitor.waitForAbort(0.25 if fast else 1):
+            # nobody pressed a button for half a minute: look around less often (small boxes)
+            pause = 0.25 if fast else (2.5 if cond("System.IdleTime(30)") else 1)
+            if monitor.waitForAbort(pause):
                 break
     finally:
         stop.set()

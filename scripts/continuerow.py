@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Lucent: "Continue watching" from the Kodi library in ONE row - films and episodes you stopped in, then the next
-episode of every series you are watching.
+"""Lucent: "Continue watching" for series from the Kodi library in ONE row - the episodes you stopped in, then the
+next episode of every series you are watching (films have a row of their own).
 
     RunScript(special://skin/scripts/continuerow.py,play)   OK on an item of the row (Container(8092))
 
-The Lucent helper (helper.py) calls update() once a minute while Skin.HasSetting(lucent.cw.on); it only asks the
+The Lucent helper (helper.py) calls update() once a minute (always on); it only asks the
 library again when something was played or the library changed (VideoLibrary is quick, but not needed every minute).
 The row reads Window(home).Property(lucent.cw.<n>.*) - the same idea as "Tonight for you".
 """
@@ -51,16 +51,7 @@ def _percent(resume):
 
 def collect():
     items = []
-    movies = rpc("VideoLibrary.GetMovies", {
-        "filter": {"field": "inprogress", "operator": "true", "value": ""},
-        "properties": ["title", "year", "art", "resume", "lastplayed", "plot", "rating", "file"],
-        "sort": {"method": "lastplayed", "order": "descending"}, "limits": {"start": 0, "end": MAX}}).get("movies") or []
-    for m in movies:
-        art = m.get("art") or {}
-        items.append({"type": "movie", "id": m["movieid"], "title": m.get("title", ""), "sub": str(m.get("year") or ""),
-                      "thumb": _art(art, "landscape", "fanart", "thumb", "poster"), "fanart": _art(art, "fanart"),
-                      "logo": _art(art, "clearlogo"), "plot": m.get("plot", ""), "file": m.get("file", ""),
-                      "percent": _percent(m.get("resume") or {}), "last": m.get("lastplayed", "")})
+    # films are not in this row: they have their own row ("Films die je kijkt" in Menu and widgets)
     eps = rpc("VideoLibrary.GetEpisodes", {
         "filter": {"field": "inprogress", "operator": "true", "value": ""},
         "properties": ["title", "showtitle", "season", "episode", "art", "resume", "lastplayed", "plot", "file", "tvshowid"],
@@ -111,10 +102,6 @@ def signature():
 
 
 def update(force=False):
-    if not xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.on)"):
-        if HOME.getProperty(P + "count"):
-            clear()
-        return
     sig = signature()
     if not force and sig == _STATE["sig"] and time.time() - _STATE["t"] < 3600:
         return

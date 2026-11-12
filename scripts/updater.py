@@ -77,7 +77,11 @@ def write_state(state):
 
 
 def version_key(version):
-    return tuple(int(x) for x in re.findall(r"\d+", version))
+    """1.0.0~beta1 < 1.0.0~beta2 < 1.0.0 < 1.0.1 (Kodi's own order: a ~ version comes before the final one)."""
+    base, _sep, pre = version.partition("~")
+    nums = [int(x) for x in re.findall(r"\d+", base)][:4]
+    nums += [0] * (4 - len(nums))
+    return tuple(nums) + ((0, int((re.findall(r"\d+", pre) or ["0"])[0])) if pre else (1, 0))
 
 
 def installed_version(addon_id):

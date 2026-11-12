@@ -199,7 +199,7 @@ WIDGETS_LV = [                                      # the video add-on (plugin.v
     (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
     (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
     (("Next up", "Volgende afleveringen"), LV + "nextup", "land"),
-    (("Continue watching and next up", "Verder kijken en volgende afleveringen"), LV + "watching", "land"),
+    (("Series · Continue watching and next up", "Series · Verder kijken en volgende aflevering"), LV + "watching", "land"),
     (("Watchlist · Films", "Kijklijst · Films"), LV + "watchlist_movie", "poster"),
     (("Watchlist · Series", "Kijklijst · Series"), LV + "watchlist_tv", "poster"),
     (("Watchlist · Coming soon", "Kijklijst · Komt binnenkort uit"), LV + "coming_watchlist", "poster"),
