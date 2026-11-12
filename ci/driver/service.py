@@ -4330,6 +4330,8 @@ def cwrow_test():
                     for n in range(1, int(out["count"] or 0) + 1)]
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
+    xbmc.executebuiltin("Dialog.Close(all,true)")          # the video add-on can ask something at start (skip intro)
+    mon.waitForAbort(1)
     xbmc.executebuiltin("SetFocus(8092)")
     mon.waitForAbort(2)
     out["row_visible"] = cond("Control.IsVisible(8092)")
@@ -4415,6 +4417,35 @@ def perf_test():
     except OSError as error:
         out["log"] = str(error)
     log("perf: " + json.dumps(out))
+
+
+def firststart_test():
+    """Speed point 1: a new installation runs its one-time jobs one after the other in startup.py (not 6 scripts from Home)."""
+    import importlib
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    out = {}
+    try:
+        text = open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace").read()
+        starts = [ln for ln in text.splitlines() if "the source file to load is" in ln and "skin/scripts/" in ln]
+        out["home_scripts_at_start"] = sorted({ln.split("skin/scripts/")[1].split(".py")[0] for ln in starts})
+    except OSError as error:
+        out["log"] = str(error)
+    for key in ("lucent.lite.checked", "lucent.addonw4"):
+        xbmc.executebuiltin(f"Skin.Reset({key})")
+    mon.waitForAbort(1)
+    t = time.time()
+    try:
+        import startup
+        importlib.reload(startup)
+        out["reload"] = startup.first_start()
+    except Exception as error:  # noqa: BLE001
+        out["error"] = f"{type(error).__name__}: {error}"
+    out["seconds"] = round(time.time() - t, 1)
+    out["lite_checked"] = lab("Skin.String(lucent.lite.checked)")
+    out["addonw4"] = lab("Skin.String(lucent.addonw4)")
+    out["alive"] = bool(lab("System.Time"))
+    log("firststart: " + json.dumps(out))
 
 
 def mousehome_test():
@@ -4937,6 +4968,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(mousehome_test)
+    safe(firststart_test)
     safe(perf_test)
     safe(cwrow_test)
     safe(litesetup_test)

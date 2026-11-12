@@ -5,16 +5,14 @@
     <!-- First time: write the default menu; once per session: select the start tab -->
     <!-- boxes with 2 GB memory or less get the light mode once (Skin settings > Advanced) -->
     <onload>ClearProperty(lucent.kids.ok,home)</onload>
-    <onload condition="String.IsEmpty(Skin.String(lucent.lite.checked))">RunScript(special://skin/scripts/settings.py,litecheck)</onload>
-    <onload condition="[Skin.HasSetting(lucent.lite) + String.IsEmpty(Skin.String(lucent.lite.built))] | [!Skin.HasSetting(lucent.lite) + !String.IsEmpty(Skin.String(lucent.lite.built))]">RunScript(special://skin/scripts/settings.py,litebuild)</onload>
-    <onload condition="String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/migrate.py)</onload>
+    <onload condition="!String.IsEmpty(Window(home).Property(nuvio.started)) + [[Skin.HasSetting(lucent.lite) + String.IsEmpty(Skin.String(lucent.lite.built))] | [!Skin.HasSetting(lucent.lite) + !String.IsEmpty(Skin.String(lucent.lite.built))]]">RunScript(special://skin/scripts/settings.py,litebuild)</onload>
     <onload condition="Skin.HasSetting(nuvio.trailer.test)">Skin.Reset(nuvio.trailer.test)</onload>   <!-- old test switch, no longer in Skin settings -->
     <!-- 1.31.58: bigger posters without the names under them (once; switch back in Skin settings) -->
     <onload condition="String.IsEmpty(Skin.String(lucent.posters.big))">Skin.SetBool(nuvio.posterlabels.hide)</onload>
     <onload condition="String.IsEmpty(Skin.String(lucent.posters.big))">Skin.SetString(lucent.posters.big,1)</onload>
-    <onload condition="String.IsEmpty(Skin.String(nuvio.menu.version)) + !String.IsEmpty(Skin.String(nuvio.migrated))">RunScript(special://skin/scripts/menu.py,init)</onload>
-    <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + String.IsEmpty(Skin.String(lucent.addonw4))">RunScript(special://skin/scripts/menu.py,addons)</onload>
-    <onload condition="!String.IsEmpty(Skin.String(nuvio.menu.version)) + System.HasAddon(plugin.video.lucent) + !String.IsEqual(Skin.String(lucent.lvrows),done4)">RunScript(special://skin/scripts/menu.py,lv)</onload>
+    <!-- the one-time jobs of a new installation run one after the other in startup.py; this one stays for a video
+         add-on installed later -->
+    <onload condition="!String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.menu.version)) + System.HasAddon(plugin.video.lucent) + !String.IsEqual(Skin.String(lucent.lvrows),done4)">RunScript(special://skin/scripts/menu.py,lv)</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started)) + !String.IsEmpty(Skin.String(nuvio.homepos))">Control.SetFocus(9000,$INFO[Skin.String(nuvio.homepos)])</onload>
     <onload condition="String.IsEmpty(Window(home).Property(nuvio.started))">SetFocus(9100)</onload>
     <onload condition="!$EXP[NuvioAnyRow]">SetFocus(9000)</onload>
@@ -28,7 +26,6 @@
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.posterfocus)</onload>
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.trailer.test)</onload>
     <!-- the very first time: the setup assistant (the most important settings and logins) -->
-    <onload condition="String.IsEmpty(Skin.String(lucent.setup.done)) + String.IsEmpty(Window(home).Property(lucent.setup.shown))">RunScript(special://skin/scripts/setup.py,first)</onload>
     <onload>SetProperty(nuvio.started,1,home)</onload>
     <controls>
         <include>LucentHomeMarkers</include>
