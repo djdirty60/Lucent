@@ -4233,6 +4233,42 @@ def osdintro_test():
     log("osdintro: " + json.dumps(out))
 
 
+def mousehome_test():
+    """Issue #13: with a mouse, the first posters of a Home row must not open the side menu."""
+    out = {}
+    def move(x, y):
+        try:
+            subprocess.run(["xdotool", "mousemove", str(x), str(y)], timeout=5)
+        except Exception as error:  # noqa: BLE001
+            log(f"xdotool error {error!r}")
+        mon.waitForAbort(1.2)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(1.5)
+    out["rows_focus"] = not cond("Control.HasFocus(9000)")
+    for name, x, y in (("poster1", 250, 820), ("poster2", 380, 820), ("rowtitle", 300, 600)):
+        move(x, y)
+        out[name + "_menu"] = cond("Control.HasFocus(9000)")
+        shot(f"mouse-{name}")
+        xbmc.executebuiltin("SetFocus(9100)")
+        move(1700, 100)
+        xbmc.executebuiltin("SetFocus(9100)")
+        mon.waitForAbort(0.8)
+    move(60, 300)
+    out["icon_menu"] = cond("Control.HasFocus(9000)")
+    shot("mouse-icon")
+    move(260, 300)
+    out["label_menu"] = cond("Control.HasFocus(9000)")
+    out["label_item"] = lab("Container(9000).ListItem.Label")
+    shot("mouse-label")
+    move(1700, 100)
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(1)
+    log("mousehome: " + json.dumps(out))
+
+
 def owntrakt_test():
     """2.0.1: Lucent's own Trakt login (traktlogin.py) comes before the login of a video add-on; Skin settings > Follow."""
     import importlib
@@ -4698,6 +4734,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    safe(mousehome_test)
     safe(owntrakt_test)
     safe(osdintro_test)
     safe(flicker_test)
