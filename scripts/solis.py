@@ -44,6 +44,8 @@ def wanted():
 
 def base():
     try:
+        if not xbmc.getCondVisibility(f"System.HasAddon({ADDON})"):
+            raise LookupError(ADDON)
         a = xbmcaddon.Addon(ADDON)
         host, port = (a.getSetting("host") or "homey.local").strip(), a.getSetting("port") or "8765"
     except Exception:  # noqa: BLE001

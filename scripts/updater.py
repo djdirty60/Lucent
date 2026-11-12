@@ -81,6 +81,8 @@ def version_key(version):
 
 
 def installed_version(addon_id):
+    if not xbmc.getCondVisibility(f"System.HasAddon({addon_id})"):
+        return ""                                        # not installed: no 'Unknown addon id' in the log
     try:
         return xbmcaddon.Addon(addon_id).getAddonInfo("version")
     except Exception:  # noqa: BLE001 - not installed

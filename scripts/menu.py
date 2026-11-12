@@ -253,7 +253,8 @@ def pick_lv_person():
     key = info.tmdb_key()
     if not key:
         try:
-            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
+            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip() \
+                if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)") else ""
         except Exception:  # noqa: BLE001
             key = ""
     if not key:
@@ -296,7 +297,8 @@ def lv_ready():
     if not has_lv():
         return False
     try:
-        if xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key"):
+        if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)") and \
+                xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key"):
             return True
     except Exception:  # noqa: BLE001
         return False

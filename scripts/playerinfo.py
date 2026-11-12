@@ -154,6 +154,8 @@ def location(path):
         addon = urllib.parse.urlparse(path).netloc
         try:
             import xbmcaddon
+            if not xbmc.getCondVisibility(f"System.HasAddon({addon})"):
+                return addon
             return xbmcaddon.Addon(addon).getAddonInfo("name")
         except Exception:  # noqa: BLE001
             return addon

@@ -4233,6 +4233,85 @@ def osdintro_test():
     log("osdintro: " + json.dumps(out))
 
 
+def _alive(seconds=20):
+    """Does Kodi still answer? Asked from another thread, so a stuck Kodi does not stop this driver."""
+    import threading
+    box = {}
+    def probe():
+        box["v"] = xbmc.getInfoLabel("System.Time")
+    th = threading.Thread(target=probe, daemon=True)
+    th.start()
+    th.join(seconds)
+    return "v" in box
+
+
+def _setup_look():
+    xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py)")
+    for _ in range(40):
+        if mon.waitForAbort(0.3) or cond("Window.IsVisible(Lucent_Setup.xml)"):
+            break
+    mon.waitForAbort(1.5)
+    n = int(lab("Container(100).NumItems") or 0)
+    for i in range(n):
+        if lab(f"Container(100).ListItemAbsolute({i}).Label") in ("Look", "Weergave"):
+            xbmc.executebuiltin(f"SetFocus(100,{i},absolute)")
+            mon.waitForAbort(0.5)
+            xbmc.executebuiltin("Action(Select)")
+            mon.waitForAbort(1.5)
+            return True
+    return False
+
+
+def litesetup_test():
+    """Reddit: light mode switched on in the setup assistant hung Kodi. Now the skin reloads after the assistant closes."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    out["look_step"] = _setup_look()
+    out["button"] = lab("Control.GetLabel(301)")
+    shot("lite-setup-before")
+    xbmc.executebuiltin("SetFocus(301)")
+    mon.waitForAbort(0.5)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    out["alive_in_setup"] = _alive()
+    out["setup_open"] = cond("Window.IsVisible(Lucent_Setup.xml)")
+    out["button_after"] = lab("Control.GetLabel(301)")
+    shot("lite-setup-after")
+    log("litesetup step1: " + json.dumps(out))
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(12)
+    out["alive_after_close"] = _alive()
+    out["lite"] = cond("Skin.HasSetting(lucent.lite)")
+    out["built"] = lab("Skin.String(lucent.lite.built)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(6)
+    out["home"] = cond("Window.IsActive(home)")
+    out["row1_items"] = lab("Container(8101).NumItems")
+    out["visible_rows"] = [i for i in range(8101, 8111) if cond(f"Control.IsVisible({i})")]
+    shot("lite-home")
+    log("litesetup: " + json.dumps(out))
+    xbmc.executebuiltin("Skin.Reset(lucent.lite)")             # back to normal for the old-path test
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,litebuild)")
+    mon.waitForAbort(10)
+
+
+def liteold_test():
+    """The old way (reload while the assistant is open), to see whether that is what hung Kodi. Runs last."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    out["look_step"] = _setup_look()
+    xbmc.executebuiltin("Skin.ToggleSetting(lucent.lite)")
+    xbmc.sleep(400)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,litebuild)")
+    mon.waitForAbort(15)
+    out["alive"] = _alive(30)
+    log("liteold: " + json.dumps(out))
+    if out["alive"]:
+        shot("lite-old")
+
+
 def mousehome_test():
     """Issue #13: with a mouse, the first posters of a Home row must not open the side menu."""
     import subprocess
@@ -4243,6 +4322,14 @@ def mousehome_test():
         except Exception as error:  # noqa: BLE001
             log(f"xdotool error {error!r}")
         mon.waitForAbort(1.2)
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                     "params": {"setting": "input.enablemouse", "value": True}}))
+    try:
+        subprocess.run(["xdotool", "search", "--name", "Kodi", "windowactivate", "--sync"], timeout=5)
+    except Exception as error:  # noqa: BLE001
+        log(f"xdotool error {error!r}")
+    move(900, 300)
+    move(910, 310)
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
@@ -4736,6 +4823,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(mousehome_test)
+    safe(litesetup_test)
     safe(owntrakt_test)
     safe(osdintro_test)
     safe(flicker_test)
@@ -4774,6 +4862,7 @@ def main():
     safe(wnitem_test)
     safe(osdclose_test)
     safe(newviews_test)
+    safe(liteold_test)
 
     try:                                                   # conditions Kodi could not read (like '[dv2]' in 1.34.1-1.34.14)
         with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:

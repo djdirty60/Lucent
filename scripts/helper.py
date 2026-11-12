@@ -262,10 +262,12 @@ def run():
                     break
                 count += 1
             HOME.setProperty("lucent.as.count", str(count))
-            try:                                       # the settings of the video add-on of the Lucent repository?
-                name = xbmcaddon.Addon("plugin.video.lucent").getAddonInfo("name")
-            except Exception:  # noqa: BLE001 - not installed
-                name = ""
+            name = ""                                  # the settings of the video add-on of the Lucent repository?
+            if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
+                try:
+                    name = xbmcaddon.Addon("plugin.video.lucent").getAddonInfo("name")
+                except Exception:  # noqa: BLE001
+                    name = ""
             if name and name in xbmc.getInfoLabel("Control.GetLabel(2)"):
                 HOME.setProperty("lucent.as.lv", "1")
             else:

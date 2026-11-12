@@ -203,6 +203,8 @@ def pick_time():
 
 def pick_level():
     try:
+        if not xbmc.getCondVisibility(f"System.HasAddon({DIM})"):
+            raise LookupError(DIM)
         addon = xbmcaddon.Addon(DIM)
         current = int(addon.getSetting("level") or 20)
     except Exception:  # noqa: BLE001
@@ -322,6 +324,8 @@ def sync():
     minutes = kodi_get("screensaver.time") or 3
     set_string("nuvio.ss.time.label", tr(("{0} minutes", "{0} minuten"), minutes) if minutes > 1 else tr(("1 minute", "1 minuut")))
     try:
+        if not xbmc.getCondVisibility(f"System.HasAddon({DIM})"):
+            raise LookupError(DIM)
         level = int(xbmcaddon.Addon(DIM).getSetting("level") or 20)
         nearest = min(SS_LEVELS, key=lambda item: abs(item[0] - level))
         set_string("nuvio.ss.level.label", tr(nearest[1]).split(" – ")[0])

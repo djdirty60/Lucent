@@ -722,7 +722,8 @@ def tmdb_key():
         key = _read_key(path)
     if not key:                                         # the video add-on: its own setting, or the tester code's keys.json
         try:
-            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip()
+            key = (xbmcaddon.Addon("plugin.video.lucent").getSetting("tmdb_key") or "").strip() \
+                if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)") else ""
         except Exception:  # noqa: BLE001 - not installed
             key = ""
         if not key:
