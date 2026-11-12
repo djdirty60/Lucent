@@ -352,10 +352,9 @@ def lv_on():
 
 
 def lv_version():
-    try:
-        return tuple(int(x) for x in xbmc.getInfoLabel(f"System.AddonVersion({LV_ID})").split(".")[:3])
-    except ValueError:
-        return (0, 0, 0)
+    # "1.0.0~beta1": only the numbers before the ~ count (a beta of 1.0.0 is newer than every 0.x)
+    numbers = re.findall(r"\d+", xbmc.getInfoLabel(f"System.AddonVersion({LV_ID})").split("~")[0])[:3]
+    return tuple(int(x) for x in numbers) + (0,) * (3 - len(numbers)) if numbers else (0, 0, 0)
 
 
 def use_lv(prefix="ListItem."):

@@ -4360,6 +4360,17 @@ def cwrow_test():
     out["info_title"] = lab("ListItem.Title")
     out["info_dbid"] = lab("ListItem.DBID")
     out["bell_button"] = cond("Control.IsVisible(23)")
+    out["more_button"] = cond("Control.IsVisible(25)")
+    out["lv_version"] = lab("System.AddonVersion(plugin.video.lucent)")
+    try:
+        import sys as _s
+        _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+        import importlib
+        import info as _i
+        importlib.reload(_i)
+        out["lv_version_parsed"] = list(_i.lv_version())
+    except Exception as error:  # noqa: BLE001
+        out["lv_version_parsed"] = str(error)
     shot("cw-info-libfilm")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -4446,6 +4457,34 @@ def firststart_test():
     out["addonw4"] = lab("Skin.String(lucent.addonw4)")
     out["alive"] = bool(lab("System.Time"))
     log("firststart: " + json.dumps(out))
+
+
+def remember_test():
+    """Issue #9: going back into a folder (Films ...) starts on the title you were on."""
+    out = {}
+    path = "plugin://plugin.video.fakefen/?mode=showcase"
+    for rnd in (1, 2):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin(f"ActivateWindow(Videos,{path},return)")
+        for _ in range(40):
+            if mon.waitForAbort(0.3) or int(lab("Container.NumItems") or 0) > 0:
+                break
+        mon.waitForAbort(2.5)
+        out[f"label_{rnd}"] = lab("ListItem.Label")
+        if rnd == 1:
+            view = xbmcgui.Window(xbmcgui.getCurrentWindowId()).getFocusId()
+            for _ in range(5):
+                xbmc.executebuiltin("Action(Right)" if cond("Container.Content(movies)") and view in (51, 52, 70, 72) else "Action(Down)")
+                mon.waitForAbort(0.4)
+            mon.waitForAbort(2)
+            out["picked"] = lab("ListItem.Label")
+            xbmc.executebuiltin("ActivateWindow(home)")
+            mon.waitForAbort(3)
+    out["back_on_it"] = out.get("label_2") == out.get("picked")
+    shot("remember")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("remember: " + json.dumps(out))
 
 
 def mousehome_test():
@@ -4968,6 +5007,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(mousehome_test)
+    safe(remember_test)
     safe(firststart_test)
     safe(perf_test)
     safe(cwrow_test)

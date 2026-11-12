@@ -3,7 +3,8 @@
 <includes>
     <!-- media flags row: keep its place fixed (no jumping) in the library views where Lucent shows flags (issue #9) -->
     <!-- the row with OMDb / MDBList scores in the lists: kept in place while a key is set, so nothing jumps (issue #8) -->
-    <expression name="LucentScoreRow">!String.IsEmpty(Window(home).Property(lucent.omdbl.on))</expression>
+    <expression name="LucentScoreRow">!String.IsEmpty(Window(home).Property(lucent.omdbl.on)) + ![Skin.HasSetting(lucent.rate.hide.rt) + Skin.HasSetting(lucent.rate.hide.rta) + Skin.HasSetting(lucent.rate.hide.mc) + Skin.HasSetting(lucent.rate.hide.lb)]</expression>
+    <!-- issue #9: with every other score switched off, IMDb stays on the first row instead of alone on a row of its own -->
     <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
         <value condition="Container.SortDirection(descending)">$LOCALIZE[31025]</value>
