@@ -308,6 +308,7 @@ Get:83 http://deb.debian.org/debian trixie/main amd64 libxdmcp6 amd64 1:1.1.5-1 
 Get:84 http://deb.debian.org/debian trixie/main amd64 libxcb1 amd64 1.17.0-2+b1 [144 kB]
 Get:85 http://deb.debian.org/debian trixie/main amd64 libx11-data all 2:1.8.12-1 [343 kB]
 Get:86 http://deb.debian.org/debian trixie/main amd64 libx11-6 amd64 2:1.8.12-1 [815 kB]
+Ign:86 http://deb.debian.org/debian trixie/main amd64 libx11-6 amd64 2:1.8.12-1
 Get:87 http://deb.debian.org/debian trixie/main amd64 libxext6 amd64 2:1.3.4-1+b3 [50.4 kB]
 Get:88 http://deb.debian.org/debian trixie/main amd64 libxi6 amd64 2:1.8.2-1 [78.9 kB]
 Get:89 http://deb.debian.org/debian trixie/main amd64 libatspi2.0-0t64 amd64 2.56.2-1+deb13u2 [81.1 kB]
@@ -318,6 +319,7 @@ Get:93 http://deb.debian.org/debian trixie/main amd64 libdconf1 amd64 0.40.0-5 [
 Get:94 http://deb.debian.org/debian trixie/main amd64 dconf-service amd64 0.40.0-5 [32.4 kB]
 Get:95 http://deb.debian.org/debian trixie/main amd64 dconf-gsettings-backend amd64 0.40.0-5 [28.6 kB]
 Get:96 http://deb.debian.org/debian trixie/main amd64 gsettings-desktop-schemas all 48.0-1 [700 kB]
+Get:86 http://deb.debian.org/debian trixie/main amd64 libx11-6 amd64 2:1.8.12-1 [815 kB]
 Get:97 http://deb.debian.org/debian trixie/main amd64 at-spi2-core amd64 2.56.2-1+deb13u2 [62.1 kB]
 Get:98 http://deb.debian.org/debian trixie/main amd64 libgpg-error0 amd64 1.51-4 [82.1 kB]
 Get:99 http://deb.debian.org/debian trixie/main amd64 libassuan9 amd64 3.0.2-2 [61.5 kB]
@@ -713,7 +715,7 @@ Get:488 http://deb.debian.org/debian-security trixie-security/main amd64 xserver
 Get:489 http://deb.debian.org/debian-security trixie-security/main amd64 xvfb amd64 2:21.1.16-1.3+deb13u4 [3199 kB]
 Get:490 http://deb.debian.org/debian trixie/main amd64 gnupg-utils amd64 2.4.7-21+deb13u1+b5 [194 kB]
 Preconfiguring packages ...
-Fetched 333 MB in 6s (52.2 MB/s)
+Fetched 333 MB in 24s (13.6 MB/s)
 Selecting previously unselected package libcom-err2:amd64.
 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4951 files and directories currently installed.)
 Preparing to unpack .../libcom-err2_1.47.2-3+b12_amd64.deb ...
@@ -2748,7 +2750,7 @@ Removing 'diversion of /lib/x86_64-linux-gnu/libparted.so.2.0.5 to /lib/x86_64-l
 Setting up systemd-cryptsetup (257.13-1~deb13u1) ...
 Setting up parted (3.6-5) ...
 Setting up udisks2 (2.10.1-12.1+deb13u2) ...
-sda: Failed to write 'change' to '/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/f8b3781a-1e82-4818-a1c3-63d806ec15bb/host1/target1:0:0/1:0:0:0/block/sda/uevent': Read-only file system
+sda: Failed to write 'change' to '/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/f8b3781a-1e82-4818-a1c3-63d806ec15bb/host0/target0:0:0/0:0:0:0/block/sda/uevent': Read-only file system
 Created symlink '/etc/systemd/system/graphical.target.wants/udisks2.service' → '/usr/lib/systemd/system/udisks2.service'.
 Processing triggers for libc-bin (2.41-12+deb13u4) ...
 Processing triggers for systemd (257.13-1~deb13u1) ...
