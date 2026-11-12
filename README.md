@@ -6,7 +6,7 @@
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font.
 
-Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyfin, YouTube, an IPTV add-on, Fen Light and its clones, TMDb Helper …) or of your Kodi library can become a row on Home. With **Lucent Video** (its own video add-on) Home fills by itself and the buttons on the info page, the calendar, subtitles and skip intro use it.
+Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyfin, YouTube, an IPTV add-on, Fen Light and its clones, TMDb Helper …) or of your Kodi library can become a row on Home. With the video add-on of the Lucent repository Home fills by itself and the buttons on the info page, subtitles and skip intro use it. Trakt (watchlist, lists, the calendar) goes through Lucent's own Trakt login, so it works with every video add-on.
 
 ![Home screen](screenshots/home.jpg)
 
@@ -18,7 +18,7 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 
 ## New in 2.0 RC 1
 
-- **Checked and tidied up** – only Lucent Video and your own add-on folders; the code for one older video add-on is gone (its old rows turn into Lucent Video rows by themselves). Similar titles on the info page come from Lucent Video. The skin no longer installs Lucent Subtitles by itself (Lucent Video does subtitles); it stays in the Lucent repository for who only wants a subtitle add-on.
+- **Checked and tidied up** – only your video add-on and your own add-on folders; the code for one older video add-on is gone (its old rows turn into rows of your video add-on by themselves). Similar titles on the info page come from your video add-on. The skin no longer installs Lucent Subtitles by itself (your video add-on does subtitles); it stays in the Lucent repository for who only wants a subtitle add-on.
 - **New views** – Spotlight, Wall with info panel, Carousel, Title card, Banner list, Progress rings, Mosaic, Timeline, Episode cards, Up next stack, List with flags, Vinyl, Artist wall, Album with track list, Coverflow, Discography timeline, Collection shelf and Recently added. On the series page you choose how the episodes look (side menu → *Episodes as*).
 - **What's new** – OK on a change gives a picture, the whole explanation, steps and a *Try it now* button.
 
@@ -30,7 +30,7 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 - **Unfolding cards** – the focused poster opens into a wide card with its backdrop and info, and the posters next to it slide along.
 - **Home picture** – the backdrop at the top right fades softly into the background at the bottom and on the left.
 - **Info page** – *More* opens every option of your video add-on for a title in one menu (choose a source, trailer, cast, similar, rate …). *Library and lists* opens one window with ticks that shows where the title is.
-- **Library and lists, Mark as watched, Calendar** work with the Trakt login of your video add-on, also for titles of other add-ons.
+- **Library and lists, Mark as watched, Calendar** work with Trakt, also for titles of other add-ons.
 - **Subtitles and skip intro** are handled by the video add-on; without one, the subtitle button in the player opens Kodi's own subtitle screen.
 - **Go to playlist** in the side menu of a list when something is queued (like Estuary).
 - **Watched tick** in a colour of your choice; the watched percentage also works for add-ons that only pass on their progress (Fen Light, Red Light …).
@@ -99,7 +99,7 @@ Everything on one page. At the top: logo, buttons, director, scores, plot, genre
 Cast, collections and studios need a free **TMDB API key**: Lucent uses the one of your video add-on, or enter your own in **Skin settings → Integrations → TMDB API key** (free at [themoviedb.org](https://www.themoviedb.org/settings/api)).
 
 ### Calendar
-A **Calendar** tab (Week, List and Month) for the series and films of your Trakt collection. Switch the bell on for a title (in the calendar or on its info page) and a pop-up tells you when a new episode is out (*Watch now / Later*) or when a film is released digitally. Uses the Trakt login of your video add-on.
+A **Calendar** tab (Week, List and Month) for the series and films of your Trakt collection. Switch the bell on for a title (in the calendar or on its info page) and a pop-up tells you when a new episode is out (*Watch now / Later*) or when a film is released digitally. Uses Lucent's own Trakt login (*Skin settings → Follow → Trakt login*).
 
 ### Sport (needs IPTV channels)
 A **Sport** tab with games from almost 200 competitions (football worldwide, NBA, NFL, NHL, MLB, rugby, Formula 1, IndyCar, NASCAR, golf, tennis, UFC and more), fetched from ESPN. It only appears when Kodi has TV channels.

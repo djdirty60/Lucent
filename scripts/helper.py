@@ -9,7 +9,7 @@ subtitles). Each one costs memory, so now this single helper does all the jobs i
   every 60 s      Tonight for you (works from its saved list; asks TMDB a few times a day)
   every 120 s     calendar pop-ups
   every 6 h       check for a new version of Lucent
-  (subtitles and skip intro moved to Lucent Video in 1.37.0)
+  (subtitles and skip intro moved to the video add-on in 1.37.0)
 
 Started from Home.xml; a second start does nothing while the first one is running.
 
@@ -21,6 +21,7 @@ import threading
 import time
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
@@ -150,14 +151,14 @@ def run():
         live.check_reminders()
 
     def lv_features():
-        """What the installed Lucent Video can do (it can go back to an older version too): its code is checked, the
+        """What the installed the video add-on can do (it can go back to an older version too): its code is checked, the
         player menu shows a button only when the add-on knows it."""
         try:
             with open(xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/lib/router.py"), encoding="utf-8") as fh:
                 code = fh.read()
         except OSError:
             code = ""
-        for action, prop in (("replay", "lucent.lv.replay"),):
+        for action, prop in (("replay", "lucent.lv.replay"), ("intro_mark", "lucent.lv.intromark")):
             if f'"{action}"' in code:
                 HOME.setProperty(prop, "1")
             else:
@@ -247,6 +248,7 @@ def run():
                 settings_state["open"] = False
                 HOME.clearProperty("lucent.as.cat")
                 HOME.clearProperty("lucent.as.count")
+                HOME.clearProperty("lucent.as.lv")
             return
         win = xbmcgui.Window(10140)
         if not settings_state["open"]:
@@ -260,6 +262,14 @@ def run():
                     break
                 count += 1
             HOME.setProperty("lucent.as.count", str(count))
+            try:                                       # the settings of the video add-on of the Lucent repository?
+                name = xbmcaddon.Addon("plugin.video.lucent").getAddonInfo("name")
+            except Exception:  # noqa: BLE001 - not installed
+                name = ""
+            if name and name in xbmc.getInfoLabel("Control.GetLabel(2)"):
+                HOME.setProperty("lucent.as.lv", "1")
+            else:
+                HOME.clearProperty("lucent.as.lv")
         try:
             fid = win.getFocusId()
         except RuntimeError:

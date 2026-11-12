@@ -20,7 +20,7 @@ import xbmcvfs
 VERSION = "1"
 NTABS = 12
 NWIDGETS = 10
-SEREN = "plugin://plugin.video.seren/"         # only to turn old Seren rows (before 2.0) into Lucent Video rows
+SEREN = "plugin://plugin.video.seren/"         # only to turn old Seren rows (before 2.0) into the video add-on rows
 HEADING = "Lucent"
 
 # ----------------------------------------------------------------------------- texts
@@ -183,7 +183,7 @@ WIDGETS_LIBRARY = [                               # the Kodi library (works with
     (("Video sources", "Videobronnen"), "sources://video/", "land"),
 ]
 LV = "plugin://plugin.video.lucent/?action=list&widget=1&name="
-WIDGETS_LV = [                                      # Lucent Video (plugin.video.lucent): rows without a 'next page' item
+WIDGETS_LV = [                                      # the video add-on (plugin.video.lucent): rows without a 'next page' item
     (("Films · Trending", "Films · Trending"), LV + "trending_movie", "poster"),
     (("Films · Popular", "Films · Populair"), LV + "popular_movie", "poster"),
     (("Films · Top rated", "Films · Best beoordeeld"), LV + "toprated_movie", "poster"),
@@ -230,8 +230,8 @@ def pick_lv_list():
                 found.append((clean(f.get("label")), path, tag))
     busy(False)
     if not found:
-        xbmcgui.Dialog().ok(HEADING, tr(G("No lists found. Log in to Trakt or set your MDBList key or Floppy in Lucent Video.",
-                                          "Geen lijsten gevonden. Log in bij Trakt of vul je MDBList-sleutel of Floppy in bij Lucent Video.")))
+        xbmcgui.Dialog().ok(HEADING, tr(G("No lists found. Log in to Trakt or set your MDBList key or Floppy in your video add-on.",
+                                          "Geen lijsten gevonden. Log in bij Trakt of vul je MDBList-sleutel of Floppy in bij je video-add-on.")))
         return None
     pick = select(tr(G("Your lists", "Je lijsten")), [f[0] for f in found], True, ["icons/list.png"] * len(found), [f[2] for f in found])
     if pick < 0:
@@ -241,7 +241,7 @@ def pick_lv_list():
 
 
 def pick_lv_person():
-    """Search a person on TMDb (the key of Lucent, else of Lucent Video): a row with their best-known films and series."""
+    """Search a person on TMDb (the key of Lucent, else of the video add-on): a row with their best-known films and series."""
     name = keyboard(tr(G("Name of the actor or actress", "Naam van de acteur of actrice")))
     if not name:
         return None
@@ -292,7 +292,7 @@ def log(text):
 
 
 def lv_ready():
-    """Lucent Video has a TMDB key (its own setting or the tester code's keys.json): its rows can fill."""
+    """The video add-on has a TMDB key (its own setting or the tester code's keys.json): its rows can fill."""
     if not has_lv():
         return False
     try:
@@ -304,12 +304,12 @@ def lv_ready():
 
 
 def use_lv():
-    """The default rows come from Lucent Video: it is installed."""
+    """The default rows come from the video add-on: it is installed."""
     return has_lv()
 
 
 LVA = "plugin://plugin.video.lucent/?action="
-SEREN_TO_LV = [  # (part of a Seren row address, Lucent Video row name): the first match wins
+SEREN_TO_LV = [  # (part of a Seren row address, the video add-on row name): the first match wins
     ("showsNextUp", "nextup"), ("onDeckMovies", "continue_movie"),
     ("mediatype=movies&endpoint=trending", "trending_movie"), ("mediatype=shows&endpoint=trending", "trending_tv"),
     ("mediatype=movies&endpoint=popular", "popular_movie"), ("mediatype=shows&endpoint=popular", "popular_tv"),
@@ -322,7 +322,7 @@ SEREN_TO_LV = [  # (part of a Seren row address, Lucent Video row name): the fir
 SEREN_TABS = [("action=searchMenu", "searchmenu"), ("action=moviesHome", "menu&type=movie"), ("action=showsHome", "menu&type=tvshow")]
 
 
-LIB_TO_LV = [  # (part of a Lucent Library row address, Lucent Video row name): the first match wins
+LIB_TO_LV = [  # (part of a Lucent Library row address, the video add-on row name): the first match wins
     ("kind=continue&only=movie", "continue_movie"), ("kind=continue&only=tv", "continue_episode"), ("kind=continue", "continue"),
     ("kind=nextup", "nextup"), ("kind=newepisodes", "nextup"), ("kind=newseasons", "nextup"),
     ("kind=newin&only=tv", "collection_tv"), ("kind=newin", "collection_movie"),
@@ -336,7 +336,7 @@ LIB_TO_LV = [  # (part of a Lucent Library row address, Lucent Video row name): 
 
 
 def lv_path(path, seren_too=True, lib_too=False):
-    """The Lucent Video row for a Seren row, a Lucent Library streaming row, or (lib_too: Lucent Library is not
+    """The the video add-on row for a Seren row, a Lucent Library streaming row, or (lib_too: Lucent Library is not
     installed) any other Lucent Library row; '' when there is none."""
     if seren_too and path.startswith(SEREN):
         return LV + next(name for part, name in SEREN_TO_LV if part in path)
@@ -351,11 +351,11 @@ def lv_path(path, seren_too=True, lib_too=False):
 
 
 def lv_convert():
-    """Old Seren rows and the streaming rows of Lucent Library become Lucent Video rows.
-    Runs from Home until there is nothing left to change and Lucent Video has its key."""
+    """Old Seren rows and the streaming rows of Lucent Library become the video add-on rows.
+    Runs from Home until there is nothing left to change and the video add-on has its key."""
     if not has_lv():
         return
-    seren_too, services_too = True, lv_ready()        # old Seren rows (from before 2.0) become Lucent Video rows
+    seren_too, services_too = True, lv_ready()        # old Seren rows (from before 2.0) become the video add-on rows
     lib_too = True                                      # Lucent Library is no longer used: its rows never fill
     menu = Menu()
     changed = False
@@ -375,14 +375,14 @@ def lv_convert():
                 wd["path"], changed = new, True
     if changed:
         menu.save()
-        log(f"rows moved to Lucent Video (seren={seren_too}, services={services_too}, library={lib_too})")
+        log(f"rows moved to the video add-on (seren={seren_too}, services={services_too}, library={lib_too})")
         xbmc.executebuiltin("Container.Refresh")
     if services_too:
         put("lucent.lvrows", "done4")                       # done4: Lucent Library rows converted too (1.39.0)
 
 
 def lv_knows(name):
-    """True when the installed Lucent Video knows this row (it can also go back to an older version)."""
+    """True when the installed the video add-on knows this row (it can also go back to an older version)."""
     try:
         with open(xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/lib/router.py"), encoding="utf-8") as fh:
             return f'"{name}"' in fh.read()
@@ -391,13 +391,13 @@ def lv_knows(name):
 
 
 def pick_lv():
-    """A Lucent Video row: one of its lists, or a streaming service (newest first)."""
+    """A the video add-on row: one of its lists, or a streaming service (newest first)."""
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
     own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
     actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
     rows = [r for r in WIDGETS_LV if "coming_watchlist" not in r[1] or lv_knows("coming_watchlist")]
     labels = [tr(k) for k, _p, _s in rows] + [own, actor, service]
-    choice = select("Lucent Video", labels)
+    choice = select(tr(G("Your video add-on", "Je video-add-on")), labels)
     if choice < 0:
         return None
     if choice < len(rows):
@@ -413,8 +413,8 @@ def pick_lv():
     busy(False)
     entries = [e for e in entries if "provider=" in e.get("file", "")]
     if not entries:
-        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Lucent Video needs its TMDb key.",
-                                          "Geen diensten gevonden. Lucent Video heeft zijn TMDb-sleutel nodig.")))
+        xbmcgui.Dialog().ok(HEADING, tr(G("No services found. Your video add-on needs its TMDb key.",
+                                          "Geen diensten gevonden. Je video-add-on heeft zijn TMDb-sleutel nodig.")))
         return None
     pick = select(tr(G("Streaming services", "Streamingdiensten")), [clean(e.get("label") or e.get("title")) for e in entries],
                   True, [e.get("thumbnail", "") for e in entries])
@@ -562,7 +562,7 @@ def plain_tabs():
 
 
 def lv_tabs():
-    """The default menu with Lucent Video: its rows on the tabs, its search and menus behind them."""
+    """The default menu with the video add-on: its rows on the tabs, its search and menus behind them."""
     lib_by_key = {k: (p, s) for k, p, s in WIDGETS_LIBRARY}
     names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV}
     names["new_tv"] = (("Series · New", "Series · Nieuw"), "poster")
@@ -595,7 +595,7 @@ def lv_tabs():
 
 
 def default_tabs():
-    """The default menu: Lucent Video's rows when it is installed, else the Kodi library (plain_tabs)."""
+    """The default menu: the video add-on's rows when it is installed, else the Kodi library (plain_tabs)."""
     return lv_tabs() if has_lv() else plain_tabs()
 
 
@@ -814,8 +814,8 @@ def pick_widget():
     # an add-on folder first (what you know from other skins); 0 and 1 were Seren's rows and lists (gone in 2.0)
     order = [3, 2, 8, 5, 6, 7, 4]
     order.remove(7)                                     # the fast TMDb lists of Lucent Library: the video add-on has them now
-    if has_lv():                                        # Lucent Video: its own rows first
-        sources.append("Lucent Video")
+    if has_lv():                                        # the video add-on: its own rows first
+        sources.append(tr(G("Your video add-on", "Je video-add-on")))
         icons.append("icons/play.png")
         order.insert(0, 9)
     pick = select(tr("add_widget"), [sources[i] for i in order], True, [icons[i] for i in order])

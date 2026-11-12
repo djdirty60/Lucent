@@ -8,7 +8,7 @@ The screen itself is scripts/agenda.py; this file holds everything that has no s
   new episode     a pop-up "Watch now / Later", from the background helper (run_service)
 
 What the calendar shows: the series (still running) of your Trakt collection and the films of your collection /
-watchlist that are about to come out; the Trakt login of your video add-on (Lucent Video). The bell of a title is OFF
+watchlist that are about to come out; the Trakt login of your video add-on. The bell of a title is OFF
 until you switch it on; with the bell on you get a pop-up for a new episode / the digital release of a film.
 Episodes, artwork and plots come from TMDB (the key of your video add-on, like the info page). The air time
 comes from TVmaze (free, no key) when it knows the show; otherwise only the date is known.
@@ -52,7 +52,7 @@ T = {
     "unfollowed": ("Notification off for {0}", "Melding uit voor {0}"),
     "no_id": ("This title has no TMDB number, so it cannot be followed.", "Deze titel heeft geen TMDB-nummer en kan niet gevolgd worden."),
     "failed": ("Could not load the calendar data. Try again later.", "Kalendergegevens laden is niet gelukt. Probeer het later opnieuw."),
-    "no_addon": ("No video add-on to open it with (Lucent Video).", "Geen video-add-on om het mee te openen (Lucent Video)."),
+    "no_addon": ("No video add-on to open it with.", "Geen video-add-on om het mee te openen."),
     "cinema": ("In cinemas", "In de bioscoop"),
     "cinema_soon": ("Coming to cinemas", "Binnenkort in de bioscoop"),
     "film": ("Film", "Film"),
@@ -611,7 +611,7 @@ def follow_button():
 
 # ----------------------------------------------------------------------------- opening a title
 def open_title(name, kind, tmdb=None):
-    """Opens the title in your video add-on (Lucent Video): the seasons of a series, or the film."""
+    """Opens the title in your video add-on: the seasons of a series, or the film."""
     if tmdb and info.lv_open_with():
         url = info.lv_play_url(kind, tmdb)
         xbmc.executebuiltin(f"PlayMedia({url})" if kind == "movie" else f'ActivateWindow(Videos,"{url}",return)')
