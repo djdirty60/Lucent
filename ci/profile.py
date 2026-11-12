@@ -72,6 +72,18 @@ elif stage == "enable":
             v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (901, 902)")
             v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (901, 901, 1)")
             v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (901, 902, 'Pilot', '1', '1', 901, 901)")
+            # 2.0.1 continue row: a next episode of the same series (left out: that series has an episode in progress) and
+            # a second series with episode 1 watched and episode 2 not yet (that one is the 'next episode')
+            v.execute("INSERT INTO files (idFile, idPath, strFilename, dateAdded) VALUES (903, 902, 's01e02.mkv', '2026-10-31 10:00:00')")
+            v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (902, 903, 'Second', '1', '2', 901, 901)")
+            v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (903, '/tmp/ci/lib/shows/Two/', '', '')")
+            v.execute("INSERT INTO files (idFile, idPath, strFilename, playCount, lastPlayed, dateAdded) VALUES (904, 903, 's01e01.mkv', 1, '2026-11-01 21:00:00', '2026-10-31 10:00:00')")
+            v.execute("INSERT INTO files (idFile, idPath, strFilename, dateAdded) VALUES (905, 903, 's01e02.mkv', '2026-10-31 10:00:00')")
+            v.execute("INSERT INTO tvshow (idShow, c00) VALUES (902, 'Show Two')")
+            v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (902, 903)")
+            v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (902, 902, 1)")
+            v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (903, 904, 'One', '1', '1', 902, 902)")
+            v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (904, 905, 'Two', '1', '2', 902, 902)")
             # 1.34.18 media flags (issue #9): stream details like Kodi stores them after a scan
             try:
                 cols = [r[1] for r in v.execute("PRAGMA table_info(streamdetails)")]

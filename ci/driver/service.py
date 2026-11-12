@@ -4312,6 +4312,56 @@ def liteold_test():
         shot("lite-old")
 
 
+def cwrow_test():
+    """2.0.1: one 'Continue watching' row from the library: in progress (film, episode) + next episode of a series."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.SetBool(lucent.cw.on)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/continuerow.py)")
+    for _ in range(30):
+        if mon.waitForAbort(0.5) or HOME.getProperty("lucent.cw.count"):
+            break
+    out["count"] = HOME.getProperty("lucent.cw.count")
+    out["items"] = [(HOME.getProperty(f"lucent.cw.{n}.type"), HOME.getProperty(f"lucent.cw.{n}.title"),
+                     HOME.getProperty(f"lucent.cw.{n}.sub"), HOME.getProperty(f"lucent.cw.{n}.percent"))
+                    for n in range(1, int(out["count"] or 0) + 1)]
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(8092)")
+    mon.waitForAbort(2)
+    out["row_visible"] = cond("Control.IsVisible(8092)")
+    out["focus"] = cond("Control.HasFocus(8092)")
+    out["list_items"] = lab("Container(8092).NumItems")
+    shot("cw-row")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    shot("cw-row-2")
+    # the calendar button is not on the info page of a film in the library
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
+            break
+    n = int(lab("Container.NumItems") or 0)
+    for i in range(n + 1):
+        if lab(f"Container.ListItemAbsolute({i}).Label") == "Lib Film":
+            xbmc.executebuiltin(f"SetFocus(50,{i},absolute)")
+            xbmc.executebuiltin(f"SetFocus(51,{i},absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or cond("Window.IsVisible(movieinformation)"):
+            break
+    mon.waitForAbort(2)
+    out["info_title"] = lab("ListItem.Title")
+    out["info_dbid"] = lab("ListItem.DBID")
+    out["bell_button"] = cond("Control.IsVisible(23)")
+    shot("cw-info-libfilm")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("cwrow: " + json.dumps(out))
+
+
 def mousehome_test():
     """Issue #13: with a mouse, the first posters of a Home row must not open the side menu."""
     import subprocess
@@ -4826,6 +4876,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(mousehome_test)
+    safe(cwrow_test)
     safe(litesetup_test)
     safe(owntrakt_test)
     safe(osdintro_test)

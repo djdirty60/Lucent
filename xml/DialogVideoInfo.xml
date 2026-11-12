@@ -108,7 +108,8 @@
                         <height>72</height>
                         <label>$VAR[NuvioAgendaBell]</label>
                         <onclick>RunScript(special://skin/scripts/agenda.py,follow)</onclick>
-                        <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))]</visible>
+                        <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))] + ![String.IsEqual(ListItem.DBType,movie) + Integer.IsGreater(ListItem.DBID,0)]</visible>
+                        <!-- a film in the Kodi library is already there: no calendar notification needed -->
                     </control>
                     <control type="button" id="14">
                         <width>auto</width>
