@@ -5156,6 +5156,43 @@ def rowshift_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
+def cwmenu_test():
+    """2.1.3: Continue watching from the library holds REAL library items (multipath of smart playlists), so Kodi's own
+    context menu works on it, with the items of context add-ons."""
+    W = "plugin://plugin.video.fakeseren/?list="
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Series"), ("w1.label", "Nieuw"), ("w1.path", W + "ss"), ("w1.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/continuerow.py)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(8092)")
+    mon.waitForAbort(3)
+    out = {"path": HOME.getProperty("lucent.cw.path")[:300], "count": HOME.getProperty("lucent.cw.count"),
+           "show": HOME.getProperty("lucent.cw.show"), "focus": lab("System.CurrentControlID"),
+           "num": lab("Container(8092).NumItems"), "items": []}
+    for i in range(int(out["num"]) if out["num"].isdigit() else 0):
+        b = f"Container(8092).ListItemAbsolute({i})."
+        out["items"].append([lab(b + "DBType"), lab(b + "DBID"), lab(b + "TVShowTitle"), lab(b + "Title"), lab(b + "Season"),
+                             lab(b + "Episode"), lab(b + "PercentPlayed"), lab(b + "FileNameAndPath")[-40:]])
+    shot("cwmenu-row")
+    xbmc.executebuiltin("Action(ContextMenu)")
+    mon.waitForAbort(2)
+    out["menu_open"] = cond("Window.IsVisible(contextmenu)")
+    out["menu"] = [lab(f"Control.GetLabel({i})") for i in range(1000, 1030) if cond(f"Control.IsVisible({i})")]
+    shot("cwmenu-menu")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    log("cwmenu: " + json.dumps(out))
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10150,6 +10187,7 @@ def main():
     safe(introsound_test)
     safe(cwjumplog_test)
     safe(rowshift_test)
+    safe(cwmenu_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
