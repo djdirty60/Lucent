@@ -317,6 +317,23 @@
                         <width>24</width>
                         <height>24</height>
                         <texture colordiffuse="text4">icons/chevron_right.png</texture>
+                        <visible>String.IsEmpty(ListItem.Property(switch))</visible>
+                    </control>
+                    <control type="image">
+                        <left>1142</left>
+                        <top>32</top>
+                        <width>76</width>
+                        <height>40</height>
+                        <texture colordiffuse="text">toggle_on.png</texture>
+                        <visible>String.IsEqual(ListItem.Property(switch),on)</visible>
+                    </control>
+                    <control type="image">
+                        <left>1142</left>
+                        <top>32</top>
+                        <width>76</width>
+                        <height>40</height>
+                        <texture colordiffuse="text">toggle_off.png</texture>
+                        <visible>String.IsEqual(ListItem.Property(switch),off)</visible>
                     </control>
                 </itemlayout>
                 <focusedlayout width="1270" height="104">
@@ -369,6 +386,23 @@
                             <width>24</width>
                             <height>24</height>
                             <texture colordiffuse="on_focus">icons/chevron_right.png</texture>
+                            <visible>String.IsEmpty(ListItem.Property(switch))</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="on_focus">toggle_on_fo.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),on)</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="on_focus">toggle_off.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),off)</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -412,6 +446,23 @@
                             <width>24</width>
                             <height>24</height>
                             <texture colordiffuse="text4">icons/chevron_right.png</texture>
+                            <visible>String.IsEmpty(ListItem.Property(switch))</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="text">toggle_on.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),on)</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="text">toggle_off.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),off)</visible>
                         </control>
                     </control>
                 </focusedlayout>
@@ -446,6 +497,7 @@
                     </item>
                     <item>
                         <label>$LOCALIZE[31649]</label>
+                        <property name="switch">off</property>
                         <label2>$LOCALIZE[31650]</label2>
                         <icon>icons/view.png</icon>
                         <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
@@ -454,6 +506,7 @@
                     </item>
                     <item>
                         <label>$LOCALIZE[31648]</label>
+                        <property name="switch">on</property>
                         <label2>$LOCALIZE[31650]</label2>
                         <icon>icons/view.png</icon>
                         <onclick>Skin.ToggleSetting(lucent.lite)</onclick>
@@ -553,6 +606,7 @@
                     </item>
                     <item>
                         <label>$LOCALIZE[31638]</label>
+                        <property name="switch">on</property>
                         <label2>$LOCALIZE[31640]</label2>
                         <icon>icons/sport.png</icon>
                         <onclick>Skin.ToggleSetting(lucent.goals.off)</onclick>
@@ -560,6 +614,7 @@
                     </item>
                     <item>
                         <label>$LOCALIZE[31639]</label>
+                        <property name="switch">off</property>
                         <label2>$LOCALIZE[31640]</label2>
                         <icon>icons/sport.png</icon>
                         <onclick>Skin.ToggleSetting(lucent.goals.off)</onclick>
@@ -867,6 +922,23 @@
                         <width>24</width>
                         <height>24</height>
                         <texture colordiffuse="text4">icons/chevron_right.png</texture>
+                        <visible>String.IsEmpty(ListItem.Property(switch))</visible>
+                    </control>
+                    <control type="image">
+                        <left>1142</left>
+                        <top>32</top>
+                        <width>76</width>
+                        <height>40</height>
+                        <texture colordiffuse="text">toggle_on.png</texture>
+                        <visible>String.IsEqual(ListItem.Property(switch),on)</visible>
+                    </control>
+                    <control type="image">
+                        <left>1142</left>
+                        <top>32</top>
+                        <width>76</width>
+                        <height>40</height>
+                        <texture colordiffuse="text">toggle_off.png</texture>
+                        <visible>String.IsEqual(ListItem.Property(switch),off)</visible>
                     </control>
                 </itemlayout>
                 <focusedlayout width="1270" height="104">
@@ -919,6 +991,23 @@
                             <width>24</width>
                             <height>24</height>
                             <texture colordiffuse="on_focus">icons/chevron_right.png</texture>
+                            <visible>String.IsEmpty(ListItem.Property(switch))</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="on_focus">toggle_on_fo.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),on)</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="on_focus">toggle_off.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),off)</visible>
                         </control>
                     </control>
                     <control type="group">
@@ -962,6 +1051,23 @@
                             <width>24</width>
                             <height>24</height>
                             <texture colordiffuse="text4">icons/chevron_right.png</texture>
+                            <visible>String.IsEmpty(ListItem.Property(switch))</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="text">toggle_on.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),on)</visible>
+                        </control>
+                        <control type="image">
+                            <left>1142</left>
+                            <top>32</top>
+                            <width>76</width>
+                            <height>40</height>
+                            <texture colordiffuse="text">toggle_off.png</texture>
+                            <visible>String.IsEqual(ListItem.Property(switch),off)</visible>
                         </control>
                     </control>
                 </focusedlayout>
@@ -989,6 +1095,7 @@
                     </item>
                     <item>
                         <label>$LOCALIZE[31646]</label>
+                        <property name="switch">on</property>
                         <label2>$LOCALIZE[31232]</label2>
                         <icon>icons/refresh.png</icon>
                         <onclick>Skin.ToggleSetting(nuvio.update.off)</onclick>
@@ -996,6 +1103,7 @@
                     </item>
                     <item>
                         <label>$LOCALIZE[31647]</label>
+                        <property name="switch">off</property>
                         <label2>$LOCALIZE[31232]</label2>
                         <icon>icons/refresh.png</icon>
                         <onclick>Skin.ToggleSetting(nuvio.update.off)</onclick>
