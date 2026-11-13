@@ -57,6 +57,9 @@
         <value>25</value>
     </variable>
     <variable name="NuvioW1Sort">
+        <!-- A-Z goes by the name on screen: many add-on folders and genre rows give a name but no title, and sorting
+             on an empty title left them in the order of the source (issue #9) -->
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.sort))">$INFO[Skin.String(nuvio.home.w1.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.sort))">$INFO[Container(9000).ListItem.Property(w1.sort)]</value>
         <value>userpreference</value>
@@ -68,6 +71,7 @@
     </variable>
     <!-- widget 2: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW2Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.sort))">$INFO[Skin.String(nuvio.home.w2.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.sort))">$INFO[Container(9000).ListItem.Property(w2.sort)]</value>
         <value>userpreference</value>
@@ -79,6 +83,7 @@
     </variable>
     <!-- widget 3: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW3Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.sort))">$INFO[Skin.String(nuvio.home.w3.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.sort))">$INFO[Container(9000).ListItem.Property(w3.sort)]</value>
         <value>userpreference</value>
@@ -90,6 +95,7 @@
     </variable>
     <!-- widget 4: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW4Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.sort))">$INFO[Skin.String(nuvio.home.w4.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.sort))">$INFO[Container(9000).ListItem.Property(w4.sort)]</value>
         <value>userpreference</value>
@@ -101,6 +107,7 @@
     </variable>
     <!-- widget 5: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW5Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.sort))">$INFO[Skin.String(nuvio.home.w5.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.sort))">$INFO[Container(9000).ListItem.Property(w5.sort)]</value>
         <value>userpreference</value>
@@ -112,6 +119,7 @@
     </variable>
     <!-- widget 6: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW6Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.sort))">$INFO[Skin.String(nuvio.home.w6.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.sort))">$INFO[Container(9000).ListItem.Property(w6.sort)]</value>
         <value>userpreference</value>
@@ -123,6 +131,7 @@
     </variable>
     <!-- widget 7: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW7Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.sort))">$INFO[Skin.String(nuvio.home.w7.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.sort))">$INFO[Container(9000).ListItem.Property(w7.sort)]</value>
         <value>userpreference</value>
@@ -134,6 +143,7 @@
     </variable>
     <!-- widget 8: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW8Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.sort))">$INFO[Skin.String(nuvio.home.w8.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.sort))">$INFO[Container(9000).ListItem.Property(w8.sort)]</value>
         <value>userpreference</value>
@@ -145,6 +155,7 @@
     </variable>
     <!-- widget 9: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW9Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.sort))">$INFO[Skin.String(nuvio.home.w9.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.sort))">$INFO[Container(9000).ListItem.Property(w9.sort)]</value>
         <value>userpreference</value>
@@ -156,6 +167,7 @@
     </variable>
     <!-- widget 10: sort chosen in Menu and widgets (empty = as the source gives it) -->
     <variable name="NuvioW10Sort">
+        <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.sort))">$INFO[Skin.String(nuvio.home.w10.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.sort))">$INFO[Container(9000).ListItem.Property(w10.sort)]</value>
         <value>userpreference</value>
@@ -8999,14 +9011,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -9165,14 +9177,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -9907,14 +9919,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -10073,14 +10085,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -10815,14 +10827,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -10981,14 +10993,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -11723,14 +11735,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -11889,14 +11901,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -12631,14 +12643,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -12797,14 +12809,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -13540,14 +13552,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -13706,14 +13718,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -14452,14 +14464,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -14618,14 +14630,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -15360,14 +15372,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -15526,14 +15538,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -16268,14 +16280,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -16434,14 +16446,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -17176,14 +17188,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
@@ -17342,14 +17354,14 @@
                     <aspectratio scalediffuse="false">scale</aspectratio>
                     <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                 </control>
-                <!-- a streaming service: its logo on a dark card; when focused its own animation (not in light mode) -->
+                <!-- a streaming service: its logo on a solid dark card (the art behind it does not show through) -->
                 <control type="image">
                     <left>0</left>
                     <top>0</top>
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
-                    <colordiffuse>B3000000</colordiffuse>
+                    <colordiffuse>FF07090C</colordiffuse>
                     <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">

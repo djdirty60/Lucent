@@ -4,7 +4,6 @@
 Pictures come from TMDB (trending films / series) or from the Kodi library. Two slots (a and b) take turns;
 the window XML fades one out through black and the other in, and zooms it slowly.
 """
-import re
 import json
 import random
 import urllib.parse
@@ -19,40 +18,25 @@ ADDON = xbmcaddon.Addon()
 PATH = ADDON.getAddonInfo("path")
 TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
-KEY = "9f3ca569aa46b6fb13931ec96ab8ae7e"       # the public key Seren also uses by default
+KEY = "9f3ca569aa46b6fb13931ec96ab8ae7e"       # public TMDB key, when you did not enter your own
 LANG = "nl-NL" if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else "en-US"
-
-
-def seren_client_id(seren):
-    """The Trakt app key Seren itself uses. Its login only works with that same key, and Seren versions differ:
-    taken from Seren's setting, else read from Seren's own code (its built-in default)."""
-    key = seren.getSetting("trakt.clientid").strip()
-    if key:
-        return key
-    try:
-        path = xbmcvfs.translatePath("special://home/addons/plugin.video.seren/resources/lib/indexers/trakt.py")
-        with open(path, encoding="utf-8") as fh:
-            found = re.search(r'"trakt\.clientid",\s*"([0-9a-f]{64})"', fh.read())
-        if found:
-            return found.group(1)
-    except Exception:  # noqa: BLE001
-        pass
-    return "0c9a30819e4af6ffaf3b954cbeae9b54499088513863c03c02911de00ac2de79"
 
 
 def log(text):
     xbmc.log(f"[screensaver.lucent] {text}", xbmc.LOGINFO)
 
 
-def seren_key():
+def own_key():
+    """Your own TMDB key from Lucent's Skin settings, else the public key."""
     try:
-        return xbmcaddon.Addon("plugin.video.seren").getSetting("tmdb.apikey") or KEY
-    except Exception:  # noqa: BLE001 - Seren not installed
+        with xbmcvfs.File("special://profile/addon_data/skin.lucent/tmdb_key.txt") as fh:
+            return (fh.read() or "").strip() or KEY
+    except Exception:  # noqa: BLE001
         return KEY
 
 
 def tmdb(path, **params):
-    params["api_key"] = seren_key()
+    params["api_key"] = own_key()
     params.setdefault("language", LANG)
     request = urllib.request.Request(f"{TMDB}{path}?{urllib.parse.urlencode(params)}", headers={"User-Agent": "screensaver.lucent"})
     with urllib.request.urlopen(request, timeout=15) as response:
@@ -102,15 +86,15 @@ REGION = "NL" if LANG == "nl-NL" else "GB"
 
 
 def watchlist():
-    """[(kind, tmdb id)] of your Trakt watchlist (films and series), through Seren's Trakt login."""
+    """[(kind, tmdb id)] of your Trakt watchlist (films and series), through the Trakt login in Lucent's Skin settings."""
     try:
-        seren = xbmcaddon.Addon("plugin.video.seren")
-    except Exception:  # noqa: BLE001
+        with xbmcvfs.File("special://profile/addon_data/skin.lucent/trakt.json") as fh:
+            login = json.loads(fh.read() or "{}")
+    except Exception:  # noqa: BLE001 - no Trakt login
         return []
-    token = seren.getSetting("trakt.auth")
-    if not token:
+    client, token = login.get("client_id") or "", login.get("access_token") or ""
+    if not (client and token):
         return []
-    client = seren_client_id(seren)
     headers = {"Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": client,
                "Authorization": f"Bearer {token}", "User-Agent": "screensaver.lucent"}
     out = []

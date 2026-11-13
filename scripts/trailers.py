@@ -335,6 +335,11 @@ class Trailers(xbmc.Player):
             self.stop_ours()
             self.focus_key = ""
             return
+        if busy and not self.av_started and xbmc.getCondVisibility("Window.IsVisible(busydialog) | Window.IsVisible(busydialognocancel)"):
+            # YouTube is getting the trailer: Kodi's busy circle has the focus for a moment, the card is still yours.
+            # Counting that as "you left the card" stopped the trailer and started it again, over and over.
+            dbg("YouTube is busy: waiting")
+            return
         focus = Focus()
         if not focus.valid():
             # the row refreshes now and then (add-ons reload widgets): the card is gone for a moment.
