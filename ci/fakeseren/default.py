@@ -94,6 +94,11 @@ else:
         tag.setRating(round(1 + (i * 3) % 9 + 0.5, 1))
         tag.setDateAdded(f"2026-01-{(i * 11) % 28 + 1:02d} 12:00:00")
         li.setArt({"poster": icon, "thumb": icon, "fanart": icon})
+        if kind == "fast3" and i < 6:              # 2.1.2 test: streaming service tiles, like the video add-on sends them
+            keys = ("netflix", "hulu", "starz", "mgm", "peacock", "amc")
+            sq = f"{ART}svc{i}.png"
+            li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq})
+            li.setProperty("svclogo", f"special://skin/media/services/{keys[i]}.png")
         li.setProperty("IsPlayable", "true")
         if kind == "folder":
             items.append((f"plugin://plugin.video.fakeseren/?list=fast&from={i}", li, True))

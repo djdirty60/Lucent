@@ -5064,20 +5064,20 @@ def svctiles_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    xbmc.executebuiltin("Control.SetFocus(9000,0)")
-    mon.waitForAbort(4)
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(5)
     for _ in range(10):
-        xbmc.executebuiltin("SetFocus(8202)")
+        xbmc.executebuiltin("SetFocus(8205)")
         mon.waitForAbort(1.5)
-        if lab("Container(8202).ListItem.Label"):
+        if lab("Container(8205).ListItem.Label"):
             break
-    out["first"] = lab("Container(8202).ListItem.Label")
-    out["svclogo"] = lab("Container(8202).ListItem.Property(svclogo)")
-    out["num"] = lab("Container(8202).NumItems")
+    out["first"] = lab("Container(8205).ListItem.Label")
+    out["svclogo"] = lab("Container(8205).ListItem.Property(svclogo)")
+    out["num"] = lab("Container(8205).NumItems")
     shot("svc-1")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1.5)
-    out["second"] = lab("Container(8202).ListItem.Label")
+    out["second"] = lab("Container(8205).ListItem.Label")
     shot("svc-2")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     mon.waitForAbort(1)
