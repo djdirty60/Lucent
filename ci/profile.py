@@ -16,7 +16,7 @@ tabs = {
     # issue #9 (13 Nov): the sort of a row from an add-on and of a genre row (two rows per tab: lower rows load later)
     4: ("Sort labels", "", [("Labels bron", W + "labels"), ("Labels A-Z", W + "labels")]),
     5: ("Sort genres", "", [("Genres bron", "videodb://movies/genres/"), ("Genres A-Z", "videodb://movies/genres/")]),
-    6: ("Diensten", "", [("Streamingdiensten", W + "svc")]),
+    6: ("Diensten", "", [("Namen liggend", W + "names"), ("Streamingdiensten", W + "svc")]),
 }
 SORT = {(4, 2): "title", (5, 2): "title"}
 if stage == "skin":
@@ -31,7 +31,7 @@ if stage == "skin":
             s[f"nuvio.tab{t}.w{w}.path"] = path
             if (t, w) in SORT:
                 s[f"nuvio.tab{t}.w{w}.sort"] = SORT[(t, w)]
-            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3), (6, 1)) else "poster"
+            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3), (6, 1), (6, 2)) else "poster"
             if t == 1:
                 s[f"nuvio.home.w{w}.label"] = lab
                 s[f"nuvio.home.w{w}.path"] = path
