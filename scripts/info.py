@@ -42,6 +42,8 @@ T = {
     "nothing": ("Nothing changed", "Niets veranderd"),
     "no_video": ("You are not logged in to Trakt. Log in at Skin settings > Follow > Trakt login.",
                  "Je bent niet ingelogd bij Trakt. Log in bij Skin-instellingen > Volgen > Trakt-login."),
+    "no_player": ("No video add-on that can play this title. Install a video add-on, or TMDb Helper with a player.",
+                  "Geen video-add-on die deze titel kan afspelen. Installeer een video-add-on, of TMDb Helper met een speler."),
     "no_login": ("You are not logged in to Trakt. Log in at Skin settings > Follow > Trakt login.",
                  "Je bent niet ingelogd bij Trakt. Log in bij Skin-instellingen > Volgen > Trakt-login."),
     "expired": ("Trakt does not accept the login any more (Trakt code {0}). Log in again: "
@@ -1233,13 +1235,38 @@ def _overlay_open():
         return None
 
 
+TH_ID = "plugin.video.themoviedb.helper"
+THP = f"plugin://{TH_ID}/"
+
+
+def title_player():
+    """Who plays a title that Lucent opened itself from TMDB (Tonight for you, actor, collection, similar, calendar):
+    'lv' = the video add-on of the Lucent repository, 'th' = TMDb Helper (it plays with the players you set up there,
+    so every video add-on that has a player file works), '' = nobody."""
+    if lv_on():
+        return "lv"
+    if xbmc.getCondVisibility(f"System.AddonIsEnabled({TH_ID})"):
+        return "th"
+    return ""
+
+
 def lv_open_with():
-    """Titles opened by Lucent itself (actor, collection, similar): played with the video add-on."""
-    return lv_on()
+    """Titles opened by Lucent itself can be played: a video add-on that plays TMDB titles is there."""
+    return bool(title_player())
 
 
 def lv_play_url(kind, tmdb_id):
+    """Play a film, or the folder with the seasons of a series."""
+    if title_player() == "th":
+        return f"{THP}?info=play&tmdb_type=movie&tmdb_id={tmdb_id}" if kind == "movie" \
+            else f"{THP}?info=seasons&tmdb_type=tv&tmdb_id={tmdb_id}"
     return f"{LVP}?action=play&type=movie&tmdb={tmdb_id}" if kind == "movie" else f"{LVP}?action=seasons&tmdb={tmdb_id}"
+
+
+def episode_play_url(tmdb_id, season, episode):
+    if title_player() == "th":
+        return f"{THP}?info=play&tmdb_type=tv&tmdb_id={tmdb_id}&season={season}&episode={episode}"
+    return f"{LVP}?action=play&type=episode&tmdb={tmdb_id}&season={season}&episode={episode}"
 
 
 def _show_title(kind, tmdb_id, trakt_id):
@@ -1248,7 +1275,8 @@ def _show_title(kind, tmdb_id, trakt_id):
         li = build_listitem(kind, tmdb_id, None)
         li.setPath(lv_play_url(kind, tmdb_id))
         li.setProperty("tmdb_id", str(tmdb_id))
-        li.setProperty("lucent_video", "1")
+        if title_player() == "lv":
+            li.setProperty("lucent_video", "1")
         if kind != "movie":
             try:
                 li.setIsFolder(True)
@@ -1444,7 +1472,7 @@ def resume_show():
     if not tmdb_id.isdigit():
         tmdb_id = str((library_show_ids("Container(56).ListItem.") or {}).get("tmdb") or "")
     if not lv_open_with():
-        notify(tr("no_video"))
+        notify(tr("no_player"))
         return
     if not tmdb_id.isdigit():
         notify(tr("no_ids"))
@@ -1460,8 +1488,7 @@ def resume_show():
     episode = next_episode(int(trakt)) if str(trakt).isdigit() else None
     if episode and episode.get("season") is not None:
         log(f"continue {tmdb_id}: season {episode['season']} episode {episode['number']} ({episode['why']})")
-        xbmc.executebuiltin(f"PlayMedia({LVP}?action=play&type=episode&tmdb={tmdb_id}"
-                            f"&season={episode['season']}&episode={episode['number']})")
+        xbmc.executebuiltin(f"PlayMedia({episode_play_url(tmdb_id, episode['season'], episode['number'])})")
     else:
         xbmc.executebuiltin(f'ActivateWindow(Videos,"{lv_play_url("tv", tmdb_id)}",return)')
 

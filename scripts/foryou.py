@@ -200,6 +200,10 @@ def load_cache():
 
 
 def update(force=False):
+    if not info.lv_open_with():                      # nobody can play these titles: no row (a general skin)
+        if HOME.getProperty(P + "count"):
+            HOME.clearProperty(P + "count")
+        return
     part = daypart()
     cache = load_cache()
     if not force and cache.get("part") == part and time.time() - cache.get("time", 0) < REFRESH and cache.get("items") \

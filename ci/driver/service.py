@@ -4487,6 +4487,55 @@ def remember_test():
     log("remember: " + json.dumps(out))
 
 
+def nolv_test():
+    """2.1.1: not tied to one video add-on - who plays titles Lucent opens itself, For you only on Home."""
+    import importlib
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    out = {}
+    try:
+        import info
+        importlib.reload(info)
+        out["player_with_lv"] = info.title_player()
+        out["film_lv"] = info.lv_play_url("movie", 603)
+        real = info.lv_on
+        info.lv_on = lambda: False
+        out["player_without"] = info.title_player()
+        out["can_open_without"] = info.lv_open_with()
+        info.title_player = lambda: "th"
+        out["film_th"] = info.lv_play_url("movie", 603)
+        out["show_th"] = info.lv_play_url("tv", 1399)
+        out["ep_th"] = info.episode_play_url(1399, 2, 3)
+        info.lv_on = real
+        importlib.reload(info)
+    except Exception as error:  # noqa: BLE001
+        out["error"] = f"{type(error).__name__}: {error}"
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab1.icon,icons/home.png)")
+    xbmc.executebuiltin("Skin.Reset(lucent.fy.off)")
+    HOME.setProperty("lucent.fy.count", "3")
+    HOME.setProperty("lucent.fy.label", "Tonight for you")
+    for n in (1, 2, 3):
+        HOME.setProperty(f"lucent.fy.{n}.title", f"Title {n}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    for tab in (0, 1):
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{tab})")
+        mon.waitForAbort(2)
+        out[f"foryou_tab{tab + 1}"] = cond("Control.IsVisible(9989)")
+        out[f"icon_tab{tab + 1}"] = lab("Container(9000).ListItem.Icon")
+        shot(f"nolv-tab{tab + 1}")
+    xbmc.executebuiltin("Skin.SetBool(lucent.fy.off)")
+    HOME.clearProperty("lucent.fy.count")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab1.icon,icons/movies.png)")
+    xbmc.executebuiltin("ActivateWindow(InterfaceSettings)")
+    mon.waitForAbort(3)
+    shot("nolv-level")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    log("nolv: " + json.dumps(out))
+
+
 def mousehome_test():
     """Issue #13: with a mouse, the first posters of a Home row must not open the side menu."""
     import subprocess
@@ -5007,6 +5056,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(mousehome_test)
+    safe(nolv_test)
     safe(remember_test)
     safe(firststart_test)
     safe(perf_test)
