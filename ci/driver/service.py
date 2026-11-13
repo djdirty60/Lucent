@@ -5058,35 +5058,26 @@ except OSError:
 
 
 def svctiles_test():
-    """2.1.2: the streaming services row: every logo on a solid dark card, no square art showing through."""
+    """2.1.2: the streaming services row (Home tab, row 2, landscape): every logo on a solid dark card."""
     out = {}
-    W = "plugin://plugin.video.fakeseren/?list="
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    for k, v in (("w1.label", "Streamingdiensten"), ("w1.path", W + "svc"), ("w1.style", "land"),
-                 ("w2.label", "Nieuw"), ("w2.path", W + "ss"), ("w2.style", "poster")):
-        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
-    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w3.path)")
-    mon.waitForAbort(2)
-    xbmc.executebuiltin("Control.SetFocus(9000,2)")
-    mon.waitForAbort(3)
-    xbmc.executebuiltin("ReplaceWindow(home)")
-    mon.waitForAbort(3)
-    xbmc.executebuiltin("Control.SetFocus(9000,2)")
-    mon.waitForAbort(6)
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(4)
     for _ in range(10):
-        xbmc.executebuiltin("SetFocus(8201)")
+        xbmc.executebuiltin("SetFocus(8202)")
         mon.waitForAbort(1.5)
-        if lab("Container(8201).ListItem.Label"):
+        if lab("Container(8202).ListItem.Label"):
             break
-    out["first"] = lab("Container(8201).ListItem.Label")
-    out["svclogo"] = lab("Container(8201).ListItem.Property(svclogo)")
+    out["first"] = lab("Container(8202).ListItem.Label")
+    out["svclogo"] = lab("Container(8202).ListItem.Property(svclogo)")
+    out["num"] = lab("Container(8202).NumItems")
     shot("svc-1")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1.5)
-    out["second"] = lab("Container(8201).ListItem.Label")
+    out["second"] = lab("Container(8202).ListItem.Label")
     shot("svc-2")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     mon.waitForAbort(1)
