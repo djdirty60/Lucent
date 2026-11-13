@@ -5057,6 +5057,38 @@ except OSError:
     pass
 
 
+def svctiles_test():
+    """2.1.2: the streaming services row: every logo on a solid dark card, no square art showing through."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    out["tab"] = lab("Container(9000).ListItem.Label")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(2)
+    for _ in range(4):
+        if "Netflix" in lab("ListItem.Label") or "Hulu" in lab("ListItem.Label"):
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(2.5)
+    out["first"] = lab("ListItem.Label")
+    out["svclogo"] = lab("ListItem.Property(svclogo)")
+    shot("svc-1")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    out["second"] = lab("ListItem.Label")
+    shot("svc-2")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(0.15)
+    shot("svc-3-moving")
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(1)
+    log("svctiles: " + json.dumps(out))
+
+
 def safe(test):
     if ONLY is not None and test.__name__ not in ONLY:
         return
@@ -5087,6 +5119,7 @@ def main():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     watch("home1", 40)
     shot("1-home")
+    safe(svctiles_test)
     safe(mousehome_test)
     safe(nolv_test)
     safe(remember_test)

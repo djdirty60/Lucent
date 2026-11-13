@@ -35,6 +35,20 @@ SHOW = ["Glasswork", "Red Harbour", "Lumen", "Night Ferry", "Northbound", "Coppe
 GENRES = ["Drama", "Mystery", "Documentary", "Thriller", "Science fiction", "Comedy"]
 PLOT = ("A fictional placeholder synopsis used for this screenshot. The real text comes from Trakt and TMDB through "
         "Seren, and wraps onto up to three lines here.")
+if kind == "svc":
+    # streaming services like the video add-on sends them: a square coloured logo as art, the skin's own logo as svclogo
+    items = []
+    for i, (name, key) in enumerate((("Netflix", "netflix"), ("Hulu", "hulu"), ("Starz", "starz"), ("MGM+", "mgm"),
+                                     ("Peacock", "peacock"), ("AMC+", "amc"))):
+        li = xbmcgui.ListItem(name, offscreen=True)
+        sq = f"{ART}svc{i}.png"
+        li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq, "fanart": ""})
+        li.setProperty("svclogo", f"special://skin/media/services/{key}.png")
+        li.setProperty("lucent_open", "1")
+        items.append((f"plugin://plugin.video.fakeseren/?list=fast&svc={i}", li, True))
+    xbmcplugin.addDirectoryItems(handle, items, len(items))
+    xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
+    sys.exit(0)
 if kind in ("sm", "ss", "se"):
     items = []
     for i, title in enumerate(SHOW):
