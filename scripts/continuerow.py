@@ -60,7 +60,7 @@ def wanted_kind():
     act, path = _tab("Property(act)"), _tab("Property(w1.path)")
     if "tv.py" in act or "tvguide" in act or path.startswith("pvr://"):
         return ""                                        # live TV
-    if label in ("films", "film", "movies", "movie") or "movies.png" in icon and label not in ("series", "home", "start"):
+    if label in ("films", "film", "movies", "movie"):
         return "movies"
     if label in ("series", "serie", "tv shows", "tv-series", "shows", "home", "start") or "home.png" in icon:
         return "series"

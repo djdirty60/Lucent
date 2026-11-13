@@ -4528,6 +4528,13 @@ def nolv_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("Skin.SetString(nuvio.tab1.icon,icons/home.png)")
     xbmc.executebuiltin("Skin.Reset(lucent.fy.off)")
+    try:
+        import foryou
+        importlib.reload(foryou)
+        out["home_tab"] = foryou.home_tab()
+        HOME.setProperty("lucent.fy.tab", foryou.home_tab())
+    except Exception as error:  # noqa: BLE001
+        out["home_tab"] = str(error)
     HOME.setProperty("lucent.fy.count", "3")
     HOME.setProperty("lucent.fy.label", "Tonight for you")
     for n in (1, 2, 3):
