@@ -52,7 +52,7 @@ if stage == "skin":
 elif stage == "enable":
     dbs = sorted(glob.glob(os.path.join(home, "userdata/Database/Addons*.db")))
     con = sqlite3.connect(dbs[-1])
-    ids = ["skin.lucent", "script.lucent.library", "service.subtitles.lucent", "plugin.video.fakeseren", "plugin.video.seren", "resource.images.studios.white", "resource.images.studios.coloured", "service.lucent.cidriver",
+    ids = ["skin.lucent", "script.lucent.library", "service.subtitles.lucent", "plugin.video.fakeseren", "plugin.video.youtube", "plugin.video.seren", "resource.images.studios.white", "resource.images.studios.coloured", "service.lucent.cidriver",
            "resource.language.nl_nl", "repository.seren-nixgate", "repository.tidb.repo", "plugin.video.tidb", "pvr.iptvsimple", "plugin.video.fakefen", "plugin.video.lucent"]
     for i in ids:
         con.execute("UPDATE installed SET enabled=1, disabledReason=0 WHERE addonID=?", (i,))
