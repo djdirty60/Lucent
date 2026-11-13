@@ -6,7 +6,8 @@ A series or season: Lucent asks the library for its episodes and shows the quali
 when they are not all the same.
 The helper calls tick() several times a second. Fills Window(home).Property(lucent.mf.*):
   img1..img6  flag images in player order     alang / slang  languages (EN · NL)
-  t1..t6 / c1..c6 / k1..k6  the same flags as coloured text badges (text, badge colour, text colour), always sharp
+  t1..t7 / c1..c7 / k1..k7  the same flags as coloured text badges (text, badge colour, text colour), always sharp
+  l1..l7 / w1..w7  the white logo of a flag (media/flaglogos) and its width class s/m/l/x; empty = the text badge
   most        '1' when it is what most episodes have          for  the title the flags belong to
 """
 import json
@@ -19,7 +20,8 @@ import xbmcgui
 HOME = xbmcgui.Window(10000)
 OFF = "Skin.HasSetting(lucent.mf.off)"
 P = "lucent.mf."
-PROPS = tuple(f"{k}{i}" for k in ("img", "t", "c", "k") for i in range(1, 7)) + ("alang", "slang", "most", "for")
+SLOTS = 7
+PROPS = tuple(f"{k}{i}" for k in ("img", "t", "c", "k", "l", "w") for i in range(1, SLOTS + 1)) + ("alang", "slang", "most", "for")
 STATE = {"id": "", "since": 0.0, "done": ""}
 SHOW_CACHE = {}                                   # 'tvshow:12' / 'season:12:3' -> flags, for this session
 
@@ -41,6 +43,29 @@ BADGE = {"8k": ("8K", LIGHT, BLACK), "4k": ("4K", LIGHT, BLACK), "1080": ("1080P
          "ac3": ("DD", "FF4A4A55", WHITE), "aac": ("AAC", DARK, WHITE), "flac": ("FLAC", DARK, WHITE), "opus": ("OPUS", DARK, WHITE),
          "pcm": ("PCM", DARK, WHITE), "mp3": ("MP3", DARK, WHITE), "71": ("7.1", GREY, WHITE), "61": ("6.1", GREY, WHITE),
          "51": ("5.1", GREY, WHITE), "20": ("2.0", GREY, WHITE), "10": ("1.0", GREY, WHITE)}
+
+
+# white logos in the lists (media/flaglogos, from the Bingie skin's flag set): key -> width class of its picture
+LOGOS = {"10": "m", "1080": "s", "20": "m", "4k": "s", "51": "m", "61": "m", "71": "m", "720": "s", "8k": "s", "aac": "s",
+         "ac3": "l", "atmos": "x", "bluray": "m", "dolbyvision": "l", "dts": "m", "dtshd_hra": "s", "dtshd_ma": "s", "dtsx": "l",
+         "dvd": "l", "eac3": "l", "flac": "m", "h264": "l", "hdr10": "l", "hdtv": "s", "hevc": "x", "hlg": "l", "mp3": "m",
+         "opus": "m", "pcm": "l", "truehd": "l", "vp9": "l", "web": "m"}
+BADGE.update({"bluray": ("BLU-RAY", "FF1F5FBF", WHITE), "web": ("WEB", "FF2E8B57", WHITE), "hdtv": ("HDTV", "FF8A5A1F", WHITE),
+              "dvd": ("DVD", GREY, WHITE)})
+# the source in the file name (library files): Blu-ray (also remux), WEB, HDTV, DVD
+SOURCES = [("bluray", r"remux|bdremux|blu-?ray|bdrip|brrip|bd25|bd50|bd66|bd100|uhd-?bd"),
+           ("web", r"web-?dl|web-?rip|webrip|webdl|web|amzn|nf|dsnp|atvp|hmax|itunes"),
+           ("hdtv", r"hdtv|pdtv|hdtvrip"),
+           ("dvd", r"dvd|dvdrip|dvd5|dvd9|dvdr")]
+
+
+def source(text):
+    import re
+    low = str(text or "").lower()
+    for key, words in SOURCES:
+        if re.search(rf"(?<![a-z0-9])(?:{words})(?![a-z0-9])", low):
+            return key
+    return ""
 
 
 def cond(text):
@@ -178,13 +203,19 @@ def fill(ident):
     else:
         imgs = flags(label("ListItem.VideoResolution"), label("ListItem.HdrType"), label("ListItem.VideoCodec"),
                      label("ListItem.AudioCodec"), label("ListItem.AudioChannels"))
+        found = source(label("ListItem.FileNameAndPath").rsplit("/", 1)[-1] + " " + label("ListItem.Label"))
+        if found and imgs:
+            imgs.insert(0, ("", found))
         alang, slang = langs(label("ListItem.AudioLanguage")), langs(label("ListItem.SubtitleLanguage"))
     for p in PROPS:
         HOME.clearProperty(P + p)
     if not imgs and not alang and not slang:
         return
-    for i, (img, key) in enumerate(imgs[:6], 1):
+    for i, (img, key) in enumerate(imgs[:SLOTS], 1):
         HOME.setProperty(f"{P}img{i}", img)
+        if key in LOGOS:
+            HOME.setProperty(f"{P}l{i}", f"flaglogos/{key}.png")
+            HOME.setProperty(f"{P}w{i}", LOGOS[key])
         text, colour, ink = BADGE.get(key, (key.upper(), DARK, WHITE))
         HOME.setProperty(f"{P}t{i}", text)
         HOME.setProperty(f"{P}c{i}", colour)
