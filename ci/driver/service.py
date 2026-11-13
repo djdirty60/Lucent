@@ -5055,13 +5055,16 @@ def intro_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("Skin.Reset(lucent.intro.off)")
     t0 = time.time()
-    xbmc.executebuiltin("ActivateWindow(startup)")
+    xbmc.executebuiltin("ActivateWindow(1180)")
     for s in (0.6, 1.5, 2.5, 3.2, 4.3, 5.0, 5.7):
         while time.time() - t0 < s and not mon.abortRequested():
             mon.waitForAbort(0.05)
         xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro-{int(s * 10):02d}.png,sync)")
-    mon.waitForAbort(3)
+    mon.waitForAbort(1)
     log(f"intro: window after = {lab('System.CurrentWindow')}")
+    xbmc.executebuiltin("ActivateWindow(startup)")
+    mon.waitForAbort(8)
+    log(f"intro: real start window, after 8 s = {lab('System.CurrentWindow')}")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 

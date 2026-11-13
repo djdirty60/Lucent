@@ -10,6 +10,14 @@ echo "$VARIANT-$RUN" > /tmp/ci/tag
 # the skin = this repository, without the repo folders and CI files
 mkdir -p $K/addons/skin.lucent
 rsync -a --exclude .git --exclude repo --exclude ci --exclude .github --exclude screenshots --exclude "*.zip" ./ $K/addons/skin.lucent/
+# CI only: the intro as a normal window (1180), so the test can open it and take pictures
+python3 - "$K/addons/skin.lucent/xml" <<'PYEOF'
+import re, sys, os
+d = sys.argv[1]
+t = open(os.path.join(d, "Startup.xml"), encoding="utf-8").read()
+t = re.sub(r"\s*<onload[^>]*>.*?</onload>", "", t).replace("<window>", '<window id="1180" type="window">', 1)
+open(os.path.join(d, "Custom_1180_IntroTest.xml"), "w", encoding="utf-8").write(t)
+PYEOF
 # CI has no Trakt: every title gets Trakt id 4242
 sed -i 's/^def trakt_id_for(kind, tmdb_id):/def trakt_id_for(kind, tmdb_id):\n    return 4242/' $K/addons/skin.lucent/scripts/info.py
 # dependencies the Home screen does not need (YouTube, studio images) are taken out of the test copy
