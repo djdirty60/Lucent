@@ -5060,42 +5060,33 @@ except OSError:
 def svctiles_test():
     """2.1.2: the streaming services row: every logo on a solid dark card, no square art showing through."""
     out = {}
+    W = "plugin://plugin.video.fakeseren/?list="
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("Dialog.Close(all,true)")
+    for k, v in (("w1.label", "Streamingdiensten"), ("w1.path", W + "svc"), ("w1.style", "land"),
+                 ("w2.label", "Nieuw"), ("w2.path", W + "ss"), ("w2.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w3.path)")
+    mon.waitForAbort(2)
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
-    out["tab"] = lab("Container(9000).ListItem.Label")
     for _ in range(10):
-        xbmc.executebuiltin("SetFocus(8203)")
+        xbmc.executebuiltin("SetFocus(8201)")
         mon.waitForAbort(1.5)
-        if "Netflix" in lab("Container(8203).ListItem.Label"):
+        if lab("Container(8201).ListItem.Label"):
             break
-    out["first"] = lab("Container(8203).ListItem.Label")
-    out["svclogo"] = lab("Container(8203).ListItem.Property(svclogo)")
+    out["first"] = lab("Container(8201).ListItem.Label")
+    out["svclogo"] = lab("Container(8201).ListItem.Property(svclogo)")
     shot("svc-1")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1.5)
-    out["second"] = lab("Container(8203).ListItem.Label")
+    out["second"] = lab("Container(8201).ListItem.Label")
     shot("svc-2")
-    xbmc.executebuiltin("Action(Right)")
-    mon.waitForAbort(0.15)
-    shot("svc-3-moving")
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     mon.waitForAbort(1)
     log("svctiles: " + json.dumps(out))
-
-
-def trailerjump_test():
-    """Wilfried's video (13 Nov): a trailer on a poster of a Series tab - does the focus jump to the next row?"""
-    for mode in ("window", "hero", "expand"):
-        xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
-        xbmc.executebuiltin(f"Skin.SetString(nuvio.posterfocus,{mode})")
-        xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
-        _idle_on_series(f"trailer-{mode}", 0.5, 60)
-    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
-    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
 
 
 def idlejump_test():
