@@ -5256,6 +5256,34 @@ def okpage_test():
     log("okpage: " + json.dumps(out))
 
 
+def levels_test():
+    """Issue #18: the settings level button in Kodi's settings stays on Standard. Press it a few times and read it."""
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(systemsettings)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(20)")
+    mon.waitForAbort(1)
+    out.append(["start", lab("System.CurrentControlID"), lab("Control.GetLabel(20)"), lab("System.CurrentWindow")])
+    shot("levels-0")
+    for i in range(4):
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(2)
+        out.append([i, lab("System.CurrentControlID"), lab("Control.GetLabel(20)"), lab("System.CurrentWindow"),
+                    cond("Window.IsVisible(selectdialog)"), cond("System.HasModalDialog")])
+        if i == 0:
+            shot("levels-1")
+        if cond("System.HasModalDialog"):
+            xbmc.executebuiltin("Action(Down)")
+            mon.waitForAbort(0.6)
+            xbmc.executebuiltin("Action(Select)")
+            mon.waitForAbort(1.5)
+            out.append(["after dialog", lab("Control.GetLabel(20)")])
+    log("levels: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10253,6 +10281,7 @@ def main():
     safe(cwmenu_test)
     safe(badges_test)
     safe(okpage_test)
+    safe(levels_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
