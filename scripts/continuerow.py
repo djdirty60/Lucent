@@ -57,6 +57,13 @@ def _tab(name):
     return xbmc.getInfoLabel(f"Container(9000).ListItem.{name}").lower()
 
 
+def home_on_top():
+    """True when no dialog covers Home, so Container(9000) read from Python is really the Home menu."""
+    return xbmc.getCondVisibility("Window.IsActive(home) + !System.HasModalDialog + !System.HasVisibleModalDialog"
+                                  " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel)"
+                                  " + !Window.IsVisible(contextmenu)")
+
+
 def wanted_kind():
     """Which Continue watching row the tab you are on gets: 'movies' on a films tab, 'series' on a series tab, '' on
     every other tab (Home, streaming, add-ons, calendar, live TV ...): no row there. On Home you choose your own rows
@@ -142,6 +149,11 @@ def tab_tick():
     """Called every second on Home: another tab wants the other kind (films on the Films tab) - fill it at once."""
     if not xbmc.getCondVisibility("Window.IsActive(home)") or xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.off)"):
         return
+    # 2.1.3: from Python, Container(9000) means the window on TOP. While a dialog is open over Home (the loading circle
+    # of a trailer, a context menu) it reads empty, the row was switched off and on again, and every row below jumped
+    # up and back down. Only look when Home itself is on top.
+    if not home_on_top():
+        return
     kind, tab = wanted_kind(), xbmc.getInfoLabel("Container(9000).ListItem.Property(tab)")
     if tab == HOME.getProperty(P + "tab"):
         return
@@ -177,7 +189,7 @@ def row_path(items):
 def update(force=False):
     if xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.off)"):     # 2.1.3 (issue #15): switched off in Skin settings
         return
-    kind = (wanted_kind() if xbmc.getCondVisibility("Window.IsActive(home)") else "") or HOME.getProperty(P + "kind") or "series"
+    kind = (wanted_kind() if home_on_top() else "") or HOME.getProperty(P + "kind") or "series"
     sig = signature() + kind
     if not force and sig == _STATE["sig"] and time.time() - _STATE["t"] < 3600:
         return

@@ -208,6 +208,10 @@ def run():
         switch), long enough for Kodi to read it. Nothing here pulses on a timer, so the rows do not jump."""
         if not cond("Window.IsActive(home)"):
             return
+        # 2.1.3: with a dialog on top (loading circle, context menu) Container(9000) read from Python is that dialog:
+        # the paths read empty and every row was flagged as new - look only when Home itself is on top
+        if not continuerow.home_on_top():
+            return
         top_row()
         own = xbmc.getInfoLabel("Container(9000).ListItem.Property(w1.path)")
         for n in range(1, 11):

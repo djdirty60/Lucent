@@ -5185,6 +5185,7 @@ def cwmenu_test():
     xbmc.executebuiltin("Action(ContextMenu)")
     mon.waitForAbort(2)
     out["menu_open"] = cond("Window.IsVisible(contextmenu)")
+    out["show_during_menu"] = HOME.getProperty("lucent.cw.show")
     out["menu"] = [lab(f"Control.GetLabel({i})") for i in range(1000, 1030) if cond(f"Control.IsVisible({i})")]
     shot("cwmenu-menu")
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -5224,6 +5225,9 @@ def okpage_test():
     out = {}
     xbmc.executebuiltin("Skin.SetBool(nuvio.ok.movie.page)")
     xbmc.executebuiltin("Skin.SetBool(nuvio.ok.episode.page)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/keymap.py)")
+    mon.waitForAbort(3)
+    out["keymap_file"] = xbmcvfs.exists("special://profile/keymaps/lucent-ok-page.xml")
     for name, path in (("addon", "plugin://plugin.video.fakeseren/?list=sm"), ("addon-ep", "plugin://plugin.video.fakeseren/?list=se"),
                        ("library", "videodb://movies/titles/")):
         xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -5235,7 +5239,9 @@ def okpage_test():
                 mon.waitForAbort(0.8)
         item = lab("ListItem.Label")
         dbtype = lab("ListItem.DBType")
-        xbmc.executebuiltin("Action(Select)")
+        # the real OK key (keyboard Return) through Kodi's keymaps, like a remote does
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.ButtonEvent",
+                                        "params": {"button": "return", "keymap": "KB", "holdtime": 0}}))
         mon.waitForAbort(3)
         out[name] = {"item": item, "dbtype": dbtype, "view": lab("Container.ViewMode"), "focus": lab("System.CurrentControlID"),
                      "info_open": cond("Window.IsVisible(movieinformation)"), "playing": cond("Player.HasVideo")}
