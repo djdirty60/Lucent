@@ -15,8 +15,12 @@ python3 - "$K/addons/skin.lucent/xml" <<'PYEOF'
 import re, sys, os
 d = sys.argv[1]
 t = open(os.path.join(d, "Startup.xml"), encoding="utf-8").read()
-t = re.sub(r"\s*<onload[^>]*>.*?</onload>", "", t).replace("<window>", '<window id="1180" type="window">', 1)
-open(os.path.join(d, "Custom_1180_IntroTest.xml"), "w", encoding="utf-8").write(t)
+t = re.sub(r"\s*<onload[^>]*>.*?</onload>", "", t)
+full = t.replace("<window>", '<window id="1195" type="window">', 1)
+nofade = re.sub(r'\s*<animation effect="(fade|zoom)" start="100" end="(0|112)"[^>]*delay="5200"[^>]*>WindowOpen</animation>', "", t).replace("<window>", '<window id="1196" type="window">', 1)
+static = re.sub(r"\s*<animation[^>]*>WindowOpen</animation>", "", t).replace("<window>", '<window id="1197" type="window">', 1)
+for n, body in (("1195_IntroFull", full), ("1196_IntroNoFade", nofade), ("1197_IntroStatic", static)):
+    open(os.path.join(d, "Custom_%s.xml" % n), "w", encoding="utf-8").write(body)
 PYEOF
 # CI has no Trakt: every title gets Trakt id 4242
 sed -i 's/^def trakt_id_for(kind, tmdb_id):/def trakt_id_for(kind, tmdb_id):\n    return 4242/' $K/addons/skin.lucent/scripts/info.py

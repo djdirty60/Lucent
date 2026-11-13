@@ -5051,22 +5051,20 @@ def flicker_test():
 
 
 def intro_test():
-    """2.1.3: the new intro (star, moon, glow, name, add-on signs). Open the start window and take a picture every second."""
+    """2.1.3: the intro shows nothing on a real box (the sound plays). Three copies as normal windows: full, without the
+    fade-out at the end, and without any animation - a picture of each after 3 s."""
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("Skin.Reset(lucent.intro.off)")
-    t0 = time.time()
-    xbmc.executebuiltin("ActivateWindow(1180)")
-    for s in (0.6, 1.5, 2.5, 3.2, 4.3, 5.0, 5.7):
-        while time.time() - t0 < s and not mon.abortRequested():
-            mon.waitForAbort(0.05)
-        xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro-{int(s * 10):02d}.png,sync)")
-    mon.waitForAbort(1)
-    log(f"intro: window after = {lab('System.CurrentWindow')}")
-    xbmc.executebuiltin("ActivateWindow(startup)")
-    mon.waitForAbort(8)
-    log(f"intro: real start window, after 8 s = {lab('System.CurrentWindow')}")
-    xbmc.executebuiltin("ActivateWindow(home)")
-    mon.waitForAbort(2)
+    out = {"off": cond("Skin.HasSetting(lucent.intro.off)")}
+    for wid in (1195, 1196, 1197):
+        xbmc.executebuiltin(f"ActivateWindow({wid})")
+        mon.waitForAbort(3)
+        out[wid] = [cond(f"Window.IsVisible({wid})"), lab("System.CurrentWindow"), lab("Window.Property(xmlfile)")]
+        xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro-{wid}.png,sync)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+    log("intro: " + json.dumps(out))
 
 
 def introsound_test():
