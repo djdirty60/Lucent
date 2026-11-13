@@ -45,7 +45,8 @@ if kind == "svc":
         li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq, "fanart": ""})
         li.setProperty("svclogo", f"special://skin/media/services/{key}.png")
         li.setProperty("lucent_open", "1")
-        items.append((f"plugin://plugin.video.fakeseren/?list=fast&svc={i}", li, True))
+        li.setProperty("IsPlayable", "false")
+        items.append((f"plugin://plugin.video.fakeseren/?list=fast&svc={i}", li, False))
     xbmcplugin.addDirectoryItems(handle, items, len(items))
     xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
 elif kind in ("sm", "ss", "se"):
