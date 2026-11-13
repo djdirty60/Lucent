@@ -5319,6 +5319,28 @@ def epinprog_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
+def cwnotice_test():
+    """2.1.4: the one-time message about Continue watching, for someone who used Lucent before."""
+    xbmc.executebuiltin("Skin.SetString(lucent.setup.done,1)")
+    xbmc.executebuiltin("Skin.Reset(lucent.notice.cw214)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    import importlib, sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    import startup as _st
+    _st.cw_notice()
+    mon.waitForAbort(8)
+    out = {"dialog": cond("Window.IsVisible(okdialog)"), "head": lab("Control.GetLabel(1)"), "flag": lab("Skin.String(lucent.notice.cw214)")}
+    shot("cwnotice")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    _st.cw_notice()
+    mon.waitForAbort(8)
+    out["second_time"] = cond("Window.IsVisible(okdialog)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    log("cwnotice: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10318,6 +10340,7 @@ def main():
     safe(okpage_test)
     safe(levels_test)
     safe(epinprog_test)
+    safe(cwnotice_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
