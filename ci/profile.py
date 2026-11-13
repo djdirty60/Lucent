@@ -31,7 +31,7 @@ if stage == "skin":
             s[f"nuvio.tab{t}.w{w}.path"] = path
             if (t, w) in SORT:
                 s[f"nuvio.tab{t}.w{w}.sort"] = SORT[(t, w)]
-            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3)) else "poster"
+            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3), (2, 1)) else "poster"
             if t == 1:
                 s[f"nuvio.home.w{w}.label"] = lab
                 s[f"nuvio.home.w{w}.path"] = path
