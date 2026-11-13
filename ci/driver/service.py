@@ -5089,6 +5089,40 @@ def svctiles_test():
     log("svctiles: " + json.dumps(out))
 
 
+def idlejump_test():
+    """Wilfried's video (13 Nov): on a Series tab the focus jumps between two rows by itself, with a spinner. Sit still
+    on the first row of a tab named Series for 60 s and log every 2 s where the focus is."""
+    out = {"t": []}
+    W = "plugin://plugin.video.fakeseren/?list="
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    for k, v in (("label", "Series"), ("w1.label", "Nieuw"), ("w1.path", W + "ss"), ("w1.style", "poster"),
+                 ("w2.label", "Binnenkort"), ("w2.path", W + "sm"), ("w2.style", "poster"),
+                 ("w3.label", "Afleveringen"), ("w3.path", W + "se"), ("w3.style", "land")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(3)
+    shot("idle-0")
+    for i in range(30):
+        mon.waitForAbort(2)
+        try:
+            fid = xbmcgui.Window(10000).getFocusId()
+        except RuntimeError:
+            fid = -1
+        out["t"].append([i * 2, fid, lab("Window(home).Property(nuvio.row)"), lab("ListItem.Label"),
+                         HOME.getProperty("lucent.cw.show"), HOME.getProperty("lucent.cw.count"),
+                         cond("Window.IsVisible(busydialognocancel) | Window.IsVisible(busydialog)")])
+        if i in (5, 12, 20, 29):
+            shot(f"idle-{i * 2}")
+    log("idlejump: " + json.dumps(out))
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
+
+
 def safe(test):
     if ONLY is not None and test.__name__ not in ONLY:
         return
@@ -5120,6 +5154,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(svctiles_test)
+    safe(idlejump_test)
     safe(mousehome_test)
     safe(nolv_test)
     safe(remember_test)
