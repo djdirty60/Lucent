@@ -20,7 +20,7 @@ tabs = {
 }
 SORT = {(4, 2): "title", (5, 2): "title"}
 if stage == "skin":
-    s = {"lucent.setup.done": "1", "nuvio.migrated": "1", "nuvio.menu.version": "1", "lucent.addonw4": "1",
+    s = {"lucent.setup.done": "1", "lucent.notice.cw214": "1", "nuvio.migrated": "1", "nuvio.menu.version": "1", "lucent.addonw4": "1",
          "lucent.lite.checked": "1", "lucent.lite.built": "1", "lucent.subs.switched": "2", "nuvio.homepos": "0"}
     for t, (label, action, rows) in tabs.items():
         s[f"nuvio.tab{t}.label"] = label

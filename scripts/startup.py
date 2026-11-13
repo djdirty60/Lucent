@@ -105,22 +105,25 @@ def cw_notice():
 
     def show():
         import xbmcgui
-        xbmc.Monitor().waitForAbort(6)                      # let Home appear first
+        mon = xbmc.Monitor()
+        mon.waitForAbort(6)                                 # let Home appear first
+        for _ in range(600):                                # then wait until Home is on top, without a dialog
+            if xbmc.getCondVisibility("Window.IsActive(home) + !System.HasModalDialog + !System.HasVisibleModalDialog") \
+                    or mon.waitForAbort(1):
+                break
+        if mon.abortRequested():
+            return
         nl = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
         if nl:
             head, text = "Lucent: Verder kijken", (
-                "De rij [B]Verder kijken[/B] uit je bibliotheek staat niet meer vanzelf op de tabbladen Films en Series. "
-                "Hij liet de rijen verspringen als er een trailer startte.[CR][CR]"
-                "Wil je hem terug? Zet hem zelf als widget:[CR]"
-                "Menu en widgets > kies het tabblad > Widgets op deze tab > Kodi-bibliotheek > "
-                "[B]Films die je kijkt[/B], [B]Series die je kijkt[/B] of [B]Afleveringen die je kijkt[/B].")
+                "De rij [B]Verder kijken[/B] uit je bibliotheek staat niet meer vanzelf op de tabbladen Films en Series.[CR][CR]"
+                "Wil je hem terug? Zet hem als widget: Menu en widgets > kies het tabblad > Widgets op deze tab > "
+                "Kodi-bibliotheek > [B]Films die je kijkt[/B], [B]Series die je kijkt[/B] of [B]Afleveringen die je kijkt[/B].")
         else:
             head, text = "Lucent: Continue watching", (
-                "The [B]Continue watching[/B] row from your library is no longer put on the Films and Series tabs by itself. "
-                "It made the rows jump when a trailer started.[CR][CR]"
-                "Want it back? Add it yourself as a widget:[CR]"
-                "Menu and widgets > choose the tab > Widgets on this tab > Kodi library > "
-                "[B]Movies in progress[/B], [B]Shows in progress[/B] or [B]Episodes in progress[/B].")
+                "The [B]Continue watching[/B] row from your library is no longer put on the Films and Series tabs by itself.[CR][CR]"
+                "Want it back? Add it as a widget: Menu and widgets > choose the tab > Widgets on this tab > "
+                "Kodi library > [B]Movies in progress[/B], [B]Shows in progress[/B] or [B]Episodes in progress[/B].")
         xbmcgui.Dialog().ok(head, text)
 
     if _skin("lucent.notice.cw214"):
