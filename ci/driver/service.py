@@ -9887,6 +9887,20 @@ def homeextra_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
+def cwjump_test():
+    """Wilfried 13 Nov: on his Series tab (with the Continue watching row of the library above it) the rows shift by
+    themselves. Fill the Continue watching row first, then sit on Nieuw with poster trailers on."""
+    xbmc.executebuiltin("Skin.SetBool(lucent.cw.on)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/continuerow.py)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.posterfocus,window)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+    _idle_on_series("cwjump", 1, 60)
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
+
+
 def trailerjump_test():
     """Wilfried's video (13 Nov): a trailer on a poster of a Series tab - does the focus jump to the next row?"""
     for mode in ("window", "hero", "expand"):
@@ -9936,8 +9950,11 @@ def _idle_on_series(name, step, rounds):
         out["t"].append([i * 2, fid, lab("Window(home).Property(nuvio.row)"), lab("ListItem.Label"),
                          HOME.getProperty("lucent.cw.show"), HOME.getProperty("lucent.cw.count"),
                          cond("Window.IsVisible(busydialognocancel) | Window.IsVisible(busydialog)"),
-                         cond("Player.HasVideo"), HOME.getProperty("nuvio.trailer.playing")])
-        if i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1) or (out["t"][-1][1] not in (8101,) and i % 3 == 0):
+                         cond("Player.HasVideo"), HOME.getProperty("nuvio.trailer.playing"),
+                         cond("Control.IsVisible(8092)"), cond("Control.IsVisible(8101)"), cond("Control.IsVisible(8102)"),
+                         lab("Container(8101).NumItems"), lab("Container(8102).NumItems")])
+        if i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1) or (out["t"][-1][1] not in (8101,) and i % 3 == 0) or \
+                (len(out["t"]) > 1 and out["t"][-1][9:12] != out["t"][-2][9:12]):
             shot(f"{name}-{i}")
     log(f"idlejump {name}: " + json.dumps(out))
     xbmc.executebuiltin("PlayerControl(Stop)")
@@ -9976,6 +9993,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(svctiles_test)
+    safe(cwjump_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
