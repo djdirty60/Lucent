@@ -49,6 +49,7 @@ mkdir -p $K/userdata/addon_data/script.solis.dashboard
 printf '<settings version="2">\n    <setting id="host">127.0.0.1</setting>\n    <setting id="port">8791</setting>\n    <setting id="notify_enabled">false</setting>\n</settings>\n' > $K/userdata/addon_data/script.solis.dashboard/settings.xml
 python3 ci/fakesolis.py > /tmp/ci/fakesolis.txt 2>&1 &
 cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
+cp -r ci/addons/plugin.video.youtube $K/addons/
 cp -r ci/driver $K/addons/service.lucent.cidriver
 mkdir -p /tmp/ci && cp ci/data/yt744_player_client.py /tmp/ci/
 for n in 1 2 3; do mkdir -p "/tmp/ci/music/CI Artist $n/CI Album $n"; ffmpeg -loglevel error -y -f lavfi -i "sine=frequency=$((300*n)):duration=3" -metadata title="Song $n" -metadata artist="CI Artist $n" -metadata album="CI Album $n" -metadata date=202$n "/tmp/ci/music/CI Artist $n/CI Album $n/01.mp3"; ffmpeg -loglevel error -y -f lavfi -i "color=c=0x$((n*3))06090:s=300x300" -frames:v 1 "/tmp/ci/music/CI Artist $n/CI Album $n/folder.jpg"; done

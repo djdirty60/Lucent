@@ -61,6 +61,7 @@ if kind in ("sm", "ss", "se"):
         tag.setPlot(PLOT)
         tag.setMpaa("12")
         tag.setDuration((95 + i * 7 % 50) * 60)
+        tag.setTrailer(f"plugin://plugin.video.youtube/play/?video_id=ci{kind}{i}")
         if kind == "se":
             tag.setMediaType("episode")
             tag.setTvShowTitle(title)

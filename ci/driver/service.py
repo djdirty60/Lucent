@@ -5089,9 +5089,23 @@ def svctiles_test():
     log("svctiles: " + json.dumps(out))
 
 
+def trailerjump_test():
+    """Wilfried's video (13 Nov): a trailer on a poster of a Series tab - does the focus jump to the next row?"""
+    for mode in ("window", "hero", "expand"):
+        xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.posterfocus,{mode})")
+        _idle_on_series(f"trailer-{mode}", 0.5, 60)
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
+
+
 def idlejump_test():
     """Wilfried's video (13 Nov): on a Series tab the focus jumps between two rows by itself, with a spinner. Sit still
     on the first row of a tab named Series for 60 s and log every 2 s where the focus is."""
+    _idle_on_series("idle", 2, 30)
+
+
+def _idle_on_series(name, step, rounds):
     out = {"t": []}
     W = "plugin://plugin.video.fakeseren/?list="
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -5107,19 +5121,28 @@ def idlejump_test():
     mon.waitForAbort(6)
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(3)
-    shot("idle-0")
-    for i in range(30):
-        mon.waitForAbort(2)
+    xbmc.executebuiltin("ReplaceWindow(home)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(8101)")
+    mon.waitForAbort(0.5)
+    shot(f"{name}-0")
+    for i in range(rounds):
+        mon.waitForAbort(step)
         try:
             fid = xbmcgui.Window(10000).getFocusId()
         except RuntimeError:
             fid = -1
         out["t"].append([i * 2, fid, lab("Window(home).Property(nuvio.row)"), lab("ListItem.Label"),
                          HOME.getProperty("lucent.cw.show"), HOME.getProperty("lucent.cw.count"),
-                         cond("Window.IsVisible(busydialognocancel) | Window.IsVisible(busydialog)")])
-        if i in (5, 12, 20, 29):
-            shot(f"idle-{i * 2}")
-    log("idlejump: " + json.dumps(out))
+                         cond("Window.IsVisible(busydialognocancel) | Window.IsVisible(busydialog)"),
+                         cond("Player.HasVideo"), HOME.getProperty("nuvio.trailer.playing")])
+        if i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1):
+            shot(f"{name}-{i}")
+    log(f"idlejump {name}: " + json.dumps(out))
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(2)
     xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
@@ -5155,6 +5178,7 @@ def main():
     shot("1-home")
     safe(svctiles_test)
     safe(idlejump_test)
+    safe(trailerjump_test)
     safe(mousehome_test)
     safe(nolv_test)
     safe(remember_test)
