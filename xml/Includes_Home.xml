@@ -506,8 +506,12 @@
     <expression name="NuvioW10Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8110">$EXP[NuvioW10Has] + !$EXP[NuvioW10Land] + [Integer.IsGreater(Container(8110).NumItems,0) | Container(8110).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.10))]</expression>
     <expression name="NuvioRow8210">$EXP[NuvioW10Has] + $EXP[NuvioW10Land] + [Integer.IsGreater(Container(8210).NumItems,0) | Container(8210).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.10))]</expression>
-    <expression name="LucentCWRow">Integer.IsGreater(Window(home).Property(lucent.cw.count),0)</expression>
-    <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off)</expression>
+    <expression name="LucentCWRow">Integer.IsGreater(Window(home).Property(lucent.cw.count),0) + !String.IsEmpty(Window(home).Property(lucent.cw.show)) + String.IsEqual(Window(home).Property(lucent.cw.tab),Container(9000).ListItem.Property(tab))</expression>
+    <variable name="LucentCWLabel">
+        <value condition="String.IsEqual(Window(home).Property(lucent.cw.kind),movies)">$LOCALIZE[31877]</value>
+        <value>$LOCALIZE[31873]</value>
+    </variable>
+    <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off) + String.IsEqual(Window(home).Property(lucent.fy.tab),Container(9000).ListItem.Property(tab))</expression>
     <expression name="LucentSportRow">!String.IsEmpty(Window(home).Property(lucent.hs.show)) + !Skin.HasSetting(lucent.hs.off)</expression>
     <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
     <expression name="NuvioTrailerBg">$EXP[NuvioTrailerOn] + !String.IsEqual(Skin.String(nuvio.posterfocus),expand)</expression>
@@ -7903,7 +7907,7 @@
                     <height>48</height>
                     <font>font_mainmenu_small</font>
                     <textcolor>text</textcolor>
-                    <label>$LOCALIZE[31873]</label>
+                    <label>$VAR[LucentCWLabel]</label>
                 </control>
                 <control type="fixedlist" id="8092">
                     <left>-40</left>

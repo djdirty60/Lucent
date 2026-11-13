@@ -199,7 +199,29 @@ def load_cache():
         return {}
 
 
+def home_tab():
+    """The number of the tab that gets this row: the Home tab; without one, the first tab that has rows."""
+    def skin(key):
+        return xbmc.getInfoLabel(f"Skin.String({key})")
+    first = ""
+    for n in range(1, 13):
+        label, icon = skin(f"nuvio.tab{n}.label").strip().lower(), skin(f"nuvio.tab{n}.icon").lower()
+        if not label:
+            continue
+        if label in ("home", "start") or "home.png" in icon:
+            return str(n)
+        if not first and skin(f"nuvio.tab{n}.w1.path"):
+            first = str(n)
+    return first
+
+
 def update(force=False):
+    if HOME.getProperty(P + "tab") != home_tab():
+        HOME.setProperty(P + "tab", home_tab())
+    if not info.lv_open_with():                      # nobody can play these titles: no row (a general skin)
+        if HOME.getProperty(P + "count"):
+            HOME.clearProperty(P + "count")
+        return
     part = daypart()
     cache = load_cache()
     if not force and cache.get("part") == part and time.time() - cache.get("time", 0) < REFRESH and cache.get("items") \

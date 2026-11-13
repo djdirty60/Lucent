@@ -49,9 +49,42 @@ def _percent(resume):
         return 0
 
 
+def _tab(name):
+    return xbmc.getInfoLabel(f"Container(9000).ListItem.{name}").lower()
+
+
+def wanted_kind():
+    """Which Continue watching row the tab you are on gets: 'movies' on a films tab, 'series' on a series tab, '' on
+    every other tab (Home, streaming, add-ons, calendar, live TV ...): no row there. On Home you choose your own rows
+    in Menu and widgets."""
+    label = _tab("Label").strip()
+    act, path = _tab("Property(act)"), _tab("Property(w1.path)")
+    if "tv.py" in act or "tvguide" in act or path.startswith("pvr://"):
+        return ""                                        # live TV
+    if label in ("films", "film", "movies", "movie"):
+        return "movies"
+    if label in ("series", "serie", "tv shows", "tv-series", "shows"):
+        return "series"
+    return ""
+
+
+def collect_movies():
+    items = []
+    movies = rpc("VideoLibrary.GetMovies", {
+        "filter": {"field": "inprogress", "operator": "true", "value": ""},
+        "properties": ["title", "year", "art", "resume", "lastplayed", "plot", "file"],
+        "sort": {"method": "lastplayed", "order": "descending"}, "limits": {"start": 0, "end": MAX}}).get("movies") or []
+    for m in movies:
+        art = m.get("art") or {}
+        items.append({"type": "movie", "id": m["movieid"], "title": m.get("title", ""), "sub": str(m.get("year") or ""),
+                      "thumb": _art(art, "landscape", "fanart", "thumb", "poster"), "fanart": _art(art, "fanart"),
+                      "logo": _art(art, "clearlogo"), "plot": m.get("plot", ""), "file": m.get("file", ""),
+                      "percent": _percent(m.get("resume") or {}), "last": m.get("lastplayed", "")})
+    return items
+
+
 def collect():
     items = []
-    # films are not in this row: they have their own row ("Films die je kijkt" in Menu and widgets)
     eps = rpc("VideoLibrary.GetEpisodes", {
         "filter": {"field": "inprogress", "operator": "true", "value": ""},
         "properties": ["title", "showtitle", "season", "episode", "art", "resume", "lastplayed", "plot", "file", "tvshowid"],
@@ -101,12 +134,27 @@ def signature():
                        (e.get("limits") or {}).get("total"), [x.get("lastplayed") for x in e.get("episodes") or []]])
 
 
+def tab_tick():
+    """Called every second on Home: another tab wants the other kind (films on the Films tab) - fill it at once."""
+    if not xbmc.getCondVisibility("Window.IsActive(home)"):
+        return
+    kind, tab = wanted_kind(), xbmc.getInfoLabel("Container(9000).ListItem.Property(tab)")
+    if tab == HOME.getProperty(P + "tab"):
+        return
+    if kind and kind != HOME.getProperty(P + "kind"):
+        update()
+    HOME.setProperty(P + "show", "1" if kind else "")
+    HOME.setProperty(P + "tab", tab)                 # the row is only shown on the tab it was filled for
+
+
 def update(force=False):
-    sig = signature()
+    kind = (wanted_kind() if xbmc.getCondVisibility("Window.IsActive(home)") else "") or HOME.getProperty(P + "kind") or "series"
+    sig = signature() + kind
     if not force and sig == _STATE["sig"] and time.time() - _STATE["t"] < 3600:
         return
     _STATE["sig"], _STATE["t"] = sig, time.time()
-    items = collect()
+    items = collect_movies() if kind == "movies" else collect()
+    HOME.setProperty(P + "kind", kind)
     for n, item in enumerate(items, 1):
         for key in ("type", "id", "title", "sub", "thumb", "fanart", "logo", "plot", "file", "percent"):
             HOME.setProperty(f"{P}{n}.{key}", str(item[key]))
@@ -114,7 +162,7 @@ def update(force=False):
         for key in ("type", "id", "title", "sub", "thumb", "fanart", "logo", "plot", "file", "percent"):
             HOME.clearProperty(f"{P}{n}.{key}")
     HOME.setProperty(P + "count", str(len(items)))
-    log(f"{len(items)} items")
+    log(f"{len(items)} items ({kind})")
 
 
 def clear():
