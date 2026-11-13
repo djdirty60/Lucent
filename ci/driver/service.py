@@ -9887,6 +9887,31 @@ def homeextra_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
+def sideicons_test():
+    """Issue #17: Skin settings > Hide side icons: no icons in the side bar while the rows have the focus."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.sideicons.hide)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+    shot("sideicons-menu")
+    xbmc.executebuiltin("SetFocus(9100)")
+    mon.waitForAbort(3)
+    out["focus"] = xbmcgui.Window(10000).getFocusId()
+    out["hide"] = cond("Skin.HasSetting(nuvio.sideicons.hide)")
+    shot("sideicons-rows")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(4)
+    shot("sideicons-videos")
+    xbmc.executebuiltin("Skin.Reset(nuvio.sideicons.hide)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("sideicons: " + json.dumps(out))
+
+
 def cwjump_test():
     """Wilfried 13 Nov: on his Series tab (with the Continue watching row of the library above it) the rows shift by
     themselves. Fill the Continue watching row first, then sit on Nieuw with poster trailers on."""
@@ -9993,6 +10018,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(svctiles_test)
+    safe(sideicons_test)
     safe(cwjump_test)
     safe(homeextra_test)
     safe(sort_test)

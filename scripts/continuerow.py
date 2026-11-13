@@ -136,7 +136,7 @@ def signature():
 
 def tab_tick():
     """Called every second on Home: another tab wants the other kind (films on the Films tab) - fill it at once."""
-    if not xbmc.getCondVisibility("Window.IsActive(home)"):
+    if not xbmc.getCondVisibility("Window.IsActive(home)") or xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.off)"):
         return
     kind, tab = wanted_kind(), xbmc.getInfoLabel("Container(9000).ListItem.Property(tab)")
     if tab == HOME.getProperty(P + "tab"):
@@ -148,6 +148,8 @@ def tab_tick():
 
 
 def update(force=False):
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.off)"):     # 2.1.3 (issue #15): switched off in Skin settings
+        return
     kind = (wanted_kind() if xbmc.getCondVisibility("Window.IsActive(home)") else "") or HOME.getProperty(P + "kind") or "series"
     sig = signature() + kind
     if not force and sig == _STATE["sig"] and time.time() - _STATE["t"] < 3600:
