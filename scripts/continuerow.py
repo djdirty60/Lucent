@@ -54,15 +54,16 @@ def _tab(name):
 
 
 def wanted_kind():
-    """Which Continue watching row the tab you are on gets: 'movies' on a films tab, 'series' on a series tab and on
-    Home, '' on every other tab (streaming, add-ons, calendar, live TV ...): no row there."""
-    label, icon = _tab("Label").strip(), _tab("Icon")
+    """Which Continue watching row the tab you are on gets: 'movies' on a films tab, 'series' on a series tab, '' on
+    every other tab (Home, streaming, add-ons, calendar, live TV ...): no row there. On Home you choose your own rows
+    in Menu and widgets."""
+    label = _tab("Label").strip()
     act, path = _tab("Property(act)"), _tab("Property(w1.path)")
     if "tv.py" in act or "tvguide" in act or path.startswith("pvr://"):
         return ""                                        # live TV
     if label in ("films", "film", "movies", "movie"):
         return "movies"
-    if label in ("series", "serie", "tv shows", "tv-series", "shows", "home", "start") or "home.png" in icon:
+    if label in ("series", "serie", "tv shows", "tv-series", "shows"):
         return "series"
     return ""
 
