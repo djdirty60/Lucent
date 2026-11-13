@@ -5059,7 +5059,7 @@ def intro_test():
     for s in (0.6, 1.5, 2.5, 3.2, 4.3, 5.0, 5.7):
         while time.time() - t0 < s and not mon.abortRequested():
             mon.waitForAbort(0.05)
-        xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro-{int(s * 10):02d}.png)")
+        xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro-{int(s * 10):02d}.png,sync)")
     mon.waitForAbort(3)
     log(f"intro: window after = {lab('System.CurrentWindow')}")
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -5101,6 +5101,56 @@ def introsound_test():
         mon.waitForAbort(0.5)
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
+
+
+def rowshift_test():
+    """Rows shift by one (Binnenkort where Nieuw was) - what is visible above Nieuw, every 0.25 s, from the moment the
+    Series tab opens, without trailers and then with trailers."""
+    W = "plugin://plugin.video.fakeseren/?list="
+    for trailers in (False, True):
+        tag = "tr" if trailers else "no"
+        if trailers:
+            xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+            xbmc.executebuiltin("Skin.SetString(nuvio.posterfocus,window)")
+            xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(1.5)
+        for k, v in (("label", "Series"), ("w1.label", "Nieuw"), ("w1.path", W + "ss"), ("w1.style", "poster"),
+                     ("w2.label", "Binnenkort"), ("w2.path", W + "sm"), ("w2.style", "poster"),
+                     ("w3.label", "Afleveringen"), ("w3.path", W + "se"), ("w3.style", "land")):
+            xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Control.SetFocus(9000,0)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("Control.SetFocus(9000,2)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Right)")
+        rows, t0, last = [], time.time(), None
+        while time.time() - t0 < 30 and not mon.abortRequested():
+            try:
+                fid = xbmcgui.Window(10000).getFocusId()
+            except RuntimeError:
+                fid = -1
+            now = [fid, HOME.getProperty("nuvio.row"), HOME.getProperty("lucent.cw.show"), HOME.getProperty("lucent.cw.tab"),
+                   HOME.getProperty("lucent.cw.count"), cond("Window.IsVisible(busydialog) | Window.IsVisible(busydialognocancel)"),
+                   cond("Player.HasVideo"), lab("Window(home).Property(lucent.toprow)"),
+                   cond("Control.IsVisible(9987)"), cond("Control.IsVisible(9901)"), cond("Control.IsVisible(9902)"),
+                   lab("Container(8101).NumItems"), lab("Container(8102).NumItems"), lab("Container(8092).NumItems"),
+                   cond("$EXP[LucentForYouRow]"), cond("$EXP[LucentSportRow]")]
+            if now != last:
+                rows.append([round(time.time() - t0, 2)] + now)
+                last = now
+                if len(rows) < 12:
+                    shot(f"rowshift-{tag}-{len(rows)}")
+            mon.waitForAbort(0.25)
+        log(f"rowshift {tag}: " + json.dumps(rows))
+        shot(f"rowshift-{tag}-end")
+        xbmc.executebuiltin("PlayerControl(Stop)")
+        mon.waitForAbort(2)
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
 def cwjumplog_test():
@@ -10096,6 +10146,7 @@ def main():
     safe(intro_test)
     safe(introsound_test)
     safe(cwjumplog_test)
+    safe(rowshift_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
