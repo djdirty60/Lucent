@@ -19,6 +19,7 @@ import agenda_core as core
 WINDOW_XML = "Lucent_Agenda.xml"
 ACTION_PREVIOUS_MENU = 10
 ACTION_NAV_BACK = 92
+ACTION_MOVE_UP, ACTION_MOVE_DOWN, ACTION_PAGE_UP, ACTION_PAGE_DOWN = 3, 4, 5, 6
 
 VIEW_BUTTONS = {101: "week", 102: "list", 103: "month"}
 LIST, BELL_LIST, OPEN_LIST, STOP_LIST = 200, 301, 302, 303
@@ -96,6 +97,27 @@ def ep_title(ev):
     return core.tr("cinema") if 0 <= gap <= 90 else core.tr("cinema_soon") if gap < 0 else core.tr("film")
 
 
+RED = "FFFF5A6E"
+
+
+def badge(ev):
+    """Midseason finale / season finale (from TMDB) or season / series premiere (episode 1), else empty."""
+    if ev.get("kind") != "tv":
+        return ""
+    kind = ev.get("ep_type") or ""
+    if kind == "mid_season":
+        return core.tr("ep_mid")
+    if kind == "finale":
+        return core.tr("ep_finale")
+    if ev.get("episode") == 1:
+        return core.tr("ep_series_premiere" if ev.get("season") == 1 else "ep_premiere")
+    return ""
+
+
+def red(text):
+    return f"[COLOR {RED}]{text}[/COLOR]" if text else ""
+
+
 def when_line(ev):
     d = parse(ev["date"])
     text = t("today") if d == core.today() else core.day_long(d)
@@ -153,7 +175,45 @@ class Agenda(xbmcgui.WindowXML):
 
     def onAction(self, action):
         if action.getId() in (ACTION_PREVIOUS_MENU, ACTION_NAV_BACK):
-            self.close()
+            # Back first goes up to Week / List / Month; Back on those buttons closes the calendar
+            try:
+                focus = self.getFocusId()
+            except RuntimeError:
+                focus = 0
+            if focus in VIEW_BUTTONS or self.getProperty("agenda.empty"):
+                self.close()
+                return
+            button = {v: k for k, v in VIEW_BUTTONS.items()}.get(self.view)
+            if button:
+                self.setFocusId(button)
+            else:
+                self.close()
+            return
+        if action.getId() in (ACTION_MOVE_UP, ACTION_MOVE_DOWN, ACTION_PAGE_UP, ACTION_PAGE_DOWN):
+            self.skip_header(action.getId() in (ACTION_MOVE_UP, ACTION_PAGE_UP))
+
+    def skip_header(self, up):
+        """Kodi has already moved the cursor; when it landed on a day heading, take one more step."""
+        try:
+            if self.getFocusId() != LIST:
+                return
+            control = self.getControl(LIST)
+            pos = control.getSelectedPosition()
+            if not control.getSelectedItem().getProperty("isheader"):
+                return
+            if up and pos == 0:
+                if control.size() > 1:
+                    control.selectItem(1)
+                button = {v: k for k, v in VIEW_BUTTONS.items()}.get(self.view)
+                if button:
+                    self.setFocusId(button)
+                return
+            target = pos - 1 if up else pos + 1
+            if not 0 <= target < control.size():
+                target = pos + 1 if up else pos - 1
+            control.selectItem(target)
+        except Exception:  # noqa: BLE001
+            pass
 
     def onFocus(self, control_id):
         if control_id in WEEK_DAYS:
@@ -255,17 +315,28 @@ class Agenda(xbmcgui.WindowXML):
                 nxt[f"next{n}_thumb"] = e["still"]
             extra = {"headerdate": core.day_short(d) if d == core.today() and header else "",
                      "nextlabel": t("next_of", ev["name"]) if upcoming else ""}
+            mark = badge(ev)
+            if header:
+                # 2.1.4: the day is a row of its own (a Kodi list cannot give one row a different height); the cursor
+                # steps over it (onAction)
+                items.append(listitem(header, "", "", isheader="1", headerdate=extra["headerdate"]))
+                if first_today == len(items) - 1:
+                    first_today = len(items)
+                header = ""
             items.append(listitem(
-                ev["name"], ep_title(ev), ev["still"] or ev["poster"], header=header, time=ev["time"], datecol=core.day_short(d),
+                ev["name"], ep_title(ev) + ("   " + red(mark) if mark else ""), ev["still"] or ev["poster"], header=header,
+                time=ev["time"], datecol=core.day_short(d),
                 notify="1" if ev["notify"] else "", showkey=ev["show"], tmdb=ev["tmdb"], kind=ev["kind"], backdrop=ev["backdrop"],
-                poster=ev["poster"], when=when_line(ev), dtitle=ep_title(ev), meta=meta(ev), plot=ev["plot"],
+                poster=ev["poster"], when=when_line(ev), dtitle=ep_title(ev), meta=red(mark) + ("  ·  " if mark and meta(ev) else "") + meta(ev), plot=ev["plot"],
                 still=ev["still"], bellText=t("bell_on") if ev["notify"] else t("bell_off"),
                 openText=t("open_movie") if ev["kind"] == "movie" else t("open_show"), logo=ev.get("logo", ""), **nxt, **extra))
         control = self.getControl(LIST)
         control.reset()
         control.addItems(items)
         if items:
-            control.selectItem(first_today)
+            if items[min(first_today, len(items) - 1)].getProperty("isheader") and first_today + 1 < len(items):
+                first_today += 1
+            control.selectItem(min(first_today, len(items) - 1))
 
     # -- week
     def shift_week(self, days):
@@ -358,6 +429,8 @@ class Agenda(xbmcgui.WindowXML):
     def open_selected(self, control_id):
         item = self.current(control_id)
         if not item:
+            return
+        if item.getProperty("isheader"):
             return
         if control_id == GRID:
             day = self.events_on(add_days(monday(self.anchor.replace(day=1)), self.getControl(GRID).getSelectedPosition()))

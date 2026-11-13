@@ -5341,6 +5341,53 @@ def cwnotice_test():
     log("cwnotice: " + json.dumps(out))
 
 
+def agendalist_test():
+    """2.1.4: calendar List in the new look (day headings, backdrop in view, logo on the picture) and Back: first up to
+    Week / List / Month, then out."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/agenda.py)")
+    mon.waitForAbort(8)
+    xbmc.executebuiltin("SetFocus(102)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    out["start"] = [lab("System.CurrentControlID"), lab("Container(200).ListItem.Label"), lab("Container(200).ListItem.Property(isheader)"), lab("Container(200).NumItems")]
+    shot("agenda-list-1")
+    seen = []
+    for _ in range(4):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+        seen.append([lab("Container(200).CurrentItem"), lab("Container(200).ListItem.Label"), lab("Container(200).ListItem.Property(isheader)")])
+    out["down"] = seen
+    shot("agenda-list-2")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    out["back1"] = [lab("System.CurrentControlID"), cond("Window.IsVisible(Lucent_Agenda.xml)")]
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    out["back2"] = [lab("System.CurrentControlID"), cond("Window.IsVisible(Lucent_Agenda.xml)"), lab("System.CurrentWindow")]
+    log("agendalist: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def intro2_test():
+    """2.1.4: the intro after the fix (no delayed fade-out on the group): pictures at 1, 2.5, 4 and 5.5 s."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(1195)")
+    t0 = time.time()
+    for s in (1.0, 2.5, 4.0, 5.5):
+        while time.time() - t0 < s:
+            mon.waitForAbort(0.05)
+        xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro2-{int(s*10):02d}.png,sync)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10341,6 +10388,8 @@ def main():
     safe(levels_test)
     safe(epinprog_test)
     safe(cwnotice_test)
+    safe(agendalist_test)
+    safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)

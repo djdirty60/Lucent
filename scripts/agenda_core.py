@@ -57,6 +57,10 @@ T = {
     "cinema_soon": ("Coming to cinemas", "Binnenkort in de bioscoop"),
     "film": ("Film", "Film"),
     "time_unknown": ("Time not known yet", "Tijd nog niet bekend"),
+    "ep_mid": ("Midseason finale", "Midseason-finale"),
+    "ep_finale": ("Season finale", "Seizoensfinale"),
+    "ep_premiere": ("Season premiere", "Seizoenspremière"),
+    "ep_series_premiere": ("Series premiere", "Seriepremière"),
 }
 WEEKDAYS = {"nl": ["maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag", "zondag"],
             "en": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
@@ -292,7 +296,7 @@ def tv_events(rec):
                                episode=ep["episode_number"], title=ep.get("name") or "", date=date, time=at,
                                plot=ep.get("overview") or base["show_plot"],
                                still=img(ep.get("still_path"), "w500") or img(show.get("backdrop_path"), "w500"),
-                               runtime=ep.get("runtime") or 0))
+                               runtime=ep.get("runtime") or 0, ep_type=ep.get("episode_type") or ""))
     return events, maze_id
 
 
