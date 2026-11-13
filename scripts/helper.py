@@ -69,7 +69,6 @@ def run():
 
     import agenda_core
     import foryou
-    import continuerow
     import tint
     import omdb
     import seasoninfo
@@ -137,7 +136,6 @@ def run():
     slow = [                                        # network work: in the worker thread
         Job("sport", 30, 15, sport, lambda: cond("Pvr.HasTVChannels")),
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
-        Job("continue row", 60, 8, continuerow.update),   # one row: films/episodes in progress + next episodes (library)
         Job("calendar", 120, 60, calendar),
         Job("tab panels", 60, 6, tab_panels),
         Job("solis", 3, 4, solis_tab, lambda: cond("System.AddonIsEnabled(script.solis.dashboard) + Window.IsVisible(home)")),
@@ -190,7 +188,7 @@ def run():
 
     lost = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
-    ROW_ORDER = [(8090, 9988), (8092, 9987), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
+    ROW_ORDER = [(8090, 9988), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
 
     def top_row():
         """lucent.toprow: the highest Home row on screen - Back from a row goes there (then to the menu)."""
@@ -202,6 +200,11 @@ def run():
         if HOME.getProperty("lucent.toprow") != top:
             HOME.setProperty("lucent.toprow", top)
 
+    def home_on_top():
+        """True when no dialog covers Home: from Python, Container(9000) means the window on top."""
+        return cond("Window.IsActive(home) + !System.HasModalDialog + !System.HasVisibleModalDialog"
+                    " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel) + !Window.IsVisible(contextmenu)")
+
     def rows_state(now):
         """lucent.rowok.N: show Home row N even while its list is empty. Kodi only reads the list of a VISIBLE row, so a
         row hidden for being empty would never fill. A row is shown for a few seconds after its path changed (a tab
@@ -210,7 +213,7 @@ def run():
             return
         # 2.1.3: with a dialog on top (loading circle, context menu) Container(9000) read from Python is that dialog:
         # the paths read empty and every row was flagged as new - look only when Home itself is on top
-        if not continuerow.home_on_top():
+        if not home_on_top():
             return
         top_row()
         own = xbmc.getInfoLabel("Container(9000).ListItem.Property(w1.path)")
@@ -361,10 +364,6 @@ def run():
                 home_focus()
             except Exception as error:  # noqa: BLE001
                 log(f"focus: {error}")
-            try:
-                continuerow.tab_tick()               # the Films tab: films you stopped in; other tabs: series
-            except Exception as error:  # noqa: BLE001
-                log(f"continue row: {error}")
             try:
                 omdb.list_tick()                     # Rotten Tomatoes / Metacritic of the title under the cursor
             except Exception as error:  # noqa: BLE001

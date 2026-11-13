@@ -98,6 +98,41 @@ def first_start():
     return False
 
 
+def cw_notice():
+    """2.1.4: the Continue watching row from the library is no longer put on the Films and Series tabs by itself. Tell
+    people who used Lucent before, once, how to add it themselves as a widget. A new installation gets no message."""
+    import threading
+
+    def show():
+        import xbmcgui
+        mon = xbmc.Monitor()
+        mon.waitForAbort(6)                                 # let Home appear first
+        for _ in range(600):                                # then wait until Home is on top, without a dialog
+            if xbmc.getCondVisibility("Window.IsActive(home) + !System.HasModalDialog + !System.HasVisibleModalDialog") \
+                    or mon.waitForAbort(1):
+                break
+        if mon.abortRequested():
+            return
+        nl = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
+        if nl:
+            head, text = "Lucent: Verder kijken", (
+                "De rij [B]Verder kijken[/B] uit je bibliotheek staat niet meer vanzelf op de tabbladen Films en Series.[CR][CR]"
+                "Wil je hem terug? Zet hem als widget: Menu en widgets > kies het tabblad > Widgets op deze tab > "
+                "Kodi-bibliotheek > [B]Films die je kijkt[/B], [B]Series die je kijkt[/B] of [B]Afleveringen die je kijkt[/B].")
+        else:
+            head, text = "Lucent: Continue watching", (
+                "The [B]Continue watching[/B] row from your library is no longer put on the Films and Series tabs by itself.[CR][CR]"
+                "Want it back? Add it as a widget: Menu and widgets > choose the tab > Widgets on this tab > "
+                "Kodi library > [B]Movies in progress[/B], [B]Shows in progress[/B] or [B]Episodes in progress[/B].")
+        xbmcgui.Dialog().ok(head, text)
+
+    if _skin("lucent.notice.cw214"):
+        return
+    xbmc.executebuiltin('Skin.SetString(lucent.notice.cw214,"1")')
+    if _skin("lucent.setup.done"):                          # used Lucent before this version
+        threading.Thread(target=show, daemon=True).start()
+
+
 def run():
     if first_start():
         return
@@ -114,6 +149,7 @@ def run():
         step("sport tab", sport.ensure_tab)
     if not _skin("lucent.setup.done") and not xbmc.getInfoLabel("Window(home).Property(lucent.setup.shown)"):
         xbmc.executebuiltin("RunScript(special://skin/scripts/setup.py,first)")   # the very first time, after the jobs above
+    step("continue watching notice", cw_notice)
     import helper
     helper.run()                                     # keeps running until Kodi stops or the skin is updated
 

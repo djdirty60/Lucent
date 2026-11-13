@@ -168,6 +168,7 @@ WIDGETS_LIBRARY = [                               # the Kodi library (works with
     (("Random movies", "Willekeurige films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="random"), "poster"),
     (("Unwatched movies", "Niet bekeken films"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("playcount", "is", "0")], order="dateadded"), "poster"),
     (("Movies in progress", "Films die je kijkt"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
+    (("Episodes in progress", "Afleveringen die je kijkt"), "videodb://tvshows/titles/-1/-1/-1/?xsp=" + xsp("episodes", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
     (("Top rated movies", "Best beoordeelde films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="rating"), "poster"),
     (("Random shows", "Willekeurige series"), "videodb://tvshows/titles/?xsp=" + xsp("tvshows", order="random"), "poster"),
     (("Unwatched shows", "Niet bekeken series"), "videodb://tvshows/titles/?xsp=" + xsp("tvshows", rules=[("playcount", "is", "0")], order="dateadded"), "poster"),
