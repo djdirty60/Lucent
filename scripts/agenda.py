@@ -190,7 +190,36 @@ class Agenda(xbmcgui.WindowXML):
                 self.close()
             return
         if action.getId() in (ACTION_MOVE_UP, ACTION_MOVE_DOWN, ACTION_PAGE_UP, ACTION_PAGE_DOWN):
-            self.skip_header(action.getId() in (ACTION_MOVE_UP, ACTION_PAGE_UP))
+            up = action.getId() in (ACTION_MOVE_UP, ACTION_PAGE_UP)
+            try:
+                focus = self.getFocusId()
+            except RuntimeError:
+                focus = 0
+            if focus == CARDS:
+                self.page_day(-1 if up else 1)
+            else:
+                self.skip_header(up)
+
+    def page_day(self, step):
+        """Week view, 2.1.4: up / down on the cards shows the previous / next day that has something on it - one day per
+        page, the week bar follows. Up before the first such day goes to the alert button."""
+        d = self.selected
+        for _ in range(60):
+            d = add_days(d, step)
+            if [e for e in self.events_on(d) if self.chip in ("all", e["kind"])]:
+                break
+        else:
+            d = None
+        if d is None:
+            if step < 0:
+                self.setFocusId(BELL_WEEK)
+            return
+        self.selected = d
+        if not monday(self.anchor) <= d <= add_days(monday(self.anchor), 6):
+            self.anchor = d
+        self.fill_week()
+        self.setFocusId(CARDS)
+        self.getControl(CARDS).selectItem(0)
 
     def skip_header(self, up):
         """Kodi has already moved the cursor; when it landed on a day heading, take one more step."""
@@ -357,6 +386,7 @@ class Agenda(xbmcgui.WindowXML):
             self.setProperty(prefix + "today", "1" if d == core.today() else "")
         if not start <= self.selected <= add_days(start, 6):
             self.selected = start
+        self.setProperty("agenda.selday", str((self.selected - start).days + 1))
         for name in CHIPS.values():
             self.setProperty(f"agenda.chip.{name}", "1" if name == self.chip else "")
         self.fill_cards()
@@ -382,7 +412,9 @@ class Agenda(xbmcgui.WindowXML):
         control.reset()
         control.addItems(items)
         self.setProperty("agenda.week.empty", "" if items else t("none_day"))
-        self.setProperty("agenda.weektitle", core.day_long(self.selected))
+        name = nice_day(self.selected)
+        short = core.day_short(self.selected) if self.selected in (core.today(), add_days(core.today(), 1)) else ""
+        self.setProperty("agenda.weektitle", f"{name}   [COLOR FFB8BECC]{short}[/COLOR]" if short else name)
 
     # -- month
     def shift_month(self, months):

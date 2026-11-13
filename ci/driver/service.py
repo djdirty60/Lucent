@@ -5388,6 +5388,34 @@ def intro2_test():
     mon.waitForAbort(2)
 
 
+def agendaweek_test():
+    """2.1.4: calendar Week - one day per page, big cards, up / down to the previous / next day with something on it."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/agenda.py)")
+    mon.waitForAbort(8)
+    xbmc.executebuiltin("SetFocus(101)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(430)")
+    mon.waitForAbort(2)
+    out["start"] = [lab("System.CurrentControlID"), lab("Window(home).Property(x)"), lab("Container(430).NumItems"), lab("Container(430).ListItem.Label")]
+    shot("agenda-week-1")
+    steps = []
+    for key in ("Down", "Down", "Up"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(2)
+        steps.append([key, lab("System.CurrentControlID"), lab("Container(430).ListItem.Label"), lab("Container(430).NumItems")])
+    out["steps"] = steps
+    shot("agenda-week-2")
+    log("agendaweek: " + json.dumps(out))
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10389,6 +10417,7 @@ def main():
     safe(epinprog_test)
     safe(cwnotice_test)
     safe(agendalist_test)
+    safe(agendaweek_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)

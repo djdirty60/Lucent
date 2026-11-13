@@ -31,7 +31,7 @@
                 <height>1080</height>
                 <aspectratio>scale</aspectratio>
                 <texture background="true">$INFO[Container(430).ListItem.Property(backdrop)]</texture>
-                <colordiffuse>3DFFFFFF</colordiffuse>
+                <colordiffuse>FFFFFFFF</colordiffuse>
                 <visible>String.IsEqual(Window.Property(agenda.view),week)</visible>
                 <animation effect="fade" start="0" end="100" time="400">VisibleChange</animation>
             </control>
@@ -42,7 +42,7 @@
                 <height>1080</height>
                 <texture>grad_left.png</texture>
                 <colordiffuse>bg_96</colordiffuse>
-                <visible>!String.IsEqual(Window.Property(agenda.view),list)</visible>
+                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
             </control>
             <control type="image">
                 <left>0</left>
@@ -51,7 +51,7 @@
                 <height>1080</height>
                 <texture>grad_bottom.png</texture>
                 <colordiffuse>bg_80</colordiffuse>
-                <visible>!String.IsEqual(Window.Property(agenda.view),list)</visible>
+                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
             </control>
             <control type="image">
                 <left>0</left>
@@ -59,9 +59,9 @@
                 <width>1920</width>
                 <height>1080</height>
                 <texture>vignette.png</texture>
-                <visible>!String.IsEqual(Window.Property(agenda.view),list)</visible>
+                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
             </control>
-            <!-- list view: the backdrop well in view, darker on the left where the list is -->
+            <!-- list and week view: the backdrop well in view, darker on the left where the list is -->
             <control type="image">
                 <left>0</left>
                 <top>0</top>
@@ -69,7 +69,7 @@
                 <height>1080</height>
                 <texture>white.png</texture>
                 <colordiffuse>73080A12</colordiffuse>
-                <visible>String.IsEqual(Window.Property(agenda.view),list)</visible>
+                <visible>[String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
             </control>
             <control type="image">
                 <left>0</left>
@@ -78,7 +78,7 @@
                 <height>1080</height>
                 <texture>grad_left.png</texture>
                 <colordiffuse>66080A12</colordiffuse>
-                <visible>String.IsEqual(Window.Property(agenda.view),list)</visible>
+                <visible>[String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
             </control>
             <control type="group">
                 <left>-54</left>
@@ -448,7 +448,7 @@
                 <label>‹</label>
                 <onright>412</onright>
                 <onup>101</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
             </control>
                 <control type="group">
                     <left>232</left>
@@ -462,7 +462,14 @@
                 <onleft>411</onleft>
                 <onright>413</onright>
                 <onup>101</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),1) + !Control.HasFocus(412)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -533,7 +540,14 @@
                 <onleft>412</onleft>
                 <onright>414</onright>
                 <onup>101</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),2) + !Control.HasFocus(413)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -604,7 +618,14 @@
                 <onleft>413</onleft>
                 <onright>415</onright>
                 <onup>101</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),3) + !Control.HasFocus(414)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -675,7 +696,14 @@
                 <onleft>414</onleft>
                 <onright>416</onright>
                 <onup>101</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),4) + !Control.HasFocus(415)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -746,7 +774,14 @@
                 <onleft>415</onleft>
                 <onright>417</onright>
                 <onup>102</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),5) + !Control.HasFocus(416)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -817,7 +852,14 @@
                 <onleft>416</onleft>
                 <onright>418</onright>
                 <onup>102</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),6) + !Control.HasFocus(417)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -888,7 +930,14 @@
                 <onleft>417</onleft>
                 <onright>419</onright>
                 <onup>102</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
+                    </control>
+                    <control type="image">
+                        <width>130</width>
+                        <height>108</height>
+                        <texture border="28">rr20_edge.png</texture>
+                        <colordiffuse>E6FFFFFF</colordiffuse>
+                        <visible>String.IsEqual(Window.Property(agenda.selday),7) + !Control.HasFocus(418)</visible>
                     </control>
                     <control type="image">
                         <width>130</width>
@@ -959,7 +1008,7 @@
                 <onleft>418</onleft>
                 <onright>421</onright>
                 <onup>102</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
             </control>
             <control type="image">
                 <left>1316</left>
@@ -982,7 +1031,7 @@
                 <onleft>419</onleft>
                 <onright>422</onright>
                 <onup>103</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
             </control>
             <control type="image">
                 <left>1460</left>
@@ -1005,7 +1054,7 @@
                 <onleft>421</onleft>
                 <onright>423</onright>
                 <onup>103</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
             </control>
             <control type="image">
                 <left>1624</left>
@@ -1027,11 +1076,11 @@
                 <label>$INFO[Window.Property(agenda.t.movie)]</label>
                 <onleft>422</onleft>
                 <onup>103</onup>
-                <ondown>431</ondown>
+                <ondown>430</ondown>
             </control>
             <control type="label">
                 <left>150</left>
-                <top>288</top>
+                <top>250</top>
                 <width>1300</width>
                 <height>100</height>
                 <font>font_hero</font>
@@ -1042,7 +1091,7 @@
             </control>
             <control type="image">
                 <left>150</left>
-                <top>280</top>
+                <top>244</top>
                 <width>560</width>
                 <height>108</height>
                 <aspectratio align="left" aligny="center">keep</aspectratio>
@@ -1051,7 +1100,7 @@
             </control>
             <control type="label">
                 <left>150</left>
-                <top>392</top>
+                <top>356</top>
                 <width>1300</width>
                 <height>56</height>
                 <font>font37</font>
@@ -1060,48 +1109,40 @@
             </control>
             <control type="label">
                 <left>150</left>
-                <top>452</top>
-                <width>1300</width>
-                <height>40</height>
-                <font>font12_bold</font>
-                <textcolor>red</textcolor>
-                <label>$INFO[Container(430).ListItem.Property(hwhen)]</label>
-            </control>
-            <control type="label">
-                <left>150</left>
-                <top>490</top>
+                <top>414</top>
                 <width>1300</width>
                 <height>40</height>
                 <font>font12</font>
                 <textcolor>text2</textcolor>
-                <label>$INFO[Container(430).ListItem.Property(hmeta)]</label>
+                <label>[COLOR red]$INFO[Container(430).ListItem.Property(hwhen)][/COLOR]$INFO[Container(430).ListItem.Property(hmeta),  ·  ,]</label>
             </control>
             <control type="textbox">
                 <left>150</left>
-                <top>534</top>
+                <top>460</top>
                 <width>1200</width>
-                <height>84</height>
+                <height>80</height>
                 <font>font_body</font>
                 <textcolor>text2</textcolor>
                 <label>$INFO[Container(430).ListItem.Property(plot)]</label>
                 <include>TextAutoScroll</include>
             </control>
             <control type="button" id="431">
-                <left>150</left>
-                <top>648</top>
+                <left>1520</left>
+                <top>562</top>
                 <width>300</width>
-                <height>64</height>
+                <height>56</height>
                 <font>font10_bold</font>
                 <textoffsetx>0</textoffsetx>
                 <align>center</align>
                 <label>$INFO[Container(430).ListItem.Property(bellText)]</label>
                 <onup>412</onup>
                 <ondown>430</ondown>
+                <onleft>430</onleft>
                 <visible>Integer.IsGreater(Container(430).NumItems,0)</visible>
             </control>
             <control type="label">
                 <left>150</left>
-                <top>716</top>
+                <top>566</top>
                 <width>900</width>
                 <height>56</height>
                 <font>font_heading_small</font>
@@ -1110,7 +1151,7 @@
             </control>
             <control type="label">
                 <left>150</left>
-                <top>830</top>
+                <top>660</top>
                 <width>900</width>
                 <height>50</height>
                 <font>font14</font>
@@ -1119,16 +1160,17 @@
             </control>
                 <control type="list" id="430">
                     <left>150</left>
-                    <top>776</top>
+                    <top>616</top>
                     <width>1700</width>
-                    <height>304</height>
+                    <height>370</height>
                     <orientation>horizontal</orientation>
                     <scrolltime tween="cubic" easing="out">200</scrolltime>
-                    <onup>431</onup>
-                    <itemlayout width="404" height="304">
+                    <onup>430</onup>
+                    <ondown>430</ondown>   <!-- up / down: the previous / next day with something on it (agenda.py) -->
+                    <itemlayout width="510" height="370">
                         <include content="AgendaCard"><param name="focus">false</param></include>
                     </itemlayout>
-                    <focusedlayout width="404" height="304">
+                    <focusedlayout width="510" height="370">
                         <include content="AgendaCard"><param name="focus">true</param></include>
                     </focusedlayout>
                 </control>
