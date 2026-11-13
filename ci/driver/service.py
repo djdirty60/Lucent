@@ -5050,6 +5050,79 @@ def flicker_test():
     log("flicker: " + json.dumps(out))
 
 
+def intro_test():
+    """2.1.3: the new intro (star, moon, glow, name, add-on signs). Open the start window and take a picture every second."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.Reset(lucent.intro.off)")
+    t0 = time.time()
+    xbmc.executebuiltin("ActivateWindow(startup)")
+    for s in (0.6, 1.5, 2.5, 3.2, 4.3, 5.0, 5.7):
+        while time.time() - t0 < s and not mon.abortRequested():
+            mon.waitForAbort(0.05)
+        xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro-{int(s * 10):02d}.png)")
+    mon.waitForAbort(3)
+    log(f"intro: window after = {lab('System.CurrentWindow')}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def introsound_test():
+    """2.1.3: the switch 'Sound with the intro' (1225) sits between Intro at start (1110) and the next row (1111)."""
+    fid = lambda: lab("System.CurrentControlID")  # noqa: E731
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(3)
+    found = None
+    for pos in range(16):
+        xbmc.executebuiltin(f"SetFocus(9000,{pos},absolute)")
+        mon.waitForAbort(1.0)
+        xbmc.executebuiltin("SetFocus(1225)")
+        mon.waitForAbort(0.6)
+        if cond("Control.HasFocus(1225)"):
+            found = pos
+            break
+    log(f"introsound: found at 9000 pos {found} cat={lab('Container(9000).ListItem.Label')!r}")
+    if found is not None:
+        shot("introsound-1")
+        xbmc.executebuiltin("Action(Up)")
+        mon.waitForAbort(0.6)
+        up = fid()
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.6)
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.6)
+        down = fid()
+        xbmc.executebuiltin("SetFocus(1225)")
+        mon.waitForAbort(0.5)
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(1)
+        log(f"introsound: up={up} down={down} off after select={cond('Skin.HasSetting(lucent.introsound.off)')}")
+        shot("introsound-2")
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(0.5)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def cwjumplog_test():
+    """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
+    the skin's own log lines of that minute, to see what moves the rows."""
+    import re as _re
+    t0 = time.strftime("%H:%M:%S")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.posterfocus,window)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+    _idle_on_series("cwlog", 1, 26)
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            lines = fh.read().splitlines()
+        keep = [ln[11:] for ln in lines if ln[11:19] >= t0 and _re.search(r"skin.lucent|trailer|youtube|Activate|busy|focus|Window|CPythonInvoker", ln)]
+        log("cwlog lines: " + json.dumps(keep[-120:]))
+    except Exception as error:  # noqa: BLE001
+        log(f"cwlog lines: {error}")
+
+
 ONLY = None
 try:
     ONLY = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "only.txt")).read().split()
@@ -9978,7 +10051,7 @@ def _idle_on_series(name, step, rounds):
                          cond("Player.HasVideo"), HOME.getProperty("nuvio.trailer.playing"),
                          cond("Control.IsVisible(8092)"), cond("Control.IsVisible(8101)"), cond("Control.IsVisible(8102)"),
                          lab("Container(8101).NumItems"), lab("Container(8102).NumItems")])
-        if i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1) or (out["t"][-1][1] not in (8101,) and i % 3 == 0) or \
+        if (name == "cwlog" and i % 2 == 0) or i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1) or (out["t"][-1][1] not in (8101,) and i % 3 == 0) or \
                 (len(out["t"]) > 1 and out["t"][-1][9:12] != out["t"][-2][9:12]):
             shot(f"{name}-{i}")
     log(f"idlejump {name}: " + json.dumps(out))
@@ -10020,6 +10093,9 @@ def main():
     safe(svctiles_test)
     safe(sideicons_test)
     safe(cwjump_test)
+    safe(intro_test)
+    safe(introsound_test)
+    safe(cwjumplog_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
