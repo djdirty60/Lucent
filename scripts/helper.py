@@ -357,6 +357,10 @@ def run():
             except Exception as error:  # noqa: BLE001
                 log(f"focus: {error}")
             try:
+                continuerow.tab_tick()               # the Films tab: films you stopped in; other tabs: series
+            except Exception as error:  # noqa: BLE001
+                log(f"continue row: {error}")
+            try:
                 omdb.list_tick()                     # Rotten Tomatoes / Metacritic of the title under the cursor
             except Exception as error:  # noqa: BLE001
                 log(f"omdb: {error}")

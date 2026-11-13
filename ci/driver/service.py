@@ -4338,6 +4338,14 @@ def cwrow_test():
     out["focus"] = cond("Control.HasFocus(8092)")
     out["list_items"] = lab("Container(8092).NumItems")
     shot("cw-row")
+    for tab, name in ((1, "films"), (2, "streaming"), (0, "home")):
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{tab})")
+        mon.waitForAbort(3.5)
+        out[f"tab_{name}"] = [lab("Container(9000).ListItem.Label"), HOME.getProperty("lucent.cw.kind"), cond("Control.IsVisible(9987)"),
+                              HOME.getProperty("lucent.cw.count"), HOME.getProperty("lucent.cw.1.title")]
+        shot(f"cw-tab-{name}")
+    xbmc.executebuiltin("SetFocus(8092)")
+    mon.waitForAbort(1)
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1.5)
     shot("cw-row-2")
