@@ -101,7 +101,6 @@ def first_start():
 def run():
     if first_start():
         return
-    xbmc.executebuiltin("Skin.Reset(nuvio.osdstats)")      # the old player-info overlay: now its own window (playerinfo.py)
     step("season page", season_page)
     step("fresh icons", fresh_icons)
     import keymap

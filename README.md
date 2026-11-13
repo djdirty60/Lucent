@@ -1,8 +1,8 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (2.0 RC 1)
+# Lucent – Kodi skin (2.1 RC 2)
 
-> **Release candidate 1:** everything is in place and has been checked and tidied up. From now on only fixes are added. Found something odd? Please report it on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
+> **Release candidate 2:** everything is in place and has been checked and tidied up. From now on only fixes are added. Found something odd? Please report it on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font.
 

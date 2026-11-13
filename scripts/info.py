@@ -1365,7 +1365,7 @@ def open_title():
     kind = HOME.getProperty("nuvio.open.type") or "movie"
     tmdb_id = HOME.getProperty("nuvio.open.tmdb")
     trakt_id = HOME.getProperty("nuvio.open.trakt")
-    if kind == "tv" and len(sys.argv) > 3 and sys.argv[3] == "series" and not Skin_series_page():
+    if kind == "tv" and len(sys.argv) > 3 and sys.argv[3] == "series":
         open_seasons()                                   # a series in a TMDb row: straight to its seasons
         return
     if not tmdb_id.isdigit() or not tmdb_key():
@@ -1406,11 +1406,6 @@ def open_title():
         notify(tr("failed"), xbmcgui.NOTIFICATION_WARNING)
         return
     watch_back(gen)
-
-
-def Skin_series_page():
-    """Skin setting: a series in a TMDb row opens its page first (instead of its seasons)."""
-    return xbmc.getCondVisibility("Skin.HasSetting(lucent.series.page)")
 
 
 def open_seasons():
