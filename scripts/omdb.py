@@ -315,7 +315,8 @@ def _from_library(kind, dbid):
     return (imdb if imdb.startswith("tt") else ""), str(ids.get("tmdb") or "")
 
 
-def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
+def _fill(ident, imdb_id, tmdb_id, kind, dbid="", state=None, prefix="lucent.omdbl."):
+    state = LIST if state is None else state
     try:
         if not imdb_id and not tmdb_id and dbid:
             got = TMDB_IMDB.get(f"db:{kind}:{dbid}")
@@ -334,34 +335,34 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid=""):
                 if imdb_id:
                     TMDB_IMDB[f"{kind}:{tmdb_id}"] = imdb_id
         d = all_scores(imdb_id, kind) if imdb_id else {}
-        if LIST["id"] != ident:
+        if state["id"] != ident:
             return                                  # the cursor moved on meanwhile
         for p in LPROPS:
-            HOME.clearProperty("lucent.omdbl." + p)
+            HOME.clearProperty(prefix + p)
         rt, mc = d.get("rt", ""), d.get("mc", "")
         if rt:
-            HOME.setProperty("lucent.omdbl.rt", rt)
-            HOME.setProperty("lucent.omdbl.rtc", GREEN if int(rt.rstrip("%") or 0) >= 60 else RED)
+            HOME.setProperty(prefix + "rt", rt)
+            HOME.setProperty(prefix + "rtc", GREEN if int(rt.rstrip("%") or 0) >= 60 else RED)
         if mc:
             n = int(mc)
-            HOME.setProperty("lucent.omdbl.mc", mc)
-            HOME.setProperty("lucent.omdbl.mcc", GREEN if n >= 61 else YELLOW if n >= 40 else RED)
+            HOME.setProperty(prefix + "mc", mc)
+            HOME.setProperty(prefix + "mcc", GREEN if n >= 61 else YELLOW if n >= 40 else RED)
         if d.get("imdb"):
-            HOME.setProperty("lucent.omdbl.imdb", d["imdb"])
+            HOME.setProperty(prefix + "imdb", d["imdb"])
         if d.get("rta"):
-            HOME.setProperty("lucent.omdbl.rta", d["rta"])
-            HOME.setProperty("lucent.omdbl.rtac", _fresh(d["rta"]))
+            HOME.setProperty(prefix + "rta", d["rta"])
+            HOME.setProperty(prefix + "rtac", _fresh(d["rta"]))
         for k in ("lb", "mcu"):
             if d.get(k):
-                HOME.setProperty("lucent.omdbl." + k, d[k])
-                HOME.setProperty(f"lucent.omdbl.{k}.c", _dot(k, d[k]))
-        HOME.setProperty("lucent.omdbl.text", list_text(d))
-        HOME.setProperty("lucent.omdbl.for", ident)
-        LIST["done"] = ident
+                HOME.setProperty(prefix + k, d[k])
+                HOME.setProperty(f"{prefix}{k}.c", _dot(k, d[k]))
+        HOME.setProperty(prefix + "text", list_text(d))
+        HOME.setProperty(prefix + "for", ident)
+        state["done"] = ident
     except Exception as error:  # noqa: BLE001
         log(f"list: {error}")
     finally:
-        LIST["busy"] = False
+        state["busy"] = False
 
 
 def list_tick():
@@ -396,6 +397,56 @@ def list_tick():
     LIST["busy"] = True
     import threading
     threading.Thread(target=_fill, args=(ident, imdb_id, tmdb_id, kind, dbid), daemon=True).start()
+
+
+# ----------------------------------------------------------------------------- scores on Home (2.1.3)
+HLIST = {"id": "", "since": 0.0, "done": "", "busy": False}
+
+
+def _hclear():
+    if HOME.getProperty("lucent.omdbh.for"):
+        for p in LPROPS + ("for",):
+            HOME.clearProperty("lucent.omdbh." + p)
+
+
+def home_tick():
+    """The scores of the title under the cursor in a Home row (Window(home).Property(lucent.omdbh.*)), like the lists.
+    An episode or season gets the scores of its series: OMDb and MDBList rarely have them per episode."""
+    if (not _key_cached() or xbmc.getCondVisibility("Skin.HasSetting(lucent.omdb.lists.off)")
+            or not xbmc.getCondVisibility("Window.IsActive(home)")):
+        HLIST["id"] = HLIST["done"] = ""
+        _hclear()
+        return
+    row = HOME.getProperty("nuvio.row")
+    if not row.isdigit():
+        return
+    label = xbmc.getInfoLabel
+    pre = f"Container({row}).ListItem."
+    dbtype = label(pre + "DBType")
+    if dbtype in ("episode", "season"):
+        kind = "tvshow"
+        imdb_id = label(pre + "Property(tvshow.imdb_id)")
+        tmdb_id = label(pre + "Property(tvshow.tmdb_id)") or label(pre + "UniqueID(tmdbshow)")
+        dbid = label(pre + "TvShowDBID")
+    else:
+        kind = "tvshow" if dbtype == "tvshow" else "movie"
+        imdb_id = label(pre + "UniqueID(imdb)") or label(pre + "IMDBNumber") or label(pre + "Property(imdb_id)")
+        tmdb_id = label(pre + "UniqueID(tmdb)") or label(pre + "Property(tmdb_id)")
+        dbid = label(pre + "DBID") if dbtype in ("movie", "tvshow") else ""
+    imdb_id = imdb_id if imdb_id.startswith("tt") else ""
+    tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
+    dbid = dbid if dbid.isdigit() else ""
+    ident = imdb_id or (f"tmdb:{kind}:{tmdb_id}" if tmdb_id else "") or (f"db:{kind}:{dbid}" if dbid else "")
+    now = time.time()
+    if ident != HLIST["id"]:
+        HLIST["id"], HLIST["since"], HLIST["done"] = ident, now, ""
+        _hclear()
+        return
+    if not ident or HLIST["done"] == ident or HLIST["busy"] or now - HLIST["since"] < 0.6:
+        return
+    HLIST["busy"] = True
+    import threading
+    threading.Thread(target=_fill, args=(ident, imdb_id, tmdb_id, kind, dbid, HLIST, "lucent.omdbh."), daemon=True).start()
 
 
 # ----------------------------------------------------------------------------- settings

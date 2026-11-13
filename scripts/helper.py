@@ -72,6 +72,7 @@ def run():
     import continuerow
     import tint
     import omdb
+    import seasoninfo
     import views
     import mediaflags
     import updater
@@ -206,6 +207,10 @@ def run():
         row hidden for being empty would never fill. A row is shown for a few seconds after its path changed (a tab
         switch), long enough for Kodi to read it. Nothing here pulses on a timer, so the rows do not jump."""
         if not cond("Window.IsActive(home)"):
+            return
+        # 2.1.3: with a dialog on top (loading circle, context menu) Container(9000) read from Python is that dialog:
+        # the paths read empty and every row was flagged as new - look only when Home itself is on top
+        if not continuerow.home_on_top():
             return
         top_row()
         own = xbmc.getInfoLabel("Container(9000).ListItem.Property(w1.path)")
@@ -364,6 +369,11 @@ def run():
                 omdb.list_tick()                     # Rotten Tomatoes / Metacritic of the title under the cursor
             except Exception as error:  # noqa: BLE001
                 log(f"omdb: {error}")
+            try:
+                omdb.home_tick()                     # 2.1.3: the same scores for the title under the cursor on Home
+                seasoninfo.tick()                    # 2.1.3: episodes left in the season, premiere / finale
+            except Exception as error:  # noqa: BLE001
+                log(f"home extra: {error}")
             try:
                 views.tick()                         # the view you chose, for every folder of that kind (issue #5)
             except Exception as error:  # noqa: BLE001

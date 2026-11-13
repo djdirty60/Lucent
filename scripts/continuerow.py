@@ -6,11 +6,15 @@ next episode of every series you are watching (films have a row of their own).
 
 The Lucent helper (helper.py) calls update() once a minute (always on); it only asks the
 library again when something was played or the library changed (VideoLibrary is quick, but not needed every minute).
-The row reads Window(home).Property(lucent.cw.<n>.*) - the same idea as "Tonight for you".
+The row reads Window(home).Property(lucent.cw.path) (2.1.3): a multipath:// of one library smart-playlist per title, in
+the order of the row. The row then holds the REAL films and episodes of the library, so Kodi gives them its own context
+menu (resume, play from the start, mark as watched, information, and the menu items of the add-on a .strm file comes
+from). A static <item> list can never get that menu. The lucent.cw.<n>.* properties stay for the play() fallback.
 """
 import json
 import sys
 import time
+import urllib.parse
 
 import xbmc
 import xbmcgui
@@ -51,6 +55,13 @@ def _percent(resume):
 
 def _tab(name):
     return xbmc.getInfoLabel(f"Container(9000).ListItem.{name}").lower()
+
+
+def home_on_top():
+    """True when no dialog covers Home, so Container(9000) read from Python is really the Home menu."""
+    return xbmc.getCondVisibility("Window.IsActive(home) + !System.HasModalDialog + !System.HasVisibleModalDialog"
+                                  " + !Window.IsVisible(busydialog) + !Window.IsVisible(busydialognocancel)"
+                                  " + !Window.IsVisible(contextmenu)")
 
 
 def wanted_kind():
@@ -136,7 +147,12 @@ def signature():
 
 def tab_tick():
     """Called every second on Home: another tab wants the other kind (films on the Films tab) - fill it at once."""
-    if not xbmc.getCondVisibility("Window.IsActive(home)"):
+    if not xbmc.getCondVisibility("Window.IsActive(home)") or xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.off)"):
+        return
+    # 2.1.3: from Python, Container(9000) means the window on TOP. While a dialog is open over Home (the loading circle
+    # of a trailer, a context menu) it reads empty, the row was switched off and on again, and every row below jumped
+    # up and back down. Only look when Home itself is on top.
+    if not home_on_top():
         return
     kind, tab = wanted_kind(), xbmc.getInfoLabel("Container(9000).ListItem.Property(tab)")
     if tab == HOME.getProperty(P + "tab"):
@@ -147,8 +163,33 @@ def tab_tick():
     HOME.setProperty(P + "tab", tab)                 # the row is only shown on the tab it was filled for
 
 
+
+def _one(item):
+    """A library smart playlist that holds exactly this film or episode (its folder + file name)."""
+    f = item.get("file") or ""
+    cut = max(f.rfind("/"), f.rfind("\\"))
+    if cut < 0:
+        return ""
+    folder, name = f[:cut + 1], f[cut + 1:]
+    kind = "movies" if item.get("type") == "movie" else "episodes"
+    base = "videodb://movies/titles/" if kind == "movies" else "videodb://tvshows/titles/-1/-1/-1/"
+    xsp = {"rules": {"and": [{"field": "path", "operator": "is", "value": [folder]},
+                             {"field": "filename", "operator": "is", "value": [name]}]}, "type": kind}
+    return base + "?xsp=" + urllib.parse.quote(json.dumps(xsp, separators=(",", ":")), safe="")
+
+
+def row_path(items):
+    """multipath:// keeps the order of the parts: the row shows the titles in the order this script chose."""
+    parts = [p for p in (_one(i) for i in items) if p]
+    if not parts:
+        return ""
+    return "multipath://" + "/".join(urllib.parse.quote(p, safe="") for p in parts) + "/"
+
+
 def update(force=False):
-    kind = (wanted_kind() if xbmc.getCondVisibility("Window.IsActive(home)") else "") or HOME.getProperty(P + "kind") or "series"
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.cw.off)"):     # 2.1.3 (issue #15): switched off in Skin settings
+        return
+    kind = (wanted_kind() if home_on_top() else "") or HOME.getProperty(P + "kind") or "series"
     sig = signature() + kind
     if not force and sig == _STATE["sig"] and time.time() - _STATE["t"] < 3600:
         return
@@ -162,6 +203,9 @@ def update(force=False):
         for key in ("type", "id", "title", "sub", "thumb", "fanart", "logo", "plot", "file", "percent"):
             HOME.clearProperty(f"{P}{n}.{key}")
     HOME.setProperty(P + "count", str(len(items)))
+    path = row_path(items)
+    if HOME.getProperty(P + "path") != path:           # only a new path makes Kodi read the row again
+        HOME.setProperty(P + "path", path)
     log(f"{len(items)} items ({kind})")
 
 
@@ -170,6 +214,7 @@ def clear():
         for key in ("type", "id", "title", "sub", "thumb", "fanart", "logo", "plot", "file", "percent"):
             HOME.clearProperty(f"{P}{n}.{key}")
     HOME.clearProperty(P + "count")
+    HOME.clearProperty(P + "path")
 
 
 def play():

@@ -81,11 +81,18 @@ def write_state(state):
 
 
 def version_key(version):
-    """1.0.0~beta1 < 1.0.0~beta2 < 1.0.0 < 1.0.1 (Kodi's own order: a ~ version comes before the final one)."""
+    """1.0.0~beta1 < 1.0.0~beta1+5 < 1.0.0~beta2 < 1.0.0 < 1.0.1 (Kodi's own order: a ~ version comes before the final
+    one). Also the words of a news line: '1.0.0 beta 1, update 5' = 1.0.0~beta1+5."""
+    version = re.sub(r"\s*beta\s*(\d+)(?:,?\s*update\s*(\d+))?", lambda m: f"~beta{m.group(1)}" + (f"+{m.group(2)}" if m.group(2) else ""),
+                     str(version), flags=re.I)
     base, _sep, pre = version.partition("~")
     nums = [int(x) for x in re.findall(r"\d+", base)][:4]
     nums += [0] * (4 - len(nums))
-    return tuple(nums) + ((0, int((re.findall(r"\d+", pre) or ["0"])[0])) if pre else (1, 0))
+    if not pre:
+        return tuple(nums) + (1, 0, 0)
+    pre_nums = [int(x) for x in re.findall(r"\d+", pre)][:2]
+    pre_nums += [0] * (2 - len(pre_nums))
+    return tuple(nums) + (0,) + tuple(pre_nums)
 
 
 def installed_version(addon_id):
@@ -121,10 +128,11 @@ def fetch_available():
 
 def release_notes(news, installed, limit=4):
     """The lines of <news> that are newer than the installed version."""
-    parts = [p.strip() for p in re.split(r"\s(?=\d+\.\d+(?:\.\d+)?:)", news) if p.strip()]
+    head = r"\d+\.\d+(?:\.\d+)?(?:~[\w.+]+| beta \d+(?:, update \d+)?)?:"     # 2.1.3: '1.0.0 beta 1, update 5:' too
+    parts = [p.strip() for p in re.split(rf"\s(?={head})", news) if p.strip()]
     keep = []
     for part in parts:
-        match = re.match(r"(\d+(?:\.\d+)+):", part)
+        match = re.match(r"(\d+(?:\.\d+)+(?:~[\w.+]+| beta \d+(?:, update \d+)?)?):", part)
         if match and installed and version_key(match.group(1)) <= version_key(installed):
             break
         keep.append(part)
