@@ -5094,6 +5094,7 @@ def trailerjump_test():
     for mode in ("window", "hero", "expand"):
         xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
         xbmc.executebuiltin(f"Skin.SetString(nuvio.posterfocus,{mode})")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
         _idle_on_series(f"trailer-{mode}", 0.5, 60)
     xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
     xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
@@ -5138,7 +5139,7 @@ def _idle_on_series(name, step, rounds):
                          HOME.getProperty("lucent.cw.show"), HOME.getProperty("lucent.cw.count"),
                          cond("Window.IsVisible(busydialognocancel) | Window.IsVisible(busydialog)"),
                          cond("Player.HasVideo"), HOME.getProperty("nuvio.trailer.playing")])
-        if i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1):
+        if i in (rounds // 6, rounds // 3, rounds // 2, rounds - 1) or (out["t"][-1][1] not in (8101,) and i % 3 == 0):
             shot(f"{name}-{i}")
     log(f"idlejump {name}: " + json.dumps(out))
     xbmc.executebuiltin("PlayerControl(Stop)")
