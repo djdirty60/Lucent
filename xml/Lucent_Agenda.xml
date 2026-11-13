@@ -40,9 +40,21 @@
                 <top>0</top>
                 <width>1920</width>
                 <height>1080</height>
+                <aspectratio>scale</aspectratio>
+                <fadetime>300</fadetime>
+                <texture background="true">$INFO[Container(520).ListItem.Property(backdrop)]</texture>
+                <colordiffuse>FFFFFFFF</colordiffuse>
+                <visible>String.IsEqual(Window.Property(agenda.view),month)</visible>
+                <animation effect="fade" start="0" end="100" time="400">VisibleChange</animation>
+            </control>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>1920</width>
+                <height>1080</height>
                 <texture>grad_left.png</texture>
                 <colordiffuse>bg_96</colordiffuse>
-                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
+                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week) | String.IsEqual(Window.Property(agenda.view),month)]</visible>
             </control>
             <control type="image">
                 <left>0</left>
@@ -51,7 +63,7 @@
                 <height>1080</height>
                 <texture>grad_bottom.png</texture>
                 <colordiffuse>bg_80</colordiffuse>
-                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
+                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week) | String.IsEqual(Window.Property(agenda.view),month)]</visible>
             </control>
             <control type="image">
                 <left>0</left>
@@ -59,7 +71,7 @@
                 <width>1920</width>
                 <height>1080</height>
                 <texture>vignette.png</texture>
-                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
+                <visible>![String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week) | String.IsEqual(Window.Property(agenda.view),month)]</visible>
             </control>
             <!-- list and week view: the backdrop well in view, darker on the left where the list is -->
             <control type="image">
@@ -69,7 +81,7 @@
                 <height>1080</height>
                 <texture>white.png</texture>
                 <colordiffuse>73080A12</colordiffuse>
-                <visible>[String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
+                <visible>[String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week) | String.IsEqual(Window.Property(agenda.view),month)]</visible>
             </control>
             <control type="image">
                 <left>0</left>
@@ -78,7 +90,7 @@
                 <height>1080</height>
                 <texture>grad_left.png</texture>
                 <colordiffuse>66080A12</colordiffuse>
-                <visible>[String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week)]</visible>
+                <visible>[String.IsEqual(Window.Property(agenda.view),list) | String.IsEqual(Window.Property(agenda.view),week) | String.IsEqual(Window.Property(agenda.view),month)]</visible>
             </control>
             <control type="group">
                 <left>-54</left>
@@ -1080,7 +1092,7 @@
             </control>
             <control type="label">
                 <left>150</left>
-                <top>250</top>
+                <top>274</top>
                 <width>1300</width>
                 <height>100</height>
                 <font>font_hero</font>
@@ -1091,16 +1103,16 @@
             </control>
             <control type="image">
                 <left>150</left>
-                <top>244</top>
+                <top>272</top>
                 <width>560</width>
-                <height>108</height>
+                <height>96</height>
                 <aspectratio align="left" aligny="center">keep</aspectratio>
                 <texture background="true">$INFO[Container(430).ListItem.Property(logo)]</texture>
                 <visible>!String.IsEmpty(Container(430).ListItem.Property(logo))</visible>
             </control>
             <control type="label">
                 <left>150</left>
-                <top>356</top>
+                <top>374</top>
                 <width>1300</width>
                 <height>56</height>
                 <font>font37</font>
@@ -1109,7 +1121,7 @@
             </control>
             <control type="label">
                 <left>150</left>
-                <top>414</top>
+                <top>430</top>
                 <width>1300</width>
                 <height>40</height>
                 <font>font12</font>
@@ -1118,7 +1130,7 @@
             </control>
             <control type="textbox">
                 <left>150</left>
-                <top>460</top>
+                <top>474</top>
                 <width>1200</width>
                 <height>80</height>
                 <font>font_body</font>
@@ -1175,240 +1187,246 @@
                     </focusedlayout>
                 </control>
             </control>
+            <!-- month view (2.1.5): the month on the left, the chosen day on the right like List -->
             <control type="group">
                 <visible>String.IsEqual(Window.Property(agenda.view),month) + String.IsEmpty(Window.Property(agenda.empty))</visible>
-            <control type="button" id="511">
-                <left>150</left>
-                <top>150</top>
-                <width>64</width>
-                <height>64</height>
-                <font>font_heading_small</font>
-                <textoffsetx>0</textoffsetx>
-                <align>center</align>
-                <label>‹</label>
-                <onright>512</onright>
-                <onup>101</onup>
-                <ondown>520</ondown>
-            </control>
-            <control type="label">
-                <left>236</left>
-                <top>150</top>
-                <width>560</width>
-                <height>64</height>
-                <font>font_heading</font>
-                <textcolor>text</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.monthtitle)]</label>
-            </control>
-            <control type="button" id="512">
-                <left>810</left>
-                <top>150</top>
-                <width>64</width>
-                <height>64</height>
-                <font>font_heading_small</font>
-                <textoffsetx>0</textoffsetx>
-                <align>center</align>
-                <label>›</label>
-                <onleft>511</onleft>
-                <onup>102</onup>
-                <ondown>520</ondown>
-            </control>
-            <control type="label">
-                <left>150</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd0)]</label>
-            </control>
-            <control type="label">
-                <left>300</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd1)]</label>
-            </control>
-            <control type="label">
-                <left>450</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd2)]</label>
-            </control>
-            <control type="label">
-                <left>600</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd3)]</label>
-            </control>
-            <control type="label">
-                <left>750</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd4)]</label>
-            </control>
-            <control type="label">
-                <left>900</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd5)]</label>
-            </control>
-            <control type="label">
-                <left>1050</left>
-                <top>232</top>
-                <width>150</width>
-                <height>36</height>
-                <font>font10</font>
-                <textcolor>text3</textcolor>
-                <align>center</align>
-                <label>$INFO[Window.Property(agenda.wd6)]</label>
-            </control>
-                <control type="panel" id="520">
-                    <pagecontrol>61</pagecontrol>
-                    <onright condition="Control.IsVisible(61)">61</onright>
-                    <onright>noop</onright>
+                <control type="grouplist" id="510">
                     <left>150</left>
-                    <top>272</top>
+                    <top>120</top>
                     <width>1050</width>
-                    <height>744</height>
+                    <height>64</height>
+                    <orientation>horizontal</orientation>
+                    <itemgap>18</itemgap>
+                    <onup>103</onup>
+                    <ondown>520</ondown>
+                    <control type="button" id="511">
+                        <width>56</width>
+                        <height>56</height>
+                        <font>font_heading_small</font>
+                        <textoffsetx>0</textoffsetx>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <texturenofocus border="28" colordiffuse="B81E202C">pill64.png</texturenofocus>
+                        <label>‹</label>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>56</height>
+                        <font>font_heading</font>
+                        <textcolor>text</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[Window.Property(agenda.monthtitle)]</label>
+                    </control>
+                    <control type="button" id="512">
+                        <width>56</width>
+                        <height>56</height>
+                        <font>font_heading_small</font>
+                        <textoffsetx>0</textoffsetx>
+                        <align>center</align>
+                        <aligny>center</aligny>
+                        <texturenofocus border="28" colordiffuse="B81E202C">pill64.png</texturenofocus>
+                        <label>›</label>
+                    </control>
+                </control>
+                <control type="label">
+                    <left>158</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd0)]</label>
+                </control>
+                <control type="label">
+                    <left>308</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd1)]</label>
+                </control>
+                <control type="label">
+                    <left>458</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd2)]</label>
+                </control>
+                <control type="label">
+                    <left>608</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd3)]</label>
+                </control>
+                <control type="label">
+                    <left>758</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd4)]</label>
+                </control>
+                <control type="label">
+                    <left>908</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd5)]</label>
+                </control>
+                <control type="label">
+                    <left>1058</left>
+                    <top>194</top>
+                    <width>140</width>
+                    <height>36</height>
+                    <font>font10_bold</font>
+                    <textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(agenda.wd6)]</label>
+                </control>
+                <control type="panel" id="520">
+                    <left>150</left>
+                    <top>236</top>
+                    <width>1050</width>
+                    <height>696</height>
                     <orientation>vertical</orientation>
                     <scrolltime>0</scrolltime>
                     <onup>511</onup>
-                    <itemlayout width="150" height="124">
+                    <onright>noop</onright>
+                    <onleft>noop</onleft>
+                    <itemlayout width="150" height="116">
                         <include content="AgendaCell"><param name="focus">false</param></include>
                     </itemlayout>
-                    <focusedlayout width="150" height="124">
+                    <focusedlayout width="150" height="116">
                         <include content="AgendaCell"><param name="focus">true</param></include>
                     </focusedlayout>
                 </control>
-                <control type="scrollbar" id="61">
-                    <left>1212</left>
-                    <top>272</top>
-                    <height>744</height>
-                    <onleft>520</onleft>
-                    <onright>520</onright>
-                    <visible>Control.IsVisible(520)</visible>
-                </control>
+                <!-- the chosen day -->
                 <control type="image">
                     <left>1240</left>
-                    <top>150</top>
-                    <width>640</width>
-                    <height>850</height>
+                    <top>140</top>
+                    <width>628</width>
+                    <height>860</height>
                     <texture border="20">rr20.png</texture>
-                    <colordiffuse>glass</colordiffuse>
+                    <colordiffuse>B8141620</colordiffuse>
                 </control>
-            <control type="label">
-                <left>1260</left>
-                <top>170</top>
-                <width>600</width>
-                <height>56</height>
-                <font>font_heading_small</font>
-                <textcolor>text</textcolor>
-                <label>$INFO[Container(520).ListItem.Property(dayname)]</label>
-            </control>
-            <control type="label">
-                <left>1260</left>
-                <top>226</top>
-                <width>600</width>
-                <height>36</height>
-                <font>font12</font>
-                <textcolor>text3</textcolor>
-                <label>$INFO[Container(520).ListItem.Property(count)]</label>
-            </control>
                 <control type="group">
                     <visible>!String.IsEmpty(Container(520).ListItem.Property(e1_name))</visible>
                     <control type="image">
-                        <left>1260</left>
-                        <top>284</top>
-                        <width>600</width>
+                        <left>1240</left>
+                        <top>140</top>
+                        <width>628</width>
                         <height>300</height>
                         <aspectratio>scale</aspectratio>
-                        <texture diffuse="mask_landscape.png" background="true">$INFO[Container(520).ListItem.Property(e1_thumb)]</texture>
+                        <fadetime>200</fadetime>
+                        <texture diffuse="mask_landscape.png" background="true">$INFO[Container(520).ListItem.Property(e1_fanart)]</texture>
+                    </control>
+                    <control type="image">
+                        <left>1240</left>
+                        <top>140</top>
+                        <width>628</width>
+                        <height>300</height>
+                        <texture diffuse="mask_landscape.png">grad_bottom.png</texture>
+                        <colordiffuse>bg_80</colordiffuse>
+                    </control>
+                    <control type="image">
+                        <left>1262</left>
+                        <top>350</top>
+                        <width>300</width>
+                        <height>76</height>
+                        <aspectratio align="left" aligny="bottom">keep</aspectratio>
+                        <texture background="true">$INFO[Container(520).ListItem.Property(e1_logo)]</texture>
+                        <visible>!String.IsEmpty(Container(520).ListItem.Property(e1_logo))</visible>
                     </control>
                     <control type="label">
-                        <left>1276</left>
-                        <top>296</top>
-                        <width>200</width>
-                        <height>40</height>
-                        <font>font10_bold</font>
-                        <textcolor>text</textcolor>
-                        <label>$INFO[Container(520).ListItem.Property(e1_time)]</label>
-                        <visible>!String.IsEmpty(Container(520).ListItem.Property(e1_time))</visible>
-                    </control>
-                    <control type="label">
-                        <left>1560</left>
-                        <top>536</top>
-                        <width>284</width>
-                        <height>40</height>
-                        <font>font10_bold</font>
-                        <textcolor>text</textcolor>
-                        <align>right</align>
-                        <label>$INFO[Container(520).ListItem.Property(e1_code)]</label>
-                    </control>
-                    <control type="label">
-                        <left>1260</left>
-                        <top>596</top>
-                        <width>600</width>
-                        <height>44</height>
-                        <font>font14_bold</font>
+                        <left>1262</left>
+                        <top>376</top>
+                        <width>580</width>
+                        <height>56</height>
+                        <font>font37</font>
                         <textcolor>text</textcolor>
                         <label>$INFO[Container(520).ListItem.Property(e1_name)]</label>
+                        <visible>String.IsEmpty(Container(520).ListItem.Property(e1_logo))</visible>
                     </control>
                     <control type="label">
-                        <left>1260</left>
-                        <top>640</top>
-                        <width>600</width>
+                        <left>1270</left>
+                        <top>460</top>
+                        <width>580</width>
                         <height>36</height>
+                        <font>font12_bold</font>
+                        <textcolor>red</textcolor>
+                        <label>$INFO[Container(520).ListItem.Property(e1_when)]</label>
+                    </control>
+                    <control type="label">
+                        <left>1270</left>
+                        <top>498</top>
+                        <width>580</width>
+                        <height>50</height>
+                        <font>font_heading_small</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[Container(520).ListItem.Property(e1_title)]</label>
+                    </control>
+                    <control type="label">
+                        <left>1270</left>
+                        <top>550</top>
+                        <width>580</width>
+                        <height>34</height>
                         <font>font10</font>
                         <textcolor>text3</textcolor>
-                        <label>$INFO[Container(520).ListItem.Property(e1_sub)]</label>
+                        <label>$INFO[Container(520).ListItem.Property(e1_meta)]</label>
                     </control>
-                </control>
+                    <control type="textbox">
+                        <left>1270</left>
+                        <top>592</top>
+                        <width>580</width>
+                        <height>110</height>
+                        <font>font10</font>
+                        <textcolor>text2</textcolor>
+                        <label>$INFO[Container(520).ListItem.Property(e1_plot)]</label>
+                        <include>TextAutoScroll</include>
+                    </control>
+                    <control type="label">
+                        <left>1270</left>
+                        <top>722</top>
+                        <width>580</width>
+                        <height>36</height>
+                        <font>font12_bold</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[Window.Property(agenda.t.also_day)]</label>
+                        <visible>!String.IsEmpty(Container(520).ListItem.Property(e2_name))</visible>
+                    </control>
                 <control type="group">
                     <visible>!String.IsEmpty(Container(520).ListItem.Property(e2_name))</visible>
                     <control type="image">
-                        <left>1260</left>
-                        <top>700</top>
-                        <width>170</width>
-                        <height>86</height>
+                        <left>1270</left>
+                        <top>768</top>
+                        <width>150</width>
+                        <height>84</height>
                         <aspectratio>scale</aspectratio>
                         <texture diffuse="mask_landscape.png" background="true">$INFO[Container(520).ListItem.Property(e2_thumb)]</texture>
                     </control>
                     <control type="label">
-                        <left>1450</left>
-                        <top>704</top>
+                        <left>1440</left>
+                        <top>774</top>
                         <width>410</width>
-                        <height>40</height>
+                        <height>38</height>
                         <font>font12_bold</font>
                         <textcolor>text</textcolor>
                         <label>$INFO[Container(520).ListItem.Property(e2_name)]</label>
                     </control>
                     <control type="label">
-                        <left>1450</left>
-                        <top>744</top>
+                        <left>1440</left>
+                        <top>812</top>
                         <width>410</width>
                         <height>34</height>
-                        <font>font_tiny</font>
+                        <font>font10</font>
                         <textcolor>text3</textcolor>
                         <label>$INFO[Container(520).ListItem.Property(e2_sub)]</label>
                     </control>
@@ -1416,30 +1434,53 @@
                 <control type="group">
                     <visible>!String.IsEmpty(Container(520).ListItem.Property(e3_name))</visible>
                     <control type="image">
-                        <left>1260</left>
-                        <top>800</top>
-                        <width>170</width>
-                        <height>86</height>
+                        <left>1270</left>
+                        <top>868</top>
+                        <width>150</width>
+                        <height>84</height>
                         <aspectratio>scale</aspectratio>
                         <texture diffuse="mask_landscape.png" background="true">$INFO[Container(520).ListItem.Property(e3_thumb)]</texture>
                     </control>
                     <control type="label">
-                        <left>1450</left>
-                        <top>804</top>
+                        <left>1440</left>
+                        <top>874</top>
                         <width>410</width>
-                        <height>40</height>
+                        <height>38</height>
                         <font>font12_bold</font>
                         <textcolor>text</textcolor>
                         <label>$INFO[Container(520).ListItem.Property(e3_name)]</label>
                     </control>
                     <control type="label">
-                        <left>1450</left>
-                        <top>844</top>
+                        <left>1440</left>
+                        <top>912</top>
                         <width>410</width>
                         <height>34</height>
-                        <font>font_tiny</font>
+                        <font>font10</font>
                         <textcolor>text3</textcolor>
                         <label>$INFO[Container(520).ListItem.Property(e3_sub)]</label>
+                    </control>
+                </control>
+                </control>
+                <!-- a day without anything on it -->
+                <control type="group">
+                    <visible>String.IsEmpty(Container(520).ListItem.Property(e1_name))</visible>
+                    <control type="label">
+                        <left>1270</left>
+                        <top>170</top>
+                        <width>580</width>
+                        <height>50</height>
+                        <font>font_heading_small</font>
+                        <textcolor>text</textcolor>
+                        <label>$INFO[Container(520).ListItem.Property(dayname)]</label>
+                    </control>
+                    <control type="label">
+                        <left>1270</left>
+                        <top>224</top>
+                        <width>580</width>
+                        <height>36</height>
+                        <font>font12</font>
+                        <textcolor>text3</textcolor>
+                        <label>$INFO[Container(520).ListItem.Property(count)]</label>
                     </control>
                 </control>
             </control>

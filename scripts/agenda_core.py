@@ -28,7 +28,7 @@ import info  # http() and tmdb() helpers of the info page (same folder)
 DATA = "special://profile/addon_data/skin.lucent/"
 FOLLOW_PATH = DATA + "agenda_follow.json"
 CACHE_PATH = DATA + "agenda_cache.json"
-CACHE_VERSION = 2
+CACHE_VERSION = 3
 SYNC_TTL = 12 * 3600        # the Trakt collection is read again after this many seconds
 TTL = 6 * 3600              # episode data is refreshed after this many seconds
 PAST_DAYS = 45              # how far back the calendar looks
@@ -162,7 +162,7 @@ def load_follow():
 
 def load_cache():
     data = read_json(CACHE_PATH, {})
-    if data.get("v") != CACHE_VERSION:           # older entries have no logos: fetch everything again
+    if data.get("v") != CACHE_VERSION:           # older entries lack logos (v2) or episode types (v3): fetch everything again
         data = {"v": CACHE_VERSION}
     data.setdefault("shows", {})
     return data

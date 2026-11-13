@@ -5439,6 +5439,46 @@ def agendaweek_test():
     mon.waitForAbort(2)
 
 
+def agendamonth_test():
+    """2.1.5: calendar Month - grid on the left, the chosen day on the right like List."""
+    out = {}
+    _seed_agenda()
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/agenda.py)")
+    mon.waitForAbort(8)
+    xbmc.executebuiltin("SetFocus(103)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(3)
+    def state():
+        return [lab("System.CurrentControlID"), lab("Container(520).CurrentItem"), lab("Container(520).ListItem.Property(day)"),
+                lab("Container(520).ListItem.Property(e1_name)"), lab("Container(520).ListItem.Property(e1_meta)"),
+                lab("Container(520).ListItem.Property(e2_name)"), lab("Container(520).ListItem.Property(more)")]
+    out["start"] = state()
+    shot("agenda-month-1")
+    steps = []
+    for key in ("Right", "Right", "Up", "Up"):
+        xbmc.executebuiltin(f"Action({key})")
+        mon.waitForAbort(1.5)
+        steps.append([key] + state())
+        if key == "Right" and len(steps) == 2:
+            shot("agenda-month-2")
+    out["steps"] = steps
+    xbmc.executebuiltin("SetFocus(520)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    out["back1"] = [lab("System.CurrentControlID"), cond("Window.IsVisible(Lucent_Agenda.xml)")]
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    out["back2"] = [cond("Window.IsVisible(Lucent_Agenda.xml)")]
+    log("agendamonth: " + json.dumps(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10441,6 +10481,7 @@ def main():
     safe(cwnotice_test)
     safe(agendalist_test)
     safe(agendaweek_test)
+    safe(agendamonth_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)
