@@ -1,15 +1,26 @@
 name: Idea / wish
-description: Something Lucent could do better or new
-labels: ["idea"]
+description: Something Lucent could do better, or something new
+title: "[Idea] "
+labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! **One idea per issue**, so every idea gets its own answer and nothing gets lost.
+        Mockups and screenshots (also of how another skin does it) are very welcome.
   - type: textarea
     id: idea
     attributes:
       label: What would you like?
-      description: A screenshot of how another skin does it (for example Nimbus or Arctic Fuse) is very welcome.
+      description: Where in Lucent (Home, a list, the info page, the player …) and what it should do or look like.
     validations:
       required: true
   - type: textarea
     id: why
     attributes:
       label: When would you use it?
+  - type: input
+    id: version
+    attributes:
+      label: Lucent version (optional)
+      description: Settings > Help and info

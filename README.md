@@ -262,7 +262,10 @@ A tab without widgets shows the widgets of the start tab.
 - **Remote:** the Home button of the remote goes to the Home screen from almost every window. In lists with a scroll bar press Right to get on the bar, then Up/Down scroll a page at a time.
 - **Screen size:** Kodi scales the skin to any resolution (720p, 1080p, 4K). If you see black edges or the picture is cut off, use **Skin settings → Calibrate the picture**.
 - **Not styled:** games and weather. Recordings and timers of live TV still need Estuary.
-- Feedback and bug reports are welcome – please open an issue and include a photo of the screen or your safe log if something looks wrong.
+- **Ideas and bugs go on GitHub**, so nothing gets lost: open a new issue for each one.
+  - [Share an idea](https://github.com/djdirty60/Lucent/issues/new?template=idea.yml) – a mockup or a screenshot of another skin is very welcome.
+  - [Report a problem](https://github.com/djdirty60/Lucent/issues/new?template=bug.yml) – include a photo of the screen or your safe log (Settings > Help and info > Safe log).
+  - [All ideas so far](https://github.com/djdirty60/Lucent/issues?q=is%3Aissue+label%3Aenhancement)
 
 ---
 
