@@ -5071,6 +5071,10 @@ def svctiles_test():
     xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w3.path)")
     mon.waitForAbort(2)
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("ReplaceWindow(home)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
     for _ in range(10):
         xbmc.executebuiltin("SetFocus(8201)")
@@ -5087,6 +5091,17 @@ def svctiles_test():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     mon.waitForAbort(1)
     log("svctiles: " + json.dumps(out))
+
+
+def trailerjump_test():
+    """Wilfried's video (13 Nov): a trailer on a poster of a Series tab - does the focus jump to the next row?"""
+    for mode in ("window", "hero", "expand"):
+        xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.posterfocus,{mode})")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+        _idle_on_series(f"trailer-{mode}", 0.5, 60)
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
 
 
 def idlejump_test():
