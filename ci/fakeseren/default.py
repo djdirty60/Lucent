@@ -48,8 +48,7 @@ if kind == "svc":
         items.append((f"plugin://plugin.video.fakeseren/?list=fast&svc={i}", li, True))
     xbmcplugin.addDirectoryItems(handle, items, len(items))
     xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
-    sys.exit(0)
-if kind in ("sm", "ss", "se"):
+elif kind in ("sm", "ss", "se"):
     items = []
     for i, title in enumerate(SHOW):
         li = xbmcgui.ListItem(title, offscreen=True)

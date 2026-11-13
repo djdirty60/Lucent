@@ -175,11 +175,9 @@ def lv_trakt():
             token = ""
     except (TypeError, ValueError):
         pass
-    try:
-        client = xbmcaddon.Addon("plugin.video.lucent").getSetting("trakt_id").strip()
-    except Exception:  # noqa: BLE001
-        client = ""
-    client = client or (_lv_json("keys.json").get("trakt_client_id") or "")
+    # 1.0.0~beta3+: the login itself says with which Trakt app (Client ID) it was made; Trakt only accepts it with that
+    # app. A login without it is from before and no longer works: nothing of Trakt until you link it again.
+    client = str(account.get("client_id") or "").strip()
     return (client, token) if client and token else ("", "")
 
 
@@ -235,7 +233,8 @@ class Trakt:
             self.client_id, self.token = traktlogin.credentials()
             return
         self.client_id, self.token = lv_trakt()
-        if not self.token and _lv_json("trakt.json").get("access_token"):
+        account = _lv_json("trakt.json")
+        if not self.token and account.get("access_token") and account.get("client_id"):
             lv_renew()
             self.client_id, self.token = lv_trakt()
 
