@@ -674,6 +674,127 @@
             <texture background="true">$VAR[LucentHomeFanart]</texture>
         </control>
     </include>
+    <!-- 2.1.3: the OMDb / MDBList scores of the title under the cursor (scripts/omdb.py home_tick) and the season
+         premiere / finale badge (scripts/seasoninfo.py), at the end of the ratings line of every Home hero -->
+    <include name="LucentHomeExtraScores">
+        <param name="row">8101</param>
+        <definition>
+        <control type="image">
+            <width>64</width>
+            <height>44</height>
+            <aspectratio align="right">keep</aspectratio>
+            <texture>$INFO[Window(home).Property(nuvio.logo.rt)]</texture>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.rt)) + !Skin.HasSetting(lucent.rate.hide.rt) + String.IsEmpty(Container($PARAM[row]).ListItem.Property(RottenTomatoes_Rating)) + !String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>$VAR[LucentHeroText3]</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>[B]RT[/B]</label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.rt)) + !Skin.HasSetting(lucent.rate.hide.rt) + String.IsEmpty(Container($PARAM[row]).ListItem.Property(RottenTomatoes_Rating)) + String.IsEmpty(Window(home).Property(nuvio.logo.rt))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>text</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>$INFO[Window(home).Property(lucent.omdbh.rt)]   </label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.rt)) + !Skin.HasSetting(lucent.rate.hide.rt) + String.IsEmpty(Container($PARAM[row]).ListItem.Property(RottenTomatoes_Rating))</visible>
+        </control>
+        <control type="image">
+            <width>64</width>
+            <height>44</height>
+            <aspectratio align="right">keep</aspectratio>
+            <texture>$INFO[Window(home).Property(nuvio.logo.rta)]</texture>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.rta)) + !Skin.HasSetting(lucent.rate.hide.rta) + !String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>$VAR[LucentHeroText3]</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>[B]RTA[/B]</label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.rta)) + !Skin.HasSetting(lucent.rate.hide.rta) + String.IsEmpty(Window(home).Property(nuvio.logo.rta))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>text</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>$INFO[Window(home).Property(lucent.omdbh.rta)]   </label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.rta)) + !Skin.HasSetting(lucent.rate.hide.rta)</visible>
+        </control>
+        <control type="image">
+            <width>64</width>
+            <height>44</height>
+            <aspectratio align="right">keep</aspectratio>
+            <texture>$INFO[Window(home).Property(nuvio.logo.mc)]</texture>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.mc)) + !Skin.HasSetting(lucent.rate.hide.mc) + !String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>$VAR[LucentHeroText3]</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>[B]MC[/B]</label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.mc)) + !Skin.HasSetting(lucent.rate.hide.mc) + String.IsEmpty(Window(home).Property(nuvio.logo.mc))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>text</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>$INFO[Window(home).Property(lucent.omdbh.mc)]   </label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.mc)) + !Skin.HasSetting(lucent.rate.hide.mc)</visible>
+        </control>
+        <control type="image">
+            <width>64</width>
+            <height>44</height>
+            <aspectratio align="right">keep</aspectratio>
+            <texture>$INFO[Window(home).Property(nuvio.logo.lb)]</texture>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.lb)) + !Skin.HasSetting(lucent.rate.hide.lb) + !String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>$VAR[LucentHeroText3]</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>[B]LB[/B]</label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.lb)) + !Skin.HasSetting(lucent.rate.hide.lb) + String.IsEmpty(Window(home).Property(nuvio.logo.lb))</visible>
+        </control>
+        <control type="label">
+            <width>auto</width>
+            <height>44</height>
+            <font>font12</font>
+            <textcolor>text</textcolor>
+            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+            <label>$INFO[Window(home).Property(lucent.omdbh.lb)]   </label>
+            <visible>!String.IsEmpty(Window(home).Property(lucent.omdbh.lb)) + !Skin.HasSetting(lucent.rate.hide.lb)</visible>
+        </control>
+        <include content="InfoPill">
+            <param name="label">[B]$LOCALIZE[31880][/B]</param>
+            <param name="bg">FF7FE3E8</param>
+            <param name="color">FF111111</param>
+            <param name="font">font10_bold</param>
+            <param name="visible">String.IsEqual(Window(home).Property(lucent.ep.badge),premiere)</param>
+        </include>
+        <include content="InfoPill">
+            <param name="label">[B]$LOCALIZE[31881][/B]</param>
+            <param name="bg">FFC9A227</param>
+            <param name="color">FF111111</param>
+            <param name="font">font10_bold</param>
+            <param name="visible">String.IsEqual(Window(home).Property(lucent.ep.badge),finale)</param>
+        </include>
+        </definition>
+    </include>
     <include name="HomeHeroes">
         <!-- Continue watching (library, scripts/continuerow.py) focused -->
         <control type="group">
@@ -1046,6 +1167,7 @@
                     <label>★ $INFO[Container(8101).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8101).ListItem.Rating(imdb)) + String.IsEmpty(Container(8101).ListItem.Rating(trakt)) + String.IsEmpty(Container(8101).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8101).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8101</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -1187,6 +1309,13 @@
                     <label>$INFO[Container(8101).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -1388,6 +1517,7 @@
                     <label>★ $INFO[Container(8201).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8201).ListItem.Rating(imdb)) + String.IsEmpty(Container(8201).ListItem.Rating(trakt)) + String.IsEmpty(Container(8201).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8201).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8201</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -1529,6 +1659,13 @@
                     <label>$INFO[Container(8201).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -1730,6 +1867,7 @@
                     <label>★ $INFO[Container(8102).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8102).ListItem.Rating(imdb)) + String.IsEmpty(Container(8102).ListItem.Rating(trakt)) + String.IsEmpty(Container(8102).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8102).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8102</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -1871,6 +2009,13 @@
                     <label>$INFO[Container(8102).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -2072,6 +2217,7 @@
                     <label>★ $INFO[Container(8202).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8202).ListItem.Rating(imdb)) + String.IsEmpty(Container(8202).ListItem.Rating(trakt)) + String.IsEmpty(Container(8202).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8202).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8202</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -2213,6 +2359,13 @@
                     <label>$INFO[Container(8202).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -2414,6 +2567,7 @@
                     <label>★ $INFO[Container(8103).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8103).ListItem.Rating(imdb)) + String.IsEmpty(Container(8103).ListItem.Rating(trakt)) + String.IsEmpty(Container(8103).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8103).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8103</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -2555,6 +2709,13 @@
                     <label>$INFO[Container(8103).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -2756,6 +2917,7 @@
                     <label>★ $INFO[Container(8203).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8203).ListItem.Rating(imdb)) + String.IsEmpty(Container(8203).ListItem.Rating(trakt)) + String.IsEmpty(Container(8203).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8203).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8203</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -2897,6 +3059,13 @@
                     <label>$INFO[Container(8203).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -3098,6 +3267,7 @@
                     <label>★ $INFO[Container(8104).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8104).ListItem.Rating(imdb)) + String.IsEmpty(Container(8104).ListItem.Rating(trakt)) + String.IsEmpty(Container(8104).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8104).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8104</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -3239,6 +3409,13 @@
                     <label>$INFO[Container(8104).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -3440,6 +3617,7 @@
                     <label>★ $INFO[Container(8204).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8204).ListItem.Rating(imdb)) + String.IsEmpty(Container(8204).ListItem.Rating(trakt)) + String.IsEmpty(Container(8204).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8204).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8204</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -3581,6 +3759,13 @@
                     <label>$INFO[Container(8204).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -3782,6 +3967,7 @@
                     <label>★ $INFO[Container(8105).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8105).ListItem.Rating(imdb)) + String.IsEmpty(Container(8105).ListItem.Rating(trakt)) + String.IsEmpty(Container(8105).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8105).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8105</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -3923,6 +4109,13 @@
                     <label>$INFO[Container(8105).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -4124,6 +4317,7 @@
                     <label>★ $INFO[Container(8205).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8205).ListItem.Rating(imdb)) + String.IsEmpty(Container(8205).ListItem.Rating(trakt)) + String.IsEmpty(Container(8205).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8205).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8205</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -4265,6 +4459,13 @@
                     <label>$INFO[Container(8205).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -4466,6 +4667,7 @@
                     <label>★ $INFO[Container(8106).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8106).ListItem.Rating(imdb)) + String.IsEmpty(Container(8106).ListItem.Rating(trakt)) + String.IsEmpty(Container(8106).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8106).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8106</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -4607,6 +4809,13 @@
                     <label>$INFO[Container(8106).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -4808,6 +5017,7 @@
                     <label>★ $INFO[Container(8206).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8206).ListItem.Rating(imdb)) + String.IsEmpty(Container(8206).ListItem.Rating(trakt)) + String.IsEmpty(Container(8206).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8206).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8206</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -4949,6 +5159,13 @@
                     <label>$INFO[Container(8206).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -5150,6 +5367,7 @@
                     <label>★ $INFO[Container(8107).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8107).ListItem.Rating(imdb)) + String.IsEmpty(Container(8107).ListItem.Rating(trakt)) + String.IsEmpty(Container(8107).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8107).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8107</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -5291,6 +5509,13 @@
                     <label>$INFO[Container(8107).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -5492,6 +5717,7 @@
                     <label>★ $INFO[Container(8207).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8207).ListItem.Rating(imdb)) + String.IsEmpty(Container(8207).ListItem.Rating(trakt)) + String.IsEmpty(Container(8207).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8207).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8207</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -5633,6 +5859,13 @@
                     <label>$INFO[Container(8207).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -5834,6 +6067,7 @@
                     <label>★ $INFO[Container(8108).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8108).ListItem.Rating(imdb)) + String.IsEmpty(Container(8108).ListItem.Rating(trakt)) + String.IsEmpty(Container(8108).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8108).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8108</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -5975,6 +6209,13 @@
                     <label>$INFO[Container(8108).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -6176,6 +6417,7 @@
                     <label>★ $INFO[Container(8208).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8208).ListItem.Rating(imdb)) + String.IsEmpty(Container(8208).ListItem.Rating(trakt)) + String.IsEmpty(Container(8208).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8208).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8208</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -6317,6 +6559,13 @@
                     <label>$INFO[Container(8208).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -6518,6 +6767,7 @@
                     <label>★ $INFO[Container(8109).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8109).ListItem.Rating(imdb)) + String.IsEmpty(Container(8109).ListItem.Rating(trakt)) + String.IsEmpty(Container(8109).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8109).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8109</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -6659,6 +6909,13 @@
                     <label>$INFO[Container(8109).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -6860,6 +7117,7 @@
                     <label>★ $INFO[Container(8209).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8209).ListItem.Rating(imdb)) + String.IsEmpty(Container(8209).ListItem.Rating(trakt)) + String.IsEmpty(Container(8209).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8209).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8209</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -7001,6 +7259,13 @@
                     <label>$INFO[Container(8209).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -7202,6 +7467,7 @@
                     <label>★ $INFO[Container(8110).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8110).ListItem.Rating(imdb)) + String.IsEmpty(Container(8110).ListItem.Rating(trakt)) + String.IsEmpty(Container(8110).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8110).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8110</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -7343,6 +7609,13 @@
                     <label>$INFO[Container(8110).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -7544,6 +7817,7 @@
                     <label>★ $INFO[Container(8210).ListItem.Rating]</label>
                     <visible>String.IsEmpty(Container(8210).ListItem.Rating(imdb)) + String.IsEmpty(Container(8210).ListItem.Rating(trakt)) + String.IsEmpty(Container(8210).ListItem.Rating(tmdb)) + !String.IsEmpty(Container(8210).ListItem.Rating)</visible>
                 </control>
+                <include content="LucentHomeExtraScores"><param name="row">8210</param></include>
             </control>
             <!-- Status, date, episode, how far you are -->
             <control type="grouplist">
@@ -7685,6 +7959,13 @@
                     <label>$INFO[Container(8210).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+                <include content="InfoPill">
+                    <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
+                    <param name="bg">glass_strong</param>
+                    <param name="color">FFBFF3F5</param>
+                    <param name="font">font10_bold</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                </include>
             </control>
 
             <!-- Episode title -->
@@ -8554,6 +8835,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -8750,6 +9044,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -9095,6 +9402,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -9261,6 +9581,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -9462,6 +9795,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -9658,6 +10004,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -10003,6 +10362,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -10169,6 +10541,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -10370,6 +10755,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -10566,6 +10964,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -10911,6 +11322,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -11077,6 +11501,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -11278,6 +11715,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -11474,6 +11924,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -11819,6 +12282,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -11985,6 +12461,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -12186,6 +12675,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -12382,6 +12884,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -12727,6 +13242,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -12893,6 +13421,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -13094,6 +13635,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -13290,6 +13844,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -13636,6 +14203,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -13802,6 +14382,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -14007,6 +14600,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -14203,6 +14809,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -14548,6 +15167,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -14714,6 +15346,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -14915,6 +15560,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -15111,6 +15769,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -15456,6 +16127,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -15622,6 +16306,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -15823,6 +16520,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -16019,6 +16729,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -16364,6 +17087,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -16530,6 +17266,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -16731,6 +17480,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>96</left>
@@ -16927,6 +17689,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
@@ -17272,6 +18047,19 @@
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                 </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">
                     <left>276</left>
@@ -17438,6 +18226,19 @@
                     <height>40</height>
                     <texture colordiffuse="$VAR[LucentWatchedColour]">buttons/check_fo.png</texture>
                     <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
+                </control>
+                <!-- 2.1.3: season premiere (episode 1, for every add-on) / finale and episodes left (when the video add-on
+                     gives lucent.season.finale / lucent.season.left) -->
+                <control type="group">
+                    <left>12</left>
+                    <top>14</top>
+                    <visible>String.IsEqual(ListItem.DBType,episode)</visible>
+                    <control type="image"><left>0</left><top>0</top><width>124</width><height>32</height><texture border="14" colordiffuse="FF7FE3E8">rr14.png</texture><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>124</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31882][/B]</label><visible>Integer.IsEqual(ListItem.Episode,1) + Integer.IsGreater(ListItem.Season,0) + String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>0</top><width>96</width><height>32</height><texture border="14" colordiffuse="FFC9A227">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="label"><left>0</left><top>0</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>FF111111</textcolor><selectedcolor>FF111111</selectedcolor><label>[B]$LOCALIZE[31883][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.finale))</visible></control>
+                    <control type="image"><left>0</left><top>38</top><width>96</width><height>32</height><texture border="14" colordiffuse="E60B0F19">rr14.png</texture><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
+                    <control type="label"><left>0</left><top>38</top><width>96</width><height>32</height><align>center</align><aligny>center</aligny><font>font10_bold</font><textcolor>white</textcolor><selectedcolor>white</selectedcolor><label>[B]$INFO[ListItem.Property(lucent.season.left)][/B]</label><visible>!String.IsEmpty(ListItem.Property(lucent.season.left))</visible></control>
                 </control>
                 <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                 <control type="image">

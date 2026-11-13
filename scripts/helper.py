@@ -72,6 +72,7 @@ def run():
     import continuerow
     import tint
     import omdb
+    import seasoninfo
     import views
     import mediaflags
     import updater
@@ -364,6 +365,11 @@ def run():
                 omdb.list_tick()                     # Rotten Tomatoes / Metacritic of the title under the cursor
             except Exception as error:  # noqa: BLE001
                 log(f"omdb: {error}")
+            try:
+                omdb.home_tick()                     # 2.1.3: the same scores for the title under the cursor on Home
+                seasoninfo.tick()                    # 2.1.3: episodes left in the season, premiere / finale
+            except Exception as error:  # noqa: BLE001
+                log(f"home extra: {error}")
             try:
                 views.tick()                         # the view you chose, for every folder of that kind (issue #5)
             except Exception as error:  # noqa: BLE001

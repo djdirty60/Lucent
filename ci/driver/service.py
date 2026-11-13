@@ -8396,8 +8396,11 @@ def mediaflags_test():
     """1.34.18 (issue #9): media flags in the list with the big picture, for a film, a series and an episode."""
     out = {}
     for name, path in (("movie", "videodb://movies/titles/"), ("tvshow", "videodb://tvshows/titles/"), ("episode", "videodb://tvshows/titles/901/1/")):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(2)
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
         xbmc.executebuiltin(f"ActivateWindow(Videos,{path},return)")
         mon.waitForAbort(3)
         xbmc.executebuiltin("Container.SetViewMode(51)")
@@ -8410,7 +8413,8 @@ def mediaflags_test():
             mon.waitForAbort(1)
         mon.waitForAbort(2.5)
         out[name] = {"item": lab("ListItem.Label"), "res": lab("ListItem.VideoResolution"), "hdr": lab("ListItem.HdrType"),
-                     **{k: HOME.getProperty("lucent.mf." + k) for k in ("img1", "img2", "img3", "img4", "img5", "img6", "alang", "slang", "most", "for")}}
+                     **{k: HOME.getProperty("lucent.mf." + k) for k in ("img1", "img2", "img3", "img4", "img5", "img6", "alang", "slang", "most", "for")},
+                     "logos": [HOME.getProperty(f"lucent.mf.l{i}") + "/" + HOME.getProperty(f"lucent.mf.w{i}") for i in range(1, 8)]}
         shot(f"mediaflags-{name}")
         if name in ("movie", "episode"):                 # 1.35.2: shown at once, and the row keeps its place
             xbmc.executebuiltin("Action(Left)")
@@ -9839,6 +9843,50 @@ def sort_test():
     log("sort: " + json.dumps(out))
 
 
+def homeextra_test():
+    """2.1.3 (Reddit): on Home the OMDb / MDBList scores of the title under the cursor, episodes left in the season and a
+    season premiere / finale badge. Lib Show season 1 has two episodes: E1 = premiere, 1 left; E2 = finale, last one."""
+    out = {}
+    d = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "mdblist.key"), "w") as fh:
+        fh.write("cimdbkey")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    for k, v in (("label", "Series"), ("w1.label", "Afleveringen"), ("w1.path", "videodb://tvshows/titles/901/1/"), ("w1.style", "poster"),
+                 ("w2.label", "Films"), ("w2.path", "videodb://movies/titles/"), ("w2.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w3.path)")
+    mon.waitForAbort(31)                                   # the helper reads the keys again after 30 s
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("ReplaceWindow(home)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(5)
+    props = lambda: {"item": lab("Container(8101).ListItem.Label") if HOME.getProperty("nuvio.row") == "8101" else lab("Container(8102).ListItem.Label"),  # noqa: E731
+                     "row": HOME.getProperty("nuvio.row"),
+                     "ep": [HOME.getProperty("lucent.ep.left"), HOME.getProperty("lucent.ep.badge")],
+                     "scores": {k: HOME.getProperty("lucent.omdbh." + k) for k in ("rt", "rta", "mc", "lb", "for")}}
+    xbmc.executebuiltin("SetFocus(8101,0,absolute)")
+    mon.waitForAbort(4)
+    out["ep1"] = props()
+    shot("homeextra-ep1")
+    xbmc.executebuiltin("SetFocus(8101,1,absolute)")
+    mon.waitForAbort(4)
+    out["ep2"] = props()
+    shot("homeextra-ep2")
+    xbmc.executebuiltin("SetFocus(8102,0,absolute)")
+    mon.waitForAbort(4)
+    out["movie"] = props()
+    shot("homeextra-movie")
+    log("homeextra: " + json.dumps(out, ensure_ascii=False))
+    os.remove(os.path.join(d, "mdblist.key"))
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
+
+
 def trailerjump_test():
     """Wilfried's video (13 Nov): a trailer on a poster of a Series tab - does the focus jump to the next row?"""
     for mode in ("window", "hero", "expand"):
@@ -9928,6 +9976,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(svctiles_test)
+    safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
     safe(trailerjump_test)
