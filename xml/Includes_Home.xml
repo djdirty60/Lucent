@@ -8253,6 +8253,8 @@
                     <label>$VAR[LucentCWLabel]</label>
                 </control>
                 <control type="fixedlist" id="8092">
+                    <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                    <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                     <left>-40</left>
                     <top>40</top>
                     <width>1800</width>

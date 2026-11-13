@@ -1049,6 +1049,9 @@
         </control>
         <control type="group" id="9250">
             <control type="list" id="50">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <onback>ClearProperty(nuvio.back,home)</onback>
                 <onback condition="Integer.IsGreater(Container(50).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
                 <onback condition="Integer.IsGreater(Container(50).CurrentItem,1)">SetFocus(50,0,absolute)</onback>
@@ -1260,6 +1263,9 @@
         </control>
         <control type="group" id="9251">
             <control type="fixedlist" id="51">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <onback>ClearProperty(nuvio.back,home)</onback>
                 <onback condition="Integer.IsGreater(Container(51).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
                 <onback condition="Integer.IsGreater(Container(51).CurrentItem,1)">SetFocus(51,0,absolute)</onback>
@@ -2238,6 +2244,9 @@
         </control>
         <control type="group" id="9252">
             <control type="panel" id="52">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <onback>ClearProperty(nuvio.back,home)</onback>
                 <onback condition="Integer.IsGreater(Container(52).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
                 <onback condition="Integer.IsGreater(Container(52).CurrentItem,1)">SetFocus(52,0,absolute)</onback>
@@ -2494,6 +2503,9 @@
         </control>
         <control type="group" id="9253">
             <control type="fixedlist" id="53">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <onback>ClearProperty(nuvio.back,home)</onback>
                 <onback condition="Integer.IsGreater(Container(53).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
                 <onback condition="Integer.IsGreater(Container(53).CurrentItem,1)">SetFocus(53,0,absolute)</onback>
@@ -2801,6 +2813,9 @@
         </control>
         <control type="group" id="9255">
             <control type="list" id="55">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <onback>ClearProperty(nuvio.back,home)</onback>
                 <onback condition="Integer.IsGreater(Container(55).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
                 <onback condition="Integer.IsGreater(Container(55).CurrentItem,1)">SetFocus(55,0,absolute)</onback>
@@ -3336,6 +3351,9 @@
             </control>
             <!-- the episodes of the chosen season -->
             <control type="list" id="5601">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <left>72</left>
                 <top>624</top>
                 <width>1848</width>
@@ -3903,6 +3921,9 @@
         </control>
         <control type="group" id="9257">
             <control type="fixedlist" id="57">
+                <!-- OK opens the film / episode page when chosen in Skin settings (every add-on and the library) -->
+                <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
+                <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
                 <onback>ClearProperty(nuvio.back,home)</onback>
                 <onback condition="Integer.IsGreater(Container(57).CurrentItem,1)">SetProperty(nuvio.back,1,home)</onback>
                 <onback condition="Integer.IsGreater(Container(57).CurrentItem,1)">SetFocus(57,0,absolute)</onback>

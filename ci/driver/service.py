@@ -5219,6 +5219,37 @@ def badges_test():
     xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w2.path)")
 
 
+def okpage_test():
+    """2.1.3: 'OK on a film opens its page' also in the video lists (an add-on folder and the library), not only on Home."""
+    out = {}
+    xbmc.executebuiltin("Skin.SetBool(nuvio.ok.movie.page)")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.ok.episode.page)")
+    for name, path in (("addon", "plugin://plugin.video.fakeseren/?list=sm"), ("addon-ep", "plugin://plugin.video.fakeseren/?list=se"),
+                       ("library", "videodb://movies/titles/")):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin(f"ActivateWindow(Videos,{path},return)")
+        mon.waitForAbort(5)
+        for _ in range(3):
+            if lab("ListItem.Label") == "..":
+                xbmc.executebuiltin("Action(Down)")
+                mon.waitForAbort(0.8)
+        item = lab("ListItem.Label")
+        dbtype = lab("ListItem.DBType")
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(3)
+        out[name] = {"item": item, "dbtype": dbtype, "view": lab("Container.ViewMode"), "focus": lab("System.CurrentControlID"),
+                     "info_open": cond("Window.IsVisible(movieinformation)"), "playing": cond("Player.HasVideo")}
+        shot(f"okpage-{name}")
+        xbmc.executebuiltin("PlayerControl(Stop)")
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Skin.Reset(nuvio.ok.movie.page)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.ok.episode.page)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("okpage: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10215,6 +10246,7 @@ def main():
     safe(rowshift_test)
     safe(cwmenu_test)
     safe(badges_test)
+    safe(okpage_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
