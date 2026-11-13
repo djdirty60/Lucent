@@ -71,6 +71,14 @@ elif kind in ("sm", "ss", "se"):
             li.setLabel(f"Chapter {5 + i}")
             if i % 2 == 0:
                 tag.setResumePoint(600 + i * 300, 3000)
+            if i in (0, 3):                       # season premiere (3 = already watched: badge left of the tick)
+                tag.setEpisode(1)
+            if i == 3:
+                tag.setPlaycount(1)
+            if i == 1:
+                li.setProperty("lucent.season.finale", "1")
+            if i in (1, 2, 4, 5):
+                li.setProperty("lucent.season.left", "nog %d" % (i + 1))
             li.setArt({"thumb": f"{ART}f{i}.jpg", "fanart": f"{ART}f{i}.jpg", "poster": f"{ART}p{i}.jpg", "landscape": f"{ART}f{i}.jpg"})
         else:
             tag.setMediaType("movie" if kind == "sm" else "tvshow")

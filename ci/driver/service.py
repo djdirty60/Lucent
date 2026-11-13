@@ -5193,6 +5193,32 @@ def cwmenu_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
 
 
+def badges_test():
+    """2.1.3: premiere / finale top right (left of the watched tick when watched), episodes left bottom left (next to
+    the percentage when that shows) - on poster cards and on landscape cards."""
+    W = "plugin://plugin.video.fakeseren/?list="
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Afleveringen"), ("w1.label", "Poster"), ("w1.path", W + "se"), ("w1.style", "poster"),
+                 ("w2.label", "Landschap"), ("w2.path", W + "se"), ("w2.style", "land")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(4)
+    shot("badges-poster")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(4)
+    shot("badges-land")
+    log(f"badges: focus={lab('System.CurrentControlID')} n1={lab('Container(8101).NumItems')} n2={lab('Container(8202).NumItems')}")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Streaming)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w2.path)")
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10188,6 +10214,7 @@ def main():
     safe(cwjumplog_test)
     safe(rowshift_test)
     safe(cwmenu_test)
+    safe(badges_test)
     safe(homeextra_test)
     safe(sort_test)
     safe(idlejump_test)
