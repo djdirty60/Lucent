@@ -8,12 +8,17 @@ home = os.path.expanduser("~/.kodi")
 stage = sys.argv[1]
 W = "plugin://plugin.video.fakeseren/?list="
 tabs = {
-    1: ("Home", "", [("Namen A", W + "names"), ("Streamingdiensten", W + "svc"), ("Snel X", W + "fast4"), ("Veel", W + "many"), ("Lucent bib", "plugin://script.lucent.library/?action=lib&kind=movies&list=recent"), ("TMDb films", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie")]),
+    1: ("Home", "", [("Namen A", W + "names"), ("Traag B", W + "slow"), ("Snel X", W + "fast4"), ("Veel", W + "many"), ("Lucent bib", "plugin://script.lucent.library/?action=lib&kind=movies&list=recent"), ("TMDb films", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie")]),
     3: ("Streaming", "", [("Streamingdiensten", "plugin://script.lucent.library/?action=providers"),
                           ("Netflix nieuw", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie"), ("Diensten", W + "svc")]),
     2: ("Films", "", [("Snel C", W + "fast2"), ("Traag D", W + "slow2"), ("Wisselvallig E", W + "flaky"),
                       ("Heel traag F", W + "slower"), ("Snel G", W + "fast3"), ("Altijd leeg H", W + "empty")]),
+    # issue #9 (13 Nov): the sort of a row from an add-on and of a genre row
+    4: ("Sorteren", "", [("Add-on bron", W + "names"), ("Add-on A-Z", W + "names"), ("Labels bron", W + "labels"),
+                         ("Labels A-Z", W + "labels"), ("Genres bron", "videodb://movies/genres/"),
+                         ("Genres A-Z", "videodb://movies/genres/"), ("Labels jaar", W + "labels")]),
 }
+SORT = {(4, 2): "title", (4, 4): "title", (4, 6): "title", (4, 7): "year"}
 if stage == "skin":
     s = {"lucent.setup.done": "1", "nuvio.migrated": "1", "nuvio.menu.version": "1", "lucent.addonw4": "1",
          "lucent.lite.checked": "1", "lucent.lite.built": "1", "lucent.subs.switched": "2", "nuvio.homepos": "0"}
@@ -24,6 +29,8 @@ if stage == "skin":
         for w, (lab, path) in enumerate(rows, 1):
             s[f"nuvio.tab{t}.w{w}.label"] = lab
             s[f"nuvio.tab{t}.w{w}.path"] = path
+            if (t, w) in SORT:
+                s[f"nuvio.tab{t}.w{w}.sort"] = SORT[(t, w)]
             s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3)) else "poster"
             if t == 1:
                 s[f"nuvio.home.w{w}.label"] = lab

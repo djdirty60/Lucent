@@ -5084,6 +5084,32 @@ def svctiles_test():
     log("svctiles: " + json.dumps(out))
 
 
+def sort_test():
+    """Issue #9 (13 Nov): rows from an add-on and genre rows ignore the sort chosen in Menu and widgets."""
+    out = {}
+    r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies"})))
+    genres = [["Western"], ["Action", "Drama"], ["Comedy"], ["Thriller"], ["Animation"], ["Horror"]]
+    for n, m in enumerate((r.get("result") or {}).get("movies") or []):
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                        "params": {"movieid": m["movieid"], "genre": genres[n % len(genres)]}}))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Control.SetFocus(9000,3)")
+    mon.waitForAbort(8)
+    out["tab"] = lab("Container(9000).ListItem.Label")
+    for w in range(1, 8):
+        rows = {}
+        for cid in (8100 + w, 8200 + w):
+            n = int(lab(f"Container({cid}).NumItems") or 0)
+            if n:
+                rows[cid] = [lab(f"Container({cid}).ListItemAbsolute({i}).Label") for i in range(min(n, 8))]
+        out[f"w{w}"] = [lab(f"Skin.String(nuvio.tab4.w{w}.label)"), lab(f"Skin.String(nuvio.tab4.w{w}.sort)"), rows]
+    shot("sort-tab")
+    log("sort: " + json.dumps(out))
+
+
 def trailerjump_test():
     """Wilfried's video (13 Nov): a trailer on a poster of a Series tab - does the focus jump to the next row?"""
     for mode in ("window", "hero", "expand"):
@@ -5173,6 +5199,7 @@ def main():
     watch("home1", 40)
     shot("1-home")
     safe(svctiles_test)
+    safe(sort_test)
     safe(idlejump_test)
     safe(trailerjump_test)
     safe(mousehome_test)

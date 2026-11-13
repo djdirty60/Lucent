@@ -85,7 +85,12 @@ else:
     NAMES = ["Mango", "Zebra", "Apple", "Kiwi", "Delta", "Banana", "Yankee", "Echo", "Lima", "Charlie", "Oscar", "Hotel",
              "Golf", "Nectar", "Fig", "Juliet", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "Xray"]
     for i in range(n):
-        title = NAMES[i] if kind == "names" else f"{kind} {i + 1}"
+        title = NAMES[i] if kind in ("names", "labels") else f"{kind} {i + 1}"
+        if kind == "labels":            # an add-on folder that only gives names (no title, year ...), like many add-ons do
+            li = xbmcgui.ListItem(title, offscreen=True)
+            li.setArt({"poster": icon, "thumb": icon})
+            items.append((f"plugin://plugin.video.fakeseren/?list=fast&from={i}", li, True))
+            continue
         li = xbmcgui.ListItem(title, offscreen=True)
         tag = li.getVideoInfoTag()
         tag.setMediaType("movie")
