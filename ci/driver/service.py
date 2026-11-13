@@ -5067,19 +5067,17 @@ def svctiles_test():
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
     out["tab"] = lab("Container(9000).ListItem.Label")
-    xbmc.executebuiltin("Action(Right)")
-    mon.waitForAbort(2)
-    for _ in range(4):
-        if "Netflix" in lab("ListItem.Label") or "Hulu" in lab("ListItem.Label"):
+    for _ in range(10):
+        xbmc.executebuiltin("SetFocus(8203)")
+        mon.waitForAbort(1.5)
+        if "Netflix" in lab("Container(8203).ListItem.Label"):
             break
-        xbmc.executebuiltin("Action(Down)")
-        mon.waitForAbort(2.5)
-    out["first"] = lab("ListItem.Label")
-    out["svclogo"] = lab("ListItem.Property(svclogo)")
+    out["first"] = lab("Container(8203).ListItem.Label")
+    out["svclogo"] = lab("Container(8203).ListItem.Property(svclogo)")
     shot("svc-1")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1.5)
-    out["second"] = lab("ListItem.Label")
+    out["second"] = lab("Container(8203).ListItem.Label")
     shot("svc-2")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(0.15)
