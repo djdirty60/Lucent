@@ -99,7 +99,7 @@ else:
         tag.setRating(round(1 + (i * 3) % 9 + 0.5, 1))
         tag.setDateAdded(f"2026-01-{(i * 11) % 28 + 1:02d} 12:00:00")
         li.setArt({"poster": icon, "thumb": icon, "fanart": icon})
-        if kind == "fast2" and i < 6:              # 2.1.2 test: streaming service tiles, like the video add-on sends them
+        if kind == "fast2x" and i < 6:              # 2.1.2 test: streaming service tiles, like the video add-on sends them
             keys = ("netflix", "hulu", "starz", "mgm", "peacock", "amc")
             sq = f"{ART}svc{i}.png"
             li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq})

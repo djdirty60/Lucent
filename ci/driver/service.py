@@ -5064,8 +5064,8 @@ def svctiles_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    xbmc.executebuiltin("Control.SetFocus(9000,1)")
-    mon.waitForAbort(5)
+    xbmc.executebuiltin("Control.SetFocus(9000,5)")
+    mon.waitForAbort(6)
     for _ in range(10):
         xbmc.executebuiltin("SetFocus(8201)")
         mon.waitForAbort(1.5)
@@ -5096,16 +5096,18 @@ def sort_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    xbmc.executebuiltin("Control.SetFocus(9000,3)")
-    mon.waitForAbort(8)
-    out["tab"] = lab("Container(9000).ListItem.Label")
-    for w in range(1, 8):
-        rows = {}
-        for cid in (8100 + w, 8200 + w):
-            n = int(lab(f"Container({cid}).NumItems") or 0)
-            if n:
-                rows[cid] = [lab(f"Container({cid}).ListItemAbsolute({i}).Label") for i in range(min(n, 8))]
-        out[f"w{w}"] = [lab(f"Skin.String(nuvio.tab4.w{w}.label)"), lab(f"Skin.String(nuvio.tab4.w{w}.sort)"), rows]
+    for tab in (3, 4):
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{tab})")
+        mon.waitForAbort(8)
+        name = lab("Container(9000).ListItem.Label")
+        for w in (1, 2):
+            rows = {}
+            for cid in (8100 + w, 8200 + w):
+                n = int(lab(f"Container({cid}).NumItems") or 0)
+                if n:
+                    rows[cid] = [lab(f"Container({cid}).ListItemAbsolute({i}).Label") for i in range(min(n, 8))]
+            out[f"{name} w{w}"] = [lab(f"Skin.String(nuvio.tab{tab + 1}.w{w}.label)"), lab(f"Skin.String(nuvio.tab{tab + 1}.w{w}.sort)"), rows]
+        shot(f"sort-tab{tab}")
     shot("sort-tab")
     log("sort: " + json.dumps(out))
 

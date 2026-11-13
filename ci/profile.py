@@ -13,12 +13,12 @@ tabs = {
                           ("Netflix nieuw", "plugin://script.lucent.library/?action=tmdb&list=prov_8_newmovie"), ("Diensten", W + "svc")]),
     2: ("Films", "", [("Snel C", W + "fast2"), ("Traag D", W + "slow2"), ("Wisselvallig E", W + "flaky"),
                       ("Heel traag F", W + "slower"), ("Snel G", W + "fast3"), ("Altijd leeg H", W + "empty")]),
-    # issue #9 (13 Nov): the sort of a row from an add-on and of a genre row
-    4: ("Sorteren", "", [("Add-on bron", W + "names"), ("Add-on A-Z", W + "names"), ("Labels bron", W + "labels"),
-                         ("Labels A-Z", W + "labels"), ("Genres bron", "videodb://movies/genres/"),
-                         ("Genres A-Z", "videodb://movies/genres/"), ("Labels jaar", W + "labels")]),
+    # issue #9 (13 Nov): the sort of a row from an add-on and of a genre row (two rows per tab: lower rows load later)
+    4: ("Sort labels", "", [("Labels bron", W + "labels"), ("Labels A-Z", W + "labels")]),
+    5: ("Sort genres", "", [("Genres bron", "videodb://movies/genres/"), ("Genres A-Z", "videodb://movies/genres/")]),
+    6: ("Diensten", "", [("Streamingdiensten", W + "svc")]),
 }
-SORT = {(4, 2): "title", (4, 4): "title", (4, 6): "title", (4, 7): "year"}
+SORT = {(4, 2): "title", (5, 2): "title"}
 if stage == "skin":
     s = {"lucent.setup.done": "1", "nuvio.migrated": "1", "nuvio.menu.version": "1", "lucent.addonw4": "1",
          "lucent.lite.checked": "1", "lucent.lite.built": "1", "lucent.subs.switched": "2", "nuvio.homepos": "0"}
@@ -31,7 +31,7 @@ if stage == "skin":
             s[f"nuvio.tab{t}.w{w}.path"] = path
             if (t, w) in SORT:
                 s[f"nuvio.tab{t}.w{w}.sort"] = SORT[(t, w)]
-            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3), (2, 1)) else "poster"
+            s[f"nuvio.tab{t}.w{w}.style"] = "land" if (t, w) in ((2, 5), (3, 1), (1, 2), (3, 3), (6, 1)) else "poster"
             if t == 1:
                 s[f"nuvio.home.w{w}.label"] = lab
                 s[f"nuvio.home.w{w}.path"] = path
