@@ -216,6 +216,16 @@ Lucent's settings are grouped in categories: **Lucent** (look, menu, streaming s
 
 ## Installation
 
+**The easy way: add a source in Kodi**
+1. In Kodi go to **Settings → File manager → Add source**.
+2. Choose **<None>**, type `https://djdirty60.github.io/Lucent/`, and name it **Lucent**.
+3. Go to **Add-ons → Install from zip file → Lucent → repository.lucent.zip**.
+4. Go to **Add-ons → Install from repository → Lucent Repository → Look and feel → Skin → Lucent** and choose **Install**.
+
+Installing from zip needs **Settings → System → Add-ons → Unknown sources** switched on.
+
+**Or download the zip**
+
 1. Download [`repository.lucent.zip`](https://github.com/djdirty60/Lucent/raw/main/repository.lucent.zip) and copy it to your device, for example to the *Download* folder.
 2. In Kodi, go to **Settings → System → Add-ons** and switch on **Unknown sources**.
 3. Go to **Add-ons → Install from zip file** and choose `repository.lucent.zip`.
