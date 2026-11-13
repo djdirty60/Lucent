@@ -5280,6 +5280,18 @@ def levels_test():
             mon.waitForAbort(1.5)
             out.append(["after dialog", lab("Control.GetLabel(20)")])
     log("levels: " + json.dumps(out))
+    # the same in the settings of an add-on
+    xbmc.executebuiltin("Addon.OpenSettings(plugin.video.fakeseren)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(20)")
+    mon.waitForAbort(1)
+    a = [lab("Control.GetLabel(20)")]
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(2)
+    a.append(lab("Control.GetLabel(20)"))
+    log("levels addon: " + json.dumps(a))
+    shot("levels-addon")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
