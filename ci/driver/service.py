@@ -5343,6 +5343,7 @@ def cwnotice_test():
 
 def _seed_agenda():
     import datetime as _d
+    ART = "special://home/addons/plugin.video.fakeseren/art/"
     sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
     import agenda_core as _ac
     data = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
