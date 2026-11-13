@@ -4510,6 +4510,13 @@ def nolv_test():
         importlib.reload(info)
     except Exception as error:  # noqa: BLE001
         out["error"] = f"{type(error).__name__}: {error}"
+    for _ in range(40):                                    # the video add-on asks something at start: answer No
+        if mon.waitForAbort(0.5):
+            break
+        if cond("Window.IsVisible(yesnodialog)"):
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            mon.waitForAbort(1)
+            break
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("Skin.SetString(nuvio.tab1.icon,icons/home.png)")
     xbmc.executebuiltin("Skin.Reset(lucent.fy.off)")
@@ -4522,6 +4529,8 @@ def nolv_test():
     for tab in (0, 1):
         xbmc.executebuiltin(f"Control.SetFocus(9000,{tab})")
         mon.waitForAbort(2)
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.5)
         out[f"foryou_tab{tab + 1}"] = cond("Control.IsVisible(9989)")
         out[f"icon_tab{tab + 1}"] = lab("Container(9000).ListItem.Icon")
         shot(f"nolv-tab{tab + 1}")
