@@ -5525,7 +5525,11 @@ def thcount_test():
     for k, v in (("label", "Afleveringen"), ("w1.label", "Up next"), ("w1.path", "plugin://plugin.video.fakeseren/?list=th"), ("w1.style", "poster")):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
     xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w2.path)")
+    out["helper_before"] = HOME.getProperty("lucent.helper")
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
     mon.waitForAbort(31)
+    out["helper_after"] = HOME.getProperty("lucent.helper")
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
     for pos in (1, 2):
