@@ -5688,6 +5688,38 @@ def updnews_test():
     log("updnews: " + json.dumps(out, ensure_ascii=False))
 
 
+def announce_test():
+    """2.1.8: the new pop-up with the poster - one episode, and a whole season out at once."""
+    import threading
+    sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    import agenda_core as _ac
+    import datetime as _d
+    ART = "special://home/addons/plugin.video.fakeseren/art/"
+    today = _d.date.today().isoformat()
+    base = {"kind": "tv", "show": "tv:7", "name": "Northbound", "tmdb": 107, "date": today, "time": "02:00", "poster": f"{ART}p4.jpg",
+            "season": 3, "title": "Black Water"}
+    one = dict(base, key="a", episode=7)
+    season = [dict(base, key=f"s{n}", episode=n, title=f"Chapter {n}") for n in range(1, 9)]
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    for name, ev, group in (("ep", one, None), ("season", season[0], season)):
+        res = {}
+        threading.Thread(target=lambda: res.setdefault("c", _ac.announce(ev, group)), daemon=True).start()
+        mon.waitForAbort(3)
+        out[name] = [lab("System.CurrentControlID"), lab("Control.GetLabel(10)"), lab("Control.GetLabel(11)"), lab("Control.GetLabel(12)")]
+        shot(f"announce-{name}")
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.5)
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.5)
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(2)
+        out[name].append(res.get("c", "?"))
+    log("announce: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10697,6 +10729,7 @@ def main():
     safe(wnvideo_test)
     safe(rowreload_test)
     safe(placeholder_test)
+    safe(announce_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)

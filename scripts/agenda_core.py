@@ -47,6 +47,15 @@ T = {
     "movie_out": ("This film has a digital release now. Do you want to watch it?", "Deze film is nu digitaal uit. Wil je hem kijken?"),
     "digital": ("Digital release", "Digitale release"),
     "watch_now": ("Watch now", "Nu kijken"),
+    "open_show": ("Open series", "Serie openen"),
+    "open_movie": ("Open film", "Film openen"),
+    "new_season": ("New season", "Nieuw seizoen"),
+    "season_line": ("Season {0} · {1} episodes", "Seizoen {0} · {1} afleveringen"),
+    "season_out": ("All out today at once", "Vandaag in één keer verschenen"),
+    "from_ep": ("From episode {0}", "Vanaf aflevering {0}"),
+    "aired_today": ("Aired today at {0}", "Vandaag om {0} uitgezonden"),
+    "aired_today_notime": ("Out today", "Vandaag verschenen"),
+    "aired_on": ("Out since {0}", "Verschenen op {0}"),
     "later": ("Later", "Later"),
     "following": ("Notification on for {0}. You get a pop-up for a new episode / the digital release.",
                   "Melding aan voor {0}. Je krijgt een pop-up bij een nieuwe aflevering / digitale release."),
@@ -709,17 +718,79 @@ def providers_line(tmdb_id):
     return ("Te zien op " if _NL else "Watch on ") + ", ".join(names[:3])
 
 
-def announce(ev):
-    """Ask 'Watch now / Later'. Returns True when the user wants to watch."""
+class Announce(xbmcgui.WindowXMLDialog):
+    """2.1.8: the pop-up with the poster (xml/Lucent_NewEpisode.xml). choice: 'watch', 'open' or '' (later)."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
+        self.props, self.choice, self.closed = kwargs["props"], "", False
+
+    def onInit(self):
+        for key, value in self.props.items():
+            self.setProperty(f"ne.{key}", value)
+        self.setFocusId(10)
+        import threading
+        threading.Thread(target=self._timeout, daemon=True).start()
+
+    def _timeout(self):
+        if not xbmc.Monitor().waitForAbort(60) and not self.closed:     # no answer within a minute: later
+            self.close()
+
+    def onClick(self, control_id):
+        self.choice = {10: "watch", 11: "open"}.get(control_id, "")
+        self.closed = True
+        self.close()
+
+    def onAction(self, action):
+        if action.getId() in (9, 10, 92, 216, 247, 257, 275, 61467, 61448):
+            self.closed = True
+            self.close()
+
+
+def when_text(ev):
+    day = parse_date(ev["date"])
+    if day == today():
+        return tr("aired_today", ev["time"]) if ev["time"] else tr("aired_today_notime")
+    return tr("aired_on", day_long(day))
+
+
+def announce(ev, group=None):
+    """Ask 'Watch now / Open / Later' for one episode or film, or for a whole season out at once (group = its episodes).
+    Returns 'watch', 'open' or '' (later)."""
     movie = ev["kind"] == "movie"
-    code = "" if movie else f" · {ep_code(ev)}" + (f" · {ev['title']}" if ev["title"] else "")
-    text = f"[B]{ev['name']}[/B]{code}\n\n{tr('movie_out' if movie else 'ep_out')}"
-    if movie:
-        where = providers_line(ev.get("tmdb"))
-        if where:
-            text += f"\n{where}"
-    return xbmcgui.Dialog().yesno(tr("new_movie" if movie else "new_ep"), text, nolabel=tr("later"), yeslabel=tr("watch_now"),
-                               autoclose=60000)   # no answer within a minute counts as "later"
+    if group:
+        first = min(group, key=lambda e: e["episode"])
+        props = {"head": tr("new_season"), "line": tr("season_line", first["season"], len(group)), "when": tr("season_out"),
+                 "watch": tr("from_ep", first["episode"]), "open": tr("open_show")}
+    elif movie:
+        props = {"head": tr("new_movie"), "line": providers_line(ev.get("tmdb")) or tr("digital"), "when": when_text(ev),
+                 "watch": tr("watch_now"), "open": tr("open_movie")}
+    else:
+        props = {"head": tr("new_ep"), "line": f"{ep_code(ev)} · {ev['title']}" if ev["title"] else ep_code(ev),
+                 "when": when_text(ev), "watch": tr("watch_now"), "open": tr("open_show")}
+    props.update(title=ev["name"], poster=ev.get("poster") or "", later=tr("later"))
+    try:
+        import xbmcaddon
+        path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
+        window = Announce("Lucent_NewEpisode.xml", path, "Default", "1080i", props=props)
+        window.doModal()
+        choice = window.choice
+        del window
+        return choice
+    except Exception as error:  # noqa: BLE001 - fall back to Kodi's own question
+        log(f"announce window: {error}")
+        text = f"[B]{ev['name']}[/B] · {props['line']}\n\n{props['when']}"
+        return "watch" if xbmcgui.Dialog().yesno(props["head"], text, nolabel=tr("later"), yeslabel=props["watch"],
+                                                 autoclose=60000) else ""
+
+
+def watch(ev, group=None):
+    """Play the episode (the first of a new season), the film, or open it when nothing can play an episode."""
+    if ev["kind"] == "tv" and ev.get("tmdb") and info.lv_open_with():
+        first = min(group, key=lambda e: e["episode"]) if group else ev
+        xbmc.executebuiltin(f"PlayMedia({info.episode_play_url(ev['tmdb'], first['season'], first['episode'])})")
+        return
+    open_title(ev["name"], ev["kind"], ev["tmdb"])
 
 
 def already_watched(ev):
@@ -771,19 +842,37 @@ def check_notifications():
             write_json(FOLLOW_PATH, store)
             continue
         due.append(ev)
-    for ev in due[:3]:
+    # 2.1.8: several episodes of one season out on the same day (a whole season at once): one pop-up for that season
+    groups, order = {}, []
+    for ev in due:
+        key = (ev["show"], ev.get("season"), ev["date"]) if ev["kind"] == "tv" else (ev["key"],)
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(ev)
+    for key in order[:3]:
         if busy_now():
             break
+        group = groups[key]
+        season = group if len(group) >= 3 else None
+        evs = group if season else group[:1]
+        ev = min(evs, key=lambda e: e.get("episode") or 0)
         shown += 1
-        if announce(ev):
-            store["notified"][ev["key"]] = "done"
+        choice = announce(ev, season)
+        if choice:
+            for one in evs:
+                store["notified"][one["key"]] = "done"
             write_json(FOLLOW_PATH, store)
-            open_title(ev["name"], ev["kind"], ev["tmdb"])
+            if choice == "watch":
+                watch(ev, season)
+            else:
+                open_title(ev["name"], ev["kind"], ev["tmdb"])
             break
-        count = (store["snooze"].get(ev["key"]) or [0, 0])[1] + 1
-        if count >= 3:
-            store["notified"][ev["key"]] = "done"
-        else:
-            store["snooze"][ev["key"]] = [time.time() + 6 * 3600, count]
+        for one in evs:
+            count = (store["snooze"].get(one["key"]) or [0, 0])[1] + 1
+            if count >= 3:
+                store["notified"][one["key"]] = "done"
+            else:
+                store["snooze"][one["key"]] = [time.time() + 6 * 3600, count]
         write_json(FOLLOW_PATH, store)
     return shown
