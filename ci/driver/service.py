@@ -5537,6 +5537,20 @@ def thcount_test():
                            "left": HOME.getProperty("lucent.ep.left"), "badge": HOME.getProperty("lucent.ep.badge"),
                            "scores": {k: HOME.getProperty("lucent.omdbh." + k) for k in ("imdb", "rt", "mc", "for")}}
         shot(f"thcount-{pos}")
+    # the same in this interpreter, to see an error the helper would swallow
+    try:
+        sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+        import seasoninfo as _si
+        import info as _inf
+        out["key"] = bool(_inf.tmdb_key())
+        for _ in range(12):
+            _si.tick()
+            mon.waitForAbort(0.25)
+        out["direct"] = [HOME.getProperty("lucent.ep.left"), _si.STATE, _si.COUNTS]
+        out["count"] = _si._tmdb_count("1401", 2)
+    except Exception as error:  # noqa: BLE001
+        import traceback
+        out["direct_error"] = traceback.format_exc()[-600:]
     log("thcount: " + json.dumps(out, ensure_ascii=False))
     os.remove(os.path.join(d, "mdblist.key"))
 
