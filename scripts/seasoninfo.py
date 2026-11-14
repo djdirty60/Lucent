@@ -3,7 +3,7 @@
 it is the season premiere or the season finale (idea from Reddit, Nov 2026).
 
 Window(home).Property:
-  lucent.ep.left   'Nog 6 afleveringen in seizoen 7' / 'Laatste aflevering van seizoen 7' (empty when unknown)
+  lucent.ep.left   'Nog 7 te zien in seizoen 7' (this one counts too) / 'Laatste aflevering van seizoen 7' (empty when unknown)
   lucent.ep.badge  'premiere' / 'finale' / ''
 How many episodes a season has: the video add-on's own property (lucent.season.count) when it gives one, else the Kodi
 library (a library episode), else TMDB (with the series' TMDB id). Remembered per season for this session.
@@ -152,14 +152,12 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
             final = True                                    # your own library: what you have is the season
         aired = out - episode if out >= episode else 0          # of those, already out (TMDB only)
         if (own_count or tmdb_id) and not show_dbid and left > 0 and aired < left:
-            if aired > 0:
-                text = t(f"{aired} more out now, {left - aired} still to come", f"Nog {aired} te zien, {left - aired} komen nog")
+            if aired > 0:                                   # 2.1.15: the episode you are on counts too (#19)
+                text = t(f"{aired + 1} to watch now, {left - aired} still to come", f"Nog {aired + 1} te zien, {left - aired} komen nog")
             else:
                 text = t(f"Newest episode · {left} still to come", f"Nieuwste aflevering · nog {left} op komst")
-        elif left > 1:
-            text = t(f"{left} episodes left in season {season}", f"Nog {left} afleveringen in seizoen {season}")
-        elif left == 1:
-            text = t(f"1 episode left in season {season}", f"Nog 1 aflevering in seizoen {season}")
+        elif left > 0:                                      # this one and the ones after it
+            text = t(f"{left + 1} to watch in season {season}", f"Nog {left + 1} te zien in seizoen {season}")
         elif left == 0 and final:
             text = t(f"Last episode of season {season}", f"Laatste aflevering van seizoen {season}")
         elif left == 0:
