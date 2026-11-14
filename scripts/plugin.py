@@ -3,8 +3,8 @@
 
     plugin://skin.lucent/?list=lib_continue_new
 
-'Episodes - new and continue': first the new episodes of your library (not watched, out in the last 30 days, newest
-first), then the episodes you stopped halfway (last watched first). Works for every add-on that fills the Kodi library
+'Episodes - new and continue': one tile per series you are watching - first its newest new episode (not watched, out
+in the last 30 days, newest first), then the episode you stopped halfway (last watched first). Works for every add-on that fills the Kodi library
 (NLZiet, Videoland, Lucent Video ...). Each tile is the library episode itself, so playing it resumes and marks it as
 watched in the library like any library item."""
 import json
@@ -16,7 +16,7 @@ import xbmcgui
 import xbmcplugin
 
 NEW_DAYS = 30
-LIMIT = 40
+LIMIT = 200
 FIELDS = ["title", "showtitle", "season", "episode", "firstaired", "plot", "rating", "runtime", "playcount", "lastplayed",
           "resume", "art", "file", "tvshowid", "dateadded", "streamdetails", "uniqueid"]
 
@@ -62,16 +62,21 @@ def item(ep):
 
 
 def lib_continue_new():
+    """One tile per series, only for series you are watching (you saw an episode of it, or one is half watched):
+    first its newest new episode (unwatched, out in the last 30 days), newest first; then for the other series the
+    episode you stopped halfway, last watched first."""
+    shows = rpc("VideoLibrary.GetTVShows", properties=["watchedepisodes"]).get("tvshows") or []
+    going = episodes({"field": "inprogress", "operator": "true", "value": ""}, {"method": "lastplayed", "order": "descending"})
+    watching = {s["tvshowid"] for s in shows if int(s.get("watchedepisodes") or 0) > 0} | {e.get("tvshowid") for e in going}
     new = episodes({"and": [{"field": "playcount", "operator": "is", "value": "0"},
                             {"field": "airdate", "operator": "inthelast", "value": f"{NEW_DAYS} days"},
                             {"field": "inprogress", "operator": "false", "value": ""}]},
                    {"method": "date", "order": "descending"})
-    going = episodes({"field": "inprogress", "operator": "true", "value": ""}, {"method": "lastplayed", "order": "descending"})
-    seen, rows = set(), []
-    for ep in new + going:
-        if ep["episodeid"] in seen:
-            continue
-        seen.add(ep["episodeid"])
+    done, rows = set(), []
+    for ep in [e for e in new if e.get("tvshowid") in watching] + going:
+        if ep.get("tvshowid") in done:
+            continue                                    # one tile per series
+        done.add(ep.get("tvshowid"))
         url, li = item(ep)
         if url:
             rows.append((url, li, False))

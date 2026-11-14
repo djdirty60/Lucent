@@ -98,6 +98,25 @@ elif stage == "enable":
             import datetime as _dt                   # 2.1.17: 'Two' aired 5 days ago (new), 'Second' long ago
             v.execute("UPDATE episode SET c05=? WHERE idEpisode=904", ((_dt.date.today() - _dt.timedelta(days=5)).isoformat(),))
             v.execute("UPDATE episode SET c05='2025-01-01' WHERE idEpisode=902")
+            # 2.1.17b: 'Three' - one episode seen, three new ones (only the newest may show); 'Four' - never watched,
+            # two new ones (not shown: you are not watching it)
+            v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (904, '/tmp/ci/lib/shows/Three/', '', '')")
+            v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (905, '/tmp/ci/lib/shows/Four/', '', '')")
+            v.execute("INSERT INTO tvshow (idShow, c00) VALUES (903, 'Show Three')")
+            v.execute("INSERT INTO tvshow (idShow, c00) VALUES (904, 'Show Four')")
+            v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (903, 904)")
+            v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (904, 905)")
+            v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (903, 903, 1)")
+            v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (904, 904, 1)")
+            for n, (ep, pc, days) in enumerate(((1, 1, 60), (2, 0, 20), (3, 0, 12), (4, 0, 3))):
+                v.execute("INSERT INTO files (idFile, idPath, strFilename, playCount, dateAdded) VALUES (?, 904, ?, ?, '2026-10-31 10:00:00')",
+                          (910 + n, f"s01e0{ep}.mkv", pc or None))
+                v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, c05, idShow, idSeason) VALUES (?, ?, ?, '1', ?, ?, 903, 903)",
+                          (910 + n, 910 + n, f"Three E{ep}", str(ep), (_dt.date.today() - _dt.timedelta(days=days)).isoformat()))
+            for n, ep in enumerate((1, 2)):
+                v.execute("INSERT INTO files (idFile, idPath, strFilename, dateAdded) VALUES (?, 905, ?, '2026-10-31 10:00:00')", (920 + n, f"s01e0{ep}.mkv"))
+                v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, c05, idShow, idSeason) VALUES (?, ?, ?, '1', ?, ?, 904, 904)",
+                          (920 + n, 920 + n, f"Four E{ep}", str(ep), (_dt.date.today() - _dt.timedelta(days=4)).isoformat()))
             # 1.34.18 media flags (issue #9): stream details like Kodi stores them after a scan
             try:
                 cols = [r[1] for r in v.execute("PRAGMA table_info(streamdetails)")]
