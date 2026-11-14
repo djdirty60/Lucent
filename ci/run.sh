@@ -65,6 +65,8 @@ python3 ci/fakesolis.py > /tmp/ci/fakesolis.txt 2>&1 &
 cp -r ci/fakeseren $K/addons/plugin.video.fakeseren
 cp -r ci/addons/plugin.video.youtube $K/addons/
 cp -r ci/driver $K/addons/service.lucent.cidriver
+# a long test list split over the runs: ci/driver/only-<run>.txt is the list of that run
+if [ -f ci/driver/only-$RUN.txt ]; then cp ci/driver/only-$RUN.txt $K/addons/service.lucent.cidriver/only.txt; fi
 mkdir -p /tmp/ci && cp ci/data/yt744_player_client.py /tmp/ci/
 for n in 1 2 3; do mkdir -p "/tmp/ci/music/CI Artist $n/CI Album $n"; ffmpeg -loglevel error -y -f lavfi -i "sine=frequency=$((300*n)):duration=3" -metadata title="Song $n" -metadata artist="CI Artist $n" -metadata album="CI Album $n" -metadata date=202$n "/tmp/ci/music/CI Artist $n/CI Album $n/01.mp3"; ffmpeg -loglevel error -y -f lavfi -i "color=c=0x$((n*3))06090:s=300x300" -frames:v 1 "/tmp/ci/music/CI Artist $n/CI Album $n/folder.jpg"; done
 # posters and backgrounds for the view screenshots (fakefen mode=showcase)
