@@ -54,27 +54,41 @@ def _library_count(show_dbid, season):
 
 
 def _tmdb_count(tmdb_id, season):
+    """(episodes in the season, episodes out by today) from TMDB; an announced episode without an air date counts in
+    the first number only. 2.1.10: 'Nog 2 afleveringen' was wrong when those two were not out yet."""
     key = f"tmdb:{tmdb_id}:{season}"
     if key not in COUNTS:
         try:
+            import datetime
             import info
             data = info.tmdb(f"tv/{tmdb_id}/season/{season}") if info.tmdb_key() else {}
-            eps = [e["episode_number"] for e in data.get("episodes") or [] if e.get("episode_number")]
-            COUNTS[key] = max(eps, default=0)      # an episode without an air date yet still counts (the finale is known early)
+            eps = [e for e in data.get("episodes") or [] if e.get("episode_number")]
+            today = datetime.date.today().isoformat()
+            out = [e["episode_number"] for e in eps if e.get("air_date") and e["air_date"] <= today]
+            COUNTS[key] = (max((e["episode_number"] for e in eps), default=0), max(out, default=0))
         except Exception as error:  # noqa: BLE001
             log(f"tmdb {tmdb_id} S{season}: {error}")
-            return 0
+            return 0, 0
     return COUNTS[key]
 
 
-def _fill(ident, season, episode, own_count, show_dbid, tmdb_id):
+def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0):
     try:
-        count = own_count or (_library_count(show_dbid, season) if show_dbid else 0) or \
-            (_tmdb_count(tmdb_id, season) if tmdb_id else 0)
+        # the video add-on gives the season's episodes (also announced ones) and how many after this one are out
+        out = episode + own_left if own_count else 0
+        count = own_count or (_library_count(show_dbid, season) if show_dbid else 0)
+        if not count and tmdb_id:
+            count, out = _tmdb_count(tmdb_id, season)
         if STATE["id"] != ident:
             return
         left = count - episode if count >= episode else -1
-        if left > 1:
+        aired = out - episode if out >= episode else 0          # of those, already out (TMDB only)
+        if (own_count or tmdb_id) and not show_dbid and left > 0 and aired < left:
+            if aired > 0:
+                text = t(f"{aired} more out now, {left - aired} still to come", f"Nog {aired} te zien, {left - aired} komen nog")
+            else:
+                text = t(f"Newest episode · {left} still to come", f"Nieuwste aflevering · nog {left} op komst")
+        elif left > 1:
             text = t(f"{left} episodes left in season {season}", f"Nog {left} afleveringen in seizoen {season}")
         elif left == 1:
             text = t(f"1 episode left in season {season}", f"Nog 1 aflevering in seizoen {season}")
@@ -118,6 +132,7 @@ def tick():
     tmdb_id = label(pre + "Property(tvshow.tmdb_id)") or label(pre + "UniqueID(tmdbshow)")
     tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
     own_count = _int(label(pre + "Property(lucent.season.count)"))
+    own_left = _int("".join(c for c in label(pre + "Property(lucent.season.left)") if c.isdigit()) or 0)
     ident = f"{show_dbid or tmdb_id or label(pre + 'TVShowTitle')}:{season}:{episode}"
     now = time.time()
     if ident != STATE["id"]:
@@ -127,4 +142,4 @@ def tick():
     if STATE["done"] == ident or STATE["busy"] or now - STATE["since"] < 0.4:
         return
     STATE["busy"] = True
-    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id), daemon=True).start()
+    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left), daemon=True).start()
