@@ -77,6 +77,8 @@ elif kind in ("sm", "ss", "se"):
                 tag.setPlaycount(1)
             if i == 1:
                 li.setProperty("lucent.season.finale", "1")
+            if i in (2, 4):                       # TMDb Helper style (#19): episode_type on the item
+                li.setProperty("episode_type", "season_finale" if i == 2 else "mid_season_finale")
             if i in (1, 2, 4, 5):
                 li.setProperty("lucent.season.left", "nog %d" % (i + 1))
             li.setArt({"thumb": f"{ART}f{i}.jpg", "fanart": f"{ART}f{i}.jpg", "poster": f"{ART}p{i}.jpg", "landscape": f"{ART}f{i}.jpg"})
