@@ -5838,9 +5838,16 @@ def finalecheck_test():
         sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
         import seasoninfo as _si
         for name, args in (("marked_finale", (2, 10, 0, 0, "1500")), ("running_season", (2, 22, 0, 0, "1499")),
-                           ("lv_count_running", (2, 22, 22, 0, "1499")), ("lv_count_finale", (2, 10, 10, 0, "1500"))):
+                           ("lv_count_running", (2, 22, 22, 0, "1499")), ("lv_count_finale", (2, 10, 10, 0, "1500")),
+                           # 2.1.15: the add-on's own mark first; no mark and no TMDB answer is never a finale
+                           ("lv_mark_finale", (2, 7, 7, 0, "1499", 0, "", "", "season_finale")),
+                           ("lv_mark_mid", (2, 7, 7, 0, "1499", 0, "", "", "mid_season_finale")),
+                           ("no_answer", (2, 7, 7, 0, "")),
+                           ("library_title_running", (2, 22, 0, "77", "", 0, "Lumen", "1997-11-22")),
+                           ("library_title_finale", (2, 10, 0, "78", "", 0, "Red Harbour", "2026-11-01"))):
             ident = "ci:" + name
             _si.STATE["id"] = ident
+            _si.COUNTS["db:77:2"], _si.COUNTS["db:78:2"] = 22, 10
             _si._fill(ident, *args)
             out[name] = [HOME.getProperty("lucent.ep.left"), HOME.getProperty("lucent.ep.badge")]
     except Exception as error:  # noqa: BLE001

@@ -129,7 +129,7 @@ def _tmdb_count(tmdb_id, season):
     return COUNTS[key]
 
 
-def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title="", aired=""):
+def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title="", aired="", etype=""):
     try:
         if not (own_count or show_dbid or tmdb_id) and title:
             tmdb_id = show_by_title(title, season, episode, aired)
@@ -143,13 +143,21 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
         left = count - episode if count >= episode else -1
         # 2.1.14: the last episode TMDB knows of a season that is still running is not its last one (Gold Rush S17 E7
         # was called the season finale). Only when TMDB marks it as the finale; otherwise it is the newest episode.
+        # 2.1.15: only a real mark makes it the last episode of the season: the add-on's own episode_type (Lucent Video,
+        # TMDb Helper), else TMDB's episode_type. When neither is known it is never called the finale (Gold Rush S17 E7
+        # still said season finale in 2.1.14 when TMDB's answer did not arrive).
         final = False
-        if left == 0 and tmdb_id:
-            _tmdb_count(tmdb_id, season)
-            kind = TYPES.get(f"tmdb:{tmdb_id}:{season}", {}).get(episode)
-            final = kind == "finale" or kind is None and not TYPES.get(f"tmdb:{tmdb_id}:{season}")
+        if left == 0 and etype:
+            final = etype in ("season_finale", "series_finale")
         elif left == 0:
-            final = True                                    # your own library: what you have is the season
+            if not tmdb_id and title:                       # e.g. a library episode without the series' TMDB number
+                tmdb_id = show_by_title(title, season, episode, aired)
+            if tmdb_id:
+                _tmdb_count(tmdb_id, season)
+                final = TYPES.get(f"tmdb:{tmdb_id}:{season}", {}).get(episode) == "finale"
+        if left == 0:
+            log(f"last known episode {ident}: add-on mark '{etype}', TMDB {tmdb_id or '-'} "
+                f"'{TYPES.get(f'tmdb:{tmdb_id}:{season}', {}).get(episode, '?')}' -> {'finale' if final else 'newest'}")
         aired = out - episode if out >= episode else 0          # of those, already out (TMDB only)
         if (own_count or tmdb_id) and not show_dbid and left > 0 and aired < left:
             if aired > 0:                                   # 2.1.15: the episode you are on counts too (#19)
@@ -212,4 +220,4 @@ def tick():
     if STATE["done"] == ident or STATE["busy"] or now - STATE["since"] < 0.4:
         return
     STATE["busy"] = True
-    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left, title, aired), daemon=True).start()
+    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left, title, aired, label(pre + "Property(episode_type)")), daemon=True).start()

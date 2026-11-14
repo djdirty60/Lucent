@@ -336,8 +336,31 @@ def run():
             return True
         return False
 
+    back_trace = {"home": False, "t": 0.0, "last": ""}
+
+    def home_return_trace():
+        """2.1.15 (Home slow or stuck after a menu): for 12 seconds after you come back to Home, write to the log what has
+        the focus and which rows are ready - only when it changes, so a log shows what happened on that box."""
+        on_home = cond("Window.IsActive(home)")
+        if on_home and not back_trace["home"]:
+            back_trace.update(t=time.time(), last="")
+        back_trace["home"] = on_home
+        if not on_home or time.time() - back_trace["t"] > 12:
+            return
+        rows = [str(cid) for cid in (8101, 8201, 8102, 8202, 8103, 8203) if cond(f"Integer.IsGreater(Container({cid}).NumItems,0)")]
+        state = (f"focus {xbmc.getInfoLabel('System.CurrentControlID') or '-'}, menu {xbmc.getInfoLabel('Container(9000).CurrentItem')}, "
+                 f"rows {'/'.join(rows) or 'none'}, busy {int(cond('Window.IsVisible(busydialog) | Window.IsVisible(busydialognocancel)'))}, "
+                 f"dialog {int(cond('System.HasVisibleModalDialog'))}")
+        if state != back_trace["last"]:
+            back_trace["last"] = state
+            log(f"back on Home +{time.time() - back_trace['t']:.1f}s: {state}")
+
     try:
         while not monitor.abortRequested():
+            try:
+                home_return_trace()
+            except Exception as error:  # noqa: BLE001
+                log(f"home trace: {error}")
             if HOME.getProperty(STOP) or updated():
                 log("skin updated - making way for the new helper")
                 break
