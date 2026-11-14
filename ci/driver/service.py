@@ -5769,6 +5769,33 @@ def foryoulv_test():
     log("foryoulv: " + json.dumps(out, ensure_ascii=False))
 
 
+def settingsback_test():
+    """#22: Kodi froze after coming back from Kodi's settings (Shield, Kodi 21.2). Go into settings and back, a few
+    kinds, and see if Home still answers (a frozen Kodi would end the run by its time limit)."""
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    for win in ("settings", "systemsettings", "playersettings", "interfacesettings", "addonbrowser", "skinsettings"):
+        t0 = time.time()
+        xbmc.executebuiltin(f"ActivateWindow({win})")
+        mon.waitForAbort(3)
+        opened = lab("System.CurrentWindow")
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(3)
+        back = lab("System.CurrentWindow")
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.5)
+        out.append([win, opened, back, lab("System.CurrentControlID"), round(time.time() - t0, 1), lab("System.FPS")])
+        shot(f"settingsback-{win}")
+        log("settingsback step: " + json.dumps(out[-1]))
+    log("settingsback: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10781,6 +10808,7 @@ def main():
     safe(announce_test)
     safe(restartask_test)
     safe(foryoulv_test)
+    safe(settingsback_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
