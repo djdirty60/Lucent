@@ -5644,6 +5644,44 @@ def rowreload_test():
     log("rowreload: " + json.dumps(out))
 
 
+def placeholder_test():
+    """2.1.8 (item 4): grey cards while a row loads (a slow add-on folder of 12 s), then the real items."""
+    W = "plugin://plugin.video.fakeseren/?list="
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+    for k, v in (("label", "Laden"), ("w1.label", "Snel"), ("w1.path", W + "ss"), ("w1.style", "poster"),
+                 ("w2.label", "Traag"), ("w2.path", W + "slowph"), ("w2.style", "land"),
+                 ("w3.label", "Ook traag"), ("w3.path", W + "slowph2"), ("w3.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(3)
+    out["at3"] = [lab("Container(8202).NumItems"), cond("Container(8202).IsUpdating"), cond("Control.IsVisible(9912)"), cond("Control.IsVisible(9903)")]
+    shot("placeholder-loading")
+    mon.waitForAbort(14)
+    out["at17"] = [lab("Container(8202).NumItems"), cond("Container(8202).IsUpdating"), cond("Control.IsVisible(9912)")]
+    shot("placeholder-done")
+    log("placeholder: " + json.dumps(out))
+    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w3.path)")
+
+
+def updnews_test():
+    """2.1.8: the update window takes <news lang="nl_NL"> when Kodi is Dutch, else <news>."""
+    sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    import updater as _u
+    out = {"lang": xbmc.getLanguage(xbmc.ISO_639_1)}
+    try:
+        found = _u.fetch_available()
+        lv = found.get("plugin.video.lucent")
+        out["lv"] = [lv[0], lv[1][:160]] if lv else None
+    except Exception as error:  # noqa: BLE001
+        out["error"] = str(error)
+    log("updnews: " + json.dumps(out, ensure_ascii=False))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10652,6 +10690,8 @@ def main():
     safe(thcount_test)
     safe(wnvideo_test)
     safe(rowreload_test)
+    safe(placeholder_test)
+    safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)
