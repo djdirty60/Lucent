@@ -5529,9 +5529,11 @@ def thcount_test():
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
     for pos in (1, 2):
-        xbmc.executebuiltin(f"SetFocus(8101,{pos},absolute)")
-        mon.waitForAbort(5)
-        out[f"ep{pos}"] = {"row": HOME.getProperty("nuvio.row"), "label": lab("Container(8101).ListItem.Label"),
+        xbmc.executebuiltin(f"SetFocus(8101,{pos - 1},absolute)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(10)
+        out[f"ep{pos}"] = {"helper": HOME.getProperty("lucent.helper"), "idle": cond("System.IdleTime(30)"), "row": HOME.getProperty("nuvio.row"), "label": lab("Container(8101).ListItem.Label"),
                            "dbtype": lab("Container(8101).ListItem.DBType"), "tmdb": lab("Container(8101).ListItem.Property(tvshow.tmdb_id)"),
                            "se": [lab("Container(8101).ListItem.Season"), lab("Container(8101).ListItem.Episode")],
                            "left": HOME.getProperty("lucent.ep.left"), "badge": HOME.getProperty("lucent.ep.badge"),
