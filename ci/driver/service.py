@@ -5738,6 +5738,37 @@ def restartask_test():
     log("restartask: " + json.dumps(res))
 
 
+def foryoulv_test():
+    """2.1.8 (item 5): 'Tonight for you' shows the video add-on's own For you list (real titles, its full menu)."""
+    out = {}
+    sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    import foryou as _fy
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    try:
+        _fy.update(force=True)
+    except Exception as error:  # noqa: BLE001
+        out["error"] = str(error)
+    out["props"] = {k: HOME.getProperty("lucent.fy." + k) for k in ("lv", "count", "label", "tab")}
+    tab = HOME.getProperty("lucent.fy.tab")
+    if tab.isdigit():
+        xbmc.executebuiltin(f"Control.SetFocus(9000,{int(tab) - 1})")
+    mon.waitForAbort(8)
+    out["row"] = [cond("Control.IsVisible(8091)"), lab("Container(8091).NumItems"), cond("Container(8091).IsUpdating"),
+                  lab("Container(8091).ListItemAbsolute(0).Label"), lab("Container(8091).ListItemAbsolute(0).FileNameAndPath")[:90]]
+    xbmc.executebuiltin("SetFocus(8091)")
+    mon.waitForAbort(2)
+    shot("foryou-lv")
+    xbmc.executebuiltin("Action(ContextMenu)")
+    mon.waitForAbort(2)
+    out["menu"] = [lab(f"Container(996).ListItemAbsolute({i}).Label") for i in range(14) if lab(f"Container(996).ListItemAbsolute({i}).Label")]
+    shot("foryou-lv-menu")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1)
+    log("foryoulv: " + json.dumps(out, ensure_ascii=False))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10749,6 +10780,7 @@ def main():
     safe(placeholder_test)
     safe(announce_test)
     safe(restartask_test)
+    safe(foryoulv_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
