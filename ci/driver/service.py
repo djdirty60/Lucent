@@ -5499,14 +5499,14 @@ def volmute_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
-    xbmc.executebuiltin("Mute")
+    xbmc.executebuiltin("Action(Mute)")
     mon.waitForAbort(0.6)
     shot("vol-muted-0s")
     out["at0"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
     mon.waitForAbort(3)
     shot("vol-muted-3s")
     out["at3"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
-    xbmc.executebuiltin("Mute")
+    xbmc.executebuiltin("Action(Mute)")
     mon.waitForAbort(3)
     out["after"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
     log("volmute: " + json.dumps(out))
