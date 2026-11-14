@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Start of Kodi: the star appears, the moon turns in around it, a glow lights up, the name and the signs of the add-ons rise
+<!-- 2.1.5: on a real box (CoreELEC, issue #14) Kodi opens this window while it is still busy starting: the animations ran
+     unseen and the first picture drawn was already the end. Now the picture starts together with the sound: introsound.py sets
+     Window(home).Property(lucent.intro.go) once Kodi is free, the animations are 'Visible' animations of that moment, and the
+     script goes on to the start window 6 seconds later. A safety alarm goes on after 20 seconds if the script never runs.
+     Start of Kodi: the star appears, the moon turns in around it, a glow lights up, the name and the signs of the add-ons rise
      (about 6 seconds, with a warm sound), then the start window.
      Skin settings > Appearance > Intro at start switches it off. -->
 <window>
     <onload condition="Skin.HasSetting(lucent.intro.off)">ReplaceWindow($INFO[System.StartupWindow])</onload>
-    <onload condition="!Skin.HasSetting(lucent.intro.off) + !Skin.HasSetting(lucent.introsound.off)">RunScript(special://skin/scripts/introsound.py)</onload>
-    <onload condition="!Skin.HasSetting(lucent.intro.off)">AlarmClock(lucentintro,ReplaceWindow($INFO[System.StartupWindow]),00:06,silent)</onload>
+    <onload condition="!Skin.HasSetting(lucent.intro.off)">ClearProperty(lucent.intro.go,home)</onload>
+    <onload condition="!Skin.HasSetting(lucent.intro.off)">RunScript(special://skin/scripts/introsound.py)</onload>
+    <onload condition="!Skin.HasSetting(lucent.intro.off)">AlarmClock(lucentintrosafe,ReplaceWindow($INFO[System.StartupWindow]),00:20,silent)</onload>
     <controls>
         <control type="image">
             <left>0</left>
@@ -23,8 +28,9 @@
                 <top>0</top>
                 <width>1920</width>
                 <height>1080</height>
+                <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                 <texture>intro_bg.jpg</texture>
-                <animation effect="fade" start="0" end="100" time="900" tween="sine" easing="out">WindowOpen</animation>
+                <animation effect="fade" start="0" end="100" time="900" tween="sine" easing="out">Visible</animation>
             </control>
             <control type="group">
                 <!-- glow behind the moon -->
@@ -33,12 +39,13 @@
                     <top>-70</top>
                     <width>1000</width>
                     <height>1000</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>tint_glow.png</texture>
                     <colordiffuse>FFD9D2FF</colordiffuse>
-                    <animation effect="fade" start="0" end="60" time="1200" delay="1600" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="zoom" start="40" end="100" center="960,430" time="1200" delay="1600" tween="cubic" easing="out">WindowOpen</animation>
-                    <animation effect="zoom" start="100" end="106" center="960,430" time="600" delay="2800" tween="sine" easing="inout">WindowOpen</animation>
-                    <animation effect="zoom" start="100" end="94.4" center="960,430" time="800" delay="3400" tween="sine" easing="inout">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="60" time="1200" delay="1600" tween="sine" easing="out">Visible</animation>
+                    <animation effect="zoom" start="40" end="100" center="960,430" time="1200" delay="1600" tween="cubic" easing="out">Visible</animation>
+                    <animation effect="zoom" start="100" end="106" center="960,430" time="600" delay="2800" tween="sine" easing="inout">Visible</animation>
+                    <animation effect="zoom" start="100" end="94.4" center="960,430" time="800" delay="3400" tween="sine" easing="inout">Visible</animation>
                 </control>
                 <!-- the moon turns in from the right -->
                 <control type="image">
@@ -46,11 +53,12 @@
                     <top>174</top>
                     <width>512</width>
                     <height>512</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro_moon.png</texture>
-                    <animation effect="fade" start="0" end="100" time="1600" delay="1300" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="slide" start="160,0" end="0,0" time="1600" delay="1300" tween="cubic" easing="out">WindowOpen</animation>
-                    <animation effect="rotate" start="35" end="0" center="960,430" time="1600" delay="1300" tween="cubic" easing="out">WindowOpen</animation>
-                    <animation effect="zoom" start="85" end="100" center="960,430" time="1600" delay="1300" tween="cubic" easing="out">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="1600" delay="1300" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="160,0" end="0,0" time="1600" delay="1300" tween="cubic" easing="out">Visible</animation>
+                    <animation effect="rotate" start="35" end="0" center="960,430" time="1600" delay="1300" tween="cubic" easing="out">Visible</animation>
+                    <animation effect="zoom" start="85" end="100" center="960,430" time="1600" delay="1300" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <!-- the star -->
                 <control type="image">
@@ -58,12 +66,13 @@
                     <top>295</top>
                     <width>214</width>
                     <height>214</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro_star.png</texture>
-                    <animation effect="fade" start="0" end="100" time="1100" delay="400" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="zoom" start="1" end="100" center="867,402" time="1100" delay="400" tween="cubic" easing="out">WindowOpen</animation>
-                    <animation effect="rotate" start="90" end="0" center="867,402" time="1100" delay="400" tween="cubic" easing="out">WindowOpen</animation>
-                    <animation effect="zoom" start="100" end="125" center="867,402" time="300" delay="3600" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="zoom" start="100" end="80" center="867,402" time="400" delay="3900" tween="sine" easing="inout">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="1100" delay="400" tween="sine" easing="out">Visible</animation>
+                    <animation effect="zoom" start="1" end="100" center="867,402" time="1100" delay="400" tween="cubic" easing="out">Visible</animation>
+                    <animation effect="rotate" start="90" end="0" center="867,402" time="1100" delay="400" tween="cubic" easing="out">Visible</animation>
+                    <animation effect="zoom" start="100" end="125" center="867,402" time="300" delay="3600" tween="sine" easing="out">Visible</animation>
+                    <animation effect="zoom" start="100" end="80" center="867,402" time="400" delay="3900" tween="sine" easing="inout">Visible</animation>
                 </control>
                 <!-- name -->
                 <control type="image">
@@ -71,9 +80,10 @@
                     <top>728</top>
                     <width>336</width>
                     <height>70</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro_name.png</texture>
-                    <animation effect="fade" start="0" end="100" time="900" delay="2900" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="slide" start="0,40" end="0,0" time="900" delay="2900" tween="cubic" easing="out">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="900" delay="2900" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="0,40" end="0,0" time="900" delay="2900" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <!-- the signs of the add-ons in the Lucent family (only signs, no names) -->
                 <control type="image">
@@ -81,36 +91,40 @@
                     <top>818</top>
                     <width>48</width>
                     <height>56</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro/sign_video.png</texture>
-                    <animation effect="fade" start="0" end="100" time="600" delay="3300" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3300" tween="cubic" easing="out">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="600" delay="3300" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3300" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <control type="image">
                     <left>861</left>
                     <top>818</top>
                     <width>73</width>
                     <height>56</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro/sign_subtitles.png</texture>
-                    <animation effect="fade" start="0" end="100" time="600" delay="3500" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3500" tween="cubic" easing="out">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="600" delay="3500" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3500" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <control type="image">
                     <left>994</left>
                     <top>818</top>
                     <width>58</width>
                     <height>56</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro/sign_screensaver.png</texture>
-                    <animation effect="fade" start="0" end="100" time="600" delay="3700" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3700" tween="cubic" easing="out">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="600" delay="3700" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3700" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <control type="image">
                     <left>1112</left>
                     <top>818</top>
                     <width>55</width>
                     <height>56</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
                     <texture>intro/sign_repository.png</texture>
-                    <animation effect="fade" start="0" end="100" time="600" delay="3900" tween="sine" easing="out">WindowOpen</animation>
-                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3900" tween="cubic" easing="out">WindowOpen</animation>
+                    <animation effect="fade" start="0" end="100" time="600" delay="3900" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="3900" tween="cubic" easing="out">Visible</animation>
                 </control>
             </control>
         </control>
@@ -123,8 +137,8 @@
             <height>1080</height>
             <texture>white.png</texture>
             <colordiffuse>FF000000</colordiffuse>
-            <visible>!Skin.HasSetting(lucent.intro.off)</visible>
-            <animation effect="fade" start="0" end="100" time="800" delay="5200" tween="sine" easing="in">WindowOpen</animation>
+            <visible>!Skin.HasSetting(lucent.intro.off) + !String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
+            <animation effect="fade" start="0" end="100" time="800" delay="5200" tween="sine" easing="in">Visible</animation>
         </control>
     </controls>
 </window>

@@ -86,9 +86,20 @@ timeout 60 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/fi
 python3 ci/profile.py enable
 python3 ci/profile.py skin
 # 2nd start with Lucent: the driver does the test and quits
-timeout 1600 xvfb-run -a -s "-screen 0 1920x1080x24" kodi --standalone >/tmp/ci/second.txt 2>&1
+# 2.1.5: the real start is filmed for 16 s (does the intro show while Kodi is still starting up?)
+Xvfb :77 -screen 0 1920x1080x24 >/dev/null 2>&1 &
+XV=$!
+sleep 2
+(DISPLAY=:77 timeout 1600 kodi --standalone >/tmp/ci/second.txt 2>&1) &
+KP=$!
+ffmpeg -v error -y -f x11grab -video_size 1920x1080 -framerate 10 -i :77 -t 16 -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/ci/out/boot.mp4
+mkdir -p /tmp/ci/out/boot
+ffmpeg -v error -y -i /tmp/ci/out/boot.mp4 -vf "fps=2,scale=640:-1" /tmp/ci/out/boot/f%02d.jpg
+wait $KP
+kill $XV 2>/dev/null
 mkdir -p ci-results
-cp /tmp/ci/out/* ci-results/ 2>/dev/null
+cp -r /tmp/ci/out/* ci-results/ 2>/dev/null
+grep -nE "Activat|startup|Startup|introsound|WindowXML|Loading skin|load skin|home" $K/temp/kodi.log | head -80 > ci-results/boot-log.txt
 grep -iE "lucent|cidriver|fakeseren|error|CDirectoryProvider|exception|traceback" $K/temp/kodi.log | tail -800 > ci-results/$VARIANT-$RUN.log
 cp /tmp/ci/first.txt ci-results/$VARIANT-$RUN-first.txt; cp /tmp/ci/second.txt ci-results/$VARIANT-$RUN-second.txt
 tail -300 $K/temp/kodi.log > ci-results/$VARIANT-$RUN-tail.log 2>/dev/null
