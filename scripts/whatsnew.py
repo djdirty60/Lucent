@@ -5,8 +5,6 @@ that takes you there.
 The newest versions come from resources/whatsnew.json (a heading and an icon per change, Dutch and English).
 Older versions come from addon.xml's <news> (English) or resources/changelog_nl.txt (Dutch); their text is split
 into headings where it says 'Heading: ...'.
-2.1.8: the updates of your video add-on are in the same list (its resources/whatsnew.json, when it is installed), by
-date and with a label with the add-on's name; without that file the window is as before.
 """
 import html
 import json
@@ -18,11 +16,6 @@ import xbmcgui
 import xbmcvfs
 
 SKIN = "special://skin/"
-VIDEO_NEWS = "special://home/addons/plugin.video.lucent/resources/whatsnew.json"
-
-
-def video_name():
-    return xbmc.getInfoLabel("System.AddonTitle(plugin.video.lucent)") or "Lucent Video"
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 MONTHS_NL = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -116,53 +109,7 @@ def versions():
         tag = tag.replace("Beta", "Bèta") if NL else tag
         out.append({"v": v, "tag": tag, "short": "", "long": "", "items": split_items(text)})
     out.sort(key=lambda e: [int(x) for x in e["v"].split(".")], reverse=True)
-    return merge_video(out)
-
-
-def video_versions():
-    """The updates of your video add-on from its own whatsnew.json; [] when it is not installed or the file is broken."""
-    try:
-        if not xbmcvfs.exists(VIDEO_NEWS):
-            return []
-        fh = xbmcvfs.File(VIDEO_NEWS)
-        data = json.loads(fh.read() or "{}")
-        fh.close()
-    except Exception:  # noqa: BLE001 - a broken file changes nothing
-        return []
-    out = []
-    for entry in (data.get("versions") or []) if isinstance(data, dict) else []:
-        try:
-            items = [(it[0], it[1] if NL else it[3], it[2] if NL else it[4], {})
-                     for it in entry.get("items") or [] if isinstance(it, list) and len(it) >= 5]
-            label = (entry.get("label") if NL else entry.get("label_en") or entry.get("label")) or str(entry.get("v", ""))
-            short, long = nice_date(entry.get("date", ""))
-            if label and items:
-                out.append({"v": label, "tag": "", "short": short, "long": long, "items": items, "video": True,
-                            "date": entry.get("date", "")})
-        except Exception:  # noqa: BLE001
-            continue
-    out.sort(key=lambda e: e["date"], reverse=True)
     return out
-
-
-def merge_video(skin):
-    """Skin versions (newest first) and video add-on updates in one list by date; an add-on update goes above the first
-    skin version that is older (skin versions without a date count as older than every dated one)."""
-    video = video_versions()
-    if not video:
-        return skin
-    try:
-        dates = {e["v"]: e.get("date", "") for e in json.loads(read("resources/whatsnew.json") or "{}").get("versions") or []
-                 if isinstance(e, dict) and e.get("v")}
-    except ValueError:
-        dates = {}
-    out = []
-    for e in skin:
-        d = dates.get(e["v"], "")
-        while video and (not d or video[0]["date"] >= d):
-            out.append(video.pop(0))
-        out.append(e)
-    return out + video
 
 
 def count_word(n):
@@ -177,8 +124,6 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
         for e in self.data:
             li = xbmcgui.ListItem(e["v"], " · ".join(x for x in (e["short"], count_word(len(e["items"]))) if x))
             li.setProperty("tag", e["tag"])
-            if e.get("video"):
-                li.setProperty("vid", video_name())
             rows.append(li)
         lst = self.getControl(100)
         lst.reset()
@@ -209,7 +154,7 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
             return
         e = self.data[pos]
         self.shown = pos
-        self.setProperty("wn.title", f"{video_name()} · {e['v']}" if e.get("video") else f"Lucent {e['v']}")
+        self.setProperty("wn.title", f"Lucent {e['v']}")
         self.setProperty("wn.tag", e["tag"])
         self.setProperty("wn.sub", " · ".join(x for x in (e["long"], count_word(len(e["items"]))) if x))
         items = []
@@ -268,8 +213,7 @@ class Item(xbmcgui.WindowXMLDialog):
         icon, head, text, extra = items[self.pos]
         more = extra.get("more_nl" if NL else "more_en") or text
         steps = extra.get("steps_nl" if NL else "steps_en") or []
-        name = f"{video_name()} · {self.version['v']}" if self.version.get("video") else f"Lucent {self.version['v']}"
-        self.setProperty("wi.ver", name + (f"  ·  {self.version['long']}" if self.version.get("long") else ""))
+        self.setProperty("wi.ver", f"Lucent {self.version['v']}" + (f"  ·  {self.version['long']}" if self.version.get("long") else ""))
         self.setProperty("wi.head", head)
         self.setProperty("wi.text", more)
         self.setProperty("wi.icon", f"icons/{icon}.png")
