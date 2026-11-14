@@ -122,7 +122,15 @@ def fetch_available():
             continue
         for block in re.finditer(r'<addon\s[^>]*?id="([^"]+)"[^>]*?version="([^"]+)".*?</addon>', xml, re.S):
             news = re.search(r"<news>(.*?)</news>", block.group(0), re.S)
-            found.setdefault(block.group(1), (block.group(2), (news.group(1).strip() if news else ""), zips))
+            # 2.1.8: a <news lang="nl_NL"> in the language of Kodi wins (Lucent Video has Dutch notes); else <news>
+            lang = (xbmc.getLanguage(xbmc.ISO_639_1) or "").lower()[:2]
+            if lang:
+                for own in re.finditer(r'<news\s+lang="([a-zA-Z]{2})[^"]*">(.*?)</news>', block.group(0), re.S):
+                    if own.group(1).lower() == lang and own.group(2).strip():
+                        news = own
+                        break
+            text = (news.group(news.lastindex).strip() if news else "")
+            found.setdefault(block.group(1), (block.group(2), text, zips))
     return found
 
 

@@ -5622,6 +5622,16 @@ def rowreload_test():
     xbmc.executebuiltin("PlayerControl(Stop)")
     mon.waitForAbort(4)
     out["flip_before"] = HOME.getProperty("lucent.sortflip")
+    # a short video stopped after 5 s, like a poster trailer (too short for Kodi to save a resume point)
+    t2 = time.strftime("%H:%M:%S.000")
+    xbmc.Player().play(xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/formattest/hevc4k.mp4"))
+    mon.waitForAbort(5)
+    xbmc.Player().stop()
+    mon.waitForAbort(6)
+    ref, plays = refreshes(t2)
+    out["short_refreshes"] = len(ref)
+    out["short_ref"] = ref[-12:]
+    out["short_plays"] = plays[-3:]
     t1 = time.strftime("%H:%M:%S.000")
     xbmc.Player().play("/tmp/ci/test.mkv")
     mon.waitForAbort(6)
