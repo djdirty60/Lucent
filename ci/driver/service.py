@@ -5512,6 +5512,35 @@ def volmute_test():
     log("volmute: " + json.dumps(out))
 
 
+def thcount_test():
+    """#19: an episode from a TMDb Helper style row (only tvshow.tmdb_id): episodes left and the series' scores on Home."""
+    out = {}
+    d = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "mdblist.key"), "w") as fh:
+        fh.write("cimdbkey")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Afleveringen"), ("w1.label", "Up next"), ("w1.path", "plugin://plugin.video.fakeseren/?list=th"), ("w1.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w2.path)")
+    mon.waitForAbort(31)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    for pos in (1, 2):
+        xbmc.executebuiltin(f"SetFocus(8101,{pos},absolute)")
+        mon.waitForAbort(5)
+        out[f"ep{pos}"] = {"row": HOME.getProperty("nuvio.row"), "label": lab("Container(8101).ListItem.Label"),
+                           "dbtype": lab("Container(8101).ListItem.DBType"), "tmdb": lab("Container(8101).ListItem.Property(tvshow.tmdb_id)"),
+                           "se": [lab("Container(8101).ListItem.Season"), lab("Container(8101).ListItem.Episode")],
+                           "left": HOME.getProperty("lucent.ep.left"), "badge": HOME.getProperty("lucent.ep.badge"),
+                           "scores": {k: HOME.getProperty("lucent.omdbh." + k) for k in ("imdb", "rt", "mc", "for")}}
+        shot(f"thcount-{pos}")
+    log("thcount: " + json.dumps(out, ensure_ascii=False))
+    os.remove(os.path.join(d, "mdblist.key"))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10517,6 +10546,7 @@ def main():
     safe(agendamonth_test)
     safe(kbfocus_test)
     safe(volmute_test)
+    safe(thcount_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)

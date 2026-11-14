@@ -45,6 +45,8 @@ class H(BaseHTTPRequestHandler):
                 {"source": "tomatoes", "value": 87, "score": 87, "votes": 120},
                 {"source": "popcorn", "value": 56, "score": 56, "votes": 250000},
                 {"source": "letterboxd", "value": 3.4, "score": 68, "votes": 90000}]}).encode(), "application/json")
+        if "/season/" in path:                                # a season with 10 episodes
+            return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "2026-11-01"} for n in range(1, 11)]}).encode(), "application/json")
         if path.endswith("/external_ids"):
             return self.send(json.dumps({"imdb_id": "tt0185937"}).encode(), "application/json")
         if path.startswith("/t/p/"):
