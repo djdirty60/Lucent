@@ -97,7 +97,7 @@ elif stage == "enable":
             v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (904, 905, 'Two', '1', '2', 902, 902)")
             import datetime as _dt                   # 2.1.17: 'Two' aired 5 days ago (new), 'Second' long ago
             v.execute("UPDATE episode SET c05=? WHERE idEpisode=904", ((_dt.date.today() - _dt.timedelta(days=5)).isoformat(),))
-            v.execute("UPDATE episode SET c05='2025-01-01' WHERE idEpisode=902")
+            v.execute("UPDATE episode SET c05=? WHERE idEpisode=902", ((_dt.date.today() - _dt.timedelta(days=2)).isoformat(),))   # halfway Pilot + a new Second: Pilot wins
             # 2.1.17b: 'Three' - one episode seen, three new ones (only the newest may show); 'Four' - never watched,
             # two new ones (not shown: you are not watching it)
             v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (904, '/tmp/ci/lib/shows/Three/', '', '')")

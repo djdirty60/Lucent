@@ -62,9 +62,9 @@ def item(ep):
 
 
 def lib_continue_new():
-    """One tile per series, only for series you are watching (you saw an episode of it, or one is half watched):
-    first its newest new episode (unwatched, out in the last 30 days), newest first; then for the other series the
-    episode you stopped halfway, last watched first."""
+    """One tile per series, only for series you are watching (you saw an episode of it): first the newest new episode
+    (unwatched, out in the last 30 days) of series you are not halfway an episode of, newest first; then the episodes
+    you stopped halfway, last watched first."""
     shows = rpc("VideoLibrary.GetTVShows", properties=["watchedepisodes"]).get("tvshows") or []
     going = episodes({"field": "inprogress", "operator": "true", "value": ""}, {"method": "lastplayed", "order": "descending"})
     watching = {s["tvshowid"] for s in shows if int(s.get("watchedepisodes") or 0) > 0} | {e.get("tvshowid") for e in going}
@@ -73,7 +73,8 @@ def lib_continue_new():
                             {"field": "inprogress", "operator": "false", "value": ""}]},
                    {"method": "date", "order": "descending"})
     done, rows = set(), []
-    for ep in [e for e in new if e.get("tvshowid") in watching] + going:
+    halfway = {e.get("tvshowid") for e in going}       # halfway an episode: you meet the new one by yourself
+    for ep in [e for e in new if e.get("tvshowid") in watching and e.get("tvshowid") not in halfway] + going:
         if ep.get("tvshowid") in done:
             continue                                    # one tile per series
         done.add(ep.get("tvshowid"))

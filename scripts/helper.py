@@ -72,6 +72,10 @@ def run():
             if method in ("VideoLibrary.OnUpdate", "VideoLibrary.OnScanFinished", "VideoLibrary.OnRemove", "VideoLibrary.OnCleanFinished"):
                 HOME.setProperty("lucent.lib.changed", f"{time.time():.0f}")
 
+        def onScreensaverDeactivated(self):  # noqa: N802 - Kodi's name
+            back_trace.update(home=False)                # 2.1.17: log the first seconds after the screensaver too
+            log("screensaver off")
+
     monitor = LibraryWatch()
 
     import agenda_core
@@ -355,7 +359,8 @@ def run():
         if not on_home or time.time() - back_trace["t"] > 12:
             return
         rows = [str(cid) for cid in (8101, 8201, 8102, 8202, 8103, 8203) if cond(f"Integer.IsGreater(Container({cid}).NumItems,0)")]
-        state = (f"focus {xbmc.getInfoLabel('System.CurrentControlID') or '-'}, menu {xbmc.getInfoLabel('Container(9000).CurrentItem')}, "
+        state = (f"window {xbmc.getInfoLabel('System.CurrentWindow')}, focus {xbmc.getInfoLabel('System.CurrentControlID') or '-'}, "
+                 f"menu {xbmc.getInfoLabel('Container(9000).CurrentItem')}, screensaver {int(cond('System.ScreenSaverActive'))}, "
                  f"rows {'/'.join(rows) or 'none'}, busy {int(cond('Window.IsVisible(busydialog) | Window.IsVisible(busydialognocancel)'))}, "
                  f"dialog {int(cond('System.HasVisibleModalDialog'))}")
         if state != back_trace["last"]:
