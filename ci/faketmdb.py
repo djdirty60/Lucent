@@ -48,7 +48,11 @@ class H(BaseHTTPRequestHandler):
                 {"source": "letterboxd", "value": 3.4, "score": 68, "votes": 90000}]}).encode(), "application/json")
         if "/search/tv" in path:
             q = urllib.parse.unquote_plus(self.path.split("query=", 1)[-1].split("&")[0])
-            return self.send(json.dumps({"results": [{"id": 1500, "name": q}]}).encode(), "application/json")
+            # 2.1.13 (#19 Millennium): two series with the same name; the old one first, so a pick by name alone is wrong
+            return self.send(json.dumps({"results": [{"id": 1499, "name": q, "first_air_date": "1996-10-25"},
+                                                     {"id": 1500, "name": q, "first_air_date": "2010-03-21"}]}).encode(), "application/json")
+        if "/tv/1499/season/" in path:                        # the old series: 22 episodes from 1997
+            return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "1997-11-%02d" % n} for n in range(1, 23)]}).encode(), "application/json")
         if "/season/" in path:                                # a season with 10 episodes
             return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "2026-11-01"} for n in range(1, 11)]}).encode(), "application/json")
         if path.endswith("/external_ids"):

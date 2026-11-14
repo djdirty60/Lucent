@@ -35,6 +35,22 @@ def clear():
             HOME.clearProperty("lucent.ep." + p)
 
 
+def _iso(text):
+    """Kodi's date label (in the date format of your region) -> 'YYYY-MM-DD' when it can be read, else ''."""
+    import re
+    text = (text or "").strip()
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})", text)
+    if m:
+        return m.group(0)
+    m = re.match(r"(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})", text)
+    if m:
+        a, b, y = int(m.group(1)), int(m.group(2)), m.group(3)
+        order = xbmc.getRegion("dateshort").lower()
+        month, day = (a, b) if order.find("m") < order.find("d") else (b, a)
+        return f"{y}-{month:02d}-{day:02d}"
+    return ""
+
+
 def _int(text):
     try:
         return int(str(text).strip())
@@ -56,23 +72,40 @@ def _library_count(show_dbid, season):
 SHOWS = {}                                          # series title -> TMDB id (searched once per session)
 
 
-def show_by_title(title):
+def show_by_title(title, season=0, episode=0, aired=""):
     """2.1.12 (#19): add-ons like TMDb Movies give an episode without the series' TMDB number. Find it by the series
-    title (the first result with exactly that name, else the first result). '' when not found."""
+    title. 2.1.13: several series share a name (Millennium 1996 and 2010), so the one is taken whose season has this
+    episode on the same air date; else the series that started closest before that date. '' when not found."""
     title = (title or "").strip()
     if not title:
         return ""
-    if title not in SHOWS:
+    key = f"{title}|{aired[:4]}"
+    if key not in SHOWS:
         try:
             import info
             res = (info.tmdb("search/tv", query=title) if info.tmdb_key() else {}).get("results") or []
-            exact = [r for r in res if (r.get("name") or "").lower() == title.lower() or (r.get("original_name") or "").lower() == title.lower()]
-            pick = (exact or res[:1] or [None])[0]
-            SHOWS[title] = str(pick["id"]) if pick else ""
+            names = [r for r in res if title.lower() in ((r.get("name") or "").lower(), (r.get("original_name") or "").lower())]
+            pool = names or res[:5]
+            pick = None
+            if aired and season and episode:
+                for r in pool[:4]:                          # the episode's air date decides
+                    try:
+                        data = info.tmdb(f"tv/{r['id']}/season/{season}")
+                    except Exception:  # noqa: BLE001
+                        continue
+                    ep = next((e for e in data.get("episodes") or [] if e.get("episode_number") == episode), None)
+                    if ep and (ep.get("air_date") or "")[:10] == aired[:10]:
+                        pick = r
+                        break
+            if not pick and aired:                          # else: started closest before the episode
+                before = [r for r in pool if r.get("first_air_date") and r["first_air_date"] <= aired[:10]]
+                pick = max(before, key=lambda r: r["first_air_date"]) if before else None
+            pick = pick or (pool[:1] or [None])[0]
+            SHOWS[key] = str(pick["id"]) if pick else ""
         except Exception as error:  # noqa: BLE001 - offline: try again next time
             log(f"search {title}: {error}")
             return ""
-    return SHOWS[title]
+    return SHOWS[key]
 
 
 def _tmdb_count(tmdb_id, season):
@@ -94,10 +127,10 @@ def _tmdb_count(tmdb_id, season):
     return COUNTS[key]
 
 
-def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title=""):
+def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title="", aired=""):
     try:
         if not (own_count or show_dbid or tmdb_id) and title:
-            tmdb_id = show_by_title(title)
+            tmdb_id = show_by_title(title, season, episode, aired)
         # the video add-on gives the season's episodes (also announced ones) and how many after this one are out
         out = episode + own_left if own_count else 0
         count = own_count or (_library_count(show_dbid, season) if show_dbid else 0)
@@ -158,6 +191,7 @@ def tick():
     own_count = _int(label(pre + "Property(lucent.season.count)"))
     own_left = _int("".join(c for c in label(pre + "Property(lucent.season.left)") if c.isdigit()) or 0)
     title = label(pre + "TVShowTitle")
+    aired = _iso(label(pre + "Premiered") or label(pre + "Date"))
     ident = f"{show_dbid or tmdb_id or title}:{season}:{episode}"
     now = time.time()
     if ident != STATE["id"]:
@@ -167,4 +201,4 @@ def tick():
     if STATE["done"] == ident or STATE["busy"] or now - STATE["since"] < 0.4:
         return
     STATE["busy"] = True
-    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left, title), daemon=True).start()
+    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left, title, aired), daemon=True).start()

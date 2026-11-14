@@ -571,6 +571,13 @@
     <variable name="LucentForYouPath">
         <value condition="!String.IsEmpty(Window(home).Property(lucent.fy.lv))">plugin://plugin.video.lucent/?action=list&amp;name=foryou&amp;widget=1</value>
     </variable>
+    <!-- 2.1.13: a streaming service tile is always one logo on a calm dark card: the skin's own logo, else the service's
+         wide logo, else its icon (a tile with its own picture and a logo on top showed two logos) -->
+    <variable name="LucentSvcLogo">
+        <value condition="!String.IsEmpty(ListItem.Property(svclogo))">$INFO[ListItem.Property(svclogo)]</value>
+        <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>
+        <value>$INFO[ListItem.Icon]</value>
+    </variable>
     <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off) + String.IsEqual(Window(home).Property(lucent.fy.tab),Container(9000).ListItem.Property(tab))</expression>
     <expression name="LucentSportRow">!String.IsEmpty(Window(home).Property(lucent.hs.show)) + !Skin.HasSetting(lucent.hs.off)</expression>
     <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
@@ -9191,7 +9198,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9208,8 +9215,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -9368,7 +9375,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9394,8 +9401,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -10171,7 +10178,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10188,8 +10195,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -10348,7 +10355,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10374,8 +10381,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -11151,7 +11158,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11168,8 +11175,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -11328,7 +11335,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11354,8 +11361,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -12131,7 +12138,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12148,8 +12155,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -12308,7 +12315,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12334,8 +12341,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -13111,7 +13118,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13128,8 +13135,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -13288,7 +13295,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13314,8 +13321,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -14092,7 +14099,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14109,8 +14116,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -14269,7 +14276,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14295,8 +14302,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -15076,7 +15083,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15093,8 +15100,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -15253,7 +15260,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15279,8 +15286,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -16056,7 +16063,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16073,8 +16080,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -16233,7 +16240,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16259,8 +16266,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -17036,7 +17043,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17053,8 +17060,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -17213,7 +17220,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17239,8 +17246,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -18016,7 +18023,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18033,8 +18040,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo))</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">
@@ -18193,7 +18200,7 @@
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">white.png</texture>
                     <colordiffuse>FF07090C</colordiffuse>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + String.IsEmpty(ListItem.Property(svchover))</visible>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + String.IsEmpty(ListItem.Property(svchover))</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18219,8 +18226,8 @@
                     <width>288</width>
                     <height>112</height>
                     <aspectratio>keep</aspectratio>
-                    <texture background="true">$INFO[ListItem.Property(svclogo)]</texture>
-                    <visible>!String.IsEmpty(ListItem.Property(svclogo)) + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
+                    <texture background="true">$VAR[LucentSvcLogo]</texture>
+                    <visible>[!String.IsEmpty(ListItem.Property(svclogo)) | !String.IsEmpty(ListItem.Property(lucent_open))] + [String.IsEmpty(ListItem.Property(svchover)) | Skin.HasSetting(lucent.lite)]</visible>
                 </control>
                 <!-- Folder / menu icons are shown smaller and centred -->
                 <control type="image">

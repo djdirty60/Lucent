@@ -81,6 +81,8 @@ elif kind in ("sm", "ss", "se", "th", "thn"):
                 tag.setEpisode(1)
             if i == 3:
                 tag.setPlaycount(1)
+            if NOID:                              # the episode's air date, as add-ons give it
+                tag.setFirstAired("2026-11-01")
             if TH and not NOID:
                 li.setProperty("tvshow.tmdb_id", str(1399 + i))
             if i == 1 and not TH:
