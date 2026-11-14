@@ -53,6 +53,7 @@ python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &
 # Solis Dashboard with a stand-in Homey (the example of the Solis handover)
 cp -r ci/addons/script.solis.dashboard $K/addons/
 cp -r ci/addons/plugin.video.fakefen $K/addons/
+cp -r ci/addons/service.upnext $K/addons/
 rm -rf /tmp/ci/lv && git clone -q --depth 1 https://github.com/djdirty60/Lucent-video /tmp/ci/lv && cp -r /tmp/ci/lv/plugin.video.lucent $K/addons/
 # a short clip as stand-in trailer (the real add-on ships its format-test clips, the CI copy does not)
 mkdir -p $K/addons/plugin.video.lucent/resources/formattest

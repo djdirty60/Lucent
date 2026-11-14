@@ -573,6 +573,16 @@
     </variable>
     <!-- 2.1.13: a streaming service tile is always one logo on a calm dark card: the skin's own logo, else the service's
          wide logo, else its icon (a tile with its own picture and a logo on top showed two logos) -->
+    <!-- 2.1.13: the Up Next add-on's pop-up (xml/script-upnext-*.xml) -->
+    <variable name="LucentUpNextArt">
+        <value condition="!String.IsEmpty(Window.Property(thumb))">$INFO[Window.Property(thumb)]</value>
+        <value condition="!String.IsEmpty(Window.Property(landscape))">$INFO[Window.Property(landscape)]</value>
+        <value>$INFO[Window.Property(fanart)]</value>
+    </variable>
+    <variable name="LucentUpNextTitle">
+        <value condition="!String.IsEmpty(Window.Property(tvshowtitle))">$INFO[Window.Property(tvshowtitle)]</value>
+        <value>$INFO[Window.Property(title)]</value>
+    </variable>
     <variable name="LucentSvcLogo">
         <value condition="!String.IsEmpty(ListItem.Property(svclogo))">$INFO[ListItem.Property(svclogo)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>

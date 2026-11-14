@@ -5796,6 +5796,40 @@ def settingsback_test():
     log("settingsback: " + json.dumps(out))
 
 
+def upnext_test():
+    """2.1.13: the Up Next add-on's pop-ups in the skin's own look (all four: up next / still watching, with and without
+    picture). Up Next itself opens them like this, with its own folder; Kodi takes the skin's window of the same name."""
+    out = {}
+    path = xbmcvfs.translatePath("special://home/addons/service.upnext/")
+    props = {"tvshowtitle": "Red Harbour", "title": "Chapter 7", "season": "2", "episode": "9", "rating": "7.4", "year": "2026",
+             "remaining": "12", "endtime": "21:47", "stop_close_label": "Sluiten", "shuffle_enable": "False", "shuffle_on": "False",
+             "popup_position": "bottom", "accent_colour": "FFFFFFFF", "thumb": "http://127.0.0.1:8765/t/p/w780/g1.png",
+             "fanart": "http://127.0.0.1:8765/t/p/w780/g1.png"}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    for name in ("upnext", "upnext-simple", "stillwatching", "stillwatching-simple"):
+        try:
+            win = xbmcgui.WindowXMLDialog(f"script-upnext-{name}.xml", path, "default", "1080i")
+            for k, v in props.items():
+                win.setProperty(k, v)
+            win.show()
+            mon.waitForAbort(2.5)
+            try:
+                win.getControl(3014).setPercent(62)
+            except Exception as error:  # noqa: BLE001
+                out[name + "_bar"] = str(error)
+            mon.waitForAbort(1)
+            out[name] = [lab("System.CurrentControlID"), lab("Control.GetLabel(3012)"), lab("Control.GetLabel(3013)")]
+            shot(f"upnext-{name}")
+            win.close()
+            del win
+        except Exception as error:  # noqa: BLE001
+            out[name] = f"error: {error}"
+        mon.waitForAbort(1)
+    log("upnext: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10816,6 +10850,7 @@ def main():
     safe(restartask_test)
     safe(foryoulv_test)
     safe(settingsback_test)
+    safe(upnext_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
