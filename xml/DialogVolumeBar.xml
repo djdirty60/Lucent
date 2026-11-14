@@ -9,11 +9,12 @@
     <animation effect="fade" start="100" end="0" time="300">WindowClose</animation>
     <controls>
         <!-- 2.1.7 (#20): when the sound is muted Kodi keeps this window open; like Kodi's own skin the card then fades
-             away after a second instead of staying over Home -->
+             away after a second instead of staying over Home (scripts/volume.py sets lucent.vol.hide) -->
         <control type="group">
             <left>560</left>
             <top>800</top>
-            <animation effect="fade" start="100" end="0" time="300" delay="1200" condition="Player.Muted">Conditional</animation>
+            <visible>String.IsEmpty(Window(home).Property(lucent.vol.hide))</visible>
+            <animation effect="fade" time="300">VisibleChange</animation>
             <control type="image"><left>-24</left><top>-14</top><width>848</width><height>210</height><texture border="44">rr20_glow.png</texture><colordiffuse>73000000</colordiffuse></control>
             <control type="image"><left>0</left><top>0</top><width>800</width><height>170</height><texture border="28">pinfo/rr28.png</texture><colordiffuse>EB0E121C</colordiffuse></control>
             <control type="image"><left>0</left><top>0</top><width>800</width><height>170</height><texture border="28">pinfo/rr28_edge.png</texture><colordiffuse>1AFFFFFF</colordiffuse></control>

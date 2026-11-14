@@ -5502,10 +5502,10 @@ def volmute_test():
     xbmc.executebuiltin("Action(Mute)")
     mon.waitForAbort(0.6)
     shot("vol-muted-0s")
-    out["at0"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
+    out["at0"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted"), HOME.getProperty("lucent.vol.hide")]
     mon.waitForAbort(3)
     shot("vol-muted-3s")
-    out["at3"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
+    out["at3"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted"), HOME.getProperty("lucent.vol.hide")]
     xbmc.executebuiltin("Action(Mute)")
     mon.waitForAbort(3)
     out["after"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
