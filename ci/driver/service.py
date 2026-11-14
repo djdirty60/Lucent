@@ -5580,7 +5580,7 @@ def wnvideo_test():
     xbmc.executebuiltin("RunScript(special://skin/scripts/whatsnew.py)")
     mon.waitForAbort(4)
     rows = []
-    for i in range(10):
+    for i in range(16):
         rows.append(lab(f"Container(100).ListItemAbsolute({i}).Label") + " | " + lab(f"Container(100).ListItemAbsolute({i}).Property(vid)"))
     out["rows"] = rows
     out["title"] = lab("Window.Property(wn.title)") if False else xbmcgui.Window(xbmcgui.getCurrentWindowDialogId()).getProperty("wn.title")

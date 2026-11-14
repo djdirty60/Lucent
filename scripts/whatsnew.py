@@ -138,7 +138,7 @@ def video_versions():
             short, long = nice_date(entry.get("date", ""))
             if label and items:
                 out.append({"v": label, "tag": "", "short": short, "long": long, "items": items, "video": True,
-                            "date": entry.get("date", "")})
+                            "date": entry.get("date", ""), "at": entry.get("at", "")})
         except Exception:  # noqa: BLE001
             continue
     out.sort(key=lambda e: e["date"], reverse=True)
@@ -146,23 +146,21 @@ def video_versions():
 
 
 def merge_video(skin):
-    """Skin versions (newest first) and video add-on updates in one list by date; an add-on update goes above the first
-    skin version that is older (skin versions without a date count as older than every dated one)."""
+    """Skin versions and video add-on updates in one list, newest first. 2.1.8: by the moment they were published ('at',
+    UTC) when both have it, else by date (an add-on update without a time goes above a skin version of the same day);
+    skin versions without a date (the oldest ones) stay at the bottom in their own order."""
     video = video_versions()
     if not video:
         return skin
     try:
-        dates = {e["v"]: e.get("date", "") for e in json.loads(read("resources/whatsnew.json") or "{}").get("versions") or []
+        known = {e["v"]: e.get("at") or e.get("date", "") for e in json.loads(read("resources/whatsnew.json") or "{}").get("versions") or []
                  if isinstance(e, dict) and e.get("v")}
     except ValueError:
-        dates = {}
-    out = []
-    for e in skin:
-        d = dates.get(e["v"], "")
-        while video and (not d or video[0]["date"] >= d):
-            out.append(video.pop(0))
-        out.append(e)
-    return out + video
+        known = {}
+    rows = [(known.get(e["v"], ""), 0, i, e) for i, e in enumerate(skin)]
+    rows += [(e.get("at") or (e["date"] + "T99") if e["date"] else "", 1, i, e) for i, e in enumerate(video)]
+    dated = sorted([r for r in rows if r[0]], key=lambda r: (r[0], r[1], -r[2]), reverse=True)
+    return [r[3] for r in dated] + [r[3] for r in rows if not r[0]]
 
 
 def count_word(n):
