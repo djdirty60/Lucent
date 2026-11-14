@@ -5479,6 +5479,39 @@ def agendamonth_test():
     mon.waitForAbort(2)
 
 
+def kbfocus_test():
+    """#21: which button has the focus when the keyboard opens (empty, and with text already in it)."""
+    import threading
+    out = {}
+    for name, text in (("empty", ""), ("text", "abc123")):
+        threading.Thread(target=lambda: xbmcgui.Dialog().input("CI keyboard", defaultt=text), daemon=True).start()
+        mon.waitForAbort(3)
+        out[name] = [lab("System.CurrentWindow"), lab("System.CurrentControlID"), lab("System.CurrentControl")]
+        shot(f"kb-{name}")
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(2)
+    log("kbfocus: " + json.dumps(out))
+
+
+def volmute_test():
+    """#20: muted sound - the volume card fades away after a second (Kodi keeps the window open)."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Mute")
+    mon.waitForAbort(0.6)
+    shot("vol-muted-0s")
+    out["at0"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
+    mon.waitForAbort(3)
+    shot("vol-muted-3s")
+    out["at3"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
+    xbmc.executebuiltin("Mute")
+    mon.waitForAbort(3)
+    out["after"] = [cond("Window.IsVisible(volumebar)"), cond("Player.Muted")]
+    log("volmute: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10482,6 +10515,8 @@ def main():
     safe(agendalist_test)
     safe(agendaweek_test)
     safe(agendamonth_test)
+    safe(kbfocus_test)
+    safe(volmute_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)
