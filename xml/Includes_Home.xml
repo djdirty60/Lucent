@@ -561,6 +561,16 @@
     <!-- 2.1.6: a finale - from your video add-on (lucent.season.finale) or from TMDb Helper and add-ons built on it (episode_type, #19) -->
     <expression name="LucentFinale">[!String.IsEmpty(ListItem.Property(lucent.season.finale)) | String.IsEqual(ListItem.Property(episode_type),season_finale) | String.IsEqual(ListItem.Property(episode_type),series_finale) | String.IsEqual(ListItem.Property(episode_type),mid_season_finale)]</expression>
     <expression name="LucentPctShown">!Skin.HasSetting(lucent.pct.off) + [Integer.IsGreater(ListItem.PercentPlayed,0) | Integer.IsGreater(ListItem.Property(WatchedProgress),0)] + Integer.IsLess(ListItem.PercentPlayed,100)</expression>
+    <variable name="LucentForYouYear"><value condition="String.IsEmpty(Container(8091).ListItem.Label2)">$INFO[Container(8091).ListItem.Year]</value></variable>
+    <variable name="LucentForYouRating"><value condition="String.IsEmpty(Container(8091).ListItem.Property(rating))">$INFO[Container(8091).ListItem.Rating]</value></variable>
+    <variable name="LucentForYouPlot"><value condition="String.IsEmpty(Container(8091).ListItem.Property(plot))">$INFO[Container(8091).ListItem.Plot]</value></variable>
+    <variable name="LucentForYouPoster">
+        <value condition="!String.IsEmpty(ListItem.Art(poster))">$INFO[ListItem.Art(poster)]</value>
+        <value>$INFO[ListItem.Thumb]</value>
+    </variable>
+    <variable name="LucentForYouPath">
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.fy.lv))">plugin://plugin.video.lucent/?action=list&amp;name=foryou&amp;widget=1</value>
+    </variable>
     <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off) + String.IsEqual(Window(home).Property(lucent.fy.tab),Container(9000).ListItem.Property(tab))</expression>
     <expression name="LucentSportRow">!String.IsEmpty(Window(home).Property(lucent.hs.show)) + !Skin.HasSetting(lucent.hs.off)</expression>
     <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
@@ -616,7 +626,7 @@
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8209) + Control.IsVisible(9919) + $EXP[NuvioW9HasBg]">$VAR[NuvioW9Bg]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8110) + Control.IsVisible(9910) + $EXP[NuvioW10HasBg]">$VAR[NuvioW10Bg]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8210) + Control.IsVisible(9920) + $EXP[NuvioW10HasBg]">$VAR[NuvioW10Bg]</value>
-        <value condition="String.IsEqual(Window(home).Property(nuvio.row),8091) + $EXP[LucentForYouRow]">$INFO[Container(8091).ListItem.Property(fanart)]</value>
+        <value condition="String.IsEqual(Window(home).Property(nuvio.row),8091) + $EXP[LucentForYouRow]">$INFO[Container(8091).ListItem.Property(fanart)]$INFO[Container(8091).ListItem.Art(fanart)]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(9901) + !String.IsEmpty(Container(8101).ListItem.Art(fanart))">$INFO[Container(8101).ListItem.Art(fanart)]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8101) + Control.IsVisible(9901)">$INFO[Container(8101).ListItem.Art(tvshow.fanart)]</value>
         <value condition="String.IsEqual(Window(home).Property(nuvio.row),8201) + Control.IsVisible(9911) + !String.IsEmpty(Container(8201).ListItem.Art(fanart))">$INFO[Container(8201).ListItem.Art(fanart)]</value>
@@ -848,8 +858,8 @@
                 <height>210</height>
                 <aspectratio align="left" aligny="bottom">keep</aspectratio>
                 <fadetime>250</fadetime>
-                <texture background="true">$INFO[Container(8091).ListItem.Property(logo)]</texture>
-                <visible>!String.IsEmpty(Container(8091).ListItem.Property(logo))</visible>
+                <texture background="true">$INFO[Container(8091).ListItem.Property(logo)]$INFO[Container(8091).ListItem.Art(clearlogo)]</texture>
+                <visible>!String.IsEmpty(Container(8091).ListItem.Property(logo)) | !String.IsEmpty(Container(8091).ListItem.Art(clearlogo))</visible>
             </control>
             <control type="textbox">
                 <left>0</left>
@@ -861,7 +871,7 @@
                 <aligny>bottom</aligny>
                 <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                 <label>$INFO[Container(8091).ListItem.Label]</label>
-                <visible>String.IsEmpty(Container(8091).ListItem.Property(logo))</visible>
+                <visible>String.IsEmpty(Container(8091).ListItem.Property(logo)) + String.IsEmpty(Container(8091).ListItem.Art(clearlogo))</visible>
             </control>
             <control type="grouplist">
                 <left>0</left>
@@ -871,22 +881,22 @@
                 <orientation>horizontal</orientation>
                 <itemgap>12</itemgap>
                 <include content="InfoPill">
-                    <param name="label">$INFO[Container(8091).ListItem.Property(because)]</param>
+                    <param name="label">$INFO[Container(8091).ListItem.Property(because)]$INFO[Container(8091).ListItem.Property(kompas_reason)]</param>
                     <param name="bg">focus</param>
                     <param name="color">on_focus</param>
-                    <param name="visible">!String.IsEmpty(Container(8091).ListItem.Property(because))</param>
+                    <param name="visible">!String.IsEmpty(Container(8091).ListItem.Property(because)) | !String.IsEmpty(Container(8091).ListItem.Property(kompas_reason))</param>
                 </include>
                 <include content="InfoPill">
-                    <param name="label">$INFO[Container(8091).ListItem.Label2]</param>
+                    <param name="label">$INFO[Container(8091).ListItem.Label2]$VAR[LucentForYouYear]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
-                    <param name="visible">!String.IsEmpty(Container(8091).ListItem.Label2)</param>
+                    <param name="visible">!String.IsEmpty(Container(8091).ListItem.Label2) | !String.IsEmpty(Container(8091).ListItem.Year)</param>
                 </include>
                 <include content="InfoPill">
-                    <param name="label">★ $INFO[Container(8091).ListItem.Property(rating)]</param>
+                    <param name="label">★ $INFO[Container(8091).ListItem.Property(rating)]$VAR[LucentForYouRating]</param>
                     <param name="bg">glass</param>
                     <param name="color">text2</param>
-                    <param name="visible">!String.IsEmpty(Container(8091).ListItem.Property(rating))</param>
+                    <param name="visible">!String.IsEmpty(Container(8091).ListItem.Property(rating)) | !String.IsEmpty(Container(8091).ListItem.Rating)</param>
                 </include>
             </control>
             <control type="textbox">
@@ -897,7 +907,7 @@
                 <font>font_body</font>
                 <textcolor>text2</textcolor>
                 <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8091).ListItem.Property(plot)]</label>
+                <label>$INFO[Container(8091).ListItem.Property(plot)]$VAR[LucentForYouPlot]</label>
 <include>TextAutoScroll</include>
 </control>
         </control>
@@ -8335,7 +8345,7 @@
                             <left>40</left><top>16</top>
                             <control type="image">
                                 <left>0</left><top>0</top><width>220</width><height>330</height>
-                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Thumb]</texture>
+                                <texture diffuse="mask_poster.png" background="true">$VAR[LucentForYouPoster]</texture>
                             </control>
                         </control>
                     </itemlayout>
@@ -8352,7 +8362,7 @@
                             </control>
                             <control type="image">
                                 <left>0</left><top>0</top><width>220</width><height>330</height>
-                                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Thumb]</texture>
+                                <texture diffuse="mask_poster.png" background="true">$VAR[LucentForYouPoster]</texture>
                             </control>
                             <control type="image">
                                 <left>0</left><top>0</top><width>220</width><height>330</height>
@@ -8374,7 +8384,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.1.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.1.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.1.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.1.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.2.title)]</label>
@@ -8387,7 +8397,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.2.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.2.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.2.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.2.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.3.title)]</label>
@@ -8400,7 +8410,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.3.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.3.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.3.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.3.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.4.title)]</label>
@@ -8413,7 +8423,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.4.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.4.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.4.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.4.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.5.title)]</label>
@@ -8426,7 +8436,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.5.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.5.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.5.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.5.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.6.title)]</label>
@@ -8439,7 +8449,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.6.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.6.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.6.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.6.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.7.title)]</label>
@@ -8452,7 +8462,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.7.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.7.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.7.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.7.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.8.title)]</label>
@@ -8465,7 +8475,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.8.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.8.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.8.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.8.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.9.title)]</label>
@@ -8478,7 +8488,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.9.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.9.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.9.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.9.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.10.title)]</label>
@@ -8491,7 +8501,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.10.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.10.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.10.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.10.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.11.title)]</label>
@@ -8504,7 +8514,7 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.11.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.11.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.11.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.11.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(lucent.fy.12.title)]</label>
@@ -8517,9 +8527,11 @@
                             <property name="rating">$INFO[Window(home).Property(lucent.fy.12.rating)]</property>
                             <property name="because">$INFO[Window(home).Property(lucent.fy.12.because)]</property>
                             <onclick>RunScript(special://skin/scripts/foryou.py,open)</onclick>
-                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.12.title))</visible>
+                            <visible>!String.IsEmpty(Window(home).Property(lucent.fy.12.title)) + String.IsEmpty(Window(home).Property(lucent.fy.lv))</visible>
                         </item>
                     </content>
+                    <!-- 2.1.8: with the video add-on of the Lucent repository, its own "For you" list: real titles with its full menu -->
+                    <content target="videos" browse="never" sortby="playlist">$VAR[LucentForYouPath]</content>
                 </control>
             </control>
             <!-- Widget 1 (poster) -->

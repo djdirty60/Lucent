@@ -215,9 +215,41 @@ def home_tab():
     return first
 
 
+LV_LIST = "plugin://plugin.video.lucent/?action=list&name=foryou&widget=1"
+_LV = {"time": 0.0, "count": 0}
+
+
+def lv_list(part, force):
+    """2.1.8: with the video add-on of the Lucent repository the row shows its own "For you" list (real titles with its
+    full menu). Here only: the label of the moment, and whether that list has titles (asked every few hours)."""
+    if force or time.time() - _LV["time"] > REFRESH or not _LV["count"] and time.time() - _LV["time"] > 15 * 60:
+        _LV["time"] = time.time()
+        try:
+            req = {"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                   "params": {"directory": LV_LIST, "media": "video", "properties": ["title"]}}
+            res = json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}
+            _LV["count"] = len(res.get("files") or [])
+        except Exception as error:  # noqa: BLE001
+            log(f"video add-on list: {error}")
+        log(f"{part}: {_LV['count']} titles from the video add-on")
+    if not _LV["count"]:
+        return False                                 # its list is empty (or failed): the skin picks titles itself
+    if HOME.getProperty(P + "lv") != "1":
+        HOME.setProperty(P + "lv", "1")
+    if HOME.getProperty(P + "label") != t(part):
+        HOME.setProperty(P + "label", t(part))
+    if HOME.getProperty(P + "count") != str(_LV["count"]):
+        HOME.setProperty(P + "count", str(_LV["count"]))
+    return True
+
+
 def update(force=False):
     if HOME.getProperty(P + "tab") != home_tab():
         HOME.setProperty(P + "tab", home_tab())
+    if xbmc.getCondVisibility("System.AddonIsEnabled(plugin.video.lucent)") and lv_list(daypart(), force):
+        return
+    if HOME.getProperty(P + "lv"):
+        HOME.clearProperty(P + "lv")
     if not info.lv_open_with():                      # nobody can play these titles: no row (a general skin)
         if HOME.getProperty(P + "count"):
             HOME.clearProperty(P + "count")
