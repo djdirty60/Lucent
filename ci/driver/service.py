@@ -5846,7 +5846,7 @@ def finalecheck_test():
                            ("library_title_running", (2, 22, 0, "77", "", 0, "Lumen", "1997-11-22")),
                            ("library_title_finale", (2, 10, 0, "78", "", 0, "Red Harbour", "2026-11-01")),
                            # 2.1.16: newest library episode of a running season: how many are coming, and the series' status
-                           ("library_newest_more", (2, 7, 0, "79", "", 0, "Red Harbour", "2026-11-01"))):
+                           ("library_newest_more", (2, 7, 0, "79", "", 0, "Future Gold", "2026-11-07"))):
             ident = "ci:" + name
             _si.STATE["id"] = ident
             _si.COUNTS["db:77:2"], _si.COUNTS["db:78:2"], _si.COUNTS["db:79:2"] = 22, 10, 7

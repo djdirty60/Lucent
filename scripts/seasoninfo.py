@@ -130,6 +130,21 @@ def _tmdb_count(tmdb_id, season):
     return COUNTS[key]
 
 
+def _library_tmdb(show_dbid):
+    """2.1.16: the TMDB number of a series in the Kodi library (its uniqueid), '' when it has none."""
+    key = f"db:{show_dbid}"
+    if key not in SHOWS:
+        try:
+            req = {"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShowDetails",
+                   "params": {"tvshowid": int(show_dbid), "properties": ["uniqueid"]}}
+            ids = ((json.loads(xbmc.executeJSONRPC(json.dumps(req))).get("result") or {}).get("tvshowdetails") or {}).get("uniqueid") or {}
+            SHOWS[key] = str(ids.get("tmdb") or "") if str(ids.get("tmdb") or "").isdigit() else ""
+        except Exception as error:  # noqa: BLE001
+            log(f"library tmdb {show_dbid}: {error}")
+            return ""
+    return SHOWS[key]
+
+
 def _status(tmdb_id):
     """2.1.16: TMDB's status of a series, for an episode that does not bring one (a library episode): LOOPT NOG."""
     if tmdb_id not in STATUS:
@@ -144,13 +159,18 @@ def _status(tmdb_id):
 
 def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title="", aired="", etype="", status=""):
     try:
-        if not (own_count or show_dbid or tmdb_id) and title:
-            tmdb_id = show_by_title(title, season, episode, aired)
+        # 2.1.16: a library episode counts with TMDB too (its library has only what is out): the series' TMDB number from
+        # the library (uniqueid), else by title and air date; the library's own count only when TMDB does not answer
+        if not (own_count or tmdb_id) and (show_dbid or title):
+            tmdb_id = (_library_tmdb(show_dbid) if show_dbid else "") or (show_by_title(title, season, episode, aired) if title else "")
         # the video add-on gives the season's episodes (also announced ones) and how many after this one are out
         out = episode + own_left if own_count else 0
-        count = own_count or (_library_count(show_dbid, season) if show_dbid else 0)
+        count, from_tmdb = own_count, False
         if not count and tmdb_id:
             count, out = _tmdb_count(tmdb_id, season)
+            from_tmdb = count >= episode > 0
+        if show_dbid and not own_count and not from_tmdb:
+            count, out = _library_count(show_dbid, season), 0
         if STATE["id"] != ident:
             return
         left = count - episode if count >= episode else -1
@@ -163,29 +183,22 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
         if left == 0 and etype:
             final = etype in ("season_finale", "series_finale")
         elif left == 0:
-            if not tmdb_id and title:                       # e.g. a library episode without the series' TMDB number
-                tmdb_id = show_by_title(title, season, episode, aired)
             if tmdb_id:
                 _tmdb_count(tmdb_id, season)
                 final = TYPES.get(f"tmdb:{tmdb_id}:{season}", {}).get(episode) == "finale"
-        upcoming = 0
-        if left == 0 and not final and tmdb_id and show_dbid:
-            upcoming = max(_tmdb_count(tmdb_id, season)[0] - episode, 0)    # 2.1.16: a library episode, more to come
         if left == 0:
             log(f"last known episode {ident}: add-on mark '{etype}', TMDB {tmdb_id or '-'} "
                 f"'{TYPES.get(f'tmdb:{tmdb_id}:{season}', {}).get(episode, '?')}' -> {'finale' if final else 'newest'}")
-        aired = out - episode if out >= episode else 0          # of those, already out (TMDB only)
-        if (own_count or tmdb_id) and not show_dbid and left > 0 and aired < left:
-            if aired > 0:                                   # 2.1.15: the episode you are on counts too (#19)
-                text = t(f"{aired + 1} to watch now, {left - aired} still to come", f"Nog {aired + 1} te zien, {left - aired} komen nog")
+        out_after = out - episode if out >= episode else 0      # of those, already out (add-on or TMDB count only)
+        if (own_count or from_tmdb) and left > 0 and out_after < left:
+            if out_after > 0:                               # 2.1.15: the episode you are on counts too (#19)
+                text = t(f"{out_after + 1} to watch now, {left - out_after} still to come", f"Nog {out_after + 1} te zien, {left - out_after} komen nog")
             else:
                 text = t(f"Newest episode · {left} still to come", f"Nieuwste aflevering · nog {left} op komst")
         elif left > 0:                                      # this one and the ones after it
             text = t(f"{left + 1} to watch in season {season}", f"Nog {left + 1} te zien in seizoen {season}")
         elif left == 0 and final:
             text = t(f"Last episode of season {season}", f"Laatste aflevering van seizoen {season}")
-        elif left == 0 and upcoming:
-            text = t(f"Newest episode · {upcoming} still to come", f"Nieuwste aflevering · nog {upcoming} op komst")
         elif left == 0:
             text = t("Newest episode", "Nieuwste aflevering")
         else:
@@ -196,8 +209,6 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
                 HOME.setProperty("lucent.ep." + p, v)
             else:
                 HOME.clearProperty("lucent.ep." + p)
-        if not status and not tmdb_id and show_dbid and title:
-            tmdb_id = show_by_title(title, season, episode, aired)
         own_status = "" if status else (_status(tmdb_id) if tmdb_id else "")
         if own_status:
             HOME.setProperty("lucent.ep.status", own_status)
