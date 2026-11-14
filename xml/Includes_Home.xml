@@ -62,7 +62,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.sort))">$INFO[Skin.String(nuvio.home.w1.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.sort))">$INFO[Container(9000).ListItem.Property(w1.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW1Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),title)]">ascending</value>
@@ -74,7 +78,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.sort))">$INFO[Skin.String(nuvio.home.w2.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.sort))">$INFO[Container(9000).ListItem.Property(w2.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW2Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),title)]">ascending</value>
@@ -86,7 +94,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.sort))">$INFO[Skin.String(nuvio.home.w3.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.sort))">$INFO[Container(9000).ListItem.Property(w3.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW3Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),title)]">ascending</value>
@@ -98,7 +110,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.sort))">$INFO[Skin.String(nuvio.home.w4.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.sort))">$INFO[Container(9000).ListItem.Property(w4.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW4Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),title)]">ascending</value>
@@ -110,7 +126,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.sort))">$INFO[Skin.String(nuvio.home.w5.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.sort))">$INFO[Container(9000).ListItem.Property(w5.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW5Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),title)]">ascending</value>
@@ -122,7 +142,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.sort))">$INFO[Skin.String(nuvio.home.w6.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.sort))">$INFO[Container(9000).ListItem.Property(w6.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW6Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),title)]">ascending</value>
@@ -134,7 +158,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.sort))">$INFO[Skin.String(nuvio.home.w7.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.sort))">$INFO[Container(9000).ListItem.Property(w7.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW7Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),title)]">ascending</value>
@@ -146,7 +174,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.sort))">$INFO[Skin.String(nuvio.home.w8.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.sort))">$INFO[Container(9000).ListItem.Property(w8.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW8Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),title)]">ascending</value>
@@ -158,7 +190,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.sort))">$INFO[Skin.String(nuvio.home.w9.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.sort))">$INFO[Container(9000).ListItem.Property(w9.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW9Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),title)]">ascending</value>
@@ -170,7 +206,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.sort))">$INFO[Skin.String(nuvio.home.w10.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.sort))">$INFO[Container(9000).ListItem.Property(w10.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW10Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),title)]">ascending</value>
@@ -1242,26 +1282,33 @@
                     <label>$INFO[Container(8101).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8101).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8101).ListItem.DBType,episode) | [!String.IsEmpty(Container(8101).ListItem.Episode) + Integer.IsGreater(Container(8101).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8101).ListItem.DBType,episode) | [!String.IsEmpty(Container(8101).ListItem.Episode) + Integer.IsGreater(Container(8101).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8101).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8101).ListItem.DBType,episode) | [!String.IsEmpty(Container(8101).ListItem.Episode) + Integer.IsGreater(Container(8101).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -1592,26 +1639,33 @@
                     <label>$INFO[Container(8201).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8201).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8201).ListItem.DBType,episode) | [!String.IsEmpty(Container(8201).ListItem.Episode) + Integer.IsGreater(Container(8201).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8201).ListItem.DBType,episode) | [!String.IsEmpty(Container(8201).ListItem.Episode) + Integer.IsGreater(Container(8201).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8201).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8201).ListItem.DBType,episode) | [!String.IsEmpty(Container(8201).ListItem.Episode) + Integer.IsGreater(Container(8201).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -1942,26 +1996,33 @@
                     <label>$INFO[Container(8102).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8102).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8102).ListItem.DBType,episode) | [!String.IsEmpty(Container(8102).ListItem.Episode) + Integer.IsGreater(Container(8102).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8102).ListItem.DBType,episode) | [!String.IsEmpty(Container(8102).ListItem.Episode) + Integer.IsGreater(Container(8102).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8102).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8102).ListItem.DBType,episode) | [!String.IsEmpty(Container(8102).ListItem.Episode) + Integer.IsGreater(Container(8102).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -2292,26 +2353,33 @@
                     <label>$INFO[Container(8202).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8202).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8202).ListItem.DBType,episode) | [!String.IsEmpty(Container(8202).ListItem.Episode) + Integer.IsGreater(Container(8202).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8202).ListItem.DBType,episode) | [!String.IsEmpty(Container(8202).ListItem.Episode) + Integer.IsGreater(Container(8202).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8202).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8202).ListItem.DBType,episode) | [!String.IsEmpty(Container(8202).ListItem.Episode) + Integer.IsGreater(Container(8202).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -2642,26 +2710,33 @@
                     <label>$INFO[Container(8103).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8103).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8103).ListItem.DBType,episode) | [!String.IsEmpty(Container(8103).ListItem.Episode) + Integer.IsGreater(Container(8103).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8103).ListItem.DBType,episode) | [!String.IsEmpty(Container(8103).ListItem.Episode) + Integer.IsGreater(Container(8103).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8103).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8103).ListItem.DBType,episode) | [!String.IsEmpty(Container(8103).ListItem.Episode) + Integer.IsGreater(Container(8103).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -2992,26 +3067,33 @@
                     <label>$INFO[Container(8203).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8203).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8203).ListItem.DBType,episode) | [!String.IsEmpty(Container(8203).ListItem.Episode) + Integer.IsGreater(Container(8203).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8203).ListItem.DBType,episode) | [!String.IsEmpty(Container(8203).ListItem.Episode) + Integer.IsGreater(Container(8203).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8203).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8203).ListItem.DBType,episode) | [!String.IsEmpty(Container(8203).ListItem.Episode) + Integer.IsGreater(Container(8203).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -3342,26 +3424,33 @@
                     <label>$INFO[Container(8104).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8104).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8104).ListItem.DBType,episode) | [!String.IsEmpty(Container(8104).ListItem.Episode) + Integer.IsGreater(Container(8104).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8104).ListItem.DBType,episode) | [!String.IsEmpty(Container(8104).ListItem.Episode) + Integer.IsGreater(Container(8104).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8104).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8104).ListItem.DBType,episode) | [!String.IsEmpty(Container(8104).ListItem.Episode) + Integer.IsGreater(Container(8104).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -3692,26 +3781,33 @@
                     <label>$INFO[Container(8204).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8204).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8204).ListItem.DBType,episode) | [!String.IsEmpty(Container(8204).ListItem.Episode) + Integer.IsGreater(Container(8204).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8204).ListItem.DBType,episode) | [!String.IsEmpty(Container(8204).ListItem.Episode) + Integer.IsGreater(Container(8204).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8204).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8204).ListItem.DBType,episode) | [!String.IsEmpty(Container(8204).ListItem.Episode) + Integer.IsGreater(Container(8204).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -4042,26 +4138,33 @@
                     <label>$INFO[Container(8105).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8105).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8105).ListItem.DBType,episode) | [!String.IsEmpty(Container(8105).ListItem.Episode) + Integer.IsGreater(Container(8105).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8105).ListItem.DBType,episode) | [!String.IsEmpty(Container(8105).ListItem.Episode) + Integer.IsGreater(Container(8105).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8105).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8105).ListItem.DBType,episode) | [!String.IsEmpty(Container(8105).ListItem.Episode) + Integer.IsGreater(Container(8105).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -4392,26 +4495,33 @@
                     <label>$INFO[Container(8205).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8205).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8205).ListItem.DBType,episode) | [!String.IsEmpty(Container(8205).ListItem.Episode) + Integer.IsGreater(Container(8205).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8205).ListItem.DBType,episode) | [!String.IsEmpty(Container(8205).ListItem.Episode) + Integer.IsGreater(Container(8205).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8205).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8205).ListItem.DBType,episode) | [!String.IsEmpty(Container(8205).ListItem.Episode) + Integer.IsGreater(Container(8205).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -4742,26 +4852,33 @@
                     <label>$INFO[Container(8106).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8106).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8106).ListItem.DBType,episode) | [!String.IsEmpty(Container(8106).ListItem.Episode) + Integer.IsGreater(Container(8106).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8106).ListItem.DBType,episode) | [!String.IsEmpty(Container(8106).ListItem.Episode) + Integer.IsGreater(Container(8106).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8106).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8106).ListItem.DBType,episode) | [!String.IsEmpty(Container(8106).ListItem.Episode) + Integer.IsGreater(Container(8106).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -5092,26 +5209,33 @@
                     <label>$INFO[Container(8206).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8206).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8206).ListItem.DBType,episode) | [!String.IsEmpty(Container(8206).ListItem.Episode) + Integer.IsGreater(Container(8206).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8206).ListItem.DBType,episode) | [!String.IsEmpty(Container(8206).ListItem.Episode) + Integer.IsGreater(Container(8206).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8206).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8206).ListItem.DBType,episode) | [!String.IsEmpty(Container(8206).ListItem.Episode) + Integer.IsGreater(Container(8206).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -5442,26 +5566,33 @@
                     <label>$INFO[Container(8107).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8107).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8107).ListItem.DBType,episode) | [!String.IsEmpty(Container(8107).ListItem.Episode) + Integer.IsGreater(Container(8107).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8107).ListItem.DBType,episode) | [!String.IsEmpty(Container(8107).ListItem.Episode) + Integer.IsGreater(Container(8107).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8107).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8107).ListItem.DBType,episode) | [!String.IsEmpty(Container(8107).ListItem.Episode) + Integer.IsGreater(Container(8107).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -5792,26 +5923,33 @@
                     <label>$INFO[Container(8207).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8207).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8207).ListItem.DBType,episode) | [!String.IsEmpty(Container(8207).ListItem.Episode) + Integer.IsGreater(Container(8207).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8207).ListItem.DBType,episode) | [!String.IsEmpty(Container(8207).ListItem.Episode) + Integer.IsGreater(Container(8207).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8207).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8207).ListItem.DBType,episode) | [!String.IsEmpty(Container(8207).ListItem.Episode) + Integer.IsGreater(Container(8207).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -6142,26 +6280,33 @@
                     <label>$INFO[Container(8108).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8108).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8108).ListItem.DBType,episode) | [!String.IsEmpty(Container(8108).ListItem.Episode) + Integer.IsGreater(Container(8108).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8108).ListItem.DBType,episode) | [!String.IsEmpty(Container(8108).ListItem.Episode) + Integer.IsGreater(Container(8108).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8108).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8108).ListItem.DBType,episode) | [!String.IsEmpty(Container(8108).ListItem.Episode) + Integer.IsGreater(Container(8108).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -6492,26 +6637,33 @@
                     <label>$INFO[Container(8208).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8208).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8208).ListItem.DBType,episode) | [!String.IsEmpty(Container(8208).ListItem.Episode) + Integer.IsGreater(Container(8208).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8208).ListItem.DBType,episode) | [!String.IsEmpty(Container(8208).ListItem.Episode) + Integer.IsGreater(Container(8208).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8208).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8208).ListItem.DBType,episode) | [!String.IsEmpty(Container(8208).ListItem.Episode) + Integer.IsGreater(Container(8208).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -6842,26 +6994,33 @@
                     <label>$INFO[Container(8109).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8109).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8109).ListItem.DBType,episode) | [!String.IsEmpty(Container(8109).ListItem.Episode) + Integer.IsGreater(Container(8109).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8109).ListItem.DBType,episode) | [!String.IsEmpty(Container(8109).ListItem.Episode) + Integer.IsGreater(Container(8109).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8109).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8109).ListItem.DBType,episode) | [!String.IsEmpty(Container(8109).ListItem.Episode) + Integer.IsGreater(Container(8109).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -7192,26 +7351,33 @@
                     <label>$INFO[Container(8209).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8209).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8209).ListItem.DBType,episode) | [!String.IsEmpty(Container(8209).ListItem.Episode) + Integer.IsGreater(Container(8209).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8209).ListItem.DBType,episode) | [!String.IsEmpty(Container(8209).ListItem.Episode) + Integer.IsGreater(Container(8209).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8209).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8209).ListItem.DBType,episode) | [!String.IsEmpty(Container(8209).ListItem.Episode) + Integer.IsGreater(Container(8209).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -7542,26 +7708,33 @@
                     <label>$INFO[Container(8110).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8110).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8110).ListItem.DBType,episode) | [!String.IsEmpty(Container(8110).ListItem.Episode) + Integer.IsGreater(Container(8110).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8110).ListItem.DBType,episode) | [!String.IsEmpty(Container(8110).ListItem.Episode) + Integer.IsGreater(Container(8110).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8110).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8110).ListItem.DBType,episode) | [!String.IsEmpty(Container(8110).ListItem.Episode) + Integer.IsGreater(Container(8110).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -7892,26 +8065,33 @@
                     <label>$INFO[Container(8210).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8210).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8210).ListItem.DBType,episode) | [!String.IsEmpty(Container(8210).ListItem.Episode) + Integer.IsGreater(Container(8210).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8210).ListItem.DBType,episode) | [!String.IsEmpty(Container(8210).ListItem.Episode) + Integer.IsGreater(Container(8210).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8210).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8210).ListItem.DBType,episode) | [!String.IsEmpty(Container(8210).ListItem.Episode) + Integer.IsGreater(Container(8210).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -8383,6 +8563,22 @@
                     <top>8</top>
                     <visible>Container(8101).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8101).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8101">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -8920,6 +9116,18 @@
                     <visible>Container(8201).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8201).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8201">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -9335,6 +9543,22 @@
                     <top>8</top>
                     <visible>Container(8102).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8102).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8102">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -9872,6 +10096,18 @@
                     <visible>Container(8202).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8202).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8202">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -10287,6 +10523,22 @@
                     <top>8</top>
                     <visible>Container(8103).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8103).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8103">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -10824,6 +11076,18 @@
                     <visible>Container(8203).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8203).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8203">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -11239,6 +11503,22 @@
                     <top>8</top>
                     <visible>Container(8104).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8104).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8104">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -11776,6 +12056,18 @@
                     <visible>Container(8204).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8204).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8204">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -12191,6 +12483,22 @@
                     <top>8</top>
                     <visible>Container(8105).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8105).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8105">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -12728,6 +13036,18 @@
                     <visible>Container(8205).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8205).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8205">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -13143,6 +13463,22 @@
                     <top>8</top>
                     <visible>Container(8106).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8106).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8106">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -13680,6 +14016,18 @@
                     <visible>Container(8206).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8206).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8206">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -14100,6 +14448,22 @@
                     <top>8</top>
                     <visible>Container(8107).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8107).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8107">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -14637,6 +15001,18 @@
                     <visible>Container(8207).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8207).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8207">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -15052,6 +15428,22 @@
                     <top>8</top>
                     <visible>Container(8108).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8108).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8108">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -15589,6 +15981,18 @@
                     <visible>Container(8208).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8208).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8208">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -16004,6 +16408,22 @@
                     <top>8</top>
                     <visible>Container(8109).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8109).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8109">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -16541,6 +16961,18 @@
                     <visible>Container(8209).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
                 </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8209).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                </control>
                 <control type="fixedlist" id="8209">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
                     <onclick condition="Skin.HasSetting(nuvio.ok.episode.page) + String.IsEqual(ListItem.DBType,episode)">Action(Info)</onclick>
@@ -16956,6 +17388,22 @@
                     <top>8</top>
                     <visible>Container(8110).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8110).NumItems,0)</visible>
+                    <animation effect="zoom" start="115" end="115" center="0,40" time="0" condition="!Skin.HasSetting(lucent.posters.small)">Conditional</animation>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>288</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>536</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>784</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1032</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1280</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1528</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1776</left><top>16</top><width>220</width><height>330</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8110">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>
@@ -17492,6 +17940,18 @@
                     <top>8</top>
                     <visible>Container(8210).IsUpdating</visible>
                     <include content="Spinner"><param name="size">32</param></include>
+                </control>
+                <!-- 2.1.8: grey cards while the row loads, so it keeps its place (Kodi fills it a moment later) -->
+                <control type="group">
+                    <left>-40</left>
+                    <top>40</top>
+                    <visible>Integer.IsEqual(Container(8210).NumItems,0)</visible>
+                    <animation effect="fade" start="100" end="45" time="900" tween="sine" pulse="true" condition="true">Conditional</animation>
+                    <control type="image"><left>40</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>468</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>896</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1324</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
+                    <control type="image"><left>1752</left><top>16</top><width>400</width><height>225</height><texture border="14">rr14.png</texture><colordiffuse>14FFFFFF</colordiffuse></control>
                 </control>
                 <control type="fixedlist" id="8210">
                     <onclick condition="Skin.HasSetting(nuvio.ok.movie.page) + String.IsEqual(ListItem.DBType,movie) + String.IsEmpty(ListItem.Property(lucent_open))">Action(Info)</onclick>

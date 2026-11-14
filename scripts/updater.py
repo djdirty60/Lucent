@@ -45,6 +45,10 @@ T = {
     "done": ("{0} {1} installed", "{0} {1} is geïnstalleerd"),
     "failed": ("Update failed, Kodi will try it again by itself", "Bijwerken mislukt, Kodi probeert het zelf opnieuw"),
     "offline": ("Could not check for updates", "Kon niet op updates controleren"),
+    "restart_title": ("Restart Kodi", "Kodi herstarten"),
+    "restart_text": ("{0} has new texts. Kodi shows them after a restart; until then some settings may have no name.",
+                     "{0} heeft nieuwe teksten. Kodi laat die pas zien na een herstart; tot dan kunnen sommige instellingen zonder naam staan."),
+    "restart_now": ("Restart now", "Nu herstarten"),
 }
 
 
@@ -122,7 +126,15 @@ def fetch_available():
             continue
         for block in re.finditer(r'<addon\s[^>]*?id="([^"]+)"[^>]*?version="([^"]+)".*?</addon>', xml, re.S):
             news = re.search(r"<news>(.*?)</news>", block.group(0), re.S)
-            found.setdefault(block.group(1), (block.group(2), (news.group(1).strip() if news else ""), zips))
+            # 2.1.8: a <news lang="nl_NL"> in the language of Kodi wins (Lucent Video has Dutch notes); else <news>
+            lang = (xbmc.getLanguage(xbmc.ISO_639_1) or "").lower()[:2]
+            if lang:
+                for own in re.finditer(r'<news\s+lang="([a-zA-Z]{2})[^"]*">(.*?)</news>', block.group(0), re.S):
+                    if own.group(1).lower() == lang and own.group(2).strip():
+                        news = own
+                        break
+            text = (news.group(news.lastindex).strip() if news else "")
+            found.setdefault(block.group(1), (block.group(2), text, zips))
     return found
 
 
@@ -193,8 +205,24 @@ def download_zip(update):
     return target
 
 
+def _texts(folder):
+    """The text files of an add-on (resources/language/*/strings.po) and their contents, to see if they changed."""
+    out = {}
+    base = os.path.join(folder, "resources", "language")
+    for root, _dirs, files in os.walk(base):
+        for name in files:
+            if name.endswith(".po"):
+                try:
+                    with open(os.path.join(root, name), "rb") as fh:
+                        out[os.path.relpath(os.path.join(root, name), base)] = fh.read()
+                except OSError:
+                    pass
+    return out
+
+
 def unpack(update, zip_path):
-    """Replace the add-on folder by the one in the zip (the old one is kept until the new one is in place)."""
+    """Replace the add-on folder by the one in the zip (the old one is kept until the new one is in place).
+    Returns True when its texts changed: Kodi only reads those again after a restart (2.1.8)."""
     import shutil
     import zipfile
     addons = xbmcvfs.translatePath("special://home/addons/")
@@ -210,6 +238,7 @@ def unpack(update, zip_path):
         if f'version="{update["version"]}"' not in fh.read():
             raise RuntimeError("zip has another version")
     folder = os.path.join(addons, update["id"])
+    texts_changed = _texts(folder) != _texts(unpacked)
     backup = folder + ".old"
     shutil.rmtree(backup, ignore_errors=True)
     if os.path.isdir(folder):
@@ -222,15 +251,17 @@ def unpack(update, zip_path):
         raise
     shutil.rmtree(backup, ignore_errors=True)
     shutil.rmtree(staging, ignore_errors=True)
+    return texts_changed
 
 
 def install(update, monitor):
+    """Returns True when the add-on got new texts (then Kodi should restart to show them)."""
     progress = xbmcgui.DialogProgressBG()
     progress.create(HEADING, tr("busy", update["name"]))
     try:
         zip_path = download_zip(update)
         progress.update(60)
-        unpack(update, zip_path)
+        texts_changed = unpack(update, zip_path)
         try:
             os.remove(zip_path)
         except OSError:
@@ -240,7 +271,7 @@ def install(update, monitor):
         progress.close()
         xbmcgui.Dialog().notification(HEADING, tr("failed"), xbmcgui.NOTIFICATION_WARNING, 5000)
         xbmc.executebuiltin("UpdateAddonRepos")
-        return
+        return False
     progress.update(90)
     xbmc.executebuiltin("UpdateLocalAddons")             # Kodi reads the new addon.xml
     monitor.waitForAbort(3)
@@ -248,11 +279,21 @@ def install(update, monitor):
         restart(update["id"], monitor)
     progress.close()
     xbmcgui.Dialog().notification(HEADING, tr("done", update["name"], update["version"]), xbmcgui.NOTIFICATION_INFO, 5000)
-    if update["id"] == "skin.lucent":
-        monitor.waitForAbort(2)
-        xbmcgui.Window(10000).setProperty("lucent.helper.stop", "1")   # the running helper makes way for the new code
-        xbmcgui.Window(10000).clearProperty("nuvio.started")           # Home runs its start-up (and the new helper) again
-        xbmc.executebuiltin("ReloadSkin()")             # show the new version right away
+    # the skin reads its own texts again with ReloadSkin (check() does that last); other add-ons need a restart
+    return texts_changed and update["id"] != "skin.lucent"
+
+
+def reload_skin(monitor):
+    monitor.waitForAbort(2)
+    xbmcgui.Window(10000).setProperty("lucent.helper.stop", "1")   # the running helper makes way for the new code
+    xbmcgui.Window(10000).clearProperty("nuvio.started")           # Home runs its start-up (and the new helper) again
+    xbmc.executebuiltin("ReloadSkin()")             # show the new version right away
+
+
+def ask_restart(names):
+    """2.1.8: an add-on got new texts. Kodi only loads texts at start, so offer a restart (Restart now / Later)."""
+    return xbmcgui.Dialog().yesno(tr("restart_title"), tr("restart_text", " · ".join(names)),
+                                  nolabel=tr("later"), yeslabel=tr("restart_now"))
 
 
 def rpc(method, params):
@@ -300,14 +341,22 @@ def check(manual=False):
     if not manual and xbmc.getCondVisibility("Player.HasMedia | System.ScreenSaverActive | System.HasModalDialog"):
         return                                           # never interrupt a film, the screensaver or another dialog
     choice = ask(updates)
-    for update in updates:
+    new_texts, skin = [], False
+    for update in sorted(updates, key=lambda u: u["id"] == "skin.lucent"):     # the skin last (it reloads)
         if choice == "now":
-            install(update, monitor)
+            if install(update, monitor):
+                new_texts.append(update["name"])
+            skin = skin or update["id"] == "skin.lucent"
         elif choice == "skip":
             state.setdefault("skip", {})[update["id"]] = update["version"]
         else:
             state.setdefault("later", {})[update["id"]] = time.time() + 24 * 3600
     write_state(state)
+    if new_texts and ask_restart(new_texts):
+        xbmc.executebuiltin("RestartApp")
+        return
+    if skin:
+        reload_skin(monitor)
 
 if __name__ == "__main__":
     check(manual=True)

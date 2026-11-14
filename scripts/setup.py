@@ -79,7 +79,11 @@ def ac_welcome():
 def st_video():
     """Which video add-on fills the rows and plays: the video add-on works best, any other add-on works too."""
     if has(LV):
-        account = setting(LV, "trakt_user") or setting(LV, "simkl_user")
+        # 2.1.8: Trakt and Simkl can both be logged in (video add-on beta 1 update 23); the main account (tracker) first
+        names = [(n, setting(LV, key)) for n, key in (("Trakt", "trakt_user"), ("Simkl", "simkl_user")) if setting(LV, key)]
+        if setting(LV, "tracker") == "1":
+            names.reverse()
+        account = "  ·  ".join(f"{user} ({n})" for n, user in names) if len(names) > 1 else (names[0][1] if names else "")
         return "ok", t(f"Your video add-on is installed{'  ·  account: ' + account if account else ''}",
                        f"Je video-add-on staat erop{'  ·  account: ' + account if account else ''}")
     return "info", t("No video add-on for films and series yet", "Nog geen video-add-on voor films en series")

@@ -248,6 +248,7 @@ def run():
             xbmc.executebuiltin("Dialog.Close(videoosd)")
 
     settings_state = {"open": False}
+    sortflip = {"real": False}
 
     def addon_settings():
         """Add-on settings in three columns: remember which group is chosen and how many groups there are, for the
@@ -342,6 +343,8 @@ def run():
                 break
             now = time.time()
             if cond("Player.HasVideo"):
+                if not HOME.getProperty("nuvio.trailer.active") and not HOME.getProperty("nuvio.trailer.playing"):
+                    sortflip["real"] = True             # a real video, not a poster trailer
                 # a video plays: keep the box as quiet as possible (Dolby Vision FEL on small boxes needs all of it).
                 # Only the score in the TV player and closing the player menu; everything else waits until it stops.
                 for job in quick:
@@ -356,6 +359,14 @@ def run():
                 continue
             for job in quick:
                 job.maybe(now)
+            if sortflip["real"]:
+                # 2.1.8: rows are no longer 'unsorted' (Kodi reloaded those at every trailer); after a real video the
+                # sort switches between two that keep the order, so every row is read again once (Continue watching)
+                sortflip["real"] = False
+                if HOME.getProperty("lucent.sortflip"):
+                    HOME.clearProperty("lucent.sortflip")
+                else:
+                    HOME.setProperty("lucent.sortflip", "1")
             try:
                 rows_state(now)
             except Exception as error:  # noqa: BLE001
