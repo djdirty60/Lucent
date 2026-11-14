@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="skin.lucent" version="2.1.14" name="Lucent" provider-name="Claude">
+<addon id="skin.lucent" version="2.1.15" name="Lucent" provider-name="Wilfried van der Voort">
     <requires>
         <import addon="xbmc.gui" version="5.17.0"/>
         <import addon="plugin.video.youtube" version="6.8.0"/>
@@ -15,7 +15,8 @@
         <summary lang="nl_NL">Lucent - een cinematische glas-skin</summary>
         <description lang="en_GB">A dark, cinematic Kodi skin with glass panels and large backdrops. Works with every video add-on: any add-on folder can be a row on Home, with trailers on posters, a full info page, a calendar, sport and live TV.</description>
         <description lang="nl_NL">Een donkere, cinematische Kodi-skin met glazen panelen en grote achtergronden. Werkt met elke video-add-on: elke map van een add-on kan een rij op Home worden, met trailers op posters, een volledige infopagina, een kalender, sport en live tv.</description>
-        <news>2.1.14: The newest episode of a season that is still running is no longer called the season finale: Lucent only does that when TMDB marks the episode as the finale; otherwise it says Newest episode.
+        <news>2.1.15: Season finale only with a real mark (also when TMDB does not answer). Episodes to watch count the episode you are on. Lucent Video rows on Home refresh by themselves after watching. The on-screen keyboard opens on OK. Maker: Wilfried van der Voort. A log of the first seconds back on Home.
+2.1.14: The newest episode of a season that is still running is no longer called the season finale: Lucent only does that when TMDB marks the episode as the finale; otherwise it says Newest episode.
 2.1.13: The Up Next add-on's pop-ups (Up next and Still there?) in Lucent's own look: a dark card at the bottom right. When two series share a name (such as Millennium), Lucent picks the one whose episode aired on that date, so the episodes left are right. Streaming service tiles show one logo on a dark card.
 2.1.12: Episodes left and the series' scores on Home also work for add-ons that give an episode without the series' TMDB number (such as TMDb Movies): Lucent finds the series by its name.
 2.1.11: Episodes left next to the episode title no longer counts episodes that are not out yet (Newest episode · 2 still to come).
@@ -51,7 +52,7 @@
     </extension>
 </addon>
 
-<addon id="repository.lucent" name="Lucent Repository" version="1.0.3" provider-name="Claude">
+<addon id="repository.lucent" name="Lucent Repository" version="1.0.4" provider-name="Wilfried van der Voort">
     <requires>
         <import addon="xbmc.addon" version="12.0.0"/>
     </requires>
@@ -70,7 +71,8 @@
         </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <news>1.0.3: New, sharper icon (blue, with a download arrow).
+        <news>1.0.4: Maker shown as Wilfried van der Voort.
+1.0.3: New, sharper icon (blue, with a download arrow).
 1.0.2: Also reads the separate folder of the video add-on.</news>
         <summary lang="en_GB">Updates for the Lucent skin and its video add-on</summary>
         <summary lang="nl_NL">Updates voor de Lucent-skin en de video add-on</summary>
@@ -85,7 +87,7 @@
     </extension>
 </addon>
 
-<addon id="screensaver.lucent" version="1.1.3" name="Lucent Screensaver" provider-name="Claude">
+<addon id="screensaver.lucent" version="1.1.4" name="Lucent Screensaver" provider-name="Wilfried van der Voort">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
@@ -101,13 +103,14 @@
             <icon>resources/icon.png</icon>
             <fanart>resources/fanart.jpg</fanart>
         </assets>
-        <news>1.1.3: My Trakt watchlist uses the Trakt login of the skin (Skin settings > Follow > Trakt login); no more look-ups of an add-on that is not installed.
+        <news>1.1.4: Maker shown as Wilfried van der Voort.
+1.1.3: My Trakt watchlist uses the Trakt login of the skin (Skin settings > Follow > Trakt login); no more look-ups of an add-on that is not installed.
 1.1.2: New, sharper icon (indigo, with stars).
 1.1.0: new choice My Trakt watchlist: your watchlist films and series, with the year and where you can watch them (Netflix, Videoland, ...). 1.0.1: slow zoom and drift of the picture (Netflix style). 1.0.0: first version.</news>
     </extension>
 </addon>
 
-<addon id="service.subtitles.lucent" version="1.0.5" name="Lucent Subtitles" provider-name="Claude">
+<addon id="service.subtitles.lucent" version="1.0.6" name="Lucent Subtitles" provider-name="Wilfried van der Voort">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
@@ -119,7 +122,8 @@
         <description lang="nl_NL">Gemaakt voor de Lucent-skin. Vraagt alle bronnen tegelijk met een tijdslimiet, herkent ondertitels die precies bij je video passen (bestands-hash en releasenaam) en bewaart ze als UTF-8 zodat accenten goed staan. Nodig: een gratis OpenSubtitles-account met API-sleutel en een gratis SubDL-API-sleutel (instellingen van de add-on); Podnapisi werkt zonder account.</description>
         <platform>all</platform>
         <license>MIT</license>
-        <news>1.0.5: New, sharper icon (turquoise, with subtitle lines).
+        <news>1.0.6: Maker shown as Wilfried van der Voort.
+1.0.5: New, sharper icon (turquoise, with subtitle lines).
 1.0.4: The settings follow Kodi's language (English or Dutch); before they were only in Dutch. 1.0.3: Lucent can ask for another video than the one playing (the next episode, a video on the wish list). 1.0.2: Episodes are found again when the player (for example Seren) gives the series id as the episode id: OpenSubtitles and SubDL are asked in several ways, and results for other episodes are left out. 1.0.1: No longer opens the film stream a second time to compute the OpenSubtitles hash for internet streams (debrid / IPTV): that could stop the film. 1.0.0: First version.</news>
         <assets>
             <icon>icon.png</icon>
