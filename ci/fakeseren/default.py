@@ -49,8 +49,9 @@ if kind == "svc":
         items.append((f"plugin://plugin.video.fakeseren/?list=fast&svc={i}", li, False))
     xbmcplugin.addDirectoryItems(handle, items, len(items))
     xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
-elif kind in ("sm", "ss", "se", "th"):
-    TH = kind == "th"                         # #19: episodes like TMDb Helper sends them (tvshow.tmdb_id, no Lucent properties)
+elif kind in ("sm", "ss", "se", "th", "thn"):
+    TH = kind in ("th", "thn")
+    NOID = kind == "thn"                      # 2.1.12: like TMDb Movies, no tvshow.tmdb_id at all                         # #19: episodes like TMDb Helper sends them (tvshow.tmdb_id, no Lucent properties)
     kind = "se" if TH else kind
     items = []
     for i, title in enumerate(SHOW):
@@ -77,7 +78,7 @@ elif kind in ("sm", "ss", "se", "th"):
                 tag.setEpisode(1)
             if i == 3:
                 tag.setPlaycount(1)
-            if TH:
+            if TH and not NOID:
                 li.setProperty("tvshow.tmdb_id", str(1399 + i))
             if i == 1 and not TH:
                 li.setProperty("lucent.season.finale", "1")

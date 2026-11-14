@@ -326,6 +326,9 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid="", state=None, prefix="lucent.omd
                     TMDB_IMDB[f"db:{kind}:{dbid}"] = got
             imdb_id, tmdb_id = got
             tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
+        if not imdb_id and tmdb_id.startswith("title:"):
+            import seasoninfo
+            tmdb_id = seasoninfo.show_by_title(tmdb_id[6:])
         if not imdb_id and tmdb_id:
             imdb_id = TMDB_IMDB.get(f"{kind}:{tmdb_id}")
             if imdb_id is None:
@@ -428,13 +431,19 @@ def home_tick():
         imdb_id = label(pre + "Property(tvshow.imdb_id)")
         tmdb_id = label(pre + "Property(tvshow.tmdb_id)") or label(pre + "UniqueID(tmdbshow)")
         dbid = label(pre + "TvShowDBID")
+        if not imdb_id.startswith("tt") and not tmdb_id.isdigit() and not dbid.isdigit():
+            # 2.1.12 (#19): an episode without the series' numbers (TMDb Movies): find the series by its title
+            import seasoninfo
+            tmdb_id = seasoninfo.SHOWS.get(label(pre + "TVShowTitle").strip(), "")
+            if not tmdb_id and label(pre + "TVShowTitle"):
+                tmdb_id = "title:" + label(pre + "TVShowTitle")
     else:
         kind = "tvshow" if dbtype == "tvshow" else "movie"
         imdb_id = label(pre + "UniqueID(imdb)") or label(pre + "IMDBNumber") or label(pre + "Property(imdb_id)")
         tmdb_id = label(pre + "UniqueID(tmdb)") or label(pre + "Property(tmdb_id)")
         dbid = label(pre + "DBID") if dbtype in ("movie", "tvshow") else ""
     imdb_id = imdb_id if imdb_id.startswith("tt") else ""
-    tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
+    tmdb_id = tmdb_id if tmdb_id.isdigit() or tmdb_id.startswith("title:") else ""
     dbid = dbid if dbid.isdigit() else ""
     ident = imdb_id or (f"tmdb:{kind}:{tmdb_id}" if tmdb_id else "") or (f"db:{kind}:{dbid}" if dbid else "")
     now = time.time()

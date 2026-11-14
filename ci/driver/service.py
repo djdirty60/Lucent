@@ -5522,7 +5522,7 @@ def thcount_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
-    for k, v in (("label", "Afleveringen"), ("w1.label", "Up next"), ("w1.path", "plugin://plugin.video.fakeseren/?list=th"), ("w1.style", "poster")):
+    for k, v in (("label", "Afleveringen"), ("w1.label", "Up next"), ("w1.path", "plugin://plugin.video.fakeseren/?list=thn"), ("w1.style", "poster")):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
     xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w2.path)")
     out["helper_before"] = HOME.getProperty("lucent.helper")
