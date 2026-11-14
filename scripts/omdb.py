@@ -328,7 +328,8 @@ def _fill(ident, imdb_id, tmdb_id, kind, dbid="", state=None, prefix="lucent.omd
             tmdb_id = tmdb_id if tmdb_id.isdigit() else ""
         if not imdb_id and tmdb_id.startswith("title:"):
             import seasoninfo
-            tmdb_id = seasoninfo.show_by_title(tmdb_id[6:])
+            name, season, episode, aired = (tmdb_id[6:].split("|") + ["", "", ""])[:4]
+            tmdb_id = seasoninfo.show_by_title(name, int(season or 0), int(episode or 0), aired)
         if not imdb_id and tmdb_id:
             imdb_id = TMDB_IMDB.get(f"{kind}:{tmdb_id}")
             if imdb_id is None:
@@ -434,9 +435,9 @@ def home_tick():
         if not imdb_id.startswith("tt") and not tmdb_id.isdigit() and not dbid.isdigit():
             # 2.1.12 (#19): an episode without the series' numbers (TMDb Movies): find the series by its title
             import seasoninfo
-            tmdb_id = seasoninfo.SHOWS.get(label(pre + "TVShowTitle").strip(), "")
-            if not tmdb_id and label(pre + "TVShowTitle"):
-                tmdb_id = "title:" + label(pre + "TVShowTitle")
+            aired = seasoninfo._iso(label(pre + "Premiered") or label(pre + "Date"))
+            if label(pre + "TVShowTitle"):
+                tmdb_id = "title:" + "|".join((label(pre + "TVShowTitle"), label(pre + "Season"), label(pre + "Episode"), aired))
     else:
         kind = "tvshow" if dbtype == "tvshow" else "movie"
         imdb_id = label(pre + "UniqueID(imdb)") or label(pre + "IMDBNumber") or label(pre + "Property(imdb_id)")

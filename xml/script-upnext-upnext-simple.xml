@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent 2.1.13: the Up Next add-on's pop-up (Up next, without picture) in the skin's own look: a dark card
+     at the bottom right. Up Next fills the Window.Property values and uses the ids 3012 (play), 3013 (close / stop),
+     3014 (countdown bar) and 3015 (shuffle). -->
+<window>
+    <defaultcontrol always="true">3012</defaultcontrol>
+    <onload>Dialog.Close(fullscreeninfo,true)</onload>
+    <onload>Dialog.Close(videoosd,true)</onload>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="slide" start="0,40" end="0,0" time="260" tween="cubic" easing="out">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="160">WindowClose</animation>
+    <controls>
+        <control type="group">
+            <left>1176</left>
+            <top>679</top>
+            <control type="image">
+                <left>-24</left>
+                <top>-14</top>
+                <width>728</width>
+                <height>385</height>
+                <texture border="44">rr20_glow.png</texture>
+                <colordiffuse>73000000</colordiffuse>
+            </control>
+            <control type="image">
+                <left>0</left>
+                <top>0</top>
+                <width>680</width>
+                <height>337</height>
+                <texture border="20">rr20.png</texture>
+                <colordiffuse>F516181E</colordiffuse>
+            </control>
+            <control type="label">
+                <left>32</left>
+                <top>34</top>
+                <width>616</width>
+                <height>30</height>
+                <font>font_caps</font>
+                <textcolor>text2</textcolor>
+                <label>[UPPERCASE]$ADDON[service.upnext 30008]$INFO[Window.Property(remaining), · , s][/UPPERCASE]</label>
+            </control>
+            <control type="label">
+                <left>32</left>
+                <top>70</top>
+                <width>616</width>
+                <height>50</height>
+                <font>font36</font>
+                <textcolor>text</textcolor>
+                <label>$VAR[LucentUpNextTitle]</label>
+            </control>
+            <control type="label">
+                <left>32</left>
+                <top>124</top>
+                <width>616</width>
+                <height>38</height>
+                <font>font13_bold</font>
+                <textcolor>text</textcolor>
+                <label>$INFO[Window.Property(season),S, · ]$INFO[Window.Property(episode),E,  ]$INFO[Window.Property(title)]</label>
+                <visible>!String.IsEmpty(Window.Property(tvshowtitle))</visible>
+            </control>
+            <control type="label">
+                <left>32</left>
+                <top>164</top>
+                <width>616</width>
+                <height>34</height>
+                <font>font12</font>
+                <textcolor>text2</textcolor>
+                <label>$INFO[Window.Property(rating),★ ,   ·   ]$INFO[Window.Property(year),,   ·   ]$ADDON[service.upnext 30009]</label>
+                <visible>!String.IsEmpty(Window.Property(endtime))</visible>
+            </control>
+            <control type="label">
+                <left>32</left>
+                <top>164</top>
+                <width>616</width>
+                <height>34</height>
+                <font>font12</font>
+                <textcolor>text2</textcolor>
+                <label>$INFO[Window.Property(rating),★ ,   ·   ]$INFO[Window.Property(year)]</label>
+                <visible>String.IsEmpty(Window.Property(endtime))</visible>
+            </control>
+            <control type="progress" id="3014">
+                <left>32</left>
+                <top>209</top>
+                <width>616</width>
+                <height>6</height>
+                <texturebg colordiffuse="2EFFFFFF">white.png</texturebg>
+                <lefttexture></lefttexture>
+                <midtexture>white.png</midtexture>
+                <righttexture></righttexture>
+            </control>
+            <control type="grouplist" id="9000">
+                <left>32</left>
+                <top>233</top>
+                <width>616</width>
+                <height>72</height>
+                <orientation>horizontal</orientation>
+                <itemgap>16</itemgap>
+                <control type="button" id="3012">
+                    <width>auto</width>
+                    <height>72</height>
+                    <font>font13_bold</font>
+                    <textoffsetx>34</textoffsetx>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>text</textcolor>
+                    <focusedcolor>text</focusedcolor>
+                    <texturefocus border="22">rr20_btnfocus.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus>
+                    <label>$ADDON[service.upnext 30006]</label>
+                </control>
+                <control type="button" id="3013">
+                    <width>auto</width>
+                    <height>72</height>
+                    <font>font13_bold</font>
+                    <textoffsetx>34</textoffsetx>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>text</textcolor>
+                    <focusedcolor>text</focusedcolor>
+                    <texturefocus border="22">rr20_btnfocus.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus>
+                    <label>$INFO[Window.Property(stop_close_label)]</label>
+                </control>
+                <control type="togglebutton" id="3015">
+                    <width>auto</width>
+                    <height>72</height>
+                    <font>font13_bold</font>
+                    <textoffsetx>34</textoffsetx>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>text</textcolor>
+                    <focusedcolor>text</focusedcolor>
+                    <texturefocus border="22">rr20_btnfocus.png</texturefocus>
+                    <texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus>
+                    <alttexturefocus border="22">rr20_btnfocus.png</alttexturefocus>
+                    <alttexturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</alttexturenofocus>
+                    <label>$LOCALIZE[191]</label>
+                    <altlabel>$LOCALIZE[191]  ✓</altlabel>
+                    <usealttexture>String.IsEqual(Window.Property(shuffle_on),True)</usealttexture>
+                    <visible>String.IsEqual(Window.Property(shuffle_enable),True)</visible>
+                </control>
+            </control>
+        </control>
+    </controls>
+</window>
