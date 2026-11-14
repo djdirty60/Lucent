@@ -6,7 +6,7 @@ The newest versions come from resources/whatsnew.json (a heading and an icon per
 Older versions come from addon.xml's <news> (English) or resources/changelog_nl.txt (Dutch); their text is split
 into headings where it says 'Heading: ...'.
 2.1.8: the updates of your video add-on are in the same list (its resources/whatsnew.json, when it is installed), by
-date and with a 'Video add-on' label; without that file the window is as before.
+date and with a label with the add-on's name; without that file the window is as before.
 """
 import html
 import json
@@ -19,6 +19,10 @@ import xbmcvfs
 
 SKIN = "special://skin/"
 VIDEO_NEWS = "special://home/addons/plugin.video.lucent/resources/whatsnew.json"
+
+
+def video_name():
+    return xbmc.getInfoLabel("System.AddonTitle(plugin.video.lucent)") or "Lucent Video"
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 MONTHS_NL = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
 MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -174,7 +178,7 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
             li = xbmcgui.ListItem(e["v"], " · ".join(x for x in (e["short"], count_word(len(e["items"]))) if x))
             li.setProperty("tag", e["tag"])
             if e.get("video"):
-                li.setProperty("vid", t("Video add-on", "Video-add-on"))
+                li.setProperty("vid", video_name())
             rows.append(li)
         lst = self.getControl(100)
         lst.reset()
@@ -205,7 +209,7 @@ class WhatsNew(xbmcgui.WindowXMLDialog):
             return
         e = self.data[pos]
         self.shown = pos
-        self.setProperty("wn.title", f"{t('Video add-on', 'Video-add-on')} · {e['v']}" if e.get("video") else f"Lucent {e['v']}")
+        self.setProperty("wn.title", f"{video_name()} · {e['v']}" if e.get("video") else f"Lucent {e['v']}")
         self.setProperty("wn.tag", e["tag"])
         self.setProperty("wn.sub", " · ".join(x for x in (e["long"], count_word(len(e["items"]))) if x))
         items = []
@@ -264,7 +268,7 @@ class Item(xbmcgui.WindowXMLDialog):
         icon, head, text, extra = items[self.pos]
         more = extra.get("more_nl" if NL else "more_en") or text
         steps = extra.get("steps_nl" if NL else "steps_en") or []
-        name = f"{t('Video add-on', 'Video-add-on')} · {self.version['v']}" if self.version.get("video") else f"Lucent {self.version['v']}"
+        name = f"{video_name()} · {self.version['v']}" if self.version.get("video") else f"Lucent {self.version['v']}"
         self.setProperty("wi.ver", name + (f"  ·  {self.version['long']}" if self.version.get("long") else ""))
         self.setProperty("wi.head", head)
         self.setProperty("wi.text", more)
