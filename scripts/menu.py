@@ -168,6 +168,9 @@ WIDGETS_LIBRARY = [                               # the Kodi library (works with
     (("Random movies", "Willekeurige films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="random"), "poster"),
     (("Unwatched movies", "Niet bekeken films"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("playcount", "is", "0")], order="dateadded"), "poster"),
     (("Movies in progress", "Films die je kijkt"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
+    # 2.1.17: one row with the new episodes of your library first and then where you stopped (any add-on that fills
+    # the library: NLZiet, Videoland, Lucent Video ...); the skin makes it itself (scripts/plugin.py)
+    (("Episodes · New and continue", "Afleveringen · Nieuw en verder kijken"), "plugin://skin.lucent/?list=lib_continue_new", "land"),
     (("Episodes in progress", "Afleveringen die je kijkt"), "videodb://tvshows/titles/-1/-1/-1/?xsp=" + xsp("episodes", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
     (("Top rated movies", "Best beoordeelde films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="rating"), "poster"),
     (("Random shows", "Willekeurige series"), "videodb://tvshows/titles/?xsp=" + xsp("tvshows", order="random"), "poster"),
