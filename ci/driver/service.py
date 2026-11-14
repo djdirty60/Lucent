@@ -5885,6 +5885,106 @@ def lvreload_test():
     log("lvreload: " + json.dumps(out))
 
 
+def aboutback_test():
+    """2.1.15: back from the About part of Lucent's settings, then the side menu on Home no longer reacts (Wilfried)."""
+    out = {}
+    def home_state(tag):
+        st = {"win": lab("System.CurrentWindow"), "focus": lab("System.CurrentControlID"), "menu": lab("Container(9000).CurrentItem"),
+              "label": lab("Container(9000).ListItem.Label"), "modal": cond("System.HasVisibleModalDialog")}
+        out[tag] = st
+        shot("aboutback-" + tag)
+        return st
+    for variant in ("menu", "list", "dialog"):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Control.SetFocus(9000,0)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("ActivateWindow(settings)")
+        mon.waitForAbort(3)
+        found = -1
+        for i in range(20):
+            xbmc.executebuiltin(f"Control.SetFocus(9000,{i},absolute)")
+            mon.waitForAbort(0.4)
+            if xbmc.getInfoLabel("Container(9000).ListItem.Property(cat)") == "about":
+                found = i
+                break
+        out[variant + "_aboutpos"] = found
+        if variant in ("list", "dialog"):
+            xbmc.executebuiltin("Action(Right)")
+            mon.waitForAbort(1.5)
+        if variant == "dialog":
+            xbmc.executebuiltin("Action(Select)")
+            mon.waitForAbort(3)
+            out["dialog_open"] = [lab("System.CurrentWindow"), cond("System.HasVisibleModalDialog")]
+            shot("aboutback-dialog-open")
+            xbmc.executebuiltin("Action(Back)")
+            mon.waitForAbort(2)
+        home_state(variant + "_in_settings")
+        for n in range(3):
+            if lab("System.CurrentWindow") == "Home":
+                break
+            xbmc.executebuiltin("Action(Back)")
+            mon.waitForAbort(2)
+        home_state(variant + "_back")
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.5)
+        home_state(variant + "_down1")
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1.5)
+        home_state(variant + "_down2")
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(2)
+        home_state(variant + "_right")
+    log("aboutback: " + json.dumps(out))
+    menuback_part()
+
+
+def menuback_part():
+    """Wilfried: coming back from a menu it often takes a while before Home reacts, or it needs one more Back. For each
+    window: open it from Home, press Back once, then press Down every 0.5 s until the side menu moves. Logs how many
+    Backs were needed to reach Home and how long until Home reacted."""
+    res = []
+    targets = [("settings", "ActivateWindow(settings)"), ("skinsettings", "ActivateWindow(skinsettings)"),
+               ("systemsettings", "ActivateWindow(systemsettings)"), ("addons", "ActivateWindow(addonbrowser)"),
+               ("folder", "ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=fast2,return)"),
+               ("whatsnew", "RunScript(special://skin/scripts/whatsnew.py)"), ("favourites", "ActivateWindow(favouritesbrowser)"),
+               ("systeminfo", "ActivateWindow(systeminfo)"), ("filemanager", "ActivateWindow(filemanager)")]
+    for name, action in targets:
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Control.SetFocus(9000,0)")
+        mon.waitForAbort(1)
+        xbmc.executebuiltin(action)
+        mon.waitForAbort(4)
+        opened = lab("System.CurrentWindow")
+        backs = 0
+        t0 = time.time()
+        while backs < 4:
+            xbmc.executebuiltin("Action(Back)")
+            backs += 1
+            mon.waitForAbort(1.2)
+            if lab("System.CurrentWindow") == "Home" and not cond("System.HasVisibleModalDialog"):
+                break
+        at_home = round(time.time() - t0, 1)
+        before = (lab("System.CurrentControlID"), lab("Container(9000).CurrentItem"))
+        reacted = None
+        t1 = time.time()
+        while time.time() - t1 < 12:
+            xbmc.executebuiltin("Action(Down)")
+            mon.waitForAbort(0.5)
+            now = (lab("System.CurrentControlID"), lab("Container(9000).CurrentItem"))
+            if now != before and now[0]:
+                reacted = round(time.time() - t1, 1)
+                break
+        res.append({"name": name, "opened": opened, "backs": backs, "home_after_s": at_home, "focus_before": before,
+                    "react_s": reacted, "focus_after": [lab("System.CurrentControlID"), lab("Container(9000).CurrentItem")]})
+        shot("menuback-" + name)
+        log("menuback step: " + json.dumps(res[-1]))
+    log("menuback: " + json.dumps(res))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10908,6 +11008,7 @@ def main():
     safe(upnext_test)
     safe(finalecheck_test)
     safe(lvreload_test)
+    safe(aboutback_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
