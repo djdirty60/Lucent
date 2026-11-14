@@ -329,6 +329,9 @@
         <value>$INFO[Container(9000).ListItem.Property(w10.bg)]</value>
     </variable>
     <variable name="NuvioW1Path">
+        <!-- 2.1.15: a row of the video add-on loads again by itself when the add-on says it has new content -->
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w1.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w1.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w1.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w1.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w1.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w1.path)]</value>
     </variable>
@@ -337,6 +340,8 @@
         <value>$INFO[Container(9000).ListItem.Property(w2.label)]</value>
     </variable>
     <variable name="NuvioW2Path">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w2.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w2.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w2.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w2.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w2.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w2.path)]</value>
     </variable>
@@ -345,6 +350,8 @@
         <value>$INFO[Container(9000).ListItem.Property(w3.label)]</value>
     </variable>
     <variable name="NuvioW3Path">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w3.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w3.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w3.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w3.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w3.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w3.path)]</value>
     </variable>
@@ -353,6 +360,8 @@
         <value>$INFO[Container(9000).ListItem.Property(w4.label)]</value>
     </variable>
     <variable name="NuvioW4Path">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w4.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w4.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w4.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w4.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w4.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w4.path)]</value>
     </variable>
@@ -361,6 +370,8 @@
         <value>$INFO[Container(9000).ListItem.Property(w5.label)]</value>
     </variable>
     <variable name="NuvioW5Path">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w5.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w5.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w5.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w5.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w5.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w5.path)]</value>
     </variable>
@@ -369,6 +380,8 @@
         <value>$INFO[Container(9000).ListItem.Property(w6.label)]</value>
     </variable>
     <variable name="NuvioW6Path">
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w6.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w6.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w6.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w6.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w6.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w6.path)]</value>
     </variable>
@@ -378,6 +391,8 @@
     </variable>
     <variable name="NuvioW7Path">
         <value condition="Skin.HasSetting(lucent.lite)"></value>
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w7.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w7.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w7.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w7.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w7.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w7.path)]</value>
     </variable>
@@ -387,6 +402,8 @@
     </variable>
     <variable name="NuvioW8Path">
         <value condition="Skin.HasSetting(lucent.lite)"></value>
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w8.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w8.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w8.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w8.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w8.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w8.path)]</value>
     </variable>
@@ -396,6 +413,8 @@
     </variable>
     <variable name="NuvioW9Path">
         <value condition="Skin.HasSetting(lucent.lite)"></value>
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w9.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w9.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w9.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w9.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w9.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w9.path)]</value>
     </variable>
@@ -405,6 +424,8 @@
     </variable>
     <variable name="NuvioW10Path">
         <value condition="Skin.HasSetting(lucent.lite)"></value>
+        <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w10.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w10.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
+        <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w10.path),plugin://plugin.video.lucent/)">$INFO[Container(9000).ListItem.Property(w10.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w10.path)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w10.path)]</value>
     </variable>
@@ -569,10 +590,8 @@
         <value>$INFO[ListItem.Thumb]</value>
     </variable>
     <variable name="LucentForYouPath">
-        <value condition="!String.IsEmpty(Window(home).Property(lucent.fy.lv))">plugin://plugin.video.lucent/?action=list&amp;name=foryou&amp;widget=1</value>
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.fy.lv))">plugin://plugin.video.lucent/?action=list&amp;name=foryou&amp;widget=1&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
     </variable>
-    <!-- 2.1.13: a streaming service tile is always one logo on a calm dark card: the skin's own logo, else the service's
-         wide logo, else its icon (a tile with its own picture and a logo on top showed two logos) -->
     <!-- 2.1.13: the Up Next add-on's pop-up (xml/script-upnext-*.xml) -->
     <variable name="LucentUpNextArt">
         <value condition="!String.IsEmpty(Window.Property(thumb))">$INFO[Window.Property(thumb)]</value>
@@ -583,6 +602,8 @@
         <value condition="!String.IsEmpty(Window.Property(tvshowtitle))">$INFO[Window.Property(tvshowtitle)]</value>
         <value>$INFO[Window.Property(title)]</value>
     </variable>
+    <!-- 2.1.13: a streaming service tile is always one logo on a calm dark card: the skin's own logo, else the service's
+         wide logo, else its icon (a tile with its own picture and a logo on top showed two logos) -->
     <variable name="LucentSvcLogo">
         <value condition="!String.IsEmpty(ListItem.Property(svclogo))">$INFO[ListItem.Property(svclogo)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>

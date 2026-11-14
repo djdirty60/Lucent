@@ -5849,6 +5849,42 @@ def finalecheck_test():
     log("finalecheck: " + json.dumps(out))
 
 
+def lvreload_test():
+    """2.1.15: a row of the video add-on gets &reload=<Home property lucent.video.widgets> in its address, so Kodi loads
+    it again when the add-on says it changed. Other rows keep their own address."""
+    import re as _re
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    lv = "plugin://plugin.video.lucent/?action=list&widget=1&name=popular_movie"
+    for k, v in (("label", "LV test"), ("w1.label", "LV rij"), ("w1.path", lv), ("w1.style", "poster"),
+                 ("w2.label", "Andere rij"), ("w2.path", "plugin://plugin.video.fakeseren/?list=fast2"), ("w2.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    HOME.setProperty("lucent.video.widgets", "111")
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(31)
+    t0 = time.strftime("%H:%M:%S")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(8)
+    out["lv_path_1"] = lab("Container(8101).FolderPath")
+    out["other_path"] = lab("Container(8201).FolderPath")
+    out["focus_1"] = lab("System.CurrentControlID")
+    HOME.setProperty("lucent.video.widgets", "222")
+    mon.waitForAbort(6)
+    out["lv_path_2"] = lab("Container(8101).FolderPath")
+    out["focus_2"] = lab("System.CurrentControlID")
+    shot("lvreload")
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            lines = fh.read().splitlines()
+        out["provider"] = [ln[11:][:230] for ln in lines if ln[11:19] >= t0 and "CDirectoryProvider[" in ln and ("lucent" in ln or "fast2" in ln)][-12:]
+    except Exception as error:  # noqa: BLE001
+        out["provider"] = str(error)
+    log("lvreload: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10871,6 +10907,7 @@ def main():
     safe(settingsback_test)
     safe(upnext_test)
     safe(finalecheck_test)
+    safe(lvreload_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
