@@ -10561,6 +10561,9 @@ def svctiles_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("Dialog.Close(all,true)")
+    if not HOME.getProperty("lucent.helper"):              # rows on Home need the skin's helper
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(31)
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
     for _ in range(10):
