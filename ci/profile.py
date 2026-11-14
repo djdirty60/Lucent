@@ -95,6 +95,9 @@ elif stage == "enable":
             v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (902, 902, 1)")
             v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (903, 904, 'One', '1', '1', 902, 902)")
             v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (904, 905, 'Two', '1', '2', 902, 902)")
+            import datetime as _dt                   # 2.1.17: 'Two' aired 5 days ago (new), 'Second' long ago
+            v.execute("UPDATE episode SET c05=? WHERE idEpisode=904", ((_dt.date.today() - _dt.timedelta(days=5)).isoformat(),))
+            v.execute("UPDATE episode SET c05='2025-01-01' WHERE idEpisode=902")
             # 1.34.18 media flags (issue #9): stream details like Kodi stores them after a scan
             try:
                 cols = [r[1] for r in v.execute("PRAGMA table_info(streamdetails)")]

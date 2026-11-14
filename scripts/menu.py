@@ -168,6 +168,15 @@ WIDGETS_LIBRARY = [                               # the Kodi library (works with
     (("Random movies", "Willekeurige films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="random"), "poster"),
     (("Unwatched movies", "Niet bekeken films"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("playcount", "is", "0")], order="dateadded"), "poster"),
     (("Movies in progress", "Films die je kijkt"), "videodb://movies/titles/?xsp=" + xsp("movies", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
+    # 2.1.17: one row with where you stopped and the new episodes of your library (any add-on that fills the library:
+    # NLZiet, Videoland, Lucent Video ...): half-watched episodes first (last watched first), then unwatched episodes
+    # that aired in the last 30 days
+    (("Episodes · Continue and new", "Afleveringen · Verder kijken en nieuw"), "videodb://tvshows/titles/-1/-1/-1/?xsp=" + urllib.parse.quote(json.dumps(
+        {"type": "episodes", "order": {"direction": "descending", "method": "lastplayed"},
+         "rules": {"or": [{"field": "inprogress", "operator": "true", "value": []},
+                          {"and": [{"field": "playcount", "operator": "is", "value": ["0"]},
+                                   {"field": "airdate", "operator": "inthelast", "value": ["30 days"]}]}]}},
+        separators=(",", ":"))), "land"),
     (("Episodes in progress", "Afleveringen die je kijkt"), "videodb://tvshows/titles/-1/-1/-1/?xsp=" + xsp("episodes", rules=[("inprogress", "true", "")], order="lastplayed"), "land"),
     (("Top rated movies", "Best beoordeelde films"), "videodb://movies/titles/?xsp=" + xsp("movies", order="rating"), "poster"),
     (("Random shows", "Willekeurige series"), "videodb://tvshows/titles/?xsp=" + xsp("tvshows", order="random"), "poster"),

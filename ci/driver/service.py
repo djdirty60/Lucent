@@ -6021,6 +6021,19 @@ def towatch_test():
     log("towatch: " + json.dumps(out))
 
 
+def libnew_test():
+    """2.1.17: the library row 'Episodes - continue and new': half-watched episodes and unwatched ones that aired in the
+    last 30 days, from any add-on's library. Expected: Pilot (half watched) and Two (new), not Second (old) or One (seen)."""
+    sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    import menu as _menu
+    path = next(p for label, p, style in _menu.WIDGETS_LIBRARY if isinstance(label, tuple) and label[0].startswith("Episodes · Continue and new"))
+    r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                                    "params": {"directory": path, "media": "video", "properties": ["showtitle", "lastplayed", "firstaired", "playcount", "resume"]}})))
+    files = (r.get("result") or {}).get("files") or []
+    log("libnew: " + json.dumps({"error": r.get("error"), "items": [[f.get("label"), f.get("showtitle"), f.get("firstaired"), f.get("playcount"),
+                                                                     (f.get("resume") or {}).get("position")] for f in files]}))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11046,6 +11059,7 @@ def main():
     safe(lvreload_test)
     safe(aboutback_test)
     safe(towatch_test)
+    safe(libnew_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
