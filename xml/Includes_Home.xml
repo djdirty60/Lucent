@@ -1282,26 +1282,33 @@
                     <label>$INFO[Container(8101).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8101).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8101).ListItem.DBType,episode) | [!String.IsEmpty(Container(8101).ListItem.Episode) + Integer.IsGreater(Container(8101).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8101).ListItem.DBType,episode) | [!String.IsEmpty(Container(8101).ListItem.Episode) + Integer.IsGreater(Container(8101).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8101).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8101).ListItem.DBType,episode) | [!String.IsEmpty(Container(8101).ListItem.Episode) + Integer.IsGreater(Container(8101).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -1632,26 +1639,33 @@
                     <label>$INFO[Container(8201).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8201).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8201).ListItem.DBType,episode) | [!String.IsEmpty(Container(8201).ListItem.Episode) + Integer.IsGreater(Container(8201).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8201).ListItem.DBType,episode) | [!String.IsEmpty(Container(8201).ListItem.Episode) + Integer.IsGreater(Container(8201).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8201).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8201).ListItem.DBType,episode) | [!String.IsEmpty(Container(8201).ListItem.Episode) + Integer.IsGreater(Container(8201).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -1982,26 +1996,33 @@
                     <label>$INFO[Container(8102).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8102).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8102).ListItem.DBType,episode) | [!String.IsEmpty(Container(8102).ListItem.Episode) + Integer.IsGreater(Container(8102).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8102).ListItem.DBType,episode) | [!String.IsEmpty(Container(8102).ListItem.Episode) + Integer.IsGreater(Container(8102).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8102).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8102).ListItem.DBType,episode) | [!String.IsEmpty(Container(8102).ListItem.Episode) + Integer.IsGreater(Container(8102).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -2332,26 +2353,33 @@
                     <label>$INFO[Container(8202).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8202).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8202).ListItem.DBType,episode) | [!String.IsEmpty(Container(8202).ListItem.Episode) + Integer.IsGreater(Container(8202).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8202).ListItem.DBType,episode) | [!String.IsEmpty(Container(8202).ListItem.Episode) + Integer.IsGreater(Container(8202).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8202).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8202).ListItem.DBType,episode) | [!String.IsEmpty(Container(8202).ListItem.Episode) + Integer.IsGreater(Container(8202).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -2682,26 +2710,33 @@
                     <label>$INFO[Container(8103).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8103).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8103).ListItem.DBType,episode) | [!String.IsEmpty(Container(8103).ListItem.Episode) + Integer.IsGreater(Container(8103).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8103).ListItem.DBType,episode) | [!String.IsEmpty(Container(8103).ListItem.Episode) + Integer.IsGreater(Container(8103).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8103).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8103).ListItem.DBType,episode) | [!String.IsEmpty(Container(8103).ListItem.Episode) + Integer.IsGreater(Container(8103).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -3032,26 +3067,33 @@
                     <label>$INFO[Container(8203).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8203).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8203).ListItem.DBType,episode) | [!String.IsEmpty(Container(8203).ListItem.Episode) + Integer.IsGreater(Container(8203).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8203).ListItem.DBType,episode) | [!String.IsEmpty(Container(8203).ListItem.Episode) + Integer.IsGreater(Container(8203).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8203).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8203).ListItem.DBType,episode) | [!String.IsEmpty(Container(8203).ListItem.Episode) + Integer.IsGreater(Container(8203).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -3382,26 +3424,33 @@
                     <label>$INFO[Container(8104).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8104).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8104).ListItem.DBType,episode) | [!String.IsEmpty(Container(8104).ListItem.Episode) + Integer.IsGreater(Container(8104).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8104).ListItem.DBType,episode) | [!String.IsEmpty(Container(8104).ListItem.Episode) + Integer.IsGreater(Container(8104).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8104).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8104).ListItem.DBType,episode) | [!String.IsEmpty(Container(8104).ListItem.Episode) + Integer.IsGreater(Container(8104).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -3732,26 +3781,33 @@
                     <label>$INFO[Container(8204).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8204).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8204).ListItem.DBType,episode) | [!String.IsEmpty(Container(8204).ListItem.Episode) + Integer.IsGreater(Container(8204).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8204).ListItem.DBType,episode) | [!String.IsEmpty(Container(8204).ListItem.Episode) + Integer.IsGreater(Container(8204).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8204).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8204).ListItem.DBType,episode) | [!String.IsEmpty(Container(8204).ListItem.Episode) + Integer.IsGreater(Container(8204).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -4082,26 +4138,33 @@
                     <label>$INFO[Container(8105).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8105).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8105).ListItem.DBType,episode) | [!String.IsEmpty(Container(8105).ListItem.Episode) + Integer.IsGreater(Container(8105).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8105).ListItem.DBType,episode) | [!String.IsEmpty(Container(8105).ListItem.Episode) + Integer.IsGreater(Container(8105).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8105).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8105).ListItem.DBType,episode) | [!String.IsEmpty(Container(8105).ListItem.Episode) + Integer.IsGreater(Container(8105).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -4432,26 +4495,33 @@
                     <label>$INFO[Container(8205).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8205).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8205).ListItem.DBType,episode) | [!String.IsEmpty(Container(8205).ListItem.Episode) + Integer.IsGreater(Container(8205).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8205).ListItem.DBType,episode) | [!String.IsEmpty(Container(8205).ListItem.Episode) + Integer.IsGreater(Container(8205).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8205).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8205).ListItem.DBType,episode) | [!String.IsEmpty(Container(8205).ListItem.Episode) + Integer.IsGreater(Container(8205).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -4782,26 +4852,33 @@
                     <label>$INFO[Container(8106).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8106).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8106).ListItem.DBType,episode) | [!String.IsEmpty(Container(8106).ListItem.Episode) + Integer.IsGreater(Container(8106).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8106).ListItem.DBType,episode) | [!String.IsEmpty(Container(8106).ListItem.Episode) + Integer.IsGreater(Container(8106).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8106).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8106).ListItem.DBType,episode) | [!String.IsEmpty(Container(8106).ListItem.Episode) + Integer.IsGreater(Container(8106).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -5132,26 +5209,33 @@
                     <label>$INFO[Container(8206).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8206).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8206).ListItem.DBType,episode) | [!String.IsEmpty(Container(8206).ListItem.Episode) + Integer.IsGreater(Container(8206).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8206).ListItem.DBType,episode) | [!String.IsEmpty(Container(8206).ListItem.Episode) + Integer.IsGreater(Container(8206).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8206).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8206).ListItem.DBType,episode) | [!String.IsEmpty(Container(8206).ListItem.Episode) + Integer.IsGreater(Container(8206).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -5482,26 +5566,33 @@
                     <label>$INFO[Container(8107).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8107).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8107).ListItem.DBType,episode) | [!String.IsEmpty(Container(8107).ListItem.Episode) + Integer.IsGreater(Container(8107).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8107).ListItem.DBType,episode) | [!String.IsEmpty(Container(8107).ListItem.Episode) + Integer.IsGreater(Container(8107).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8107).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8107).ListItem.DBType,episode) | [!String.IsEmpty(Container(8107).ListItem.Episode) + Integer.IsGreater(Container(8107).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -5832,26 +5923,33 @@
                     <label>$INFO[Container(8207).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8207).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8207).ListItem.DBType,episode) | [!String.IsEmpty(Container(8207).ListItem.Episode) + Integer.IsGreater(Container(8207).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8207).ListItem.DBType,episode) | [!String.IsEmpty(Container(8207).ListItem.Episode) + Integer.IsGreater(Container(8207).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8207).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8207).ListItem.DBType,episode) | [!String.IsEmpty(Container(8207).ListItem.Episode) + Integer.IsGreater(Container(8207).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -6182,26 +6280,33 @@
                     <label>$INFO[Container(8108).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8108).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8108).ListItem.DBType,episode) | [!String.IsEmpty(Container(8108).ListItem.Episode) + Integer.IsGreater(Container(8108).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8108).ListItem.DBType,episode) | [!String.IsEmpty(Container(8108).ListItem.Episode) + Integer.IsGreater(Container(8108).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8108).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8108).ListItem.DBType,episode) | [!String.IsEmpty(Container(8108).ListItem.Episode) + Integer.IsGreater(Container(8108).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -6532,26 +6637,33 @@
                     <label>$INFO[Container(8208).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8208).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8208).ListItem.DBType,episode) | [!String.IsEmpty(Container(8208).ListItem.Episode) + Integer.IsGreater(Container(8208).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8208).ListItem.DBType,episode) | [!String.IsEmpty(Container(8208).ListItem.Episode) + Integer.IsGreater(Container(8208).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8208).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8208).ListItem.DBType,episode) | [!String.IsEmpty(Container(8208).ListItem.Episode) + Integer.IsGreater(Container(8208).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -6882,26 +6994,33 @@
                     <label>$INFO[Container(8109).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8109).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8109).ListItem.DBType,episode) | [!String.IsEmpty(Container(8109).ListItem.Episode) + Integer.IsGreater(Container(8109).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8109).ListItem.DBType,episode) | [!String.IsEmpty(Container(8109).ListItem.Episode) + Integer.IsGreater(Container(8109).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8109).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8109).ListItem.DBType,episode) | [!String.IsEmpty(Container(8109).ListItem.Episode) + Integer.IsGreater(Container(8109).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -7232,26 +7351,33 @@
                     <label>$INFO[Container(8209).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8209).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8209).ListItem.DBType,episode) | [!String.IsEmpty(Container(8209).ListItem.Episode) + Integer.IsGreater(Container(8209).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8209).ListItem.DBType,episode) | [!String.IsEmpty(Container(8209).ListItem.Episode) + Integer.IsGreater(Container(8209).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8209).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8209).ListItem.DBType,episode) | [!String.IsEmpty(Container(8209).ListItem.Episode) + Integer.IsGreater(Container(8209).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -7582,26 +7708,33 @@
                     <label>$INFO[Container(8110).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8110).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8110).ListItem.DBType,episode) | [!String.IsEmpty(Container(8110).ListItem.Episode) + Integer.IsGreater(Container(8110).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8110).ListItem.DBType,episode) | [!String.IsEmpty(Container(8110).ListItem.Episode) + Integer.IsGreater(Container(8110).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8110).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8110).ListItem.DBType,episode) | [!String.IsEmpty(Container(8110).ListItem.Episode) + Integer.IsGreater(Container(8110).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
@@ -7932,26 +8065,33 @@
                     <label>$INFO[Container(8210).ListItem.Genre]</label>
                     <visible>true</visible>
                 </control>
+            </control>
+
+            <!-- Episode title, and episodes left in the season next to it (2.1.8: on the meta line it was cut off) -->
+            <control type="grouplist">
+                <left>0</left>
+                <top>336</top>
+                <width>1100</width>
+                <height>44</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <usecontrolcoords>true</usecontrolcoords>
+                <control type="label">
+                    <width max="760">auto</width>
+                    <height>44</height>
+                    <font>font27</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Container(8210).ListItem.Title]</label>
+                    <visible>String.IsEqual(Container(8210).ListItem.DBType,episode) | [!String.IsEmpty(Container(8210).ListItem.Episode) + Integer.IsGreater(Container(8210).ListItem.Episode,0)]</visible>
+                </control>
                 <include content="InfoPill">
                     <param name="label">$INFO[Window(home).Property(lucent.ep.left)]</param>
                     <param name="bg">glass_strong</param>
                     <param name="color">FFBFF3F5</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left))</param>
+                    <param name="visible">!String.IsEmpty(Window(home).Property(lucent.ep.left)) + [String.IsEqual(Container(8210).ListItem.DBType,episode) | [!String.IsEmpty(Container(8210).ListItem.Episode) + Integer.IsGreater(Container(8210).ListItem.Episode,0)]]</param>
                 </include>
-            </control>
-
-            <!-- Episode title -->
-            <control type="label">
-                <left>0</left>
-                <top>336</top>
-                <width>1000</width>
-                <height>44</height>
-                <font>font27</font>
-                <textcolor>text</textcolor>
-                <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
-                <label>$INFO[Container(8210).ListItem.Title]</label>
-                <visible>String.IsEqual(Container(8210).ListItem.DBType,episode) | [!String.IsEmpty(Container(8210).ListItem.Episode) + Integer.IsGreater(Container(8210).ListItem.Episode,0)]</visible>
             </control>
 
             <!-- Plot -->
