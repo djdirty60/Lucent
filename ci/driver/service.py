@@ -5596,6 +5596,44 @@ def wnvideo_test():
     log("wnvideo: " + json.dumps(out, ensure_ascii=False))
 
 
+def rowreload_test():
+    """2.1.8 (item 4): do the Home rows reload when a poster trailer starts / stops (no), and once after a real video (yes)?"""
+    import re as _re
+    out = {}
+    logf = xbmcvfs.translatePath("special://logpath/kodi.log")
+
+    def refreshes(since):
+        with open(logf, encoding="utf-8", errors="replace") as fh:
+            lines = [ln for ln in fh.read().splitlines() if ln[11:23] >= since]
+        ref = [ln[11:23] + " " + ln.split("CDirectoryProvider[", 1)[1][:70] for ln in lines if "CDirectoryProvider[" in ln and "refreshing" in ln]
+        plays = [ln[11:23] + " " + ln[ln.find("OpenFile"):][:60] for ln in lines if "OpenFile" in ln]
+        return ref, plays
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.posterfocus,window)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+    t0 = time.strftime("%H:%M:%S.000")
+    _idle_on_series("rowreload", 2, 14)
+    ref, plays = refreshes(t0)
+    out["trailer_refreshes"] = len(ref)
+    out["trailer_ref"] = ref[-12:]
+    out["trailer_plays"] = plays[-6:]
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(4)
+    out["flip_before"] = HOME.getProperty("lucent.sortflip")
+    t1 = time.strftime("%H:%M:%S.000")
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    mon.waitForAbort(6)
+    xbmc.Player().stop()
+    mon.waitForAbort(6)
+    ref, plays = refreshes(t1)
+    out["real_refreshes"] = len(ref)
+    out["real_ref"] = ref[-12:]
+    out["flip_after"] = HOME.getProperty("lucent.sortflip")
+    log("rowreload: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10603,6 +10641,7 @@ def main():
     safe(volmute_test)
     safe(thcount_test)
     safe(wnvideo_test)
+    safe(rowreload_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)

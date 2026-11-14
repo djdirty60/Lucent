@@ -62,7 +62,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.sort))">$INFO[Skin.String(nuvio.home.w1.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w1.sort))">$INFO[Container(9000).ListItem.Property(w1.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW1Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.sort),title)]">ascending</value>
@@ -74,7 +78,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.sort))">$INFO[Skin.String(nuvio.home.w2.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.sort))">$INFO[Container(9000).ListItem.Property(w2.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW2Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.sort),title)]">ascending</value>
@@ -86,7 +94,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.sort))">$INFO[Skin.String(nuvio.home.w3.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.sort))">$INFO[Container(9000).ListItem.Property(w3.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW3Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.sort),title)]">ascending</value>
@@ -98,7 +110,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.sort))">$INFO[Skin.String(nuvio.home.w4.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.sort))">$INFO[Container(9000).ListItem.Property(w4.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW4Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.sort),title)]">ascending</value>
@@ -110,7 +126,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.sort))">$INFO[Skin.String(nuvio.home.w5.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.sort))">$INFO[Container(9000).ListItem.Property(w5.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW5Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.sort),title)]">ascending</value>
@@ -122,7 +142,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.sort))">$INFO[Skin.String(nuvio.home.w6.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.sort))">$INFO[Container(9000).ListItem.Property(w6.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW6Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.sort),title)]">ascending</value>
@@ -134,7 +158,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.sort))">$INFO[Skin.String(nuvio.home.w7.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.sort))">$INFO[Container(9000).ListItem.Property(w7.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW7Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.sort),title)]">ascending</value>
@@ -146,7 +174,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.sort))">$INFO[Skin.String(nuvio.home.w8.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.sort))">$INFO[Container(9000).ListItem.Property(w8.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW8Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.sort),title)]">ascending</value>
@@ -158,7 +190,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.sort))">$INFO[Skin.String(nuvio.home.w9.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.sort))">$INFO[Container(9000).ListItem.Property(w9.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW9Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.sort),title)]">ascending</value>
@@ -170,7 +206,11 @@
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),title)]">label</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.sort))">$INFO[Skin.String(nuvio.home.w10.sort)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.sort))">$INFO[Container(9000).ListItem.Property(w10.sort)]</value>
-        <value>userpreference</value>
+        <!-- 2.1.8: no 'unsorted' (Kodi reloads unsorted rows every time a video - also a poster trailer - starts or stops).
+             'playlist' and 'programcount' keep the add-on's own order; the helper switches between the two once after a
+             real video stopped (lucent.sortflip), so rows like Continue watching are read again then -->
+        <value condition="!String.IsEmpty(Window(home).Property(lucent.sortflip))">programcount</value>
+        <value>playlist</value>
     </variable>
     <variable name="NuvioW10Order">
         <value condition="[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.sort),title)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.sort),title)]">ascending</value>
