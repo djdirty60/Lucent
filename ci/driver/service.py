@@ -5660,11 +5660,15 @@ def placeholder_test():
     xbmc.executebuiltin("Control.SetFocus(9000,0)")
     mon.waitForAbort(2)
     for k, v in (("label", "Laden"), ("w1.label", "Snel"), ("w1.path", W + "ss"), ("w1.style", "poster"),
-                 ("w2.label", "Traag"), ("w2.path", W + "slowph"), ("w2.style", "land"),
-                 ("w3.label", "Ook traag"), ("w3.path", W + "slowph2"), ("w3.style", "poster")):
+                 ("w2.label", "Traag"), ("w2.path", W + "slowph%d" % int(time.time())), ("w2.style", "land"),
+                 ("w3.label", "Ook traag"), ("w3.path", W + "slowphb%d" % int(time.time())), ("w3.style", "poster")):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
-    mon.waitForAbort(3)
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(8101)")
+    mon.waitForAbort(0.7)
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1)
     out["at3"] = [lab("Container(8202).NumItems"), cond("Container(8202).IsUpdating"), cond("Control.IsVisible(9912)"), cond("Control.IsVisible(9903)")]
     shot("placeholder-loading")
     mon.waitForAbort(14)
@@ -5718,6 +5722,20 @@ def announce_test():
         mon.waitForAbort(2)
         out[name].append(res.get("c", "?"))
     log("announce: " + json.dumps(out))
+
+
+def restartask_test():
+    """2.1.8: the question after an update that brought new texts (Restart now / Later)."""
+    import threading
+    sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+    import updater as _u
+    res = {}
+    threading.Thread(target=lambda: res.setdefault("a", _u.ask_restart(["Lucent Video"])), daemon=True).start()
+    mon.waitForAbort(3)
+    shot("restartask")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    log("restartask: " + json.dumps(res))
 
 
 def cwjumplog_test():
@@ -10730,6 +10748,7 @@ def main():
     safe(rowreload_test)
     safe(placeholder_test)
     safe(announce_test)
+    safe(restartask_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
