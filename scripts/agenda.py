@@ -41,6 +41,7 @@ TX = {
     "powered": ("Data from TMDB and TVmaze", "Gegevens van TMDB en TVmaze"),
     "episodes": ("{0} episodes", "{0} afleveringen"), "episode": ("1 episode", "1 aflevering"),
     "none_day": ("Nothing on this day", "Niets op deze dag"),
+    "also_day": ("Also on this day", "Ook op deze dag"),
     "aired_on": ("Aired on {0}", "Uitgezonden op {0}"), "airs_on": ("Airs on {0}", "Verschijnt op {0}"),
     "empty_title": ("Nothing to show yet", "Nog niets om te tonen"),
     "empty_text": ("The calendar shows the series and films of your Trakt collection. Log in to Trakt in Skin settings "
@@ -163,7 +164,7 @@ class Agenda(xbmcgui.WindowXML):
             return
         self.ready = True
         for key in ("week", "list", "month", "all", "tv", "movie", "open_show", "open_movie", "bell_on", "bell_off",
-                    "unfollow", "empty_title", "empty_text", "powered"):
+                    "unfollow", "also_day", "empty_title", "empty_text", "powered"):
             self.setProperty(f"agenda.t.{key}", t(key))
         import time
         self.setProperty("agenda.t.times", t("times", time.strftime("%Z") or ""))
@@ -429,23 +430,30 @@ class Agenda(xbmcgui.WindowXML):
         self.setProperty("agenda.monthtitle", core.month_title(first))
         start = monday(first)
         items, pick = [], 0
-        for n in range(42):
-            d = add_days(start, n)
-            events = self.events_on(d)
+        days = [add_days(start, n) for n in range(42)]
+        # a day without anything keeps the backdrop of the day before that had something (the first one for the start)
+        lit = [self.events_on(d) for d in days]
+        backdrop = next((e[0]["backdrop"] for e in lit if e), "")
+        for n, d in enumerate(days):
+            events = lit[n]
             if d == core.today() or (not pick and d == first and core.today().month != first.month):
                 pick = n
             lead = events[0] if events else None
+            if lead:
+                backdrop = lead["backdrop"] or backdrop
             props = {"day": d.day, "inmonth": "1" if d.month == first.month else "", "today": "1" if d == core.today() else "",
                      "more": f"+{len(events) - 1}" if len(events) > 1 else "", "dayname": core.day_long(d),
                      "count": (t("episodes", len(events)) if len(events) > 1 else t("episode")) if events else t("none_day"),
-                     "has": "1" if events else ""}
-            for i, ev in enumerate(events[:3], start=1):
-                props[f"e{i}_time"] = ev["time"] or ""
+                     "has": "1" if events else "", "backdrop": backdrop}
+            if lead:
+                props.update(e1_name=lead["name"], e1_logo=lead.get("logo", ""), e1_fanart=lead["backdrop"] or lead["still"],
+                             e1_when=when_line(lead), e1_title=ep_title(lead), e1_plot=lead["plot"],
+                             e1_meta="  ·  ".join(x for x in (red(badge(lead)), meta(lead)) if x))
+            for i, ev in enumerate(events[1:3], start=2):
                 props[f"e{i}_name"] = ev["name"]
-                props[f"e{i}_sub"] = "  ·  ".join(x for x in (ep_title(ev), ev.get("network")) if x)
+                props[f"e{i}_sub"] = "  ·  ".join(x for x in (core.ep_code(ev) if ev["kind"] == "tv" else ep_title(ev), ev["time"]) if x)
                 props[f"e{i}_thumb"] = ev["still"] or ev["poster"]
-                props[f"e{i}_code"] = core.ep_code(ev)
-            items.append(listitem(str(d.day), "", (lead["poster"] or lead["still"]) if lead else "", **props))
+            items.append(listitem(str(d.day), "", (lead["still"] or lead["poster"]) if lead else "", **props))
         control = self.getControl(GRID)
         control.reset()
         control.addItems(items)

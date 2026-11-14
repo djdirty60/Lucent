@@ -16,6 +16,7 @@ comes from TVmaze (free, no key) when it knows the show; otherwise only the date
 import datetime
 import json
 import time
+import re
 import urllib.error
 import urllib.parse
 
@@ -28,7 +29,7 @@ import info  # http() and tmdb() helpers of the info page (same folder)
 DATA = "special://profile/addon_data/skin.lucent/"
 FOLLOW_PATH = DATA + "agenda_follow.json"
 CACHE_PATH = DATA + "agenda_cache.json"
-CACHE_VERSION = 2
+CACHE_VERSION = 3
 SYNC_TTL = 12 * 3600        # the Trakt collection is read again after this many seconds
 TTL = 6 * 3600              # episode data is refreshed after this many seconds
 PAST_DAYS = 45              # how far back the calendar looks
@@ -162,7 +163,7 @@ def load_follow():
 
 def load_cache():
     data = read_json(CACHE_PATH, {})
-    if data.get("v") != CACHE_VERSION:           # older entries have no logos: fetch everything again
+    if data.get("v") != CACHE_VERSION:           # older entries lack logos (v2) or episode types (v3): fetch everything again
         data = {"v": CACHE_VERSION}
     data.setdefault("shows", {})
     return data
@@ -260,11 +261,32 @@ def maze_times(tmdb_id, maze_id):
     return times, maze_id
 
 
+_PLACEHOLDER = re.compile(r"^(aflevering|episode)\s*\d+$", re.I)
+
+
+def placeholder(name):
+    """TMDB gives 'Aflevering 6' when an episode has no Dutch title yet."""
+    return not name or bool(_PLACEHOLDER.match(name.strip()))
+
+
+def english(path):
+    """2.1.5: the same TMDB page in English, for titles and summaries that have no Dutch text yet (only when needed)."""
+    if LANG == "en":
+        return {}
+    try:
+        return info.tmdb(path, language="en-US")
+    except Exception as error:  # noqa: BLE001 - the Dutch text (or nothing) stays
+        log(f"english {path}: {error}")
+        return {}
+
+
 def tv_events(rec):
     """Events of one followed series (aired recently or still to come) and its TVmaze id."""
     tmdb_id = rec["tmdb"]
     show = info.tmdb(f"tv/{tmdb_id}", append_to_response="images", include_image_language="nl,en,null")
     networks = show.get("networks") or []
+    if not show.get("overview"):
+        show["overview"] = english(f"tv/{tmdb_id}").get("overview") or ""
     base = {
         "kind": "tv", "show": show_key("tv", tmdb_id), "tmdb": tmdb_id, "name": show.get("name") or rec["name"],
         "poster": img(show.get("poster_path"), "w342"), "backdrop": img(show.get("backdrop_path"), "w1280"),
@@ -284,7 +306,16 @@ def tv_events(rec):
     events = []
     for season in sorted(seasons):
         data = info.tmdb(f"tv/{tmdb_id}/season/{season}")
-        for ep in data.get("episodes") or []:
+        eps = data.get("episodes") or []
+        if any(placeholder(ep.get("name")) or not ep.get("overview") for ep in eps if lo <= (ep.get("air_date") or "") <= hi):
+            en = {ep["episode_number"]: ep for ep in english(f"tv/{tmdb_id}/season/{season}").get("episodes") or []}
+            for ep in eps:
+                other = en.get(ep["episode_number"]) or {}
+                if placeholder(ep.get("name")) and other.get("name") and not placeholder(other["name"]):
+                    ep["name"] = other["name"]
+                if not ep.get("overview"):
+                    ep["overview"] = other.get("overview") or ""
+        for ep in eps:
             date, at = ep.get("air_date") or "", ""
             if not date:
                 continue
@@ -316,6 +347,8 @@ def digital_date(tmdb_id):
 
 def movie_events(rec):
     movie = info.tmdb(f"movie/{rec['tmdb']}", append_to_response="images", include_image_language="nl,en,null")
+    if not movie.get("overview"):
+        movie["overview"] = english(f"movie/{rec['tmdb']}").get("overview") or ""
     theatrical = movie.get("release_date") or ""
     digital = ""
     try:

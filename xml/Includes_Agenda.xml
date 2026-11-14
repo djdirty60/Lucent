@@ -194,83 +194,108 @@
     </include>
     <!-- One day of the month grid -->
     <include name="AgendaCell">
+        <!-- 2.1.5: a day in the month - the still of the first episode, day number top left (today in red), +N bottom right -->
         <param name="focus">false</param>
         <definition>
             <control type="image">
-                <left>3</left>
-                <top>3</top>
-                <width>144</width>
-                <height>118</height>
-                <texture border="16">rr14.png</texture>
-                <colordiffuse>glass</colordiffuse>
+                <left>5</left>
+                <top>5</top>
+                <width>140</width>
+                <height>106</height>
+                <texture border="14">rr14.png</texture>
+                <colordiffuse>B81E202C</colordiffuse>
+                <visible>!String.IsEmpty(ListItem.Property(inmonth))</visible>
             </control>
             <control type="image">
-                <left>3</left>
-                <top>3</top>
-                <width>144</width>
-                <height>118</height>
+                <left>5</left>
+                <top>5</top>
+                <width>140</width>
+                <height>106</height>
+                <texture border="14">rr14.png</texture>
+                <colordiffuse>401E202C</colordiffuse>
+                <visible>String.IsEmpty(ListItem.Property(inmonth))</visible>
+            </control>
+            <control type="image">
+                <left>5</left>
+                <top>5</top>
+                <width>140</width>
+                <height>106</height>
                 <aspectratio>scale</aspectratio>
                 <texture diffuse="mask_landscape.png" background="true">$INFO[ListItem.Icon]</texture>
-                <colordiffuse>E6FFFFFF</colordiffuse>
                 <visible>!String.IsEmpty(ListItem.Property(has))</visible>
             </control>
             <control type="image">
-                <left>3</left>
-                <top>3</top>
-                <width>144</width>
-                <height>118</height>
-                <texture border="16">rr14.png</texture>
-                <colordiffuse>66000000</colordiffuse>
+                <left>5</left>
+                <top>5</top>
+                <width>140</width>
+                <height>60</height>
+                <texture diffuse="mask_landscape.png">grad_top.png</texture>
+                <colordiffuse>99000000</colordiffuse>
                 <visible>!String.IsEmpty(ListItem.Property(has))</visible>
             </control>
             <control type="image">
                 <left>1</left>
                 <top>1</top>
                 <width>148</width>
-                <height>122</height>
+                <height>114</height>
                 <texture border="16">rr14_edge.png</texture>
                 <colordiffuse>FFFFFFFF</colordiffuse>
                 <visible>$PARAM[focus]</visible>
             </control>
             <control type="image">
-                <left>10</left>
-                <top>10</top>
-                <width>38</width>
-                <height>38</height>
-                <texture colordiffuse="red">mask_circle.png</texture>
+                <left>11</left>
+                <top>11</top>
+                <width>44</width>
+                <height>32</height>
+                <texture border="14">rr14.png</texture>
+                <colordiffuse>red</colordiffuse>
                 <visible>!String.IsEmpty(ListItem.Property(today))</visible>
             </control>
             <control type="label">
-                <left>10</left>
-                <top>10</top>
-                <width>38</width>
-                <height>38</height>
-                <font>font10_bold</font>
+                <left>11</left>
+                <top>11</top>
+                <width>44</width>
+                <height>32</height>
+                <font>font12_bold</font>
                 <textcolor>text</textcolor>
+                <shadowcolor>80000000</shadowcolor>
                 <align>center</align>
+                <aligny>center</aligny>
                 <label>$INFO[ListItem.Property(day)]</label>
                 <visible>!String.IsEmpty(ListItem.Property(inmonth))</visible>
             </control>
             <control type="label">
-                <left>10</left>
-                <top>10</top>
-                <width>38</width>
-                <height>38</height>
-                <font>font10</font>
+                <left>11</left>
+                <top>11</top>
+                <width>44</width>
+                <height>32</height>
+                <font>font12</font>
                 <textcolor>text5</textcolor>
                 <align>center</align>
+                <aligny>center</aligny>
                 <label>$INFO[ListItem.Property(day)]</label>
                 <visible>String.IsEmpty(ListItem.Property(inmonth))</visible>
             </control>
+            <control type="image">
+                <left>91</left>
+                <top>79</top>
+                <width>46</width>
+                <height>26</height>
+                <texture border="12">rr14.png</texture>
+                <colordiffuse>D1080A10</colordiffuse>
+                <visible>!String.IsEmpty(ListItem.Property(more))</visible>
+            </control>
             <control type="label">
-                <left>86</left>
-                <top>86</top>
-                <width>56</width>
-                <height>30</height>
+                <left>91</left>
+                <top>79</top>
+                <width>46</width>
+                <height>26</height>
                 <font>font_tiny</font>
                 <textcolor>text</textcolor>
-                <align>right</align>
+                <align>center</align>
+                <aligny>center</aligny>
                 <label>$INFO[ListItem.Property(more)]</label>
+                <visible>!String.IsEmpty(ListItem.Property(more))</visible>
             </control>
         </definition>
     </include>
