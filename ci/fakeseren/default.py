@@ -42,8 +42,11 @@ if kind == "svc":
                                      ("Peacock", "peacock"), ("AMC+", "amc"))):
         li = xbmcgui.ListItem(name, offscreen=True)
         sq = f"{ART}svc{i}.png"
-        li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq, "fanart": ""})
-        li.setProperty("svclogo", f"special://skin/media/services/{key}.png")
+        if i in (1, 2):      # 2.1.13: a service with its own picture (video add-on 1.0): no svclogo, the wide logo as clearlogo
+            li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq, "clearlogo": f"special://skin/media/services/{key}.png", "fanart": ""})
+        else:
+            li.setArt({"poster": sq, "thumb": sq, "icon": sq, "landscape": sq, "fanart": ""})
+            li.setProperty("svclogo", f"special://skin/media/services/{key}.png")
         li.setProperty("lucent_open", "1")
         li.setProperty("IsPlayable", "false")
         items.append((f"plugin://plugin.video.fakeseren/?list=fast&svc={i}", li, False))
