@@ -19,6 +19,7 @@ HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 STATE = {"id": "", "since": 0.0, "done": "", "busy": False}
 COUNTS = {}                                         # 'db:12:3' / 'tmdb:1399:3' -> episodes in that season
+STATUS = {}                                         # TMDB id -> TMDB status of the series ('Returning Series', 'Ended', ...)
 TYPES = {}                                          # 'tmdb:1399:3' -> {episode: TMDB episode_type ('finale', 'mid_season', ...)}
 
 
@@ -32,7 +33,7 @@ def log(text):
 
 def clear():
     if HOME.getProperty("lucent.ep.for"):
-        for p in ("left", "badge", "for"):
+        for p in ("left", "badge", "for", "status"):
             HOME.clearProperty("lucent.ep." + p)
 
 
@@ -129,7 +130,19 @@ def _tmdb_count(tmdb_id, season):
     return COUNTS[key]
 
 
-def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title="", aired="", etype=""):
+def _status(tmdb_id):
+    """2.1.16: TMDB's status of a series, for an episode that does not bring one (a library episode): LOOPT NOG."""
+    if tmdb_id not in STATUS:
+        try:
+            import info
+            STATUS[tmdb_id] = (info.tmdb(f"tv/{tmdb_id}") if info.tmdb_key() else {}).get("status") or ""
+        except Exception as error:  # noqa: BLE001
+            log(f"status {tmdb_id}: {error}")
+            return ""
+    return STATUS[tmdb_id]
+
+
+def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, title="", aired="", etype="", status=""):
     try:
         if not (own_count or show_dbid or tmdb_id) and title:
             tmdb_id = show_by_title(title, season, episode, aired)
@@ -155,6 +168,9 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
             if tmdb_id:
                 _tmdb_count(tmdb_id, season)
                 final = TYPES.get(f"tmdb:{tmdb_id}:{season}", {}).get(episode) == "finale"
+        upcoming = 0
+        if left == 0 and not final and tmdb_id and show_dbid:
+            upcoming = max(_tmdb_count(tmdb_id, season)[0] - episode, 0)    # 2.1.16: a library episode, more to come
         if left == 0:
             log(f"last known episode {ident}: add-on mark '{etype}', TMDB {tmdb_id or '-'} "
                 f"'{TYPES.get(f'tmdb:{tmdb_id}:{season}', {}).get(episode, '?')}' -> {'finale' if final else 'newest'}")
@@ -168,6 +184,8 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
             text = t(f"{left + 1} to watch in season {season}", f"Nog {left + 1} te zien in seizoen {season}")
         elif left == 0 and final:
             text = t(f"Last episode of season {season}", f"Laatste aflevering van seizoen {season}")
+        elif left == 0 and upcoming:
+            text = t(f"Newest episode · {upcoming} still to come", f"Nieuwste aflevering · nog {upcoming} op komst")
         elif left == 0:
             text = t("Newest episode", "Nieuwste aflevering")
         else:
@@ -178,6 +196,13 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
                 HOME.setProperty("lucent.ep." + p, v)
             else:
                 HOME.clearProperty("lucent.ep." + p)
+        if not status and not tmdb_id and show_dbid and title:
+            tmdb_id = show_by_title(title, season, episode, aired)
+        own_status = "" if status else (_status(tmdb_id) if tmdb_id else "")
+        if own_status:
+            HOME.setProperty("lucent.ep.status", own_status)
+        else:
+            HOME.clearProperty("lucent.ep.status")
         HOME.setProperty("lucent.ep.for", ident)
         STATE["done"] = ident
     except Exception as error:  # noqa: BLE001
@@ -220,4 +245,4 @@ def tick():
     if STATE["done"] == ident or STATE["busy"] or now - STATE["since"] < 0.4:
         return
     STATE["busy"] = True
-    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left, title, aired, label(pre + "Property(episode_type)")), daemon=True).start()
+    threading.Thread(target=_fill, args=(ident, season, episode, own_count, show_dbid, tmdb_id, own_left, title, aired, label(pre + "Property(episode_type)"), label(pre + "Status")), daemon=True).start()

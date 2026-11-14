@@ -1203,14 +1203,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8101).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8101).ListItem.Status,ended) | [String.IsEmpty(Container(8101).ListItem.Status) + String.IsEqual(Container(8101).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8101).ListItem.Status,returning) | String.Contains(Container(8101).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8101).ListItem.Status,returning) | String.Contains(Container(8101).ListItem.Status,continuing) | [String.IsEmpty(Container(8101).ListItem.Status) + String.IsEqual(Container(8101).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -1560,14 +1560,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8201).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8201).ListItem.Status,ended) | [String.IsEmpty(Container(8201).ListItem.Status) + String.IsEqual(Container(8201).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8201).ListItem.Status,returning) | String.Contains(Container(8201).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8201).ListItem.Status,returning) | String.Contains(Container(8201).ListItem.Status,continuing) | [String.IsEmpty(Container(8201).ListItem.Status) + String.IsEqual(Container(8201).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -1917,14 +1917,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8102).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8102).ListItem.Status,ended) | [String.IsEmpty(Container(8102).ListItem.Status) + String.IsEqual(Container(8102).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8102).ListItem.Status,returning) | String.Contains(Container(8102).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8102).ListItem.Status,returning) | String.Contains(Container(8102).ListItem.Status,continuing) | [String.IsEmpty(Container(8102).ListItem.Status) + String.IsEqual(Container(8102).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -2274,14 +2274,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8202).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8202).ListItem.Status,ended) | [String.IsEmpty(Container(8202).ListItem.Status) + String.IsEqual(Container(8202).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8202).ListItem.Status,returning) | String.Contains(Container(8202).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8202).ListItem.Status,returning) | String.Contains(Container(8202).ListItem.Status,continuing) | [String.IsEmpty(Container(8202).ListItem.Status) + String.IsEqual(Container(8202).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -2631,14 +2631,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8103).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8103).ListItem.Status,ended) | [String.IsEmpty(Container(8103).ListItem.Status) + String.IsEqual(Container(8103).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8103).ListItem.Status,returning) | String.Contains(Container(8103).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8103).ListItem.Status,returning) | String.Contains(Container(8103).ListItem.Status,continuing) | [String.IsEmpty(Container(8103).ListItem.Status) + String.IsEqual(Container(8103).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -2988,14 +2988,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8203).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8203).ListItem.Status,ended) | [String.IsEmpty(Container(8203).ListItem.Status) + String.IsEqual(Container(8203).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8203).ListItem.Status,returning) | String.Contains(Container(8203).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8203).ListItem.Status,returning) | String.Contains(Container(8203).ListItem.Status,continuing) | [String.IsEmpty(Container(8203).ListItem.Status) + String.IsEqual(Container(8203).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -3345,14 +3345,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8104).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8104).ListItem.Status,ended) | [String.IsEmpty(Container(8104).ListItem.Status) + String.IsEqual(Container(8104).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8104).ListItem.Status,returning) | String.Contains(Container(8104).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8104).ListItem.Status,returning) | String.Contains(Container(8104).ListItem.Status,continuing) | [String.IsEmpty(Container(8104).ListItem.Status) + String.IsEqual(Container(8104).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -3702,14 +3702,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8204).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8204).ListItem.Status,ended) | [String.IsEmpty(Container(8204).ListItem.Status) + String.IsEqual(Container(8204).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8204).ListItem.Status,returning) | String.Contains(Container(8204).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8204).ListItem.Status,returning) | String.Contains(Container(8204).ListItem.Status,continuing) | [String.IsEmpty(Container(8204).ListItem.Status) + String.IsEqual(Container(8204).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -4059,14 +4059,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8105).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8105).ListItem.Status,ended) | [String.IsEmpty(Container(8105).ListItem.Status) + String.IsEqual(Container(8105).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8105).ListItem.Status,returning) | String.Contains(Container(8105).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8105).ListItem.Status,returning) | String.Contains(Container(8105).ListItem.Status,continuing) | [String.IsEmpty(Container(8105).ListItem.Status) + String.IsEqual(Container(8105).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -4416,14 +4416,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8205).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8205).ListItem.Status,ended) | [String.IsEmpty(Container(8205).ListItem.Status) + String.IsEqual(Container(8205).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8205).ListItem.Status,returning) | String.Contains(Container(8205).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8205).ListItem.Status,returning) | String.Contains(Container(8205).ListItem.Status,continuing) | [String.IsEmpty(Container(8205).ListItem.Status) + String.IsEqual(Container(8205).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -4773,14 +4773,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8106).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8106).ListItem.Status,ended) | [String.IsEmpty(Container(8106).ListItem.Status) + String.IsEqual(Container(8106).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8106).ListItem.Status,returning) | String.Contains(Container(8106).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8106).ListItem.Status,returning) | String.Contains(Container(8106).ListItem.Status,continuing) | [String.IsEmpty(Container(8106).ListItem.Status) + String.IsEqual(Container(8106).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -5130,14 +5130,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8206).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8206).ListItem.Status,ended) | [String.IsEmpty(Container(8206).ListItem.Status) + String.IsEqual(Container(8206).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8206).ListItem.Status,returning) | String.Contains(Container(8206).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8206).ListItem.Status,returning) | String.Contains(Container(8206).ListItem.Status,continuing) | [String.IsEmpty(Container(8206).ListItem.Status) + String.IsEqual(Container(8206).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -5487,14 +5487,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8107).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8107).ListItem.Status,ended) | [String.IsEmpty(Container(8107).ListItem.Status) + String.IsEqual(Container(8107).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8107).ListItem.Status,returning) | String.Contains(Container(8107).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8107).ListItem.Status,returning) | String.Contains(Container(8107).ListItem.Status,continuing) | [String.IsEmpty(Container(8107).ListItem.Status) + String.IsEqual(Container(8107).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -5844,14 +5844,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8207).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8207).ListItem.Status,ended) | [String.IsEmpty(Container(8207).ListItem.Status) + String.IsEqual(Container(8207).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8207).ListItem.Status,returning) | String.Contains(Container(8207).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8207).ListItem.Status,returning) | String.Contains(Container(8207).ListItem.Status,continuing) | [String.IsEmpty(Container(8207).ListItem.Status) + String.IsEqual(Container(8207).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -6201,14 +6201,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8108).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8108).ListItem.Status,ended) | [String.IsEmpty(Container(8108).ListItem.Status) + String.IsEqual(Container(8108).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8108).ListItem.Status,returning) | String.Contains(Container(8108).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8108).ListItem.Status,returning) | String.Contains(Container(8108).ListItem.Status,continuing) | [String.IsEmpty(Container(8108).ListItem.Status) + String.IsEqual(Container(8108).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -6558,14 +6558,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8208).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8208).ListItem.Status,ended) | [String.IsEmpty(Container(8208).ListItem.Status) + String.IsEqual(Container(8208).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8208).ListItem.Status,returning) | String.Contains(Container(8208).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8208).ListItem.Status,returning) | String.Contains(Container(8208).ListItem.Status,continuing) | [String.IsEmpty(Container(8208).ListItem.Status) + String.IsEqual(Container(8208).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -6915,14 +6915,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8109).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8109).ListItem.Status,ended) | [String.IsEmpty(Container(8109).ListItem.Status) + String.IsEqual(Container(8109).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8109).ListItem.Status,returning) | String.Contains(Container(8109).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8109).ListItem.Status,returning) | String.Contains(Container(8109).ListItem.Status,continuing) | [String.IsEmpty(Container(8109).ListItem.Status) + String.IsEqual(Container(8109).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -7272,14 +7272,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8209).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8209).ListItem.Status,ended) | [String.IsEmpty(Container(8209).ListItem.Status) + String.IsEqual(Container(8209).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8209).ListItem.Status,returning) | String.Contains(Container(8209).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8209).ListItem.Status,returning) | String.Contains(Container(8209).ListItem.Status,continuing) | [String.IsEmpty(Container(8209).ListItem.Status) + String.IsEqual(Container(8209).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -7629,14 +7629,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8110).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8110).ListItem.Status,ended) | [String.IsEmpty(Container(8110).ListItem.Status) + String.IsEqual(Container(8110).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8110).ListItem.Status,returning) | String.Contains(Container(8110).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8110).ListItem.Status,returning) | String.Contains(Container(8110).ListItem.Status,continuing) | [String.IsEmpty(Container(8110).ListItem.Status) + String.IsEqual(Container(8110).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>
@@ -7986,14 +7986,14 @@
                     <param name="bg">glass_strong</param>
                     <param name="color">text</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8210).ListItem.Status,ended)</param>
+                    <param name="visible">String.Contains(Container(8210).ListItem.Status,ended) | [String.IsEmpty(Container(8210).ListItem.Status) + String.IsEqual(Container(8210).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),ended)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31558]</param>
                     <param name="bg">green</param>
                     <param name="color">white</param>
                     <param name="font">font10_bold</param>
-                    <param name="visible">String.Contains(Container(8210).ListItem.Status,returning) | String.Contains(Container(8210).ListItem.Status,continuing)</param>
+                    <param name="visible">String.Contains(Container(8210).ListItem.Status,returning) | String.Contains(Container(8210).ListItem.Status,continuing) | [String.IsEmpty(Container(8210).ListItem.Status) + String.IsEqual(Container(8210).ListItem.DBType,episode) + String.Contains(Window(home).Property(lucent.ep.status),returning)]</param>
                 </include>
                 <include content="InfoPill">
                     <param name="label">$LOCALIZE[31559]</param>

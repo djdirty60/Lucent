@@ -87,7 +87,8 @@ class H(BaseHTTPRequestHandler):
         if path.endswith("/release_dates"):
             return self.send(json.dumps(rel).encode(), "application/json")
         return self.send(json.dumps({"images": {"logos": []}, "genres": [{"name": "Drama"}], "runtime": 100, "vote_count": 321,
-                                     "production_companies": [], "release_dates": rel}).encode(), "application/json")
+                                     "production_companies": [], "release_dates": rel,
+                                     "status": "Ended" if tid == 1499 else "Returning Series"}).encode(), "application/json")
 
 
 HTTPServer(("127.0.0.1", 8765), H).serve_forever()
