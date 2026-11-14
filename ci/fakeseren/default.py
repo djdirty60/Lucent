@@ -91,6 +91,10 @@ elif kind in ("sm", "ss", "se", "th", "thn"):
                 li.setProperty("episode_type", "season_finale" if i == 2 else "mid_season_finale")
             if i in (1, 2, 4, 5) and not TH:
                 li.setProperty("lucent.season.left", "nog %d" % (i + 1))
+                if i in (1, 2):                   # 2.1.16: the video add-on's count with this episode included
+                    li.setProperty("lucent.season.towatch", "nog %d" % (i + 2))
+                elif i == 4:
+                    li.setProperty("lucent.season.towatch", "%d to watch" % (i + 2))
             li.setArt({"thumb": f"{ART}f{i}.jpg", "fanart": f"{ART}f{i}.jpg", "poster": f"{ART}p{i}.jpg", "landscape": f"{ART}f{i}.jpg"})
         else:
             tag.setMediaType("movie" if kind == "sm" else "tvshow")

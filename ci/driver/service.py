@@ -5992,6 +5992,33 @@ def menuback_part():
     log("menuback: " + json.dumps(res))
 
 
+def towatch_test():
+    """2.1.16: the poster pill shows the video add-on's lucent.season.towatch ("nog N", this episode counted) and falls
+    back to lucent.season.left; English "N to watch" gets a wider pill. Poster row and landscape row."""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Pillen"), ("w1.label", "Poster"), ("w1.path", "plugin://plugin.video.fakeseren/?list=se"), ("w1.style", "poster"),
+                 ("w2.label", "Liggend"), ("w2.path", "plugin://plugin.video.fakeseren/?list=se&land=1"), ("w2.style", "land")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(31)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("SetFocus(8101,0,absolute)")
+    mon.waitForAbort(4)
+    out["poster"] = [lab("Container(8101).NumItems"), lab("Container(8101).ListItemAbsolute(1).Property(lucent.season.towatch)"),
+                     lab("Container(8101).ListItemAbsolute(4).Property(lucent.season.towatch)")]
+    shot("towatch-poster")
+    xbmc.executebuiltin("SetFocus(8202,0,absolute)")
+    mon.waitForAbort(4)
+    out["land"] = [lab("Container(8202).NumItems"), lab("System.CurrentControlID")]
+    shot("towatch-land")
+    log("towatch: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11016,6 +11043,7 @@ def main():
     safe(finalecheck_test)
     safe(lvreload_test)
     safe(aboutback_test)
+    safe(towatch_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
