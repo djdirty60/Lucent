@@ -54,7 +54,8 @@ class H(BaseHTTPRequestHandler):
         if "/tv/1499/season/" in path:                        # the old series: 22 episodes from 1997
             return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "1997-11-%02d" % n} for n in range(1, 23)]}).encode(), "application/json")
         if "/season/" in path:                                # a season with 10 episodes
-            return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "2026-11-01"} for n in range(1, 11)]}).encode(), "application/json")
+            return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "2026-11-01",
+                                                        "episode_type": "finale" if n == 10 else "standard"} for n in range(1, 11)]}).encode(), "application/json")
         if path.endswith("/external_ids"):
             return self.send(json.dumps({"imdb_id": "tt0185937"}).encode(), "application/json")
         if path.startswith("/t/p/"):

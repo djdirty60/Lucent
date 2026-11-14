@@ -5830,6 +5830,25 @@ def upnext_test():
     log("upnext: " + json.dumps(out))
 
 
+def finalecheck_test():
+    """2.1.14: the last episode TMDB knows of a running season is not its finale (Gold Rush S17 E7). Fake TMDB: series
+    1500 marks episode 10 as the finale; series 1499 (22 episodes) marks nothing."""
+    out = {}
+    try:
+        sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+        import seasoninfo as _si
+        for name, args in (("marked_finale", (2, 10, 0, 0, "1500")), ("running_season", (2, 22, 0, 0, "1499")),
+                           ("lv_count_running", (2, 22, 22, 0, "1499")), ("lv_count_finale", (2, 10, 10, 0, "1500"))):
+            ident = "ci:" + name
+            _si.STATE["id"] = ident
+            _si._fill(ident, *args)
+            out[name] = [HOME.getProperty("lucent.ep.left"), HOME.getProperty("lucent.ep.badge")]
+    except Exception as error:  # noqa: BLE001
+        import traceback
+        out["error"] = traceback.format_exc()[-600:]
+    log("finalecheck: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10851,6 +10870,7 @@ def main():
     safe(foryoulv_test)
     safe(settingsback_test)
     safe(upnext_test)
+    safe(finalecheck_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)

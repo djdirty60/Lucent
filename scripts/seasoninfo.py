@@ -19,6 +19,7 @@ HOME = xbmcgui.Window(10000)
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 STATE = {"id": "", "since": 0.0, "done": "", "busy": False}
 COUNTS = {}                                         # 'db:12:3' / 'tmdb:1399:3' -> episodes in that season
+TYPES = {}                                          # 'tmdb:1399:3' -> {episode: TMDB episode_type ('finale', 'mid_season', ...)}
 
 
 def t(en, nl):
@@ -121,6 +122,7 @@ def _tmdb_count(tmdb_id, season):
             today = datetime.date.today().isoformat()
             out = [e["episode_number"] for e in eps if e.get("air_date") and e["air_date"] <= today]
             COUNTS[key] = (max((e["episode_number"] for e in eps), default=0), max(out, default=0))
+            TYPES[key] = {e["episode_number"]: e.get("episode_type") or "" for e in eps}
         except Exception as error:  # noqa: BLE001
             log(f"tmdb {tmdb_id} S{season}: {error}")
             return 0, 0
@@ -139,6 +141,15 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
         if STATE["id"] != ident:
             return
         left = count - episode if count >= episode else -1
+        # 2.1.14: the last episode TMDB knows of a season that is still running is not its last one (Gold Rush S17 E7
+        # was called the season finale). Only when TMDB marks it as the finale; otherwise it is the newest episode.
+        final = False
+        if left == 0 and tmdb_id:
+            _tmdb_count(tmdb_id, season)
+            kind = TYPES.get(f"tmdb:{tmdb_id}:{season}", {}).get(episode)
+            final = kind == "finale" or kind is None and not TYPES.get(f"tmdb:{tmdb_id}:{season}")
+        elif left == 0:
+            final = True                                    # your own library: what you have is the season
         aired = out - episode if out >= episode else 0          # of those, already out (TMDB only)
         if (own_count or tmdb_id) and not show_dbid and left > 0 and aired < left:
             if aired > 0:
@@ -149,11 +160,13 @@ def _fill(ident, season, episode, own_count, show_dbid, tmdb_id, own_left=0, tit
             text = t(f"{left} episodes left in season {season}", f"Nog {left} afleveringen in seizoen {season}")
         elif left == 1:
             text = t(f"1 episode left in season {season}", f"Nog 1 aflevering in seizoen {season}")
-        elif left == 0:
+        elif left == 0 and final:
             text = t(f"Last episode of season {season}", f"Laatste aflevering van seizoen {season}")
+        elif left == 0:
+            text = t("Newest episode", "Nieuwste aflevering")
         else:
             text = ""
-        badge = "finale" if left == 0 and count > 1 else "premiere" if episode == 1 else ""
+        badge = "finale" if left == 0 and final and count > 1 else "premiere" if episode == 1 else ""
         for p, v in (("left", text), ("badge", badge)):
             if v:
                 HOME.setProperty("lucent.ep." + p, v)
