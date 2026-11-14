@@ -5600,6 +5600,9 @@ def rowreload_test():
     """2.1.8 (item 4): do the Home rows reload when a poster trailer starts / stops (no), and once after a real video (yes)?"""
     import re as _re
     out = {}
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(20)
     logf = xbmcvfs.translatePath("special://logpath/kodi.log")
 
     def refreshes(since):
@@ -5648,6 +5651,9 @@ def placeholder_test():
     """2.1.8 (item 4): grey cards while a row loads (a slow add-on folder of 12 s), then the real items."""
     W = "plugin://plugin.video.fakeseren/?list="
     out = {}
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(20)
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
