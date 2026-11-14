@@ -6051,6 +6051,45 @@ def libnew_test():
     log("libnew: " + json.dumps(out))
 
 
+def ssback_test():
+    """Wilfried: after the screensaver Home is stuck. Lucent Screensaver and Dim: start it from Home (side menu and a
+    row), wake it with a key, then press Down every 0.5 s until Home moves."""
+    out = []
+    def setmode(mode):
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                        "params": {"setting": "screensaver.mode", "value": mode}}))
+    for mode in ("screensaver.lucent", "screensaver.xbmc.builtin.dim"):
+        for where in ("menu", "row"):
+            setmode(mode)
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            xbmc.executebuiltin("ActivateWindow(home)")
+            mon.waitForAbort(2)
+            xbmc.executebuiltin("Control.SetFocus(9000,0)" if where == "menu" else "SetFocus(8101)")
+            mon.waitForAbort(2)
+            xbmc.executebuiltin("ActivateScreensaver")
+            mon.waitForAbort(8)
+            on = cond("System.ScreenSaverActive")
+            shot(f"ss-{mode[-6:]}-{where}-on")
+            xbmc.executebuiltin("Action(Down)")            # the key that wakes it
+            mon.waitForAbort(1.5)
+            before = (lab("System.CurrentControlID"), lab("Container(9000).CurrentItem"), lab(f"Container({lab('System.CurrentControlID') or 0}).CurrentItem"))
+            reacted = None
+            t1 = time.time()
+            while time.time() - t1 < 12:
+                xbmc.executebuiltin("Action(Down)")
+                mon.waitForAbort(0.5)
+                now = (lab("System.CurrentControlID"), lab("Container(9000).CurrentItem"), lab(f"Container({lab('System.CurrentControlID') or 0}).CurrentItem"))
+                if now != before and now[0]:
+                    reacted = round(time.time() - t1, 1)
+                    break
+            out.append({"mode": mode, "where": where, "active": on, "after": [cond("System.ScreenSaverActive"), lab("System.CurrentWindow"),
+                        cond("System.HasVisibleModalDialog")], "before": before, "react_s": reacted, "now": now})
+            shot(f"ss-{mode[-6:]}-{where}-after")
+            log("ssback step: " + json.dumps(out[-1]))
+    setmode("")
+    log("ssback: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11077,6 +11116,7 @@ def main():
     safe(aboutback_test)
     safe(towatch_test)
     safe(libnew_test)
+    safe(ssback_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
