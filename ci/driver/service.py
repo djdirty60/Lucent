@@ -6022,16 +6022,33 @@ def towatch_test():
 
 
 def libnew_test():
-    """2.1.17: the library row 'Episodes - continue and new': half-watched episodes and unwatched ones that aired in the
-    last 30 days, from any add-on's library. Expected: Pilot (half watched) and Two (new), not Second (old) or One (seen)."""
-    sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
-    import menu as _menu
-    path = next(p for label, p, style in _menu.WIDGETS_LIBRARY if isinstance(label, tuple) and label[0].startswith("Episodes · Continue and new"))
+    """2.1.17: the skin's own library row 'Episodes - new and continue' (plugin://skin.lucent/): first the new episodes
+    (Two, aired 5 days ago), then the half-watched ones (Pilot); not Second (old) or One (seen). Also on Home."""
+    out = {}
+    path = "plugin://skin.lucent/?list=lib_continue_new"
     r = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                                                    "params": {"directory": path, "media": "video", "properties": ["showtitle", "lastplayed", "firstaired", "playcount", "resume"]}})))
-    files = (r.get("result") or {}).get("files") or []
-    log("libnew: " + json.dumps({"error": r.get("error"), "items": [[f.get("label"), f.get("showtitle"), f.get("firstaired"), f.get("playcount"),
-                                                                     (f.get("resume") or {}).get("position")] for f in files]}))
+                                                    "params": {"directory": path, "media": "video", "properties": ["showtitle", "firstaired", "playcount", "resume"]}})))
+    out["error"] = r.get("error")
+    out["items"] = [[f.get("label"), f.get("showtitle"), f.get("firstaired"), f.get("playcount"), (f.get("resume") or {}).get("position")]
+                    for f in (r.get("result") or {}).get("files") or []]
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Bieb"), ("w1.label", "Nieuw en verder kijken"), ("w1.path", path), ("w1.style", "land")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Skin.Reset(nuvio.tab3.w2.path)")
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(31)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("SetFocus(8201,0,absolute)")
+    mon.waitForAbort(4)
+    out["row"] = [lab("Container(8201).NumItems"), lab("Container(8201).ListItemAbsolute(0).Label"), lab("Container(8201).ListItemAbsolute(1).Label"),
+                  lab("Container(8201).ListItemAbsolute(1).PercentPlayed"), lab("Container(8201).FolderPath")]
+    out["changed"] = HOME.getProperty("lucent.lib.changed")
+    shot("libnew-row")
+    log("libnew: " + json.dumps(out))
 
 
 def cwjumplog_test():

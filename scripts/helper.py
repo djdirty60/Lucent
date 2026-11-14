@@ -65,7 +65,14 @@ def run():
     if last and time.time() - float(last) < 60:
         return
     log("started")
-    monitor = xbmc.Monitor()
+    class LibraryWatch(xbmc.Monitor):
+        """2.1.17: the skin's own library rows (plugin://skin.lucent/) load again when the Kodi library changes:
+        a new episode, a resume point or a watched mark (also when NLZiet or Videoland write them)."""
+        def onNotification(self, sender, method, data):  # noqa: N802 - Kodi's name
+            if method in ("VideoLibrary.OnUpdate", "VideoLibrary.OnScanFinished", "VideoLibrary.OnRemove", "VideoLibrary.OnCleanFinished"):
+                HOME.setProperty("lucent.lib.changed", f"{time.time():.0f}")
+
+    monitor = LibraryWatch()
 
     import agenda_core
     import foryou
