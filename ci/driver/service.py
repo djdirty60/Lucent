@@ -5561,6 +5561,41 @@ def thcount_test():
     os.remove(os.path.join(d, "mdblist.key"))
 
 
+def wnvideo_test():
+    """2.1.8: What's new with the updates of the video add-on (example B): one list by date with a 'Video add-on' label."""
+    out = {}
+    path = xbmcvfs.translatePath("special://home/addons/plugin.video.lucent/resources/whatsnew.json")
+    out["had_file"] = os.path.exists(path)
+    if not out["had_file"]:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        it = lambda h: ["movies", h, "Een voorbeeldtekst voor de test.", h, "An example text for the test."]  # noqa: E731
+        json.dump({"versions": [
+            {"v": "1.0.0~beta1+13", "label": "Bèta 1 · update 13", "label_en": "Beta 1 · update 13", "date": "2026-11-14", "items": [it("Episodes left"), it("Faster start")]},
+            {"v": "1.0.0~beta1+12", "label": "Bèta 1 · update 12", "label_en": "Beta 1 · update 12", "date": "2026-11-13", "items": [it("Subtitles")]},
+            {"v": "1.0.0~beta1+5", "label": "Bèta 1 · update 5", "label_en": "Beta 1 · update 5", "date": "2026-11-10", "items": [it("Older")]}]},
+            open(path, "w", encoding="utf-8"))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/whatsnew.py)")
+    mon.waitForAbort(4)
+    rows = []
+    for i in range(10):
+        rows.append(lab(f"Container(100).ListItemAbsolute({i}).Label") + " | " + lab(f"Container(100).ListItemAbsolute({i}).Property(vid)"))
+    out["rows"] = rows
+    out["title"] = lab("Window.Property(wn.title)") if False else xbmcgui.Window(xbmcgui.getCurrentWindowDialogId()).getProperty("wn.title")
+    shot("wnvideo-1")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1.5)
+    out["title2"] = xbmcgui.Window(xbmcgui.getCurrentWindowDialogId()).getProperty("wn.title")
+    shot("wnvideo-2")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    if not out["had_file"]:
+        os.remove(path)
+    log("wnvideo: " + json.dumps(out, ensure_ascii=False))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -10567,6 +10602,7 @@ def main():
     safe(kbfocus_test)
     safe(volmute_test)
     safe(thcount_test)
+    safe(wnvideo_test)
     safe(intro2_test)
     safe(homeextra_test)
     safe(sort_test)
