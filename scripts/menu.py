@@ -362,7 +362,10 @@ def lv_convert():
     Runs from Home until there is nothing left to change and the video add-on has its key."""
     if not has_lv():
         return
-    seren_too, services_too = True, lv_ready()        # old Seren rows (from before 2.0) become the video add-on rows
+    # old Seren rows become the video add-on rows only when Seren itself is gone (rows that no longer fill); someone
+    # who still uses Seren keeps them (2.1.26, Reddit: installing the video add-on took away all Seren widgets)
+    seren_too = not xbmc.getCondVisibility("System.HasAddon(plugin.video.seren)")
+    services_too = lv_ready()
     lib_too = True                                      # Lucent Library is no longer used: its rows never fill
     menu = Menu()
     changed = False

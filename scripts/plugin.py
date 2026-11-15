@@ -22,6 +22,10 @@ FIELDS = ["title", "showtitle", "season", "episode", "firstaired", "plot", "rati
           "resume", "art", "file", "tvshowid", "dateadded", "streamdetails", "uniqueid"]
 
 
+def log(text):
+    xbmc.log(f"[skin.lucent] plugin: {text}", xbmc.LOGINFO)
+
+
 def rpc(method, **params):
     res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
     return res.get("result") or {}
@@ -70,11 +74,17 @@ def aired(ep):
 def next_up(show_id):
     """2.1.22: the episode after the last one you watched of this series (season and episode order), not the newest:
     if you are behind, the new episodes wait until you get there. Only an episode that is out."""
-    eps = rpc("VideoLibrary.GetEpisodes", tvshowid=int(show_id), properties=FIELDS,
-              sort={"method": "episode", "order": "ascending"}).get("episodes") or []
+    eps = rpc("VideoLibrary.GetEpisodes", tvshowid=int(show_id), properties=FIELDS).get("episodes") or []
+    # 2.1.26: our own order (season, then episode) - not Kodi's sort, which can mix up seasons
+    eps.sort(key=lambda e: (int(e.get("season") or 0), int(e.get("episode") or 0)))
     eps = [e for e in eps if int(e.get("season") or 0) > 0] or eps          # specials (season 0) only as a last resort
     last = max((i for i, e in enumerate(eps) if int(e.get("playcount") or 0) > 0), default=-1)
-    return next((e for e in eps[last + 1:] if not int(e.get("playcount") or 0) and aired(e)), None)
+    nxt = next((e for e in eps[last + 1:] if not int(e.get("playcount") or 0) and aired(e)), None)
+    seen = eps[last] if last >= 0 else {}
+    log(f"next up {seen.get('showtitle') or show_id}: last watched "
+        f"{'S%sE%s' % (seen.get('season'), seen.get('episode')) if seen else '-'} -> "
+        f"{'S%sE%s' % (nxt.get('season'), nxt.get('episode')) if nxt else 'none'} ({len(eps)} episodes)")
+    return nxt
 
 
 def lib_continue_new():
