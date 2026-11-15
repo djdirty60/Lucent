@@ -6055,6 +6055,8 @@ def ssback_test():
     """Wilfried: after the screensaver Home is stuck. Lucent Screensaver and Dim: start it from Home (side menu and a
     row), wake it with a key, then press Down every 0.5 s until Home moves."""
     out = []
+    def key_down():
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.Down"}))
     def setmode(mode):
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
                                         "params": {"setting": "screensaver.mode", "value": mode}}))
@@ -6070,13 +6072,13 @@ def ssback_test():
             mon.waitForAbort(8)
             on = cond("System.ScreenSaverActive")
             shot(f"ss-{mode[-6:]}-{where}-on")
-            xbmc.executebuiltin("Action(Down)")            # the key that wakes it
+            key_down()                                      # a real key press: wakes the screensaver like a remote
             mon.waitForAbort(1.5)
             before = (lab("System.CurrentControlID"), lab("Container(9000).CurrentItem"), lab(f"Container({lab('System.CurrentControlID') or 0}).CurrentItem"))
             reacted = None
             t1 = time.time()
             while time.time() - t1 < 12:
-                xbmc.executebuiltin("Action(Down)")
+                key_down()
                 mon.waitForAbort(0.5)
                 now = (lab("System.CurrentControlID"), lab("Container(9000).CurrentItem"), lab(f"Container({lab('System.CurrentControlID') or 0}).CurrentItem"))
                 if now != before and now[0]:
