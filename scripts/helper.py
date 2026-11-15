@@ -322,10 +322,9 @@ def run():
             if row.isdigit() and cond(f"Control.IsVisible({row}) + Integer.IsGreater(Container({row}).NumItems,0)"):
                 xbmc.executebuiltin(f"SetFocus({row})")
                 log(f"Home had no focus - back to row {row}")
-            elif cond("Control.IsVisible(9991)"):              # Home has rows: the rows, not the side menu
-                xbmc.executebuiltin("SetFocus(9100)")
-                log(f"Home had no focus - back to the rows (last row {row or '-'})")
             else:
+                # 2.1.19 (#22): no row with tiles to go back to - straight to the side menu (focusing the empty rows
+                # did nothing and left the remote dead)
                 xbmc.executebuiltin("SetFocus(9000)")
                 log("Home had no focus - back to the menu")
 
