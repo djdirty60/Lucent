@@ -6222,6 +6222,13 @@ def merge_test():
 def skinresume_test():
     """2.1.21: the skin's own resume screen for a half-watched library title (scripts/resume.py, Lucent_Resume.xml)."""
     out = {}
+    import shutil
+    os.makedirs("/tmp/ci/lib/movies", exist_ok=True)      # the library film needs a real file to play (120 s test video)
+    if not os.path.exists("/tmp/ci/lib/movies/film.mkv"):
+        shutil.copy("/tmp/ci/test.mkv", "/tmp/ci/lib/movies/film.mkv")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                    "params": {"movieid": 901, "resume": {"position": 40, "total": 120}}}))
+    mon.waitForAbort(1)
     for _ in range(3):                               # a first-run question of the video add-on may be open
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(1)
@@ -6255,6 +6262,8 @@ def skinresume_test():
     mon.waitForAbort(3)
     xbmc.executebuiltin("ActivateWindow(home)")
     # 2.1.21 part 2: an add-on's own row (not the library): the add-on gives where you stopped (45 of 120 s)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=rs,return)")
     for _ in range(20):
         if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:

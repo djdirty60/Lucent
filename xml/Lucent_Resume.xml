@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Lucent 2.1.21: the resume question for titles of the Kodi library (scripts/resume.py), in the look of the video
-     add-on's own resume screen. Continue watching (10) / Start over (11); Back closes without playing. -->
+<!-- Lucent 2.1.21: the resume question for half-watched titles of the Kodi library and of add-on rows (scripts/resume.py),
+     in the look of the video add-on's own resume screen. Continue watching (10) / Start over (11); Back closes without
+     playing. Without a plot the card is shorter (420 instead of 650) and sits in the middle of the screen. -->
 <window type="dialog">
     <defaultcontrol always="true">10</defaultcontrol>
     <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
@@ -25,17 +26,46 @@
         </control>
         <control type="group">
             <left>490</left><top>210</top>
+            <animation effect="slide" start="0,0" end="0,115" time="0" condition="String.IsEmpty(Window.Property(plot))">Conditional</animation>
+            <!-- the card: 650 high with a plot, 420 without -->
+            <control type="group">
+                <visible>!String.IsEmpty(Window.Property(plot))</visible>
+                <control type="image">
+                    <left>-40</left><top>-40</top><width>1020</width><height>730</height>
+                    <texture border="88">panel_shadow.png</texture><colordiffuse>B3000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>940</width><height>650</height>
+                    <texture border="48">panel.png</texture><colordiffuse>panel</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>940</width><height>650</height>
+                    <texture border="48">panel_edge.png</texture><colordiffuse>hairline</colordiffuse>
+                </control>
+            </control>
+            <control type="group">
+                <visible>String.IsEmpty(Window.Property(plot))</visible>
+                <control type="image">
+                    <left>-40</left><top>-40</top><width>1020</width><height>500</height>
+                    <texture border="88">panel_shadow.png</texture><colordiffuse>B3000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>940</width><height>420</height>
+                    <texture border="48">panel.png</texture><colordiffuse>panel</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>940</width><height>420</height>
+                    <texture border="48">panel_edge.png</texture><colordiffuse>hairline</colordiffuse>
+                </control>
+            </control>
+            <!-- picture: a soft card with a play sign under it, so a title without art has no hole -->
             <control type="image">
-                <left>-40</left><top>-40</top><width>1020</width><height>730</height>
-                <texture border="88">panel_shadow.png</texture><colordiffuse>B3000000</colordiffuse>
+                <left>40</left><top>40</top><width>320</width><height>180</height>
+                <texture border="14">rr14.png</texture><colordiffuse>glass_strong</colordiffuse>
             </control>
             <control type="image">
-                <left>0</left><top>0</top><width>940</width><height>650</height>
-                <texture border="48">panel.png</texture><colordiffuse>panel</colordiffuse>
-            </control>
-            <control type="image">
-                <left>0</left><top>0</top><width>940</width><height>650</height>
-                <texture border="48">panel_edge.png</texture><colordiffuse>hairline</colordiffuse>
+                <left>176</left><top>106</top><width>48</width><height>48</height>
+                <texture colordiffuse="text3">icons/play.png</texture>
             </control>
             <control type="image">
                 <left>40</left><top>40</top><width>320</width><height>180</height>
@@ -59,14 +89,14 @@
             </control>
             <control type="progress" id="50">
                 <left>40</left><top>244</top><width>860</width><height>6</height>
-                <texturebg border="3" colordiffuse="26FFFFFF">rr14.png</texturebg>
-                <midtexture border="3" colordiffuse="FFFFFFFF">rr14.png</midtexture>
+                <texturebg colordiffuse="26FFFFFF">white.png</texturebg>
+                <midtexture colordiffuse="FFFFFFFF">white.png</midtexture>
             </control>
             <control type="group">
                 <visible>!String.IsEmpty(Window.Property(plot))</visible>
                 <control type="image">
                     <left>40</left><top>282</top><width>860</width><height>210</height>
-                    <texture border="24">rr20.png</texture><colordiffuse>glass_strong</colordiffuse>
+                    <texture border="20">rr20.png</texture><colordiffuse>glass_strong</colordiffuse>
                 </control>
                 <control type="label">
                     <left>66</left><top>296</top><width>808</width><height>36</height>
@@ -79,29 +109,34 @@
                     <label>$INFO[Window.Property(plot)]</label>
                 </control>
             </control>
-            <control type="label">
-                <left>40</left><top>522</top><width>400</width><height>60</height>
-                <aligny>center</aligny><font>font_tiny</font><textcolor>text4</textcolor>
-                <label>$INFO[Window.Property(source)]</label>
-            </control>
-            <control type="grouplist" id="9004">
-                <left>40</left><top>522</top><width>860</width><height>60</height>
-                <orientation>horizontal</orientation><align>right</align><itemgap>16</itemgap>
-                <control type="button" id="10">
-                    <width>auto</width><height>60</height><font>font_label_bold</font>
-                    <textoffsetx>34</textoffsetx><align>center</align><aligny>center</aligny>
-                    <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
-                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
-                    <texturenofocus border="20" colordiffuse="1FFFFFFF">rr20.png</texturenofocus>
-                    <label>$INFO[Window.Property(resume_label)]</label>
+            <!-- source and buttons: at the bottom of the card (522 with a plot, 292 without) -->
+            <control type="group">
+                <top>522</top>
+                <animation effect="slide" start="0,0" end="0,-230" time="0" condition="String.IsEmpty(Window.Property(plot))">Conditional</animation>
+                <control type="label">
+                    <left>40</left><top>0</top><width>400</width><height>60</height>
+                    <aligny>center</aligny><font>font_tiny</font><textcolor>text4</textcolor>
+                    <label>$INFO[Window.Property(source)]</label>
                 </control>
-                <control type="button" id="11">
-                    <width>auto</width><height>60</height><font>font_label_bold</font>
-                    <textoffsetx>34</textoffsetx><align>center</align><aligny>center</aligny>
-                    <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
-                    <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
-                    <texturenofocus border="20" colordiffuse="1FFFFFFF">rr20.png</texturenofocus>
-                    <label>$INFO[Window.Property(start_label)]</label>
+                <control type="grouplist" id="9004">
+                    <left>40</left><top>0</top><width>860</width><height>60</height>
+                    <orientation>horizontal</orientation><align>right</align><itemgap>16</itemgap>
+                    <control type="button" id="10">
+                        <width>auto</width><height>60</height><font>font_label_bold</font>
+                        <textoffsetx>34</textoffsetx><align>center</align><aligny>center</aligny>
+                        <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                        <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                        <texturenofocus border="20" colordiffuse="1FFFFFFF">rr20.png</texturenofocus>
+                        <label>$INFO[Window.Property(resume_label)]</label>
+                    </control>
+                    <control type="button" id="11">
+                        <width>auto</width><height>60</height><font>font_label_bold</font>
+                        <textoffsetx>34</textoffsetx><align>center</align><aligny>center</aligny>
+                        <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                        <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                        <texturenofocus border="20" colordiffuse="1FFFFFFF">rr20.png</texturenofocus>
+                        <label>$INFO[Window.Property(start_label)]</label>
+                    </control>
                 </control>
             </control>
         </control>
