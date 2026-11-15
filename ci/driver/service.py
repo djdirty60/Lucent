@@ -6362,20 +6362,74 @@ def fade_test():
     mon.waitForAbort(3)
     log(f"fade: item={lab('ListItem.Label')} fanart={lab('ListItem.Art(fanart)')} exists={os.path.exists('/tmp/ci/orange.jpg')}")
     shot("fade-full")
-    xbmc.executebuiltin("Skin.SetBool(ci.nogradtop)")
-    mon.waitForAbort(1.5)
-    shot("fade-notop")
-    xbmc.executebuiltin("Skin.Reset(ci.nogradtop)")
-    for var in ("ci_top240.png", "ci_top256w4.png"):
-        xbmc.executebuiltin(f"Skin.SetString(ci.topvar,{var})")
-        mon.waitForAbort(2)
-        shot("fade-" + var.split(".")[0])
-    xbmc.executebuiltin("Skin.Reset(ci.topvar)")
     xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")
     mon.waitForAbort(2.5)
     shot("fade-corner")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
+
+
+def freeze_test():
+    """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
+    (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
+    import threading
+    alive = {"t": time.time(), "stop": False}
+
+    def watchdog():
+        while not alive["stop"] and not mon.abortRequested():
+            time.sleep(5)
+            gap = time.time() - alive["t"]
+            if gap > 20:
+                log(f"freeze: driver waited {gap:.0f} s on Kodi")
+    threading.Thread(target=watchdog, daemon=True).start()
+    out = []
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    t0 = time.strftime("%H:%M:%S")
+    pages = ("settings", "systemsettings", "playersettings", "interfacesettings", "skinsettings", "mediasettings",
+             "servicesettings", "pvrsettings", "gamesettings", "profiles", "addonbrowser", "filemanager")
+    for rnd in range(3):
+        for page in pages:
+            xbmc.executebuiltin("Control.SetFocus(9000,1)")
+            mon.waitForAbort(1)
+            key("Right")
+            mon.waitForAbort(1.5)
+            before = lab("System.CurrentControlID")
+            xbmc.executebuiltin(f"ActivateWindow({page})")
+            mon.waitForAbort(2)
+            key("Down")
+            mon.waitForAbort(0.4)
+            key("Down")
+            mon.waitForAbort(0.4)
+            for _ in range(3):
+                if cond("Window.IsActive(home)"):
+                    break
+                key("BackSpace")
+                mon.waitForAbort(0.8)
+            mon.waitForAbort(1.5)
+            f1 = lab("System.CurrentControlID")
+            key("Down")
+            mon.waitForAbort(1)
+            f2 = lab("System.CurrentControlID") + ":" + lab("Container(" + lab("System.CurrentControlID") + ").CurrentItem")
+            key("Up")
+            mon.waitForAbort(1)
+            alive["t"] = time.time()
+            row = [rnd, page, before, lab("System.CurrentWindow"), f1, f2, lab("System.FPS")]
+            out.append(row)
+            log("freeze step: " + json.dumps(row))
+        shot(f"freeze-{rnd}")
+    alive["stop"] = True
+    xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            lines = [ln[11:][:220] for ln in fh.read().splitlines() if ln[11:19] >= t0]
+        bad = [ln for ln in lines if "error" in ln.lower() or "back on Home" in ln or "had no focus" in ln or "Traceback" in ln]
+        log("freeze log: " + json.dumps(bad[-60:]))
+    except Exception as error:  # noqa: BLE001
+        log(f"freeze log: {error}")
+    log("freeze: " + json.dumps(out))
 
 
 def cwjumplog_test():
@@ -11415,6 +11469,7 @@ def main():
     safe(favtab_test)
     safe(merge_test)
     safe(fade_test)
+    safe(freeze_test)
     safe(nextup_test)
     safe(pinfo2_test)
     safe(audiodelay_test)
