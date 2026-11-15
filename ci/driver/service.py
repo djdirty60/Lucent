@@ -11350,6 +11350,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
+    safe(pinfo2_test)
     safe(audiodelay_test)
     safe(skinresume_test)
     safe(updnews_test)
