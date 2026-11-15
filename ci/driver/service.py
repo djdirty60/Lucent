@@ -8605,6 +8605,13 @@ def stats_test():
 def pinfo2_test():
     """Speler-info as its own window with three tabs."""
     xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
+    try:                                             # 2.1.26: the video add-on's subtitle window covered the info in CI
+        import xbmcaddon
+        lv = xbmcaddon.Addon("plugin.video.lucent")
+        for key in ("subs_auto", "subs_check", "subs_swap"):
+            lv.setSettingBool(key, False)
+    except Exception as error:  # noqa: BLE001
+        log(f"pinfo2: lv subs off {error}")
     xbmc.Player().play("/tmp/ci/audio.mkv")
     for _ in range(20):
         if cond("Player.HasVideo"):
