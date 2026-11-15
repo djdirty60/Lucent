@@ -6345,6 +6345,9 @@ def fade_test():
         return
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
                                     "params": {"movieid": movies[0]["movieid"], "art": {"fanart": "/tmp/ci/orange.jpg"}}}))
+    for _ in range(3):                               # a first-run question of the video add-on may be open
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
     xbmc.executebuiltin("Skin.SetBool(nuvio.fullbackdrop)")
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
     mon.waitForAbort(3)
