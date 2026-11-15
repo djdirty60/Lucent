@@ -10,6 +10,21 @@ import xbmcplugin
 
 handle = int(sys.argv[1])
 q = dict(urllib.parse.parse_qsl(sys.argv[2][1:]))
+if q.get("play"):                                   # 2.1.21: play a title (resume test): the 120 s test video
+    xbmcplugin.setResolvedUrl(handle, True, xbmcgui.ListItem(path="/tmp/ci/test.mkv", offscreen=True))
+    sys.exit(0)
+if q.get("list") == "rs":                             # 2.1.21: one half-watched episode of an add-on's own row
+    li = xbmcgui.ListItem("Chapter 9", offscreen=True)
+    tag = li.getVideoInfoTag()
+    tag.setMediaType("episode"); tag.setTitle("Chapter 9"); tag.setTvShowTitle("Resume Show"); tag.setSeason(3); tag.setEpisode(7)
+    tag.setPlot("The crew looks for a new place to dig, but the weather turns and the machines break down.")
+    tag.setDuration(120); tag.setResumePoint(45, 120)
+    li.setArt({"thumb": "/tmp/ci/art/fanart2.jpg", "fanart": "/tmp/ci/art/fanart2.jpg"})
+    li.setProperty("IsPlayable", "true")
+    xbmcplugin.setContent(handle, "episodes")
+    xbmcplugin.addDirectoryItems(handle, [("plugin://plugin.video.fakeseren/?play=rs0", li, False)], 1)
+    xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
+    sys.exit(0)
 kind = q.get("list", "fast")
 STATE = "/tmp/ci/fake_calls.json"
 try:

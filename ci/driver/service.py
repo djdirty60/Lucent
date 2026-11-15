@@ -6219,7 +6219,7 @@ def merge_test():
     log("merge: " + json.dumps(out))
 
 
-def resume_test():
+def skinresume_test():
     """2.1.21: the skin's own resume screen for a half-watched library title (scripts/resume.py, Lucent_Resume.xml)."""
     out = {}
     for _ in range(3):                               # a first-run question of the video add-on may be open
@@ -6251,6 +6251,30 @@ def resume_test():
             break
     mon.waitForAbort(3)
     out["resume_play"] = [cond("Player.HasVideo"), lab("Player.Time"), lab("VideoPlayer.Title")]
+    xbmc.Player().stop()
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    # 2.1.21 part 2: an add-on's own row (not the library): the add-on gives where you stopped (45 of 120 s)
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=rs,return)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
+            break
+    for _ in range(3):
+        if "Chapter" in lab("ListItem.Label"):
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+    out["resume2_item"] = [lab("ListItem.Label"), cond("ListItem.IsResumable"), lab("ListItem.PercentPlayed"), lab("ListItem.FilenameAndPath")]
+    xbmc.executebuiltin("RunScript(special://skin/scripts/resume.py)")
+    mon.waitForAbort(5)
+    out["resume2_open"] = [lab("System.CurrentWindow"), lab("Window.Property(stopped)"), lab("Window.Property(source)")]
+    shot("resume-addon")
+    xbmc.executebuiltin("SendClick(10)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or cond("Player.HasVideo"):
+            break
+    mon.waitForAbort(3)
+    out["resume2_play"] = [cond("Player.HasVideo"), lab("Player.Time")]
     xbmc.Player().stop()
     mon.waitForAbort(3)
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -11286,7 +11310,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
-    safe(resume_test)
+    safe(skinresume_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)

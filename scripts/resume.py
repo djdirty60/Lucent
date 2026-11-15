@@ -74,25 +74,73 @@ class Resume(xbmcgui.WindowXMLDialog):
             self.close()
 
 
+def addon_item(path):
+    """An add-on's own title (not in the library): the add-on keeps where you stopped and gives it with the tile. Kodi
+    has no info label with the exact second, so ask the add-on's folder again for the item (its 'resume'); when that
+    fails, go by the percentage on the tile (rounded down: a little earlier, never later)."""
+    cid = xbmc.getInfoLabel("System.CurrentControlID")
+    folder = xbmc.getInfoLabel(f"Container({cid}).FolderPath") if cid.isdigit() else ""
+    item = {"file": path, "title": xbmc.getInfoLabel("ListItem.Title") or xbmc.getInfoLabel("ListItem.Label"),
+            "showtitle": xbmc.getInfoLabel("ListItem.TVShowTitle"), "season": xbmc.getInfoLabel("ListItem.Season"),
+            "episode": xbmc.getInfoLabel("ListItem.Episode"), "year": xbmc.getInfoLabel("ListItem.Year"),
+            "plot": xbmc.getInfoLabel("ListItem.Plot"),
+            "art": {k: xbmc.getInfoLabel(f"ListItem.Art({k})") for k in ("thumb", "fanart", "landscape", "poster", "tvshow.fanart")}}
+    try:
+        duration = float(xbmc.getInfoLabel("ListItem.Duration(secs)") or 0)
+    except ValueError:
+        duration = 0.0
+    try:
+        percent = float(xbmc.getInfoLabel("ListItem.PercentPlayed") or 0)
+    except ValueError:
+        percent = 0.0
+    item["resume"] = {"position": int(duration * percent / 100), "total": duration}
+    if folder.startswith("plugin://"):
+        files = rpc("Files.GetDirectory", {"directory": folder, "media": "video", "properties": ["resume"]}).get("files") or []
+        found = next((f for f in files if f.get("file") == path), None)
+        if found and (found.get("resume") or {}).get("position"):
+            item["resume"] = found["resume"]
+    return item
+
+
 def main():
     kind = xbmc.getInfoLabel("ListItem.DBType")
     dbid = xbmc.getInfoLabel("ListItem.DBID")
-    if kind not in ("movie", "episode") or not dbid.isdigit():
-        log(f"not a library title ({kind or '-'} {dbid or '-'}): Kodi plays it")
-        path = xbmc.getInfoLabel("ListItem.FilenameAndPath")
+    path = xbmc.getInfoLabel("ListItem.FilenameAndPath")
+    library = kind in ("movie", "episode") and dbid.isdigit() and int(dbid) > 0
+    if library:
+        item = details(kind, int(dbid))
+        source = t("From your library", "Uit je bibliotheek")
+    elif path.startswith("plugin://"):
+        item = addon_item(path)
+        addon_id = path.split("/")[2]
+        try:
+            source = xbmcaddon.Addon(addon_id).getAddonInfo("name")
+        except RuntimeError:
+            source = ""
+    else:
+        log(f"not a library or add-on title ({kind or '-'} {dbid or '-'}): Kodi plays it")
         if path:
             xbmc.executebuiltin(f'PlayMedia("{path}")')
         return
-    item = details(kind, int(dbid))
     res = item.get("resume") or {}
     position, total = float(res.get("position") or 0), float(res.get("total") or 0) or float(item.get("runtime") or 0)
     key = "episodeid" if kind == "episode" else "movieid"
+
+    def play(resume):
+        if library:
+            rpc("Player.Open", {"item": {key: int(dbid)}, "options": {"resume": bool(resume)}})
+            return
+        li = xbmcgui.ListItem(item.get("title") or "", offscreen=True)
+        li.setProperty("StartOffset", f"{position:.1f}" if resume else "0")
+        xbmc.Player().play(path, li)
+
     if position <= 0:                                   # nothing to resume after all: just play
-        rpc("Player.Open", {"item": {key: int(dbid)}})
+        play(False)
         return
-    if kind == "episode":
+    if kind == "episode" or item.get("showtitle"):
         title = item.get("showtitle") or item.get("title") or ""
-        where = t(f"S{item.get('season')} · E{item.get('episode')} · ", f"S{item.get('season')} · A{item.get('episode')} · ")
+        where = t(f"S{item.get('season')} · E{item.get('episode')} · ", f"S{item.get('season')} · A{item.get('episode')} · ") \
+            if str(item.get("season") or "").isdigit() and str(item.get("episode") or "").isdigit() else ""
         thumb = art(item, "thumb", "tvshow.fanart", "tvshow.landscape", "fanart")
         fanart = art(item, "tvshow.fanart", "fanart", "thumb")
     else:
@@ -108,7 +156,7 @@ def main():
         "caps": t("CONTINUE WATCHING", "VERDER KIJKEN"), "title": title, "stopped": stopped,
         "thumb": thumb, "fanart": fanart, "percent": f"{position * 100 / total:.1f}" if total else "0",
         "plot_head": t("What it's about", "Waar gaat het over"), "plot": item.get("plot") or "",
-        "source": t("From your library", "Uit je bibliotheek"),
+        "source": source,
         "resume_label": t("Continue watching", "Verder kijken"), "start_label": t("Start over", "Opnieuw beginnen"),
     }
     win = Resume("Lucent_Resume.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
@@ -118,8 +166,8 @@ def main():
     del win
     if choice is None:
         return
-    log(f"{kind} {dbid}: {'resume at ' + clock(position) if choice else 'from the start'}")
-    rpc("Player.Open", {"item": {key: int(dbid)}, "options": {"resume": bool(choice)}})
+    log(f"{'library ' + kind + ' ' + dbid if library else path[:60]}: {'resume at ' + clock(position) if choice else 'from the start'}")
+    play(choice)
 
 
 if __name__ == "__main__":
