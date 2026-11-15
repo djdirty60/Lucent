@@ -6362,6 +6362,11 @@ def fade_test():
     mon.waitForAbort(3)
     log(f"fade: item={lab('ListItem.Label')} fanart={lab('ListItem.Art(fanart)')} exists={os.path.exists('/tmp/ci/orange.jpg')}")
     shot("fade-full")
+    for var in ("none", "ci_t64.png", "ci_tfull.png", "ci_t16.png", "flip"):
+        xbmc.executebuiltin(f"Skin.SetString(ci.topvar,{var})")
+        mon.waitForAbort(2)
+        shot("fade-v-" + var.split(".")[0])
+    xbmc.executebuiltin("Skin.Reset(ci.topvar)")
     xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")
     mon.waitForAbort(2.5)
     shot("fade-corner")
@@ -6383,6 +6388,10 @@ def freeze_test():
                 log(f"freeze: driver waited {gap:.0f} s on Kodi")
     threading.Thread(target=watchdog, daemon=True).start()
     out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")      # no first-run questions over Home
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
     xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -6416,6 +6425,9 @@ def freeze_test():
             key("Up")
             mon.waitForAbort(1)
             alive["t"] = time.time()
+            if cond("System.HasModalDialog"):
+                log("freeze: dialog " + lab("System.CurrentWindow") + " - closing")
+                xbmc.executebuiltin("Dialog.Close(all,true)")
             row = [rnd, page, before, lab("System.CurrentWindow"), f1, f2, lab("System.FPS")]
             out.append(row)
             log("freeze step: " + json.dumps(row))

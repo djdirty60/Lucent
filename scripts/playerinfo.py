@@ -306,7 +306,7 @@ def tick():
     vcodec = info("VideoPlayer.VideoCodec").lower()
     vname = VCODEC.get(vcodec, vcodec.upper())
     fname = info("Player.Filename")
-    if not os.path.splitext(urllib.parse.urlparse(fname or "").path)[1]:
+    if os.path.splitext(urllib.parse.urlparse(fname or "").path)[1].lower().lstrip(".") not in CONTAINER:
         # 2.1.26: a stream link without a file name: the release name the video add-on gives (lucent.video.now 'name')
         try:
             named = json.loads(xbmcgui.Window(10000).getProperty("lucent.video.now") or "{}").get("name") or ""
@@ -429,7 +429,8 @@ def tick():
     loc = location(path)
     put("r.loc", f"{loc} · stream" if stream and loc else loc)
     ext = os.path.splitext(urllib.parse.urlparse(fname or "").path)[1].lower().lstrip(".")
-    put("r.cont", " · ".join(x for x in (CONTAINER.get(ext, ext.upper()), _STATE["size"]) if x))
+    # 2.1.27: only a real container extension ('Movie.2023.H.265-GRP' has none - '265-GRP' is not a container)
+    put("r.cont", " · ".join(x for x in (CONTAINER.get(ext, ""), _STATE["size"]) if x))
     put("r.rate", t(f"{total:.1f} Mb/s · picture {vbr:.1f} · audio {abr:.1f}", f"{total:.1f} Mb/s · beeld {vbr:.1f} · audio {abr:.1f}") if total else "–")
     # video
     scan = info("Player.Process(videoscantype)").lower()
