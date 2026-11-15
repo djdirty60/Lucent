@@ -4,9 +4,8 @@
     RunScript(special://skin/scripts/traktlogin.py)          Skin settings > Follow > Trakt login (log in / out)
     RunScript(special://skin/scripts/traktlogin.py,login)    log in straight away
 
-Trakt asks every app for its own keys. You make a free 'API app' on trakt.tv once (Settings > Your API Apps > New
-application, redirect uri urn:ietf:wg:oauth:2.0:oob) and type its Client ID here (and its Client Secret, only for an
-older app: new Trakt apps sign in without one, PKCE). Then Lucent shows a
+Since 2.1.23 Lucent uses its own Trakt app (no keys to type, no secret: device code / PKCE). A Client ID of your own
+app typed in earlier keeps being used (with its Client Secret, only for an older app). Lucent shows a
 code that you enter on trakt.tv/activate. Keys and login stay on this box (addon_data/skin.lucent/trakt.json); they are
 never in the skin itself. The login is renewed by itself before it runs out.
 """
@@ -26,6 +25,10 @@ API = "https://api.trakt.tv/"
 OOB = "urn:ietf:wg:oauth:2.0:oob"
 FILE = "special://profile/addon_data/skin.lucent/trakt.json"
 USER = "lucent.trakt.user"            # Skin.String: the account name, shown in Skin settings
+# 2.1.23: Lucent's own Trakt app (the one of Lucent Video, production access). It signs in without a secret (device code,
+# PKCE), so its Client ID may be public, the way Trakt intends it. Nobody has to make an API app any more; a Client ID
+# of your own (typed in earlier) still wins.
+LUCENT_CLIENT_ID = "Ygmc_TAb8t2Y_c3VoSLYyG0i4jZ_cAVBqn18kiyvuvY"
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 
 
@@ -144,8 +147,9 @@ def ask_keys(data):
 
 def login():
     data = load()
-    if not data.get("client_id") and not ask_keys(data):
-        return False
+    if not data.get("client_id"):
+        data["client_id"] = LUCENT_CLIENT_ID          # Lucent's own Trakt app: no keys to type
+        save(data)
     try:
         code = post("oauth/device/code", {"client_id": data["client_id"]})
     except urllib.error.HTTPError as error:

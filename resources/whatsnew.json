@@ -2,18 +2,34 @@
  "_comment": "What's new: one entry per version, every change under its own heading. Older versions come from addon.xml / changelog_nl.txt. 'at' is when the version was published (UTC, ISO): it puts the skin and the video add-on in the order they came out.",
  "versions": [
   {
-   "v": "2.1.23",
+   "v": "2.1.24",
    "date": "2026-11-15",
    "at": "",
    "tag": "RC 2",
    "tag_en": "RC 2",
    "items": [
     [
+     "player",
+     "Schuifjes werken weer (audio-vertraging)",
+     "Bij het instellen van bijvoorbeeld de audio-vertraging stond er een grote witte stip midden in beeld en deed links/rechts niets. Het schuifje is weer een gewone balk met een klein bolletje, en links/rechts past de waarde aan.",
+     "Sliders work again (audio offset)",
+     "When setting for example the audio offset, a big white dot filled the middle of the screen and left/right did nothing. The slider is a normal bar with a small dot again, and left/right changes the value."
+    ]
+   ]
+  },
+  {
+   "v": "2.1.23",
+   "date": "2026-11-15",
+   "at": "2026-11-15T16:21Z",
+   "tag": "RC 2",
+   "tag_en": "RC 2",
+   "items": [
+    [
      "trakt",
-     "Trakt-login zonder Client Secret",
-     "Nieuwe Trakt-apps krijgen geen Client Secret meer (Trakt toont 'Not issued'). Lucents eigen Trakt-login werkt nu ook zonder: vul alleen de Client ID in en laat de Client Secret leeg. Heeft je app nog wel een secret, dan werkt die gewoon zoals eerst.",
-     "Trakt login without a Client Secret",
-     "New Trakt apps no longer get a Client Secret (Trakt shows 'Not issued'). Lucent's own Trakt login now works without one: enter only the Client ID and leave the Client Secret empty. If your app still has a secret, it keeps working as before."
+     "Trakt-login zonder eigen API-app",
+     "Inloggen bij Trakt gaat nu met Lucents eigen Trakt-app: je hoeft geen API-app meer te maken en geen sleutels in te vullen. Lucent toont een code, die vul je in op trakt.tv/activate. Had je al een eigen app ingevuld, dan blijft die gewoon werken, ook zonder Client Secret (nieuwe Trakt-apps krijgen er geen meer).",
+     "Trakt login without your own API app",
+     "Signing in to Trakt now uses Lucent's own Trakt app: no API app to make and no keys to type. Lucent shows a code that you enter on trakt.tv/activate. If you already entered an app of your own, it keeps working, also without a Client Secret (new Trakt apps no longer get one)."
     ]
    ]
   },

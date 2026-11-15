@@ -113,6 +113,9 @@
         <pulseonselect>false</pulseonselect>
     </default>
     <default type="slider">
+        <!-- 2.1.24 (Reddit): Kodi makes a slider vertical when it has no orientation; then the nib is scaled to the width
+             of the control and fills the screen (audio offset). Sliders in Lucent are horizontal. -->
+        <orientation>horizontal</orientation>
         <height>40</height>
         <texturesliderbar colordiffuse="4DFFFFFF">slider_bar40.png</texturesliderbar>
         <textureslidernib colordiffuse="text3">nib40.png</textureslidernib>
