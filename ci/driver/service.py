@@ -6176,6 +6176,9 @@ def merge_test():
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(4)
     out["after_3_home"] = starts()
+    for _ in range(3):                               # a first-run question of the video add-on may be open
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
     for _ in range(20):
         if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
@@ -6188,6 +6191,8 @@ def merge_test():
     mon.waitForAbort(1)
     out["lib_items"] = n_items
     for n in range(2):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
         xbmc.executebuiltin("Action(Info)")
         mon.waitForAbort(6)
         out[f"page{n}"] = [cond("Window.IsActive(movieinformation)"), lab("ListItem.Label"), HOME.getProperty("nuvio.agenda.followed"),
