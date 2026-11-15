@@ -6321,6 +6321,17 @@ def audiodelay_test():
     log("audiodelay: " + json.dumps(out))
 
 
+def nextup_test():
+    """2.1.25b: New and continue after an episode you watched to the end (Show Five E3), and the shows' last-played dates."""
+    shows = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShows",
+                                                       "params": {"properties": ["title", "watchedepisodes", "lastplayed"]}})))
+    log("nextup shows: " + json.dumps([(s.get("title"), s.get("watchedepisodes"), s.get("lastplayed")) for s in (shows.get("result") or {}).get("tvshows") or []]))
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
+                                                     "params": {"directory": "plugin://skin.lucent/?list=lib_continue_new", "media": "video",
+                                                                "properties": ["showtitle", "season", "episode"]}})))
+    log("nextup row: " + json.dumps(res.get("error") or [(f.get("showtitle"), f.get("season"), f.get("episode"), f.get("label")) for f in (res.get("result") or {}).get("files") or []]))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11357,6 +11368,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
+    safe(nextup_test)
     safe(pinfo2_test)
     safe(audiodelay_test)
     safe(skinresume_test)
