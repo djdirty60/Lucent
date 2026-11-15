@@ -6176,13 +6176,17 @@ def merge_test():
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(4)
     out["after_3_home"] = starts()
-    xbmc.executebuiltin('ActivateWindow(Videos,"videodb://movies/titles/",return)')
-    mon.waitForAbort(4)
-    for _ in range(4):
-        if lab("ListItem.Label") == "Lib Film":
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
             break
-        xbmc.executebuiltin("Action(Down)")
-        mon.waitForAbort(1)
+    n_items = int(lab("Container.NumItems") or 0)
+    for i in range(n_items + 1):
+        if lab(f"Container.ListItemAbsolute({i}).Label") == "Lib Film":
+            xbmc.executebuiltin(f"SetFocus(50,{i},absolute)")
+            xbmc.executebuiltin(f"SetFocus(51,{i},absolute)")
+    mon.waitForAbort(1)
+    out["lib_items"] = n_items
     for n in range(2):
         xbmc.executebuiltin("Action(Info)")
         mon.waitForAbort(6)
@@ -6196,6 +6200,15 @@ def merge_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(60)
     out["mb_after_1min"] = rss()
+    extra = xbmcvfs.translatePath("special://temp/ci_extra.py")
+    with open(extra, "w") as fh:
+        fh.write("import sys, xbmc, xbmcvfs\nsys.path.insert(0, xbmcvfs.translatePath('special://skin/scripts/'))\n"
+                 "import trailers\nm = xbmc.Monitor()\nt = trailers.Trailers()\nm.waitForAbort(40)\n")
+    xbmc.executebuiltin(f"RunScript({extra})")
+    mon.waitForAbort(20)
+    out["mb_with_separate_trailer_script"] = rss()
+    mon.waitForAbort(40)
+    out["mb_after_it_ended"] = rss()
     beat = HOME.getProperty("nuvio.trailer.service")
     out["heartbeat_age_end"] = round(time.time() - float(beat), 1) if beat else None
     log("merge: " + json.dumps(out))
