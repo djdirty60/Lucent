@@ -6366,6 +6366,11 @@ def fade_test():
     mon.waitForAbort(1.5)
     shot("fade-notop")
     xbmc.executebuiltin("Skin.Reset(ci.nogradtop)")
+    for var in ("ci_top240.png", "ci_top256w4.png"):
+        xbmc.executebuiltin(f"Skin.SetString(ci.topvar,{var})")
+        mon.waitForAbort(2)
+        shot("fade-" + var.split(".")[0])
+    xbmc.executebuiltin("Skin.Reset(ci.topvar)")
     xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")
     mon.waitForAbort(2.5)
     shot("fade-corner")
