@@ -17,6 +17,7 @@ The slow jobs (they ask the internet) run one after another in a worker thread, 
 never waits for them. A small heartbeat thread tells a new start that this helper is still alive,
 also while a job takes long. After a skin update (lucent.helper.stop) this helper stops so the new one can start.
 """
+import json
 import threading
 import time
 
@@ -367,10 +368,23 @@ def run():
             back_trace["last"] = state
             log(f"back on Home +{time.time() - back_trace['t']:.1f}s: {state}")
 
+    favs = {"t": 0.0}
+
+    def fav_count():
+        """2.1.19: lucent.favs - how many favourites there are, while the Favourites tab is under the cursor (#19)."""
+        if time.time() - favs["t"] < 3 or not cond("Window.IsActive(home) + String.Contains(Container(9000).ListItem.Property(act),favouritesbrowser)"):
+            return
+        favs["t"] = time.time()
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Favourites.GetFavourites"})))
+        count = str(len((res.get("result") or {}).get("favourites") or []))
+        if HOME.getProperty("lucent.favs") != count:
+            HOME.setProperty("lucent.favs", count)
+
     try:
         while not monitor.abortRequested():
             try:
                 home_return_trace()
+                fav_count()
             except Exception as error:  # noqa: BLE001
                 log(f"home trace: {error}")
             if HOME.getProperty(STOP) or updated():

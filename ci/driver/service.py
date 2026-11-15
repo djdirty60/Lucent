@@ -6092,6 +6092,52 @@ def ssback_test():
     log("ssback: " + json.dumps(out))
 
 
+def favtab_test():
+    """2.1.19 (#19): the Favourites tab shows your favourites as its row (not the Home rows); without favourites a clear
+    message, also in the Favourites window (no lone '..')."""
+    out = {}
+    def rpc(method, **params):
+        return json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.label,Favourites)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.action,ActivateWindow(favouritesbrowser))")
+    for n in range(1, 11):
+        xbmc.executebuiltin(f"Skin.Reset(nuvio.tab3.w{n}.path)")
+    for f in (rpc("Favourites.GetFavourites").get("result") or {}).get("favourites") or []:
+        pass
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(31)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(7)
+    out["empty"] = {"favs": HOME.getProperty("lucent.favs"), "rows": cond("Control.IsVisible(9991)"), "row1": lab("Container(8101).NumItems") + "/" + lab("Container(8201).NumItems")}
+    shot("favtab-empty")
+    xbmc.executebuiltin("ActivateWindow(favouritesbrowser)")
+    mon.waitForAbort(3)
+    out["window_empty"] = [lab("System.CurrentWindow"), lab("Container.NumItems"), lab("System.CurrentControlID")]
+    shot("favwin-empty")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    out["add"] = rpc("Favourites.AddFavourite", title="CI Fav Film", type="media", path="/tmp/ci/test.mkv").get("result")
+    out["add2"] = rpc("Favourites.AddFavourite", title="CI Fav Folder", type="window", window="videos", windowparameter="videodb://movies/titles/").get("result")
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(8)
+    out["with"] = {"favs": HOME.getProperty("lucent.favs"), "rows": cond("Control.IsVisible(9991)"), "row1": lab("Container(8101).NumItems") + "/" + lab("Container(8201).NumItems"),
+                   "label": lab("Container(8101).ListItemAbsolute(0).Label") or lab("Container(8201).ListItemAbsolute(0).Label")}
+    shot("favtab-with")
+    xbmc.executebuiltin("ActivateWindow(favouritesbrowser)")
+    mon.waitForAbort(3)
+    out["window_with"] = [lab("System.CurrentWindow"), lab("Container.NumItems"), lab("System.CurrentControlID")]
+    shot("favwin-with")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+    log("favtab: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11119,6 +11165,7 @@ def main():
     safe(towatch_test)
     safe(libnew_test)
     safe(ssback_test)
+    safe(favtab_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
