@@ -61,10 +61,21 @@ def item(ep):
     return ep.get("file") or "", li
 
 
+def next_up(show_id):
+    """2.1.22: the episode after the last one you watched of this series (season and episode order), not the newest:
+    if you are behind, the new episodes wait until you get there."""
+    eps = rpc("VideoLibrary.GetEpisodes", tvshowid=int(show_id), properties=FIELDS,
+              sort={"method": "episode", "order": "ascending"}).get("episodes") or []
+    eps = [e for e in eps if int(e.get("season") or 0) > 0] or eps          # specials (season 0) only as a last resort
+    last = max((i for i, e in enumerate(eps) if int(e.get("playcount") or 0) > 0), default=-1)
+    return next((e for e in eps[last + 1:] if not int(e.get("playcount") or 0)), None)
+
+
 def lib_continue_new():
-    """One tile per series, only for series you are watching (you saw an episode of it): first the newest new episode
-    (unwatched, out in the last 30 days) of series you are not halfway an episode of, newest first; then the episodes
-    you stopped halfway, last watched first."""
+    """One tile per series, only for series you are watching (you saw an episode of it): first the series with a new
+    episode (unwatched, out in the last 30 days) that you are not halfway an episode of, newest first - the tile is the
+    episode after the last one you watched (2.1.22), so you are never sent past episodes you have not seen; then the
+    episodes you stopped halfway, last watched first."""
     shows = rpc("VideoLibrary.GetTVShows", properties=["watchedepisodes"]).get("tvshows") or []
     going = episodes({"field": "inprogress", "operator": "true", "value": ""}, {"method": "lastplayed", "order": "descending"})
     watching = {s["tvshowid"] for s in shows if int(s.get("watchedepisodes") or 0) > 0} | {e.get("tvshowid") for e in going}
@@ -78,6 +89,11 @@ def lib_continue_new():
         if ep.get("tvshowid") in done:
             continue                                    # one tile per series
         done.add(ep.get("tvshowid"))
+        if ep not in going:                             # a new episode: show the next one after where you are
+            try:
+                ep = next_up(ep.get("tvshowid")) or ep
+            except Exception:  # noqa: BLE001 - a library hiccup: keep the new episode
+                pass
         url, li = item(ep)
         if url:
             rows.append((url, li, False))

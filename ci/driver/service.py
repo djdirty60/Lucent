@@ -6290,6 +6290,37 @@ def skinresume_test():
     log("resume: " + json.dumps(out))
 
 
+def audiodelay_test():
+    """2.1.23 (Reddit): the audio offset slider (DialogSlider.xml) during playback: no big white dot, and it moves."""
+    out = {}
+    xbmc.Player().play("/tmp/ci/test.mkv")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or cond("Player.HasVideo"):
+            break
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("ActivateWindow(osdaudiosettings)")
+    mon.waitForAbort(3)
+    shot("audiosettings")
+    xbmc.executebuiltin("Dialog.Close(osdaudiosettings)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Action(AudioDelay)")
+    mon.waitForAbort(3)
+    out["slider_open"] = [cond("Window.IsVisible(slider)"), lab("System.CurrentControlID"), lab("Control.GetLabel(12)")]
+    shot("audiodelay")
+    for _ in range(4):
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(0.4)
+    mon.waitForAbort(1)
+    out["after_right"] = [lab("Control.GetLabel(12)"), lab("Player.AudioDelay") if hasattr(xbmc, "log") else ""]
+    shot("audiodelay-moved")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1)
+    xbmc.Player().stop()
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    log("audiodelay: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11319,6 +11350,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
+    safe(audiodelay_test)
     safe(skinresume_test)
     safe(updnews_test)
     safe(intro2_test)
