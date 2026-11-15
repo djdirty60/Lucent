@@ -6219,6 +6219,44 @@ def merge_test():
     log("merge: " + json.dumps(out))
 
 
+def resume_test():
+    """2.1.21: the skin's own resume screen for a half-watched library title (scripts/resume.py, Lucent_Resume.xml)."""
+    out = {}
+    for _ in range(3):                               # a first-run question of the video add-on may be open
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
+            break
+    n_items = int(lab("Container.NumItems") or 0)
+    for i in range(n_items + 1):
+        if lab(f"Container.ListItemAbsolute({i}).Label") == "Lib Film":
+            xbmc.executebuiltin(f"SetFocus(50,{i},absolute)")
+            xbmc.executebuiltin(f"SetFocus(51,{i},absolute)")
+    mon.waitForAbort(1)
+    out["item"] = [lab("ListItem.Label"), lab("ListItem.DBType"), lab("ListItem.DBID"), cond("ListItem.IsResumable")]
+    xbmc.executebuiltin("RunScript(special://skin/scripts/resume.py)")
+    mon.waitForAbort(4)
+    out["open"] = [lab("System.CurrentWindow"), lab("System.CurrentControlID"), lab("Window.Property(stopped)")]
+    shot("resume-skin")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    out["after_back"] = [lab("System.CurrentWindow"), cond("Player.HasVideo")]
+    xbmc.executebuiltin("RunScript(special://skin/scripts/resume.py)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SendClick(10)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or cond("Player.HasVideo"):
+            break
+    mon.waitForAbort(3)
+    out["resume_play"] = [cond("Player.HasVideo"), lab("Player.Time"), lab("VideoPlayer.Title")]
+    xbmc.Player().stop()
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    log("resume: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11248,6 +11286,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
+    safe(resume_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
