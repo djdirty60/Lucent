@@ -6332,6 +6332,40 @@ def nextup_test():
     log("nextup row: " + json.dumps(res.get("error") or [(f.get("showtitle"), f.get("season"), f.get("episode"), f.get("label")) for f in (res.get("result") or {}).get("files") or []]))
 
 
+def fade_test():
+    """2.1.27 (#23): the dark fades over a full-screen backdrop must not show a line on a bright, flat picture."""
+    import subprocess
+    if not os.path.exists("/tmp/ci/orange.jpg"):
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i",
+                        "gradients=s=1920x1080:c0=0xF08A30:c1=0xC04010:x0=0:y0=0:x1=1920:y1=1080", "-frames:v", "1", "/tmp/ci/orange.jpg"])
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
+    movies = (res.get("result") or {}).get("movies") or []
+    if not movies:
+        log("fade: no movie")
+        return
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                    "params": {"movieid": movies[0]["movieid"], "art": {"fanart": "/tmp/ci/orange.jpg"}}}))
+    xbmc.executebuiltin("Skin.SetBool(nuvio.fullbackdrop)")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(51)")
+    for _ in range(4):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key("Right")
+        mon.waitForAbort(1)
+    mon.waitForAbort(3)
+    log(f"fade: item={lab('ListItem.Label')} fanart={lab('ListItem.Art(fanart)')} exists={os.path.exists('/tmp/ci/orange.jpg')}")
+    shot("fade-full")
+    xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")
+    mon.waitForAbort(2.5)
+    shot("fade-corner")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11368,6 +11402,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
+    safe(fade_test)
     safe(nextup_test)
     safe(pinfo2_test)
     safe(audiodelay_test)
