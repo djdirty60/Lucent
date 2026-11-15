@@ -4,8 +4,8 @@
     RunScript(special://skin/scripts/traktlogin.py)          Skin settings > Follow > Trakt login (log in / out)
     RunScript(special://skin/scripts/traktlogin.py,login)    log in straight away
 
-Trakt asks every app for its own keys. You make a free 'API app' on trakt.tv once (Settings > Your API Apps > New
-application, redirect uri urn:ietf:wg:oauth:2.0:oob) and type its Client ID and Client Secret here. Then Lucent shows a
+Since 2.1.23 Lucent uses its own Trakt app (no keys to type, no secret: device code / PKCE). A Client ID of your own
+app typed in earlier keeps being used (with its Client Secret, only for an older app). Lucent shows a
 code that you enter on trakt.tv/activate. Keys and login stay on this box (addon_data/skin.lucent/trakt.json); they are
 never in the skin itself. The login is renewed by itself before it runs out.
 """
@@ -25,6 +25,10 @@ API = "https://api.trakt.tv/"
 OOB = "urn:ietf:wg:oauth:2.0:oob"
 FILE = "special://profile/addon_data/skin.lucent/trakt.json"
 USER = "lucent.trakt.user"            # Skin.String: the account name, shown in Skin settings
+# 2.1.23: Lucent's own Trakt app (the one of Lucent Video, production access). It signs in without a secret (device code,
+# PKCE), so its Client ID may be public, the way Trakt intends it. Nobody has to make an API app any more; a Client ID
+# of your own (typed in earlier) still wins.
+LUCENT_CLIENT_ID = "Ygmc_TAb8t2Y_c3VoSLYyG0i4jZ_cAVBqn18kiyvuvY"
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
 
 
@@ -81,12 +85,11 @@ def has_login():
 def renew(data=None):
     """Renew the login with its refresh token. True when it worked."""
     data = data or load()
-    if not (data.get("client_id") and data.get("client_secret") and data.get("refresh_token")):
+    if not (data.get("client_id") and data.get("refresh_token")):
         return False
     try:
-        answer = post("oauth/token", {"refresh_token": data["refresh_token"], "client_id": data["client_id"],
-                                      "client_secret": data["client_secret"], "redirect_uri": OOB,
-                                      "grant_type": "refresh_token"})
+        answer = post("oauth/token", with_secret(data, {"refresh_token": data["refresh_token"], "client_id": data["client_id"],
+                                                        "redirect_uri": OOB, "grant_type": "refresh_token"}))
     except Exception as error:  # noqa: BLE001
         log(f"renew: {error}")
         return False
@@ -112,22 +115,31 @@ def credentials():
     return data.get("client_id", ""), data.get("access_token", "")
 
 
+def with_secret(data, body):
+    """2.1.23: new Trakt apps have no Client Secret any more (they sign in with PKCE; the device code is the proof).
+    Send the secret only when this app still has one, so older apps keep working."""
+    if data.get("client_secret"):
+        body["client_secret"] = data["client_secret"]
+    return body
+
+
 # ----------------------------------------------------------------------------- logging in
 def ask_keys(data):
     dialog = xbmcgui.Dialog()
     if not dialog.yesno(HEADING, t(
             "Trakt needs your own (free) API app once:\n1. trakt.tv > Settings > Your API Apps > New application\n"
-            "2. Name: Lucent - Redirect uri: urn:ietf:wg:oauth:2.0:oob\n3. Type its Client ID and Client Secret here.",
+            "2. Name: Lucent - Redirect uri: urn:ietf:wg:oauth:2.0:oob\n3. Type its Client ID here. A Client Secret only if "
+            "your app has one (new apps don't: leave it empty).",
             "Trakt wil één keer je eigen (gratis) API-app:\n1. trakt.tv > Settings > Your API Apps > New application\n"
-            "2. Naam: Lucent - Redirect uri: urn:ietf:wg:oauth:2.0:oob\n3. Typ hier de Client ID en Client Secret."),
+            "2. Naam: Lucent - Redirect uri: urn:ietf:wg:oauth:2.0:oob\n3. Typ hier de Client ID. Een Client Secret alleen als "
+            "je app er een heeft (nieuwe apps niet: laat het leeg)."),
             nolabel=t("Cancel", "Annuleren"), yeslabel=t("Enter keys", "Sleutels invullen")):
         return False
     client = dialog.input("Client ID", data.get("client_id", "")).strip()
     if not client:
         return False
-    secret = dialog.input("Client Secret", data.get("client_secret", "")).strip()
-    if not secret:
-        return False
+    secret = dialog.input(t("Client Secret (empty when Trakt shows 'Not issued')", "Client Secret (leeg als Trakt 'Not issued' toont)"),
+                          data.get("client_secret", "")).strip()
     data.update(client_id=client, client_secret=secret)
     save(data)
     return True
@@ -135,8 +147,9 @@ def ask_keys(data):
 
 def login():
     data = load()
-    if not (data.get("client_id") and data.get("client_secret")) and not ask_keys(data):
-        return False
+    if not data.get("client_id"):
+        data["client_id"] = LUCENT_CLIENT_ID          # Lucent's own Trakt app: no keys to type
+        save(data)
     try:
         code = post("oauth/device/code", {"client_id": data["client_id"]})
     except urllib.error.HTTPError as error:
@@ -163,8 +176,7 @@ def login():
         if monitor.waitForAbort(interval):
             break
         try:
-            answer = post("oauth/device/token", {"code": code.get("device_code", ""), "client_id": data["client_id"],
-                                                 "client_secret": data["client_secret"]})
+            answer = post("oauth/device/token", with_secret(data, {"code": code.get("device_code", ""), "client_id": data["client_id"]}))
             break
         except urllib.error.HTTPError as error:
             if error.code == 400:                # not entered yet
@@ -206,10 +218,9 @@ def login():
 
 def logout(keep_keys=True):
     data = load()
-    if data.get("access_token") and data.get("client_secret"):
+    if data.get("access_token"):
         try:
-            post("oauth/revoke", {"token": data["access_token"], "client_id": data["client_id"],
-                                  "client_secret": data["client_secret"]})
+            post("oauth/revoke", with_secret(data, {"token": data["access_token"], "client_id": data["client_id"]}))
         except Exception as error:  # noqa: BLE001
             log(f"revoke: {error}")
     data = {k: v for k, v in data.items() if keep_keys and k in ("client_id", "client_secret")}
