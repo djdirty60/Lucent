@@ -71,7 +71,6 @@ def _home_keymap():
         "        <remote>\n"
         "            <start>%(b)s</start>\n"
         "            <rootmenu>%(b)s</rootmenu>\n"
-        "            <homepage>%(b)s</homepage>\n"
         "        </remote>\n"
     ) % {"b": BTN}
     out = "<keymap>\n"

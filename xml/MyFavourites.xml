@@ -6,18 +6,33 @@
     <controls>
         <include>PlainBackground</include>
         <include>MediaTopBar</include>
-        <include>View_50</include>
-        <!-- Empty folder message -->
-        <control type="label">
-            <left>96</left>
-            <top>480</top>
-            <width>1728</width>
-            <height>60</height>
-            <align>center</align>
-            <font>font13</font>
-            <textcolor>text4</textcolor>
-            <label>$LOCALIZE[31094]</label>
+        <!-- 2.1.19 (#19): no favourites: no list with a lone '..', just a clear message in the middle -->
+        <control type="group">
+            <visible>!Integer.IsEqual(Container.NumItems,0) | Container.IsUpdating</visible>
+            <include>View_50</include>
+        </control>
+        <control type="group">
+            <top>440</top>
             <visible>Integer.IsEqual(Container.NumItems,0) + !Container.IsUpdating</visible>
+            <control type="label">
+                <left>96</left>
+                <top>0</top>
+                <width>1728</width>
+                <height>60</height>
+                <align>center</align>
+                <font>font_mainmenu_small</font>
+                <label>$LOCALIZE[31890]</label>
+            </control>
+            <control type="textbox">
+                <left>460</left>
+                <top>72</top>
+                <width>1000</width>
+                <height>120</height>
+                <align>center</align>
+                <font>font_body</font>
+                <textcolor>text4</textcolor>
+                <label>$LOCALIZE[31891]</label>
+            </control>
         </control>
         <control type="group">
             <left>928</left>

@@ -2,6 +2,7 @@
 <!-- Generated: side menu, widget rows, hero blocks and backdrops -->
 <includes>
     <variable name="NuvioW1Label">
+        <value condition="$EXP[LucentFavTab]">$LOCALIZE[1036]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path))">$INFO[Skin.String(nuvio.home.w1.label)]</value>
         <value>$INFO[Container(9000).ListItem.Property(w1.label)]</value>
     </variable>
@@ -329,6 +330,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w10.bg)]</value>
     </variable>
     <variable name="NuvioW1Path">
+        <value condition="$EXP[LucentFavTab]">favourites://</value>
         <!-- 2.1.15: a row of the video add-on loads again by itself when the add-on says it has new content -->
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w1.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w1.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w1.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w1.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
@@ -342,6 +344,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w2.label)]</value>
     </variable>
     <variable name="NuvioW2Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w2.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w2.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w2.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w2.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w2.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w2.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
@@ -354,6 +357,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w3.label)]</value>
     </variable>
     <variable name="NuvioW3Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w3.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w3.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w3.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w3.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w3.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w3.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
@@ -366,6 +370,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w4.label)]</value>
     </variable>
     <variable name="NuvioW4Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w4.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w4.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w4.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w4.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w4.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w4.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
@@ -378,6 +383,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w5.label)]</value>
     </variable>
     <variable name="NuvioW5Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w5.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w5.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w5.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w5.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w5.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w5.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
@@ -390,6 +396,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w6.label)]</value>
     </variable>
     <variable name="NuvioW6Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w6.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w6.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w6.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w6.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w6.path),plugin://plugin.video.lucent/)">$INFO[Skin.String(nuvio.home.w6.path)]&amp;reload=$INFO[Window(Home).Property(lucent.video.widgets)]</value>
@@ -402,6 +409,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w7.label)]</value>
     </variable>
     <variable name="NuvioW7Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="Skin.HasSetting(lucent.lite)"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w7.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w7.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w7.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w7.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
@@ -415,6 +423,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w8.label)]</value>
     </variable>
     <variable name="NuvioW8Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="Skin.HasSetting(lucent.lite)"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w8.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w8.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w8.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w8.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
@@ -428,6 +437,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w9.label)]</value>
     </variable>
     <variable name="NuvioW9Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="Skin.HasSetting(lucent.lite)"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w9.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w9.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w9.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w9.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
@@ -441,6 +451,7 @@
         <value>$INFO[Container(9000).ListItem.Property(w10.label)]</value>
     </variable>
     <variable name="NuvioW10Path">
+        <value condition="$EXP[LucentFavTab]"></value>
         <value condition="Skin.HasSetting(lucent.lite)"></value>
         <value condition="String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Skin.String(nuvio.home.w10.path),plugin://skin.lucent/)">$INFO[Skin.String(nuvio.home.w10.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
         <value condition="!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.StartsWith(Container(9000).ListItem.Property(w10.path),plugin://skin.lucent/)">$INFO[Container(9000).ListItem.Property(w10.path)]&amp;reload=$INFO[Window(Home).Property(lucent.lib.changed)]</value>
@@ -559,43 +570,45 @@
         <value>glow</value>
     </variable>
 
-    <expression name="NuvioW1Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.path))] | !String.IsEmpty(Container(9000).ListItem.Property(w1.path))</expression>
+    <!-- 2.1.19: the Favourites tab (no rows of its own) shows your favourites as its row, not the Home rows (#19) -->
+    <expression name="LucentFavTab">String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.Contains(Container(9000).ListItem.Property(act),favouritesbrowser)</expression>
+    <expression name="NuvioW1Has">[$EXP[LucentFavTab] + Integer.IsGreater(Window(home).Property(lucent.favs),0)] | [!$EXP[LucentFavTab] + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w1.path))] | !String.IsEmpty(Container(9000).ListItem.Property(w1.path))]]</expression>
     <expression name="NuvioW1Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w1.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w1.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8101">$EXP[NuvioW1Has] + !$EXP[NuvioW1Land] + [Integer.IsGreater(Container(8101).NumItems,0) | Container(8101).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.1))]</expression>
     <expression name="NuvioRow8201">$EXP[NuvioW1Has] + $EXP[NuvioW1Land] + [Integer.IsGreater(Container(8201).NumItems,0) | Container(8201).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.1))]</expression>
-    <expression name="NuvioW2Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.path))]</expression>
+    <expression name="NuvioW2Has">!$EXP[LucentFavTab] + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w2.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w2.path))]]</expression>
     <expression name="NuvioW2Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w2.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w2.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8102">$EXP[NuvioW2Has] + !$EXP[NuvioW2Land] + [Integer.IsGreater(Container(8102).NumItems,0) | Container(8102).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.2))]</expression>
     <expression name="NuvioRow8202">$EXP[NuvioW2Has] + $EXP[NuvioW2Land] + [Integer.IsGreater(Container(8202).NumItems,0) | Container(8202).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.2))]</expression>
-    <expression name="NuvioW3Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.path))]</expression>
+    <expression name="NuvioW3Has">!$EXP[LucentFavTab] + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w3.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w3.path))]]</expression>
     <expression name="NuvioW3Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w3.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w3.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8103">$EXP[NuvioW3Has] + !$EXP[NuvioW3Land] + [Integer.IsGreater(Container(8103).NumItems,0) | Container(8103).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.3))]</expression>
     <expression name="NuvioRow8203">$EXP[NuvioW3Has] + $EXP[NuvioW3Land] + [Integer.IsGreater(Container(8203).NumItems,0) | Container(8203).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.3))]</expression>
-    <expression name="NuvioW4Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.path))]</expression>
+    <expression name="NuvioW4Has">!$EXP[LucentFavTab] + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w4.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w4.path))]]</expression>
     <expression name="NuvioW4Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w4.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w4.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8104">$EXP[NuvioW4Has] + !$EXP[NuvioW4Land] + [Integer.IsGreater(Container(8104).NumItems,0) | Container(8104).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.4))]</expression>
     <expression name="NuvioRow8204">$EXP[NuvioW4Has] + $EXP[NuvioW4Land] + [Integer.IsGreater(Container(8204).NumItems,0) | Container(8204).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.4))]</expression>
-    <expression name="NuvioW5Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.path))]</expression>
+    <expression name="NuvioW5Has">!$EXP[LucentFavTab] + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w5.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w5.path))]]</expression>
     <expression name="NuvioW5Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w5.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w5.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8105">$EXP[NuvioW5Has] + !$EXP[NuvioW5Land] + [Integer.IsGreater(Container(8105).NumItems,0) | Container(8105).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.5))]</expression>
     <expression name="NuvioRow8205">$EXP[NuvioW5Has] + $EXP[NuvioW5Land] + [Integer.IsGreater(Container(8205).NumItems,0) | Container(8205).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.5))]</expression>
-    <expression name="NuvioW6Has">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.path))]</expression>
+    <expression name="NuvioW6Has">!$EXP[LucentFavTab] + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w6.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w6.path))]]</expression>
     <expression name="NuvioW6Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w6.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w6.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8106">$EXP[NuvioW6Has] + !$EXP[NuvioW6Land] + [Integer.IsGreater(Container(8106).NumItems,0) | Container(8106).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.6))]</expression>
     <expression name="NuvioRow8206">$EXP[NuvioW6Has] + $EXP[NuvioW6Land] + [Integer.IsGreater(Container(8206).NumItems,0) | Container(8206).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.6))]</expression>
-    <expression name="NuvioW7Has">!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.path))]]</expression>
+    <expression name="NuvioW7Has">!$EXP[LucentFavTab] + [!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w7.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w7.path))]]]</expression>
     <expression name="NuvioW7Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w7.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w7.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8107">$EXP[NuvioW7Has] + !$EXP[NuvioW7Land] + [Integer.IsGreater(Container(8107).NumItems,0) | Container(8107).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.7))]</expression>
     <expression name="NuvioRow8207">$EXP[NuvioW7Has] + $EXP[NuvioW7Land] + [Integer.IsGreater(Container(8207).NumItems,0) | Container(8207).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.7))]</expression>
-    <expression name="NuvioW8Has">!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.path))]]</expression>
+    <expression name="NuvioW8Has">!$EXP[LucentFavTab] + [!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w8.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w8.path))]]]</expression>
     <expression name="NuvioW8Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w8.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w8.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8108">$EXP[NuvioW8Has] + !$EXP[NuvioW8Land] + [Integer.IsGreater(Container(8108).NumItems,0) | Container(8108).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.8))]</expression>
     <expression name="NuvioRow8208">$EXP[NuvioW8Has] + $EXP[NuvioW8Land] + [Integer.IsGreater(Container(8208).NumItems,0) | Container(8208).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.8))]</expression>
-    <expression name="NuvioW9Has">!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.path))]]</expression>
+    <expression name="NuvioW9Has">!$EXP[LucentFavTab] + [!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w9.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w9.path))]]]</expression>
     <expression name="NuvioW9Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w9.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w9.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8109">$EXP[NuvioW9Has] + !$EXP[NuvioW9Land] + [Integer.IsGreater(Container(8109).NumItems,0) | Container(8109).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.9))]</expression>
     <expression name="NuvioRow8209">$EXP[NuvioW9Has] + $EXP[NuvioW9Land] + [Integer.IsGreater(Container(8209).NumItems,0) | Container(8209).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.9))]</expression>
-    <expression name="NuvioW10Has">!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.path))]]</expression>
+    <expression name="NuvioW10Has">!$EXP[LucentFavTab] + [!Skin.HasSetting(lucent.lite) + [[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Skin.String(nuvio.home.w10.path))] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + !String.IsEmpty(Container(9000).ListItem.Property(w10.path))]]]</expression>
     <expression name="NuvioW10Land">[String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Skin.String(nuvio.home.w10.style),land)] | [!String.IsEmpty(Container(9000).ListItem.Property(w1.path)) + String.IsEqual(Container(9000).ListItem.Property(w10.style),land)] | String.IsEqual(Skin.String(nuvio.landscape),home)</expression>
     <expression name="NuvioRow8110">$EXP[NuvioW10Has] + !$EXP[NuvioW10Land] + [Integer.IsGreater(Container(8110).NumItems,0) | Container(8110).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.10))]</expression>
     <expression name="NuvioRow8210">$EXP[NuvioW10Has] + $EXP[NuvioW10Land] + [Integer.IsGreater(Container(8210).NumItems,0) | Container(8210).IsUpdating | !String.IsEmpty(Window(home).Property(lucent.rowok.10))]</expression>
