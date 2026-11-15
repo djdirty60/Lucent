@@ -6138,6 +6138,69 @@ def favtab_test():
     log("favtab: " + json.dumps(out))
 
 
+def merge_test():
+    """2.1.20: the poster trailers run inside the helper and the info page sets the bell itself: count the Python script
+    starts of trailers.py and agenda.py, the trailer heartbeat, and Kodi's memory."""
+    import re as _re
+    def rss():
+        try:
+            for ln in open("/proc/self/status"):
+                if ln.startswith("VmRSS:"):
+                    return int(ln.split()[1]) // 1024
+        except OSError:
+            return -1
+    def starts():
+        try:
+            text = open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace").read()
+        except OSError:
+            return {}
+        names = {}
+        for ln in text.splitlines():
+            if "CPythonInvoker" in ln and "the source file to load is" in ln:
+                m = _re.search(r"scripts/(\w+)\.py", ln)
+                if m:
+                    names[m.group(1)] = names.get(m.group(1), 0) + 1
+        return {k: names.get(k, 0) for k in ("trailers", "agenda", "info", "helper", "startup")}
+    out = {"start": starts()}
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.posterfocus,window)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+    mon.waitForAbort(15)
+    beat = HOME.getProperty("nuvio.trailer.service")
+    out["heartbeat_age"] = round(time.time() - float(beat), 1) if beat else None
+    out["mb_home"] = rss()
+    for _ in range(3):
+        xbmc.executebuiltin("ActivateWindow(Settings)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(4)
+    out["after_3_home"] = starts()
+    xbmc.executebuiltin('ActivateWindow(Videos,"videodb://movies/titles/",return)')
+    mon.waitForAbort(4)
+    for _ in range(4):
+        if lab("ListItem.Label") == "Lib Film":
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(1)
+    for n in range(2):
+        xbmc.executebuiltin("Action(Info)")
+        mon.waitForAbort(6)
+        out[f"page{n}"] = [cond("Window.IsActive(movieinformation)"), lab("ListItem.Label"), HOME.getProperty("nuvio.agenda.followed"),
+                           HOME.getProperty("nuvio.info.key")]
+        if n == 0:
+            shot("merge-info")
+        xbmc.executebuiltin("Action(Back)")
+        mon.waitForAbort(3)
+    out["after_2_pages"] = starts()
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(60)
+    out["mb_after_1min"] = rss()
+    beat = HOME.getProperty("nuvio.trailer.service")
+    out["heartbeat_age_end"] = round(time.time() - float(beat), 1) if beat else None
+    log("merge: " + json.dumps(out))
+
+
 def cwjumplog_test():
     """Rows shift by one when a poster trailer starts. Same as cwjump, but a picture every 2 s during the first 26 s and
     the skin's own log lines of that minute, to see what moves the rows."""
@@ -11166,6 +11229,7 @@ def main():
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)
+    safe(merge_test)
     safe(updnews_test)
     safe(intro2_test)
     safe(homeextra_test)
