@@ -205,7 +205,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         queue = build_queue(source)
         if not queue:
             log("nothing to show")
-            self.exit()
+            self.wait_for_wake()
             return
         random.shuffle(queue)
         monitor = xbmc.Monitor()
@@ -233,6 +233,16 @@ class Screensaver(xbmcgui.WindowXMLDialog):
                 if monitor.waitForAbort(0.5):
                     break
                 waited += 0.5
+        self.wait_for_wake()
+
+    def wait_for_wake(self):
+        """1.1.5: never close on our own while Kodi still has the screensaver on. Closing early left Kodi thinking the
+        screensaver was on without one on screen: the first button press then did nothing ('Home stuck after the
+        screensaver'). Stay (dark) until Kodi switches it off; then onScreensaverDeactivated closes the window."""
+        monitor = xbmc.Monitor()
+        while not self.stop and not monitor.abortRequested() and xbmc.getCondVisibility("System.ScreenSaverActive"):
+            if monitor.waitForAbort(0.5):
+                break
         self.exit()
 
 
