@@ -311,8 +311,7 @@ def pick_posterfocus():
     if skin_string("nuvio.posterfocus"):
         if not xbmc.getCondVisibility("System.HasAddon(plugin.video.youtube)"):
             xbmc.executebuiltin("InstallAddon(plugin.video.youtube)", True)
-        # the trailer helper runs from the Home screen; start it now (it quits if it already runs)
-        xbmc.executebuiltin("RunScript(special://skin/scripts/trailers.py)")
+        # the trailers run inside the skin's helper: it starts them by itself within a second (2.1.20)
 
 
 # ----------------------------------------------------------------------------- sync + reset

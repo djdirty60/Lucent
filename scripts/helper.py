@@ -379,11 +379,28 @@ def run():
         if HOME.getProperty("lucent.favs") != count:
             HOME.setProperty("lucent.favs", count)
 
+    trailer = {"t": None}
+
+    def trailer_service():
+        """2.1.20: the poster trailers (trailers.py) run inside the helper instead of in a Python process of their own:
+        one process less in memory, and no Python start every time Home opens. Started as soon as the setting is on."""
+        if (trailer["t"] and trailer["t"].is_alive()) or not cond("Skin.HasSetting(nuvio.trailers.menu)"):
+            return
+        import trailers
+        if trailers.running():                       # a trailers.py of an older Lucent still runs: let it be
+            return
+
+        def go():                                    # made in its own thread, so Kodi's player callbacks arrive there
+            trailers.Trailers(stop).run()
+        trailer["t"] = threading.Thread(target=go, daemon=True)
+        trailer["t"].start()
+
     try:
         while not monitor.abortRequested():
             try:
                 home_return_trace()
                 fav_count()
+                trailer_service()
             except Exception as error:  # noqa: BLE001
                 log(f"home trace: {error}")
             if HOME.getProperty(STOP) or updated():
