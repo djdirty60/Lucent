@@ -299,10 +299,20 @@ def tick():
     prof = re.search(r"(\d+)", detail or "")
     layer = "FEL" if "FEL" in (detail or "").upper() else "MEL" if "MEL" in (detail or "").upper() else ""
     pix = info("Player.Process(pixformat)")
-    ten = bool(re.search(r"10|12", pix or ""))
+    if (pix or "").strip().lower() in ("unknown", "none"):
+        pix = ""                                   # 2.1.26: hardware decoders (am-h265 ...) do not tell; not 'unknown'
+    # HDR (Dolby Vision, HDR10, HLG) is always at least 10-bit, also when the decoder does not tell the pixel format
+    ten = bool(re.search(r"10|12", pix or "")) or hdr in ("dolbyvision", "hdr10", "hdr10plus", "hlg")
     vcodec = info("VideoPlayer.VideoCodec").lower()
     vname = VCODEC.get(vcodec, vcodec.upper())
     fname = info("Player.Filename")
+    if not os.path.splitext(urllib.parse.urlparse(fname or "").path)[1]:
+        # 2.1.26: a stream link without a file name: the release name the video add-on gives (lucent.video.now 'name')
+        try:
+            named = json.loads(xbmcgui.Window(10000).getProperty("lucent.video.now") or "{}").get("name") or ""
+        except ValueError:
+            named = ""
+        fname = named or fname
     dvn = dv_from_name(fname + " " + info("Player.FilenameAndPath")) if hdr == "dolbyvision" else {}
 
     # audio facts
@@ -432,7 +442,7 @@ def tick():
     else:
         put("r.hdr", "SDR")
     dar = info("Player.Process(videodar)")
-    put("r.fmt", " · ".join(x for x in (pix, f"{dar}:1" if dar else "") if x))
+    put("r.fmt", " · ".join(x for x in (pix or (f"{vname} 10-bit" if vname and ten else vname), f"{dar}:1" if dar else "") if x))
     hw = xbmc.getCondVisibility("Player.Process(videohwdecoder)")
     put("r.vdec", " · ".join(x for x in (info("Player.Process(videodecoder)"), "hardware" if hw else "software") if x))
     disp = info("System.ScreenResolution")
@@ -557,15 +567,15 @@ def video_tab(v):
         else ("[COLOR FFFFFFFF][B]8-bit[/B][/COLOR] · " + t("16.7 million colours", "16,7 miljoen kleuren")))
     put("v.p1k", t("File", "Bestand"))
     put("v.p1", f"{vname} 10-bit" if vname and ten else vname or "–")
-    put("v.p1s", pix)
+    put("v.p1s", pix or (t("10-bit (12-bit with FEL)", "10-bit (12-bit met FEL)") if layer == "FEL" else "10-bit" if ten else ""))
     put("v.p2k", "Decoder")
     put("v.p2", info("Player.Process(videodecoder)") or "–")
     hw = xbmc.getCondVisibility("Player.Process(videohwdecoder)")
     put("v.p2s", t("hardware ✓", "hardware ✓") if hw else "software")
     rfps = num(info("System.FPS"))
     put("v.p3k", t("Picture", "Beeld"))
-    put("v.p3", f"{rfps:.2f} fps" if rfps else "–")
-    put("v.p3s", t("drawn per second", "getekend per seconde"))
+    put("v.p3", f"{fps} fps" if fps else "–")      # 2.1.26: the film's frames per second (the menu's speed is below)
+    put("v.p3s", v["scan_word"] or "")
     disp = info("System.ScreenResolution")
     m = re.search(r"(\d+)\s*x\s*(\d+)", disp)
     hz = num(re.search(r"@\s*([\d.,]+)", disp).group(1)) if re.search(r"@\s*([\d.,]+)", disp) else 0.0
@@ -574,6 +584,22 @@ def video_tab(v):
     vfps = num(fps)
     match = hz and vfps and any(abs(hz - vfps * k) < 0.05 for k in (1, 2))
     put("v.p4s", f"@ {hz:.2f} Hz" + (" ✓" if match else "") if hz else "")
+    # 2.1.26: third row - source and screen
+    put("v.src.k", t("Source", "Bron"))
+    put("r.filek", t("File", "Bestand"))
+    put("v.src.file", middle(v.get("fname") or "", 96) or t("a stream link without a file name", "een stream-link zonder bestandsnaam"))
+    put("r.contk", "Container")
+    put("r.ratek", t("Bitrate", "Bitrate"))
+    put("r.lock", t("From", "Locatie"))
+    put("v.codk", "Codec")
+    put("v.codec", " · ".join(x for x in (vname, pix or ("10-bit" if ten else ""), info("Player.Process(videodecoder)")) if x) or "–")
+    put("v.scr.k", t("On the screen", "Op het scherm"))
+    put("v.hzk", t("Refresh rate", "Verversing"))
+    put("v.hz", (f"{m.group(1)}×{m.group(2)} @ {hz:.2f} Hz" if m else disp) if (m or disp) else "–")
+    put("v.matchk", t("Fits the film", "Past bij film"))
+    put("v.match", (t(f"yes ✓ ({fps} fps)", f"ja ✓ ({fps} fps)") if match else t(f"no ({fps} fps)", f"nee ({fps} fps)")) if hz and vfps else "–")
+    put("v.guik", t("Menu drawn", "Menu getekend"))
+    put("v.gui", f"{rfps:.1f} fps" if rfps else "–")
     vbr = v["vbr"]
     if vbr:
         _STATE["vhist"] = (_STATE["vhist"] + [vbr])[-40:]
