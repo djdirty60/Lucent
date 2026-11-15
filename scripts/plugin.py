@@ -9,6 +9,7 @@ in the last 30 days, newest first), then the episode you stopped halfway (last w
 watched in the library like any library item."""
 import json
 import sys
+import time
 import urllib.parse
 
 import xbmc
@@ -61,42 +62,72 @@ def item(ep):
     return ep.get("file") or "", li
 
 
+def aired(ep):
+    first = str(ep.get("firstaired") or "")[:10]
+    return not first or first <= time.strftime("%Y-%m-%d")
+
+
 def next_up(show_id):
     """2.1.22: the episode after the last one you watched of this series (season and episode order), not the newest:
-    if you are behind, the new episodes wait until you get there."""
+    if you are behind, the new episodes wait until you get there. Only an episode that is out."""
     eps = rpc("VideoLibrary.GetEpisodes", tvshowid=int(show_id), properties=FIELDS,
               sort={"method": "episode", "order": "ascending"}).get("episodes") or []
     eps = [e for e in eps if int(e.get("season") or 0) > 0] or eps          # specials (season 0) only as a last resort
     last = max((i for i, e in enumerate(eps) if int(e.get("playcount") or 0) > 0), default=-1)
-    return next((e for e in eps[last + 1:] if not int(e.get("playcount") or 0)), None)
+    return next((e for e in eps[last + 1:] if not int(e.get("playcount") or 0) and aired(e)), None)
 
 
 def lib_continue_new():
-    """One tile per series, only for series you are watching (you saw an episode of it): first the series with a new
-    episode (unwatched, out in the last 30 days) that you are not halfway an episode of, newest first - the tile is the
-    episode after the last one you watched (2.1.22), so you are never sent past episodes you have not seen; then the
-    episodes you stopped halfway, last watched first."""
-    shows = rpc("VideoLibrary.GetTVShows", properties=["watchedepisodes"]).get("tvshows") or []
+    """One tile per series you are watching:
+    1. series with a new episode (unwatched, out in the last 30 days), newest first;
+    2. then, last watched first: the episode you stopped halfway, or - 2.1.25 - for a series you watched in the last
+       30 days and finished an episode of, the next episode that is out.
+    A tile is always the episode after the last one you watched (2.1.22), so you never skip episodes."""
+    shows = rpc("VideoLibrary.GetTVShows", properties=["watchedepisodes", "lastplayed"]).get("tvshows") or []
     going = episodes({"field": "inprogress", "operator": "true", "value": ""}, {"method": "lastplayed", "order": "descending"})
     watching = {s["tvshowid"] for s in shows if int(s.get("watchedepisodes") or 0) > 0} | {e.get("tvshowid") for e in going}
     new = episodes({"and": [{"field": "playcount", "operator": "is", "value": "0"},
                             {"field": "airdate", "operator": "inthelast", "value": f"{NEW_DAYS} days"},
                             {"field": "inprogress", "operator": "false", "value": ""}]},
                    {"method": "date", "order": "descending"})
-    done, rows = set(), []
     halfway = {e.get("tvshowid") for e in going}       # halfway an episode: you meet the new one by yourself
-    for ep in [e for e in new if e.get("tvshowid") in watching and e.get("tvshowid") not in halfway] + going:
-        if ep.get("tvshowid") in done:
-            continue                                    # one tile per series
-        done.add(ep.get("tvshowid"))
-        if ep not in going:                             # a new episode: show the next one after where you are
-            try:
-                ep = next_up(ep.get("tvshowid")) or ep
-            except Exception:  # noqa: BLE001 - a library hiccup: keep the new episode
-                pass
+    done, rows = set(), []
+
+    def add(ep):
         url, li = item(ep)
         if url:
             rows.append((url, li, False))
+
+    for ep in new:                                      # 1. new episodes
+        sid = ep.get("tvshowid")
+        if sid not in watching or sid in halfway or sid in done:
+            continue
+        done.add(sid)
+        try:
+            ep = next_up(sid) or ep
+        except Exception:  # noqa: BLE001 - a library hiccup: keep the new episode
+            pass
+        add(ep)
+    since = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() - NEW_DAYS * 86400))
+    later = [(str(e.get("lastplayed") or ""), "half", e) for e in going]
+    for s in shows:                                     # 2. finished an episode lately: the next one
+        sid = s["tvshowid"]
+        if sid in done or sid in halfway or not int(s.get("watchedepisodes") or 0) or str(s.get("lastplayed") or "") < since:
+            continue
+        later.append((str(s.get("lastplayed") or ""), "next", sid))
+    for _when, kind, what in sorted(later, key=lambda r: r[0], reverse=True):
+        sid = what.get("tvshowid") if kind == "half" else what
+        if sid in done:
+            continue
+        if kind == "next":
+            try:
+                what = next_up(sid)
+            except Exception:  # noqa: BLE001
+                what = None
+            if not what:
+                continue                                # all caught up (or the next one is not out yet)
+        done.add(sid)
+        add(what)
     return rows
 
 
