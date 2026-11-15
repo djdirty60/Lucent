@@ -17,7 +17,6 @@ The slow jobs (they ask the internet) run one after another in a worker thread, 
 never waits for them. A small heartbeat thread tells a new start that this helper is still alive,
 also while a job takes long. After a skin update (lucent.helper.stop) this helper stops so the new one can start.
 """
-import json
 import threading
 import time
 
@@ -367,23 +366,27 @@ def run():
             back_trace["last"] = state
             log(f"back on Home +{time.time() - back_trace['t']:.1f}s: {state}")
 
-    favs = {"t": 0.0}
+    trailer = {"t": None}
 
-    def fav_count():
-        """2.1.19: lucent.favs - how many favourites there are, while the Favourites tab is under the cursor (#19)."""
-        if time.time() - favs["t"] < 3 or not cond("Window.IsActive(home) + String.Contains(Container(9000).ListItem.Property(act),favouritesbrowser)"):
+    def trailer_service():
+        """2.1.20: the poster trailers (trailers.py) run inside the helper instead of in a Python process of their own:
+        one process less in memory, and no Python start every time Home opens. Started as soon as the setting is on."""
+        if (trailer["t"] and trailer["t"].is_alive()) or not cond("Skin.HasSetting(nuvio.trailers.menu)"):
             return
-        favs["t"] = time.time()
-        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Favourites.GetFavourites"})))
-        count = str(len((res.get("result") or {}).get("favourites") or []))
-        if HOME.getProperty("lucent.favs") != count:
-            HOME.setProperty("lucent.favs", count)
+        import trailers
+        if trailers.running():                       # a trailers.py of an older Lucent still runs: let it be
+            return
+
+        def go():                                    # made in its own thread, so Kodi's player callbacks arrive there
+            trailers.Trailers(stop).run()
+        trailer["t"] = threading.Thread(target=go, daemon=True)
+        trailer["t"].start()
 
     try:
         while not monitor.abortRequested():
             try:
                 home_return_trace()
-                fav_count()
+                trailer_service()
             except Exception as error:  # noqa: BLE001
                 log(f"home trace: {error}")
             if HOME.getProperty(STOP) or updated():

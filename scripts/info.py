@@ -1517,6 +1517,18 @@ def next_episode(show):
 
 
 def load():
+    # 2.1.20: the bell (follow in the calendar) is set here too, in a thread next to the rest - before this the info
+    # page started a second Python script for it (agenda.py,state)
+    import threading
+
+    def bell():
+        try:
+            import agenda_core
+            agenda_core.state()
+        except Exception as error:  # noqa: BLE001
+            log(f"bell: {error}")
+    bell_job = threading.Thread(target=bell, daemon=True)
+    bell_job.start()
     item = Item()
     load_logos()
     remember_identity(item)
@@ -1535,6 +1547,7 @@ def load():
     load_credits(item)
     load_videos(item)
     load_collection(item)
+    bell_job.join(10)
 
 
 if __name__ == "__main__":

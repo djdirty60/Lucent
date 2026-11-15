@@ -22,7 +22,6 @@
     <onload condition="String.IsEmpty(Window(home).Property(lucent.pc.count)) + !String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/tabpanels.py)</onload>
     <onload condition="String.IsEmpty(Skin.String(lucent.logoask)) + Pvr.HasTVChannels + !String.IsEmpty(Window(home).Property(nuvio.started))">RunScript(special://skin/scripts/channels.py,asklogos)</onload>
     <!-- poster trailers are switched off for now (set the skin setting nuvio.trailers.menu to bring them back) -->
-    <onload condition="Skin.HasSetting(nuvio.trailers.menu)">RunScript(special://skin/scripts/trailers.py)</onload>
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.posterfocus)</onload>
     <onload condition="!Skin.HasSetting(nuvio.trailers.menu)">Skin.Reset(nuvio.trailer.test)</onload>
     <!-- the very first time: the setup assistant (the most important settings and logins) -->
@@ -267,34 +266,11 @@
             <!-- Calendar / TV / Sport / Add-ons / Settings / Power tab without rows of its own: its own screen -->
             <include>LucentTabPanels</include>
 
-            <!-- 2.1.19: the Favourites tab without favourites (#19) -->
-            <control type="group">
-                <left>160</left>
-                <top>620</top>
-                <visible>!Control.IsVisible(9991) + $EXP[LucentFavTab] + !$EXP[LucentPanel]</visible>
-                <animation effect="fade" start="0" end="100" time="300" delay="600">Visible</animation>
-                <control type="label">
-                    <left>0</left>
-                    <top>0</top>
-                    <width>1400</width>
-                    <height>48</height>
-                    <font>font_mainmenu_small</font>
-                    <label>$LOCALIZE[31890]</label>
-                </control>
-                <control type="textbox">
-                    <left>0</left>
-                    <top>56</top>
-                    <width>1100</width>
-                    <height>120</height>
-                    <font>font_body</font>
-                    <label>$LOCALIZE[31891]</label>
-                </control>
-            </control>
             <!-- Shown when the tab has no widgets (or none of them has content) -->
             <control type="group">
                 <left>160</left>
                 <top>620</top>
-                <visible>!Control.IsVisible(9991) + !$EXP[LucentFavTab] + !String.IsEqual(Container(9000).ListItem.Property(tab),kids) + !$EXP[LucentPanel]</visible>
+                <visible>!Control.IsVisible(9991) + !String.IsEqual(Container(9000).ListItem.Property(tab),kids) + !$EXP[LucentPanel]</visible>
                 <animation effect="fade" start="0" end="100" time="300" delay="1500">Visible</animation>
                 <control type="label">
                     <left>0</left>

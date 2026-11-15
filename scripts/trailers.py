@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """Lucent: poster focus trailers on the Home screen.
 
-Started once from Home.xml (RunScript(special://skin/scripts/trailers.py)) and keeps
-running in the background. When a widget card stays focused for a few seconds, it
+Runs inside the skin's helper (helper.py, since 2.1.20) while the setting is on. When a widget card stays focused for a few seconds, it
 looks up the YouTube trailer (ListItem.Trailer, or TMDB) and plays it in a window
 on the Home screen through the YouTube add-on. Home.xml shows the video according
 to Skin.String(nuvio.posterfocus): window | hero | expand.
@@ -115,9 +114,10 @@ def tmdb_trailers(focus):
 
 
 class Trailers(xbmc.Player):
-    def __init__(self):
+    def __init__(self, stop=None):
         super().__init__()
         self.monitor = xbmc.Monitor()
+        self.stop = stop               # 2.1.20: the helper's stop signal (the trailers run inside the helper)
         self.ours = False          # the video playing now was started by us
         self.requested = False     # we asked YouTube for a trailer and it has not ended yet
         self.av_started = False
@@ -280,7 +280,7 @@ class Trailers(xbmc.Player):
     def run(self):
         log("started")
         dbg("service started")
-        while not self.monitor.abortRequested():
+        while not self.monitor.abortRequested() and not (self.stop and self.stop.is_set()):
             HOME.setProperty(RUNNING, f"{time.time():.1f}")
             try:
                 self.tick()
