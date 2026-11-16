@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent 2.1.34 (#26): the order of the right-hand buttons of the player bar (scripts/settings.py, osdorder).
+     List 200: Left/Right moves the chosen button one place; button 300 puts the standard order back; Back saves. -->
+<window type="dialog">
+    <defaultcontrol always="true">200</defaultcontrol>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="160">WindowClose</animation>
+    <controls>
+        <control type="image">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <texture>white.png</texture><colordiffuse>99000000</colordiffuse>
+        </control>
+        <control type="image">
+            <left>460</left><top>90</top><width>1000</width><height>900</height>
+            <texture border="36">rr20.png</texture><colordiffuse>bg</colordiffuse>
+        </control>
+        <control type="image">
+            <left>460</left><top>90</top><width>1000</width><height>900</height>
+            <texture border="20">rr20_edge.png</texture><colordiffuse>hairline</colordiffuse>
+        </control>
+        <control type="label">
+            <left>510</left><top>124</top><width>900</width><height>56</height>
+            <font>font_heading_small</font><textcolor>text</textcolor>
+            <label>$INFO[Window.Property(heading)]</label>
+        </control>
+        <control type="label">
+            <left>510</left><top>184</top><width>900</width><height>36</height>
+            <font>font12</font><textcolor>text3</textcolor>
+            <label>$INFO[Window.Property(sub)]</label>
+        </control>
+        <control type="list" id="200">
+            <left>510</left><top>244</top><width>900</width><height>644</height>
+            <orientation>vertical</orientation>
+            <ondown>300</ondown>
+            <onup>200</onup>
+            <scrolltime tween="cubic" easing="out">200</scrolltime>
+            <itemlayout width="900" height="80">
+                <control type="image">
+                    <left>0</left><top>0</top><width>900</width><height>70</height>
+                    <texture border="20">rr20.png</texture><colordiffuse>1AFFFFFF</colordiffuse>
+                </control>
+                <control type="label">
+                    <left>30</left><top>0</top><width>560</width><height>70</height>
+                    <font>font13_bold</font><textcolor>text</textcolor><aligny>center</aligny>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+                <control type="label">
+                    <left>560</left><top>0</top><width>310</width><height>70</height>
+                    <font>font10</font><textcolor>text4</textcolor><align>right</align><aligny>center</aligny>
+                    <label>$INFO[ListItem.Label2]</label>
+                </control>
+            </itemlayout>
+            <focusedlayout width="900" height="80">
+                <control type="image">
+                    <left>0</left><top>0</top><width>900</width><height>70</height>
+                    <texture border="20">rr20.png</texture><colordiffuse>1AFFFFFF</colordiffuse>
+                    <visible>!Control.HasFocus(200)</visible>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>900</width><height>70</height>
+                    <texture border="20" colordiffuse="focus">rr20.png</texture>
+                    <visible>Control.HasFocus(200)</visible>
+                </control>
+                <control type="label">
+                    <left>30</left><top>0</top><width>560</width><height>70</height>
+                    <font>font13_bold</font><textcolor>text</textcolor><aligny>center</aligny>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>!Control.HasFocus(200)</visible>
+                </control>
+                <control type="label">
+                    <left>30</left><top>0</top><width>560</width><height>70</height>
+                    <font>font13_bold</font><textcolor>on_focus</textcolor><aligny>center</aligny>
+                    <label>$INFO[ListItem.Label]</label>
+                    <visible>Control.HasFocus(200)</visible>
+                </control>
+                <control type="label">
+                    <left>500</left><top>0</top><width>370</width><height>70</height>
+                    <font>font10_bold</font><textcolor>on_focus</textcolor><align>right</align><aligny>center</aligny>
+                    <label>$INFO[Window.Property(move)]</label>
+                    <visible>Control.HasFocus(200)</visible>
+                </control>
+            </focusedlayout>
+        </control>
+        <control type="button" id="300">
+            <left>510</left><top>906</top><width>auto</width><height>58</height>
+            <font>font_label_bold</font><textoffsetx>26</textoffsetx><align>center</align><aligny>center</aligny>
+            <textcolor>text3</textcolor><focusedcolor>on_focus</focusedcolor>
+            <texturefocus border="29" colordiffuse="focus">pill60.png</texturefocus>
+            <texturenofocus border="29" colordiffuse="1AFFFFFF">pill60.png</texturenofocus>
+            <label>$INFO[Window.Property(reset)]</label>
+            <onup>200</onup>
+        </control>
+        <control type="label">
+            <left>800</left><top>906</top><width>610</width><height>58</height>
+            <font>font10</font><textcolor>text4</textcolor><align>right</align><aligny>center</aligny>
+            <label>$INFO[Window.Property(fixed)]</label>
+        </control>
+    </controls>
+</window>

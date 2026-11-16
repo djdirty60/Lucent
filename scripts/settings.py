@@ -363,6 +363,7 @@ def sync():
         set_string(name + ".label", tr(dict(options).get(skin_string(name), options[0][1])))
     watched_label()
     osd_label()
+    osd_order_label()
 
 
 def osd_label():
@@ -385,11 +386,83 @@ def pick_osd():
     osd_label()
 
 
+# 2.1.34 (#26): the order of the right-hand buttons (VideoOSD.xml slots 1-8, Skin.String(lucent.osd.slotN))
+OSD_ORDER = ["subtitles", "subsearch", "audio", "video", "bookmarks", "stats", "sleep", "info"]
+CLOSE_ACTIONS = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
+
+
+def osd_order():
+    order = [skin_string(f"lucent.osd.slot{n}") for n in range(1, len(OSD_ORDER) + 1)]
+    if sorted(order) != sorted(OSD_ORDER):
+        order = list(OSD_ORDER)
+    return order
+
+
+def osd_order_label():
+    set_string("lucent.osd.order.label", tr(("Standard", "Standaard")) if osd_order() == OSD_ORDER
+               else tr(("Your own order", "Eigen volgorde")))
+
+
+class OsdOrder(xbmcgui.WindowXMLDialog):
+    def setup(self, order):
+        self.order = order
+        self.names = {k: tr(n) for k, n in OSD_BUTTONS}
+
+    def onInit(self):
+        self.setProperty("heading", tr(("Order of the buttons", "Volgorde van de knoppen")))
+        self.setProperty("sub", tr(("Choose a button and move it with left/right", "Kies een knop en zet hem met links/rechts op een andere plek")))
+        self.setProperty("move", tr(("◀  move  ▶", "◀  verplaatsen  ▶")))
+        self.setProperty("reset", tr(("Standard order", "Standaardvolgorde")))
+        self.setProperty("fixed", tr(("Play/pause, Stop and seeking stay where they are", "Afspelen/pauze, Stoppen en spoelen blijven op hun plek")))
+        self.fill(0)
+        self.setFocusId(200)
+
+    def fill(self, select):
+        lst = self.getControl(200)
+        lst.reset()
+        items = []
+        for n, key in enumerate(self.order, 1):
+            hidden = has(f"lucent.osd.hide.{key}")
+            items.append(xbmcgui.ListItem(f"{n}.  {self.names[key]}", tr(("hidden", "verborgen")) if hidden else "", offscreen=True))
+        lst.addItems(items)
+        lst.selectItem(select)
+
+    def onAction(self, action):
+        aid = action.getId()
+        if aid in CLOSE_ACTIONS:
+            self.close()
+            return
+        if self.getFocusId() != 200 or aid not in (1, 2):           # 1 = left, 2 = right
+            return
+        pos = self.getControl(200).getSelectedPosition()
+        new = pos - 1 if aid == 1 else pos + 1
+        if 0 <= pos < len(self.order) and 0 <= new < len(self.order):
+            self.order[pos], self.order[new] = self.order[new], self.order[pos]
+            self.fill(new)
+
+    def onClick(self, cid):
+        if cid == 300:
+            self.order = list(OSD_ORDER)
+            self.fill(0)
+            self.setFocusId(200)
+
+
+def pick_osd_order():
+    win = OsdOrder("Lucent_OsdOrder.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
+    win.setup(osd_order())
+    win.doModal()
+    order = win.order
+    del win
+    for n, key in enumerate(order, 1):
+        set_string(f"lucent.osd.slot{n}", "" if order == OSD_ORDER else key)
+    osd_order_label()
+
+
 def reset_all():
     if xbmcgui.Dialog().yesno(HEADING, tr(("Restore all skin settings? Your menu and widgets stay as they are.",
                                            "Alle skin-instellingen herstellen? Je menu en widgets blijven zoals ze zijn."))):
         for name in ("nuvio.accent", "nuvio.accent.label", "nuvio.landscape", "nuvio.watched", "lucent.watched.colour", "lucent.watched.size", "nuvio.glow",
-                     "nuvio.pauseinfo", "nuvio.posterfocus", "nuvio.trailer.delay", "lucent.osdclose"):
+                     "nuvio.pauseinfo", "nuvio.posterfocus", "nuvio.trailer.delay", "lucent.osdclose") + tuple(f"lucent.osd.slot{n}" for n in range(1, 9)):
             set_string(name, "")
         for name in ("nuvio.amoled", "nuvio.posterlabels.hide", "nuvio.sideicons.hide", "nuvio.fulldate",
                      "nuvio.fullbackdrop", "nuvio.info.hideratings", "nuvio.info.hidetrailer", "nuvio.hideclock",
@@ -460,6 +533,7 @@ if __name__ == "__main__":
         "pauseinfo": lambda: pick_option("nuvio.pauseinfo", PAUSE, tr(("Show info after", "Info tonen na"))),
         "osdclose": lambda: pick_option("lucent.osdclose", OSDCLOSE, tr(("Close the player menu by itself", "Spelermenu vanzelf sluiten"))),
         "osdbuttons": pick_osd,
+        "osdorder": pick_osd_order,
         "flags": explain_flags,
         "posterfocus": pick_posterfocus,
         "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),
