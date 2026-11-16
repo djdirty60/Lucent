@@ -105,6 +105,13 @@ PAUSE = [("3", ("After 3 seconds", "Na 3 seconden")), ("", ("After 5 seconds", "
 OSDCLOSE = [("", ("Never (Back closes it)", "Nooit (Terug sluit het)")), ("3", ("After 3 seconds", "Na 3 seconden")),
             ("5", ("After 5 seconds", "Na 5 seconden")), ("8", ("After 8 seconds", "Na 8 seconden")),
             ("10", ("After 10 seconds", "Na 10 seconden")), ("15", ("After 15 seconds", "Na 15 seconden"))]
+# 2.1.33 (#26): the buttons of the player bar (VideoOSD.xml) you can hide; play/pause and stop always stay
+OSD_BUTTONS = [("prev", ("Previous episode", "Vorige aflevering")), ("rewind", ("Back 10 seconds", "10 seconden terug")),
+               ("forward", ("Forward 30 seconds", "30 seconden vooruit")), ("next", ("Next episode", "Volgende aflevering")),
+               ("subtitles", ("Subtitles", "Ondertitels")), ("subsearch", ("Search subtitles", "Ondertitels zoeken")),
+               ("audio", ("Audio", "Audio")), ("video", ("Video settings", "Video-instellingen")),
+               ("bookmarks", ("Bookmarks", "Bladwijzers")), ("stats", ("Player info", "Spelerinfo")),
+               ("sleep", ("Sleep timer", "Slaaptimer")), ("info", ("Info", "Info"))]
 POSTERFOCUS = [("", ("Off", "Uit")), ("window", ("Trailer window with soft edge", "Trailervenster met zachte rand")),
                ("hero", ("Hero media", "Hero-media")), ("expand", ("Expanded card", "Uitgevouwen kaart"))]
 TRAILER_DELAY = [("1", ("After 1 second", "Na 1 seconde")), ("", ("After 2 seconds", "Na 2 seconden")),
@@ -357,6 +364,26 @@ def sync():
     watched_label()
 
 
+def osd_label():
+    shown = [k for k, _n in OSD_BUTTONS if not has(f"lucent.osd.hide.{k}")]
+    if len(shown) == len(OSD_BUTTONS):
+        text = tr(("All buttons", "Alle knoppen"))
+    else:
+        text = tr(("{0} of {1} buttons", "{0} van {1} knoppen"), len(shown), len(OSD_BUTTONS))
+    set_string("lucent.osd.buttons.label", text)
+
+
+def pick_osd():
+    labels = [tr(name) for _k, name in OSD_BUTTONS]
+    pre = [i for i, (k, _n) in enumerate(OSD_BUTTONS) if not has(f"lucent.osd.hide.{k}")]
+    picked = xbmcgui.Dialog().multiselect(tr(("Buttons in the player bar", "Knoppen in de spelerbalk")), labels, preselect=pre)
+    if picked is None:
+        return
+    for i, (k, _n) in enumerate(OSD_BUTTONS):
+        set_bool(f"lucent.osd.hide.{k}", i not in picked)
+    osd_label()
+
+
 def reset_all():
     if xbmcgui.Dialog().yesno(HEADING, tr(("Restore all skin settings? Your menu and widgets stay as they are.",
                                            "Alle skin-instellingen herstellen? Je menu en widgets blijven zoals ze zijn."))):
@@ -365,7 +392,7 @@ def reset_all():
             set_string(name, "")
         for name in ("nuvio.amoled", "nuvio.posterlabels.hide", "nuvio.sideicons.hide", "nuvio.fulldate",
                      "nuvio.fullbackdrop", "nuvio.info.hideratings", "nuvio.info.hidetrailer", "nuvio.hideclock",
-                     "nuvio.pauseinfo.hideflags"):
+                     "nuvio.pauseinfo.hideflags") + tuple(f"lucent.osd.hide.{k}" for k, _n in OSD_BUTTONS):
             set_bool(name, False)
         kodi_set("lookandfeel.skinzoom", 0)
         apply_colours()
@@ -431,6 +458,7 @@ if __name__ == "__main__":
         "glow": lambda: pick_option("nuvio.glow", GLOW, tr(("Edge glow", "Randgloed"))),
         "pauseinfo": lambda: pick_option("nuvio.pauseinfo", PAUSE, tr(("Show info after", "Info tonen na"))),
         "osdclose": lambda: pick_option("lucent.osdclose", OSDCLOSE, tr(("Close the player menu by itself", "Spelermenu vanzelf sluiten"))),
+        "osdbuttons": pick_osd,
         "flags": explain_flags,
         "posterfocus": pick_posterfocus,
         "trailerdelay": lambda: pick_option("nuvio.trailer.delay", TRAILER_DELAY, tr(("Start trailer after", "Trailer starten na"))),
