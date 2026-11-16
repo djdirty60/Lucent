@@ -6418,10 +6418,10 @@ def infotrailer_test():
             mon.waitForAbort(0.7)
         xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
         mon.waitForAbort(3)
-        for _ in range(4):
+        for k in ("Down", "Right", "Down", "Right"):
             if lab("ListItem.DBType") == "movie":
                 break
-            key("Right")
+            key(k)
             mon.waitForAbort(1)
         xbmc.executebuiltin("Action(Info)")
         for _ in range(20):
