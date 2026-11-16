@@ -237,7 +237,11 @@
                 <height>84</height>
                 <label></label>
             </control>
-            <control type="button" id="111">
+            <!-- 2.1.34 (#26): the right-hand buttons in your own order (Settings > Watching > Order of the buttons).
+                 Every place (slot 1-8) holds all eight buttons; Skin.String(lucent.osd.slotN) says which one shows there,
+                 empty means the standard order. The video add-on's own buttons stay after place 2. -->
+            <!-- slot 1 -->
+            <control type="button" id="2011">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -245,16 +249,146 @@
                 <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
                 <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
                 <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.subtitles)</visible>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot1),subtitles) | String.IsEmpty(Skin.String(lucent.osd.slot1))] + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
             </control>
-            <control type="button" id="118">
+            <control type="button" id="2012">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/search_fo.png</texturefocus>
                 <texturenofocus>buttons/search_nf.png</texturenofocus>
                 <onclick>ActivateWindow(subtitlesearch)</onclick>
-                <visible>[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)</visible>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2013">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2014">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2015">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2016">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2017">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2018">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot1),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <!-- slot 2 -->
+            <control type="button" id="2021">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2022">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot2),subsearch) | String.IsEmpty(Skin.String(lucent.osd.slot2))] + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2023">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2024">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2025">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2026">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2027">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2028">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot2),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
             </control>
             <!-- "What did they say?": the video add-on goes 10 s back with the subtitles on for a moment -->
             <control type="button" id="120">
@@ -277,59 +411,454 @@
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=intro_mark)</onclick>
                 <visible>System.AddonIsEnabled(plugin.video.lucent) + String.IsEqual(Window(Home).Property(lucent.lv.intromark),1) + !VideoPlayer.Content(livetv)</visible>
             </control>
-            <control type="button" id="112">
+            <!-- slot 3 -->
+            <control type="button" id="2031">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2032">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2033">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/audio_fo.png</texturefocus>
                 <texturenofocus>buttons/audio_nf.png</texturenofocus>
                 <onclick>ActivateWindow(osdaudiosettings)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.audio)</visible>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot3),audio) | String.IsEmpty(Skin.String(lucent.osd.slot3))] + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
             </control>
-            <control type="button" id="113">
+            <control type="button" id="2034">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/videosettings_fo.png</texturefocus>
                 <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
                 <onclick>ActivateWindow(osdvideosettings)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.video)</visible>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
             </control>
-            <control type="button" id="114">
+            <control type="button" id="2035">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/bookmark_fo.png</texturefocus>
                 <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
                 <onclick>ActivateWindow(videobookmarks)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.bookmarks)</visible>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
             </control>
-            <control type="button" id="117">
+            <control type="button" id="2036">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/stats_fo.png</texturefocus>
                 <texturenofocus>buttons/stats_nf.png</texturenofocus>
                 <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.stats)</visible>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
             </control>
-            <control type="button" id="119">
+            <control type="button" id="2037">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/sleep_fo.png</texturefocus>
                 <texturenofocus>buttons/sleep_nf.png</texturenofocus>
                 <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.sleep)</visible>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
             </control>
-            <control type="button" id="115">
+            <control type="button" id="2038">
                 <width>84</width>
                 <height>84</height>
                 <label></label>
                 <texturefocus>buttons/info_fo.png</texturefocus>
                 <texturenofocus>buttons/info_nf.png</texturenofocus>
                 <onclick>Dialog.Close(videoosd,true)</onclick>
-                <visible>!Skin.HasSetting(lucent.osd.hide.info)</visible>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot3),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <!-- slot 4 -->
+            <control type="button" id="2041">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2042">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2043">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2044">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot4),video) | String.IsEmpty(Skin.String(lucent.osd.slot4))] + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2045">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2046">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2047">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2048">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot4),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <!-- slot 5 -->
+            <control type="button" id="2051">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2052">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2053">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2054">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2055">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot5),bookmarks) | String.IsEmpty(Skin.String(lucent.osd.slot5))] + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2056">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2057">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2058">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot5),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <!-- slot 6 -->
+            <control type="button" id="2061">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2062">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2063">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2064">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2065">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2066">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot6),stats) | String.IsEmpty(Skin.String(lucent.osd.slot6))] + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2067">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2068">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot6),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <!-- slot 7 -->
+            <control type="button" id="2071">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2072">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2073">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2074">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2075">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2076">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2077">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot7),sleep) | String.IsEmpty(Skin.String(lucent.osd.slot7))] + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2078">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot7),info) + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
+                <onclick>ActivateWindow(fullscreeninfo)</onclick>
+            </control>
+            <!-- slot 8 -->
+            <control type="button" id="2081">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/subtitles_fo.png</texturefocus>
+                <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),subtitles) + [!Skin.HasSetting(lucent.osd.hide.subtitles)]</visible>
+            </control>
+            <control type="button" id="2082">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/search_fo.png</texturefocus>
+                <texturenofocus>buttons/search_nf.png</texturenofocus>
+                <onclick>ActivateWindow(subtitlesearch)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),subsearch) + [[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)]</visible>
+            </control>
+            <control type="button" id="2083">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/audio_fo.png</texturefocus>
+                <texturenofocus>buttons/audio_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdaudiosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),audio) + [!Skin.HasSetting(lucent.osd.hide.audio)]</visible>
+            </control>
+            <control type="button" id="2084">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/videosettings_fo.png</texturefocus>
+                <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
+                <onclick>ActivateWindow(osdvideosettings)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),video) + [!Skin.HasSetting(lucent.osd.hide.video)]</visible>
+            </control>
+            <control type="button" id="2085">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/bookmark_fo.png</texturefocus>
+                <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
+                <onclick>ActivateWindow(videobookmarks)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),bookmarks) + [!Skin.HasSetting(lucent.osd.hide.bookmarks)]</visible>
+            </control>
+            <control type="button" id="2086">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/stats_fo.png</texturefocus>
+                <texturenofocus>buttons/stats_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),stats) + [!Skin.HasSetting(lucent.osd.hide.stats)]</visible>
+            </control>
+            <control type="button" id="2087">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/sleep_fo.png</texturefocus>
+                <texturenofocus>buttons/sleep_nf.png</texturenofocus>
+                <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
+                <visible>String.IsEqual(Skin.String(lucent.osd.slot8),sleep) + [!Skin.HasSetting(lucent.osd.hide.sleep)]</visible>
+            </control>
+            <control type="button" id="2088">
+                <width>84</width>
+                <height>84</height>
+                <label></label>
+                <texturefocus>buttons/info_fo.png</texturefocus>
+                <texturenofocus>buttons/info_nf.png</texturenofocus>
+                <onclick>Dialog.Close(videoosd,true)</onclick>
+                <visible>[String.IsEqual(Skin.String(lucent.osd.slot8),info) | String.IsEmpty(Skin.String(lucent.osd.slot8))] + [!Skin.HasSetting(lucent.osd.hide.info)]</visible>
                 <onclick>ActivateWindow(fullscreeninfo)</onclick>
             </control>
             </control>

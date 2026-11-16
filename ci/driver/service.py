@@ -6750,7 +6750,7 @@ def osdbtn_test():
     mon.waitForAbort(2)
     xbmc.executebuiltin("Control.SetFocus(103)")
     mon.waitForAbort(1)
-    out.append("visible=" + ",".join(c for c in ("101", "102", "116", "103", "105", "106", "111", "118", "112", "113", "114", "117", "119", "115")
+    out.append("visible=" + ",".join(c for c in ("101", "102", "116", "103", "105", "106", "2011", "2022", "2033", "2044", "2055", "2066", "2077", "2088")
                                      if cond(f"Control.IsVisible({c})")))
     steps = []
     for k in ("Right",) * 8 + ("Left",) * 9:
@@ -6797,6 +6797,134 @@ def osdbtn_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
     log("osdbtn: " + " | ".join(out))
+
+
+def viewnav_test():
+    """2.1.34 (#27): in the one-row views (51, 53) Up always opens the side menu; Down goes to the letter bar (A-Z order)
+    or to the new slider (other orders), Left/Right on the slider scroll the row."""
+    out = []
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(51)")
+    mon.waitForAbort(1)
+    out.append(f"items={lab('Container(51).NumItems')} sort={lab('Container.SortMethod')} dir={'asc' if cond('Container.SortDirection(ascending)') else 'desc'}")
+    for _ in range(3):
+        key("Right")
+        mon.waitForAbort(0.8)
+    out.append(f"at={lab('Container(51).CurrentItem')} hint={cond('Control.IsVisible(51)')}")
+    shot("27-row-hint")
+    key("Up")
+    mon.waitForAbort(1.5)
+    out.append(f"up->{lab('System.CurrentControlID')} menu={cond('ControlGroup(9050).HasFocus')}")
+    shot("27-up-menu")
+    xbmc.executebuiltin("SetFocus(51)")
+    mon.waitForAbort(1)
+    key("Down")
+    mon.waitForAbort(1.2)
+    out.append(f"down(asc)->{lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("SetFocus(51)")
+    mon.waitForAbort(1)
+    if cond("Container.SortDirection(ascending)"):
+        xbmc.executebuiltin("Container.SetSortDirection")
+        mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(51)")
+    mon.waitForAbort(1)
+    key("Down")
+    mon.waitForAbort(1.2)
+    out.append(f"down(desc)->{lab('System.CurrentControlID')} slider={cond('Control.IsVisible(6051)')}")
+    shot("27-slider-focus")
+    for _ in range(2):
+        key("Right")
+        mon.waitForAbort(1)
+        out.append(f"right: item={lab('Container(51).CurrentItem')}/{lab('Container(51).NumItems')} focus={lab('System.CurrentControlID')}")
+    shot("27-slider-moved")
+    key("Up")
+    mon.waitForAbort(1)
+    out.append(f"up from slider->{lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("Container.SetViewMode(53)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(53)")
+    mon.waitForAbort(1)
+    key("Right")
+    mon.waitForAbort(0.8)
+    key("Up")
+    mon.waitForAbort(1.2)
+    out.append(f"53 up->{lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("SetFocus(53)")
+    mon.waitForAbort(1)
+    key("Down")
+    mon.waitForAbort(1.2)
+    out.append(f"53 down->{lab('System.CurrentControlID')} slider={cond('Control.IsVisible(6053)')}")
+    key("Right")
+    mon.waitForAbort(1)
+    out.append(f"53 right: item={lab('Container(53).CurrentItem')}")
+    shot("27-view53-slider")
+    xbmc.executebuiltin("SetFocus(53)")
+    xbmc.executebuiltin("Container.SetSortDirection")
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(1.5)
+    log("viewnav: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
+def osdorder_test():
+    """2.1.34 (#26): the order window (Settings > Watching > Order of the buttons): Down to Audio, Left moves it to place 1,
+    Back saves; the player bar then shows Audio before Subtitles. Then back to the standard order."""
+    out = []
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,osdorder)")
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if lab("System.CurrentControlID") == "200":
+            break
+    mon.waitForAbort(1)
+    shot("26-order-window")
+    key("Down")
+    mon.waitForAbort(0.8)
+    key("Down")
+    mon.waitForAbort(0.8)
+    key("Left")
+    mon.waitForAbort(1.2)
+    out.append(f"after left: sel={lab('Container(200).ListItem.Label')!r} first={lab('Container(200).ListItemAbsolute(0).Label')!r}")
+    shot("26-order-moved")
+    key("Escape")
+    mon.waitForAbort(2)
+    out.append("slots=" + ",".join(lab(f"Skin.String(lucent.osd.slot{n})") for n in range(1, 9)))
+    out.append(f"label={lab('Skin.String(lucent.osd.order.label)')!r}")
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if xbmc.Player().isPlayingVideo():
+            break
+    for _ in range(10):
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(103)")
+    mon.waitForAbort(1)
+    steps = []
+    for _ in range(4):
+        key("Right")
+        mon.waitForAbort(0.8)
+        steps.append(lab("System.CurrentControlID") + ":" + lab("Control.GetLabel(1)") )
+    out.append("right=" + " ".join(steps))
+    out.append(f"label under bar={xbmc.getInfoLabel('$VAR[OSDButtonLabel]')!r}")
+    xbmc.executebuiltin("Control.SetFocus(103)")
+    mon.waitForAbort(1.5)
+    shot("26-order-bar")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(3)
+    for n in range(1, 9):
+        xbmc.executebuiltin(f"Skin.Reset(lucent.osd.slot{n})")
+    log("osdorder: " + " | ".join(out))
 
 
 def updtext_test():
@@ -11985,6 +12113,8 @@ def main():
     safe(focusprobe_test)
     safe(updtext_test)
     safe(osdbtn_test)
+    safe(viewnav_test)
+    safe(osdorder_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
