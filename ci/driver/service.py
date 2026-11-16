@@ -6803,15 +6803,21 @@ def viewnav_test():
     """2.1.34 (#27): in the one-row views (51, 53) Up always opens the side menu; Down goes to the letter bar (A-Z order)
     or to the new slider (other orders), Left/Right on the slider scroll the row."""
     out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")      # no first-run questions over the list
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
     mon.waitForAbort(3)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("Container.SetViewMode(51)")
     mon.waitForAbort(1.5)
     xbmc.executebuiltin("SetFocus(51)")
     mon.waitForAbort(1)
-    out.append(f"items={lab('Container(51).NumItems')} sort={lab('Container.SortMethod')} dir={'asc' if cond('Container.SortDirection(ascending)') else 'desc'}")
+    out.append(f"window={lab('System.CurrentWindow')} items={lab('Container(51).NumItems')} sort={lab('Container.SortMethod')} dir={'asc' if cond('Container.SortDirection(ascending)') else 'desc'}")
     for _ in range(3):
         key("Right")
         mon.waitForAbort(0.8)
