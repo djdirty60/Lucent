@@ -6369,6 +6369,38 @@ def fade_test():
     mon.waitForAbort(2)
 
 
+def focusprobe_test():
+    """2.1.29: 'Control 9000 in window 10004 / 50 in window 10040 has been asked to focus, but it can't' (Shield log).
+    First open of Settings and of the add-on browser: where is the focus, and does the first Down land?"""
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    for win, cid in (("settings", "9000"), ("addonbrowser", "50")):
+        xbmc.executebuiltin(f"ActivateWindow({win})")
+        seen = []
+        t0 = time.time()
+        for wait in (0.1, 0.2, 0.3):
+            mon.waitForAbort(wait)
+            seen.append([round(time.time() - t0, 2), lab("System.CurrentWindow"), lab("System.CurrentControlID"),
+                         lab(f"Container({cid}).NumItems"), lab(f"Container({cid}).CurrentItem")])
+        key("Down")                                     # the first press, about 0.6 s after opening
+        mon.waitForAbort(1)
+        seen.append(["after Down", lab("System.CurrentControlID"), lab(f"Container({cid}).CurrentItem")])
+        mon.waitForAbort(1)
+        seen.append(["2 s", lab("System.CurrentControlID"), lab(f"Container({cid}).CurrentItem")])
+        out[win] = seen
+        shot(f"focusprobe-{win}")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            out["errors"] = [ln[11:][:160] for ln in fh.read().splitlines() if "has been asked to focus" in ln][-10:]
+    except Exception as error:  # noqa: BLE001
+        out["errors"] = str(error)
+    log("focusprobe: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11505,6 +11537,7 @@ def main():
     safe(ssback_test)
     safe(favtab_test)
     safe(merge_test)
+    safe(focusprobe_test)
     safe(fade_test)
     safe(freeze_test)
     safe(nextup_test)
