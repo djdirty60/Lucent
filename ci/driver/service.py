@@ -6659,6 +6659,63 @@ def epnest_test():
     log("epnest: " + json.dumps(out))
 
 
+def epbadge_test():
+    """2.1.33: episode pictures with badges for library episodes. The helper writes the series' numbers to the episodes
+    (scripts/epids.py), the skin fills Lucent Video's episode pattern (a test pattern on the test server)."""
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    out = {}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShows", "params": {}})))
+    shows = (res.get("result") or {}).get("tvshows") or []
+    for s in shows:
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetTVShowDetails",
+                                        "params": {"tvshowid": s["tvshowid"], "uniqueid": {"tmdb": str(1000 + s["tvshowid"]), "imdb": "tt%07d" % s["tvshowid"]}}}))
+    sid = shows[0]["tvshowid"]
+    eps = (json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetEpisodes",
+                                                      "params": {"tvshowid": sid, "properties": ["uniqueid", "playcount"]}}))).get("result") or {}).get("episodes") or []
+    if eps:
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetEpisodeDetails",
+                                        "params": {"episodeid": eps[0]["episodeid"], "playcount": 1}}))
+    for k, v in (("episodes", "1"), ("episode.count", "4"), ("episode.text0", "http://127.0.0.1:8765/t/p/ep/"), ("episode.slot1", "tmdb_id"),
+                 ("episode.text1", "/"), ("episode.slot2", "season"), ("episode.text2", "/"), ("episode.slot3", "episode"),
+                 ("episode.text3", ".png?blur="), ("episode.slot4", "blur"), ("episode.text4", ""), ("episode.blur", "1")):
+        HOME.setProperty(f"lucent.video.{k}", v)
+    import epids
+    out["written"] = epids.sync()
+    out["again"] = epids.sync()
+    eps = (json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetEpisodes",
+                                                      "params": {"tvshowid": sid, "properties": ["uniqueid", "playcount", "title"]}}))).get("result") or {}).get("episodes") or []
+    out["episodes"] = [[e["title"], e.get("uniqueid"), e.get("playcount")] for e in eps][:3]
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.7)
+    t0 = time.strftime("%H:%M:%S")
+    xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/-1/,return)")
+    mon.waitForAbort(4)
+    for k in ("Down", "Down", "Right"):
+        if lab("ListItem.DBType") == "episode":
+            break
+        key(k)
+        mon.waitForAbort(1)
+    out["item"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(lshowtmdb)"), lab("ListItem.PlayCount"), lab("Container.Viewmode")]
+    mon.waitForAbort(4)
+    shot("epbadge-on")
+    HOME.clearProperty("lucent.video.episodes")
+    mon.waitForAbort(3)
+    shot("epbadge-off")
+    for k in ("episode.count", "episode.text0", "episode.slot1", "episode.text1", "episode.slot2", "episode.text2", "episode.slot3",
+              "episode.text3", "episode.slot4", "episode.text4", "episode.blur"):
+        HOME.clearProperty(f"lucent.video.{k}")
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            out["fetched"] = sorted({ln.split("<")[1].split(">")[0] for ln in fh.read().splitlines() if ln[11:19] >= t0 and "/t/p/ep/" in ln and "CurlFile::Open" in ln})[:6]
+    except Exception as error:  # noqa: BLE001
+        out["fetched"] = str(error)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("epbadge: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11796,6 +11853,7 @@ def main():
     safe(favtab_test)
     safe(merge_test)
     safe(focusprobe_test)
+    safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
     safe(posterbadge_test)

@@ -39,6 +39,7 @@
         <value condition="Skin.HasSetting(lucent.land.series) + String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(tvshow.landscape))">$INFO[ListItem.Art(tvshow.landscape)]</value>
         <value condition="Skin.HasSetting(lucent.land.series) + String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
         <value condition="Skin.HasSetting(lucent.land.series) + String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(tvshow.fanart))">$INFO[ListItem.Art(tvshow.fanart)]</value>
+        <value condition="$EXP[LucentEpBadge]">$VAR[LucentEpBadgeUrl]</value>
         <value condition="String.IsEqual(ListItem.DBType,episode) + !String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(tvshow.landscape))">$INFO[ListItem.Art(tvshow.landscape)]</value>
@@ -139,7 +140,88 @@
         <value condition="!Skin.HasSetting(lucent.readable.off)">E6000000</value>
         <value>00000000</value>
     </variable>
+    <!-- 2.1.33: episode pictures with badges of Lucent Video's poster maker (Lucent Video 67+: Settings > General > Posters >
+         Episode picture pattern) for episodes of the Kodi library. Lucent Video gives the pattern in pieces (episode.text0..N
+         and the kind of each gap in episode.slot1..N); the series' TMDB / IMDb / TVDB number comes from the extra ids the
+         helper writes to each library episode (lshowtmdb, lshowimdb, lshowtvdb: Kodi gives an episode no number of its series) -->
+    <expression name="LucentEpBadge">!String.IsEmpty(Window(home).Property(lucent.video.episodes)) + String.IsEmpty(Window(home).Property(lucent.video.posters.down)) + String.IsEqual(ListItem.DBType,episode) + Integer.IsGreater(ListItem.DBID,0) + !String.IsEmpty(ListItem.Season) + Integer.IsGreater(ListItem.Episode,0) + [!String.IsEmpty(ListItem.UniqueID(lshowtmdb)) | !String.IsEmpty(ListItem.UniqueID(lshowimdb)) | !String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot1),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot1),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot1),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot2),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot2),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot2),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot3),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot3),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot3),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot4),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot4),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot4),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot5),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot5),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot5),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot6),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot6),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot6),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot7),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot7),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot7),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot8),tmdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtmdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot8),imdb_id) + String.IsEmpty(ListItem.UniqueID(lshowimdb))] + ![String.IsEqual(Window(home).Property(lucent.video.episode.slot8),tvdb_id) + String.IsEmpty(ListItem.UniqueID(lshowtvdb))]</expression>
+    <variable name="LucentEpSlot1">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot1),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot2">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot2),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot3">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot3),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot4">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot4),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot5">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot5),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot6">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot6),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot7">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot7),blur)">false</value>
+    </variable>
+    <variable name="LucentEpSlot8">
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),tmdb_id)">$INFO[ListItem.UniqueID(lshowtmdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),imdb_id)">$INFO[ListItem.UniqueID(lshowimdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),tvdb_id)">$INFO[ListItem.UniqueID(lshowtvdb)]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),season)">$INFO[ListItem.Season]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),episode)">$INFO[ListItem.Episode]</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),blur) + !String.IsEmpty(Window(home).Property(lucent.video.episode.blur)) + !Integer.IsGreater(ListItem.PlayCount,0)">true</value>
+        <value condition="String.IsEqual(Window(home).Property(lucent.video.episode.slot8),blur)">false</value>
+    </variable>
+    <variable name="LucentEpBadgeUrl">
+        <value>$INFO[Window(home).Property(lucent.video.episode.text0)]$VAR[LucentEpSlot1]$INFO[Window(home).Property(lucent.video.episode.text1)]$VAR[LucentEpSlot2]$INFO[Window(home).Property(lucent.video.episode.text2)]$VAR[LucentEpSlot3]$INFO[Window(home).Property(lucent.video.episode.text3)]$VAR[LucentEpSlot4]$INFO[Window(home).Property(lucent.video.episode.text4)]$VAR[LucentEpSlot5]$INFO[Window(home).Property(lucent.video.episode.text5)]$VAR[LucentEpSlot6]$INFO[Window(home).Property(lucent.video.episode.text6)]$VAR[LucentEpSlot7]$INFO[Window(home).Property(lucent.video.episode.text7)]$VAR[LucentEpSlot8]$INFO[Window(home).Property(lucent.video.episode.text8)]</value>
+    </variable>
     <variable name="LucentEpThumb">
+        <value condition="$EXP[LucentEpBadge]">$VAR[LucentEpBadgeUrl]</value>
         <value condition="!String.IsEmpty(ListItem.Art(thumb))">$INFO[ListItem.Art(thumb)]</value>
         <value condition="!String.IsEmpty(ListItem.Art(landscape))">$INFO[ListItem.Art(landscape)]</value>
         <value>$INFO[ListItem.Art(fanart)]</value>
