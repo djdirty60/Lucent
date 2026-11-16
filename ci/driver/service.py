@@ -6383,6 +6383,7 @@ def freeze_test():
                 log(f"freeze: driver waited {gap:.0f} s on Kodi")
     threading.Thread(target=watchdog, daemon=True).start()
     out = []
+    log(f"freeze: helper running={HOME.getProperty('lucent.helper.running')!r} beat={HOME.getProperty('lucent.helper.beat')!r}")
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")      # no first-run questions over Home
     for _ in range(3):
         xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -6447,6 +6448,7 @@ def freeze_test():
         alive["t"] = time.time()
         ok_as.append([rnd, addon, lab("System.CurrentWindow"), xbmcgui.getCurrentWindowDialogId(), lab("System.CurrentControlID")])
     log("freeze addonsettings: " + json.dumps(ok_as))
+    log(f"freeze end: helper running={HOME.getProperty('lucent.helper.running')!r} beat={HOME.getProperty('lucent.helper.beat')!r}")
     alive["stop"] = True
     xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
     try:
