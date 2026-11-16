@@ -80,6 +80,27 @@
                         <label>▶  $LOCALIZE[208]</label>
                         <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
                     </control>
+                    <!-- 2.1.30 (Lucent Video #1): Trailer right next to Play. Kodi's own Trailer button (id 11) when the title
+                         has a trailer in Kodi; otherwise the first trailer TMDB knows (the Trailers tab, through YouTube).
+                         Both close the page and play full screen; trailerback.py opens the page again afterwards.
+                         Skin settings > Info page > Trailer button switches it off. -->
+                    <control type="button" id="11">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[20410]</label>
+                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
+                        <visible>!String.IsEmpty(ListItem.Trailer) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
+                    </control>
+                    <control type="button" id="26">
+                        <width>auto</width>
+                        <height>72</height>
+                        <label>$LOCALIZE[20410]</label>
+                        <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.1.path)])</onclick>
+                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
+                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
+                        <visible>String.IsEmpty(ListItem.Trailer) + !String.IsEmpty(Window(home).Property(nuvio.info.vid.1.path)) + System.HasAddon(plugin.video.youtube) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
+                    </control>
                     <control type="button" id="9">
                         <width>auto</width>
                         <height>72</height>

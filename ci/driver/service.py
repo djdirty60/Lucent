@@ -6401,6 +6401,67 @@ def focusprobe_test():
     log("focusprobe: " + json.dumps(out))
 
 
+def infotrailer_test():
+    """2.1.30 (Lucent Video #1): a Trailer button right next to Play on the info page. Kodi's own (id 11) when the
+    title has a trailer in Kodi, else the first TMDB trailer (id 26, through YouTube)."""
+    out = {"youtube": cond("System.HasAddon(plugin.video.youtube)")}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
+    movies = (res.get("result") or {}).get("movies") or []
+    if not movies:
+        log("infotrailer: no movie")
+        return
+    mid = movies[0]["movieid"]
+
+    def open_page():
+        for _ in range(3):
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            mon.waitForAbort(0.7)
+        xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+        mon.waitForAbort(3)
+        for _ in range(4):
+            if lab("ListItem.DBType") == "movie":
+                break
+            key("Right")
+            mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Info)")
+        for _ in range(20):
+            if cond("Window.IsVisible(movieinformation)"):
+                break
+            mon.waitForAbort(0.5)
+        mon.waitForAbort(4)
+
+    def buttons():
+        return {c: cond(f"Control.IsVisible({c})") for c in (8, 11, 26, 9, 21, 22, 25, 24, 6)} | {
+            "labels": [lab(f"Control.GetLabel({c})") for c in (8, 11, 26)], "focus": lab("System.CurrentControlID")}
+
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                    "params": {"movieid": mid, "trailer": "/tmp/ci/test.mkv"}}))
+    open_page()
+    out["kodi_trailer"] = buttons()
+    shot("infotrailer-kodi")
+    key("Right")
+    mon.waitForAbort(1)
+    out["right_from_play"] = lab("System.CurrentControlID")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                    "params": {"movieid": mid, "trailer": ""}}))
+    open_page()
+    out["no_trailer"] = buttons()
+    HOME.setProperty("nuvio.info.vid.1.title", "Official Trailer")
+    HOME.setProperty("nuvio.info.vid.1.path", "plugin://plugin.video.youtube/play/?video_id=ci")
+    HOME.setProperty("nuvio.info.vid.count", "1")
+    mon.waitForAbort(1.5)
+    out["tmdb_trailer"] = buttons()
+    shot("infotrailer-tmdb")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.info.hidetrailer)")
+    mon.waitForAbort(1)
+    out["setting_off"] = buttons()
+    xbmc.executebuiltin("Skin.Reset(nuvio.info.hidetrailer)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("infotrailer: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11538,6 +11599,7 @@ def main():
     safe(favtab_test)
     safe(merge_test)
     safe(focusprobe_test)
+    safe(infotrailer_test)
     safe(fade_test)
     safe(freeze_test)
     safe(nextup_test)
