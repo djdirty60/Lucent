@@ -6725,6 +6725,8 @@ def updtext_test():
     out = {}
     for aid in ("plugin.citest", "plugin.citest2"):
         out[aid + " before"] = [updater.installed_version(aid), updater.origin(aid), updater.kodi_updates(aid)]
+    out["why"] = [cond("System.HasAddon(repository.citest)"), cond("System.AddonIsEnabled(repository.citest)"),
+                  updater.rpc("Settings.GetSettingValue", {"setting": "general.addonupdates"})]
     open("/tmp/ci/repo/ready", "w").close()
     for aid in ("plugin.citest", "plugin.citest2"):
         t0 = time.time()
