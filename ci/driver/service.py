@@ -4,6 +4,7 @@ import os
 import time
 
 import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
@@ -6715,6 +6716,33 @@ def epbadge_test():
     log("epbadge: " + json.dumps(out))
 
 
+def updtext_test():
+    """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
+    an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
+    import sys as _s
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import updater
+    out = {}
+    for aid in ("plugin.citest", "plugin.citest2"):
+        out[aid + " before"] = [updater.installed_version(aid), updater.origin(aid), updater.kodi_updates(aid)]
+    open("/tmp/ci/repo/ready", "w").close()
+    for aid in ("plugin.citest", "plugin.citest2"):
+        t0 = time.time()
+        update = {"id": aid, "name": "CI " + aid, "version": "1.0.1", "have": "1.0.0", "zips": "http://127.0.0.1:8765/repo/", "notes": ""}
+        try:
+            restart_needed = updater.install(update, mon)
+        except Exception as error:  # noqa: BLE001
+            restart_needed = f"error {error!r}"
+        mon.waitForAbort(2)
+        try:
+            new_text = xbmcaddon.Addon(aid).getLocalizedString(30001)
+        except Exception as error:  # noqa: BLE001
+            new_text = f"error {error!r}"
+        out[aid] = {"version": updater.installed_version(aid), "restart_asked": restart_needed, "new_text": new_text,
+                    "seconds": round(time.time() - t0, 1), "origin": updater.origin(aid)}
+    log("updtext: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11852,6 +11880,7 @@ def main():
     safe(favtab_test)
     safe(merge_test)
     safe(focusprobe_test)
+    safe(updtext_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)

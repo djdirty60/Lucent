@@ -60,9 +60,11 @@ elif stage == "enable":
     dbs = sorted(glob.glob(os.path.join(home, "userdata/Database/Addons*.db")))
     con = sqlite3.connect(dbs[-1])
     ids = ["skin.lucent", "script.lucent.library", "service.subtitles.lucent", "plugin.video.fakeseren", "plugin.video.youtube", "plugin.video.seren", "resource.images.studios.white", "resource.images.studios.coloured", "service.lucent.cidriver",
-           "resource.language.nl_nl", "repository.seren-nixgate", "repository.tidb.repo", "plugin.video.tidb", "pvr.iptvsimple", "plugin.video.fakefen", "plugin.video.lucent", "service.upnext", "screensaver.lucent"]
+           "resource.language.nl_nl", "repository.seren-nixgate", "repository.tidb.repo", "plugin.video.tidb", "pvr.iptvsimple", "plugin.video.fakefen", "plugin.video.lucent", "service.upnext", "screensaver.lucent", "plugin.citest", "plugin.citest2", "repository.citest"]
     for i in ids:
         con.execute("UPDATE installed SET enabled=1, disabledReason=0 WHERE addonID=?", (i,))
+    con.execute("UPDATE installed SET origin='repository.citest' WHERE addonID='plugin.citest'")     # 2.1.33 updater test
+    con.execute("UPDATE installed SET origin='' WHERE addonID='plugin.citest2'")
     con.commit()
     print({r[0]: r[1] for r in con.execute("SELECT addonID, enabled FROM installed WHERE addonID IN (%s)" % ",".join("?" * len(ids)), ids)})
     # a small video library: one film and one series with one episode, both stopped halfway

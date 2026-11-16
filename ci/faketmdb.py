@@ -1,5 +1,6 @@
 """CI stand-in for TMDb: streaming services, their lists, details and pictures."""
 import json
+import os
 import urllib.parse
 import struct
 import zlib
@@ -29,6 +30,14 @@ class H(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?")[0]
+        if path.startswith("/repo/"):                         # 2.1.33: the test repository (ci/updtest/make.py)
+            f = os.path.join("/tmp/ci/repo", path[len("/repo/"):])
+            if os.path.exists("/tmp/ci/repo/ready") and os.path.basename(f) in ("addons.xml", "addons.xml.md5"):
+                f = f.replace("addons.xml", "addons_new.xml")
+            if os.path.isfile(f):
+                with open(f, "rb") as fh:
+                    return self.send(fh.read(), "application/zip" if f.endswith(".zip") else "text/xml")
+            self.send_response(404); self.end_headers(); return
         if path.startswith("/omdb"):
             if "apikey=badkey" in self.path:
                 return self.send(json.dumps({"Response": "False", "Error": "Invalid API key!"}).encode(), "application/json")

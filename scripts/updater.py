@@ -254,10 +254,59 @@ def unpack(update, zip_path):
     return texts_changed
 
 
+def origin(addon_id):
+    """The repository Kodi installed an add-on from (Addons33.db, table installed), or '' (a zip, or unknown)."""
+    import glob
+    import sqlite3
+    found = sorted(glob.glob(os.path.join(xbmcvfs.translatePath("special://database/"), "Addons*.db")))
+    if not found:
+        return ""
+    try:
+        with sqlite3.connect(f"file:{found[-1]}?mode=ro", uri=True, timeout=5) as db:
+            row = db.execute("SELECT origin FROM installed WHERE addonID = ?", (addon_id,)).fetchone()
+        return (row[0] or "") if row else ""
+    except Exception as error:  # noqa: BLE001
+        log(f"origin of {addon_id}: {error}")
+        return ""
+
+
+def kodi_updates(addon_id):
+    """2.1.33: can Kodi install this update itself? Only then does it read the add-on's new texts right away (no
+    restart): Kodi's own installer reloads them, unpacking a zip does not. That needs the add-on to come from a
+    repository that is installed here, and Kodi's 'Updates: install automatically'."""
+    repo = origin(addon_id)
+    if not repo.startswith("repository.") or not xbmc.getCondVisibility(f"System.HasAddon({repo})"):
+        return ""
+    setting = rpc("Settings.GetSettingValue", {"setting": "general.addonupdates"}) or {}
+    if setting.get("value") not in (0, None):
+        return ""                                        # 1 = only tell, 2 = never: Kodi would not install it
+    return repo
+
+
+def install_by_kodi(update, monitor, progress):
+    """Ask Kodi to look in the repositories now and wait (at most two minutes) until it installed the new version."""
+    xbmc.executebuiltin("UpdateAddonRepos")
+    for step in range(120):
+        if monitor.waitForAbort(1):
+            return False
+        if version_key(installed_version(update["id"])) >= version_key(update["version"]):
+            return True
+        progress.update(10 + step * 80 // 120)
+    return False
+
+
 def install(update, monitor):
     """Returns True when the add-on got new texts (then Kodi should restart to show them)."""
     progress = xbmcgui.DialogProgressBG()
     progress.create(HEADING, tr("busy", update["name"]))
+    repo = kodi_updates(update["id"]) if update["id"] != "skin.lucent" else ""
+    if repo:
+        if install_by_kodi(update, monitor, progress):
+            log(f"{update['id']} {update['version']} installed by Kodi from {repo}: its new texts are there right away")
+            progress.close()
+            xbmcgui.Dialog().notification(HEADING, tr("done", update["name"], update["version"]), xbmcgui.NOTIFICATION_INFO, 5000)
+            return False
+        log(f"Kodi did not install {update['id']} {update['version']} from {repo} in time - unpacking it ourselves")
     try:
         zip_path = download_zip(update)
         progress.update(60)
