@@ -6494,6 +6494,10 @@ def reviews_test():
         if HOME.getProperty("nuvio.info.rev.count"):
             break
         mon.waitForAbort(0.5)
+    for _ in range(4):                                  # the video add-on of the test asks for a TMDB key: close that question
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(okdialog)"):
+            xbmc.executebuiltin("Dialog.Close(okdialog,true)")
     out["count"] = HOME.getProperty("nuvio.info.rev.count")
     out["head"] = HOME.getProperty("nuvio.info.rev.head")
     out["cards"] = [[HOME.getProperty(f"nuvio.info.rev.{n}.{p}") for p in ("author", "rating", "meta", "spoiler")] for n in range(1, 6)]
@@ -6544,6 +6548,50 @@ def reviews_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
     log("reviews: " + json.dumps(out))
+
+
+def posterbadge_test():
+    """2.1.30: posters with badges of Lucent Video's poster maker also for the Kodi library (Home properties of Lucent
+    Video 64: lucent.video.posters, lucent.video.poster.*). A test pattern on the test server: a plain coloured poster."""
+    out = {}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
+    for m in (res.get("result") or {}).get("movies") or []:
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                        "params": {"movieid": m["movieid"], "imdbnumber": "tt0000901"}}))
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.7)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Container.SetViewMode(52)")
+    mon.waitForAbort(2)
+    for k in ("Down", "Right", "Down", "Right"):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key(k)
+        mon.waitForAbort(1)
+    out["off"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(imdb)"), lab("ListItem.Art(poster)")[-40:]]
+    shot("posterbadge-off")
+    for k, v in (("posters", "1"), ("poster.id", "imdb"), ("poster.movie.prefix", "http://127.0.0.1:8765/t/p/badge/"),
+                 ("poster.movie.suffix", ".png?rs=TM"), ("poster.tv.prefix", "http://127.0.0.1:8765/t/p/badge/"),
+                 ("poster.tv.suffix", ".png"), ("poster.shows", "1")):
+        HOME.setProperty(f"lucent.video.{k}", v)
+    mon.waitForAbort(3)
+    out["on"] = [lab("ListItem.Label"), cond("String.StartsWith(ListItem.UniqueID(imdb),tt)")]
+    shot("posterbadge-on")
+    HOME.clearProperty("lucent.video.posters")
+    mon.waitForAbort(2)
+    shot("posterbadge-off2")
+    for k in ("poster.id", "poster.movie.prefix", "poster.movie.suffix", "poster.tv.prefix", "poster.tv.suffix", "poster.shows"):
+        HOME.clearProperty(f"lucent.video.{k}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    try:
+        with open(xbmcvfs.translatePath("special://logpath/kodi.log"), encoding="utf-8", errors="replace") as fh:
+            out["fetched"] = [ln[11:][:200] for ln in fh.read().splitlines() if "/t/p/badge/" in ln][-4:]
+    except Exception as error:  # noqa: BLE001
+        out["fetched"] = str(error)
+    log("posterbadge: " + json.dumps(out))
 
 
 def freeze_test():
@@ -11684,6 +11732,7 @@ def main():
     safe(merge_test)
     safe(focusprobe_test)
     safe(reviews_test)
+    safe(posterbadge_test)
     safe(infotrailer_test)
     safe(fade_test)
     safe(freeze_test)
