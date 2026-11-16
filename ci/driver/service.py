@@ -6432,12 +6432,17 @@ def freeze_test():
     # different waits before the keys, so the helper looks at the dialog while Kodi is still building it
     ok_as = []
     for rnd in range(12):
-        addon = ("plugin.video.lucent", "service.subtitles.lucent", "plugin.video.fakeseren")[rnd % 3]
+        addon = ("plugin.video.lucent", "service.subtitles.lucent")[rnd % 2]
+        for _ in range(3):
+            if cond("System.HasModalDialog"):
+                xbmc.executebuiltin("Dialog.Close(all,true)")
+                mon.waitForAbort(0.5)
         xbmc.executebuiltin(f"Addon.OpenSettings({addon})")
         mon.waitForAbort((0.05, 0.15, 0.3, 0.6, 1.0, 2.0)[rnd % 6])
+        opened = xbmcgui.getCurrentWindowDialogId() == 10140
         key("Down")
         mon.waitForAbort(0.2)
-        key("Right")
+        key("Down")
         mon.waitForAbort(0.3)
         for _ in range(3):
             if not xbmcgui.getCurrentWindowDialogId() == 10140:
@@ -6446,7 +6451,7 @@ def freeze_test():
             mon.waitForAbort(0.6)
         mon.waitForAbort(1)
         alive["t"] = time.time()
-        ok_as.append([rnd, addon, lab("System.CurrentWindow"), xbmcgui.getCurrentWindowDialogId(), lab("System.CurrentControlID")])
+        ok_as.append([rnd, addon, opened, lab("System.CurrentWindow"), xbmcgui.getCurrentWindowDialogId(), lab("System.CurrentControlID")])
     log("freeze addonsettings: " + json.dumps(ok_as))
     log(f"freeze end: helper beat={HOME.getProperty('lucent.helper')!r} now={time.time():.1f} stop={HOME.getProperty('lucent.helper.stop')!r}")
     alive["stop"] = True
