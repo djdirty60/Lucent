@@ -6557,7 +6557,7 @@ def posterbadge_test():
     res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
     for m in (res.get("result") or {}).get("movies") or []:
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
-                                        "params": {"movieid": m["movieid"], "imdbnumber": "tt0000901"}}))
+                                        "params": {"movieid": m["movieid"], "imdbnumber": "tt0111161", "uniqueid": {"imdb": "tt0111161"}}}))
     for _ in range(3):
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(0.7)
@@ -6572,12 +6572,12 @@ def posterbadge_test():
         mon.waitForAbort(1)
     out["off"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(imdb)"), lab("ListItem.Art(poster)")[-40:]]
     shot("posterbadge-off")
-    for k, v in (("posters", "1"), ("poster.id", "imdb"), ("poster.movie.prefix", "http://127.0.0.1:8765/t/p/badge/"),
-                 ("poster.movie.suffix", ".png?rs=TM"), ("poster.tv.prefix", "http://127.0.0.1:8765/t/p/badge/"),
+    for k, v in (("posters", "1"), ("poster.id", "imdb"), ("poster.movie.prefix", "https://btttr.cc/poster-q/imdb/poster-default/"),
+                 ("poster.movie.suffix", ".jpg?lang=nl&rs=TM"), ("poster.tv.prefix", "http://127.0.0.1:8765/t/p/badge/"),
                  ("poster.tv.suffix", ".png"), ("poster.shows", "1")):
         HOME.setProperty(f"lucent.video.{k}", v)
     xbmc.executebuiltin("Container.Refresh")
-    mon.waitForAbort(4)
+    mon.waitForAbort(12)
     out["on"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(imdb)"), lab("ListItem.IMDBNumber"), lab("ListItem.UniqueID(tmdb)"),
                  lab("ListItem.Art(poster)")[-40:], lab("ListItem.DBType")]
     shot("posterbadge-on")
