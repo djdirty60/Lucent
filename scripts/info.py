@@ -24,6 +24,7 @@ import xbmcvfs
 
 HEADING = "Lucent"
 TRAKT = "https://api.trakt.tv/"
+TRAKT_REVIEWS = TRAKT                               # the comments for the Reviews tab (a test server in CI)
 TMDB = "https://api.themoviedb.org/3/"
 TMDB_IMG = "https://image.tmdb.org/t/p/"
 MAX_COLLECTION = 12
@@ -803,6 +804,112 @@ def load_collection(item):
     HOME.setProperty("nuvio.info.coll.count", str(len(parts)))
 
 
+MAX_REVIEWS = 20
+
+
+def _review_text(text):
+    """Plain text of a review: no HTML, markdown stars or Kodi tags, and no runs of empty lines."""
+    text = re.sub(r"<[^>]+>", "", text or "")
+    text = re.sub(r"(\*\*|__|\*|~~)", "", text)
+    text = text.replace("[", "(").replace("]", ")").replace("\r", "")
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def _short(text, size=170):
+    flat = " ".join(text.split())
+    return flat if len(flat) <= size else flat[:size].rsplit(" ", 1)[0] + "…"
+
+
+def trakt_comments(kind, item):
+    """Trakt comments of a film or series (public: Lucent's own Trakt app, or yours when you logged in)."""
+    try:
+        import traktlogin
+        client = (traktlogin.load().get("client_id") or "").strip() or traktlogin.LUCENT_CLIENT_ID
+    except Exception:  # noqa: BLE001
+        return []
+    headers = {"Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": client}
+    ident = item.trakt if item.trakt.isdigit() and item.dbtype in ("movie", "tvshow") else ""
+    if not ident and item.imdb.startswith("tt"):
+        ident = item.imdb
+    if not ident and item.tmdb.isdigit():
+        found = http(f"{TRAKT_REVIEWS}search/tmdb/{item.tmdb}?type={'movie' if kind == 'movie' else 'show'}", headers=headers) or []
+        ident = str((((found[0] if found else {}).get("movie" if kind == "movie" else "show") or {}).get("ids") or {}).get("trakt") or "")
+    if not ident:
+        return []
+    path = "movies" if kind == "movie" else "shows"
+    return http(f"{TRAKT_REVIEWS}{path}/{ident}/comments/likes?limit=30", headers=headers) or []
+
+
+def load_reviews(item):
+    """2.1.30 (Lucent Video #1): the Reviews tab - reviews of TMDB and comments of Trakt for this film or series, in
+    nuvio.info.rev.* (cards) and nuvio.info.rev.json (all of them, for the reviews screen, scripts/reviews.py).
+    The skin asks TMDB and Trakt itself, so it works with every video add-on."""
+    for n in range(1, MAX_REVIEWS + 1):
+        for p in ("author", "rating", "meta", "short", "spoiler"):
+            HOME.clearProperty(f"nuvio.info.rev.{n}.{p}")
+    for p in ("count", "head", "json"):
+        HOME.clearProperty(f"nuvio.info.rev.{p}")
+    if item.has_show_trakt:                        # an episode of a series: the series' reviews (as the trailers)
+        item = item.as_show()
+    kind = {"movie": "movie", "tvshow": "tv"}.get(item.dbtype)
+    if not kind:
+        return
+    reviews = []
+    if item.tmdb.isdigit():
+        seen = set()
+        for lang in (("nl-NL", "en-US") if _NL else ("en-US",)):
+            try:
+                for r in tmdb(f"{kind}/{item.tmdb}/reviews", language=lang).get("results") or []:
+                    if r.get("id") in seen:
+                        continue
+                    seen.add(r.get("id"))
+                    rating = (r.get("author_details") or {}).get("rating")
+                    reviews.append({"src": "TMDB", "author": r.get("author") or (r.get("author_details") or {}).get("username") or "",
+                                    "rating": rating, "date": (r.get("created_at") or "")[:10],
+                                    "text": _review_text(r.get("content")), "spoiler": False})
+            except Exception as error:  # noqa: BLE001
+                log(f"reviews tmdb: {error}")
+    try:
+        for c in trakt_comments(kind, item):
+            text = _review_text(c.get("comment"))
+            if len(text) < 20:                          # 'great!' says little
+                continue
+            reviews.append({"src": "Trakt", "author": (c.get("user") or {}).get("username") or "",
+                            "rating": (c.get("user_stats") or {}).get("rating") or (c.get("user_rating")),
+                            "date": (c.get("created_at") or "")[:10], "text": text, "spoiler": bool(c.get("spoiler"))})
+    except Exception as error:  # noqa: BLE001
+        log(f"reviews trakt: {error}")
+    if HOME.getProperty("nuvio.info.key") != item.key or not reviews:
+        return
+    months = (("jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec") if _NL
+              else ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+
+    def when(day):
+        try:
+            y, m, d = (int(x) for x in day.split("-"))
+            return f"{d} {months[m - 1]} {y}"
+        except ValueError:
+            return ""
+    for r in reviews:
+        r["when"] = when(r["date"])
+        r["rating"] = f"{float(r['rating']):g}" if isinstance(r["rating"], (int, float)) and r["rating"] else ""
+    for n, r in enumerate(reviews[:MAX_REVIEWS], start=1):
+        HOME.setProperty(f"nuvio.info.rev.{n}.author", r["author"])
+        HOME.setProperty(f"nuvio.info.rev.{n}.rating", r["rating"])
+        HOME.setProperty(f"nuvio.info.rev.{n}.meta", " · ".join(x for x in (r["when"], r["src"]) if x))
+        HOME.setProperty(f"nuvio.info.rev.{n}.short", "" if r["spoiler"] else _short(r["text"], 105))
+        HOME.setProperty(f"nuvio.info.rev.{n}.spoiler", "1" if r["spoiler"] else "")
+    scores = [float(r["rating"]) for r in reviews if r["rating"]]
+    count = len(reviews)
+    head = [f"★ {sum(scores) / len(scores):.1f} {xbmc.getLocalizedString(31895)}".replace(".", "," if _NL else ".")] if scores else []
+    head.append(f"{count} {xbmc.getLocalizedString(31893)}")
+    head.append(" en ".join(s for s in ("TMDB", "Trakt") if any(r["src"] == s for r in reviews)) if _NL
+                else " and ".join(s for s in ("TMDB", "Trakt") if any(r["src"] == s for r in reviews)))
+    HOME.setProperty("nuvio.info.rev.head", " · ".join(head))
+    HOME.setProperty("nuvio.info.rev.json", json.dumps({"key": item.key, "title": item.title, "reviews": reviews}))
+    HOME.setProperty("nuvio.info.rev.count", str(min(count, MAX_REVIEWS)))
+
+
 VIDEO_TYPES = ["Trailer", "Teaser", "Clip", "Featurette", "Behind the Scenes"]
 MAX_VIDEOS = 12
 
@@ -1546,6 +1653,10 @@ def load():
     load_providers(item)
     load_credits(item)
     load_videos(item)
+    try:
+        load_reviews(item)
+    except Exception as error:  # noqa: BLE001
+        log(f"reviews: {error}")
     load_collection(item)
     bell_job.join(10)
 
