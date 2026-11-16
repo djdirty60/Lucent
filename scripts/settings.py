@@ -362,6 +362,7 @@ def sync():
                           ("nuvio.trailer.delay", TRAILER_DELAY)):
         set_string(name + ".label", tr(dict(options).get(skin_string(name), options[0][1])))
     watched_label()
+    osd_label()
 
 
 def osd_label():
