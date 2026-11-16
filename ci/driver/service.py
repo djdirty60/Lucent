@@ -6728,6 +6728,24 @@ def updtext_test():
     out["why"] = [cond("System.HasAddon(repository.citest)"), cond("System.AddonIsEnabled(repository.citest)"),
                   updater.rpc("Settings.GetSettingValue", {"setting": "general.addonupdates"})]
     open("/tmp/ci/repo/ready", "w").close()
+    # Kodi's 'install updates automatically' (CI has 'never'); citest3 is tried with Kodi's InstallAddon while it is 'never'
+    xbmc.executebuiltin("UpdateAddonRepos")
+    mon.waitForAbort(8)
+    t0 = time.time()
+    xbmc.executebuiltin("InstallAddon(plugin.citest3)")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(yesnodialog)"):
+            out["citest3 dialog"] = [lab("Control.GetLabel(1)"), lab("Control.GetLabel(9)")]
+            xbmc.executebuiltin("SendClick(yesnodialog,11)")
+        if updater.installed_version("plugin.citest3") == "1.0.1":
+            break
+    try:
+        out["plugin.citest3 InstallAddon"] = [updater.installed_version("plugin.citest3"), xbmcaddon.Addon("plugin.citest3").getLocalizedString(30001), round(time.time() - t0, 1)]
+    except Exception as error:  # noqa: BLE001
+        out["plugin.citest3 InstallAddon"] = repr(error)
+    updater.rpc("Settings.SetSettingValue", {"setting": "general.addonupdates", "value": 0})
+    out["setting now"] = updater.rpc("Settings.GetSettingValue", {"setting": "general.addonupdates"})
     for aid in ("plugin.citest", "plugin.citest2"):
         t0 = time.time()
         update = {"id": aid, "name": "CI " + aid, "version": "1.0.1", "have": "1.0.0", "zips": "http://127.0.0.1:8765/repo/", "notes": ""}

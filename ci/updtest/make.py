@@ -31,7 +31,7 @@ def write(folder, files):
 
 os.makedirs(REPO, exist_ok=True)
 xmls = []
-for aid in ("plugin.citest", "plugin.citest2"):
+for aid in ("plugin.citest", "plugin.citest2", "plugin.citest3"):
     write(os.path.join(K, aid), addon(aid, "1.0.0", False))
     new = addon(aid, "1.0.1", True)
     os.makedirs(os.path.join(REPO, aid), exist_ok=True)
