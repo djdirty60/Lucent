@@ -259,6 +259,7 @@ def run():
             xbmc.executebuiltin("Dialog.Close(videoosd)")
 
     settings_state = {"open": False, "since": 0.0, "counted": False}
+    sortflip = {"real": False}
 
     def addon_settings():
         """Add-on settings in three columns: remember which group is chosen and how many groups there are, for the
