@@ -258,32 +258,24 @@ def run():
         if wait and cond(f"System.IdleTime({wait})"):
             xbmc.executebuiltin("Dialog.Close(videoosd)")
 
-    settings_state = {"open": False}
-    sortflip = {"real": False}
+    settings_state = {"open": False, "since": 0.0, "counted": False}
 
     def addon_settings():
         """Add-on settings in three columns: remember which group is chosen and how many groups there are, for the
-        tiles and the picture (Kodi switches the group when its button gets the focus; the group buttons have the
-        ids -100, -99, ... and the settings -80, -79, ...; the skin cannot ask for negative ids itself)."""
+        tiles and the picture (the group buttons have the ids -100, -99, ...; the skin cannot ask for negative ids).
+        2.1.28 (#22, Shield froze in an add-on's settings): the dialog is never touched while Kodi still builds it. The
+        chosen group comes from Kodi's own info label; the groups are counted once, when the dialog has been open for
+        1.5 seconds, and the window itself is not asked for its focus any more."""
         if xbmcgui.getCurrentWindowDialogId() != 10140:
             if settings_state["open"]:
-                settings_state["open"] = False
+                settings_state.update(open=False, counted=False)
                 HOME.clearProperty("lucent.as.cat")
                 HOME.clearProperty("lucent.as.count")
                 HOME.clearProperty("lucent.as.lv")
             return
-        win = xbmcgui.Window(10140)
         if not settings_state["open"]:
-            settings_state["open"] = True
+            settings_state.update(open=True, since=time.time(), counted=False)
             HOME.setProperty("lucent.as.cat", "0")
-            count = 0
-            for n in range(20):
-                try:
-                    win.getControl(-100 + n)
-                except (RuntimeError, TypeError):
-                    break
-                count += 1
-            HOME.setProperty("lucent.as.count", str(count))
             name = ""                                  # the settings of the video add-on of the Lucent repository?
             if xbmc.getCondVisibility("System.HasAddon(plugin.video.lucent)"):
                 try:
@@ -294,9 +286,24 @@ def run():
                 HOME.setProperty("lucent.as.lv", "1")
             else:
                 HOME.clearProperty("lucent.as.lv")
+            return
+        if time.time() - settings_state["since"] < 1.5 or not cond("Window.IsActive(addonsettings)"):
+            return
+        if not settings_state["counted"]:
+            settings_state["counted"] = True
+            win = xbmcgui.Window(10140)
+            count = 0
+            for n in range(20):
+                try:
+                    win.getControl(-100 + n)
+                except (RuntimeError, TypeError):
+                    break
+                count += 1
+            HOME.setProperty("lucent.as.count", str(count))
+        fid = xbmc.getInfoLabel("System.CurrentControlID")
         try:
-            fid = win.getFocusId()
-        except RuntimeError:
+            fid = int(fid)
+        except ValueError:
             return
         if -100 <= fid < -80 and HOME.getProperty("lucent.as.cat") != str(fid + 100):
             HOME.setProperty("lucent.as.cat", str(fid + 100))
