@@ -6716,6 +6716,61 @@ def epbadge_test():
     log("epbadge: " + json.dumps(out))
 
 
+def osdbtn_test():
+    """2.1.33 (#26): choose the buttons of the player bar. The multiselect dialog, then the bar with Forward, Bookmarks
+    and Sleep timer hidden (and how Left/Right walk over the gap), then everything back on."""
+    import threading
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    threading.Thread(target=lambda: xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,osdbuttons)", True), daemon=True).start()
+    for _ in range(10):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(selectdialog)"):
+            break
+    mon.waitForAbort(1)
+    shot("26-osd-buttons-dialog")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    for k in ("forward", "bookmarks", "sleep"):
+        xbmc.executebuiltin(f"Skin.SetBool(lucent.osd.hide.{k})")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,sync)")
+    mon.waitForAbort(3)
+    out = [f"label={lab('Skin.String(lucent.osd.buttons.label)')!r}"]
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if xbmc.Player().isPlayingVideo():
+            break
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(103)")
+    mon.waitForAbort(1)
+    out.append("visible=" + ",".join(c for c in ("101", "102", "116", "103", "105", "106", "111", "118", "112", "113", "114", "117", "119", "115")
+                                     if cond(f"Control.IsVisible({c})")))
+    steps = []
+    for k in ("Right",) * 8 + ("Left",) * 9:
+        xbmc.executebuiltin(f"Action({k})")
+        mon.waitForAbort(0.7)
+        steps.append(k[0] + lab("System.CurrentControlID"))
+    out.append("walk=" + " ".join(steps))
+    xbmc.executebuiltin("Control.SetFocus(103)")
+    mon.waitForAbort(1.5)
+    shot("26-osd-some-hidden")
+    for k in ("forward", "bookmarks", "sleep"):
+        xbmc.executebuiltin(f"Skin.Reset(lucent.osd.hide.{k})")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Control.SetFocus(103)")
+    mon.waitForAbort(1.5)
+    shot("26-osd-all")
+    log("osdbtn: " + " | ".join(out))
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(3)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -11901,6 +11956,7 @@ def main():
     safe(merge_test)
     safe(focusprobe_test)
     safe(updtext_test)
+    safe(osdbtn_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
