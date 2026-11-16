@@ -69,6 +69,12 @@ def run():
         """2.1.17: the skin's own library rows (plugin://skin.lucent/) load again when the Kodi library changes:
         a new episode, a resume point or a watched mark (also when NLZiet or Videoland write them)."""
         def onNotification(self, sender, method, data):  # noqa: N802 - Kodi's name
+            # 2.1.29: Kodi is closing - stop now. Kodi does not always tell this script's monitor (a script without an
+            # add-on), and the helper kept running, so Kodi could not close and Home logged 'no focus' twice a second
+            if method in ("System.OnQuit", "System.OnRestart"):
+                quitting["v"] = True
+                log(f"Kodi is closing ({method}) - stopping")
+                return
             if method in ("VideoLibrary.OnUpdate", "VideoLibrary.OnScanFinished", "VideoLibrary.OnRemove", "VideoLibrary.OnCleanFinished"):
                 HOME.setProperty("lucent.lib.changed", f"{time.time():.0f}")
 
@@ -76,6 +82,7 @@ def run():
             back_trace.update(home=False)                # 2.1.17: log the first seconds after the screensaver too
             log("screensaver off")
 
+    quitting = {"v": False}
     monitor = LibraryWatch()
 
     import agenda_core
@@ -184,7 +191,7 @@ def run():
             HOME.setProperty(RUNNING, f"{time.time():.1f}")
 
     def worker():
-        while not stop.is_set() and not monitor.abortRequested():
+        while not stop.is_set() and not monitor.abortRequested() and not quitting["v"]:
             for job in slow:
                 if stop.is_set():
                     break
@@ -391,7 +398,7 @@ def run():
         trailer["t"].start()
 
     try:
-        while not monitor.abortRequested():
+        while not monitor.abortRequested() and not quitting["v"]:
             try:
                 home_return_trace()
                 trailer_service()
@@ -413,7 +420,7 @@ def run():
                     pause_clean()
                 except Exception as error:  # noqa: BLE001
                     log(f"pause clean: {error}")
-                if monitor.waitForAbort(1):
+                if monitor.waitForAbort(1) or quitting["v"]:
                     break
                 continue
             for job in quick:
@@ -462,7 +469,7 @@ def run():
             fast = colour.tick() or settings_state["open"]      # quick while the add-on settings are open
             # nobody pressed a button for half a minute: look around less often (small boxes)
             pause = 0.25 if fast else (2.5 if cond("System.IdleTime(30)") else 1)
-            if monitor.waitForAbort(pause):
+            if monitor.waitForAbort(pause) or quitting["v"]:
                 break
     finally:
         stop.set()
