@@ -897,7 +897,7 @@ def load_reviews(item):
         HOME.setProperty(f"nuvio.info.rev.{n}.author", r["author"])
         HOME.setProperty(f"nuvio.info.rev.{n}.rating", r["rating"])
         HOME.setProperty(f"nuvio.info.rev.{n}.meta", " · ".join(x for x in (r["when"], r["src"]) if x))
-        HOME.setProperty(f"nuvio.info.rev.{n}.short", "" if r["spoiler"] else _short(r["text"], 120))
+        HOME.setProperty(f"nuvio.info.rev.{n}.short", "" if r["spoiler"] else _short(r["text"], 105))
         HOME.setProperty(f"nuvio.info.rev.{n}.spoiler", "1" if r["spoiler"] else "")
     scores = [float(r["rating"]) for r in reviews if r["rating"]]
     count = len(reviews)

@@ -1329,6 +1329,13 @@
         <value>text4</value>
     </variable>
     <!-- colour of the watched check on posters (Skin settings > Watched titles; issue #10) -->
+    <!-- 2.1.31: size of the watched check on posters and in lists (Settings > Watched titles):
+         small in the corner (default, keeps badges on the poster free), large (as before) or off -->
+    <variable name="LucentWatchedTick">
+        <value condition="String.IsEqual(Skin.String(lucent.watched.size),off)"></value>
+        <value condition="String.IsEqual(Skin.String(lucent.watched.size),large)">buttons/check_fo.png</value>
+        <value>buttons/check_small.png</value>
+    </variable>
     <variable name="LucentWatchedColour">
         <value condition="String.IsEqual(Skin.String(lucent.watched.colour),graphite)">FF5F656D</value>
         <value condition="String.IsEqual(Skin.String(lucent.watched.colour),white)">FFFFFFFF</value>
