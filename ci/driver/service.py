@@ -6601,6 +6601,34 @@ def posterbadge_test():
     log("posterbadge: " + json.dumps(out))
 
 
+def dimlist_test():
+    """2.1.31: 'Watched titles: dim' also in the lists (it only worked on Home). Lib Film watched, poster view and wall."""
+    out = {}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
+    for m in (res.get("result") or {}).get("movies") or []:
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                        "params": {"movieid": m["movieid"], "playcount": 1}}))
+    xbmc.executebuiltin("Skin.SetString(nuvio.watched,dim)")
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.7)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    for view in (52, 50, 53):
+        xbmc.executebuiltin(f"Container.SetViewMode({view})")
+        mon.waitForAbort(2.5)
+        out[str(view)] = [lab("Container.Viewmode"), lab("ListItem.PlayCount")]
+        shot(f"dimlist-{view}")
+    xbmc.executebuiltin("Skin.Reset(nuvio.watched)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("Container.SetViewMode(52)")
+    mon.waitForAbort(2)
+    shot("dimlist-off")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("dimlist: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11740,6 +11768,7 @@ def main():
     safe(focusprobe_test)
     safe(reviews_test)
     safe(posterbadge_test)
+    safe(dimlist_test)
     safe(infotrailer_test)
     safe(fade_test)
     safe(freeze_test)

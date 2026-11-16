@@ -1331,6 +1331,8 @@
                             <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
                             <visible>!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | !String.IsEmpty(ListItem.Art(thumb)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(landscape))</visible>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>220</width><height>330</height><texture diffuse="mask_poster.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>54</left>
                             <top>109</top>
@@ -1450,6 +1452,8 @@
                             <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
                             <visible>!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | !String.IsEmpty(ListItem.Art(thumb)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(landscape))</visible>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>220</width><height>330</height><texture diffuse="mask_poster.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>54</left>
                             <top>109</top>
@@ -2277,6 +2281,8 @@
                             <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
                             <visible>!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | !String.IsEmpty(ListItem.Art(thumb)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(landscape))</visible>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>206</width><height>309</height><texture diffuse="mask_poster.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>47</left>
                             <top>98</top>
@@ -2396,6 +2402,8 @@
                             <texture diffuse="mask_poster.png" background="true">$VAR[ItemPoster]</texture>
                             <visible>!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | !String.IsEmpty(ListItem.Art(thumb)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(landscape))</visible>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>206</width><height>309</height><texture diffuse="mask_poster.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>47</left>
                             <top>98</top>
@@ -2537,6 +2545,8 @@
                             <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                             <visible>!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | !String.IsEmpty(ListItem.Art(thumb)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(landscape))</visible>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>400</width><height>225</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>144</left>
                             <top>56</top>
@@ -2666,6 +2676,8 @@
                             <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                             <visible>!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | !String.IsEmpty(ListItem.Art(thumb)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(landscape))</visible>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>400</width><height>225</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>144</left>
                             <top>56</top>
@@ -2833,6 +2845,8 @@
                         <aspectratio scalediffuse="false">scale</aspectratio>
                         <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                     </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>38</left><top>30</top><width>320</width><height>180</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                     <control type="label">
                         <left>392</left>
                         <top>36</top>
@@ -2921,6 +2935,8 @@
                         <aspectratio scalediffuse="false">scale</aspectratio>
                         <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                     </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>38</left><top>30</top><width>320</width><height>180</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                     <control type="progress">
                         <left>54</left>
                         <top>192</top>
@@ -3355,6 +3371,8 @@
                                 <left>0</left><top>0</top><width>420</width><height>236</height>
                                 <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                             </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>420</width><height>236</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                             <control type="image">
                                 <left>0</left><top>0</top><width>420</width><height>236</height>
                                 <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3428,6 +3446,8 @@
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>24</left><top>14</top><width>420</width><height>236</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3474,6 +3494,8 @@
                             <left>24</left><top>14</top><width>420</width><height>180</height>
                             <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>24</left><top>14</top><width>420</width><height>180</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>180</height>
                             <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3512,6 +3534,8 @@
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>24</left><top>14</top><width>420</width><height>236</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3555,6 +3579,8 @@
                                 <left>0</left><top>0</top><width>420</width><height>236</height>
                                 <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                             </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>0</left><top>0</top><width>420</width><height>236</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                             <control type="image">
                                 <left>0</left><top>0</top><width>420</width><height>236</height>
                                 <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3634,6 +3660,8 @@
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>24</left><top>14</top><width>420</width><height>236</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3686,6 +3714,8 @@
                             <left>24</left><top>14</top><width>420</width><height>180</height>
                             <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>24</left><top>14</top><width>420</width><height>180</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>180</height>
                             <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3730,6 +3760,8 @@
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png" background="true" fallback="DefaultTVShows.png">$VAR[LucentEpThumb]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><left>24</left><top>14</top><width>420</width><height>236</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture diffuse="mask_landscape.png">white.png</texture>
@@ -3936,6 +3968,8 @@
                             <aspectratio scalediffuse="false">scale</aspectratio>
                             <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><width>960</width><height>540</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <top>220</top>
                             <width>960</width>
@@ -4092,6 +4126,8 @@
                             <aspectratio scalediffuse="false">scale</aspectratio>
                             <texture diffuse="mask_landscape.png" background="true">$VAR[ItemLandscape]</texture>
                         </control>
+                            <!-- 2.1.31: "Watched titles: dim" in the lists too -->
+                            <control type="image"><width>960</width><height>540</height><texture diffuse="mask_landscape.png">white.png</texture><colordiffuse>A6000000</colordiffuse><visible>String.IsEqual(Skin.String(nuvio.watched),dim) + Integer.IsGreater(ListItem.Playcount,0)</visible></control>
                         <control type="image">
                             <top>220</top>
                             <width>960</width>
