@@ -6677,7 +6677,7 @@ def epbadge_test():
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetEpisodeDetails",
                                         "params": {"episodeid": eps[0]["episodeid"], "playcount": 1}}))
     for k, v in (("episodes", "1"), ("episode.count", "4"), ("episode.text0", "http://127.0.0.1:8765/t/p/ep/"), ("episode.slot1", "tmdb_id"),
-                 ("episode.text1", "/"), ("episode.slot2", "season"), ("episode.text2", "/"), ("episode.slot3", "episode"),
+                 ("episode.text1", "/"), ("episode.slot2", "season"), ("episode.text2", "/n"), ("episode.slot3", "episode"),
                  ("episode.text3", ".png?blur="), ("episode.slot4", "blur"), ("episode.text4", ""), ("episode.blur", "1")):
         HOME.setProperty(f"lucent.video.{k}", v)
     eps = (json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetEpisodes",
