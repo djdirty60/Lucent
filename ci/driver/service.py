@@ -6767,9 +6767,36 @@ def osdbtn_test():
     xbmc.executebuiltin("Control.SetFocus(103)")
     mon.waitForAbort(1.5)
     shot("26-osd-all")
-    log("osdbtn: " + " | ".join(out))
     xbmc.executebuiltin("PlayerControl(Stop)")
     mon.waitForAbort(3)
+    xbmc.executebuiltin("Skin.SetBool(lucent.osd.hide.sleep)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,sync)")
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if lab("Skin.String(lucent.osd.buttons.label)") not in ("", "All buttons"):
+            break
+    out.append(f"label after sync={lab('Skin.String(lucent.osd.buttons.label)')!r}")
+    # the Settings menu (#22): the helper must not move the focus while it is there
+    xbmc.executebuiltin("ActivateWindow(settings)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(1.5)
+    out.append(f"settings focus={lab('System.CurrentControlID')} cat={lab('Container(9000).ListItem.Property(cat)')}")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1.5)
+    for _ in range(6):
+        if "31896" in lab("Container(9100).ListItem.Label") or lab("Container(9100).ListItem.Label") in ("Buttons in the player bar",):
+            break
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.8)
+    mon.waitForAbort(4)
+    out.append(f"settings after 4 s: focus={lab('System.CurrentControlID')} item={lab('Container(9100).ListItem.Label')!r} "
+               f"label2={lab('Container(9100).ListItem.Label2')!r}")
+    shot("26-settings-row")
+    xbmc.executebuiltin("Skin.Reset(lucent.osd.hide.sleep)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("osdbtn: " + " | ".join(out))
 
 
 def updtext_test():

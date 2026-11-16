@@ -205,6 +205,7 @@ def run():
 
 
     lost = {"n": 0}
+    lost_settings = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
     ROW_ORDER = [(8090, 9988), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
 
@@ -342,6 +343,19 @@ def run():
                 xbmc.executebuiltin("SetFocus(9000)")
                 log("Home had no focus - back to the menu")
 
+    def settings_focus():
+        """2.1.33 (#22): back in the Settings menu (Settings.xml) the category list sometimes can't take the focus on a
+        Shield ('Control 9000 in window 10004 ... can't'); then the remote does nothing until Back. Put it back."""
+        if not cond("Window.IsActive(settings) + !System.HasVisibleModalDialog + !Window.IsVisible(contextmenu)"):
+            lost_settings["n"] = 0
+            return
+        stuck = not xbmc.getInfoLabel("System.CurrentControlID")
+        lost_settings["n"] = lost_settings["n"] + 1 if stuck else 0
+        if lost_settings["n"] >= 2:
+            lost_settings["n"] = 0
+            xbmc.executebuiltin("SetFocus(9000)")
+            log("Settings had no focus - back to the list")
+
     import xbmcaddon
     started_as = {"v": xbmcaddon.Addon("skin.lucent").getAddonInfo("version"), "t": time.time()}
 
@@ -439,6 +453,7 @@ def run():
                 log(f"rows: {error}")
             try:
                 home_focus()
+                settings_focus()
             except Exception as error:  # noqa: BLE001
                 log(f"focus: {error}")
             try:
