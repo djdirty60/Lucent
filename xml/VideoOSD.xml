@@ -172,7 +172,7 @@
                 <texturefocus>buttons/prev_fo.png</texturefocus>
                 <texturenofocus>buttons/prev_nf.png</texturenofocus>
                 <onclick>PlayerControl(Previous)</onclick>
-                <visible>VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)</visible>
+                <visible>[VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)] + !Skin.HasSetting(lucent.osd.hide.prev)</visible>
             </control>
             <control type="button" id="102">
                 <width>84</width>
@@ -181,7 +181,7 @@
                 <texturefocus>buttons/rewind_fo.png</texturefocus>
                 <texturenofocus>buttons/rewind_nf.png</texturenofocus>
                 <onclick>Seek(-10)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.rewind)</visible>
             </control>
             <control type="button" id="116">
                 <width>84</width>
@@ -221,7 +221,7 @@
                 <texturefocus>buttons/forward_fo.png</texturefocus>
                 <texturenofocus>buttons/forward_nf.png</texturenofocus>
                 <onclick>Seek(30)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.forward)</visible>
             </control>
             <control type="button" id="106">
                 <width>84</width>
@@ -230,7 +230,7 @@
                 <texturefocus>buttons/next_fo.png</texturefocus>
                 <texturenofocus>buttons/next_nf.png</texturenofocus>
                 <onclick>PlayerControl(Next)</onclick>
-                <visible>VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)</visible>
+                <visible>[VideoPlayer.Content(episodes) | !String.IsEmpty(VideoPlayer.TVShowTitle)] + !Skin.HasSetting(lucent.osd.hide.next)</visible>
             </control>
             <control type="label" id="190">
                 <width>120</width>
@@ -245,7 +245,7 @@
                 <texturenofocus>buttons/subtitles_nf.png</texturenofocus>
                 <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subtitles)</onclick>
                 <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">ActivateWindow(osdsubtitlesettings)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.subtitles)</visible>
             </control>
             <control type="button" id="118">
                 <width>84</width>
@@ -254,7 +254,7 @@
                 <texturefocus>buttons/search_fo.png</texturefocus>
                 <texturenofocus>buttons/search_nf.png</texturenofocus>
                 <onclick>ActivateWindow(subtitlesearch)</onclick>
-                <visible>!System.AddonIsEnabled(plugin.video.lucent)</visible>
+                <visible>[!System.AddonIsEnabled(plugin.video.lucent)] + !Skin.HasSetting(lucent.osd.hide.subsearch)</visible>
             </control>
             <!-- "What did they say?": the video add-on goes 10 s back with the subtitles on for a moment -->
             <control type="button" id="120">
@@ -284,7 +284,7 @@
                 <texturefocus>buttons/audio_fo.png</texturefocus>
                 <texturenofocus>buttons/audio_nf.png</texturenofocus>
                 <onclick>ActivateWindow(osdaudiosettings)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.audio)</visible>
             </control>
             <control type="button" id="113">
                 <width>84</width>
@@ -293,7 +293,7 @@
                 <texturefocus>buttons/videosettings_fo.png</texturefocus>
                 <texturenofocus>buttons/videosettings_nf.png</texturenofocus>
                 <onclick>ActivateWindow(osdvideosettings)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.video)</visible>
             </control>
             <control type="button" id="114">
                 <width>84</width>
@@ -302,7 +302,7 @@
                 <texturefocus>buttons/bookmark_fo.png</texturefocus>
                 <texturenofocus>buttons/bookmark_nf.png</texturenofocus>
                 <onclick>ActivateWindow(videobookmarks)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.bookmarks)</visible>
             </control>
             <control type="button" id="117">
                 <width>84</width>
@@ -311,7 +311,7 @@
                 <texturefocus>buttons/stats_fo.png</texturefocus>
                 <texturenofocus>buttons/stats_nf.png</texturenofocus>
                 <onclick>RunScript(special://skin/scripts/playerinfo.py,open)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.stats)</visible>
             </control>
             <control type="button" id="119">
                 <width>84</width>
@@ -320,7 +320,7 @@
                 <texturefocus>buttons/sleep_fo.png</texturefocus>
                 <texturenofocus>buttons/sleep_nf.png</texturenofocus>
                 <onclick>RunScript(special://skin/scripts/sleep.py)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.sleep)</visible>
             </control>
             <control type="button" id="115">
                 <width>84</width>
@@ -329,7 +329,7 @@
                 <texturefocus>buttons/info_fo.png</texturefocus>
                 <texturenofocus>buttons/info_nf.png</texturenofocus>
                 <onclick>Dialog.Close(videoosd,true)</onclick>
-                <visible>true</visible>
+                <visible>!Skin.HasSetting(lucent.osd.hide.info)</visible>
                 <onclick>ActivateWindow(fullscreeninfo)</onclick>
             </control>
             </control>

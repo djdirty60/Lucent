@@ -36,6 +36,19 @@ def episodes(rule, sort):
                limits={"start": 0, "end": LIMIT}).get("episodes") or []
 
 
+_SHOWS = {}
+
+
+def show_ids(show_id):
+    """TMDB / IMDb / TVDB number of a library series (once per series per row)."""
+    if not show_id:
+        return {}
+    if show_id not in _SHOWS:
+        ids = (rpc("VideoLibrary.GetTVShowDetails", tvshowid=int(show_id), properties=["uniqueid"]).get("tvshowdetails") or {}).get("uniqueid") or {}
+        _SHOWS[show_id] = {k: str(ids[k]) for k in ("tmdb", "imdb", "tvdb") if ids.get(k)}
+    return _SHOWS[show_id]
+
+
 def item(ep):
     li = xbmcgui.ListItem(ep.get("title") or "", offscreen=True)
     tag = li.getVideoInfoTag()
@@ -57,8 +70,13 @@ def item(ep):
     if resume.get("position") and resume.get("total"):
         tag.setResumePoint(float(resume["position"]), float(resume["total"]))
     ids = {k: str(v) for k, v in (ep.get("uniqueid") or {}).items() if v}
+    default = "tmdb" if "tmdb" in ids else (next(iter(ids)) if ids else "")
+    # 2.1.33: the numbers of the series too (lshowtmdb / lshowimdb / lshowtvdb), only on this tile, not in the library:
+    # Kodi gives an episode no number of its series, and episode pictures with badges need it (Variables.xml LucentEpBadge)
+    for kind, value in show_ids(ep.get("tvshowid")).items():
+        ids[f"lshow{kind}"] = value
     if ids:
-        tag.setUniqueIDs(ids, "tmdb" if "tmdb" in ids else next(iter(ids)))
+        tag.setUniqueIDs(ids, default or next(iter(ids)))
     art = {k: urllib.parse.unquote(v[8:-1]) if v.startswith("image://") else v for k, v in (ep.get("art") or {}).items()}
     li.setArt(art)
     li.setProperty("TvShowDBID", str(ep.get("tvshowid") or ""))
