@@ -6719,12 +6719,11 @@ def epbadge_test():
 def osdbtn_test():
     """2.1.33 (#26): choose the buttons of the player bar. The multiselect dialog, then the bar with Forward, Bookmarks
     and Sleep timer hidden (and how Left/Right walk over the gap), then everything back on."""
-    import threading
     xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)
-    threading.Thread(target=lambda: xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,osdbuttons)", True), daemon=True).start()
-    for _ in range(10):
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,osdbuttons)")
+    for _ in range(20):
         mon.waitForAbort(1)
         if cond("Window.IsVisible(selectdialog)"):
             break
@@ -6742,9 +6741,11 @@ def osdbtn_test():
         mon.waitForAbort(1)
         if xbmc.Player().isPlayingVideo():
             break
-    mon.waitForAbort(4)
-    xbmc.executebuiltin("Dialog.Close(all,true)")
+    for _ in range(10):                 # the subtitle list of the video add-on can pop up a few seconds after the start
+        mon.waitForAbort(1)
+        xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)
+    out.append(f"dialog={lab('System.CurrentWindow')}")
     xbmc.executebuiltin("ActivateWindow(videoosd)")
     mon.waitForAbort(2)
     xbmc.executebuiltin("Control.SetFocus(103)")
