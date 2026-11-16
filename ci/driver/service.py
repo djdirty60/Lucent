@@ -6465,6 +6465,10 @@ def infotrailer_test():
 def reviews_test():
     """2.1.30 (Lucent Video #1): the Reviews tab on the info page (TMDB and Trakt, test server) and the reviews screen."""
     out = {}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies", "params": {}})))
+    for m in (res.get("result") or {}).get("movies") or []:
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                        "params": {"movieid": m["movieid"], "uniqueid": {"tmdb": "901", "imdb": "tt0000901"}}}))
     for _ in range(3):
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(0.7)
