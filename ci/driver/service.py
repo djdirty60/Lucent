@@ -6362,11 +6362,6 @@ def fade_test():
     mon.waitForAbort(3)
     log(f"fade: item={lab('ListItem.Label')} fanart={lab('ListItem.Art(fanart)')} exists={os.path.exists('/tmp/ci/orange.jpg')}")
     shot("fade-full")
-    for var in ("none", "ci_t64.png", "ci_tfull.png", "ci_t16.png", "flip"):
-        xbmc.executebuiltin(f"Skin.SetString(ci.topvar,{var})")
-        mon.waitForAbort(2)
-        shot("fade-v-" + var.split(".")[0])
-    xbmc.executebuiltin("Skin.Reset(ci.topvar)")
     xbmc.executebuiltin("Skin.Reset(nuvio.fullbackdrop)")
     mon.waitForAbort(2.5)
     shot("fade-corner")
