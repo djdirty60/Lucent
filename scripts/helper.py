@@ -76,18 +76,13 @@ def run():
                 log(f"Kodi is closing ({method}) - stopping")
                 return
             if method in ("VideoLibrary.OnUpdate", "VideoLibrary.OnScanFinished", "VideoLibrary.OnRemove", "VideoLibrary.OnCleanFinished"):
-                if HOME.getProperty("lucent.epids.busy"):          # 2.1.33: our own writes of the series' numbers
-                    return
                 HOME.setProperty("lucent.lib.changed", f"{time.time():.0f}")
-                if method == "VideoLibrary.OnScanFinished":
-                    epids_state["due"] = True
 
         def onScreensaverDeactivated(self):  # noqa: N802 - Kodi's name
             back_trace.update(home=False)                # 2.1.17: log the first seconds after the screensaver too
             log("screensaver off")
 
     quitting = {"v": False}
-    epids_state = {"due": True, "on": False}
     monitor = LibraryWatch()
 
     import agenda_core
@@ -156,28 +151,7 @@ def run():
         ytfix.check()
         xbmc.executebuiltin(f'Skin.SetString(lucent.ytfix.state,"{ytfix.label()}")')
 
-    def episode_ids():
-        """2.1.33: the numbers of its series on every library episode (scripts/epids.py), for episode pictures with
-        badges - only while Lucent Video gives an episode picture pattern; after the start, a library scan, switching
-        it on, and every six hours."""
-        import epids
-        on = epids.wanted()
-        if on and not epids_state["on"]:
-            epids_state["due"] = True
-        epids_state["on"] = on
-        if not on or not (epids_state["due"] or time.time() - epids_state.get("last", 0) > 6 * 3600):
-            return
-        epids_state.update(due=False, last=time.time())
-        HOME.setProperty("lucent.epids.busy", "1")
-        try:
-            written = epids.sync(stop)
-        finally:
-            HOME.clearProperty("lucent.epids.busy")
-        if written:
-            HOME.setProperty("lucent.lib.changed", f"{time.time():.0f}")      # the rows show the new pictures
-
     slow = [                                        # network work: in the worker thread
-        Job("episode ids", 60, 75, episode_ids),
         Job("sport", 30, 15, sport, lambda: cond("Pvr.HasTVChannels")),
         Job("for you", 60, 20, foryou.update, lambda: not cond("Skin.HasSetting(lucent.fy.off)")),
         Job("calendar", 120, 60, calendar),

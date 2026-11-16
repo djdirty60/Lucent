@@ -6680,9 +6680,6 @@ def epbadge_test():
                  ("episode.text1", "/"), ("episode.slot2", "season"), ("episode.text2", "/"), ("episode.slot3", "episode"),
                  ("episode.text3", ".png?blur="), ("episode.slot4", "blur"), ("episode.text4", ""), ("episode.blur", "1")):
         HOME.setProperty(f"lucent.video.{k}", v)
-    import epids
-    out["written"] = epids.sync()
-    out["again"] = epids.sync()
     eps = (json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetEpisodes",
                                                       "params": {"tvshowid": sid, "properties": ["uniqueid", "playcount", "title"]}}))).get("result") or {}).get("episodes") or []
     out["episodes"] = [[e["title"], e.get("uniqueid"), e.get("playcount")] for e in eps][:3]
@@ -6690,14 +6687,16 @@ def epbadge_test():
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(0.7)
     t0 = time.strftime("%H:%M:%S")
-    xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/-1/,return)")
-    mon.waitForAbort(4)
-    for k in ("Down", "Down", "Right"):
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://skin.lucent/?list=lib_continue_new,return)")
+    mon.waitForAbort(5)
+    xbmc.executebuiltin("Container.SetViewMode(53)")
+    mon.waitForAbort(2)
+    for k in ("Down", "Right", "Down"):
         if lab("ListItem.DBType") == "episode":
             break
         key(k)
         mon.waitForAbort(1)
-    out["item"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(lshowtmdb)"), lab("ListItem.PlayCount"), lab("Container.Viewmode")]
+    out["item"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(lshowtmdb)"), lab("ListItem.PlayCount"), lab("Container.Viewmode"), lab("Container.NumItems")]
     mon.waitForAbort(4)
     shot("epbadge-on")
     HOME.clearProperty("lucent.video.episodes")
