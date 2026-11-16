@@ -6576,8 +6576,10 @@ def posterbadge_test():
                  ("poster.movie.suffix", ".png?rs=TM"), ("poster.tv.prefix", "http://127.0.0.1:8765/t/p/badge/"),
                  ("poster.tv.suffix", ".png"), ("poster.shows", "1")):
         HOME.setProperty(f"lucent.video.{k}", v)
-    mon.waitForAbort(3)
-    out["on"] = [lab("ListItem.Label"), cond("String.StartsWith(ListItem.UniqueID(imdb),tt)")]
+    xbmc.executebuiltin("Container.Refresh")
+    mon.waitForAbort(4)
+    out["on"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(imdb)"), lab("ListItem.IMDBNumber"), lab("ListItem.UniqueID(tmdb)"),
+                 lab("ListItem.Art(poster)")[-40:], lab("ListItem.DBType")]
     shot("posterbadge-on")
     HOME.clearProperty("lucent.video.posters")
     mon.waitForAbort(2)

@@ -22,13 +22,14 @@ def t(en, nl):
     return nl if NL else en
 
 
-def short(text, size=260):
+def short(text, size=210):
     flat = " ".join(text.split())
     return flat if len(flat) <= size else flat[:size].rsplit(" ", 1)[0] + "…"
 
 
 class Reviews(xbmcgui.WindowXMLDialog):
-    def setup(self, data, start):
+    def setup(self, data, start, page):
+        self.page = page
         self.reviews = data.get("reviews") or []
         self.start = start
         self.src = self.reviews[start]["src"] if 0 <= start < len(self.reviews) else (self.reviews[0]["src"] if self.reviews else "TMDB")
@@ -37,11 +38,8 @@ class Reviews(xbmcgui.WindowXMLDialog):
         self.items = []
 
     def onInit(self):
-        info = xbmc.getInfoLabel
-        self.setProperty("poster", info("ListItem.Art(poster)") or info("ListItem.Art(tvshow.poster)") or info("ListItem.Art(thumb)"))
-        self.setProperty("fanart", info("ListItem.Art(fanart)") or info("ListItem.Art(tvshow.fanart)"))
-        self.setProperty("title", info("ListItem.TVShowTitle") if info("ListItem.DBType") in ("season", "episode") else info("ListItem.Title"))
-        self.setProperty("sub", " · ".join(x for x in (info("ListItem.Year"), info("ListItem.Genre").split(" / ")[0]) if x))
+        for key, value in self.page.items():
+            self.setProperty(key, value)
         scores = [float(r["rating"]) for r in self.reviews if r.get("rating")]
         if scores:
             avg = f"{sum(scores) / len(scores):.1f}"
@@ -113,8 +111,14 @@ def main():
     if not data.get("reviews"):
         return
     start = int(sys.argv[1]) - 1 if len(sys.argv) > 1 and sys.argv[1].isdigit() else 0
+    info = xbmc.getInfoLabel                   # the title of the info page, read before this screen covers it
+    show = info("ListItem.DBType") in ("season", "episode")
+    page = {"poster": info("ListItem.Art(tvshow.poster)" if show else "ListItem.Art(poster)") or info("ListItem.Art(poster)") or info("ListItem.Art(thumb)"),
+            "fanart": info("ListItem.Art(fanart)") or info("ListItem.Art(tvshow.fanart)"),
+            "title": (info("ListItem.TVShowTitle") if show else info("ListItem.Title")) or data.get("title") or "",
+            "sub": " · ".join(x for x in (info("ListItem.Year"), info("ListItem.Genre").split(" / ")[0]) if x)}
     win = Reviews("Lucent_Reviews.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "Default", "1080i")
-    win.setup(data, start)
+    win.setup(data, start, page)
     win.doModal()
     del win
 
