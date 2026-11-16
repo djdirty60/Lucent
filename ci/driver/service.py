@@ -6629,6 +6629,36 @@ def dimlist_test():
     log("dimlist: " + json.dumps(out))
 
 
+def epnest_test():
+    """2.1.33 probe: can the skin read a Home property whose name holds the episode's series id (nested $INFO)?"""
+    out = {}
+    res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShows",
+                                                     "params": {"properties": ["uniqueid", "title"]}})))
+    shows = (res.get("result") or {}).get("tvshows") or []
+    out["shows"] = [[s["tvshowid"], s["title"], s.get("uniqueid")] for s in shows][:6]
+    for s in shows:
+        HOME.setProperty(f"lucent.show.{s['tvshowid']}.tmdb", f"T{s['tvshowid']}")
+    if not shows:
+        log("epnest: no shows"); return
+    sid = shows[0]["tvshowid"]
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.7)
+    xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/-1/,return)")
+    mon.waitForAbort(4)
+    for k in ("Down", "Down", "Right"):
+        if lab("ListItem.DBType") == "episode":
+            break
+        key(k)
+        mon.waitForAbort(1)
+    out["probe"] = [lab("Control.GetLabel(99901)"), lab("Control.GetLabel(99902)"), lab("ListItem.Label"),
+                    lab(f"Window(home).Property(lucent.show.{sid}.tmdb)")]
+    shot("epnest")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("epnest: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11766,6 +11796,7 @@ def main():
     safe(favtab_test)
     safe(merge_test)
     safe(focusprobe_test)
+    safe(epnest_test)
     safe(reviews_test)
     safe(posterbadge_test)
     safe(dimlist_test)
