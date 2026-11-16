@@ -6581,6 +6581,11 @@ def posterbadge_test():
     out["on"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(imdb)"), lab("ListItem.IMDBNumber"), lab("ListItem.UniqueID(tmdb)"),
                  lab("ListItem.Art(poster)")[-40:], lab("ListItem.DBType")]
     shot("posterbadge-on")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(8)
+    shot("posterbadge-home")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(4)
     HOME.clearProperty("lucent.video.posters")
     mon.waitForAbort(2)
     shot("posterbadge-off2")
