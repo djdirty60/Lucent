@@ -6427,6 +6427,26 @@ def freeze_test():
             out.append(row)
             log("freeze step: " + json.dumps(row))
         shot(f"freeze-{rnd}")
+    # #22 log (Shield): Settings > Add-ons > an add-on > its settings, then stuck. Open add-on settings many times, with
+    # different waits before the keys, so the helper looks at the dialog while Kodi is still building it
+    ok_as = []
+    for rnd in range(12):
+        addon = ("plugin.video.lucent", "service.subtitles.lucent", "plugin.video.fakeseren")[rnd % 3]
+        xbmc.executebuiltin(f"Addon.OpenSettings({addon})")
+        mon.waitForAbort((0.05, 0.15, 0.3, 0.6, 1.0, 2.0)[rnd % 6])
+        key("Down")
+        mon.waitForAbort(0.2)
+        key("Right")
+        mon.waitForAbort(0.3)
+        for _ in range(3):
+            if not xbmcgui.getCurrentWindowDialogId() == 10140:
+                break
+            key("BackSpace")
+            mon.waitForAbort(0.6)
+        mon.waitForAbort(1)
+        alive["t"] = time.time()
+        ok_as.append([rnd, addon, lab("System.CurrentWindow"), xbmcgui.getCurrentWindowDialogId(), lab("System.CurrentControlID")])
+    log("freeze addonsettings: " + json.dumps(ok_as))
     alive["stop"] = True
     xbmc.executebuiltin("Skin.Reset(nuvio.trailers.menu)")
     try:
@@ -10319,6 +10339,9 @@ def addonsettings_test():
                 xbmc.executebuiltin("Action(Down)")
                 mon.waitForAbort(1.5)
             log(f"addonsettings lv category ids: {ids} cat={HOME.getProperty('lucent.as.cat')!r} current={lab('System.CurrentControl')!r}")
+            probe = {"vis": [cond(f"Control.IsVisible({-100 + k})") for k in range(10)],
+                     "cur": lab("System.CurrentControlID"), "pyfocus": xbmcgui.Window(10140).getFocusId()}
+            log("addonsettings probe: " + json.dumps(probe))
             shot("addonsettings-lv-play")
             xbmc.executebuiltin("SetFocus(5)")
             mon.waitForAbort(2)
