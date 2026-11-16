@@ -6469,6 +6469,11 @@ def reviews_test():
     for m in (res.get("result") or {}).get("movies") or []:
         xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
                                         "params": {"movieid": m["movieid"], "uniqueid": {"tmdb": "901", "imdb": "tt0000901"}}}))
+        r2 = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.SetMovieDetails",
+                                        "params": {"movieid": m["movieid"], "imdbnumber": "tt0000901"}})))
+        got = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovieDetails",
+                                        "params": {"movieid": m["movieid"], "properties": ["uniqueid", "imdbnumber", "title"]}})))
+        out.setdefault("set", []).append([r2.get("result") or r2.get("error"), (got.get("result") or {}).get("moviedetails")])
     for _ in range(3):
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(0.7)
