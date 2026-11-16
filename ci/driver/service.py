@@ -6462,6 +6462,81 @@ def infotrailer_test():
     log("infotrailer: " + json.dumps(out))
 
 
+def reviews_test():
+    """2.1.30 (Lucent Video #1): the Reviews tab on the info page (TMDB and Trakt, test server) and the reviews screen."""
+    out = {}
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.7)
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    for k in ("Down", "Right", "Down", "Right"):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key(k)
+        mon.waitForAbort(1)
+    out["item"] = [lab("ListItem.Label"), lab("ListItem.UniqueID(tmdb)"), lab("ListItem.UniqueID(imdb)")]
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(20):
+        if cond("Window.IsVisible(movieinformation)"):
+            break
+        mon.waitForAbort(0.5)
+    for _ in range(20):
+        if HOME.getProperty("nuvio.info.rev.count"):
+            break
+        mon.waitForAbort(0.5)
+    out["count"] = HOME.getProperty("nuvio.info.rev.count")
+    out["head"] = HOME.getProperty("nuvio.info.rev.head")
+    out["cards"] = [[HOME.getProperty(f"nuvio.info.rev.{n}.{p}") for p in ("author", "rating", "meta", "spoiler")] for n in range(1, 6)]
+    out["tab_visible"] = cond("Control.IsVisible(6004)")
+    xbmc.executebuiltin("SetFocus(6004)")
+    mon.waitForAbort(1.5)
+    out["tab_focus"] = lab("System.CurrentControlID")
+    shot("reviews-tab-focus")
+    key("Down")
+    mon.waitForAbort(1.5)
+    out["cards_focus"] = [lab("System.CurrentControlID"), lab("Container(5250).NumItems"), lab("Container(5250).ListItem.Label")]
+    shot("reviews-tab")
+    key("Right")
+    mon.waitForAbort(0.6)
+    key("Right")
+    mon.waitForAbort(1)
+    out["third"] = lab("Container(5250).ListItem.Label")
+    key("Return")
+    for _ in range(20):
+        if cond("Window.IsVisible(Lucent_Reviews.xml)"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(1.5)
+    out["screen"] = [cond("Window.IsVisible(Lucent_Reviews.xml)"), lab("Container(200).NumItems"), lab("Container(200).ListItem.Label"),
+                     lab("Container(200).ListItem.Property(hidden)")]
+    shot("reviews-screen-spoiler")
+    key("Return")                                       # show the spoiler
+    mon.waitForAbort(1.5)
+    out["revealed"] = lab("Container(200).ListItem.Property(short)")[:40]
+    shot("reviews-screen-trakt")
+    xbmc.executebuiltin("SetFocus(101)")
+    mon.waitForAbort(0.5)
+    key("Return")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("SetFocus(200)")
+    mon.waitForAbort(1)
+    out["tmdb_list"] = [lab("Container(200).NumItems"), lab("Container(200).ListItem.Label")]
+    shot("reviews-screen-tmdb")
+    key("Return")                                       # the whole review
+    mon.waitForAbort(2)
+    out["textviewer"] = cond("Window.IsVisible(textviewer)")
+    shot("reviews-text")
+    for _ in range(3):
+        key("BackSpace")
+        mon.waitForAbort(1)
+    out["back_on"] = lab("System.CurrentWindow")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("reviews: " + json.dumps(out))
+
+
 def freeze_test():
     """#22 (Shield): Kodi stuck after leaving a settings page. Many rounds into settings and back with the real keyboard
     (like a remote), poster trailers on, Home on a tab with rows; after each round: does Home still react to Down?"""
@@ -11599,6 +11674,7 @@ def main():
     safe(favtab_test)
     safe(merge_test)
     safe(focusprobe_test)
+    safe(reviews_test)
     safe(infotrailer_test)
     safe(fade_test)
     safe(freeze_test)

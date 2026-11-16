@@ -73,33 +73,13 @@
                     <ondown condition="$EXP[NuvioTab1]">6001</ondown>
                     <ondown condition="$EXP[NuvioTab2]">6002</ondown>
                     <ondown condition="$EXP[NuvioTab3]">6003</ondown>
+                    <ondown condition="$EXP[NuvioTab4]">6004</ondown>
                     <ondown>5200</ondown>
                     <control type="button" id="8">
                         <width>auto</width>
                         <height>72</height>
                         <label>▶  $LOCALIZE[208]</label>
                         <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
-                    </control>
-                    <!-- 2.1.30 (Lucent Video #1): Trailer right next to Play. Kodi's own Trailer button (id 11) when the title
-                         has a trailer in Kodi; otherwise the first trailer TMDB knows (the Trailers tab, through YouTube).
-                         Both close the page and play full screen; trailerback.py opens the page again afterwards.
-                         Skin settings > Info page > Trailer button switches it off. -->
-                    <control type="button" id="11">
-                        <width>auto</width>
-                        <height>72</height>
-                        <label>$LOCALIZE[20410]</label>
-                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
-                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
-                        <visible>!String.IsEmpty(ListItem.Trailer) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
-                    </control>
-                    <control type="button" id="26">
-                        <width>auto</width>
-                        <height>72</height>
-                        <label>$LOCALIZE[20410]</label>
-                        <onclick>PlayMedia($INFO[Window(home).Property(nuvio.info.vid.1.path)])</onclick>
-                        <onclick>SetProperty(nuvio.open.leave,1,home)</onclick>
-                        <onclick>RunScript(special://skin/scripts/trailerback.py)</onclick>
-                        <visible>String.IsEmpty(ListItem.Trailer) + !String.IsEmpty(Window(home).Property(nuvio.info.vid.1.path)) + System.HasAddon(plugin.video.youtube) + !Skin.HasSetting(nuvio.info.hidetrailer)</visible>
                     </control>
                     <control type="button" id="9">
                         <width>auto</width>
@@ -776,7 +756,7 @@
             <control type="group">
                 <width>1920</width>
                 <height>430</height>
-                <visible>[Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] | $EXP[NuvioHasRelated] | Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube)</visible>
+                <visible>[Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] | $EXP[NuvioHasRelated] | Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube) | Integer.IsGreater(Window(home).Property(nuvio.info.rev.count),0)</visible>
                 <control type="grouplist" id="6000">
                     <left>84</left>
                     <top>0</top>
@@ -844,6 +824,38 @@
                         <onup>9000</onup>
                         <ondown>5150</ondown>
                         <visible>Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube)</visible>
+                    </control>
+                    <!-- 2.1.30: Reviews (TMDB and Trakt, scripts/info.py load_reviews); OK on a card opens the reviews screen -->
+                    <control type="label" id="6014">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textcolor>text5</textcolor>
+                        <label>|</label>
+                        <visible>Integer.IsGreater(Window(home).Property(nuvio.info.rev.count),0) + [[Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] | $EXP[NuvioHasRelated] | [Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0) + System.HasAddon(plugin.video.youtube)]]</visible>
+                    </control>
+                    <control type="button" id="6004">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_mainmenu_small</font>
+                        <textoffsetx>14</textoffsetx>
+                        <textcolor>text3</textcolor>
+                        <focusedcolor>on_focus</focusedcolor>
+                        <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                        <texturenofocus/>
+                        <label>$VAR[NuvioTabLabel4]</label>
+                        <onfocus>SetProperty(nuvio.info.tab,4,home)</onfocus>
+                        <onup>9000</onup>
+                        <ondown>5250</ondown>
+                        <visible>Integer.IsGreater(Window(home).Property(nuvio.info.rev.count),0)</visible>
+                    </control>
+                    <control type="label">
+                        <width>auto</width>
+                        <height>60</height>
+                        <font>font_small_bold</font>
+                        <textcolor>text4</textcolor>
+                        <label>      $INFO[Window(home).Property(nuvio.info.rev.head)]</label>
+                        <visible>$EXP[NuvioTab4] + Integer.IsGreater(Window(home).Property(nuvio.info.rev.count),0)</visible>
                     </control>
                 </control>
                 <control type="group">
@@ -1559,6 +1571,283 @@
                     </content>
                 </control>
                 </control>
+                <control type="group">
+                    <top>6</top>
+                    <animation effect="fade" start="100" end="0" time="0" condition="!$EXP[NuvioTab4]">Conditional</animation>
+                <control type="fixedlist" id="5250">
+                    <left>56</left>
+                    <top>64</top>
+                    <width>1864</width>
+                    <height>300</height>
+                    <orientation>horizontal</orientation>
+                    <focusposition>0</focusposition>
+                    <scrolltime tween="cubic" easing="out">260</scrolltime>
+                    <onup>6004</onup>
+                    <ondown>5200</ondown>
+                    <itemlayout width="460" height="290">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <control type="image">
+                            <left>0</left><top>0</top><width>440</width><height>250</height>
+                            <texture border="20" colordiffuse="14FFFFFF">rr20.png</texture>
+                        </control>
+                        <control type="label">
+                            <left>28</left><top>22</top><width>300</width><height>34</height>
+                            <font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>28</left><top>56</top><width>300</width><height>28</height>
+                            <font>font10</font><textcolor>text4</textcolor><selectedcolor>text4</selectedcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                        <control type="label">
+                            <left>300</left><top>22</top><width>116</width><height>34</height>
+                            <align>right</align><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor>
+                            <label>$INFO[ListItem.Property(rating),★ ]</label>
+                        </control>
+                        <control type="textbox">
+                            <left>28</left><top>96</top><width>384</width><height>132</height>
+                            <font>font12</font><textcolor>text2</textcolor>
+                            <label>$INFO[ListItem.Property(short)]</label>
+                            <visible>String.IsEmpty(ListItem.Property(spoiler))</visible>
+                        </control>
+                        <control type="label">
+                            <left>28</left><top>96</top><width>384</width><height>34</height>
+                            <font>font12</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor>
+                            <label>⚠  $LOCALIZE[31894]</label>
+                            <visible>!String.IsEmpty(ListItem.Property(spoiler))</visible>
+                        </control>
+                    </control>
+                    </itemlayout>
+                    <focusedlayout width="460" height="290">
+                    <control type="group">
+                        <left>40</left>
+                        <top>16</top>
+                        <animation effect="zoom" start="100" end="103" center="auto" time="200" tween="cubic" easing="out">Focus</animation>
+                        <animation effect="zoom" start="103" end="100" center="auto" time="160" tween="cubic" easing="out">UnFocus</animation>
+                        <control type="image">
+                            <left>0</left><top>0</top><width>440</width><height>250</height>
+                            <texture border="20" colordiffuse="29FFFFFF">rr20.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>-3</left><top>-3</top><width>446</width><height>256</height>
+                            <texture border="22">rr20_edge.png</texture><colordiffuse>text</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>28</left><top>22</top><width>300</width><height>34</height>
+                            <font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>28</left><top>56</top><width>300</width><height>28</height>
+                            <font>font10</font><textcolor>text4</textcolor><selectedcolor>text4</selectedcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                        <control type="label">
+                            <left>300</left><top>22</top><width>116</width><height>34</height>
+                            <align>right</align><font>font12_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor>
+                            <label>$INFO[ListItem.Property(rating),★ ]</label>
+                        </control>
+                        <control type="textbox">
+                            <left>28</left><top>96</top><width>384</width><height>132</height>
+                            <font>font12</font><textcolor>text2</textcolor>
+                            <label>$INFO[ListItem.Property(short)]</label>
+                            <visible>String.IsEmpty(ListItem.Property(spoiler))</visible>
+                        </control>
+                        <control type="label">
+                            <left>28</left><top>96</top><width>384</width><height>34</height>
+                            <font>font12</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor>
+                            <label>⚠  $LOCALIZE[31894]</label>
+                            <visible>!String.IsEmpty(ListItem.Property(spoiler))</visible>
+                        </control>
+                    </control>
+                    </focusedlayout>
+                    <content>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.1.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.1.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.1.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.1.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.1.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,1)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.1.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.2.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.2.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.2.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.2.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.2.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,2)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.2.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.3.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.3.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.3.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.3.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.3.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,3)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.3.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.4.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.4.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.4.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.4.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.4.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,4)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.4.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.5.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.5.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.5.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.5.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.5.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,5)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.5.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.6.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.6.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.6.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.6.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.6.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,6)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.6.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.7.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.7.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.7.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.7.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.7.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,7)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.7.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.8.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.8.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.8.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.8.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.8.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,8)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.8.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.9.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.9.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.9.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.9.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.9.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,9)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.9.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.10.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.10.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.10.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.10.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.10.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,10)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.10.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.11.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.11.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.11.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.11.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.11.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,11)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.11.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.12.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.12.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.12.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.12.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.12.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,12)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.12.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.13.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.13.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.13.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.13.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.13.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,13)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.13.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.14.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.14.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.14.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.14.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.14.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,14)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.14.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.15.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.15.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.15.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.15.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.15.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,15)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.15.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.16.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.16.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.16.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.16.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.16.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,16)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.16.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.17.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.17.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.17.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.17.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.17.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,17)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.17.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.18.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.18.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.18.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.18.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.18.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,18)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.18.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.19.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.19.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.19.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.19.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.19.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,19)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.19.author))</visible>
+                        </item>
+                        <item>
+                            <label>$INFO[Window(home).Property(nuvio.info.rev.20.author)]</label>
+                            <label2>$INFO[Window(home).Property(nuvio.info.rev.20.meta)]</label2>
+                            <property name="rating">$INFO[Window(home).Property(nuvio.info.rev.20.rating)]</property>
+                            <property name="short">$INFO[Window(home).Property(nuvio.info.rev.20.short)]</property>
+                            <property name="spoiler">$INFO[Window(home).Property(nuvio.info.rev.20.spoiler)]</property>
+                            <onclick>RunScript(special://skin/scripts/reviews.py,20)</onclick>
+                            <visible>!String.IsEmpty(Window(home).Property(nuvio.info.rev.20.author))</visible>
+                        </item>
+                    </content>
+                </control>
+                </control>
             </control>
 
             <!-- ================= Collection (TMDB) ================= -->
@@ -1584,10 +1873,11 @@
                     <focusposition>0</focusposition>
                     <preloaditems>2</preloaditems>
                     <scrolltime tween="cubic" easing="out">260</scrolltime>
-                    <onup condition="$EXP[NuvioTab1] + {TMDB_CAST}">5050</onup>
+                    <onup condition="$EXP[NuvioTab1] + Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0)">5050</onup>
                     <onup condition="$EXP[NuvioTab1]">50</onup>
                     <onup condition="$EXP[NuvioTab2]">5100</onup>
                     <onup condition="$EXP[NuvioTab3]">5150</onup>
+                    <onup condition="$EXP[NuvioTab4]">5250</onup>
                     <onup>9000</onup>
                     <ondown>5300</ondown>
                     <itemlayout width="428" height="335">

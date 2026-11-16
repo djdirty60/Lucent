@@ -47,6 +47,7 @@ sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http
 # since 1.39.0 the skin no longer uses Lucent Library: the new variant runs without it, like a fresh install
 if [ "$VARIANT" = new ]; then rm -rf $K/addons/script.lucent.library; fi
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
+sed -i 's#^TRAKT_REVIEWS = .*#TRAKT_REVIEWS = "http://127.0.0.1:8765/trakt/"#' $K/addons/skin.lucent/scripts/info.py
 sed -i 's#https://www.omdbapi.com/?#http://127.0.0.1:8765/omdb/?#' $K/addons/skin.lucent/scripts/omdb.py
 sed -i 's#https://api.mdblist.com/#http://127.0.0.1:8765/mdblist/#' $K/addons/skin.lucent/scripts/omdb.py
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &

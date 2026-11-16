@@ -61,6 +61,23 @@ class H(BaseHTTPRequestHandler):
         if "/season/" in path:                                # a season with 10 episodes
             return self.send(json.dumps({"episodes": [{"episode_number": n, "name": f"Ep {n}", "air_date": "2026-11-01",
                                                         "episode_type": "finale" if n == 10 else "standard"} for n in range(1, 11)]}).encode(), "application/json")
+        if path.endswith("/reviews"):                        # 2.1.30: the Reviews tab
+            lang = "nl" if "language=nl" in self.path else "en"
+            res = [] if lang == "nl" else [
+                {"id": "r1", "author": "marieke_film", "author_details": {"rating": 8}, "created_at": "2026-11-12T10:00:00Z",
+                 "content": "A slow start, but the last three episodes make up for everything. The **lead** is quiet and exactly right, and the harbour gives the whole series a mood of its own.\r\n\r\nSecond paragraph of a long review, so the screen has something to scroll."},
+                {"id": "r2", "author": "Northlight", "author_details": {"rating": 6}, "created_at": "2026-11-09T10:00:00Z",
+                 "content": "Nicely shot, but the story stays on the surface. Fine for an evening, not more than that."}]
+            return self.send(json.dumps({"results": res, "total_results": len(res)}).encode(), "application/json")
+        if path.startswith("/trakt/search/tmdb/"):
+            return self.send(json.dumps([{"movie": {"ids": {"trakt": 4242}}, "show": {"ids": {"trakt": 4242}}}]).encode(), "application/json")
+        if path.startswith("/trakt/") and "/comments/" in path:
+            res = [{"comment": "Do not read on: the brother was hiding in the lighthouse the whole time, and the last scene shows it.", "spoiler": True,
+                    "created_at": "2026-11-03T10:00:00Z", "user": {"username": "j.devries"}, "user_stats": {"rating": 9}},
+                   {"comment": "Great!", "spoiler": False, "created_at": "2026-11-02T10:00:00Z", "user": {"username": "short"}, "user_stats": {}},
+                   {"comment": "The ending had me thinking for days. Not perfect, but it stays with you, and the music fits every scene.", "spoiler": False,
+                    "created_at": "2026-11-01T10:00:00Z", "user": {"username": "Ferryman"}, "user_stats": {"rating": 7}}]
+            return self.send(json.dumps(res).encode(), "application/json")
         if path.endswith("/external_ids"):
             return self.send(json.dumps({"imdb_id": "tt0185937"}).encode(), "application/json")
         if path.startswith("/t/p/"):

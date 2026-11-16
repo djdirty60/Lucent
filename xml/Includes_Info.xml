@@ -4,7 +4,8 @@
     <expression name="NuvioHasRelated">[[!String.IsEmpty(ListItem.Property(trakt_id)) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow)]] | [[String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,season)] + !String.IsEmpty(ListItem.Property(trakt_show_id))]] + [Integer.IsGreater(Container(5100).NumItems,0) | Container(5100).IsUpdating]</expression>
     <expression name="NuvioTab1">String.IsEqual(Window(home).Property(nuvio.info.tab),1) | [String.IsEmpty(Window(home).Property(nuvio.info.tab)) + [Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)]]</expression>
     <expression name="NuvioTab2">String.IsEqual(Window(home).Property(nuvio.info.tab),2) | [String.IsEmpty(Window(home).Property(nuvio.info.tab)) + ![Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] + $EXP[NuvioHasRelated]]</expression>
-    <expression name="NuvioTab3">String.IsEqual(Window(home).Property(nuvio.info.tab),3) | [String.IsEmpty(Window(home).Property(nuvio.info.tab)) + ![Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] + !$EXP[NuvioHasRelated]]</expression>
+    <expression name="NuvioTab3">String.IsEqual(Window(home).Property(nuvio.info.tab),3) | [String.IsEmpty(Window(home).Property(nuvio.info.tab)) + ![Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] + !$EXP[NuvioHasRelated] + Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0)]</expression>
+    <expression name="NuvioTab4">String.IsEqual(Window(home).Property(nuvio.info.tab),4) | [String.IsEmpty(Window(home).Property(nuvio.info.tab)) + ![Integer.IsGreater(Window(home).Property(nuvio.info.cast.count),0) | Integer.IsGreater(Container(50).NumItems,0)] + !$EXP[NuvioHasRelated] + !Integer.IsGreater(Window(home).Property(nuvio.info.vid.count),0)]</expression>
     <variable name="NuvioTabLabel1">
         <value condition="$EXP[NuvioTab1] + !Control.HasFocus(6001)">[COLOR text][B]$LOCALIZE[31111][/B][/COLOR]</value>
         <value>$LOCALIZE[31111]</value>
@@ -16,6 +17,10 @@
     <variable name="NuvioTabLabel3">
         <value condition="$EXP[NuvioTab3] + !Control.HasFocus(6003)">[COLOR text][B]$LOCALIZE[31119][/B][/COLOR]</value>
         <value>$LOCALIZE[31119]</value>
+    </variable>
+    <variable name="NuvioTabLabel4">
+        <value condition="$EXP[NuvioTab4] + !Control.HasFocus(6004)">[COLOR text][B]$LOCALIZE[31892][/B][/COLOR]</value>
+        <value>$LOCALIZE[31892]</value>
     </variable>
     <variable name="NuvioAgendaBell">
         <value condition="!String.IsEmpty(Window(home).Property(nuvio.agenda.followed))">$LOCALIZE[31228]</value>
@@ -37,4 +42,47 @@
         <value condition="!System.AddonIsEnabled(plugin.video.lucent) + System.AddonIsEnabled(plugin.video.themoviedb.helper) + String.IsEqual(ListItem.DBType,tvshow) + !String.IsEmpty(ListItem.UniqueID(tmdb))">plugin://plugin.video.themoviedb.helper/?info=recommendations&amp;tmdb_type=tv&amp;tmdb_id=$INFO[ListItem.UniqueID(tmdb)]</value>
         <value condition="!System.AddonIsEnabled(plugin.video.lucent) + System.AddonIsEnabled(plugin.video.themoviedb.helper) + String.IsEqual(ListItem.DBType,tvshow) + !String.IsEmpty(ListItem.Property(tmdb_id))">plugin://plugin.video.themoviedb.helper/?info=recommendations&amp;tmdb_type=tv&amp;tmdb_id=$INFO[ListItem.Property(tmdb_id)]</value>
     </variable>
+    <!-- 2.1.30: the reviews screen (Lucent_Reviews.xml) -->
+    <variable name="LucentReviewTabTMDB">
+        <value condition="String.IsEqual(Window.Property(src),TMDB)">40FFFFFF</value>
+        <value>00FFFFFF</value>
+    </variable>
+    <variable name="LucentReviewTabTrakt">
+        <value condition="String.IsEqual(Window.Property(src),Trakt)">40FFFFFF</value>
+        <value>00FFFFFF</value>
+    </variable>
+    <include name="LucentReviewCard">
+        <control type="label">
+            <left>30</left><top>22</top><width>1000</width><height>36</height>
+            <font>font_label_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor>
+            <label>$INFO[ListItem.Label]</label>
+        </control>
+        <control type="label">
+            <left>30</left><top>58</top><width>1000</width><height>28</height>
+            <font>font10</font><textcolor>text4</textcolor><selectedcolor>text4</selectedcolor>
+            <label>$INFO[ListItem.Label2]</label>
+        </control>
+        <control type="label">
+            <left>1050</left><top>22</top><width>164</width><height>36</height>
+            <align>right</align><font>font_label_bold</font><textcolor>text</textcolor><selectedcolor>text</selectedcolor>
+            <label>$INFO[ListItem.Property(rating),★ ]</label>
+        </control>
+        <control type="textbox">
+            <left>30</left><top>94</top><width>1184</width><height>56</height>
+            <font>font12</font><textcolor>text2</textcolor>
+            <label>$INFO[ListItem.Property(short)]</label>
+            <visible>String.IsEmpty(ListItem.Property(hidden))</visible>
+        </control>
+        <control type="image">
+            <left>30</left><top>92</top><width>1184</width><height>48</height>
+            <texture border="14" colordiffuse="0FFFFFFF">rr14.png</texture>
+            <visible>!String.IsEmpty(ListItem.Property(hidden))</visible>
+        </control>
+        <control type="label">
+            <left>48</left><top>92</top><width>1150</width><height>48</height>
+            <aligny>center</aligny><font>font12</font><textcolor>text3</textcolor><selectedcolor>text3</selectedcolor>
+            <label>⚠  $INFO[ListItem.Property(hidden)]</label>
+            <visible>!String.IsEmpty(ListItem.Property(hidden))</visible>
+        </control>
+    </include>
 </includes>
