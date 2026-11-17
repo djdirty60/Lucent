@@ -6991,6 +6991,9 @@ def trailerhold_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.trailer.delay,2)")
     xbmc.executebuiltin("Skin.SetBool(nuvio.trailer.test)")
     xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
     for _ in range(90):                      # the helper (and its trailer service) must be running
         mon.waitForAbort(1)
         if HOME.getProperty("lucent.helper") and HOME.getProperty("lucent.helper.running") != "0":
