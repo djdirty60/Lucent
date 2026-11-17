@@ -556,6 +556,9 @@
         <!-- Side menu with view and window options: press left (or up) in a list -->
         <control type="group">
             <visible allowhiddenfocus="true">ControlGroup(9050).HasFocus</visible>
+            <!-- 2.1.37 (#30): while closed, the panel's (hidden) buttons sat on the left of the screen, so a tap or a click
+                 there opened it on touch screens. Closed, it is moved far off screen; the remote still opens it -->
+            <animation effect="slide" start="0,0" end="-3000,0" time="0" condition="!ControlGroup(9050).HasFocus">Conditional</animation>
             <animation effect="fade" start="0" end="100" time="200">Visible</animation>
             <animation effect="fade" start="100" end="0" time="160">Hidden</animation>
             <control type="image">
