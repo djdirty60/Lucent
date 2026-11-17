@@ -7214,6 +7214,75 @@ def tabfocus_test():
     log("tabfocus: " + " | ".join(out))
 
 
+def backpos_test():
+    """#27: Back leaves a list right away (no jump to the first title first) and Lucent keeps your place; a scanned folder
+    in Files keeps its own view apart from the Movies library."""
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        for _ in range(60):
+            mon.waitForAbort(1)
+            if HOME.getProperty("lucent.helper"):
+                break
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    for view in (51, 52):
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+        mon.waitForAbort(5)
+        xbmc.executebuiltin(f"Container.SetViewMode({view})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({view},0,absolute)")
+        mon.waitForAbort(1)
+        for _ in range(5):
+            key("Right")
+            mon.waitForAbort(0.6)
+        at = lab("ListItem.Label")
+        mon.waitForAbort(2)
+        key("BackSpace")
+        mon.waitForAbort(2)
+        after1 = lab("System.CurrentWindow")
+        xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+        mon.waitForAbort(5)
+        out.append(f"view {view}: on {at!r}, one Back -> {after1!r}, back in -> {lab('ListItem.Label')!r}")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+    movies = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetMovies",
+                                                       "params": {"properties": ["file"], "limits": {"end": 1}}}))).get("result", {}).get("movies") or []
+    folder = os.path.dirname(movies[0]["file"]) + "/" if movies else ""
+    if folder:
+        xbmc.executebuiltin(f"ActivateWindow(Videos,{folder},return)")
+        mon.waitForAbort(4)
+        c1 = lab("Container.Content")
+        xbmc.executebuiltin("Container.SetViewMode(50)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+        mon.waitForAbort(4)
+        xbmc.executebuiltin("Container.SetViewMode(52)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"ActivateWindow(Videos,{folder},return)")
+        mon.waitForAbort(4)
+        v_files = next((v for v in (50, 51, 52, 53) if cond(f"Control.IsVisible({v})")), 0)
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+        mon.waitForAbort(4)
+        v_lib = next((v for v in (50, 51, 52, 53) if cond(f"Control.IsVisible({v})")), 0)
+        out.append(f"files folder content={c1!r}: files view={v_files} (want 50), library view={v_lib} (want 52); "
+                   f"strings files.movies={lab('Skin.String(lucent.view.videos.files.movies)')} movies={lab('Skin.String(lucent.view.videos.movies)')}")
+    log("backpos: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12409,6 +12478,7 @@ def main():
     safe(deadkeys_test)
     safe(touchside_test)
     safe(tabfocus_test)
+    safe(backpos_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
