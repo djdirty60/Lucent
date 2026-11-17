@@ -7309,7 +7309,7 @@ def wrap_test():
         d = f"Right again -> {lab(f'Container({v}).CurrentItem')}"
         key("Up"); mon.waitForAbort(1.5)
         e = f"Up -> menu={cond('ControlGroup(9050).HasFocus')}"
-        key("Escape"); mon.waitForAbort(1)
+        xbmc.executebuiltin(f"SetFocus({v})"); mon.waitForAbort(1)
         out.append(f"view {v}: {a}; {b}; {c}; {d}; {e}")
     xbmc.executebuiltin("Container.SetViewMode(51)")
     log("wrap: " + " | ".join(out))
