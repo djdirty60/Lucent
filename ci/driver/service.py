@@ -5403,7 +5403,7 @@ def intro2_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(1195)")
     t0 = time.time()
-    for s in (1.0, 2.5, 4.0, 5.5):
+    for s in (1.0, 2.5, 4.0, 4.9, 5.5):
         while time.time() - t0 < s:
             mon.waitForAbort(0.05)
         xbmc.executebuiltin(f"TakeScreenshot({OUT}/{TAG}-intro2-{int(s*10):02d}.png,sync)")
