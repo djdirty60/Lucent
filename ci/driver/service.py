@@ -7283,6 +7283,44 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def touchbtn_test():
+    """#30: the Options button for touch screens: hidden without lucent.touch; with it, a tap opens the side panel."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    logf = xbmcvfs.translatePath("special://logpath/kodi.log")
+    try:
+        out.append("startup said: " + ";".join(ln.split("startup: ", 1)[1].strip() for ln in open(logf, errors="replace") if "startup: touch screen" in ln)[-60:])
+    except OSError:
+        pass
+    xbmc.executebuiltin("Skin.Reset(lucent.touch)")
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Container.SetViewMode(52)")
+    mon.waitForAbort(2)
+    out.append(f"without touch: button visible={cond('Control.IsVisible(9049)')}")
+    xbmc.executebuiltin("Skin.SetBool(lucent.touch)")
+    mon.waitForAbort(1.5)
+    out.append(f"with touch: button visible={cond('Control.IsVisible(9049)')}")
+    shot("30-options-button")
+    subprocess.run(["xdotool", "mousemove", "120", "1026", "click", "1"], timeout=5)
+    mon.waitForAbort(2)
+    out.append(f"tap Options -> focus={lab('System.CurrentControlID')} panel={cond('ControlGroup(9050).HasFocus')}")
+    subprocess.run(["xdotool", "mousemove", "1910", "5"], timeout=5)
+    mon.waitForAbort(1)
+    shot("30-options-open")
+    key("BackSpace")
+    mon.waitForAbort(1.5)
+    out.append(f"Back -> focus={lab('System.CurrentControlID')} panel={cond('ControlGroup(9050).HasFocus')} button={cond('Control.IsVisible(9049)')}")
+    xbmc.executebuiltin("Skin.Reset(lucent.touch)")
+    log("touchbtn: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12479,6 +12517,7 @@ def main():
     safe(touchside_test)
     safe(tabfocus_test)
     safe(backpos_test)
+    safe(touchbtn_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)

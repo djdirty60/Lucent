@@ -553,6 +553,23 @@
     </include>
     <!-- Left side menu of media windows; included last so it sits on top -->
     <include name="MediaSideMenu">
+        <!-- 2.1.39 (#30): on a touch screen (phone, tablet) a button bottom left opens the side menu, like Estuary's
+             Options. Only shown there (Skin.HasSetting(lucent.touch), set by scripts/startup.py); not in the remote's path -->
+        <control type="button" id="9049">
+            <left>40</left><top>996</top><width>auto</width><height>60</height>
+            <label>$LOCALIZE[31899]</label>
+            <font>font12_bold</font><textoffsetx>70</textoffsetx><aligny>center</aligny>
+            <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+            <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+            <texturenofocus border="30" colordiffuse="D9141824">pill60.png</texturenofocus>
+            <onclick>SetFocus(9050)</onclick>
+            <visible>Skin.HasSetting(lucent.touch) + !ControlGroup(9050).HasFocus</visible>
+        </control>
+        <control type="image">
+            <left>66</left><top>1012</top><width>28</width><height>28</height>
+            <texture colordiffuse="text">icons/list.png</texture>
+            <visible>Skin.HasSetting(lucent.touch) + !ControlGroup(9050).HasFocus</visible>
+        </control>
         <!-- Side menu with view and window options: press left (or up) in a list -->
         <control type="group">
             <visible allowhiddenfocus="true">ControlGroup(9050).HasFocus</visible>

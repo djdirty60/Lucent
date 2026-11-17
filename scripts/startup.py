@@ -133,7 +133,28 @@ def cw_notice():
         threading.Thread(target=show, daemon=True).start()
 
 
+def touch_screen():
+    """2.1.39 (#30): is this a touch screen (phone or tablet)? Kodi has no condition for it, so Lucent looks once per
+    start: iPhone/iPad, or Android with the handheld feature list (phones and tablets have it, Android TV boxes have the
+    TV one). Skin.HasSetting(lucent.touch) then shows the Options button in the lists."""
+    import os
+    cond = xbmc.getCondVisibility
+    touch = False
+    if cond("System.Platform.IOS"):
+        touch = True
+    elif cond("System.Platform.Android"):
+        perms = "/system/etc/permissions/"
+        try:
+            touch = os.path.exists(perms + "handheld_core_hardware.xml") and not os.path.exists(perms + "tv_core_hardware.xml")
+        except OSError:
+            touch = False
+    if touch != bool(cond("Skin.HasSetting(lucent.touch)")):
+        xbmc.executebuiltin("Skin.SetBool(lucent.touch)" if touch else "Skin.Reset(lucent.touch)")
+    log(f"touch screen: {touch}")
+
+
 def run():
+    step("touch screen", touch_screen)
     if first_start():
         return
     step("season page", season_page)
