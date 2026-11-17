@@ -988,6 +988,7 @@
     <!-- 2.1.34 (#27): fast-scroll slider under a one-row view (51, 53), with the position (34 / 120); and a small hint
          that Up opens the menu. The slider is the row's page control: Left/Right on it scroll the row a page. -->
     <include name="LucentRowSlider">
+        <param name="hinttop">78</param>
         <param name="id"/>
         <param name="visible"/>
         <definition>
@@ -1012,19 +1013,31 @@
                     <ondown>noop</ondown>
                 </control>
             </control>
-            <control type="group">
-                <left>1400</left><top>140</top>
-                <visible>Control.HasFocus($PARAM[id]) | Control.HasFocus(60$PARAM[id])</visible>
+            <!-- CI mockup A: in front of the clock -->
+            <control type="grouplist">
+                <right>96</right><top>44</top><width>1500</width><height>44</height>
+                <orientation>horizontal</orientation><align>right</align><itemgap>28</itemgap>
+                <visible>[Control.HasFocus($PARAM[id]) | Control.HasFocus(60$PARAM[id])] + String.IsEqual(Skin.String(ci.hintpos),clock)</visible>
                 <animation effect="fade" start="0" end="100" time="200">Visible</animation>
-                <control type="image">
-                    <left>0</left><top>0</top><width>424</width><height>56</height>
-                    <texture border="28" colordiffuse="66000000">pill60.png</texture>
-                </control>
                 <control type="label">
-                    <left>0</left><top>0</top><width>424</width><height>56</height>
-                    <font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>text2</textcolor>
+                    <width>auto</width><height>44</height>
+                    <font>font_tiny</font><aligny>center</aligny><textcolor>text3</textcolor>
                     <label>$LOCALIZE[31897]</label>
                 </control>
+                <control type="label">
+                    <width>auto</width><height>44</height>
+                    <font>font_clock</font><aligny>center</aligny><textcolor>00000000</textcolor>
+                    <label>$INFO[System.Time]</label>
+                    <visible>!Skin.HasSetting(nuvio.hideclock)</visible>
+                </control>
+            </control>
+            <!-- CI mockup B: above the logo -->
+            <control type="label">
+                <left>96</left><top>$PARAM[hinttop]</top><width>1100</width><height>34</height>
+                <font>font_tiny</font><aligny>center</aligny><textcolor>text3</textcolor>
+                <label>$LOCALIZE[31897]</label>
+                <visible>[Control.HasFocus($PARAM[id]) | Control.HasFocus(60$PARAM[id])] + String.IsEqual(Skin.String(ci.hintpos),logo)</visible>
+                <animation effect="fade" start="0" end="100" time="200">Visible</animation>
             </control>
         </definition>
     </include>

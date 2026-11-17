@@ -7283,6 +7283,29 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def hintpos_test():
+    """Mockups: where the 'Up: View · Sort · Filter' hint goes (in front of the clock / above the logo)."""
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    for v in (51, 53):
+        xbmc.executebuiltin(f"Container.SetViewMode({v})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({v})")
+        for pos, top in (("clock", False), ("clock", True), ("logo", True)):
+            xbmc.executebuiltin(f"Skin.SetString(ci.hintpos,{pos})")
+            xbmc.executebuiltin("Skin.SetBool(lucent.hidetopbar)" if top else "Skin.Reset(lucent.hidetopbar)")
+            mon.waitForAbort(1.5)
+            shot(f"hint-{v}-{pos}-{'notopbar' if top else 'topbar'}")
+    xbmc.executebuiltin("Skin.Reset(ci.hintpos)")
+    xbmc.executebuiltin("Skin.Reset(lucent.hidetopbar)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def wrap_test():
     """#27 (2.1.41): views 51 and 53 go round: Left on the first title -> last, Right on the last -> first; Up opens the menu."""
     out = []
@@ -12557,6 +12580,7 @@ def main():
     safe(backpos_test)
     safe(touchbtn_test)
     safe(wrap_test)
+    safe(hintpos_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
