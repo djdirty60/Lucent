@@ -7,6 +7,11 @@ Runs inside the helper (helper.py) as two small threads:
     has not reacted, which window was open just before, and where every thread of Lucent's helper was at that moment
     (file, line and function). When Kodi reacts again, it writes how long it took.
 The watcher never asks Kodi anything itself, so it can still write while Kodi is stuck. It changes nothing.
+
+2.1.36: Kodi can also hang while it still draws the screen (the watchdog above stays quiet then), for example when it
+goes back to Home and is busy with something else: your remote does nothing. The prober also notes the screen, the
+selection and whether you pressed a key. When you keep pressing keys for 8 seconds and nothing on screen changes, it
+writes that to the log with the same information (no debug log needed, nothing on screen).
 """
 import os
 import sys
@@ -16,6 +21,7 @@ import time
 import xbmc
 
 LIMIT = 3.0          # seconds without an answer before it counts as a freeze
+DEAD_KEYS = 8.0      # seconds of pressing keys without anything changing on screen
 REPEAT = (10.0, 30.0, 60.0)
 
 
@@ -46,20 +52,48 @@ class Watchdog:
         self.stop = stop
         self.asked = 0.0          # when the prober asked Kodi (0: not waiting)
         self.window = ""
+        self.dead = {"state": "", "first": 0.0, "last": 0.0, "presses": 0, "told": False}
 
     def start(self):
         threading.Thread(target=self.prober, name="watchdog-prober", daemon=True).start()
         threading.Thread(target=self.watcher, name="watchdog-watcher", daemon=True).start()
 
     def prober(self):
+        log("started")
         while not self.stop.is_set():
             self.asked = time.time()
             try:
                 self.window = xbmc.getInfoLabel("System.CurrentWindow") or self.window
+                state = "|".join(xbmc.getInfoLabel(x) for x in ("System.CurrentWindow", "System.CurrentControlID",
+                                                                 "ListItem.Label", "Container.CurrentItem"))
+                pressed = not xbmc.getCondVisibility("System.IdleTime(2)") and not xbmc.getCondVisibility("Player.HasVideo")
+                self.keys(state, pressed)
             except Exception:  # noqa: BLE001
                 pass
             self.asked = 0.0
             self.stop.wait(2)
+
+    def keys(self, state, pressed):
+        """You press keys, but nothing on screen changes (window, selection, item): Kodi does not take your remote."""
+        d = self.dead
+        now = time.time()
+        if state != d["state"]:
+            if d["told"]:
+                log(f"the remote works again after {now - d['first']:.0f} s (now: {state.split('|')[0] or '-'})")
+            d.update(state=state, first=0.0, last=0.0, presses=0, told=False)
+            return
+        if not pressed:
+            if d["first"] and now - d["last"] > 10:     # you stopped pressing: start over
+                d.update(first=0.0, presses=0)
+            return
+        d["first"] = d["first"] or now
+        d["last"] = now
+        d["presses"] += 1
+        if not d["told"] and d["presses"] >= 3 and now - d["first"] >= DEAD_KEYS:
+            d["told"] = True
+            window, control = (state.split("|") + ["", ""])[:2]
+            log(f"keys pressed for {now - d['first']:.0f} s but nothing changes (window {window or '-'}, "
+                f"focus {control or 'none'}). Python threads: {stacks()}")
 
     def watcher(self):
         reported, since, window = [], 0.0, ""

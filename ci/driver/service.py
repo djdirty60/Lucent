@@ -7102,6 +7102,34 @@ def debugpath_test():
     mon.waitForAbort(2)
 
 
+def deadkeys_test():
+    """2.1.36: keys pressed for 8+ s while nothing on screen changes -> the watchdog writes it to the log (no debug log).
+    A text window with one short line: Down changes nothing there."""
+    import threading
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+    for _ in range(90):
+        mon.waitForAbort(1)
+        if HOME.getProperty("lucent.helper"):
+            break
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(5)
+    threading.Thread(target=lambda: xbmcgui.Dialog().textviewer("CI", "one line"), daemon=True).start()
+    mon.waitForAbort(3)
+    for _ in range(14):
+        key("Down")
+        mon.waitForAbort(1)
+    key("Escape")
+    mon.waitForAbort(5)
+    logf = xbmcvfs.translatePath("special://logpath/kodi.log")
+    lines = [ln.split("watchdog: ", 1)[1][:500] for ln in open(logf, errors="replace") if "[skin.lucent] watchdog:" in ln]
+    log("deadkeys: " + " || ".join(lines[-4:]))
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12294,6 +12322,7 @@ def main():
     safe(trailerhold_test)
     safe(watchdog_test)
     safe(debugpath_test)
+    safe(deadkeys_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
