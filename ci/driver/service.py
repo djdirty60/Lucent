@@ -7060,6 +7060,48 @@ def watchdog_test():
     log("watchdogtest: " + " || ".join(lines[-4:]))
 
 
+def debugpath_test():
+    """Where is 'enable debug logging' for a user: Home > Settings tab tiles, Kodi's System page (standard and advanced
+    level), and Lucent's big Settings window > System."""
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingLevel", "params": {"level": "standard"}}))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(9000)")
+    mon.waitForAbort(1)
+    for i in range(12):
+        if xbmc.getInfoLabel("Container(9000).ListItem.Label") in ("Settings", "Instellingen"):
+            break
+        key("Down")
+        mon.waitForAbort(0.8)
+    mon.waitForAbort(2)
+    key("Right")
+    mon.waitForAbort(2)
+    log(f"debugpath: home tab item={xbmc.getInfoLabel('Container(9000).ListItem.Label')!r} focus={lab('System.CurrentControlID')}")
+    shot("dbg-1-home-settings-tab")
+    xbmc.executebuiltin("ActivateWindow(SystemSettings)")
+    mon.waitForAbort(3)
+    shot("dbg-2-system-standard")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingLevel", "params": {"level": "advanced"}}))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(SystemSettings)")
+    mon.waitForAbort(3)
+    shot("dbg-3-system-advanced")
+    xbmc.executebuiltin("ActivateWindow(SystemSettings,logging)")
+    mon.waitForAbort(3)
+    shot("dbg-4-logging")
+    xbmc.executebuiltin("ActivateWindow(settings)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,3)")
+    mon.waitForAbort(2)
+    shot("dbg-5-lucent-settings-system")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingLevel", "params": {"level": "standard"}}))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12251,6 +12293,7 @@ def main():
     safe(viewmix_test)
     safe(trailerhold_test)
     safe(watchdog_test)
+    safe(debugpath_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
