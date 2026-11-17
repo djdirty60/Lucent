@@ -6991,7 +6991,13 @@ def trailerhold_test():
     xbmc.executebuiltin("Skin.SetString(nuvio.trailer.delay,2)")
     xbmc.executebuiltin("Skin.SetBool(nuvio.trailer.test)")
     xbmc.executebuiltin("ActivateWindow(home)")
+    for _ in range(90):                      # the helper (and its trailer service) must be running
+        mon.waitForAbort(1)
+        if HOME.getProperty("lucent.helper") and HOME.getProperty("lucent.helper.running") != "0":
+            break
+    xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(5)
+    out.append(f"helper={HOME.getProperty('lucent.helper')!r} window={lab('System.CurrentWindow')!r}")
     # 1: from the side menu
     xbmc.executebuiltin("SetFocus(9000)")
     mon.waitForAbort(2)
