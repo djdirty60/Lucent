@@ -5401,7 +5401,15 @@ def agendalist_test():
 def intro2_test():
     """2.1.4: the intro after the fix (no delayed fade-out on the group): pictures at 1, 2.5, 4 and 5.5 s."""
     xbmc.executebuiltin("Dialog.Close(all,true)")
+    was_off = cond("Skin.HasSetting(lucent.intro.off)")
+    xbmc.executebuiltin("Skin.Reset(lucent.intro.off)")
+    mon.waitForAbort(0.5)
     xbmc.executebuiltin("ActivateWindow(1195)")
+    for _ in range(100):
+        if lab("Window(home).Property(lucent.intro.go)"):
+            break
+        mon.waitForAbort(0.05)
+    log(f"intro2: was_off={was_off} go={lab('Window(home).Property(lucent.intro.go)')!r} window={lab('System.CurrentWindow')!r}")
     t0 = time.time()
     for s in (1.0, 2.5, 4.0, 4.9, 5.5):
         while time.time() - t0 < s:
