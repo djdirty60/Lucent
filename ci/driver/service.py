@@ -6931,6 +6931,40 @@ def osdorder_test():
     log("osdorder: " + " | ".join(out))
 
 
+def viewmix_test():
+    """#27 follow-up: does the view chosen in Files also change Movies (library and add-on folder), and back?"""
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    places = (("files", "ActivateWindow(Videos,sources://video/,return)"),
+              ("library", "ActivateWindow(Videos,videodb://movies/titles/,return)"),
+              ("addon", "ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)"),
+              ("folder", "ActivateWindow(Videos,/tmp/ci/,return)"))
+
+    def go(name, cmd, setview=None):
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(cmd)
+        mon.waitForAbort(4)
+        if setview:
+            xbmc.executebuiltin(f"Container.SetViewMode({setview})")
+            mon.waitForAbort(3)
+        view = next((v for v in (50, 51, 52, 53, 55, 56, 57) if cond(f"Control.IsVisible({v})")), 0)
+        out.append(f"{name}{'(set ' + str(setview) + ')' if setview else ''}: content={lab('Container.Content')!r} path={lab('Container.FolderPath')[:40]!r} view={view}")
+    go(*places[0], setview=50)
+    for p in places[1:]:
+        go(*p)
+    go(*places[1], setview=51)
+    go(*places[0])
+    go(*places[2], setview=52)
+    go(*places[0])
+    go(*places[3])
+    out.append("strings=" + ",".join(f"{c}={lab(f'Skin.String(lucent.view.videos.{c})')}" for c in ("none", "movies", "files")))
+    log("viewmix: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12119,6 +12153,7 @@ def main():
     safe(osdbtn_test)
     safe(viewnav_test)
     safe(osdorder_test)
+    safe(viewmix_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
