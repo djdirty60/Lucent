@@ -1012,18 +1012,22 @@
                     <ondown>noop</ondown>
                 </control>
             </control>
-            <control type="group">
-                <left>1400</left><top>140</top>
+            <!-- 2.1.41: the Up hint as small text in front of the clock (the invisible clock copy keeps it next to the clock) -->
+            <control type="grouplist">
+                <right>96</right><top>44</top><width>1500</width><height>44</height>
+                <orientation>horizontal</orientation><align>right</align><itemgap>28</itemgap>
                 <visible>Control.HasFocus($PARAM[id]) | Control.HasFocus(60$PARAM[id])</visible>
                 <animation effect="fade" start="0" end="100" time="200">Visible</animation>
-                <control type="image">
-                    <left>0</left><top>0</top><width>424</width><height>56</height>
-                    <texture border="28" colordiffuse="66000000">pill60.png</texture>
+                <control type="label">
+                    <width>auto</width><height>44</height>
+                    <font>font_tiny</font><aligny>center</aligny><textcolor>text3</textcolor>
+                    <label>$LOCALIZE[31897]</label>
                 </control>
                 <control type="label">
-                    <left>0</left><top>0</top><width>424</width><height>56</height>
-                    <font>font_tiny</font><align>center</align><aligny>center</aligny><textcolor>text2</textcolor>
-                    <label>$LOCALIZE[31897]</label>
+                    <width>auto</width><height>44</height>
+                    <font>font_clock</font><aligny>center</aligny><textcolor>00000000</textcolor>
+                    <label>$INFO[System.Time]</label>
+                    <visible>!Skin.HasSetting(nuvio.hideclock)</visible>
                 </control>
             </control>
         </definition>
@@ -1330,7 +1334,9 @@
                 <preloaditems>2</preloaditems>
                 <!-- 2.1.34 (#27): Up always opens the menu (view, search, sort, filter); fast scrolling is the slider below -->
                 <onup>9050</onup>
-                <onleft>9050</onleft>
+                <!-- 2.1.41 (#27): the row goes round: Left on the first title goes to the last, Right on the last goes to the first -->
+                <onleft>Action(LastPage)</onleft>
+                <onright>Action(FirstPage)</onright>
                 <ondown condition="Control.IsVisible(51) + Integer.IsGreater(Container(51).NumItems,12) + Container.SortDirection(ascending) + [Container.SortMethod(1) | Container.SortMethod(7) | Container.SortMethod(29)] + !String.IsEmpty(Container(51).ListItem.SortLetter) + !String.IsEqual(Container(51).ListItem.SortLetter,A) + !String.IsEqual(Container(51).ListItem.SortLetter,B) + !String.IsEqual(Container(51).ListItem.SortLetter,C) + !String.IsEqual(Container(51).ListItem.SortLetter,D) + !String.IsEqual(Container(51).ListItem.SortLetter,E) + !String.IsEqual(Container(51).ListItem.SortLetter,F) + !String.IsEqual(Container(51).ListItem.SortLetter,G) + !String.IsEqual(Container(51).ListItem.SortLetter,H) + !String.IsEqual(Container(51).ListItem.SortLetter,I) + !String.IsEqual(Container(51).ListItem.SortLetter,J) + !String.IsEqual(Container(51).ListItem.SortLetter,K) + !String.IsEqual(Container(51).ListItem.SortLetter,L) + !String.IsEqual(Container(51).ListItem.SortLetter,M) + !String.IsEqual(Container(51).ListItem.SortLetter,N) + !String.IsEqual(Container(51).ListItem.SortLetter,O) + !String.IsEqual(Container(51).ListItem.SortLetter,P) + !String.IsEqual(Container(51).ListItem.SortLetter,Q) + !String.IsEqual(Container(51).ListItem.SortLetter,R) + !String.IsEqual(Container(51).ListItem.SortLetter,S) + !String.IsEqual(Container(51).ListItem.SortLetter,T) + !String.IsEqual(Container(51).ListItem.SortLetter,U) + !String.IsEqual(Container(51).ListItem.SortLetter,V) + !String.IsEqual(Container(51).ListItem.SortLetter,W) + !String.IsEqual(Container(51).ListItem.SortLetter,X) + !String.IsEqual(Container(51).ListItem.SortLetter,Y) + !String.IsEqual(Container(51).ListItem.SortLetter,Z)">5151</ondown>
                 <ondown condition="Control.IsVisible(51) + Integer.IsGreater(Container(51).NumItems,12) + Container.SortDirection(ascending) + [Container.SortMethod(1) | Container.SortMethod(7) | Container.SortMethod(29)] + String.IsEqual(Container(51).ListItem.SortLetter,A)">5152</ondown>
                 <ondown condition="Control.IsVisible(51) + Integer.IsGreater(Container(51).NumItems,12) + Container.SortDirection(ascending) + [Container.SortMethod(1) | Container.SortMethod(7) | Container.SortMethod(29)] + String.IsEqual(Container(51).ListItem.SortLetter,B)">5153</ondown>
@@ -2571,7 +2577,9 @@
                 <preloaditems>2</preloaditems>
                 <!-- 2.1.34 (#27): Up always opens the menu (view, search, sort, filter); fast scrolling is the slider below -->
                 <onup>9050</onup>
-                <onleft>9050</onleft>
+                <!-- 2.1.41 (#27): the row goes round: Left on the first title goes to the last, Right on the last goes to the first -->
+                <onleft>Action(LastPage)</onleft>
+                <onright>Action(FirstPage)</onright>
                 <ondown>6053</ondown>
                 <pagecontrol>6053</pagecontrol>
                 <viewtype label="$LOCALIZE[31034]">wrap</viewtype>
