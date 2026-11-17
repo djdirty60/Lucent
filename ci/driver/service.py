@@ -7148,13 +7148,11 @@ def touchside_test():
         xbmc.executebuiltin(f"SetFocus({view},2)")
         mon.waitForAbort(1.5)
         res = []
-        for x, y in ((120, 200), (300, 400), (500, 150), (300, 900)):
-            subprocess.run(["xdotool", "mousemove", str(x), str(y)], timeout=5)
-            mon.waitForAbort(0.5)
-            subprocess.run(["xdotool", "mousemove", str(x + 3), str(y + 3)], timeout=5)
-            mon.waitForAbort(1.2)
+        for x, y in ((30, 820), (30, 400), (120, 200), (500, 150)):     # empty spots only (no poster)
+            subprocess.run(["xdotool", "mousemove", str(x), str(y), "click", "1"], timeout=5)
+            mon.waitForAbort(1.5)
             res.append(f"({x},{y})->{lab('System.CurrentControlID') or '-'}{'*PANEL' if cond('ControlGroup(9050).HasFocus') else ''}")
-            if view == 51 and (x, y) == (300, 400):
+            if view == 51 and (x, y) == (30, 820):
                 shot("30-pointer-left-51")
             xbmc.executebuiltin(f"SetFocus({view},2)")
             mon.waitForAbort(0.8)
