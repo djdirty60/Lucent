@@ -7283,6 +7283,71 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def hintslider_test():
+    """#28/#29 (2.1.42): settings 'Up hint' and 'Slider only when scrolling fast'."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(4)
+    for i in range(12):
+        xbmc.executebuiltin(f"SetFocus(9000,{i},absolute)")
+        mon.waitForAbort(0.4)
+        if lab("Container(9000).ListItem.Property(cat)") == "2":
+            break
+    xbmc.executebuiltin("Skin.SetBool(lucent.ss.open.2206)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("SetFocus(1235)")
+    mon.waitForAbort(1.5)
+    out.append(f"settings focus={lab('System.CurrentControlID')}")
+    shot("28-settings-rows")
+    key("Down"); mon.waitForAbort(1)
+    out.append(f"Down -> {lab('System.CurrentControlID')}")
+    key("Down"); mon.waitForAbort(1)
+    out.append(f"Down -> {lab('System.CurrentControlID')}")
+    key("Up"); key("Up"); key("Up"); mon.waitForAbort(1)
+    out.append(f"Up x3 -> {lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("SetFocus(1235)"); mon.waitForAbort(1)
+    key("Return"); mon.waitForAbort(1)
+    out.append(f"click hint -> off={cond('Skin.HasSetting(lucent.rowhint.off)')}")
+    xbmc.executebuiltin("SetFocus(1236)"); mon.waitForAbort(1)
+    key("Return"); mon.waitForAbort(1)
+    out.append(f"click slider -> fast={cond('Skin.HasSetting(lucent.slider.fast)')}")
+    shot("28-settings-both-changed")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(51,0,absolute)")
+    mon.waitForAbort(2)
+    out.append(f"view51 still: slider visible={cond('Control.IsVisible(6051)')}")
+    shot("29-still")
+    subprocess.run(["xdotool", "keydown", "Right"], timeout=5)
+    seen = False
+    for _ in range(20):
+        mon.waitForAbort(0.1)
+        if cond("Control.IsVisible(6051)"):
+            seen = True
+            break
+    shot("29-holding")
+    subprocess.run(["xdotool", "keyup", "Right"], timeout=5)
+    out.append(f"holding Right: slider seen={seen} item={lab('Container(51).CurrentItem')}")
+    mon.waitForAbort(2.5)
+    out.append(f"after release: visible={cond('Control.IsVisible(6051)')}")
+    key("Down"); mon.waitForAbort(1)
+    out.append(f"Down -> focus={lab('System.CurrentControlID')} visible={cond('Control.IsVisible(6051)')}")
+    shot("29-down")
+    xbmc.executebuiltin("Skin.Reset(lucent.rowhint.off)")
+    xbmc.executebuiltin("Skin.Reset(lucent.slider.fast)")
+    log("hintslider: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def hintpos_test():
     """Mockups: where the 'Up: View · Sort · Filter' hint goes (in front of the clock / above the logo)."""
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
@@ -12581,6 +12646,7 @@ def main():
     safe(touchbtn_test)
     safe(wrap_test)
     safe(hintpos_test)
+    safe(hintslider_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
