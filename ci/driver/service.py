@@ -7295,7 +7295,7 @@ def hintpos_test():
         xbmc.executebuiltin(f"Container.SetViewMode({v})")
         mon.waitForAbort(2)
         xbmc.executebuiltin(f"SetFocus({v})")
-        for pos, top in (("clock", False), ("clock", True), ("logo", True)):
+        for pos, top in (("final", False), ("final", True)):
             xbmc.executebuiltin(f"Skin.SetString(ci.hintpos,{pos})")
             xbmc.executebuiltin("Skin.SetBool(lucent.hidetopbar)" if top else "Skin.Reset(lucent.hidetopbar)")
             mon.waitForAbort(1.5)
