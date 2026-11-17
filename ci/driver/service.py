@@ -7283,6 +7283,31 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def osdlow_test():
+    """#32 (2.1.42): the player buttons sit 12 lower (in the black bar of a 2.39:1 film)."""
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Player.HasVideo"):
+            break
+    for _ in range(8):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("PlayerControl(Play)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(103)")
+    mon.waitForAbort(1.5)
+    log(f"osdlow: window={lab('System.CurrentWindow')!r} focus={lab('System.CurrentControlID')} paused={cond('Player.Paused')}")
+    shot("32-osd-low")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def hintslider_test():
     """#28/#29 (2.1.42): settings 'Up hint' and 'Slider only when scrolling fast'."""
     import subprocess
@@ -12648,6 +12673,7 @@ def main():
     safe(hintpos_test)
     safe(hintslider_test)
     safe(osd_test)
+    safe(osdlow_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
