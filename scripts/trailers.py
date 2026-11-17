@@ -125,6 +125,7 @@ class Trailers(xbmc.Player):
         self.started_at = 0.0
         self.focus_key = ""
         self.focus_since = 0.0
+        self.hold_key = ""         # 2.1.35: the card the helper put the focus on (no trailer there)
         self.tried = ""            # the card we already tried during this visit
         self.cache = {}
         self.failures = 0          # trailers in a row that YouTube could not play
@@ -354,6 +355,20 @@ class Trailers(xbmc.Player):
             self.focus_key = ""
             return
         self.lost_since = 0.0
+        if HOME.getProperty("lucent.trailer.hold"):
+            # 2.1.35: the helper put the focus back on this card (Home came back without focus): you did not pick it,
+            # so no trailer here; the hold ends as soon as you move to another card
+            if not self.hold_key:
+                self.hold_key = focus.key
+            if focus.key == self.hold_key:
+                self.stop_ours()
+                self.focus_key = focus.key
+                self.focus_since = time.time()
+                return
+            HOME.clearProperty("lucent.trailer.hold")
+            self.hold_key = ""
+        elif self.hold_key:
+            self.hold_key = ""
         if focus.key != self.focus_key:
             dbg(f"new card: {self.focus_key[:28]} -> {focus.key[:28]}")
             self.stop_ours()

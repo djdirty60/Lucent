@@ -6965,6 +6965,68 @@ def viewmix_test():
     mon.waitForAbort(2)
 
 
+def trailerhold_test():
+    """2.1.35: Home comes back without focus (here: a mouse click on an empty spot). Left from the side menu -> back to
+    the menu; left from a row -> back to the row, but no poster trailer until you pick another card yourself."""
+    import subprocess
+    out = []
+    logf = xbmcvfs.translatePath("special://logpath/kodi.log")
+
+    def tries():
+        try:
+            body = open(logf, errors="replace").read()
+        except OSError:
+            return -1
+        return body.count("trailers: test:") + body.count("trailers: play ")
+
+    def click_empty():
+        subprocess.run(["xdotool", "mousemove", "1500", "420", "click", "1"], timeout=5)
+        mon.waitForAbort(0.5)
+        subprocess.run(["xdotool", "mousemove", "1910", "5"], timeout=5)
+
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailers.menu)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.posterfocus,window)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.trailer.delay,2)")
+    xbmc.executebuiltin("Skin.SetBool(nuvio.trailer.test)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(5)
+    # 1: from the side menu
+    xbmc.executebuiltin("SetFocus(9000)")
+    mon.waitForAbort(2)
+    click_empty()
+    mon.waitForAbort(1)
+    out.append(f"menu: after click focus={lab('System.CurrentControlID')!r}")
+    mon.waitForAbort(4)
+    out.append(f"menu: 4 s later focus={lab('System.CurrentControlID')}")
+    # 2: from a row
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(2)
+    key("Right")
+    mon.waitForAbort(3)
+    row = lab("System.CurrentControlID")
+    t0 = tries()
+    mon.waitForAbort(4)
+    out.append(f"row {row}: chose it myself -> trailer tries +{tries() - t0}")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(2)
+    click_empty()
+    mon.waitForAbort(1)
+    t0 = tries()
+    mon.waitForAbort(8)
+    out.append(f"row: helper put it back focus={lab('System.CurrentControlID')} hold={HOME.getProperty('lucent.trailer.hold')!r} trailer tries in 8 s +{tries() - t0}")
+    key("Right")
+    mon.waitForAbort(5)
+    out.append(f"row: moved myself -> hold={HOME.getProperty('lucent.trailer.hold')!r} trailer tries +{tries() - t0}")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    for k in ("nuvio.trailers.menu", "nuvio.trailer.test"):
+        xbmc.executebuiltin(f"Skin.Reset({k})")
+    xbmc.executebuiltin("Skin.Reset(nuvio.posterfocus)")
+    log("trailerhold: " + " | ".join(out))
+    mon.waitForAbort(2)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12154,6 +12216,7 @@ def main():
     safe(viewnav_test)
     safe(osdorder_test)
     safe(viewmix_test)
+    safe(trailerhold_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)

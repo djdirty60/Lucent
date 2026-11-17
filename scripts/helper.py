@@ -204,7 +204,7 @@ def run():
     threading.Thread(target=worker, daemon=True).start()
 
 
-    lost = {"n": 0}
+    lost = {"n": 0, "last": 0}
     lost_settings = {"n": 0}
     rowstate = {"ok": {}, "memo": {}, "path": {}, "fresh": {}}
     ROW_ORDER = [(8090, 9988), (8091, 9989)] + [(base + n, marker + n) for n in range(1, 11) for base, marker in ((8100, 9900), (8200, 9910))]
@@ -328,13 +328,21 @@ def run():
         except RuntimeError:
             fid = 0
         stuck = fid == 0 or (fid == 9100 and not cond("Control.IsVisible(9991)"))
+        if not stuck:
+            lost["last"] = fid                       # where you were on Home, for when it comes back without focus
         lost["n"] = lost["n"] + 1 if stuck else 0
         if lost["n"] >= 2:
             lost["n"] = 0
             row = HOME.getProperty("nuvio.row")
+            if lost["last"] == 9000:
+                # 2.1.35: you left Home from the side menu (for example Settings): back to the menu, not to a row
+                xbmc.executebuiltin("SetFocus(9000)")
+                log("Home had no focus - back to the menu (you were there)")
             # a mouse or a tap on an empty spot also leaves Home without focus (issue #13): then go back to the row you
             # were on, so the side menu does not open by itself; only without such a row back to the menu
-            if row.isdigit() and cond(f"Control.IsVisible({row}) + Integer.IsGreater(Container({row}).NumItems,0)"):
+            elif row.isdigit() and cond(f"Control.IsVisible({row}) + Integer.IsGreater(Container({row}).NumItems,0)"):
+                # 2.1.35: Lucent put the focus there, not you: no poster trailer until you pick a card yourself
+                HOME.setProperty("lucent.trailer.hold", "1")
                 xbmc.executebuiltin(f"SetFocus({row})")
                 log(f"Home had no focus - back to row {row}")
             else:
