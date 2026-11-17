@@ -7130,6 +7130,50 @@ def deadkeys_test():
     log("deadkeys: " + " || ".join(lines[-4:]))
 
 
+def touchside_test():
+    """#30: a click (tap) on the left of a library list must not open the side panel; Left with the remote still does."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    for view in (51, 52, 50):
+        xbmc.executebuiltin(f"Container.SetViewMode({view})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({view},2)")
+        mon.waitForAbort(1.5)
+        res = []
+        for x, y in ((60, 300), (300, 400), (500, 150), (300, 950)):
+            subprocess.run(["xdotool", "mousemove", str(x), str(y)], timeout=5)
+            mon.waitForAbort(0.4)
+            subprocess.run(["xdotool", "click", "1"], timeout=5)
+            mon.waitForAbort(1.2)
+            res.append(f"({x},{y})->{lab('System.CurrentControlID')}{'*' if cond('ControlGroup(9050).HasFocus') else ''}")
+            if cond("ControlGroup(9050).HasFocus") or not cond(f"Control.IsVisible({view})"):
+                xbmc.executebuiltin("Dialog.Close(all,true)")
+                xbmc.executebuiltin(f"SetFocus({view},2)")
+                mon.waitForAbort(1)
+        subprocess.run(["xdotool", "mousemove", "1910", "5"], timeout=5)
+        if view == 51:
+            shot("30-click-left-51")
+        xbmc.executebuiltin(f"SetFocus({view},0)")
+        mon.waitForAbort(1)
+        key("Left")
+        mon.waitForAbort(1.5)
+        res.append(f"remote Left->{lab('System.CurrentControlID')} panel={cond('ControlGroup(9050).HasFocus')}")
+        if view == 52:
+            shot("30-remote-left-52")
+        key("Right")
+        mon.waitForAbort(1)
+        out.append(f"view {view}: " + " ".join(res))
+    log("touchside: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12323,6 +12367,7 @@ def main():
     safe(watchdog_test)
     safe(debugpath_test)
     safe(deadkeys_test)
+    safe(touchside_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
