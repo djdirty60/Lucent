@@ -7033,6 +7033,30 @@ def trailerhold_test():
     mon.waitForAbort(2)
 
 
+def watchdog_test():
+    """2.1.35 (#22): the watchdog writes to the log when Kodi does not answer for more than 3 s. A real freeze cannot be
+    made here, so a second watchdog gets a prober that 'hangs' for 12 s (as if Kodi did not answer)."""
+    import sys as _s
+    import threading
+    _s.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
+    import watchdog
+    stop = threading.Event()
+    dog = watchdog.Watchdog(stop)
+
+    def slow_prober():
+        dog.window = "Home (test)"
+        dog.asked = time.time()
+        time.sleep(12)                    # Kodi 'does not answer'
+        dog.asked = 0.0
+    threading.Thread(target=slow_prober, name="test-prober", daemon=True).start()
+    threading.Thread(target=dog.watcher, name="watchdog-watcher", daemon=True).start()
+    mon.waitForAbort(15)
+    stop.set()
+    logf = xbmcvfs.translatePath("special://logpath/kodi.log")
+    lines = [ln.split("watchdog: ", 1)[1][:400] for ln in open(logf, errors="replace") if "[skin.lucent] watchdog:" in ln]
+    log("watchdogtest: " + " || ".join(lines[-4:]))
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12223,6 +12247,7 @@ def main():
     safe(osdorder_test)
     safe(viewmix_test)
     safe(trailerhold_test)
+    safe(watchdog_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)

@@ -202,6 +202,11 @@ def run():
     HOME.clearProperty(STOP)
     threading.Thread(target=beat, daemon=True).start()
     threading.Thread(target=worker, daemon=True).start()
+    try:
+        import watchdog                              # 2.1.35 (#22): writes to the log when Kodi stops reacting
+        watchdog.Watchdog(stop).start()
+    except Exception as error:  # noqa: BLE001
+        log(f"watchdog: {error}")
 
 
     lost = {"n": 0, "last": 0}
