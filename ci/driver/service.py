@@ -5404,7 +5404,7 @@ def intro2_test():
     was_off = cond("Skin.HasSetting(lucent.intro.off)")
     xbmc.executebuiltin("Skin.Reset(lucent.intro.off)")
     mon.waitForAbort(0.5)
-    xbmc.executebuiltin("ActivateWindow(1195)")
+    xbmc.executebuiltin("ActivateWindow(startup)")
     for _ in range(100):
         if lab("Window(home).Property(lucent.intro.go)"):
             break
