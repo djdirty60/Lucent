@@ -41,7 +41,10 @@ def tick():
     path = label("Container.FolderPath")
     content = label("Container.Content") or "none"
     opened = not STATE["path"]                                # the window was just opened (not a step inside it)
-    key = f"lucent.view.{window}.{content}"
+    # 2.1.38 (#27): browsing files (sources, folders) has its own remembered views. A scanned folder there also says
+    # 'movies', so Files and the Movies library shared one view: List in Files made Movies a list too.
+    files = not path.startswith(("videodb://", "musicdb://", "library://", "plugin://", "special://"))
+    key = f"lucent.view.{window}.{'files.' if files else ''}{content}"
     view = visible_view(WINDOWS[window])
     now = time.time()
     if path != STATE["path"] or key != STATE["key"]:
