@@ -7131,10 +7131,12 @@ def deadkeys_test():
 
 
 def touchside_test():
-    """#30: a click (tap) on the left of a library list must not open the side panel; Left with the remote still does."""
+    """#30: the pointer (a finger on a touch screen) on the left of a library list must not open the side panel; Left
+    with the remote still does. Only mouse moves here (a click would play the title)."""
     import subprocess
     out = []
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("PlayerControl(Stop)")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
                                     "params": {"setting": "filelists.showparentdiritems", "value": False}}))
@@ -7146,19 +7148,18 @@ def touchside_test():
         xbmc.executebuiltin(f"SetFocus({view},2)")
         mon.waitForAbort(1.5)
         res = []
-        for x, y in ((60, 300), (300, 400), (500, 150), (300, 950)):
+        for x, y in ((120, 200), (300, 400), (500, 150), (300, 900)):
             subprocess.run(["xdotool", "mousemove", str(x), str(y)], timeout=5)
-            mon.waitForAbort(0.4)
-            subprocess.run(["xdotool", "click", "1"], timeout=5)
+            mon.waitForAbort(0.5)
+            subprocess.run(["xdotool", "mousemove", str(x + 3), str(y + 3)], timeout=5)
             mon.waitForAbort(1.2)
-            res.append(f"({x},{y})->{lab('System.CurrentControlID')}{'*' if cond('ControlGroup(9050).HasFocus') else ''}")
-            if cond("ControlGroup(9050).HasFocus") or not cond(f"Control.IsVisible({view})"):
-                xbmc.executebuiltin("Dialog.Close(all,true)")
-                xbmc.executebuiltin(f"SetFocus({view},2)")
-                mon.waitForAbort(1)
+            res.append(f"({x},{y})->{lab('System.CurrentControlID') or '-'}{'*PANEL' if cond('ControlGroup(9050).HasFocus') else ''}")
+            if view == 51 and (x, y) == (300, 400):
+                shot("30-pointer-left-51")
+            xbmc.executebuiltin(f"SetFocus({view},2)")
+            mon.waitForAbort(0.8)
         subprocess.run(["xdotool", "mousemove", "1910", "5"], timeout=5)
-        if view == 51:
-            shot("30-click-left-51")
+        mon.waitForAbort(1)
         xbmc.executebuiltin(f"SetFocus({view},0)")
         mon.waitForAbort(1)
         key("Left")

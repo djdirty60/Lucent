@@ -339,10 +339,12 @@ def run():
         if lost["n"] >= 2:
             lost["n"] = 0
             row = HOME.getProperty("nuvio.row")
-            if lost["last"] == 9000:
-                # 2.1.35: you left Home from the side menu (for example Settings): back to the menu, not to a row
-                xbmc.executebuiltin("SetFocus(9000)")
-                log("Home had no focus - back to the menu (you were there)")
+            last = lost["last"]
+            if last and cond(f"Control.IsVisible({last})") and (last < 8000 or last > 8299):
+                # 2.1.35: back where you were when you left Home (the side menu, or the tiles of the Settings tab, #22):
+                # 2.1.37: not only the menu - the Settings tab's tiles (9350) were sent to a row you could not see
+                xbmc.executebuiltin(f"SetFocus({last})")
+                log(f"Home had no focus - back to {last} (you were there)")
             # a mouse or a tap on an empty spot also leaves Home without focus (issue #13): then go back to the row you
             # were on, so the side menu does not open by itself; only without such a row back to the menu
             elif row.isdigit() and cond(f"Control.IsVisible({row}) + Integer.IsGreater(Container({row}).NumItems,0)"):
