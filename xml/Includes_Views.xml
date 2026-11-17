@@ -1008,8 +1008,7 @@
                     <include>LucentSliderFade</include>
                 </control>
                 <control type="scrollbar" id="60$PARAM[id]">
-                    <visible>!Skin.HasSetting(lucent.slider.fast) | Container($PARAM[id]).Scrolling | Control.HasFocus(60$PARAM[id])</visible>
-                    <allowhiddenfocus>true</allowhiddenfocus>
+                    <visible allowhiddenfocus="true">!Skin.HasSetting(lucent.slider.fast) | Container($PARAM[id]).Scrolling | Control.HasFocus(60$PARAM[id])</visible>
                     <include>LucentSliderFade</include>
                     <left>96</left><top>1040</top><width>1728</width><height>10</height>
                     <orientation>horizontal</orientation>
