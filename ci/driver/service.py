@@ -7283,6 +7283,40 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def wrap_test():
+    """#27 (2.1.41): views 51 and 53 go round: Left on the first title -> last, Right on the last -> first; Up opens the menu."""
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    for v in (51, 53):
+        xbmc.executebuiltin(f"Container.SetViewMode({v})")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin(f"SetFocus({v},0,absolute)")
+        mon.waitForAbort(1)
+        n = lab(f"Container({v}).NumItems")
+        a = f"start {lab(f'Container({v}).CurrentItem')}/{n} {lab('ListItem.Label')!r}"
+        key("Left"); mon.waitForAbort(1.5)
+        b = f"Left -> {lab(f'Container({v}).CurrentItem')}/{n} {lab('ListItem.Label')!r} focus={lab('System.CurrentControlID')}"
+        shot(f"27-wrap-{v}-last")
+        key("Right"); mon.waitForAbort(1.5)
+        c = f"Right -> {lab(f'Container({v}).CurrentItem')}/{n} {lab('ListItem.Label')!r} focus={lab('System.CurrentControlID')}"
+        shot(f"27-wrap-{v}-first")
+        key("Right"); mon.waitForAbort(1)
+        d = f"Right again -> {lab(f'Container({v}).CurrentItem')}"
+        key("Up"); mon.waitForAbort(1.5)
+        e = f"Up -> menu={cond('ControlGroup(9050).HasFocus')}"
+        key("Escape"); mon.waitForAbort(1)
+        out.append(f"view {v}: {a}; {b}; {c}; {d}; {e}")
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    log("wrap: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def touchbtn_test():
     """#30: the Options button for touch screens: hidden without lucent.touch; with it, a tap opens the side panel."""
     import subprocess
@@ -12522,6 +12556,7 @@ def main():
     safe(tabfocus_test)
     safe(backpos_test)
     safe(touchbtn_test)
+    safe(wrap_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
