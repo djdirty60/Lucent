@@ -987,19 +987,29 @@
     </include>
     <!-- 2.1.34 (#27): fast-scroll slider under a one-row view (51, 53), with the position (34 / 120); and a small hint
          that Up opens the menu. The slider is the row's page control: Left/Right on it scroll the row a page. -->
+    <include name="LucentSliderFade">
+        <animation effect="fade" start="0" end="100" time="150">Visible</animation>
+        <animation effect="fade" start="100" end="0" delay="800" time="300">Hidden</animation>
+    </include>
     <include name="LucentRowSlider">
         <param name="id"/>
         <param name="visible"/>
         <definition>
             <control type="group">
                 <visible>$PARAM[visible]</visible>
+                <!-- 2.1.42 (#29): with 'Slider only when scrolling fast' the slider and counter show only while the row
+                     scrolls fast (a key held down) or when the slider has the focus; Down still reaches it (allowhiddenfocus) -->
                 <control type="label">
                     <left>96</left><top>1002</top><width>1728</width><height>30</height>
                     <font>font_tiny</font><align>right</align><aligny>center</aligny>
                     <textcolor>text3</textcolor>
                     <label>$INFO[Container($PARAM[id]).CurrentItem]$INFO[Container($PARAM[id]).NumItems, / ]</label>
+                    <visible>!Skin.HasSetting(lucent.slider.fast) | Container($PARAM[id]).Scrolling | Control.HasFocus(60$PARAM[id])</visible>
+                    <include>LucentSliderFade</include>
                 </control>
                 <control type="scrollbar" id="60$PARAM[id]">
+                    <visible allowhiddenfocus="true">!Skin.HasSetting(lucent.slider.fast) | Container($PARAM[id]).Scrolling | Control.HasFocus(60$PARAM[id])</visible>
+                    <include>LucentSliderFade</include>
                     <left>96</left><top>1040</top><width>1728</width><height>10</height>
                     <orientation>horizontal</orientation>
                     <showonepage>false</showonepage>
@@ -1016,7 +1026,7 @@
             <control type="grouplist">
                 <right>96</right><top>44</top><width>1500</width><height>44</height>
                 <orientation>horizontal</orientation><align>right</align><itemgap>28</itemgap>
-                <visible>Control.HasFocus($PARAM[id]) | Control.HasFocus(60$PARAM[id])</visible>
+                <visible>[Control.HasFocus($PARAM[id]) | Control.HasFocus(60$PARAM[id])] + !Skin.HasSetting(lucent.rowhint.off)</visible>
                 <animation effect="fade" start="0" end="100" time="200">Visible</animation>
                 <control type="label">
                     <width>auto</width><height>44</height>

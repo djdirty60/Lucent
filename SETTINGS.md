@@ -160,6 +160,8 @@ _What's new, updates, self-test and system information_
   - **Remember view per kind** – The view you pick for films, series, episodes ... is used in every folder of that kind
   - **Episodes in landscape rows** – Picture of the episode (a still from the episode)
   - **Name and count above lists** – Name and count above a list, e.g. 'Red Light · 1647 items · Date'
+  - **Up hint in one-row views** – Shows 'Up: View · Sort · Filter' next to the clock; Up keeps working when it is off
+  - **Slider only when scrolling fast** – The slider under a one-row view only shows while you hold a key down; Down still goes to it
 
 ### Skin settings › Menu and widgets
 

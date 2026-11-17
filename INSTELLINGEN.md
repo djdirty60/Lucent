@@ -160,6 +160,8 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
   - **Weergave onthouden per soort** – De weergave die je kiest voor films, series, afleveringen ... geldt in elke map van die soort
   - **Afleveringen in liggende rijen** – Plaatje van de aflevering (een beeld uit de aflevering)
   - **Naam en aantal boven lijsten** – Naam en aantal boven een lijst, bijv. 'Red Light · 1647 items · Datum'
+  - **Tekstje Omhoog in weergaven met één rij** – Toont 'Omhoog: Weergave · Sorteren · Filter' naast de klok; Omhoog blijft werken als het uit staat
+  - **Schuifbalk alleen bij snel scrollen** – De schuifbalk onder de rij verschijnt alleen als je een knop ingedrukt houdt; Omlaag gaat er nog steeds naartoe
 
 ### Skin-instellingen › Menu en widgets
 
