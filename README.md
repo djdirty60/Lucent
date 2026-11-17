@@ -129,6 +129,8 @@ The first time Lucent opens, a short assistant walks through **Films and series*
 ### Settings
 Lucent's settings are grouped in categories: **Lucent** (look, menu, streaming services, kids mode, setup assistant), **Watching** (playback, trailers, subtitles and skip intro), **Live TV**, **System**, **Add-ons**, **Files and profiles** and **Help and info** (what's new, updates, self-test, safe log). Kodi pages you rarely need are under *System → More Kodi settings*.
 
+**Can't find a setting?** [SETTINGS.md](SETTINGS.md) lists every setting with the path to it (in Dutch: [INSTELLINGEN.md](INSTELLINGEN.md)).
+
 ### Also
 - **Kids mode** – a PIN and a choice of side-menu items; the settings ask for the PIN.
 - **Backup and restore** – one zip with Lucent's settings and menu, Kodi's favourites and sources and the settings of your video add-ons and IPTV Simple; optionally every week into a folder you choose. The backup holds your logins – keep it to yourself.
