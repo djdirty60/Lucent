@@ -87,7 +87,7 @@
                 </control>
                 <!-- the signs of the add-ons in the Lucent family (only signs, no names) -->
                 <control type="image">
-                    <left>753</left>
+                    <left>701</left>
                     <top>818</top>
                     <width>48</width>
                     <height>56</height>
@@ -97,7 +97,7 @@
                     <animation effect="slide" start="0,24" end="0,0" time="600" delay="3300" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <control type="image">
-                    <left>861</left>
+                    <left>809</left>
                     <top>818</top>
                     <width>73</width>
                     <height>56</height>
@@ -107,7 +107,7 @@
                     <animation effect="slide" start="0,24" end="0,0" time="600" delay="3500" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <control type="image">
-                    <left>994</left>
+                    <left>942</left>
                     <top>818</top>
                     <width>58</width>
                     <height>56</height>
@@ -117,7 +117,7 @@
                     <animation effect="slide" start="0,24" end="0,0" time="600" delay="3700" tween="cubic" easing="out">Visible</animation>
                 </control>
                 <control type="image">
-                    <left>1112</left>
+                    <left>1060</left>
                     <top>818</top>
                     <width>55</width>
                     <height>56</height>
@@ -125,6 +125,17 @@
                     <texture>intro/sign_repository.png</texture>
                     <animation effect="fade" start="0" end="100" time="600" delay="3900" tween="sine" easing="out">Visible</animation>
                     <animation effect="slide" start="0,24" end="0,0" time="600" delay="3900" tween="cubic" easing="out">Visible</animation>
+                </control>
+                <!-- 2.1.43: vfs.lucent, the fast reader of the video add-on (a lightning bolt, blue like its icon) -->
+                <control type="image">
+                    <left>1175</left>
+                    <top>818</top>
+                    <width>44</width>
+                    <height>56</height>
+                    <visible>!String.IsEmpty(Window(home).Property(lucent.intro.go))</visible>
+                    <texture>intro/sign_vfs.png</texture>
+                    <animation effect="fade" start="0" end="100" time="600" delay="4100" tween="sine" easing="out">Visible</animation>
+                    <animation effect="slide" start="0,24" end="0,0" time="600" delay="4100" tween="cubic" easing="out">Visible</animation>
                 </control>
             </control>
         </control>
