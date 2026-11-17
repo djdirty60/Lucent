@@ -7173,6 +7173,47 @@ def touchside_test():
     mon.waitForAbort(2)
 
 
+def tabfocus_test():
+    """#22: from the tiles of the Settings tab on Home into a settings screen and back: the focus must come back to the
+    tiles (9350), not to a row that is not shown on that tab."""
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        for _ in range(60):
+            mon.waitForAbort(1)
+            if HOME.getProperty("lucent.helper"):
+                break
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("SetFocus(9000)")
+    mon.waitForAbort(1)
+    for _ in range(12):
+        if xbmc.getInfoLabel("Container(9000).ListItem.Label") in ("Settings", "Instellingen"):
+            break
+        key("Down")
+        mon.waitForAbort(0.8)
+    mon.waitForAbort(2)
+    key("Right")
+    mon.waitForAbort(2)
+    out.append(f"tab={xbmc.getInfoLabel('Container(9000).ListItem.Label')!r} focus={lab('System.CurrentControlID')}")
+    for rnd in range(3):
+        key("Return")
+        mon.waitForAbort(3)
+        win = lab("System.CurrentWindow")
+        key("BackSpace")
+        seen = []
+        for _ in range(8):
+            mon.waitForAbort(0.4)
+            seen.append(lab("System.CurrentControlID") or "-")
+        out.append(f"round {rnd + 1}: opened {win!r}, back -> {' '.join(seen)}")
+    shot("22-back-on-settings-tab")
+    log("tabfocus: " + " | ".join(out))
+
+
 def updtext_test():
     """2.1.33: the Lucent updater lets Kodi install an update from its repository (new texts right away, no restart);
     an add-on without a repository origin is still unpacked by the updater itself (new texts only after a restart)."""
@@ -12367,6 +12408,7 @@ def main():
     safe(debugpath_test)
     safe(deadkeys_test)
     safe(touchside_test)
+    safe(tabfocus_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
