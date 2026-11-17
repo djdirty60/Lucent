@@ -12647,6 +12647,7 @@ def main():
     safe(wrap_test)
     safe(hintpos_test)
     safe(hintslider_test)
+    safe(osd_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
