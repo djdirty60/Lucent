@@ -1,300 +1,300 @@
-2026-11-17 11:11:22.110 T:10103   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
-2026-11-17 11:11:22.119 T:10103   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 8 ms
-2026-11-17 11:11:22.119 T:10103 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
-2026-11-17 11:11:22.152 T:10103   debug <general>: CAddonDatabase::GetAddons took 42 ms
-2026-11-17 11:11:22.156 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.chardet-5.1.0.zip/script.module.chardet/ to /github/home/.kodi/addons/temp/81f55b88-2fec-43db-98d4-05a8407a12a8
-2026-11-17 11:11:22.183 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
-2026-11-17 11:11:22.184 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
-2026-11-17 11:11:22.185 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
-2026-11-17 11:11:22.185 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
-2026-11-17 11:11:22.188 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
-2026-11-17 11:11:22.188 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
-2026-11-17 11:11:22.193 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
-2026-11-17 11:11:22.194 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
-2026-11-17 11:11:22.194 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
-2026-11-17 11:11:22.197 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
-2026-11-17 11:11:22.197 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
-2026-11-17 11:11:22.198 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
-2026-11-17 11:11:22.198 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
-2026-11-17 11:11:22.199 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
-2026-11-17 11:11:22.200 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
-2026-11-17 11:11:22.200 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
-2026-11-17 11:11:22.201 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
-2026-11-17 11:11:22.202 T:10103    info <general>: CAddonMgr::FindAddon: script.module.chardet v5.1.0 installed
-2026-11-17 11:11:22.206 T:10103   debug <general>: CAddonMgr: script.module.chardet successfully loaded
-2026-11-17 11:11:22.206 T:10103   debug <general>: ADDONS: dependency [script.module.chardet] will not be version checked and unpinned
-2026-11-17 11:11:22.206 T:10103   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/script.module.idna/script.module.idna-3.10.0.zip>
-2026-11-17 11:11:22.207 T:10102   debug <general>: ContextMenuManager: addon menus reloaded.
-2026-11-17 11:11:22.259 T:10103   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/script.module.idna/script.module.idna-3.10.0.zip to https://ftp.halifax.rwth-aachen.de/xbmc/addons/omega/script.module.idna/script.module.idna-3.10.0.zip hash c4ff34dbfab2736e9214a374d331bd6f558d8b3fea8eb7902e210749509242b3
-2026-11-17 11:11:22.274 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:22.274 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:22.274 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:22.274 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:22.757 T:10103   debug <general>: CurlFile::Open - <https://ftp.halifax.rwth-aachen.de/xbmc/addons/omega/script.module.idna/script.module.idna-3.10.0.zip>
-2026-11-17 11:11:22.774 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:22.774 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:22.774 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:22.774 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:23.155 T:10103   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
-2026-11-17 11:11:23.168 T:10103   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 12 ms
-2026-11-17 11:11:23.168 T:10103 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
-2026-11-17 11:11:23.193 T:10103   debug <general>: CAddonDatabase::GetAddons took 38 ms
-2026-11-17 11:11:23.198 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.idna-3.10.0.zip/script.module.idna/ to /github/home/.kodi/addons/temp/51939760-5fa8-4030-ba2c-e2ddc692a630
-2026-11-17 11:11:23.209 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
-2026-11-17 11:11:23.210 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
-2026-11-17 11:11:23.211 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
-2026-11-17 11:11:23.211 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
-2026-11-17 11:11:23.214 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
-2026-11-17 11:11:23.214 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
-2026-11-17 11:11:23.218 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
-2026-11-17 11:11:23.219 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
-2026-11-17 11:11:23.220 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
-2026-11-17 11:11:23.223 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
-2026-11-17 11:11:23.223 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
-2026-11-17 11:11:23.224 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
-2026-11-17 11:11:23.224 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
-2026-11-17 11:11:23.225 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
-2026-11-17 11:11:23.226 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
-2026-11-17 11:11:23.226 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
-2026-11-17 11:11:23.227 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
-2026-11-17 11:11:23.228 T:10103    info <general>: CAddonMgr::FindAddon: script.module.idna v3.10.0 installed
-2026-11-17 11:11:23.235 T:10103   debug <general>: CAddonMgr: script.module.idna successfully loaded
-2026-11-17 11:11:23.236 T:10103   debug <general>: ADDONS: dependency [script.module.idna] will not be version checked and unpinned
-2026-11-17 11:11:23.236 T:10102   debug <general>: ContextMenuManager: addon menus reloaded.
-2026-11-17 11:11:23.236 T:10103   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip>
-2026-11-17 11:11:23.279 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:23.279 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:23.279 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:23.279 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:23.288 T:10103   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip to https://mirror.hro.nl/xbmc/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip hash 740b2d63bb50eee9fb35f01c567ec8d3588c5bbd548e2b8d280932be30d82f53
-2026-11-17 11:11:23.288 T:10103   debug <general>: easy_acquire - Created session to https://mirror.hro.nl
-2026-11-17 11:11:23.550 T:9926    debug <general>: ------ Window Deinit (DialogExtendedProgressBar.xml) ------
-2026-11-17 11:11:23.779 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:23.779 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:23.779 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:23.779 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:23.785 T:10103   debug <general>: CurlFile::Open - <https://mirror.hro.nl/xbmc/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip>
-2026-11-17 11:11:24.279 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:24.279 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:24.279 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:24.279 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:24.661 T:10103   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
-2026-11-17 11:11:24.677 T:10103   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 15 ms
-2026-11-17 11:11:24.677 T:10103 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
-2026-11-17 11:11:24.725 T:10103   debug <general>: CAddonDatabase::GetAddons took 63 ms
-2026-11-17 11:11:24.728 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.urllib3-2.2.3.zip/script.module.urllib3/ to /github/home/.kodi/addons/temp/869fe8b7-b0c4-4710-aba8-01c25b313842
-2026-11-17 11:11:24.751 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
-2026-11-17 11:11:24.752 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
-2026-11-17 11:11:24.753 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
-2026-11-17 11:11:24.753 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
-2026-11-17 11:11:24.755 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
-2026-11-17 11:11:24.755 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
-2026-11-17 11:11:24.759 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
-2026-11-17 11:11:24.760 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
-2026-11-17 11:11:24.761 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
-2026-11-17 11:11:24.764 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
-2026-11-17 11:11:24.764 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
-2026-11-17 11:11:24.765 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
-2026-11-17 11:11:24.765 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
-2026-11-17 11:11:24.766 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
-2026-11-17 11:11:24.767 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
-2026-11-17 11:11:24.767 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
-2026-11-17 11:11:24.768 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
-2026-11-17 11:11:24.769 T:10103    info <general>: CAddonMgr::FindAddon: script.module.urllib3 v2.2.3 installed
-2026-11-17 11:11:24.775 T:10103   debug <general>: CAddonMgr: script.module.urllib3 successfully loaded
-2026-11-17 11:11:24.776 T:10104   debug <general>: ContextMenuManager: addon menus reloaded.
-2026-11-17 11:11:24.779 T:10103   debug <general>: ADDONS: dependency [script.module.urllib3] will not be version checked and unpinned
-2026-11-17 11:11:24.779 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.requests-2.31.0.zip/script.module.requests/ to /github/home/.kodi/addons/temp/7ea1338a-e17f-40f0-a83e-782f668ec3ca
-2026-11-17 11:11:24.783 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:24.783 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:24.783 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:24.783 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:24.791 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
-2026-11-17 11:11:24.792 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
-2026-11-17 11:11:24.792 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
-2026-11-17 11:11:24.793 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
-2026-11-17 11:11:24.796 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
-2026-11-17 11:11:24.796 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
-2026-11-17 11:11:24.800 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
-2026-11-17 11:11:24.801 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
-2026-11-17 11:11:24.802 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
-2026-11-17 11:11:24.804 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
-2026-11-17 11:11:24.804 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
-2026-11-17 11:11:24.805 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
-2026-11-17 11:11:24.805 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
-2026-11-17 11:11:24.806 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
-2026-11-17 11:11:24.806 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
-2026-11-17 11:11:24.807 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
-2026-11-17 11:11:24.807 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
-2026-11-17 11:11:24.809 T:10103    info <general>: CAddonMgr::FindAddon: script.module.requests v2.31.0 installed
-2026-11-17 11:11:24.811 T:10103   debug <general>: CAddonMgr: script.module.requests successfully loaded
-2026-11-17 11:11:24.812 T:10104   debug <general>: ContextMenuManager: addon menus reloaded.
-2026-11-17 11:11:24.812 T:10103   debug <general>: ADDONS: dependency [script.module.requests] will not be version checked and unpinned
-2026-11-17 11:11:24.813 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fplugin.video.youtube-7.4.4.zip/plugin.video.youtube/ to /github/home/.kodi/addons/temp/e22bcf94-849b-4cc0-b112-6c7dd6182545
-2026-11-17 11:11:24.947 T:10103   debug <general>: LocalizeStrings: loaded 370 strings from file /github/home/.kodi/addons/plugin.video.youtube/resources/language/resource.language.en_gb/strings.po
-2026-11-17 11:11:24.955 T:10103   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
-2026-11-17 11:11:24.961 T:10103   debug <general>: ADDONS: pinned Addon: [plugin.video.youtube] Origin: [repository.xbmc.org] Version: [7.0.0]
-2026-11-17 11:11:24.962 T:10103   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip>
-2026-11-17 11:11:25.016 T:10103   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip to https://mirrors.xmission.com/kodi/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip hash de985b7c671e1f171f8ac8a71a9f24f035ffabebaeee3c3a173e570d8b3c50d6
-2026-11-17 11:11:25.180 T:10103   debug <general>: CurlFile::Open - <https://mirrors.xmission.com/kodi/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip>
-2026-11-17 11:11:25.262 T:9986     info <general>: [cidriver] updtext: {"plugin.citest before": ["1.0.0", "repository.citest", ""], "plugin.citest2 before": ["1.0.0", "", ""], "why": [true, true, {"value": 2}], "citest3 dialog": ["Skip intro", "Lucent Video now skips intro, recap and preview by itself. May Lucent switch off the separate TheIntroDB add-on? Lucent takes over its settings. Without that, Lucent's own button stays off, so two buttons never lie on top of each other."], "plugin.citest3 InstallAddon": ["1.0.0", "", 30.7], "setting now": {"value": 0}, "plugin.citest": {"version": "1.0.1", "restart_asked": false, "new_text": "New text", "seconds": 3.1, "origin": "repository.citest"}, "plugin.citest2": {"version": "1.0.1", "restart_asked": true, "new_text": "", "seconds": 5.1, "origin": ""}}
-2026-11-17 11:11:25.269 T:9986     info <general>: [cidriver] parse errors: 0 []
-2026-11-17 11:11:25.283 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:25.283 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:25.283 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:25.283 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:25.286 T:9986     info <general>: [cidriver] done
-2026-11-17 11:11:25.306 T:9926     info <general>: Stopping the application...
-2026-11-17 11:11:25.306 T:9926     info <general>: Stopping player
-2026-11-17 11:11:25.306 T:9976    debug <general>: Thread AlarmClock 140014323234496 terminating
-2026-11-17 11:11:25.306 T:9926     info <general>: Storing total System Uptime
-2026-11-17 11:11:25.306 T:9926     info <general>: Saving settings
-2026-11-17 11:11:25.308 T:9926     info <general>: Saving skin settings
-2026-11-17 11:11:25.309 T:9986    debug <general>: CPythonInvoker(3, /github/home/.kodi/addons/service.lucent.cidriver/service.py): script successfully run
-2026-11-17 11:11:25.309 T:9986    debug <general>: onExecutionDone(3, /github/home/.kodi/addons/service.lucent.cidriver/service.py)
-2026-11-17 11:11:25.310 T:9926     info <general>: Stopping all
-2026-11-17 11:11:25.310 T:10102   debug <general>: Thread JobWorker 140013048166080 terminating (autodelete)
-2026-11-17 11:11:25.310 T:10104   debug <general>: Thread JobWorker 140012863604416 terminating (autodelete)
-2026-11-17 11:11:25.339 T:9986    debug <general>: Python interpreter stopped
-2026-11-17 11:11:25.339 T:9986    debug <general>: Thread LanguageInvoker 140013769582272 terminating
-2026-11-17 11:11:25.511 T:10103   debug <general>: CAddonMgr::UnloadAddon: resource.images.studios.coloured unloaded
-2026-11-17 11:11:25.512 T:10103   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
-2026-11-17 11:11:25.518 T:10103   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 6 ms
-2026-11-17 11:11:25.518 T:10103 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
-2026-11-17 11:11:25.539 T:10103   debug <general>: CAddonDatabase::GetAddons took 26 ms
-2026-11-17 11:11:25.541 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fresource.images.studios.coloured-0.0.24.zip/resource.images.studios.coloured/ to /github/home/.kodi/addons/temp/d83a1b9d-abfd-4ba9-a89d-5c7ae5ca63f3
-2026-11-17 11:11:25.651 T:9998    debug <general>: Thread PVRGUIInfo 140013014603456 terminating
-2026-11-17 11:11:25.783 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:25.783 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:25.783 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:25.783 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:25.896 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
-2026-11-17 11:11:25.897 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
-2026-11-17 11:11:25.897 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
-2026-11-17 11:11:25.898 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
-2026-11-17 11:11:25.900 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
-2026-11-17 11:11:25.900 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
-2026-11-17 11:11:25.903 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
-2026-11-17 11:11:25.903 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
-2026-11-17 11:11:25.904 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
-2026-11-17 11:11:25.906 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
-2026-11-17 11:11:25.906 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
-2026-11-17 11:11:25.907 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
-2026-11-17 11:11:25.907 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
-2026-11-17 11:11:25.908 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
-2026-11-17 11:11:25.908 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
-2026-11-17 11:11:25.909 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
-2026-11-17 11:11:25.909 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
-2026-11-17 11:11:25.910 T:10103    info <general>: CAddonMgr::FindAddon: resource.images.studios.coloured v0.0.24 installed
-2026-11-17 11:11:25.910 T:10103   debug <general>: CAddonMgr: resource.images.studios.coloured successfully loaded
-2026-11-17 11:11:25.913 T:10103   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
-2026-11-17 11:11:25.913 T:10103   debug <general>: ADDONS: unpinned Addon: [resource.images.studios.coloured] Origin: [repository.xbmc.org] Version: [0.0.24]
-2026-11-17 11:11:25.914 T:10103   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip>
-2026-11-17 11:11:25.967 T:10103   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip to https://mirror.math.princeton.edu/pub/xbmc/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip hash cd6f96143e1efe423f85adcd2b0d9466ad4bcd5bcb0a4c5310b3916faf438e3e
-2026-11-17 11:11:26.113 T:10103   debug <general>: CurlFile::Open - <https://mirror.math.princeton.edu/pub/xbmc/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip>
-2026-11-17 11:11:26.283 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:26.283 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:26.283 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:26.283 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:26.495 T:10103   debug <general>: CAddonMgr::UnloadAddon: resource.images.studios.white unloaded
-2026-11-17 11:11:26.495 T:10103   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
-2026-11-17 11:11:26.499 T:10103   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 3 ms
-2026-11-17 11:11:26.500 T:10103 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
-2026-11-17 11:11:26.517 T:10103   debug <general>: CAddonDatabase::GetAddons took 21 ms
-2026-11-17 11:11:26.519 T:10103   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fresource.images.studios.white-0.0.34.zip/resource.images.studios.white/ to /github/home/.kodi/addons/temp/c999427f-872f-43b5-b4f6-e479d25391a7
-2026-11-17 11:11:26.594 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
-2026-11-17 11:11:26.594 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
-2026-11-17 11:11:26.595 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
-2026-11-17 11:11:26.595 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
-2026-11-17 11:11:26.597 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
-2026-11-17 11:11:26.597 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
-2026-11-17 11:11:26.600 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
-2026-11-17 11:11:26.601 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
-2026-11-17 11:11:26.601 T:10103   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
-2026-11-17 11:11:26.603 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
-2026-11-17 11:11:26.603 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
-2026-11-17 11:11:26.604 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
-2026-11-17 11:11:26.604 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
-2026-11-17 11:11:26.605 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
-2026-11-17 11:11:26.605 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
-2026-11-17 11:11:26.606 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
-2026-11-17 11:11:26.606 T:10103   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
-2026-11-17 11:11:26.607 T:10103    info <general>: CAddonMgr::FindAddon: resource.images.studios.white v0.0.34 installed
-2026-11-17 11:11:26.607 T:10103   debug <general>: CAddonMgr: resource.images.studios.white successfully loaded
-2026-11-17 11:11:26.610 T:10103   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
-2026-11-17 11:11:26.610 T:10103   debug <general>: ADDONS: unpinned Addon: [resource.images.studios.white] Origin: [repository.xbmc.org] Version: [0.0.34]
-2026-11-17 11:11:26.610 T:10115   debug <general>: Thread Timer 140013786363584 terminating
-2026-11-17 11:11:26.610 T:10103 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
-2026-11-17 11:11:26.610 T:10103   debug <general>: CRepositoryUpdater: closest next update check at 11/17/2026 5:11:17 PM (in 21591 s)
-2026-11-17 11:11:26.610 T:10103   debug <general>: CRepositoryUpdater: checking in 21591000 ms
-2026-11-17 11:11:26.611 T:10132   debug <general>: Thread Timer start, auto delete: false
-2026-11-17 11:11:26.611 T:10103   debug <general>: Thread JobWorker 140013568255680 terminating (autodelete)
-2026-11-17 11:11:26.611 T:9926    debug <general>: NetworkMessage - Signaling network services to stop
-2026-11-17 11:11:26.611 T:9926     info <general>: ES: Stopping event server
-2026-11-17 11:11:26.611 T:9926    debug <general>: CZeroconfAvahi::doRemoveService named: servers.jsonrpc-tcp
-2026-11-17 11:11:26.695 T:9992    debug <general>: Thread WSDiscoveryListenerUDP 140013232711360 terminating
-2026-11-17 11:11:26.695 T:9926     info <general>: CWSDiscoveryListenerUDP::Stop - Stopped
-2026-11-17 11:11:26.695 T:9926    debug <general>: NetworkMessage - Waiting for network services to stop
-2026-11-17 11:11:26.695 T:9926     info <general>: stopping zeroconf publishing
-2026-11-17 11:11:26.784 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:26.784 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:26.784 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:26.784 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:27.284 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
-2026-11-17 11:11:27.284 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
-2026-11-17 11:11:27.284 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
-2026-11-17 11:11:27.284 T:9969    error <general>: ActiveAE::InitSink - returned error
-2026-11-17 11:11:27.362 T:9991    debug <general>: Thread TCPServer 140013249492672 terminating
-2026-11-17 11:11:27.371 T:9990     info <general>: ES: UDP Event server stopped
-2026-11-17 11:11:27.371 T:9990    debug <general>: Thread EventServer 140013551474368 terminating
-2026-11-17 11:11:27.371 T:9926    debug <general>: CServiceAddonManager: stopping plugin.video.lucent.
-2026-11-17 11:11:27.371 T:9926    debug <general>: CPythonInvoker(1, /github/home/.kodi/addons/plugin.video.lucent/service.py): trigger Monitor abort request
-2026-11-17 11:11:27.372 T:9984    debug <general>: CPythonInvoker(1, /github/home/.kodi/addons/plugin.video.lucent/service.py): script successfully run
-2026-11-17 11:11:27.372 T:9984    debug <general>: onExecutionDone(1, /github/home/.kodi/addons/plugin.video.lucent/service.py)
-2026-11-17 11:11:27.372 T:9984    debug <general>: .
-2026-11-17 11:11:27.383 T:9984    debug <general>: Python interpreter interrupted by user
-2026-11-17 11:11:27.383 T:9926    debug <general>: CPythonInvoker(1, /github/home/.kodi/addons/plugin.video.lucent/service.py): script termination took 13ms
-2026-11-17 11:11:27.383 T:9926    debug <general>: CServiceAddonManager: stopping service.lucent.cidriver.
-2026-11-17 11:11:27.383 T:9926     info <general>: CServiceAddonManager: failed to stop service.lucent.cidriver (may have ended)
-2026-11-17 11:11:27.383 T:9984    debug <general>: Thread LanguageInvoker 140013954127552 terminating
-2026-11-17 11:11:27.383 T:9969    debug <general>: Thread ActiveAE 140014927214272 terminating
-2026-11-17 11:11:27.384 T:9970    debug <general>: Thread AESink 140014910432960 terminating
-2026-11-17 11:11:27.384 T:9926     info <general>: Application stopped
-2026-11-17 11:11:27.584 T:9926     info <general>: PVR Manager: Stopping
-2026-11-17 11:11:28.418 T:10000   debug <general>: Thread PVRTimers 140012897167040 terminating
-2026-11-17 11:11:28.418 T:9999     info <general>: EPG Container: Persisting unsaved events...
-2026-11-17 11:11:28.418 T:9999     info <general>: EPG Container: Persisting events done
-2026-11-17 11:11:28.418 T:9999    debug <general>: Thread EPGUpdater 140012913948352 terminating
-2026-11-17 11:11:28.418 T:9995     info <general>: PVR Manager: Stopped
-2026-11-17 11:11:28.418 T:9995    debug <general>: Thread PVRManager 140013752800960 terminating
-2026-11-17 11:11:28.418 T:9926    debug <general>: AddOnLog: pvr.iptvsimple: pvr.iptvsimple - ~IptvSimple Stopping update thread...
-2026-11-17 11:11:30.302 T:9926     info <general>: AddOnLog: pvr.iptvsimple: pvr.iptvsimple - ConnectionLost Could not validiate M3U after startup, but ignoring as startup is all we care about.
-2026-11-17 11:11:30.302 T:9926     info <general>: Skipped 1 duplicate messages..
-2026-11-17 11:11:30.302 T:9926    debug <general>: SECTION:UnloadDll(/usr/lib/x86_64-linux-gnu/kodi/addons/pvr.iptvsimple/pvr.iptvsimple.so.21.10.2)
-2026-11-17 11:11:30.302 T:9926     info <general>: ADDON: Dll Destroyed - IPTV Simple Client
-2026-11-17 11:11:30.302 T:9982    debug <general>: Thread PeripEventScan 140013987690176 terminating
-2026-11-17 11:11:30.381 T:9979    debug <general>: Thread PeripBusUSBUdev 140014189016768 terminating
-2026-11-17 11:11:30.381 T:9980    debug <general>: Thread PeripBusCEC 140014172235456 terminating
-2026-11-17 11:11:30.381 T:9981    debug <general>: Thread PeripBusAddon 140014155454144 terminating
-2026-11-17 11:11:30.652 T:9926     info <general>: unload skin
-2026-11-17 11:11:30.654 T:9926    debug <general>: ------ Window Deinit (DialogNotification.xml) ------
-2026-11-17 11:11:30.655 T:9926    debug <general>: ------ Window Deinit (Home.xml) ------
-2026-11-17 11:11:30.664 T:9926     info <general>: Unloaded skin
-2026-11-17 11:11:30.665 T:9926     info <general>: unload sections
-2026-11-17 11:11:30.667 T:9926     info <general>: CWSDiscoveryListenerUDP::Stop - Stopped
-2026-11-17 11:11:30.667 T:10132   debug <general>: Thread Timer 140013786363584 terminating
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 0 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 1 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 2 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 3 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 4 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 5 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 6 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 7 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 8 --> 0 instances
-2026-11-17 11:11:30.668 T:9926    debug <general>: object 9 --> 0 instances
-2026-11-17 11:11:30.672 T:9926     info <general>: XRANDR: /usr/lib/x86_64-linux-gnu/kodi/kodi-xrandr --screen 0 --output screen --mode 0x3a
-2026-11-17 11:11:30.680 T:9971    debug <general>: Thread FDEventMonitor 140014893651648 terminating
-2026-11-17 11:11:30.680 T:9928    debug <general>: Thread Lirc 140016031336128 terminating
-2026-11-17 11:11:30.681 T:9927    debug <general>: Thread Announce 140016048117440 terminating
-2026-11-17 11:11:30.681 T:9926     info <general>: Exiting the application...
+2026-11-17 11:40:34.400 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:34.400 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:34.400 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:34.518 T:10102   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-11-17 11:40:34.522 T:10102   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 3 ms
+2026-11-17 11:40:34.522 T:10102 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
+2026-11-17 11:40:34.535 T:10102   debug <general>: CAddonDatabase::GetAddons took 17 ms
+2026-11-17 11:40:34.537 T:10102   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.idna-3.10.0.zip/script.module.idna/ to /github/home/.kodi/addons/temp/31b59cf9-7b9e-430c-9022-6f9c45608076
+2026-11-17 11:40:34.544 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-11-17 11:40:34.544 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-11-17 11:40:34.544 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-11-17 11:40:34.545 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
+2026-11-17 11:40:34.546 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
+2026-11-17 11:40:34.546 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-11-17 11:40:34.548 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-11-17 11:40:34.549 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
+2026-11-17 11:40:34.549 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-11-17 11:40:34.551 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
+2026-11-17 11:40:34.551 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
+2026-11-17 11:40:34.552 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-11-17 11:40:34.552 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
+2026-11-17 11:40:34.553 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
+2026-11-17 11:40:34.554 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
+2026-11-17 11:40:34.554 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
+2026-11-17 11:40:34.555 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
+2026-11-17 11:40:34.556 T:10102    info <general>: CAddonMgr::FindAddon: script.module.idna v3.10.0 installed
+2026-11-17 11:40:34.557 T:10102   debug <general>: CAddonMgr: script.module.idna successfully loaded
+2026-11-17 11:40:34.558 T:10102   debug <general>: ADDONS: dependency [script.module.idna] will not be version checked and unpinned
+2026-11-17 11:40:34.558 T:10102   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip>
+2026-11-17 11:40:34.593 T:10102   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip to https://mirrors.dotsrc.org/kodi/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip hash 740b2d63bb50eee9fb35f01c567ec8d3588c5bbd548e2b8d280932be30d82f53
+2026-11-17 11:40:34.900 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:34.900 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:34.900 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:34.900 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:35.087 T:10102   debug <general>: CurlFile::Open - <https://mirrors.dotsrc.org/kodi/addons/omega/script.module.urllib3/script.module.urllib3-2.2.3.zip>
+2026-11-17 11:40:35.400 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:35.401 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:35.401 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:35.401 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:35.901 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:35.901 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:35.901 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:35.901 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:36.024 T:10102   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-11-17 11:40:36.028 T:10102   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 3 ms
+2026-11-17 11:40:36.028 T:10102 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
+2026-11-17 11:40:36.041 T:10102   debug <general>: CAddonDatabase::GetAddons took 17 ms
+2026-11-17 11:40:36.043 T:10102   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.urllib3-2.2.3.zip/script.module.urllib3/ to /github/home/.kodi/addons/temp/28a371a7-8900-47ea-9646-5d39d4d68b93
+2026-11-17 11:40:36.054 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-11-17 11:40:36.054 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-11-17 11:40:36.054 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-11-17 11:40:36.055 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
+2026-11-17 11:40:36.056 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
+2026-11-17 11:40:36.056 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-11-17 11:40:36.058 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-11-17 11:40:36.059 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
+2026-11-17 11:40:36.059 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-11-17 11:40:36.061 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
+2026-11-17 11:40:36.061 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
+2026-11-17 11:40:36.061 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-11-17 11:40:36.061 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
+2026-11-17 11:40:36.062 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
+2026-11-17 11:40:36.062 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
+2026-11-17 11:40:36.063 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
+2026-11-17 11:40:36.063 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
+2026-11-17 11:40:36.064 T:10102    info <general>: CAddonMgr::FindAddon: script.module.urllib3 v2.2.3 installed
+2026-11-17 11:40:36.065 T:10102   debug <general>: CAddonMgr: script.module.urllib3 successfully loaded
+2026-11-17 11:40:36.065 T:10102   debug <general>: ADDONS: dependency [script.module.urllib3] will not be version checked and unpinned
+2026-11-17 11:40:36.066 T:10102   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fscript.module.requests-2.31.0.zip/script.module.requests/ to /github/home/.kodi/addons/temp/eb083704-934a-4de1-a31e-92265c4c23ce
+2026-11-17 11:40:36.073 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-11-17 11:40:36.074 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-11-17 11:40:36.074 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-11-17 11:40:36.074 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
+2026-11-17 11:40:36.076 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
+2026-11-17 11:40:36.076 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-11-17 11:40:36.078 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-11-17 11:40:36.079 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
+2026-11-17 11:40:36.079 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-11-17 11:40:36.081 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
+2026-11-17 11:40:36.081 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
+2026-11-17 11:40:36.081 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-11-17 11:40:36.081 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
+2026-11-17 11:40:36.082 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
+2026-11-17 11:40:36.082 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
+2026-11-17 11:40:36.083 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
+2026-11-17 11:40:36.083 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
+2026-11-17 11:40:36.084 T:10102    info <general>: CAddonMgr::FindAddon: script.module.requests v2.31.0 installed
+2026-11-17 11:40:36.085 T:10102   debug <general>: CAddonMgr: script.module.requests successfully loaded
+2026-11-17 11:40:36.085 T:10102   debug <general>: ADDONS: dependency [script.module.requests] will not be version checked and unpinned
+2026-11-17 11:40:36.086 T:10102   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fplugin.video.youtube-7.4.4.zip/plugin.video.youtube/ to /github/home/.kodi/addons/temp/ebf61ea8-fce7-4c4a-b1a4-c37ff350449a
+2026-11-17 11:40:36.150 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-11-17 11:40:36.150 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-11-17 11:40:36.151 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-11-17 11:40:36.151 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
+2026-11-17 11:40:36.152 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
+2026-11-17 11:40:36.153 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-11-17 11:40:36.155 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-11-17 11:40:36.155 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
+2026-11-17 11:40:36.156 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-11-17 11:40:36.157 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
+2026-11-17 11:40:36.157 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
+2026-11-17 11:40:36.158 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-11-17 11:40:36.158 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
+2026-11-17 11:40:36.158 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
+2026-11-17 11:40:36.159 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
+2026-11-17 11:40:36.159 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
+2026-11-17 11:40:36.160 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
+2026-11-17 11:40:36.161 T:10102    info <general>: CAddonMgr::FindAddon: plugin.video.youtube v7.4.4 installed
+2026-11-17 11:40:36.161 T:10102   debug <general>: CAddonMgr: plugin.video.youtube successfully loaded
+2026-11-17 11:40:36.161 T:10102   debug <general>: LocalizeStrings: loaded 370 strings from file /github/home/.kodi/addons/plugin.video.youtube/resources/language/resource.language.en_gb/strings.po
+2026-11-17 11:40:36.164 T:10102   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
+2026-11-17 11:40:36.164 T:10102   debug <general>: ADDONS: unpinned Addon: [plugin.video.youtube] Origin: [repository.xbmc.org] Version: [7.4.4]
+2026-11-17 11:40:36.165 T:10102   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip>
+2026-11-17 11:40:36.202 T:10102   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip to https://ftp.snt.utwente.nl/pub/software/xbmc/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip hash de985b7c671e1f171f8ac8a71a9f24f035ffabebaeee3c3a173e570d8b3c50d6
+2026-11-17 11:40:36.401 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:36.401 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:36.401 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:36.401 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:36.609 T:10102   debug <general>: CurlFile::Open - <https://ftp.snt.utwente.nl/pub/software/xbmc/addons/omega/resource.images.studios.coloured/resource.images.studios.coloured-0.0.24.zip>
+2026-11-17 11:40:36.901 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:36.901 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:36.901 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:36.901 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:37.401 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:37.401 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:37.401 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:37.401 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:37.902 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:37.902 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:37.902 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:37.902 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:38.402 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:38.402 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:38.402 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:38.402 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:38.902 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:38.902 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:38.902 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:38.902 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:39.402 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:39.402 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:39.402 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:39.402 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:39.902 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:39.903 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:39.903 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:39.903 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:39.911 T:10102   debug <general>: CAddonMgr::UnloadAddon: resource.images.studios.coloured unloaded
+2026-11-17 11:40:39.911 T:10102   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-11-17 11:40:39.915 T:10102   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 3 ms
+2026-11-17 11:40:39.915 T:10102 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
+2026-11-17 11:40:39.929 T:10102   debug <general>: CAddonDatabase::GetAddons took 17 ms
+2026-11-17 11:40:39.932 T:10102   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fresource.images.studios.coloured-0.0.24.zip/resource.images.studios.coloured/ to /github/home/.kodi/addons/temp/060539b1-60cc-4179-8ca8-937a6c208e82
+2026-11-17 11:40:40.234 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-11-17 11:40:40.235 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-11-17 11:40:40.235 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-11-17 11:40:40.235 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
+2026-11-17 11:40:40.237 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
+2026-11-17 11:40:40.237 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-11-17 11:40:40.239 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-11-17 11:40:40.240 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
+2026-11-17 11:40:40.240 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-11-17 11:40:40.242 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
+2026-11-17 11:40:40.242 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
+2026-11-17 11:40:40.242 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-11-17 11:40:40.242 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
+2026-11-17 11:40:40.243 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
+2026-11-17 11:40:40.244 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
+2026-11-17 11:40:40.244 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
+2026-11-17 11:40:40.244 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
+2026-11-17 11:40:40.245 T:10102    info <general>: CAddonMgr::FindAddon: resource.images.studios.coloured v0.0.24 installed
+2026-11-17 11:40:40.246 T:10102   debug <general>: CAddonMgr: resource.images.studios.coloured successfully loaded
+2026-11-17 11:40:40.247 T:10102   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
+2026-11-17 11:40:40.248 T:10102   debug <general>: ADDONS: unpinned Addon: [resource.images.studios.coloured] Origin: [repository.xbmc.org] Version: [0.0.24]
+2026-11-17 11:40:40.248 T:10102   debug <general>: CurlFile::Open - <https://mirrors.kodi.tv/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip>
+2026-11-17 11:40:40.285 T:10102   debug <general>: Resolved addon path https://mirrors.kodi.tv/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip to https://ftp.fau.de/xbmc/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip hash cd6f96143e1efe423f85adcd2b0d9466ad4bcd5bcb0a4c5310b3916faf438e3e
+2026-11-17 11:40:40.285 T:10102   debug <general>: easy_acquire - Created session to https://ftp.fau.de
+2026-11-17 11:40:40.403 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:40.403 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:40.403 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:40.403 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:40.851 T:10102   debug <general>: CurlFile::Open - <https://ftp.fau.de/xbmc/addons/omega/resource.images.studios.white/resource.images.studios.white-0.0.34.zip>
+2026-11-17 11:40:40.903 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:40.903 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:40.903 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:40.903 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:41.403 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:41.403 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:41.403 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:41.403 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:41.903 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:41.903 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:41.903 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:41.903 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:42.404 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:42.404 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:42.404 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:42.404 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:42.679 T:10102   debug <general>: CAddonMgr::UnloadAddon: resource.images.studios.white unloaded
+2026-11-17 11:40:42.679 T:10102   debug <general>: CAddonDatabase: SELECT repo.id FROM repo .. took 0 ms
+2026-11-17 11:40:42.683 T:10102   debug <general>: CAddonDatabase: query  SELECT addons.*, repo.addonID AS repoID FROM addons JOIN addonlinkrepo ON addons.id=addonlinkrepo.idAddon JOIN repo ON repo.id=addonlinkrepo.idRepo WHERE addonlinkrepo.idRepo IN (1,2,3,4,5) ORDER BY repo.addonID, addons.addonID returned 926 rows in 3 ms
+2026-11-17 11:40:42.683 T:10102 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
+2026-11-17 11:40:42.696 T:10102   debug <general>: CAddonDatabase::GetAddons took 16 ms
+2026-11-17 11:40:42.698 T:10102   debug <general>: Unpacking zip://special%3a%2f%2fhome%2faddons%2fpackages%2fresource.images.studios.white-0.0.34.zip/resource.images.studios.white/ to /github/home/.kodi/addons/temp/7418077e-f458-4322-bfd9-e5ded46c67a0
+2026-11-17 11:40:42.763 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.aac
+2026-11-17 11:40:42.764 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.black
+2026-11-17 11:40:42.764 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: screensaver.xbmc.builtin.dim
+2026-11-17 11:40:42.764 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: visualization.spectrum
+2026-11-17 11:40:42.766 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.ffmpegdirect
+2026-11-17 11:40:42.766 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.rtmp
+2026-11-17 11:40:42.768 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: inputstream.adaptive
+2026-11-17 11:40:42.768 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: pvr.iptvsimple
+2026-11-17 11:40:42.769 T:10102   debug <general>: CAddonInfoBuilder::ParseXMLTypes: Binary addon found: audioencoder.kodi.builtin.wma
+2026-11-17 11:40:42.770 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.album.universal' already present with version 3.1.4 at '/usr/share/kodi/addons/metadata.album.universal/' replaced with version 3.1.20 at '/github/home/.kodi/addons/metadata.album.universal/'
+2026-11-17 11:40:42.770 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.albums' already present with version 1.0.14 at '/usr/share/kodi/addons/metadata.generic.albums/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.albums/'
+2026-11-17 11:40:42.771 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.tvshows.themoviedb.org.python' already present with version 1.6.0 at '/usr/share/kodi/addons/metadata.tvshows.themoviedb.org.python/' replaced with version 1.7.13 at '/github/home/.kodi/addons/metadata.tvshows.themoviedb.org.python/'
+2026-11-17 11:40:42.771 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.generic.artists' already present with version 1.0.18 at '/usr/share/kodi/addons/metadata.generic.artists/' replaced with version 1.0.21 at '/github/home/.kodi/addons/metadata.generic.artists/'
+2026-11-17 11:40:42.772 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.artists.universal' already present with version 4.3.3 at '/usr/share/kodi/addons/metadata.artists.universal/' replaced with version 4.3.24 at '/github/home/.kodi/addons/metadata.artists.universal/'
+2026-11-17 11:40:42.772 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.themoviedb.org.python' already present with version 1.3.1+matrix.1 at '/usr/share/kodi/addons/metadata.themoviedb.org.python/' replaced with version 3.2.2 at '/github/home/.kodi/addons/metadata.themoviedb.org.python/'
+2026-11-17 11:40:42.772 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'metadata.common.fanart.tv' already present with version 3.6.3 at '/usr/share/kodi/addons/metadata.common.fanart.tv/' replaced with version 3.6.5 at '/github/home/.kodi/addons/metadata.common.fanart.tv/'
+2026-11-17 11:40:42.773 T:10102   debug <general>: CAddonMgr::FindAddons: Addon 'game.controller.snes' already present with version 1.0.40 at '/usr/share/kodi/addons/game.controller.snes/' replaced with version 1.0.43 at '/github/home/.kodi/addons/game.controller.snes/'
+2026-11-17 11:40:42.774 T:10102    info <general>: CAddonMgr::FindAddon: resource.images.studios.white v0.0.34 installed
+2026-11-17 11:40:42.774 T:10102   debug <general>: CAddonMgr: resource.images.studios.white successfully loaded
+2026-11-17 11:40:42.776 T:10102   debug <general>: CAddonMgr::GetCompatibleVersions took 0 ms
+2026-11-17 11:40:42.776 T:10102   debug <general>: ADDONS: unpinned Addon: [resource.images.studios.white] Origin: [repository.xbmc.org] Version: [0.0.34]
+2026-11-17 11:40:42.776 T:10114   debug <general>: Thread Timer 140575655319232 terminating
+2026-11-17 11:40:42.776 T:10102 warning <general>: Repository add-on repository.citest uses plain HTTP for add-on downloads in path http://127.0.0.1:8765/repo/ - this is insecure and will make your Kodi installation vulnerable to attacks if enabled!
+2026-11-17 11:40:42.776 T:10102   debug <general>: CRepositoryUpdater: closest next update check at 11/17/2026 5:40:24 PM (in 21582 s)
+2026-11-17 11:40:42.776 T:10102   debug <general>: CRepositoryUpdater: checking in 21582000 ms
+2026-11-17 11:40:42.777 T:10131   debug <general>: Thread Timer start, auto delete: false
+2026-11-17 11:40:42.777 T:10102   debug <general>: Thread JobWorker 140576527734464 terminating (autodelete)
+2026-11-17 11:40:42.777 T:9926    debug <general>: NetworkMessage - Signaling network services to stop
+2026-11-17 11:40:42.777 T:9926     info <general>: ES: Stopping event server
+2026-11-17 11:40:42.777 T:9926    debug <general>: CZeroconfAvahi::doRemoveService named: servers.jsonrpc-tcp
+2026-11-17 11:40:42.873 T:9995    debug <general>: Thread WSDiscoveryListenerUDP 140574749357760 terminating
+2026-11-17 11:40:42.873 T:9926     info <general>: CWSDiscoveryListenerUDP::Stop - Stopped
+2026-11-17 11:40:42.873 T:9926    debug <general>: NetworkMessage - Waiting for network services to stop
+2026-11-17 11:40:42.873 T:9926     info <general>: stopping zeroconf publishing
+2026-11-17 11:40:42.904 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:42.904 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:42.904 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:42.904 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:43.404 T:9970     info <general>: CActiveAESink::OpenSink - initialize sink
+2026-11-17 11:40:43.404 T:9970    debug <general>: CActiveAESink::OpenSink - trying to open device Default
+2026-11-17 11:40:43.404 T:9970    error <general>: CActiveAESink::OpenSink - no sink was returned
+2026-11-17 11:40:43.404 T:9969    error <general>: ActiveAE::InitSink - returned error
+2026-11-17 11:40:43.533 T:9994    debug <general>: Thread TCPServer 140574984230592 terminating
+2026-11-17 11:40:43.534 T:9990     info <general>: ES: UDP Event server stopped
+2026-11-17 11:40:43.534 T:9990    debug <general>: Thread EventServer 140575269447360 terminating
+2026-11-17 11:40:43.534 T:9926    debug <general>: CServiceAddonManager: stopping plugin.video.lucent.
+2026-11-17 11:40:43.534 T:9926    debug <general>: CPythonInvoker(1, /github/home/.kodi/addons/plugin.video.lucent/service.py): trigger Monitor abort request
+2026-11-17 11:40:43.535 T:9984    debug <general>: CPythonInvoker(1, /github/home/.kodi/addons/plugin.video.lucent/service.py): script successfully run
+2026-11-17 11:40:43.535 T:9984    debug <general>: onExecutionDone(1, /github/home/.kodi/addons/plugin.video.lucent/service.py)
+2026-11-17 11:40:43.535 T:9984    debug <general>: .
+2026-11-17 11:40:43.546 T:9984    debug <general>: Python interpreter interrupted by user
+2026-11-17 11:40:43.546 T:9926    debug <general>: CPythonInvoker(1, /github/home/.kodi/addons/plugin.video.lucent/service.py): script termination took 12ms
+2026-11-17 11:40:43.546 T:9926    debug <general>: CServiceAddonManager: stopping service.lucent.cidriver.
+2026-11-17 11:40:43.546 T:9926     info <general>: CServiceAddonManager: failed to stop service.lucent.cidriver (may have ended)
+2026-11-17 11:40:43.546 T:9984    debug <general>: Thread LanguageInvoker 140575672100544 terminating
+2026-11-17 11:40:43.546 T:9969    debug <general>: Thread ActiveAE 140577054127808 terminating
+2026-11-17 11:40:43.546 T:9970    debug <general>: Thread AESink 140576561297088 terminating
+2026-11-17 11:40:43.546 T:9926     info <general>: Application stopped
+2026-11-17 11:40:43.746 T:9926     info <general>: PVR Manager: Stopping
+2026-11-17 11:40:44.667 T:10001   debug <general>: Thread PVRTimers 140574682232512 terminating
+2026-11-17 11:40:44.667 T:9999     info <general>: EPG Container: Persisting unsaved events...
+2026-11-17 11:40:44.668 T:9999     info <general>: EPG Container: Persisting events done
+2026-11-17 11:40:44.668 T:9999    debug <general>: Thread EPGUpdater 140574715795136 terminating
+2026-11-17 11:40:44.668 T:9996     info <general>: PVR Manager: Stopped
+2026-11-17 11:40:44.668 T:9996    debug <general>: Thread PVRManager 140575470773952 terminating
+2026-11-17 11:40:44.668 T:9926    debug <general>: AddOnLog: pvr.iptvsimple: pvr.iptvsimple - ~IptvSimple Stopping update thread...
+2026-11-17 11:40:45.492 T:9926     info <general>: AddOnLog: pvr.iptvsimple: pvr.iptvsimple - ConnectionLost Could not validiate M3U after startup, but ignoring as startup is all we care about.
+2026-11-17 11:40:45.492 T:9926     info <general>: Skipped 1 duplicate messages..
+2026-11-17 11:40:45.492 T:9926    debug <general>: SECTION:UnloadDll(/usr/lib/x86_64-linux-gnu/kodi/addons/pvr.iptvsimple/pvr.iptvsimple.so.21.10.2)
+2026-11-17 11:40:45.493 T:9926     info <general>: ADDON: Dll Destroyed - IPTV Simple Client
+2026-11-17 11:40:45.493 T:9982    debug <general>: Thread PeripEventScan 140575856645824 terminating
+2026-11-17 11:40:45.503 T:9979    debug <general>: Thread PeripBusUSBUdev 140575990863552 terminating
+2026-11-17 11:40:45.504 T:9980    debug <general>: Thread PeripBusCEC 140575890208448 terminating
+2026-11-17 11:40:45.504 T:9981    debug <general>: Thread PeripBusAddon 140575873427136 terminating
+2026-11-17 11:40:45.806 T:9926     info <general>: unload skin
+2026-11-17 11:40:45.808 T:9926    debug <general>: ------ Window Deinit (DialogNotification.xml) ------
+2026-11-17 11:40:45.808 T:9926    debug <general>: ------ Window Deinit (Home.xml) ------
+2026-11-17 11:40:45.819 T:9926     info <general>: Unloaded skin
+2026-11-17 11:40:45.821 T:9926     info <general>: unload sections
+2026-11-17 11:40:45.822 T:9926     info <general>: CWSDiscoveryListenerUDP::Stop - Stopped
+2026-11-17 11:40:45.823 T:10131   debug <general>: Thread Timer 140575655319232 terminating
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 0 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 1 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 2 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 3 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 4 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 5 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 6 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 7 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 8 --> 0 instances
+2026-11-17 11:40:45.823 T:9926    debug <general>: object 9 --> 0 instances
+2026-11-17 11:40:45.828 T:9926     info <general>: XRANDR: /usr/lib/x86_64-linux-gnu/kodi/kodi-xrandr --screen 0 --output screen --mode 0x3a
+2026-11-17 11:40:45.836 T:9971    debug <general>: Thread FDEventMonitor 140576544515776 terminating
+2026-11-17 11:40:45.836 T:9928    debug <general>: Thread Lirc 140577806292672 terminating
+2026-11-17 11:40:45.836 T:9927    debug <general>: Thread Announce 140577823073984 terminating
+2026-11-17 11:40:45.836 T:9926     info <general>: Exiting the application...
