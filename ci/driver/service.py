@@ -7299,10 +7299,32 @@ def allseasons_test():
                                     "params": {"setting": "videolibrary.showallitems", "value": True}}))
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
                                     "params": {"setting": "videolibrary.flattentvshows", "value": 0}}))
+    # a series with two seasons and its own posters, written straight into Kodi's video database for this test
+    import glob
+    import sqlite3
+    pic = lambda n: xbmcvfs.translatePath(f"special://skin/{n}.png")
+    dbf = sorted(glob.glob(os.path.join(xbmcvfs.translatePath("special://database/"), "MyVideos*.db")))[-1]
+    try:
+        with sqlite3.connect(dbf, timeout=10) as v:
+            if not v.execute("SELECT 1 FROM tvshow WHERE idShow=990").fetchone():
+                v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (990, '/tmp/ci/lib/shows/Seasons/', '', '')")
+                v.execute("INSERT INTO tvshow (idShow, c00) VALUES (990, 'Seasons Show')")
+                v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (990, 990)")
+                for sid, sn in ((990, 1), (991, 2), (992, -1)):
+                    v.execute("INSERT INTO seasons (idSeason, idShow, season) VALUES (?, 990, ?)", (sid, sn))
+                for n, sn in enumerate((1, 2)):
+                    v.execute("INSERT INTO files (idFile, idPath, strFilename, dateAdded) VALUES (?, 990, ?, '2026-10-31 10:00:00')", (990 + n, f"s0{sn}e01.mkv"))
+                    v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (?, ?, ?, ?, '1', 990, ?)",
+                              (990 + n, 990 + n, f"S{sn} E1", str(sn), 990 + n))
+                for mid, mtype, kind, url in ((990, "tvshow", "poster", pic("logos/trakt")), (990, "season", "poster", pic("logos/tmdb")),
+                                              (991, "season", "poster", pic("logos/imdb")), (992, "season", "poster", pic("media/DefaultAddon"))):
+                    v.execute("INSERT INTO art (media_id, media_type, type, url) VALUES (?, ?, ?, ?)", (mid, mtype, kind, url))
+    except Exception as error:  # noqa: BLE001
+        log(f"allseasons: db {error!r}")
     shows = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShows",
                                                        "params": {"properties": ["title", "season", "art"]}}))).get("result", {}).get("tvshows", [])
     log(f"allseasons: shows {[(x['tvshowid'], x['title'], x.get('season'), sorted(x.get('art', {}))) for x in shows][:6]}")
-    sid = next((x["tvshowid"] for x in shows if (x.get("season") or 0) >= 1), shows[0]["tvshowid"] if shows else 0)
+    sid = 990
     xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/,return)")
     mon.waitForAbort(5)
     xbmc.executebuiltin("Container.SetViewMode(51)")
