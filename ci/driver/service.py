@@ -7300,7 +7300,8 @@ def imdbown_test():
 
     def fake(prefix, with_logo):
         for k, v in (("imdb", "7.6"), ("rt", "74%"), ("rtc", "FF2FB24C"), ("rta", "85%"), ("rtac", "FF2FB24C"), ("mc", "65"), ("mcc", "FFE9B824"), ("on", "1"), ("for", "x")):
-            xbmc.executebuiltin(f"SetProperty({prefix}{k},{v},home)")
+            if not (prefix == "lucent.omdbh." and k == "for"):      # without 'for' the helper (no key in CI) leaves them
+                xbmc.executebuiltin(f"SetProperty({prefix}{k},{v},home)")
         xbmc.executebuiltin(f"SetProperty(nuvio.logo.imdb,{logo},home)" if with_logo else "ClearProperty(nuvio.logo.imdb,home)")
 
     xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
