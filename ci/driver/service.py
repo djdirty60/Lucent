@@ -7306,7 +7306,12 @@ def allseasons_test():
     dbf = sorted(glob.glob(os.path.join(xbmcvfs.translatePath("special://database/"), "MyVideos*.db")))[-1]
     try:
         with sqlite3.connect(dbf, timeout=10) as v:
-            if not v.execute("SELECT 1 FROM tvshow WHERE idShow=990").fetchone():
+            if True:
+                v.execute("DELETE FROM art WHERE media_id IN (990, 991, 992)")
+                for t_, c_ in (("tvshow", "idShow"), ("seasons", "idShow"), ("tvshowlinkpath", "idShow"), ("episode", "idShow")):
+                    v.execute(f"DELETE FROM {t_} WHERE {c_}=990")
+                v.execute("DELETE FROM files WHERE idFile IN (990, 991)")
+                v.execute("DELETE FROM path WHERE idPath=990")
                 v.execute("INSERT INTO path (idPath, strPath, strContent, strScraper) VALUES (990, '/tmp/ci/lib/shows/Seasons/', '', '')")
                 v.execute("INSERT INTO tvshow (idShow, c00) VALUES (990, 'Seasons Show')")
                 v.execute("INSERT INTO tvshowlinkpath (idShow, idPath) VALUES (990, 990)")
@@ -7317,7 +7322,7 @@ def allseasons_test():
                     v.execute("INSERT INTO episode (idEpisode, idFile, c00, c12, c13, idShow, idSeason) VALUES (?, ?, ?, ?, '1', 990, ?)",
                               (990 + n, 990 + n, f"S{sn} E1", str(sn), 990 + n))
                 for mid, mtype, kind, url in ((990, "tvshow", "poster", pic("logos/trakt")), (990, "season", "poster", pic("logos/tmdb")),
-                                              (991, "season", "poster", pic("logos/imdb")), (992, "season", "poster", pic("media/DefaultAddon"))):
+                                              (991, "season", "poster", pic("logos/tmdb")), (992, "season", "poster", pic("logos/imdb"))):
                     v.execute("INSERT INTO art (media_id, media_type, type, url) VALUES (?, ?, ?, ?)", (mid, mtype, kind, url))
     except Exception as error:  # noqa: BLE001
         log(f"allseasons: db {error!r}")
@@ -7340,6 +7345,7 @@ def allseasons_test():
     shot("33-all-seasons")
     xbmc.executebuiltin("Control.Move(51,1)")
     mon.waitForAbort(1.5)
+    log(f"allseasons: focused {lab('ListItem.Label')!r} var={xbmc.getInfoLabel('$VAR[ItemPoster]')[-40:]!r}")
     shot("33-all-seasons-focus")
     xbmc.executebuiltin("Skin.Reset(lucent.seasontabs.off)")
     xbmc.executebuiltin("ActivateWindow(home)")
