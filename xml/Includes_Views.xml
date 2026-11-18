@@ -4,6 +4,8 @@
     <!-- media flags row: keep its place fixed (no jumping) in the library views where Lucent shows flags (issue #9) -->
     <!-- the row with OMDb / MDBList scores in the lists: kept in place while a key is set, so nothing jumps (issue #8) -->
     <expression name="LucentScoreRow">!String.IsEmpty(Window(home).Property(lucent.omdbl.on)) + ![Skin.HasSetting(lucent.rate.hide.rt) + Skin.HasSetting(lucent.rate.hide.rta) + Skin.HasSetting(lucent.rate.hide.mc) + Skin.HasSetting(lucent.rate.hide.lb)]</expression>
+    <!-- 2.1.44 (#31): no IMDb score from the add-on, but Lucent fetched one (MDBList / OMDb) -->
+    <expression name="LucentListImdbOwn">String.IsEmpty(ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbl.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</expression>
     <!-- issue #9: with every other score switched off, IMDb stays on the first row instead of alone on a row of its own -->
     <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
@@ -151,7 +153,7 @@
                     <control type="group">
                         <width>140</width>
                         <height>44</height>
-                        <visible>!String.IsEmpty(ListItem.Rating) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + !String.IsEmpty(ListItem.Rating(imdb))</visible>
+                        <visible>!String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + [[!String.IsEmpty(ListItem.Rating) + !String.IsEmpty(ListItem.Rating(imdb))] | $EXP[LucentListImdbOwn]]</visible>
                         <control type="image">
                             <width>140</width>
                             <height>44</height>
@@ -171,7 +173,35 @@
                             <height>44</height>
                             <font>font_small_bold</font>
                             <textcolor>text</textcolor>
-                            <label>$INFO[ListItem.Rating(imdb)]</label>
+                            <label>$VAR[LucentListImdb]</label>
+                        </control>
+                    </control>
+                    <!-- 2.1.44 (#31): without the IMDb logo, the IMDb score Lucent fetched itself as a pill with a yellow dot -->
+                    <control type="group">
+                        <width>176</width>
+                        <height>44</height>
+                        <visible>String.IsEmpty(Window(home).Property(nuvio.logo.imdb)) + $EXP[LucentListImdbOwn]</visible>
+                        <control type="image">
+                            <width>176</width>
+                            <height>44</height>
+                            <texture border="22" colordiffuse="glass">pill44.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left>
+                            <top>13</top>
+                            <width>18</width>
+                            <height>18</height>
+                            <texture>mask_circle.png</texture>
+                            <colordiffuse>FFE9B824</colordiffuse>
+                        </control>
+                        <control type="label">
+                            <left>48</left>
+                            <width>122</width>
+                            <height>44</height>
+                            <font>font_small_bold</font>
+                            <textcolor>text</textcolor>
+                            <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                            <label>IMDb  $INFO[Window(home).Property(lucent.omdbl.imdb)]</label>
                         </control>
                     </control>
                     <control type="group">

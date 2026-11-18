@@ -7291,6 +7291,47 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def imdbown_test():
+    """#31 (2.1.44): Home and the lists show the IMDb score Lucent fetched (lucent.omdbh / omdbl.imdb) when the add-on gives none."""
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    logo = "special://skin/logos/imdb.png"
+
+    def fake(prefix, with_logo):
+        for k, v in (("imdb", "7.6"), ("rt", "74%"), ("rtc", "FF2FB24C"), ("rta", "85%"), ("rtac", "FF2FB24C"), ("mc", "65"), ("mcc", "FFE9B824"), ("on", "1"), ("for", "x")):
+            xbmc.executebuiltin(f"SetProperty({prefix}{k},{v},home)")
+        xbmc.executebuiltin(f"SetProperty(nuvio.logo.imdb,{logo},home)" if with_logo else "ClearProperty(nuvio.logo.imdb,home)")
+
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=sm,return)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(51,1,absolute)")
+    mon.waitForAbort(1.5)
+    for with_logo in (True, False):
+        fake("lucent.omdbl.", with_logo)
+        mon.waitForAbort(0.4)
+        out.append(f"list logo={with_logo}: rating={lab('ListItem.Rating')!r} imdb={lab('ListItem.Rating(imdb)')!r} own={lab('Window(home).Property(lucent.omdbl.imdb)')!r}")
+        shot(f"31-list-{'logo' if with_logo else 'nologo'}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(4)
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(8)
+    xbmc.executebuiltin("SetFocus(8101,1,absolute)")
+    mon.waitForAbort(2)
+    for with_logo in (True, False):
+        fake("lucent.omdbh.", with_logo)
+        mon.waitForAbort(0.4)
+        out.append(f"home logo={with_logo}: focus={lab('System.CurrentControlID')} imdb={lab('Container(8101).ListItem.Rating(imdb)')!r} own={lab('Window(home).Property(lucent.omdbh.imdb)')!r}")
+        shot(f"31-home-{'logo' if with_logo else 'nologo'}")
+    log("imdbown: " + " | ".join(out))
+    xbmc.executebuiltin("ClearProperty(nuvio.logo.imdb,home)")
+
+
 def osdlow_test():
     """#32 (2.1.42): the player buttons sit 12 lower (in the black bar of a 2.39:1 film)."""
     xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
@@ -12682,6 +12723,7 @@ def main():
     safe(hintslider_test)
     safe(osd_test)
     safe(osdlow_test)
+    safe(imdbown_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)

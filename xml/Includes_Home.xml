@@ -1107,7 +1107,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8101).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8101).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -1116,7 +1116,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8101).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8101).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -1126,6 +1126,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8101).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8101).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8101).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -1464,7 +1474,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8201).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8201).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -1473,7 +1483,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8201).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8201).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -1483,6 +1493,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8201).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8201).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8201).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -1821,7 +1841,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8102).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8102).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -1830,7 +1850,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8102).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8102).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -1840,6 +1860,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8102).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8102).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8102).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -2178,7 +2208,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8202).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8202).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -2187,7 +2217,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8202).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8202).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -2197,6 +2227,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8202).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8202).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8202).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -2535,7 +2575,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8103).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8103).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -2544,7 +2584,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8103).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8103).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -2554,6 +2594,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8103).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8103).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8103).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -2892,7 +2942,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8203).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8203).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -2901,7 +2951,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8203).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8203).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -2911,6 +2961,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8203).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8203).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8203).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -3249,7 +3309,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8104).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8104).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -3258,7 +3318,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8104).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8104).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -3268,6 +3328,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8104).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8104).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8104).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -3606,7 +3676,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8204).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8204).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -3615,7 +3685,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8204).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8204).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -3625,6 +3695,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8204).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8204).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8204).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -3963,7 +4043,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8105).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8105).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -3972,7 +4052,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8105).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8105).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -3982,6 +4062,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8105).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8105).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8105).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -4320,7 +4410,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8205).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8205).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -4329,7 +4419,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8205).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8205).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -4339,6 +4429,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8205).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8205).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8205).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -4677,7 +4777,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8106).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8106).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -4686,7 +4786,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8106).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8106).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -4696,6 +4796,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8106).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8106).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8106).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -5034,7 +5144,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8206).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8206).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -5043,7 +5153,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8206).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8206).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -5053,6 +5163,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8206).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8206).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8206).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -5391,7 +5511,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8107).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8107).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -5400,7 +5520,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8107).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8107).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -5410,6 +5530,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8107).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8107).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8107).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -5748,7 +5878,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8207).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8207).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -5757,7 +5887,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8207).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8207).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -5767,6 +5897,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8207).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8207).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8207).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -6105,7 +6245,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8108).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8108).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -6114,7 +6254,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8108).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8108).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -6124,6 +6264,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8108).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8108).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8108).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -6462,7 +6612,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8208).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8208).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -6471,7 +6621,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8208).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8208).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -6481,6 +6631,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8208).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8208).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8208).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -6819,7 +6979,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8109).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8109).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -6828,7 +6988,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8109).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8109).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -6838,6 +6998,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8109).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8109).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8109).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -7176,7 +7346,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8209).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8209).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -7185,7 +7355,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8209).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8209).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -7195,6 +7365,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8209).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8209).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8209).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -7533,7 +7713,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8110).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8110).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -7542,7 +7722,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8110).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8110).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -7552,6 +7732,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8110).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8110).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8110).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
@@ -7890,7 +8080,7 @@
                     <height>44</height>
                     <aspectratio align="right">keep</aspectratio>
                     <texture>$INFO[Window(home).Property(nuvio.logo.imdb)]</texture>
-                    <visible>!String.IsEmpty(Container(8210).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8210).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + !String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -7899,7 +8089,7 @@
                     <textcolor>$VAR[LucentHeroText3]</textcolor>
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>[B]IMDb[/B]</label>
-                    <visible>!String.IsEmpty(Container(8210).ListItem.Rating(imdb)) + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
+                    <visible>[!String.IsEmpty(Container(8210).ListItem.Rating(imdb)) | [!String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)]] + String.IsEmpty(Window(home).Property(nuvio.logo.imdb))</visible>
                 </control>
                 <control type="label">
                     <width>auto</width>
@@ -7909,6 +8099,16 @@
                     <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
                     <label>$INFO[Container(8210).ListItem.Rating(imdb)]   </label>
                     <visible>!String.IsEmpty(Container(8210).ListItem.Rating(imdb))</visible>
+                </control>
+                <!-- 2.1.44 (#31): the IMDb score Lucent fetched itself (MDBList / OMDb) when the add-on gives none -->
+                <control type="label">
+                    <width>auto</width>
+                    <height>44</height>
+                    <font>font12</font>
+                    <textcolor>text</textcolor>
+                    <shadowcolor>$VAR[LucentTextShadow]</shadowcolor>
+                    <label>$INFO[Window(home).Property(lucent.omdbh.imdb)]   </label>
+                    <visible>String.IsEmpty(Container(8210).ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbh.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</visible>
                 </control>
                 <control type="image">
                     <width>64</width>
