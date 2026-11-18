@@ -125,6 +125,12 @@ def fetch_available():
             log(f"source {n + 1}: {error}")
             continue
         for block in re.finditer(r'<addon\s[^>]*?id="([^"]+)"[^>]*?version="([^"]+)".*?</addon>', xml, re.S):
+            # 2.1.46: an add-on built per platform (a binary add-on such as vfs.lucent: <platform>android-armv7</platform>,
+            # version 0.1.2+android.armv7.k21) is left to Kodi, which picks the build of this box itself. Taking the first
+            # one in the list would offer and unpack the build of another platform (the fast reader then stops working).
+            platform = re.search(r"<platform>(.*?)</platform>", block.group(0), re.S)
+            if platform and platform.group(1).strip() not in ("", "all"):
+                continue
             news = re.search(r"<news>(.*?)</news>", block.group(0), re.S)
             # 2.1.8: a <news lang="nl_NL"> in the language of Kodi wins (Lucent Video has Dutch notes); else <news>
             lang = (xbmc.getLanguage(xbmc.ISO_639_1) or "").lower()[:2]
@@ -152,7 +158,7 @@ def release_notes(news, installed, limit=4):
 
 
 # add-ons in the repository that this window leaves alone: Kodi keeps them up to date by itself, without a message
-SILENT = set()                                           # 2.1.0: the video add-on is in this window too
+SILENT = {"vfs.lucent"}                                  # 2.1.46: the fast reader (one build per platform): Kodi only
 
 
 def available_updates():
