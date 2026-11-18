@@ -7325,6 +7325,7 @@ def allseasons_test():
                                                        "params": {"properties": ["title", "season", "art"]}}))).get("result", {}).get("tvshows", [])
     log(f"allseasons: shows {[(x['tvshowid'], x['title'], x.get('season'), sorted(x.get('art', {}))) for x in shows][:6]}")
     sid = 990
+    xbmc.executebuiltin("Skin.SetBool(lucent.seasontabs.off)")
     xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/,return)")
     mon.waitForAbort(5)
     xbmc.executebuiltin("Container.SetViewMode(51)")
@@ -7337,6 +7338,10 @@ def allseasons_test():
     xbmc.executebuiltin("SetFocus(51,0,absolute)")
     mon.waitForAbort(1.5)
     shot("33-all-seasons")
+    xbmc.executebuiltin("Control.Move(51,1)")
+    mon.waitForAbort(1.5)
+    shot("33-all-seasons-focus")
+    xbmc.executebuiltin("Skin.Reset(lucent.seasontabs.off)")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
