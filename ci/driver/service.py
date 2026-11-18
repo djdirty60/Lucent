@@ -7332,7 +7332,7 @@ def allseasons_test():
     rows = []
     for i in range(int(lab("Container.NumItems") or 0) + 1):
         pre = f"Container.ListItemAbsolute({i})."
-        rows.append([lab(pre + "Label"), lab(pre + "Season"), lab(pre + "DBType"), lab(pre + "Art(poster)")[-40:], lab(pre + "Art(tvshow.poster)")[-40:]])
+        rows.append([lab(pre + "Label"), lab(pre + "Season"), lab(pre + "DBType"), lab(pre + "FolderPath"), lab(pre + "FileNameAndPath"), lab(pre + "Art(poster)")[-40:], lab(pre + "Art(tvshow.poster)")[-40:]])
     log(f"allseasons: items {rows}")
     xbmc.executebuiltin("SetFocus(51,0,absolute)")
     mon.waitForAbort(1.5)
