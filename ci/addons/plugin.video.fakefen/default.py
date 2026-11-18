@@ -79,6 +79,8 @@ if handle >= 0:
             tag.addSubtitleStream(xbmc.SubtitleStreamDetail(language="nl"))
             k = n % 8
             li.setArt({"thumb": "/tmp/ci/art/fanart%d.jpg" % k, "fanart": "/tmp/ci/art/fanart0.jpg", "tvshow.poster": "/tmp/ci/art/poster0.jpg"})
+            if n in (2, 4, 5):
+                li.setProperty("lucent.ready", "1")       # 2.1.48: prepared by the video add-on (Season ready)
             li.setProperty("IsPlayable", "true")
             xbmcplugin.addDirectoryItem(handle, "plugin://plugin.video.fakefen/?mode=playback&t=" + urllib.parse.quote(name), li, False)
         xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)

@@ -1017,6 +1017,31 @@
     </include>
     <!-- 2.1.34 (#27): fast-scroll slider under a one-row view (51, 53), with the position (34 / 120); and a small hint
          that Up opens the menu. The slider is the row's page control: Left/Right on it scroll the row a page. -->
+    <!-- 2.1.48: "✓ ready" on an episode the video add-on has prepared (Season ready: ListItem.Property(lucent.ready)), at the
+         top right of the episode card; moves left of the watched tick when that is there -->
+    <include name="LucentReadyBadge">
+        <param name="left">0</param>
+        <param name="top">0</param>
+        <param name="height">34</param>
+        <param name="shift">-42</param>
+        <definition>
+            <control type="group">
+                <left>$PARAM[left]</left><top>$PARAM[top]</top><width>112</width><height>$PARAM[height]</height>
+                <visible>!String.IsEmpty(ListItem.Property(lucent.ready))</visible>
+                <animation effect="slide" end="$PARAM[shift],0" time="0" condition="Integer.IsGreater(ListItem.Playcount,0)">Conditional</animation>
+                <control type="image">
+                    <left>0</left><top>0</top><width>112</width><height>$PARAM[height]</height>
+                    <texture border="16" colordiffuse="FF4CC38A">pill44.png</texture>
+                </control>
+                <control type="label">
+                    <left>0</left><top>0</top><width>112</width><height>$PARAM[height]</height>
+                    <font>font10_bold</font><textcolor>FF0B1A12</textcolor><selectedcolor>FF0B1A12</selectedcolor>
+                    <align>center</align><aligny>center</aligny>
+                    <label>$LOCALIZE[31904]</label>
+                </control>
+            </control>
+        </definition>
+    </include>
     <include name="LucentSliderFade">
         <animation effect="fade" start="0" end="100" time="150">Visible</animation>
         <animation effect="fade" start="100" end="0" delay="800" time="300">Hidden</animation>
@@ -2705,6 +2730,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">276</param><param name="top">12</param><param name="height">40</param><param name="shift">-48</param></include>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                         <control type="image">
                             <left>276</left>
@@ -2837,6 +2863,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0) | ListItem.IsSelected</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">276</param><param name="top">12</param><param name="height">40</param><param name="shift">-48</param></include>
                         <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                         <control type="image">
                             <left>276</left>
@@ -3501,6 +3528,7 @@
                                 <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                                 <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                             </control>
+                            <include content="LucentReadyBadge"><param name="left">296</param><param name="top">12</param><param name="height">34</param><param name="shift">-42</param></include>
                             <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                             <control type="image">
                                 <left>296</left>
@@ -3573,6 +3601,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">320</param><param name="top">26</param><param name="height">34</param><param name="shift">-42</param></include>
                         <control type="image">
                             <left>0</left><top>270</top><width>446</width><height>4</height>
                             <texture>white.png</texture><colordiffuse>separator</colordiffuse>
@@ -3622,6 +3651,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">320</param><param name="top">26</param><param name="height">34</param><param name="shift">-42</param></include>
                         <control type="label">
                             <left>36</left><top>200</top><width>400</width><height>34</height>
                             <font>font12_bold</font><textcolor>text</textcolor>
@@ -3663,6 +3693,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">320</param><param name="top">26</param><param name="height">34</param><param name="shift">-42</param></include>
                         <control type="label">
                             <left>24</left><top>258</top><width>420</width><height>34</height>
                             <font>font12_bold</font><textcolor>text</textcolor>
@@ -3713,6 +3744,7 @@
                                 <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                                 <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                             </control>
+                            <include content="LucentReadyBadge"><param name="left">296</param><param name="top">12</param><param name="height">34</param><param name="shift">-42</param></include>
                             <!-- lucent-newbadge: a series you watch with episodes you have not seen yet -->
                             <control type="image">
                                 <left>296</left>
@@ -3791,6 +3823,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">320</param><param name="top">26</param><param name="height">34</param><param name="shift">-42</param></include>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture border="20">rr20_ring.png</texture>
@@ -3846,6 +3879,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">320</param><param name="top">26</param><param name="height">34</param><param name="shift">-42</param></include>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>180</height>
                             <texture border="20">rr20_ring.png</texture>
@@ -3893,6 +3927,7 @@
                             <animation effect="slide" end="8,-6" time="0" condition="String.IsEmpty(Skin.String(lucent.watched.size))">Conditional</animation>
                             <visible>Integer.IsGreater(ListItem.Playcount,0)</visible>
                         </control>
+                        <include content="LucentReadyBadge"><param name="left">320</param><param name="top">26</param><param name="height">34</param><param name="shift">-42</param></include>
                         <control type="image">
                             <left>24</left><top>14</top><width>420</width><height>236</height>
                             <texture border="20">rr20_ring.png</texture>

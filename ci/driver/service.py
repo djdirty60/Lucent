@@ -7313,6 +7313,31 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def ready_test():
+    """2.1.48: '✓ ready' on episodes the video add-on prepared (ListItem.Property(lucent.ready)): view 56 and view 53."""
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "filelists.showparentdiritems", "value": False}}))
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase_seasons,return)")
+    mon.waitForAbort(6)
+    out = [f"view={next((v for v in (50, 51, 52, 53, 55, 56, 57) if cond(f'Control.IsVisible({v})')), 0)}"]
+    xbmc.executebuiltin("SetFocus(5601,1,absolute)")
+    mon.waitForAbort(3)
+    out.append(f"5601 n={lab('Container(5601).NumItems')} ready2={lab('Container(5601).ListItemAbsolute(1).Property(lucent.ready)')!r}")
+    shot("48-ready-56")
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase_ep,return)")
+    mon.waitForAbort(5)
+    xbmc.executebuiltin("Container.SetViewMode(53)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(53,0,absolute)")
+    mon.waitForAbort(2)
+    shot("48-ready-53")
+    log("ready: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def allseasons_test():
     """#33 (2.1.45): Kodi's 'All seasons' item in a series gets the series poster."""
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
@@ -12810,6 +12835,7 @@ def main():
     safe(osdlow_test)
     safe(imdbown_test)
     safe(allseasons_test)
+    safe(ready_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
