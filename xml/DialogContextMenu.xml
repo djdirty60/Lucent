@@ -46,6 +46,51 @@
             <width>560</width>
             <height>640</height>
             <itemgap>4</itemgap>
+            <!-- 2.1.49: the video add-on's options for titles it put in the Kodi library, at the top: Kodi always puts the
+                 menu items of add-ons below its own, so the skin shows these itself (Kodi adds its own buttons after them).
+                 Window(home).Property(lucent.skin.libctx) (startup.py) tells the add-on to hide its own copies. -->
+            <control type="button" id="901">
+                <width>560</width>
+                <height>68</height>
+                <font>font_label</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>28</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus/>
+                <label>$LOCALIZE[31905]</label>
+                <onclick>Dialog.Close(contextmenu)</onclick>
+                <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=tonight)</onclick>
+                <visible>[String.Contains(ListItem.Path,plugin.video.lucent/library) | String.Contains(ListItem.FolderPath,plugin.video.lucent/library) | String.Contains(ListItem.FileNameAndPath,plugin.video.lucent/library)] + System.HasAddon(plugin.video.lucent) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)]</visible>
+            </control>
+            <control type="button" id="902">
+                <width>560</width>
+                <height>68</height>
+                <font>font_label</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>28</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus/>
+                <label>$LOCALIZE[31906]</label>
+                <onclick>Dialog.Close(contextmenu)</onclick>
+                <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=marathon)</onclick>
+                <visible>[String.Contains(ListItem.Path,plugin.video.lucent/library) | String.Contains(ListItem.FolderPath,plugin.video.lucent/library) | String.Contains(ListItem.FileNameAndPath,plugin.video.lucent/library)] + System.HasAddon(plugin.video.lucent) + String.IsEqual(ListItem.DBTYPE,tvshow)</visible>
+            </control>
+            <control type="button" id="903">
+                <width>560</width>
+                <height>68</height>
+                <font>font_label</font>
+                <textcolor>text2</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <textoffsetx>28</textoffsetx>
+                <texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus>
+                <texturenofocus/>
+                <label>$LOCALIZE[31907]</label>
+                <onclick>Dialog.Close(contextmenu)</onclick>
+                <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=seasonready)</onclick>
+                <visible>[String.Contains(ListItem.Path,plugin.video.lucent/library) | String.Contains(ListItem.FolderPath,plugin.video.lucent/library) | String.Contains(ListItem.FileNameAndPath,plugin.video.lucent/library)] + System.HasAddon(plugin.video.lucent) + String.IsEqual(ListItem.DBTYPE,season) + !String.IsEmpty(Window(Home).Property(lucent.video.usenet))</visible>
+            </control>
         </control>
         <control type="scrollbar" id="60">
             <left>586</left>

@@ -169,6 +169,9 @@ def touch_screen():
 
 
 def run():
+    # 2.1.49: the context menu (DialogContextMenu.xml) shows the video add-on's library options itself, at the top;
+    # this tells the add-on to hide its own copies, which Kodi would put at the bottom
+    xbmc.executebuiltin("SetProperty(lucent.skin.libctx,1,home)")
     step("touch screen", touch_screen)
     if first_start():
         return
