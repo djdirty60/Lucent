@@ -7291,6 +7291,34 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def allseasons_test():
+    """#33 (2.1.45): Kodi's 'All seasons' item in a series gets the series poster."""
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "videolibrary.showallitems", "value": True}}))
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
+                                    "params": {"setting": "videolibrary.flattentvshows", "value": 0}}))
+    shows = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "VideoLibrary.GetTVShows",
+                                                       "params": {"properties": ["title", "season", "art"]}}))).get("result", {}).get("tvshows", [])
+    log(f"allseasons: shows {[(x['tvshowid'], x['title'], x.get('season'), sorted(x.get('art', {}))) for x in shows][:6]}")
+    sid = next((x["tvshowid"] for x in shows if (x.get("season") or 0) >= 1), shows[0]["tvshowid"] if shows else 0)
+    xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/,return)")
+    mon.waitForAbort(5)
+    xbmc.executebuiltin("Container.SetViewMode(51)")
+    mon.waitForAbort(2)
+    rows = []
+    for i in range(int(lab("Container.NumItems") or 0) + 1):
+        pre = f"Container.ListItemAbsolute({i})."
+        rows.append([lab(pre + "Label"), lab(pre + "Season"), lab(pre + "DBType"), lab(pre + "Art(poster)")[-40:], lab(pre + "Art(tvshow.poster)")[-40:]])
+    log(f"allseasons: items {rows}")
+    xbmc.executebuiltin("SetFocus(51,0,absolute)")
+    mon.waitForAbort(1.5)
+    shot("33-all-seasons")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def imdbown_test():
     """#31 (2.1.44): Home and the lists show the IMDb score Lucent fetched (lucent.omdbh / omdbl.imdb) when the add-on gives none."""
     out = []
@@ -12725,6 +12753,7 @@ def main():
     safe(osd_test)
     safe(osdlow_test)
     safe(imdbown_test)
+    safe(allseasons_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
