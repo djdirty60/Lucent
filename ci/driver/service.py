@@ -5342,7 +5342,7 @@ def cwnotice_test():
     log("cwnotice: " + json.dumps(out))
 
 
-def _seed_agenda():
+def _seed_agenda(shift=None):
     import datetime as _d
     ART = "special://home/addons/plugin.video.fakeseren/art/"
     sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
@@ -5353,6 +5353,8 @@ def _seed_agenda():
     rows = [("Glasswork", 0, "21:00", 1, 1, ""), ("Red Harbour", 0, "22:00", 2, 8, "mid_season"), ("Lumen", 1, "20:00", 3, 10, "finale"),
             ("Night Ferry", 3, "", 2, 1, ""), ("Copper Sky", 5, "02:00", 1, 4, "")]
     evs = []
+    if shift:
+        rows = [(r[0], shift[i % len(shift)]) + r[2:] for i, r in enumerate(rows)]
     for n, (name, days, at, s, e, kind) in enumerate(rows):
         evs.append({"kind": "tv", "key": f"k{n}", "show": f"tv:{n}", "name": name, "title": f"Chapter {e}", "season": s, "episode": e,
                     "date": (today + _d.timedelta(days=days)).isoformat(), "time": at, "still": f"{ART}f{n}.jpg", "backdrop": f"{ART}f{n}.jpg",
@@ -5362,6 +5364,26 @@ def _seed_agenda():
     json.dump({"shows": {f"tv:{n}": {"name": r[0], "kind": "tv", "tmdb": 100 + n, "notify": n % 2 == 0} for n, r in enumerate(rows)},
                "synced": time.time()}, open(data + "agenda_follow.json", "w"))
     json.dump({"v": _ac.CACHE_VERSION, "shows": {"tv:1": {"events": evs, "fetched": time.time()}}}, open(data + "agenda_cache.json", "w"))
+
+
+def agendatoday_test():
+    """2.1.47: the calendar opens on today, also with episodes of the past week above it."""
+    _seed_agenda(shift=[-7, -6, -3, 0, 1])
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/agenda.py)")
+    mon.waitForAbort(8)
+    out = [lab("System.CurrentControlID"), lab("Container(200).CurrentItem"), lab("Container(200).ListItem.Label"),
+           lab("Container(200).ListItem.Property(when)"), lab("Container(200).NumItems")]
+    log("agendatoday: " + json.dumps(out))
+    shot("agenda-today")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
 
 
 def agendalist_test():
@@ -12745,6 +12767,7 @@ def main():
     safe(epinprog_test)
     safe(cwnotice_test)
     safe(agendalist_test)
+    safe(agendatoday_test)
     safe(agendaweek_test)
     safe(agendamonth_test)
     safe(kbfocus_test)
