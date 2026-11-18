@@ -157,6 +157,7 @@ class Agenda(xbmcgui.WindowXML):
         self.events = []
         self.ready = False
         self.week_key = ""
+        self.list_pick = 0
 
     # ------------------------------------------------------------------ window events
     def onInit(self):
@@ -320,21 +321,40 @@ class Agenda(xbmcgui.WindowXML):
             target = GRID
         if focus and not self.getProperty("agenda.empty"):
             self.setFocusId(target)
+            if view == "list":
+                self.select_today()
         elif focus:
             self.setFocusId(102)
+
+    def select_today(self):
+        """2.1.47: Kodi ignores selectItem on the list while it is not on screen yet (it opened on the first day of the
+        past week): select today's first title again once the list is visible."""
+        monitor = xbmc.Monitor()
+        for _ in range(20):
+            if xbmc.getCondVisibility(f"Control.IsVisible({LIST})"):
+                break
+            if monitor.waitForAbort(0.05):
+                return
+        monitor.waitForAbort(0.1)
+        try:
+            control = self.getControl(LIST)
+            if control.getSelectedPosition() != self.list_pick and self.list_pick < control.size():
+                control.selectItem(self.list_pick)
+        except Exception:  # noqa: BLE001
+            pass
 
     # -- list
     def fill_list(self):
         lo, hi = add_days(core.today(), -7).isoformat(), add_days(core.today(), 90).isoformat()
         events = [e for e in self.events if lo <= e["date"] <= hi]
-        items, first_today, last_date = [], 0, ""
+        items, first_today, last_date = [], None, ""
         by_show = {}
         for ev in self.events:
             by_show.setdefault(ev["show"], []).append(ev)
         for ev in events:
             d = parse(ev["date"])
             header = nice_day(d) if ev["date"] != last_date else ""
-            if header and not first_today and ev["date"] >= core.today().isoformat():
+            if header and first_today is None and ev["date"] >= core.today().isoformat():
                 first_today = len(items)
             last_date = ev["date"]
             upcoming = [e for e in by_show[ev["show"]] if (e["date"], e["time"]) > (ev["date"], ev["time"])][:2]
@@ -363,10 +383,14 @@ class Agenda(xbmcgui.WindowXML):
         control = self.getControl(LIST)
         control.reset()
         control.addItems(items)
+        self.list_pick = 0
         if items:
+            if first_today is None:
+                first_today = len(items) - 1               # 2.1.47: nothing from today on: the last one
             if items[min(first_today, len(items) - 1)].getProperty("isheader") and first_today + 1 < len(items):
                 first_today += 1
-            control.selectItem(min(first_today, len(items) - 1))
+            self.list_pick = min(first_today, len(items) - 1)
+            control.selectItem(self.list_pick)
 
     # -- week
     def shift_week(self, days):
