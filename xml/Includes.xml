@@ -657,4 +657,144 @@
         </control>
         </definition>
     </include>
+
+    <!-- 3.1.0: the search screen (Lucent_Search.xml, scripts/search.py) -->
+    <variable name="LucentSearchTabLabel">
+        <value condition="String.IsEqual(Skin.String(lucent.search.tab),lv) + System.HasAddon(plugin.video.lucent)">$LOCALIZE[31926]</value>
+        <value>$LOCALIZE[31925]</value>
+    </variable>
+    <variable name="LucentSearchProviderLabel">
+        <value condition="!String.IsEmpty(Skin.String(lucent.search.provider.label))">$INFO[Skin.String(lucent.search.provider.label)]</value>
+        <value condition="System.HasAddon(plugin.video.lucent)">$INFO[System.AddonTitle(plugin.video.lucent)]</value>
+        <value condition="System.HasAddon(plugin.video.fen)">$INFO[System.AddonTitle(plugin.video.fen)]</value>
+        <value condition="System.HasAddon(plugin.video.fenlight)">$INFO[System.AddonTitle(plugin.video.fenlight)]</value>
+        <value condition="System.HasAddon(plugin.video.pov)">$INFO[System.AddonTitle(plugin.video.pov)]</value>
+        <value condition="System.HasAddon(plugin.video.umbrella)">$INFO[System.AddonTitle(plugin.video.umbrella)]</value>
+        <value condition="System.HasAddon(plugin.video.seren)">$INFO[System.AddonTitle(plugin.video.seren)]</value>
+        <value>$LOCALIZE[31920]</value>
+    </variable>
+    <variable name="LucentSearchTrash">
+        <value condition="Control.HasFocus(103)">on_focus</value>
+        <value>text</value>
+    </variable>
+    <variable name="LucentSearchRowText">
+        <value condition="Control.HasFocus(200)">on_focus</value>
+        <value>text</value>
+    </variable>
+    <variable name="LucentSearchRowText2">
+        <value condition="Control.HasFocus(200)">on_focus</value>
+        <value>text4</value>
+    </variable>
+    <include name="LucentSearchItem">
+        <param name="id"/>
+        <definition>
+            <control type="image">
+                <left>0</left><top>0</top><width>180</width><height>270</height>
+                <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
+            </control>
+            <control type="image">
+                <left>0</left><top>0</top><width>180</width><height>270</height>
+                <aspectratio scalediffuse="false">scale</aspectratio>
+                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Icon]</texture>
+            </control>
+            <control type="image">
+                <left>0</left><top>0</top><width>180</width><height>270</height>
+                <aspectratio scalediffuse="false">scale</aspectratio>
+                <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
+            </control>
+        </definition>
+    </include>
+    <include name="LucentSearchList">
+        <param name="id"/>
+        <definition>
+            <orientation>horizontal</orientation>
+            <left>30</left><top>56</top><width>1470</width><height>330</height>
+            <scrolltime tween="cubic" easing="out">200</scrolltime>
+            <itemlayout width="204" height="330">
+                <include content="LucentSearchItem"/>
+                <control type="label">
+                    <left>0</left><top>282</top><width>180</width><height>34</height>
+                    <font>font10</font><textcolor>text3</textcolor>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+            </itemlayout>
+            <focusedlayout width="204" height="330">
+                <include content="LucentSearchItem"/>
+                <control type="image">
+                    <left>-3</left><top>-3</top><width>186</width><height>276</height>
+                    <texture border="14">rr14_edge.png</texture><colordiffuse>text</colordiffuse>
+                    <visible>Control.HasFocus($PARAM[id])</visible>
+                </control>
+                <control type="label">
+                    <left>0</left><top>282</top><width>180</width><height>34</height>
+                    <font>font10</font><textcolor>text</textcolor>
+                    <scroll>true</scroll>
+                    <label>$INFO[ListItem.Label]</label>
+                </control>
+            </focusedlayout>
+        </definition>
+    </include>
+    <include name="LucentSearchRow">
+        <param name="id"/>
+        <param name="key"/>
+        <definition>
+            <control type="group">
+                <width>1500</width><height>390</height>
+                <defaultcontrol>$PARAM[id]</defaultcontrol>
+                <visible>!String.IsEmpty(Window.Property(url.$PARAM[key]))</visible>
+                <control type="label">
+                    <left>34</left><top>0</top><width>1000</width><height>44</height>
+                    <font>font_label_bold</font><textcolor>text</textcolor>
+                    <label>$INFO[Window.Property(title.$PARAM[key])]</label>
+                </control>
+                <control type="label">
+                    <left>34</left><top>140</top><width>1300</width><height>40</height>
+                    <font>font_body</font><textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(busy)]</label>
+                    <visible>Container($PARAM[id]).IsUpdating | String.IsEqual(Window.Property(wait.$PARAM[key]),1)</visible>
+                </control>
+                <control type="label">
+                    <left>34</left><top>140</top><width>1300</width><height>40</height>
+                    <font>font_body</font><textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(none)]</label>
+                    <visible>Integer.IsEqual(Container($PARAM[id]).NumItems,0) + !Container($PARAM[id]).IsUpdating + String.IsEmpty(Window.Property(wait.$PARAM[key]))</visible>
+                </control>
+                <control type="list" id="$PARAM[id]">
+                    <include content="LucentSearchList"><param name="id">$PARAM[id]</param></include>
+                    <content target="videos">$INFO[Window.Property(url.$PARAM[key])]</content>
+                </control>
+            </control>
+        </definition>
+    </include>
+    <include name="LucentSearchRowStatic">
+        <param name="id"/>
+        <param name="key"/>
+        <definition>
+            <control type="group">
+                <width>1500</width><height>390</height>
+                <defaultcontrol>$PARAM[id]</defaultcontrol>
+                <visible>!String.IsEmpty(Window.Property(url.$PARAM[key]))</visible>
+                <control type="label">
+                    <left>34</left><top>0</top><width>1000</width><height>44</height>
+                    <font>font_label_bold</font><textcolor>text</textcolor>
+                    <label>$INFO[Window.Property(title.$PARAM[key])]</label>
+                </control>
+                <control type="label">
+                    <left>34</left><top>140</top><width>1300</width><height>40</height>
+                    <font>font_body</font><textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(busy)]</label>
+                    <visible>String.IsEqual(Window.Property(wait.$PARAM[key]),1)</visible>
+                </control>
+                <control type="label">
+                    <left>34</left><top>140</top><width>1300</width><height>40</height>
+                    <font>font_body</font><textcolor>text3</textcolor>
+                    <label>$INFO[Window.Property(none.$PARAM[key])]</label>
+                    <visible>Integer.IsEqual(Container($PARAM[id]).NumItems,0) + String.IsEmpty(Window.Property(wait.$PARAM[key]))</visible>
+                </control>
+                <control type="list" id="$PARAM[id]">
+                    <include content="LucentSearchList"><param name="id">$PARAM[id]</param></include>
+                </control>
+            </control>
+        </definition>
+    </include>
 </includes>

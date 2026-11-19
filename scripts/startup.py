@@ -91,6 +91,9 @@ def first_start():
             and _skin("nuvio.menu.version"):
         import menu
         step("rows of the video add-on", menu.lv_convert)
+    if not _skin("lucent.searchtab") and _skin("nuvio.menu.version"):
+        import menu
+        step("search tab", menu.search_convert)
     lite = xbmc.getCondVisibility("Skin.HasSetting(lucent.lite)")
     if lite != bool(_skin("lucent.lite.built")):
         step("light mode", settings.lite_build)      # reloads the skin: Home starts this script again

@@ -48,6 +48,7 @@ sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http
 if [ "$VARIANT" = new ]; then rm -rf $K/addons/script.lucent.library; fi
 sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^TMDB_IMG = .*#TMDB_IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/skin.lucent/scripts/info.py
 sed -i 's#^TRAKT_REVIEWS = .*#TRAKT_REVIEWS = "http://127.0.0.1:8765/trakt/"#' $K/addons/skin.lucent/scripts/info.py
+sed -i 's#("plugin.video.fen", "plugin://plugin.video.fen/?mode=build_movie_list&action=tmdb_movies_search&query={q}",#("plugin.video.fakefen", "plugin://plugin.video.fakefen/?mode=showcase\&q={q}",#; s#"plugin://plugin.video.fen/?mode=build_tvshow_list&action=tmdb_tv_search&query={q}"),#"plugin://plugin.video.fakefen/?mode=showcase_tv\&q={q}"),#; s#https://image.tmdb.org/t/p/#http://127.0.0.1:8765/t/p/#g' $K/addons/skin.lucent/scripts/search.py   # 3.1.0 search screen: the fake add-on as provider
 sed -i 's#https://www.omdbapi.com/?#http://127.0.0.1:8765/omdb/?#' $K/addons/skin.lucent/scripts/omdb.py
 sed -i 's#https://api.mdblist.com/#http://127.0.0.1:8765/mdblist/#' $K/addons/skin.lucent/scripts/omdb.py
 python3 ci/faketmdb.py > /tmp/ci/faketmdb.txt 2>&1 &

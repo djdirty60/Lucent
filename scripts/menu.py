@@ -391,6 +391,22 @@ def lv_convert():
         put("lucent.lvrows", "done4")                       # done4: Lucent Library rows converted too (1.39.0)
 
 
+def search_convert():
+    """3.1.0 (#34): the Search tab of the default menu opens the search screen of Lucent. Once; a tab you named or
+    pointed somewhere else yourself stays as it is. Skin settings > Search > Search tab opens can go back."""
+    menu = Menu()
+    old = ("VideoLibrary.Search", videos(LVA + "searchmenu"))
+    names = (T["t_search"][0], T["t_search"][1])
+    changed = False
+    for tab in menu.tabs:
+        if tab["action"] in old and tab["label"] in names and tab.get("icon") == "icons/search.png":
+            tab["action"], changed = SEARCH, True
+    if changed:
+        menu.save()
+        log("Search tab opens the search screen")
+    put("lucent.searchtab", "1")
+
+
 def lv_knows(name):
     """True when the installed the video add-on knows this row (it can also go back to an older version)."""
     try:
@@ -459,6 +475,7 @@ G = lambda en, nl: (en, nl)  # noqa: E731 - inline translation
 ACTION_GROUPS = [
     (G("Video library", "Videobibliotheek"), "icons/library.png", [
         ("k_library", "icons/library.png", videos("videodb://")),
+        (G("Lucent search screen", "Zoekscherm van Lucent"), "icons/search.png", SEARCH),
         (G("Search the library", "Bibliotheek doorzoeken"), "icons/search.png", "VideoLibrary.Search"),
         ("k_lib_m", "icons/movies.png", videos("videodb://movies/titles/")),
         ("k_lib_s", "icons/tv.png", videos("videodb://tvshows/titles/")),
@@ -526,6 +543,7 @@ ICONS = ["home", "search", "movies", "tv", "library", "star", "trakt", "favourit
          "trailer", "calendar", "download", "addons", "folder", "files", "music", "pictures", "globe", "user",
          "bookmark", "info", "settings", "power"]
 SHOW_WIDGETS = "SetFocus(9100)"
+SEARCH = "RunScript(special://skin/scripts/search.py)"   # 3.1.0: the search screen of Lucent (#34)
 
 
 def widget(key, path, style):
@@ -562,7 +580,7 @@ def plain_tabs():
         return {"label": tr(key), "icon": f"icons/{icon}.png", "action": action, "widgets": widgets or []}
 
     return [
-        tab("t_search", "search", "VideoLibrary.Search"),
+        tab("t_search", "search", SEARCH),
         tab("t_home", "home", SHOW_WIDGETS, home),
         tab("t_movies", "movies", videos("videodb://movies/titles/"), movies),
         tab("t_shows", "tv", videos("videodb://tvshows/titles/"), shows),
@@ -593,7 +611,7 @@ def lv_tabs():
         return {"label": tr(key), "icon": f"icons/{icon}.png", "action": action, "widgets": widgets or []}
 
     return [
-        tab("t_search", "search", videos(LVA + "searchmenu")),
+        tab("t_search", "search", SEARCH),
         tab("t_home", "home", SHOW_WIDGETS, home),
         tab("t_movies", "movies", videos(LVA + "menu&type=movie"), movies),
         tab("t_shows", "tv", videos(LVA + "menu&type=tvshow"), shows),
@@ -1304,6 +1322,8 @@ if __name__ == "__main__":
         addons_once()
     elif arg == "lv":
         lv_convert()
+    elif arg == "search":
+        search_convert()
     elif arg == "addwidget":
         add_here()
     elif arg == "reset":

@@ -28,6 +28,7 @@
                 <onright condition="String.IsEqual(Container(9000).ListItem.Property(cat),6)">9106</onright>
                 <onright condition="String.IsEqual(Container(9000).ListItem.Property(cat),7)">9107</onright>
                 <onright condition="String.IsEqual(Container(9000).ListItem.Property(cat),8)">9108</onright>
+                <onright condition="String.IsEqual(Container(9000).ListItem.Property(cat),9)">9109</onright>
                 <onright condition="String.IsEqual(Container(9000).ListItem.Property(cat),setup) | String.IsEqual(Container(9000).ListItem.Property(cat),backup) | String.IsEqual(Container(9000).ListItem.Property(cat),kids)">9190</onright>
                 <itemlayout width="460" height="70">
                 <control type="image">
@@ -132,6 +133,12 @@
                     <icon>icons/layout.png</icon>
                     <property name="cat">$NUMBER[3]</property>
                     <property name="sub">$LOCALIZE[31404]</property><onclick>SetFocus(9103)</onclick>
+                </item>
+                <item>
+                    <label>$LOCALIZE[31910]</label>
+                    <icon>icons/search.png</icon>
+                    <property name="cat">$NUMBER[9]</property>
+                    <property name="sub">$LOCALIZE[31911]</property><onclick>SetFocus(9109)</onclick>
                 </item>
                 <item>
                     <label>$LOCALIZE[31133]</label>
@@ -718,6 +725,66 @@
                     <onclick>Skin.ToggleDebug</onclick>
                 <font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>21806</onup><ondown>2801</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9108</onright></control>
             <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1807_text3]">icons/settings.png</texture></control><control type="label"><left>124</left><top>20</top><width>960</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1807_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31477]</label></control><control type="label"><left>124</left><top>56</top><width>960</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1807_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31478]</label></control></control></control>
+            <control type="grouplist" id="9109">
+                <onright condition="Control.IsVisible(60)">60</onright>
+                <onright>9109</onright>
+                <left>596</left>
+                <top>280</top>
+                <width>1248</width>
+                <height>780</height>
+                <itemgap>0</itemgap>
+                <usecontrolcoords>true</usecontrolcoords><pagecontrol>60</pagecontrol>
+                <onleft>9000</onleft>
+                <onup>9109</onup>
+                <ondown>9109</ondown>
+                <visible>String.IsEqual(Container(9000).ListItem.Property(cat),9)</visible>
+                <control type="label" id="2901">
+                    <left>28</left><width>1200</width>
+                    <height>64</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31910]</label>
+                </control>
+<control type="group" id="21901"><width>1248</width><height>108</height><control type="image"><left>2</left><top>-16</top><width>1244</width><height>140</height><texture colordiffuse="glow" border="44">rr20_glow.png</texture><visible>Control.HasFocus(1901)</visible></control><control type="button" id="1901">
+                    <left>24</left><top>6</top><width>1200</width><height>96</height><label/><textcolor>text3</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <label2>$VAR[LucentSearchProviderLabel]</label2>
+                    <onclick>RunScript(special://skin/scripts/search.py,provider)</onclick>
+                <font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>2901</onup><ondown>21902</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9109</onright></control>
+                <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1901_text3]">icons/search.png</texture></control><control type="label"><left>124</left><top>20</top><width>740</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1901_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31912]</label></control><control type="label"><left>124</left><top>56</top><width>740</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1901_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31913]</label></control></control>
+<control type="group" id="21902"><width>1248</width><height>108</height><control type="image"><left>2</left><top>-16</top><width>1244</width><height>140</height><texture colordiffuse="glow" border="44">rr20_glow.png</texture><visible>Control.HasFocus(1902)</visible></control><control type="button" id="1902">
+                    <left>24</left><top>6</top><width>1200</width><height>96</height><label/><textcolor>text3</textcolor>
+                    <focusedcolor>on_focus</focusedcolor>
+                    <label2>$VAR[LucentSearchTabLabel]</label2>
+                    <onclick>RunScript(special://skin/scripts/search.py,tab)</onclick>
+                <font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>21901</onup><ondown>2902</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9109</onright></control>
+                <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1902_text3]">icons/search.png</texture></control><control type="label"><left>124</left><top>20</top><width>740</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1902_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31914]</label></control><control type="label"><left>124</left><top>56</top><width>740</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1902_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31915]</label></control></control>
+                <control type="label" id="2902">
+                    <left>28</left><width>1200</width>
+                    <height>64</height>
+                    <font>font_caps</font>
+                    <textcolor>text4</textcolor>
+                    <aligny>bottom</aligny>
+                    <label>$LOCALIZE[31916]</label>
+                </control>
+<control type="group" id="21903"><width>1248</width><height>108</height><control type="image"><left>2</left><top>-16</top><width>1244</width><height>140</height><texture colordiffuse="glow" border="44">rr20_glow.png</texture><visible>Control.HasFocus(1903)</visible></control><control type="radiobutton" id="1903">
+                    <left>24</left><top>6</top><width>1200</width><height>96</height><label/><selected>!Skin.HasSetting(lucent.search.nomovies)</selected>
+                    <onclick>Skin.ToggleSetting(lucent.search.nomovies)</onclick><font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>2902</onup><ondown>21904</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9109</onright></control>
+                <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1903_text3]">icons/movies.png</texture></control><control type="label"><left>124</left><top>20</top><width>960</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1903_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31917]</label></control><control type="label"><left>124</left><top>56</top><width>960</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1903_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31921]</label></control></control>
+<control type="group" id="21904"><width>1248</width><height>108</height><control type="image"><left>2</left><top>-16</top><width>1244</width><height>140</height><texture colordiffuse="glow" border="44">rr20_glow.png</texture><visible>Control.HasFocus(1904)</visible></control><control type="radiobutton" id="1904">
+                    <left>24</left><top>6</top><width>1200</width><height>96</height><label/><selected>!Skin.HasSetting(lucent.search.noshows)</selected>
+                    <onclick>Skin.ToggleSetting(lucent.search.noshows)</onclick><font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>21903</onup><ondown>21905</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9109</onright></control>
+                <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1904_text3]">icons/tv.png</texture></control><control type="label"><left>124</left><top>20</top><width>960</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1904_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31918]</label></control><control type="label"><left>124</left><top>56</top><width>960</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1904_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31922]</label></control></control>
+<control type="group" id="21905"><width>1248</width><height>108</height><control type="image"><left>2</left><top>-16</top><width>1244</width><height>140</height><texture colordiffuse="glow" border="44">rr20_glow.png</texture><visible>Control.HasFocus(1905)</visible></control><control type="radiobutton" id="1905">
+                    <left>24</left><top>6</top><width>1200</width><height>96</height><label/><selected>Skin.HasSetting(lucent.search.people)</selected>
+                    <onclick>Skin.ToggleSetting(lucent.search.people)</onclick><font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>21904</onup><ondown>21906</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9109</onright></control>
+                <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1905_text3]">icons/people.png</texture></control><control type="label"><left>124</left><top>20</top><width>960</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1905_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31919]</label></control><control type="label"><left>124</left><top>56</top><width>960</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1905_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31923]</label></control></control>
+<control type="group" id="21906"><width>1248</width><height>108</height><control type="image"><left>2</left><top>-16</top><width>1244</width><height>140</height><texture colordiffuse="glow" border="44">rr20_glow.png</texture><visible>Control.HasFocus(1906)</visible></control><control type="radiobutton" id="1906">
+                    <left>24</left><top>6</top><width>1200</width><height>96</height><label/><selected>!Skin.HasSetting(lucent.search.nolib)</selected>
+                    <onclick>Skin.ToggleSetting(lucent.search.nolib)</onclick><font>font10</font><textoffsetx>36</textoffsetx><texturefocus border="20" colordiffuse="focus">rr20.png</texturefocus><texturenofocus border="20" colordiffuse="card">rr20.png</texturenofocus><onup>21905</onup><ondown>2901</ondown><onleft>9000</onleft><onright condition="Control.IsVisible(60)">60</onright><onright>9109</onright></control>
+                <control type="image"><left>54</left><top>34</top><width>40</width><height>40</height><texture colordiffuse="$VAR[SSF1906_text3]">icons/library.png</texture></control><control type="label"><left>124</left><top>20</top><width>960</width><height>36</height><font>font12_bold</font><textcolor>$VAR[SSF1906_text]</textcolor><aligny>center</aligny><label>$LOCALIZE[31920]</label></control><control type="label"><left>124</left><top>56</top><width>960</width><height>30</height><font>font_tiny</font><textcolor>$VAR[SSF1906_text4]</textcolor><aligny>center</aligny><label>$LOCALIZE[31924]</label></control></control>
+            </control>
             <control type="scrollbar" id="60">
                 <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),1)">9101</onleft>
                 <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),2)">9102</onleft>
@@ -727,6 +794,7 @@
                 <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),6)">9106</onleft>
                 <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),7)">9107</onleft>
                 <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),8)">9108</onleft>
+                <onleft condition="String.IsEqual(Container(9000).ListItem.Property(cat),9)">9109</onleft>
                 <left>1846</left>
                 <top>286</top>
                 <height>760</height>

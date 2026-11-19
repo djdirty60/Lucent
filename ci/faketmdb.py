@@ -55,6 +55,9 @@ class H(BaseHTTPRequestHandler):
                 {"source": "tomatoes", "value": 87, "score": 87, "votes": 120},
                 {"source": "popcorn", "value": 56, "score": 56, "votes": 250000},
                 {"source": "letterboxd", "value": 3.4, "score": 68, "votes": 90000}]}).encode(), "application/json")
+        if "/search/person" in path:                         # 3.1.0: the Actors row of the search screen
+            return self.send(json.dumps({"results": [{"id": 31 + i, "name": n, "profile_path": f"/{n[0].lower()}p.png"}
+                                                     for i, n in enumerate(["Anna Actor", "Bram Bakker", "Carla Cast"])]}).encode(), "application/json")
         if "/search/tv" in path:
             q = urllib.parse.unquote_plus(self.path.split("query=", 1)[-1].split("&")[0])
             if q.startswith("Future"):                          # 2.1.16: a running season, episodes 8 and 9 still to come

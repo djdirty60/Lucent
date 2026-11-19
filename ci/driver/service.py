@@ -7372,6 +7372,98 @@ def refreshopt_test():
     mon.waitForAbort(2)
 
 
+def search_test():
+    """3.1.0 (#34): the search screen. The fake add-on stands in for Fen (run.sh); actors from the fake TMDb."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    keyf = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/tmdb_key.txt")
+    if not os.path.exists(keyf):
+        os.makedirs(os.path.dirname(keyf), exist_ok=True)
+        open(keyf, "w").write("cikey")
+    tabs = {n: lab(f"Skin.String(nuvio.tab{n}.action)") for n in range(1, 4)}
+    out.append(f"tabs after start={tabs} searchtab={lab('Skin.String(lucent.searchtab)')!r}")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Control.SetFocus(9000,0)")
+    mon.waitForAbort(1)
+    hist = xbmcvfs.translatePath("special://profile/addon_data/skin.lucent/search_history.json")
+    if os.path.exists(hist):
+        os.remove(hist)
+    HOME.clearProperty("lucent.search.last")
+    xbmc.executebuiltin("Skin.SetBool(lucent.search.people)")
+    xbmc.executebuiltin("Skin.SetString(lucent.search.provider,plugin.video.fakefen)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/search.py)")
+    mon.waitForAbort(3)
+    out.append(f"open={cond('Window.IsActive(Lucent_Search.xml)')} focus={lab('System.CurrentControlID')} provider={lab('Control.GetLabel(101)')!r}")
+    shot("310-search-empty")
+    xbmc.executebuiltin("SetFocus(101)")
+    mon.waitForAbort(1)
+    shot("310-search-provider")
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(1)
+    out.append(f"after OK provider={lab('Control.GetLabel(101)')!r} skin={lab('Skin.String(lucent.search.provider)')!r}")
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(1)
+    out.append(f"after 2x OK provider={lab('Control.GetLabel(101)')!r}")
+    xbmc.executebuiltin("Skin.SetString(lucent.search.provider,plugin.video.fakefen)")
+    subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+    mon.waitForAbort(2)
+    out.append(f"closed={not cond('Window.IsActive(Lucent_Search.xml)')}")
+    # a search (the keyboard is Kodi's own; the screen reopens a search kept on Home)
+    HOME.setProperty("lucent.search.last", json.dumps(["Northern", "plugin.video.fakefen"]))
+    xbmc.executebuiltin("RunScript(special://skin/scripts/search.py)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or int(lab("Container(301).NumItems") or 0) > 0:
+            break
+    mon.waitForAbort(3)
+    out.append(f"results: focus={lab('System.CurrentControlID')} movies={lab('Container(301).NumItems')} shows={lab('Container(302).NumItems')} "
+               f"people={lab('Container(303).NumItems')} libm={lab('Container(304).NumItems')} libs={lab('Container(305).NumItems')} "
+               f"first={lab('Container(301).ListItem.Label')!r}")
+    shot("311-search-results")
+    for n in range(3):
+        subprocess.run(["xdotool", "key", "Down"], timeout=5)
+        mon.waitForAbort(1.5)
+        out.append(f"down{n + 1}: focus={lab('System.CurrentControlID')}")
+        shot(f"311-search-results-down{n + 1}")
+    subprocess.run(["xdotool", "key", "BackSpace"], timeout=5)
+    mon.waitForAbort(2)
+    out.append(f"back: open={cond('Window.IsActive(Lucent_Search.xml)')} history={lab('Container(200).NumItems')} first={lab('Container(200).ListItem(0).Label')!r} label2={lab('Container(200).ListItem(0).Label2')!r}")
+    shot("312-search-history")
+    # OK on a film: the screen steps aside and Kodi plays / opens it
+    HOME.setProperty("lucent.search.last", json.dumps(["Northern", "plugin.video.fakefen"]))
+    subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+    mon.waitForAbort(2)
+    HOME.setProperty("lucent.search.last", json.dumps(["Northern", "plugin.video.fakefen"]))
+    xbmc.executebuiltin("RunScript(special://skin/scripts/search.py)")
+    mon.waitForAbort(5)
+    xbmc.executebuiltin("SetFocus(302)")
+    mon.waitForAbort(1)
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(4)
+    out.append(f"ok on show: search open={cond('Window.IsActive(Lucent_Search.xml)')} window={lab('System.CurrentWindow')!r} path={lab('Container.FolderPath')!r}")
+    shot("313-search-ok-show")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    # Skin settings > Search
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(3)
+    for i in range(int(lab("Container(9000).NumItems") or 0)):
+        if lab(f"Container(9000).ListItemAbsolute({i}).Property(cat)") == "9":
+            xbmc.executebuiltin(f"Control.SetFocus(9000,{i},absolute)")
+    mon.waitForAbort(2)
+    shot("314-settings-search")
+    xbmc.executebuiltin("SetFocus(1901)")
+    mon.waitForAbort(1)
+    out.append(f"settings: provider={lab('Control.GetLabel(1901).index(1)')!r} tab={lab('Control.GetLabel(1902).index(1)')!r} focus={lab('System.CurrentControlID')}")
+    shot("314-settings-search-focus")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    log("search: " + " | ".join(out))
+
+
 def epctx_test():
     """2.1.51: the menu key on an episode of the series page (list 5601) gives that episode's menu (ctx.py), not the
     season's; on the season tabs (56) and elsewhere Kodi's own menu stays. OK still opens."""
@@ -12979,6 +13071,7 @@ def main():
     safe(libctx_test)
     safe(epctx_test)
     safe(refreshopt_test)
+    safe(search_test)
     safe(wn300_test)
     safe(epbadge_test)
     safe(epnest_test)
