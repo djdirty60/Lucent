@@ -46,17 +46,39 @@ OK_KEYMAP = """<keymap>
         <!-- holding OK still opens the context menu: once a key is mapped here, Kodi ignores the global long press -->
         <keyboard>
             <return>RunScript(special://skin/scripts/openitem.py)</return>
-            <return mod="longpress">ContextMenu</return>
+            <return mod="longpress">RunScript(special://skin/scripts/ctx.py)</return>
             <enter>RunScript(special://skin/scripts/openitem.py)</enter>
-            <enter mod="longpress">ContextMenu</enter>
+            <enter mod="longpress">RunScript(special://skin/scripts/ctx.py)</enter>
         </keyboard>
         <remote>
             <select>RunScript(special://skin/scripts/openitem.py)</select>
-            <select mod="longpress">ContextMenu</select>
+            <select mod="longpress">RunScript(special://skin/scripts/ctx.py)</select>
         </remote>
     </videos>
 </keymap>
 """
+
+
+# 2.1.51: the menu key / holding OK in the video lists goes through ctx.py: on the episodes row of the series page
+# (view 56) Kodi would show the menu of the selected season; ctx.py shows the episode's own menu there, Kodi's elsewhere
+CTX_PATH = DIR + "lucent-ctx.xml"
+CTX = "RunScript(special://skin/scripts/ctx.py)"
+CTX_KEYMAP = """<keymap>
+    <videos>
+        <keyboard>
+            <c>%(c)s</c>
+            <menu>%(c)s</menu>
+            <return mod="longpress">%(c)s</return>
+            <enter mod="longpress">%(c)s</enter>
+        </keyboard>
+        <remote>
+            <menu>%(c)s</menu>
+            <title>%(c)s</title>
+            <select mod="longpress">%(c)s</select>
+        </remote>
+    </videos>
+</keymap>
+""" % {"c": CTX}
 
 
 HOME_PATH = DIR + "lucent-home.xml"
@@ -128,6 +150,7 @@ def main():
     # the Home button of the remote goes to the Home screen from every window (switch off: Skin.String(nuvio.homekey) = off)
     changed = sync(HOME_PATH, HOME_KEYMAP, xbmc.getInfoLabel("Skin.String(nuvio.homekey)") != "off") or changed
     changed = sync(TOUCH_PATH, TOUCH_KEYMAP, xbmc.getInfoLabel("Skin.String(lucent.touchswipe)") != "off") or changed
+    changed = sync(CTX_PATH, CTX_KEYMAP, True) or changed
     if changed:
         xbmc.executebuiltin("Action(reloadkeymaps)")
         log("keymaps updated")
