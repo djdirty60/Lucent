@@ -151,6 +151,23 @@ def people(term):
     return items
 
 
+def open_action(cid):
+    """What OK on the selected title of result row cid does, as a Kodi command."""
+    info = lambda name: xbmc.getInfoLabel(f"Container({cid}).ListItem.{name}")  # noqa: E731
+    path = info("FolderPath") or info("FileNameAndPath")
+    if not path:
+        return ""
+    if xbmc.getCondVisibility(f"Container({cid}).ListItem.IsFolder"):
+        return f'ActivateWindow(Videos,"{path}",return)'
+    tmdb = info("UniqueID(tmdb)")
+    if info("DBType") == "movie" and tmdb.isdigit() and xbmc.getCondVisibility("Skin.HasSetting(nuvio.ok.movie.page)"):
+        HOME.setProperty("nuvio.open.tmdb", tmdb)
+        HOME.setProperty("nuvio.open.type", "movie")
+        HOME.clearProperty("nuvio.open.trakt")
+        return "RunScript(special://skin/scripts/info.py,open,path)"
+    return f'PlayMedia("{path}")'
+
+
 class Search(xbmcgui.WindowXMLDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -318,10 +335,12 @@ class Search(xbmcgui.WindowXMLDialog):
                 self.setFocusId(rows[at - 1] if at > 0 else 101)
             return
         if action.getId() in (7, 100) and focus in (301, 302, 304, 305):
-            # Kodi opens the folder or plays the title itself (the row's content, it never reaches onClick);
-            # this screen steps aside for it and opens on the same results when you come back to Search
-            log(f"open from row {focus}: {xbmc.getInfoLabel(f'Container({focus}).ListItem.Label')}")
-            self.close()
+            # OK on a title: this screen closes and opens it (a folder in Videos, a film plays or opens its page);
+            # coming back to Search shows the same results
+            self.after = open_action(focus)
+            log(f"open from row {focus}: {self.after}")
+            if self.after:
+                self.close()
             return
         if action.getId() == 4 and focus in (101, 102, 103) and self.getProperty("mode") == "results":
             rows = self.rows()
