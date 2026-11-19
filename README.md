@@ -1,4 +1,4 @@
-<p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
+<p align="center"><img src="screenshots/banner.jpg" alt="Lucent" width="720"></p>
 
 # Lucent – Kodi skin (3.0)
 
