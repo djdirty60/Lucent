@@ -32,7 +32,6 @@
             <!-- the text block: lower without plot, higher with plot (cinema style) -->
             <control type="group">
                 <top>0</top>
-                <animation effect="slide" start="0,0" end="0,-190" time="0" condition="!String.IsEmpty(Window.Property(cinema)) + !String.IsEmpty(Window.Property(a.plot))">Conditional</animation>
                 <control type="grouplist">
                     <left>120</left><top>436</top><width>1200</width><height>48</height>
                     <orientation>horizontal</orientation>
@@ -49,9 +48,9 @@
                     <texture background="true">$INFO[Window.Property(a.logo)]</texture>
                     <visible>!String.IsEmpty(Window.Property(a.logo))</visible>
                 </control>
-                <control type="textbox">
-                    <left>120</left><top>550</top><width>1100</width><height>160</height>
-                    <font>font45_title</font><textcolor>FFFFFFFF</textcolor><aligny>bottom</aligny>
+                <control type="label">
+                    <left>120</left><top>630</top><width>1500</width><height>80</height>
+                    <font>font45_title</font><textcolor>FFFFFFFF</textcolor><aligny>center</aligny>
                     <label>$INFO[Window.Property(a.title)]</label>
                     <visible>String.IsEmpty(Window.Property(a.logo))</visible>
                 </control>
@@ -95,7 +94,7 @@
                 </control>
                 <!-- cinema style: score, year, genres, runtime as pills, and the plot -->
                 <control type="grouplist">
-                    <left>120</left><top>916</top><width>1500</width><height>48</height>
+                    <left>120</left><top>732</top><width>1500</width><height>48</height>
                     <orientation>horizontal</orientation><itemgap>12</itemgap>
                     <visible>!String.IsEmpty(Window.Property(cinema)) + String.IsEmpty(Window.Property(a.sub))</visible>
                     <control type="button">
@@ -124,7 +123,7 @@
                 </control>
                 </control>
                 <control type="textbox">
-                    <left>124</left><top>986</top><width>960</width><height>132</height>
+                    <left>124</left><top>800</top><width>1000</width><height>132</height>
                     <font>font14</font><textcolor>E6FFFFFF</textcolor>
                     <label>$INFO[Window.Property(a.plot)]</label>
                     <visible>!String.IsEmpty(Window.Property(cinema)) + String.IsEmpty(Window.Property(a.sub))</visible>
@@ -172,7 +171,6 @@
             <!-- the text block: lower without plot, higher with plot (cinema style) -->
             <control type="group">
                 <top>0</top>
-                <animation effect="slide" start="0,0" end="0,-190" time="0" condition="!String.IsEmpty(Window.Property(cinema)) + !String.IsEmpty(Window.Property(b.plot))">Conditional</animation>
                 <control type="grouplist">
                     <left>120</left><top>436</top><width>1200</width><height>48</height>
                     <orientation>horizontal</orientation>
@@ -189,9 +187,9 @@
                     <texture background="true">$INFO[Window.Property(b.logo)]</texture>
                     <visible>!String.IsEmpty(Window.Property(b.logo))</visible>
                 </control>
-                <control type="textbox">
-                    <left>120</left><top>550</top><width>1100</width><height>160</height>
-                    <font>font45_title</font><textcolor>FFFFFFFF</textcolor><aligny>bottom</aligny>
+                <control type="label">
+                    <left>120</left><top>630</top><width>1500</width><height>80</height>
+                    <font>font45_title</font><textcolor>FFFFFFFF</textcolor><aligny>center</aligny>
                     <label>$INFO[Window.Property(b.title)]</label>
                     <visible>String.IsEmpty(Window.Property(b.logo))</visible>
                 </control>
@@ -235,7 +233,7 @@
                 </control>
                 <!-- cinema style: score, year, genres, runtime as pills, and the plot -->
                 <control type="grouplist">
-                    <left>120</left><top>916</top><width>1500</width><height>48</height>
+                    <left>120</left><top>732</top><width>1500</width><height>48</height>
                     <orientation>horizontal</orientation><itemgap>12</itemgap>
                     <visible>!String.IsEmpty(Window.Property(cinema)) + String.IsEmpty(Window.Property(b.sub))</visible>
                     <control type="button">
@@ -264,7 +262,7 @@
                 </control>
                 </control>
                 <control type="textbox">
-                    <left>124</left><top>986</top><width>960</width><height>132</height>
+                    <left>124</left><top>800</top><width>1000</width><height>132</height>
                     <font>font14</font><textcolor>E6FFFFFF</textcolor>
                     <label>$INFO[Window.Property(b.plot)]</label>
                     <visible>!String.IsEmpty(Window.Property(cinema)) + String.IsEmpty(Window.Property(b.sub))</visible>
@@ -306,7 +304,7 @@
             <control type="label">
                 <left>1020</left><top>70</top><width>800</width><height>100</height>
                 <font>font_hero</font><textcolor>FFFFFFFF</textcolor><align>right</align>
-                <label>$INFO[System.Time(hh:mm)]</label>
+                <label>$INFO[System.Time]</label>
                 <animation effect="zoom" start="170" end="170" center="1820,120" time="0" condition="true">Conditional</animation>
             </control>
             <control type="label">
