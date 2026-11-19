@@ -11,6 +11,7 @@ what you have in the Kodi library. The last searches stay in a list, OK searches
 """
 import json
 import sys
+import threading
 import time
 import urllib.parse
 
@@ -26,6 +27,7 @@ CLOSE = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
 LIBRARY = "library"
 LV = "plugin.video.lucent"
 ROWS = (301, 302, 303, 304, 305)
+KEYS = ("movie", "tvshow", "people", "libmovie", "libtvshow")      # the rows, in the same order
 
 # the add-ons the screen knows, in the order of the button: (id, movies, shows); {q} = the search term, url-encoded
 PROVIDERS = [
@@ -62,6 +64,7 @@ T = {
     "busy": ("Searching…", "Bezig met zoeken…"),
     "none": ("Nothing found", "Niets gevonden"),
     "no_key": ("Needs a TMDb key (Skin settings > Integrations)", "Heeft een TMDb-sleutel nodig (Skin-instellingen > Integraties)"),
+    "none_for": ("Nothing found for \u201c{0}\u201d", "Niets gevonden voor \u201c{0}\u201d"),
     "nothing": ("Nothing to search: switch on Movies, Shows or Actors in Skin settings > Search.",
                 "Niets om te zoeken: zet Films, Series of Acteurs aan in Skin-instellingen > Zoeken."),
     "library": ("Kodi library", "Kodi-bibliotheek"),
@@ -175,6 +178,7 @@ class Search(xbmcgui.WindowXMLDialog):
         self.provider = current(self.providers)
         self.history = load_history()
         self.term = ""
+        self.gen = 0                            # one number per search: an older watcher stops
         self.after = None                       # what to do once the screen is closed (open a person page)
         self.start = None
 
@@ -253,8 +257,11 @@ class Search(xbmcgui.WindowXMLDialog):
         for key, title in titles.items():
             self.setProperty(f"title.{key}", title)
         # clear first, so a row whose address stays the same still loads again
-        for key in urls:
+        self.gen += 1
+        for key in KEYS:
             self.setProperty(f"url.{key}", "")
+            self.setProperty(f"empty.{key}", "")
+        self.setProperty("allempty", "")
         self.setProperty("mode", "results")
         xbmc.sleep(50)
         for key, url in urls.items():
@@ -271,30 +278,63 @@ class Search(xbmcgui.WindowXMLDialog):
             else:
                 self.setProperty("none.people", tr("none"))
                 self.getControl(303).addItems(found)
-        else:
-            self.setProperty("url.people", "")
-        xbmc.sleep(250)
-        for _ in range(60):                                  # the first row (top down) with something in it
-            first = None
-            for cid in ROWS:
-                if not xbmc.getCondVisibility(f"Control.IsVisible({cid})"):
-                    continue
-                if xbmc.getCondVisibility(f"Integer.IsGreater(Container({cid}).NumItems,0)"):
-                    first = cid
-                    break
-                if xbmc.getCondVisibility(f"Container({cid}).IsUpdating"):
-                    first = 0                                # a row above is still loading: wait for it
-                    break
-            if first:
-                self.setFocusId(first)
+                if not found:
+                    self.setProperty("empty.people", "1")
+        if not any(self.getProperty(f"url.{key}") for key in KEYS):
+            self.setProperty("nothing", tr("nothing"))
+            self.setProperty("allempty", "1")
+            self.setFocusId(102)
+            return
+        threading.Thread(target=self.watch, args=(self.gen, term), daemon=True).start()
+
+    def watch(self, gen, term):
+        """While the rows load: hide the ones that stay empty, put the focus on the top row with something in it."""
+        started = time.time()
+        quiet = {}
+        focused = False
+        while time.time() - started < 30 and gen == self.gen and not xbmc.Monitor().abortRequested():
+            states = []                                     # per row: "items", "empty", "loading" or "off"
+            for key, cid in zip(KEYS, ROWS):
+                if not self.getProperty(f"url.{key}"):
+                    states.append("off")
+                elif self.getProperty(f"empty.{key}"):
+                    states.append("empty")
+                elif xbmc.getCondVisibility(f"Integer.IsGreater(Container({cid}).NumItems,0)"):
+                    states.append("items")
+                elif xbmc.getCondVisibility(f"Container({cid}).IsUpdating") or self.getProperty(f"wait.{key}") \
+                        or time.time() - started < 1.5:
+                    quiet[key] = 0
+                    states.append("loading")
+                else:                                       # not loading and nothing in it, twice in a row: empty
+                    quiet[key] = quiet.get(key, 0) + 1
+                    if quiet[key] >= 2 and key != "people":
+                        self.setProperty(f"empty.{key}", "1")
+                        states.append("empty")
+                    elif key == "people":
+                        states.append("message")            # the people row shows its own message (no key)
+                    else:
+                        states.append("loading")
+            if not focused:
+                for state, cid in zip(states, ROWS):
+                    if state == "loading":
+                        break
+                    if state == "items":
+                        if self.getFocusId() in (0, 101, 102, 103, 9001, 9002, 9100) or self.getFocusId() in ROWS:
+                            self.setFocusId(cid)
+                        focused = True
+                        break
+            if "loading" not in states:
+                if "items" not in states:
+                    self.setProperty("nothing", tr("none_for", term))
+                    self.setProperty("allempty", "1")
+                    self.setFocusId(102)
                 return
-            if first is None and _ > 4:
-                break
             xbmc.sleep(250)
-        self.setFocusId(102)
 
     def back_to_history(self):
         self.term = ""
+        self.gen += 1
+        self.setProperty("allempty", "")
         HOME.clearProperty("lucent.search.last")
         for key in ("movie", "tvshow", "people", "libmovie", "libtvshow"):
             self.setProperty(f"url.{key}", "")

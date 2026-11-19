@@ -7427,6 +7427,7 @@ def search_test():
         if mon.waitForAbort(0.5) or int(lab("Container(301).NumItems") or 0) > 0:
             break
     mon.waitForAbort(3)
+    out.append(f"empties: {[lab(f'Window(Lucent_Search.xml).Property(empty.{k})') for k in ('movie', 'tvshow', 'people', 'libmovie', 'libtvshow')]} vis={[cond(f'Control.IsVisible({c})') for c in (301, 302, 303, 304, 305)]}")
     out.append(f"results: focus={lab('System.CurrentControlID')} movies={lab('Container(301).NumItems')} shows={lab('Container(302).NumItems')} "
                f"people={lab('Container(303).NumItems')} libm={lab('Container(304).NumItems')} libs={lab('Container(305).NumItems')} "
                f"first={lab('Container(301).ListItem.Label')!r}")
@@ -7480,6 +7481,16 @@ def search_test():
     xbmc.executebuiltin("SetFocus(304)")
     mon.waitForAbort(1)
     shot("313-search-library")
+    HOME.setProperty("lucent.search.last", json.dumps(["Zzz", "plugin.video.fakefen"]))
+    subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+    mon.waitForAbort(2)
+    HOME.setProperty("lucent.search.last", json.dumps(["Zzz", "library"]))
+    xbmc.executebuiltin("RunScript(special://skin/scripts/search.py)")
+    mon.waitForAbort(8)
+    out.append(f"nothing: focus={lab('System.CurrentControlID')} vis={[cond(f'Control.IsVisible({c})') for c in (301, 302, 303, 304, 305)]}")
+    shot("313-search-nothing")
+    subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+    mon.waitForAbort(2)
     shot("313-search-reopen")
     subprocess.run(["xdotool", "key", "Escape"], timeout=5)
     mon.waitForAbort(2)

@@ -169,7 +169,7 @@
             <left>454</left><top>390</top><width>1300</width><height>40</height>
             <font>font_body</font><textcolor>text3</textcolor>
             <label>$INFO[Window.Property(nothing)]</label>
-            <visible>String.IsEqual(Window.Property(mode),results) + String.IsEmpty(Window.Property(url.movie)) + String.IsEmpty(Window.Property(url.tvshow)) + String.IsEmpty(Window.Property(url.people)) + String.IsEmpty(Window.Property(url.libmovie)) + String.IsEmpty(Window.Property(url.libtvshow))</visible>
+            <visible>String.IsEqual(Window.Property(mode),results) + !String.IsEmpty(Window.Property(allempty))</visible>
         </control>
     </controls>
 </window>
