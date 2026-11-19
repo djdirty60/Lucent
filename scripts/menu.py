@@ -150,6 +150,9 @@ def videos(path):
     return f"ActivateWindow(Videos,{path},return)"
 
 
+SEARCH = "RunScript(special://skin/scripts/search.py)"   # 3.1.0: the search screen of Lucent (#34)
+
+
 def xsp(content, rules=None, order="title"):
     """A smart-playlist filter for a library path (videodb://…?xsp=…)."""
     data = {"type": content, "order": {"direction": "descending" if order in ("rating", "dateadded", "lastplayed") else "ascending",
@@ -543,7 +546,6 @@ ICONS = ["home", "search", "movies", "tv", "library", "star", "trakt", "favourit
          "trailer", "calendar", "download", "addons", "folder", "files", "music", "pictures", "globe", "user",
          "bookmark", "info", "settings", "power"]
 SHOW_WIDGETS = "SetFocus(9100)"
-SEARCH = "RunScript(special://skin/scripts/search.py)"   # 3.1.0: the search screen of Lucent (#34)
 
 
 def widget(key, path, style):

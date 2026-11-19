@@ -7382,6 +7382,15 @@ def search_test():
     if not os.path.exists(keyf):
         os.makedirs(os.path.dirname(keyf), exist_ok=True)
         open(keyf, "w").write("cikey")
+    # the one-time switch of the default Search tab to the search screen
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab1.label,Search)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab1.icon,icons/search.png)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab1.action,ActivateWindow(Videos,plugin://plugin.video.lucent/?action=searchmenu,return))")
+    xbmc.executebuiltin("Skin.Reset(lucent.searchtab)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/menu.py,search)")
+    mon.waitForAbort(4)
+    out.append(f"migrate: tab1={lab('Skin.String(nuvio.tab1.action)')!r} flag={lab('Skin.String(lucent.searchtab)')!r}")
     tabs = {n: lab(f"Skin.String(nuvio.tab{n}.action)") for n in range(1, 4)}
     out.append(f"tabs after start={tabs} searchtab={lab('Skin.String(lucent.searchtab)')!r}")
     xbmc.executebuiltin("ActivateWindow(home)")
@@ -7438,8 +7447,9 @@ def search_test():
     HOME.setProperty("lucent.search.last", json.dumps(["Northern", "plugin.video.fakefen"]))
     xbmc.executebuiltin("RunScript(special://skin/scripts/search.py)")
     mon.waitForAbort(5)
-    xbmc.executebuiltin("SetFocus(302)")
-    mon.waitForAbort(1)
+    subprocess.run(["xdotool", "key", "Down"], timeout=5)
+    mon.waitForAbort(1.5)
+    out.append(f"before ok focus={lab('System.CurrentControlID')} item={lab('Container(302).ListItem.Label')!r}")
     subprocess.run(["xdotool", "key", "Return"], timeout=5)
     mon.waitForAbort(4)
     out.append(f"ok on show: search open={cond('Window.IsActive(Lucent_Search.xml)')} window={lab('System.CurrentWindow')!r} path={lab('Container.FolderPath')!r}")

@@ -25,6 +25,7 @@ HISTORY = "special://profile/addon_data/skin.lucent/search_history.json"
 CLOSE = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
 LIBRARY = "library"
 LV = "plugin.video.lucent"
+ROWS = (301, 302, 303, 304, 305)
 
 # the add-ons the screen knows, in the order of the button: (id, movies, shows); {q} = the search term, url-encoded
 PROVIDERS = [
@@ -255,10 +256,16 @@ class Search(xbmcgui.WindowXMLDialog):
                 self.getControl(303).addItems(found)
         else:
             self.setProperty("url.people", "")
-        self.setFocusId(9100)
-        xbmc.sleep(100)
-        if not xbmc.getCondVisibility("ControlGroup(9100).HasFocus"):
-            self.setFocusId(102)
+        for _ in range(40):                                  # the first row with something in it, once it is there
+            rows = self.rows()
+            if rows:
+                self.setFocusId(rows[0])
+                return
+            if not any(xbmc.getCondVisibility(f"Container({cid}).IsUpdating") for cid in ROWS):
+                if _ > 4:
+                    break
+            xbmc.sleep(250)
+        self.setFocusId(102)
 
     def back_to_history(self):
         self.term = ""
@@ -299,7 +306,25 @@ class Search(xbmcgui.WindowXMLDialog):
             # Kodi opens the folder or plays the title itself (the row's content); this screen steps aside for it
             self.close()
 
+    def rows(self):
+        """The result rows you can go to: shown and with something in them."""
+        return [cid for cid in ROWS if xbmc.getCondVisibility(f"Control.IsVisible({cid}) + Integer.IsGreater(Container({cid}).NumItems,0)")]
+
     def onAction(self, action):
+        focus = self.getFocusId()
+        if action.getId() in (3, 4) and focus in ROWS:         # Up / Down between the result rows
+            rows = self.rows()
+            at = rows.index(focus) if focus in rows else 0
+            if action.getId() == 4 and at + 1 < len(rows):
+                self.setFocusId(rows[at + 1])
+            elif action.getId() == 3:
+                self.setFocusId(rows[at - 1] if at > 0 else 101)
+            return
+        if action.getId() == 4 and focus in (101, 102, 103) and self.getProperty("mode") == "results":
+            rows = self.rows()
+            if rows:
+                self.setFocusId(rows[0])
+            return
         if action.getId() in CLOSE:
             if action.getId() in (10, 92) and self.getProperty("mode") == "results":
                 self.back_to_history()
