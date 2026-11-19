@@ -55,6 +55,17 @@ class H(BaseHTTPRequestHandler):
                 {"source": "tomatoes", "value": 87, "score": 87, "votes": 120},
                 {"source": "popcorn", "value": 56, "score": 56, "votes": 250000},
                 {"source": "letterboxd", "value": 3.4, "score": 68, "votes": 90000}]}).encode(), "application/json")
+        if "/trending/" in path:                             # screensaver 1.2.0
+            tv = "/tv/" in path
+            res = [{"id": 3000 + i + (100 if tv else 0), "backdrop_path": f"/{'rgbcm'[i % 5]}b{i}.png"} for i in range(4)]
+            return self.send(json.dumps({"results": res if "page=1" in self.path else []}).encode(), "application/json")
+        if path.rstrip("/").split("/")[-1].isdigit() and path.split("/")[2] in ("movie", "tv") and int(path.rstrip("/").split("/")[-1]) >= 3000:
+            tid = int(path.rstrip("/").split("/")[-1])
+            tv = path.split("/")[2] == "tv"
+            return self.send(json.dumps({"id": tid, ("name" if tv else "title"): f"Saver {'Show' if tv else 'Film'} {tid}",
+                                         "backdrop_path": f"/rb{tid}.png", "overview": "A man walks into a quiet town and finds out that the mine everyone lives on hides a secret. Made up for the screenshots.",
+                                         "vote_average": 7.4, "runtime": 112, "release_date": "2020-05-01", "first_air_date": "2021-01-01",
+                                         "genres": [{"name": "Western"}, {"name": "Drama"}], "images": {"logos": []}}).encode(), "application/json")
         if "/search/person" in path:                         # 3.1.0: the Actors row of the search screen
             return self.send(json.dumps({"results": [{"id": 31 + i, "name": n, "profile_path": f"/{n[0].lower()}p.png"}
                                                      for i, n in enumerate(["Anna Actor", "Bram Bakker", "Carla Cast"])]}).encode(), "application/json")

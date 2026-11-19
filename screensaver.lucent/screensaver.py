@@ -3,9 +3,15 @@
 
 Pictures come from TMDB (trending films / series) or from the Kodi library. Two slots (a and b) take turns;
 the window XML fades one out through black and the other in, and zooms it slowly.
+
+1.2.0: cinema style (plot and score), Continue watching (with a progress bar), new episodes of your shows (today or
+tomorrow), a big clock with the weather, night mode (darker from an hour you choose, black after a while), and after
+waking up a question whether you want to watch what was on screen (Kodi itself eats the key that wakes the screensaver).
 """
+import datetime
 import json
 import random
+import time
 import urllib.parse
 import urllib.request
 
@@ -20,6 +26,7 @@ TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
 KEY = "9f3ca569aa46b6fb13931ec96ab8ae7e"       # public TMDB key, when you did not enter your own
 LANG = "nl-NL" if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else "en-US"
+NL = LANG == "nl-NL"
 
 
 def log(text):
@@ -73,13 +80,41 @@ def tmdb_item(kind, tmdb_id, where=False):
         return None
     year = (data.get("release_date") or data.get("first_air_date") or "")[:4]
     genres = [g["name"] for g in (data.get("genres") or [])[:3]]
+    runtime = data.get("runtime") or ((data.get("episode_run_time") or [0])[0] if kind == "tv" else 0)
+    score = float(data.get("vote_average") or 0)
     return {
         "fanart": f"{IMG}original{data['backdrop_path']}",
         "logo": pick_logo(data.get("images")),
         "title": data.get("title") or data.get("name") or "",
         "genres": "  ·  ".join(([year] if where and year else []) + genres),
         "where": where_to_watch(kind, tmdb_id) if where else "",
+        "plot": data.get("overview") or "",
+        "score": f"TMDb {score:.1f}" if score else "",
+        "year": year,
+        "genre": " · ".join(genres[:2]),
+        "runtime": duration(runtime),
+        "open": ["tmdb", "movie" if kind == "movie" else "tv", str(tmdb_id)],
     }
+
+
+def duration(minutes):
+    minutes = int(minutes or 0)
+    if not minutes:
+        return ""
+    if minutes < 60:
+        return f"{minutes} min"
+    return f"{minutes // 60} u {minutes % 60:02d} min" if NL else f"{minutes // 60} h {minutes % 60:02d} min"
+
+
+def text(number, *args):
+    value = ADDON.getLocalizedString(number)
+    return value.format(*args) if args else value
+
+
+def rpc(method, params):
+    query = {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
+    return json.loads(xbmc.executeJSONRPC(json.dumps(query))).get("result") or {}
+
 
 
 REGION = "NL" if LANG == "nl-NL" else "GB"
@@ -130,18 +165,143 @@ def library_items():
     """Items of the Kodi library that have fanart: [(None, dict)]."""
     out = []
     for method, key, field in (("VideoLibrary.GetMovies", "movies", "movies"), ("VideoLibrary.GetTVShows", "tvshows", "tvshows")):
-        query = {"jsonrpc": "2.0", "id": 1, "method": method, "params": {"properties": ["art", "genre", "title"]}}
+        props = ["art", "genre", "title", "plot", "rating", "year", "uniqueid"] + (["runtime"] if key == "movies" else [])
         try:
-            result = json.loads(xbmc.executeJSONRPC(json.dumps(query))).get("result", {}).get(field) or []
+            result = rpc(method, {"properties": props}).get(field) or []
         except Exception as error:  # noqa: BLE001
             log(f"library {key}: {error}")
             continue
         for entry in result:
             art = entry.get("art") or {}
             if art.get("fanart"):
+                tmdb_id = str((entry.get("uniqueid") or {}).get("tmdb") or "")
+                rating = float(entry.get("rating") or 0)
+                if key == "movies":
+                    target = ["tmdb", "movie", tmdb_id] if tmdb_id.isdigit() else ["videos", f"videodb://movies/titles/{entry['movieid']}"]
+                else:
+                    target = ["videos", f"videodb://tvshows/titles/{entry['tvshowid']}/"]
                 out.append((None, {"fanart": art["fanart"], "logo": art.get("clearlogo", ""), "title": entry.get("title", ""),
-                                   "genres": "  ·  ".join((entry.get("genre") or [])[:3])}))
+                                   "genres": "  ·  ".join((entry.get("genre") or [])[:3]),
+                                   "plot": entry.get("plot") or "", "score": f"{rating:.1f}" if rating else "",
+                                   "year": str(entry.get("year") or ""), "genre": " · ".join((entry.get("genre") or [])[:2]),
+                                   "runtime": duration((entry.get("runtime") or 0) // 60), "open": target}))
     return out
+
+
+def in_progress():
+    """1.2.0: films and episodes you stopped halfway, from the Kodi library: [(None, dict)]."""
+    out = []
+    flt = {"field": "inprogress", "operator": "true", "value": ""}
+    try:
+        for m in rpc("VideoLibrary.GetMovies", {"filter": flt, "properties": ["art", "title", "resume"],
+                                                   "limits": {"end": 10}}).get("movies") or []:
+            out.append(resume_item(m, m.get("title", ""), "", {"movieid": m["movieid"]}))
+        for e in rpc("VideoLibrary.GetEpisodes", {"filter": flt, "properties": ["art", "title", "resume", "showtitle", "season", "episode"],
+                                                     "limits": {"end": 10}}).get("episodes") or []:
+            out.append(resume_item(e, e.get("showtitle", ""), text(30039, e.get("season"), e.get("episode")),
+                                   {"episodeid": e["episodeid"]}))
+    except Exception as error:  # noqa: BLE001
+        log(f"in progress: {error}")
+    return [x for x in out if x]
+
+
+def resume_item(entry, title, sub, item):
+    art = entry.get("art") or {}
+    fanart = art.get("fanart") or art.get("tvshow.fanart") or art.get("thumb")
+    resume = entry.get("resume") or {}
+    total, position = float(resume.get("total") or 0), float(resume.get("position") or 0)
+    if not fanart or not total:
+        return None
+    left = max(1, int((total - position) / 60))
+    return (None, {"fanart": fanart, "logo": art.get("clearlogo") or art.get("tvshow.clearlogo") or "", "title": title,
+                   "tag": text(30030), "tagcolor": "FFFFFFFF", "tagtext": "FF000000",
+                   "sub": "  ·  ".join(x for x in (sub, text(30033, left)) if x),
+                   "pct": str(int(100 * position / total)), "open": ["play", json.dumps(item)]})
+
+
+def new_episodes():
+    """1.2.0: episodes of your shows that come out today or tomorrow: the shows in the Kodi library (TMDb) and your
+    Trakt calendar. [(None, dict)]"""
+    today = datetime.date.today()
+    wanted = {today.isoformat(): text(30040), (today + datetime.timedelta(days=1)).isoformat(): text(30032)}
+    out, seen = [], set()
+
+    def add(tmdb_id, show_title, season, episode, name, air, fanart, logo, target):
+        key = (str(tmdb_id), season, episode)
+        if key in seen or air not in wanted:
+            return
+        seen.add(key)
+        tag = wanted[air]
+        sub = text(30039, season, episode) + (f"  ·  “{name}”" if name else "")
+        out.append((None, {"fanart": fanart, "logo": logo, "title": show_title, "tag": tag, "tagcolor": "FFE5534B",
+                           "tagtext": "FFFFFFFF", "sub": sub, "open": target}))
+
+    try:
+        shows = rpc("VideoLibrary.GetTVShows", {"properties": ["art", "title", "uniqueid", "status"]}).get("tvshows") or []
+    except Exception as error:  # noqa: BLE001
+        log(f"new episodes: {error}")
+        shows = []
+    for show in [s for s in shows if (s.get("uniqueid") or {}).get("tmdb") and s.get("status") != "Ended"][:40]:
+        try:
+            data = tmdb(f"tv/{show['uniqueid']['tmdb']}")
+        except Exception:  # noqa: BLE001
+            continue
+        art = show.get("art") or {}
+        for ep in (data.get("next_episode_to_air"), data.get("last_episode_to_air")):
+            if ep and art.get("fanart"):
+                add(show["uniqueid"]["tmdb"], show.get("title", ""), ep.get("season_number"), ep.get("episode_number"),
+                    ep.get("name") or "", ep.get("air_date") or "", art["fanart"], art.get("clearlogo", ""),
+                    ["videos", f"videodb://tvshows/titles/{show['tvshowid']}/"])
+    for entry in trakt_calendar(today):
+        show, ep = entry.get("show") or {}, entry.get("episode") or {}
+        tmdb_id = (show.get("ids") or {}).get("tmdb")
+        if not tmdb_id:
+            continue
+        air = local_date(entry.get("first_aired") or "")
+        if air not in wanted or (str(tmdb_id), ep.get("season"), ep.get("number")) in seen:
+            continue
+        try:
+            item = tmdb_item("tv", tmdb_id)
+        except Exception:  # noqa: BLE001
+            item = None
+        if item:
+            add(tmdb_id, item["title"], ep.get("season"), ep.get("number"), ep.get("title") or "", air, item["fanart"],
+                item["logo"], ["tmdb", "tv", str(tmdb_id)])
+    return out
+
+
+def local_date(stamp):
+    try:
+        moment = datetime.datetime.strptime(stamp[:19], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=datetime.timezone.utc)
+        return moment.astimezone().date().isoformat()
+    except ValueError:
+        return ""
+
+
+def trakt_login():
+    try:
+        with xbmcvfs.File("special://profile/addon_data/skin.lucent/trakt.json") as fh:
+            login = json.loads(fh.read() or "{}")
+    except Exception:  # noqa: BLE001 - no Trakt login
+        return None
+    client, token = login.get("client_id") or "", login.get("access_token") or ""
+    if not (client and token):
+        return None
+    return {"Content-Type": "application/json", "trakt-api-version": "2", "trakt-api-key": client,
+            "Authorization": f"Bearer {token}", "User-Agent": "screensaver.lucent"}
+
+
+def trakt_calendar(today):
+    headers = trakt_login()
+    if not headers:
+        return []
+    try:
+        request = urllib.request.Request(f"https://api.trakt.tv/calendars/my/shows/{today.isoformat()}/2", headers=headers)
+        with urllib.request.urlopen(request, timeout=15) as response:
+            return json.loads(response.read().decode("utf-8")) or []
+    except Exception as error:  # noqa: BLE001
+        log(f"trakt calendar: {error}")
+        return []
 
 
 def build_queue(source):
@@ -173,11 +333,17 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         super().__init__(*args, **kwargs)
         self.stop = False
         self.monitor = None
+        self.current = None                 # what is on screen: its "open" target, for the question after waking up
+        self.started = 0.0
 
     def onInit(self):  # noqa: N802
         self.monitor = self.ExitMonitor(self.exit)
         self.setProperty("showgenres", "1" if ADDON.getSettingBool("genres") else "")
         self.setProperty("showclock", "1" if ADDON.getSettingBool("clock") else "")
+        self.setProperty("cinema", "1" if setting_bool("cinema", True) else "")
+        self.setProperty("bigclock", "1" if setting_bool("bigclock", False) else "")
+        self.setProperty("askopen", "1" if setting_bool("askopen", True) and can_open() else "")
+        self.started = time.time()
         self.run()
 
     def onAction(self, action):  # noqa: N802
@@ -196,8 +362,23 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.setProperty(f"{slot}.title", item["title"])
         self.setProperty(f"{slot}.genres", item["genres"])
         self.setProperty(f"{slot}.where", item.get("where", ""))
+        for key in ("plot", "score", "year", "genre", "runtime", "tag", "tagcolor", "tagtext", "sub", "pct"):
+            self.setProperty(f"{slot}.{key}", item.get(key, ""))
+        self.setProperty(f"{slot}.open", "1" if item.get("open") else "")
+        self.current = item if item.get("open") else None
         self.setProperty("slot", slot)
         self.setProperty(f"{slot}.go", "1")
+
+    def tick(self):
+        """Every half second: the weather line, night mode (darker from the hour you chose, black after a while)."""
+        if self.getProperty("bigclock"):
+            self.setProperty("weather", weather_line())
+        night_from = setting_int("nightfrom", 23)
+        hour = time.localtime().tm_hour
+        night = bool(night_from) and (hour >= night_from or hour < 6)
+        self.setProperty("night", "1" if night else "")
+        black_after = setting_int("nightblack", 30)
+        self.setProperty("black", "1" if night and black_after and time.time() - self.started > black_after * 60 else "")
 
     def run(self):
         seconds = max(8, ADDON.getSettingInt("seconds") or 18)
@@ -208,6 +389,17 @@ class Screensaver(xbmcgui.WindowXMLDialog):
             self.wait_for_wake()
             return
         random.shuffle(queue)
+        extras = (in_progress() if setting_bool("resume", True) else []) + \
+            (new_episodes() if setting_bool("newep", True) else [])
+        if extras:                          # one of yours after every three others, yours first
+            random.shuffle(extras)
+            mixed = []
+            for n, entry in enumerate(queue):
+                if n % 3 == 0 and extras:
+                    mixed.append(extras.pop(0))
+                mixed.append(entry)
+            queue = mixed + extras
+        self.tick()
         monitor = xbmc.Monitor()
         slot, index, shown = "a", 0, 0
         while not self.stop and not monitor.abortRequested():
@@ -233,6 +425,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
                 if monitor.waitForAbort(0.5):
                     break
                 waited += 0.5
+                self.tick()
         self.wait_for_wake()
 
     def wait_for_wake(self):
@@ -243,10 +436,79 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         while not self.stop and not monitor.abortRequested() and xbmc.getCondVisibility("System.ScreenSaverActive"):
             if monitor.waitForAbort(0.5):
                 break
+            self.tick()
         self.exit()
+
+
+def setting_bool(name, default):
+    try:
+        return ADDON.getSettingBool(name)
+    except Exception:  # noqa: BLE001 - a setting that is not there yet
+        return default
+
+
+def setting_int(name, default):
+    try:
+        return ADDON.getSettingInt(name)
+    except Exception:  # noqa: BLE001
+        return default
+
+
+def can_open():
+    """Opening a title's page needs the Lucent skin (its info page); playing and the library work everywhere."""
+    return True
+
+
+def weather_line():
+    """'Cloudy · 6°C  ·  tomorrow 9°C / 3°C' from Kodi's own weather (needs a weather add-on), else empty."""
+    if not xbmc.getCondVisibility("Weather.IsFetched"):
+        return ""
+    now = "  ·  ".join(x for x in (xbmc.getInfoLabel("Weather.Conditions"), xbmc.getInfoLabel("Weather.Temperature")) if x)
+    high = xbmc.getInfoLabel("Window(weather).Property(Daily.2.HighTemperature)")
+    low = xbmc.getInfoLabel("Window(weather).Property(Daily.2.LowTemperature)")
+    if high and low:
+        now += f"  ·  {text(30041)} {high} / {low}".replace("  ·   ", "  ·  ")
+    return now
+
+
+def open_target(target):
+    """What 'Watch' does for the title that was on screen."""
+    kind = target[0]
+    if kind == "play":
+        rpc("Player.Open", {"item": json.loads(target[1]), "options": {"resume": True}})
+    elif kind == "videos":
+        xbmc.executebuiltin(f'ActivateWindow(Videos,"{target[1]}",return)')
+    elif kind == "tmdb" and xbmc.getSkinDir() == "skin.lucent":
+        home = xbmcgui.Window(10000)
+        home.setProperty("nuvio.open.tmdb", target[2])
+        home.setProperty("nuvio.open.type", target[1])
+        home.clearProperty("nuvio.open.trakt")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
+    elif kind == "tmdb":
+        log("open: a title page needs the Lucent skin")
+
+
+def ask_open(item):
+    """1.2.0: Kodi eats the key that wakes the screensaver, so OK on the picture cannot open it. Right after waking up
+    a small question asks whether you want to watch what was on screen (closes by itself after 8 seconds)."""
+    target = item.get("open") or []
+    if not target or (target[0] == "tmdb" and xbmc.getSkinDir() != "skin.lucent"):
+        return
+    xbmc.Monitor().waitForAbort(0.4)                   # let Kodi put the previous window back first
+    label = text(30038) if target[0] == "play" else text(30036)
+    try:
+        yes = xbmcgui.Dialog().yesno(item.get("title", ""), text(30035), nolabel=text(30037), yeslabel=label,
+                                     autoclose=8000, defaultbutton=xbmcgui.DLG_YESNO_YES_BTN)
+    except (TypeError, AttributeError):                 # Kodi 19: no defaultbutton yet
+        yes = xbmcgui.Dialog().yesno(item.get("title", ""), text(30035), nolabel=text(30037), yeslabel=label, autoclose=8000)
+    if yes:
+        open_target(target)
 
 
 if __name__ == "__main__":
     window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
     window.doModal()
+    shown = window.current
     del window
+    if shown and setting_bool("askopen", True):
+        ask_open(shown)

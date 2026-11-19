@@ -40,6 +40,57 @@
                     <control type="toggle"/>
                 </setting>
             </group>
+            <group id="2" label="30005">
+                <setting id="askopen" type="boolean" label="30020">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="resume" type="boolean" label="30021">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="newep" type="boolean" label="30022">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="cinema" type="boolean" label="30023">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="bigclock" type="boolean" label="30024">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="nightfrom" type="integer" label="30025">
+                    <level>0</level>
+                    <default>23</default>
+                    <constraints>
+                        <minimum>0</minimum>
+                        <step>1</step>
+                        <maximum>23</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                </setting>
+                <setting id="nightblack" type="integer" label="30026">
+                    <level>0</level>
+                    <default>30</default>
+                    <constraints>
+                        <minimum>0</minimum>
+                        <step>5</step>
+                        <maximum>120</maximum>
+                    </constraints>
+                    <control type="slider" format="integer">
+                        <popup>false</popup>
+                    </control>
+                </setting>
+            </group>
         </category>
     </section>
 </settings>

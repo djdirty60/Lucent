@@ -7536,6 +7536,60 @@ def search_test():
     log("search: " + " | ".join(out))
 
 
+def saver_test():
+    """Screensaver 1.2.0: cinema style, Continue watching, big clock, night mode, the question after waking up."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    rpc = lambda m, p: json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": m, "params": p})))  # noqa: E731
+    out.append(f"has={cond('System.HasAddon(screensaver.lucent)')} v={lab('System.AddonVersion(screensaver.lucent)')}")
+    movies = rpc("VideoLibrary.GetMovies", {"properties": ["title", "art"]}).get("result", {}).get("movies") or []
+    out.append(f"movies={[(m['movieid'], m['title'], bool((m.get('art') or {}).get('fanart'))) for m in movies[:4]]}")
+    if movies:
+        r = rpc("VideoLibrary.SetMovieDetails", {"movieid": movies[0]["movieid"], "resume": {"position": 1800, "total": 6000},
+                                                  "art": {"fanart": "/tmp/ci/art/fanart1.jpg"}})
+        out.append(f"resume set={r.get('result')}")
+    import xbmcaddon
+    ss = xbmcaddon.Addon("screensaver.lucent")
+    ss.setSettingInt("source", 1)
+    ss.setSettingInt("seconds", 8)
+    ss.setSettingBool("bigclock", True)
+    ss.setSettingInt("nightfrom", 0)
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
+    xbmc.executebuiltin("ActivateScreensaver")
+    mon.waitForAbort(4)
+    out.append(f"active={cond('System.ScreenSaverActive')}")
+    for n in range(5):
+        mon.waitForAbort(4.5)
+        shot(f"320-saver-{n}")
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(2)
+    out.append(f"after wake: active={cond('System.ScreenSaverActive')} yesno={cond('Window.IsActive(yesnodialog)')} heading={lab('Control.GetLabel(1)')!r}")
+    shot("321-saver-ask")
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(4)
+    out.append(f"after OK: window={lab('System.CurrentWindow')!r} info={cond('Window.IsActive(movieinformation) | Window.IsActive(1180)')} playing={cond('Player.HasVideo')}")
+    shot("322-saver-after-ok")
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    # night mode: from hour 1 (CI runs in UTC; an hour after midnight up to 6 counts as night too)
+    ss.setSettingInt("nightfrom", 1)
+    ss.setSettingInt("nightblack", 0)
+    xbmc.executebuiltin("ActivateScreensaver")
+    mon.waitForAbort(8)
+    shot("323-saver-night")
+    out.append(f"night hour={time.localtime().tm_hour}")
+    subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})
+    log("saver: " + " | ".join(out))
+
+
 def epctx_test():
     """2.1.51: the menu key on an episode of the series page (list 5601) gives that episode's menu (ctx.py), not the
     season's; on the season tabs (56) and elsewhere Kodi's own menu stays. OK still opens."""
@@ -13144,6 +13198,7 @@ def main():
     safe(epctx_test)
     safe(refreshopt_test)
     safe(search_test)
+    safe(saver_test)
     safe(wn300_test)
     safe(epbadge_test)
     safe(epnest_test)

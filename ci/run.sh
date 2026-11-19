@@ -57,6 +57,7 @@ cp -r ci/addons/script.solis.dashboard $K/addons/
 cp -r ci/addons/plugin.video.fakefen $K/addons/
 cp -r ci/addons/service.upnext $K/addons/
 cp -r screensaver.lucent $K/addons/ 2>/dev/null || true
+sed -i 's#^TMDB = .*#TMDB = "http://127.0.0.1:8765/3/"#; s#^IMG = .*#IMG = "http://127.0.0.1:8765/t/p/"#' $K/addons/screensaver.lucent/screensaver.py   # 1.2.0 screensaver test
 rm -rf /tmp/ci/lv && git clone -q --depth 1 https://github.com/djdirty60/Lucent-video /tmp/ci/lv && cp -r /tmp/ci/lv/plugin.video.lucent $K/addons/
 # a short clip as stand-in trailer (the real add-on ships its format-test clips, the CI copy does not)
 mkdir -p $K/addons/plugin.video.lucent/resources/formattest
