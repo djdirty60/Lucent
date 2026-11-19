@@ -36,6 +36,36 @@ def video_text(number):
         return ""
 
 
+def show_info(episodeid):
+    """3.0.0: the information page of this episode (Kodi's own Info would show the selected season)."""
+    props = ["title", "plot", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "playcount", "file",
+             "art", "uniqueid", "director", "writer", "resume", "tvshowid"]
+    details = (rpc("VideoLibrary.GetEpisodeDetails", {"episodeid": episodeid, "properties": props}) or {}).get("episodedetails")
+    if not details:
+        return
+    li = xbmcgui.ListItem(details.get("title", ""), path=details.get("file", ""))
+    tag = li.getVideoInfoTag()
+    tag.setMediaType("episode")
+    tag.setDbId(episodeid)
+    tag.setTitle(details.get("title", ""))
+    tag.setTvShowTitle(details.get("showtitle", ""))
+    tag.setSeason(int(details.get("season") or 0))
+    tag.setEpisode(int(details.get("episode") or 0))
+    tag.setPlot(details.get("plot", ""))
+    tag.setFirstAired(details.get("firstaired", ""))
+    tag.setDuration(int(details.get("runtime") or 0))
+    tag.setRating(float(details.get("rating") or 0))
+    tag.setPlaycount(int(details.get("playcount") or 0))
+    tag.setDirectors(details.get("director") or [])
+    tag.setWriters(details.get("writer") or [])
+    tag.setUniqueIDs(details.get("uniqueid") or {})
+    resume = details.get("resume") or {}
+    if resume.get("position"):
+        tag.setResumePoint(float(resume["position"]), float(resume.get("total") or 0))
+    li.setArt({k: urllib.parse.unquote(v[8:-1]) if v.startswith("image://") else v for k, v in (details.get("art") or {}).items()})
+    xbmcgui.Dialog().info(li)
+
+
 def episode_menu():
     pre = f"Container({EPISODES}).ListItem."
     label = xbmc.getInfoLabel
@@ -54,6 +84,8 @@ def episode_menu():
             if text:
                 entries.append((text, "lucent:" + what))
     entries.append((xbmc.getLocalizedString(208), "play"))
+    if item["dbid"].isdigit() and item["dbtype"] == "episode":
+        entries.append((xbmc.getLocalizedString(19033), "info"))      # Kodi's "Information"
     if item["dbid"].isdigit() and item["dbtype"] == "episode":
         entries.append((xbmc.getLocalizedString(16104 if watched else 16103), "kodiwatched"))
     HOME.setProperty("lucent.ctx.own", "1")          # DialogContextMenu.xml: hide its fixed buttons (they show the season)
@@ -75,6 +107,8 @@ def episode_menu():
         else:
             xbmc.executebuiltin(f"SetFocus({EPISODES})")
             xbmc.executebuiltin("Action(Select)")
+    elif what == "info":
+        show_info(int(item["dbid"]))
     elif what == "kodiwatched":
         rpc("VideoLibrary.SetEpisodeDetails", {"episodeid": int(item["dbid"]), "playcount": 0 if watched else 1})
         xbmc.executebuiltin("Container.Refresh")
