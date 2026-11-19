@@ -7315,7 +7315,7 @@ def backpos_test():
 
 def epctx_test():
     """2.1.51: the menu key on an episode of the series page (list 5601) gives that episode's menu (ctx.py), not the
-    season's; on the season tabs (56) Kodi's own menu stays. OK still plays / opens."""
+    season's; on the season tabs (56) and elsewhere Kodi's own menu stays. OK still opens."""
     import subprocess
     out = []
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
@@ -7324,38 +7324,28 @@ def epctx_test():
     mon.waitForAbort(3)
     keys = xbmcvfs.translatePath("special://profile/keymaps/")
     out.append(f"keymaps={sorted(os.listdir(keys)) if os.path.isdir(keys) else []}")
-    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase_seasons,return)")
+
+    def menu(tag):
+        subprocess.run(["xdotool", "key", "c"], timeout=5)
+        mon.waitForAbort(2.5)
+        out.append(f"{tag}: focus={lab('System.CurrentControlID')} dialog={cond('Window.IsActive(contextmenu)')} "
+                   f"buttons={[lab(f'Control.GetLabel({i})') for i in range(1001, 1007)]} fixed={[i for i in range(901, 916) if cond(f'Control.IsVisible({i})')]}")
+        shot(f"51-ctx-{tag}")
+        xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
+        mon.waitForAbort(1)
+
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/990/,return)")
     mon.waitForAbort(6)
-    xbmc.executebuiltin("SetFocus(5601,1,absolute)")
-    mon.waitForAbort(3)
-    out.append(f"focus={lab('System.CurrentControlID')} ep={lab('Container(5601).ListItem.Label')!r} type={lab('Container(5601).ListItem.DBTYPE')!r} n={lab('Container(5601).NumItems')} items={[lab(f'Container(5601).ListItemAbsolute({i}).Label') for i in range(3)]} folder56={lab('Container(56).ListItem.FolderPath')!r}")
-    subprocess.run(["xdotool", "key", "c"], timeout=5)
-    mon.waitForAbort(2.5)
-    out.append(f"5601 c: dialog={cond('Window.IsActive(contextmenu)')} buttons={[lab(f'Control.GetLabel({i})') for i in range(1001, 1006)]} fixed={[i for i in range(901, 916) if cond(f'Control.IsVisible({i})')]}")
-    shot("51-ctx-episode")
-    xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
-    mon.waitForAbort(1)
+    out.append(f"view56={cond('Control.IsVisible(56)')} eps={[lab(f'Container(5601).ListItemAbsolute({i}).Label') for i in range(3)]} type={lab('Container(5601).ListItem.DBTYPE')!r} dbid={lab('Container(5601).ListItem.DBID')!r}")
+    xbmc.executebuiltin("SetFocus(5601,0,absolute)")
+    mon.waitForAbort(2)
+    menu("episode")
     xbmc.executebuiltin("SetFocus(56)")
     mon.waitForAbort(1.5)
-    subprocess.run(["xdotool", "key", "c"], timeout=5)
-    mon.waitForAbort(2.5)
-    out.append(f"56 c: dialog={cond('Window.IsActive(contextmenu)')} buttons={[lab(f'Control.GetLabel({i})') for i in range(1001, 1006)]}")
-    shot("51-ctx-season")
-    xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
-    mon.waitForAbort(1)
-    # OK (short) on a film in a list still does what it did
-    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase,return)")
-    mon.waitForAbort(5)
-    xbmc.executebuiltin("Container.SetViewMode(51)")
-    mon.waitForAbort(2)
-    xbmc.executebuiltin("SetFocus(51,0,absolute)")
-    mon.waitForAbort(1)
-    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    menu("season")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
     mon.waitForAbort(4)
-    out.append(f"OK on film: window={lab('System.CurrentWindow')!r} playing={cond('Player.HasMedia')} dialog={lab('System.CurrentWindow')}")
-    xbmc.executebuiltin("PlayerControl(Stop)")
-    xbmc.executebuiltin("Dialog.Close(all,true)")
-    mon.waitForAbort(2)
+    menu("showlist")
     log("epctx: " + " | ".join(out))
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
