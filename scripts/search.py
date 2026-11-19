@@ -273,14 +273,23 @@ class Search(xbmcgui.WindowXMLDialog):
                 self.getControl(303).addItems(found)
         else:
             self.setProperty("url.people", "")
-        for _ in range(40):                                  # the first row with something in it, once it is there
-            rows = self.rows()
-            if rows:
-                self.setFocusId(rows[0])
-                return
-            if not any(xbmc.getCondVisibility(f"Container({cid}).IsUpdating") for cid in ROWS):
-                if _ > 4:
+        xbmc.sleep(250)
+        for _ in range(60):                                  # the first row (top down) with something in it
+            first = None
+            for cid in ROWS:
+                if not xbmc.getCondVisibility(f"Control.IsVisible({cid})"):
+                    continue
+                if xbmc.getCondVisibility(f"Integer.IsGreater(Container({cid}).NumItems,0)"):
+                    first = cid
                     break
+                if xbmc.getCondVisibility(f"Container({cid}).IsUpdating"):
+                    first = 0                                # a row above is still loading: wait for it
+                    break
+            if first:
+                self.setFocusId(first)
+                return
+            if first is None and _ > 4:
+                break
             xbmc.sleep(250)
         self.setFocusId(102)
 
