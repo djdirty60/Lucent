@@ -1,8 +1,8 @@
 <p align="center"><img src="resources/fanart.jpg" alt="Lucent" width="720"></p>
 
-# Lucent – Kodi skin (2.1 RC 2)
+# Lucent – Kodi skin (3.0)
 
-> **Release candidate 2:** everything is in place and has been checked and tidied up. From now on only fixes are added. Found something odd? Please report it on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
+> **Lucent 3.0 is the first release.** Thanks to everyone who tested the betas and release candidates and sent ideas. Found something odd or have an idea? Please open an issue on the [issues page](https://github.com/djdirty60/Lucent/issues/new/choose).
 
 **Lucent** is a dark, cinematic Kodi skin in a glass style: large backdrops, glass panels, rounded cards, a white glow on the focused item and the Inter font.
 
@@ -16,11 +16,27 @@ Lucent works with **every video add-on**. Any folder of any add-on (Emby, Jellyf
 
 ---
 
-## New in 2.0 RC 1
+## New in 3.0
+
+- **One-row views** – Up opens the menu (View, Search, Sort, Filter); a small *Up: View · Sort · Filter* hint sits next to the clock (can be switched off). Down goes to a slider under the row for fast scrolling (optionally only while you scroll fast). Left on the first title goes to the last and Right on the last goes to the first.
+- **Player bar** – choose which buttons you see and in what order (*Settings → Watching → Buttons in the player bar* / *Order of the buttons*). The buttons sit a little lower, in the black bar of wide films.
+- **Touch screens** – phones and tablets get an *Options* button at the bottom left of the lists; Lucent detects a touch screen by itself.
+- **Scores** – Home and the lists also show the IMDb score Lucent fetches through MDBList or OMDb, with the IMDb logo when you have the rating logos.
+- **Calendar** opens on today. Kodi's *All seasons* item shows the series poster.
+- **Lucent Video** – its options (Get ready for tonight, Marathon planner, Get season ready, Choose source, watchlist, trailer, cast, similar titles, rate …) are at the top of the menu for titles it put in your Kodi library. On the series page the menu key on an episode gives the menu of that episode. Episodes Lucent Video prepared get a green *✓ ready* label.
+- **Info page** – *Refresh* is in *Options*; the menu of an episode has *Information*.
+- **Updates** – the update pop-up leaves add-ons with a build per device (Lucent Video VFS) to Kodi and understands RC versions.
+- **Intro** – a sign for every add-on of the Lucent family, also the fast reader of Lucent Video.
+
+<details>
+<summary><b>New in 2.0 RC 1</b></summary>
+
 
 - **Checked and tidied up** – only your video add-on and your own add-on folders; the code for one older video add-on is gone (its old rows turn into rows of your video add-on by themselves). Similar titles on the info page come from your video add-on. The skin no longer installs Lucent Subtitles by itself (your video add-on does subtitles); it stays in the Lucent repository for who only wants a subtitle add-on.
 - **New views** – Spotlight, Wall with info panel, Carousel, Title card, Banner list, Progress rings, Mosaic, Timeline, Episode cards, Up next stack, List with flags, Vinyl, Artist wall, Album with track list, Coverflow, Discography timeline, Collection shelf and Recently added. On the series page you choose how the episodes look (side menu → *Episodes as*).
 - **What's new** – OK on a change gives a picture, the whole explanation, steps and a *Try it now* button.
+
+</details>
 
 <details>
 <summary><b>New since Beta 4</b></summary>
@@ -94,7 +110,7 @@ Everything on one page. At the top: logo, buttons, director, scores, plot, genre
 - **Mark as watched** – on Trakt, through your video add-on.
 - **Click a cast member, the director or a studio** for their page (photo, biography, films, logo); **click a title** on any of those pages to open its own info page. **Back walks the whole way back.**
 - **Trailer** plays the trailer and brings you back to the page afterwards.
-- **Options** (titles in the Kodi library): edit title, sort title, art, remove from library.
+- **Options** (titles in the Kodi library): edit title, sort title, art, remove from library, refresh.
 
 Cast, collections and studios need a free **TMDB API key**: Lucent uses the one of your video add-on, or enter your own in **Skin settings → Integrations → TMDB API key** (free at [themoviedb.org](https://www.themoviedb.org/settings/api)).
 
