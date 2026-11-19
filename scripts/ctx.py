@@ -73,6 +73,11 @@ def episode_menu():
         ("dbtype", "DBTYPE"), ("dbid", "DBID"), ("file", "FileNameAndPath"), ("path", "Path"), ("folder", "FolderPath"),
         ("tmdb", "UniqueID(tmdb)"), ("season", "Season"), ("episode", "Episode"), ("playcount", "PlayCount"),
         ("tvshowid", "TvShowDBID"), ("title", "Title"))}
+    # 3.0.0: only for an episode in the Kodi library; an episode from an add-on folder (a Lucent Video widget) keeps Kodi's
+    # own menu, with the buttons the add-on put on it (a script cannot read those)
+    if not (item["dbid"].isdigit() or any(f"{VIDEO}/library" in item[k] for k in ("file", "path", "folder"))):
+        xbmc.executebuiltin("Action(ContextMenu)")
+        return
     watched = (item["playcount"] or "0").isdigit() and int(item["playcount"] or 0) > 0
     resumable = xbmc.getCondVisibility(f"Container({EPISODES}).ListItem.IsResumable")
     entries = []                                     # (label, what) - what: a video add-on action or one of ours

@@ -7321,6 +7321,9 @@ def refreshopt_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
     mon.waitForAbort(4)
+    for v in (50, 51, 52, 53, 55, 57):
+        xbmc.executebuiltin(f"SetFocus({v},0,absolute)")
+    mon.waitForAbort(1)
     xbmc.executebuiltin("Action(Info)")
     mon.waitForAbort(4)
     out.append(f"info open={cond('Window.IsActive(movieinformation)')} title={lab('ListItem.Title')!r} btn6={cond('Control.IsVisible(6)')} options={cond('Control.IsVisible(24)')}")
@@ -7369,6 +7372,11 @@ def epctx_test():
         xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
         mon.waitForAbort(1)
 
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakefen/?mode=showcase_seasons,return)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("SetFocus(5601,0,absolute)")
+    mon.waitForAbort(2)
+    menu("plugin-episode")
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/990/,return)")
     mon.waitForAbort(6)
     out.append(f"view56={cond('Control.IsVisible(56)')} eps={[lab(f'Container(5601).ListItemAbsolute({i}).Label') for i in range(3)]} type={lab('Container(5601).ListItem.DBTYPE')!r} dbid={lab('Container(5601).ListItem.DBID')!r}")
