@@ -7315,7 +7315,7 @@ def backpos_test():
 
 def libctx_test():
     """2.1.49: the video add-on's library options at the top of the context menu (CI: on fakefen items instead)."""
-    out = [f"prop={lab('Window(home).Property(lucent.skin.libctx)')!r}"]
+    out = [f"prop={lab('Window(home).Property(lucent.skin.libctx)')!r} all={lab('Window(home).Property(lucent.skin.libctx.all)')!r}"]
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     for mode, view, name in (("showcase_ep", 53, "episode"), ("showcase_tv", 51, "tvshow"), ("showcase", 51, "movie")):
@@ -7327,8 +7327,8 @@ def libctx_test():
         mon.waitForAbort(1.5)
         xbmc.executebuiltin("Action(ContextMenu)")
         mon.waitForAbort(2)
-        labels = [lab(f"Control.GetLabel({i})") for i in (901, 902, 903, 1001, 1002, 1003)]
-        vis = [cond(f"Control.IsVisible({i})") for i in (901, 902, 903)]
+        labels = [lab(f"Control.GetLabel({i})") for i in (1001, 1002)]
+        vis = [i for i in range(901, 916) if cond(f"Control.IsVisible({i})")]
         out.append(f"{name}: focus={lab('System.CurrentControlID')} visible={vis} labels={labels}")
         shot(f"49-ctx-{name}")
         xbmc.executebuiltin("Dialog.Close(contextmenu,true)")
