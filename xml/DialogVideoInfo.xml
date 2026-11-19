@@ -133,11 +133,12 @@
                         <onclick>RunScript(special://skin/scripts/options.py)</onclick>
                         <visible>!Skin.HasSetting(lucent.kids) + !String.IsEmpty(ListItem.DBID) + [String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode) | String.IsEqual(ListItem.DBType,set)]</visible>
                     </control>
+                    <!-- 3.0.0: Refresh is in Options now (options.py clicks this button); only in kids mode, without Options, it stays -->
                     <control type="button" id="6">
                         <width>auto</width>
                         <height>72</height>
                         <label>$LOCALIZE[184]</label>
-                        <visible>!String.IsEmpty(ListItem.DBID)</visible>
+                        <visible>!String.IsEmpty(ListItem.DBID) + Skin.HasSetting(lucent.kids)</visible>
                     </control>
                 </control>
 

@@ -112,6 +112,7 @@ class Item:
         out.append(("art", loc(CHOOSE_ART)))
         if self.kind in ("movie", "tvshow", "episode") or (self.kind == "season" and self.season >= 0):
             out.append(("remove", loc(REMOVE)))
+        out.append(("refresh", loc(184)))                  # 3.0.0: Kodi's Refresh (was a button of its own on the info page)
         return out
 
     def show_tmdb(self):
@@ -267,6 +268,9 @@ def run():
             if remove(item):
                 return
             continue
+        elif key == "refresh":
+            xbmc.executebuiltin("SendClick(movieinformation,6)")   # the info page's own Refresh (control 6)
+            return
         if changed:
             time.sleep(0.2)
             reopen(item)

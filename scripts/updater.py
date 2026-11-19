@@ -84,19 +84,25 @@ def write_state(state):
         log(f"cannot write state: {error}")
 
 
+STAGES = {"alpha": 0, "a": 0, "beta": 1, "b": 1, "rc": 2}     # 3.0.0: order of the kinds of pre-release
+
+
 def version_key(version):
     """1.0.0~beta1 < 1.0.0~beta1+5 < 1.0.0~beta2 < 1.0.0 < 1.0.1 (Kodi's own order: a ~ version comes before the final
     one). Also the words of a news line: '1.0.0 beta 1, update 5' = 1.0.0~beta1+5."""
     version = re.sub(r"\s*beta\s*(\d+)(?:,?\s*update\s*(\d+))?", lambda m: f"~beta{m.group(1)}" + (f"+{m.group(2)}" if m.group(2) else ""),
                      str(version), flags=re.I)
+    version = re.sub(r"\s+rc\s*(\d+)", lambda m: f"~rc{m.group(1)}", version, flags=re.I)     # 3.0.0: '1.0.0 RC 1'
     base, _sep, pre = version.partition("~")
     nums = [int(x) for x in re.findall(r"\d+", base)][:4]
     nums += [0] * (4 - len(nums))
     if not pre:
-        return tuple(nums) + (1, 0, 0)
+        return tuple(nums) + (9, 0, 0)
+    # 3.0.0: the kind of pre-release first (alpha < beta < rc), then its numbers: 1.0.0~beta1+91 < 1.0.0~rc1
+    word = re.match(r"[a-z]*", pre.lower()).group(0)
     pre_nums = [int(x) for x in re.findall(r"\d+", pre)][:2]
     pre_nums += [0] * (2 - len(pre_nums))
-    return tuple(nums) + (0,) + tuple(pre_nums)
+    return tuple(nums) + (STAGES.get(word, 1),) + tuple(pre_nums)
 
 
 def installed_version(addon_id):
@@ -146,11 +152,11 @@ def fetch_available():
 
 def release_notes(news, installed, limit=4):
     """The lines of <news> that are newer than the installed version."""
-    head = r"\d+\.\d+(?:\.\d+)?(?:~[\w.+]+| beta \d+(?:, update \d+)?)?:"     # 2.1.3: '1.0.0 beta 1, update 5:' too
+    head = r"\d+\.\d+(?:\.\d+)?(?:~[\w.+]+| beta \d+(?:, update \d+)?| RC \d+)?:"     # 2.1.3: '1.0.0 beta 1, update 5:' too
     parts = [p.strip() for p in re.split(rf"\s(?={head})", news) if p.strip()]
     keep = []
     for part in parts:
-        match = re.match(r"(\d+(?:\.\d+)+(?:~[\w.+]+| beta \d+(?:, update \d+)?)?):", part)
+        match = re.match(r"(\d+(?:\.\d+)+(?:~[\w.+]+| beta \d+(?:, update \d+)?| RC \d+)?):", part)
         if match and installed and version_key(match.group(1)) <= version_key(installed):
             break
         keep.append(part)

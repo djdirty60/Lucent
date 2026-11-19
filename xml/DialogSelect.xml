@@ -9,8 +9,8 @@
             <top>90</top>
             <!-- choosing a picture (Lucent Options > Choose art): the list moves left, a big preview sits next to it -->
             <animation effect="slide" start="0,0" end="-400,0" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.artpick))">Conditional</animation>
-            <!-- a short menu (Lucent Options): a compact panel in the middle of the screen -->
-            <animation effect="slide" start="0,0" end="0,155" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.smallselect))">Conditional</animation>
+            <!-- a short menu (Lucent Options): a compact panel in the middle of the screen (3.0.0: room for 5 choices, Refresh) -->
+            <animation effect="slide" start="0,0" end="0,105" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.smallselect))">Conditional</animation>
         <control type="group">
             <visible>!!String.IsEmpty(Window(home).Property(lucent.smallselect))</visible>
         <include content="GlassPanel">
@@ -27,7 +27,7 @@
             <param name="left">0</param>
             <param name="top">0</param>
             <param name="width">1000</param>
-            <param name="height">590</param>
+            <param name="height">690</param>
             <param name="body">modal</param>
         </include>
         </control>
@@ -266,7 +266,7 @@
             <control type="grouplist" id="9000">
                 <left>50</left>
                 <top>800</top>
-                <animation effect="slide" start="0,0" end="0,-310" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.smallselect))">Conditional</animation>
+                <animation effect="slide" start="0,0" end="0,-200" time="0" condition="!String.IsEmpty(Window(home).Property(lucent.smallselect))">Conditional</animation>
                 <width>900</width>
                 <height>64</height>
                 <orientation>horizontal</orientation>
