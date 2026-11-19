@@ -302,9 +302,6 @@ class Search(xbmcgui.WindowXMLDialog):
             if item and item.getProperty("person"):
                 self.after = f"RunScript(special://skin/scripts/info.py,person,{item.getProperty('person')})"
                 self.close()
-        elif control_id in (301, 302, 304, 305):
-            # Kodi opens the folder or plays the title itself (the row's content); this screen steps aside for it
-            self.close()
 
     def rows(self):
         """The result rows you can go to: shown and with something in them."""
@@ -319,6 +316,12 @@ class Search(xbmcgui.WindowXMLDialog):
                 self.setFocusId(rows[at + 1])
             elif action.getId() == 3:
                 self.setFocusId(rows[at - 1] if at > 0 else 101)
+            return
+        if action.getId() in (7, 100) and focus in (301, 302, 304, 305):
+            # Kodi opens the folder or plays the title itself (the row's content, it never reaches onClick);
+            # this screen steps aside for it and opens on the same results when you come back to Search
+            log(f"open from row {focus}: {xbmc.getInfoLabel(f'Container({focus}).ListItem.Label')}")
+            self.close()
             return
         if action.getId() == 4 and focus in (101, 102, 103) and self.getProperty("mode") == "results":
             rows = self.rows()
