@@ -7319,13 +7319,22 @@ def refreshopt_test():
     out = []
     xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
     xbmc.executebuiltin("Dialog.Close(all,true)")
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(1)
     xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
-    mon.waitForAbort(4)
-    for v in (50, 51, 52, 53, 55, 57):
-        xbmc.executebuiltin(f"SetFocus({v},0,absolute)")
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
+            break
+    for i in range(int(lab("Container.NumItems") or 0) + 1):
+        if lab(f"Container.ListItemAbsolute({i}).Label") == "Lib Film":
+            for v in (50, 51, 52, 53, 55, 57):
+                xbmc.executebuiltin(f"SetFocus({v},{i},absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)
     xbmc.executebuiltin("Action(Info)")
-    mon.waitForAbort(4)
+    mon.waitForAbort(6)
     out.append(f"info open={cond('Window.IsActive(movieinformation)')} title={lab('ListItem.Title')!r} btn6={cond('Control.IsVisible(6)')} options={cond('Control.IsVisible(24)')}")
     shot("300-info-buttons")
     xbmc.executebuiltin("RunScript(special://skin/scripts/options.py)")
