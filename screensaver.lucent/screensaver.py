@@ -357,12 +357,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         # restart the slow zoom and drift of this slot: switch it off while it is hidden, then on again
         self.clearProperty(f"{slot}.go")
         xbmc.Monitor().waitForAbort(0.2)
-        self.setProperty(f"{slot}.fanart", item["fanart"])
-        self.setProperty(f"{slot}.logo", item["logo"])
-        self.setProperty(f"{slot}.title", item["title"])
-        self.setProperty(f"{slot}.genres", item["genres"])
-        self.setProperty(f"{slot}.where", item.get("where", ""))
-        for key in ("plot", "score", "year", "genre", "runtime", "tag", "tagcolor", "tagtext", "sub", "pct"):
+        for key in ("fanart", "logo", "title", "genres", "where", "plot", "score", "year", "genre", "runtime", "tag", "tagcolor", "tagtext", "sub", "pct"):
             self.setProperty(f"{slot}.{key}", item.get(key, ""))
         self.setProperty(f"{slot}.open", "1" if item.get("open") else "")
         self.current = item if item.get("open") else None
