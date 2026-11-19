@@ -172,6 +172,20 @@ _What's new, updates, self-test and system information_
 - **Power menu** – Hide Kodi's own buttons, or add your own (Settings, an add-on, Reload skin…)
 - **Restore the default menu** – Put the tabs and rows back the way they were
 
+### Skin settings › Search
+
+**Search**
+
+- **Search in by default** – The add-on the search screen starts with; OK on the add-on button there goes to the next one
+- **Search tab opens** – What OK on the Search tab of the menu opens: the Lucent search screen, or the search menu of Lucent Video
+
+**What is searched**
+
+- **Movies** – A row with movies found in the add-on
+- **Shows** – A row with shows found in the add-on
+- **Actors** – A row with actors and actresses; OK opens their page (needs a TMDb key)
+- **Kodi library** – Also a row with what you have in the Kodi library
+
 ### Skin settings › Playback
 
 **Playback**

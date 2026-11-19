@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent 3.0.1: the search screen (scripts/search.py), GitHub #34. It covers Home right of the side menu.
+     101 the add-on to search in (OK = the next one), 102 new search, 103 clear the history.
+     Mode "history": the recent searches (200). Mode "results": rows with what was found (301 movies, 302 shows,
+     303 actors, 304 / 305 movies and shows in the Kodi library); a row loads from Window.Property(url.*). -->
+<window type="dialog">
+    <defaultcontrol always="true">102</defaultcontrol>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="160">WindowClose</animation>
+    <controls>
+        <control type="image">
+            <left>120</left><top>0</top><width>1800</width><height>1080</height>
+            <texture>white.png</texture><colordiffuse>bg</colordiffuse>
+        </control>
+        <control type="image">
+            <left>120</left><top>0</top><width>1800</width><height>1080</height>
+            <texture>white.png</texture><colordiffuse>0AFFFFFF</colordiffuse>
+        </control>
+        <control type="label">
+            <left>1520</left><top>40</top><width>304</width><height>60</height>
+            <align>right</align><font>font_clock</font><textcolor>text</textcolor>
+            <label>$INFO[System.Time]</label>
+        </control>
+        <control type="label">
+            <left>450</left><top>110</top><width>1300</width><height>80</height>
+            <font>font52</font><textcolor>text</textcolor>
+            <label>$INFO[Window.Property(heading)]</label>
+        </control>
+        <control type="label">
+            <left>450</left><top>196</top><width>1300</width><height>40</height>
+            <font>font_body</font><textcolor>text3</textcolor>
+            <label>$INFO[Window.Property(sub)]</label>
+        </control>
+
+        <!-- the add-on to search in, and its dots -->
+        <control type="grouplist" id="9001">
+            <left>450</left><top>262</top><width>900</width><height>72</height>
+            <orientation>horizontal</orientation><itemgap>22</itemgap>
+            <onright>102</onright>
+            <ondown condition="String.IsEqual(Window.Property(mode),history)">200</ondown>
+            <ondown condition="String.IsEqual(Window.Property(mode),results)">noop</ondown>
+            <control type="button" id="101">
+                <width>auto</width><height>72</height><font>font_label_bold</font>
+                <textoffsetx>34</textoffsetx><aligny>center</aligny>
+                <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
+                <label>$INFO[Window.Property(provider)]</label>
+            </control>
+            <control type="label">
+                <width>auto</width><height>72</height><aligny>center</aligny>
+                <font>font12</font><textcolor>text3</textcolor>
+                <label>$INFO[Window.Property(dots)]</label>
+                <visible>Control.HasFocus(101)</visible>
+            </control>
+            <control type="label">
+                <width>auto</width><height>72</height><aligny>center</aligny>
+                <font>font10</font><textcolor>text4</textcolor>
+                <label>$INFO[Window.Property(hint)]</label>
+                <visible>Control.HasFocus(101)</visible>
+            </control>
+        </control>
+        <!-- new search, clear the history -->
+        <control type="grouplist" id="9002">
+            <left>1370</left><top>262</top><width>454</width><height>72</height>
+            <orientation>horizontal</orientation><itemgap>18</itemgap><align>right</align>
+            <onleft>101</onleft>
+            <ondown condition="String.IsEqual(Window.Property(mode),history)">200</ondown>
+            <ondown condition="String.IsEqual(Window.Property(mode),results)">noop</ondown>
+            <control type="button" id="102">
+                <width>auto</width><height>72</height><font>font_label_bold</font>
+                <textoffsetx>34</textoffsetx><aligny>center</aligny>
+                <textcolor>text</textcolor><focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
+                <label>$INFO[Window.Property(new)]</label>
+            </control>
+            <control type="group" id="9003">
+                <width>72</width><height>72</height>
+                <visible>String.IsEqual(Window.Property(mode),history) + Integer.IsGreater(Container(200).NumItems,0)</visible>
+                <control type="button" id="103">
+                    <left>0</left><top>0</top><width>72</width><height>72</height><label/>
+                    <onleft>102</onleft><onright>103</onright>
+                    <ondown>200</ondown>
+                    <texturefocus border="30" colordiffuse="focus">pill60.png</texturefocus>
+                    <texturenofocus border="30" colordiffuse="glass_strong">pill60.png</texturenofocus>
+                </control>
+                <control type="image">
+                    <left>20</left><top>20</top><width>32</width><height>32</height>
+                    <texture colordiffuse="$VAR[LucentSearchTrash]">icons/close.png</texture>
+                </control>
+            </control>
+        </control>
+
+        <!-- the recent searches -->
+        <control type="group">
+            <visible>String.IsEqual(Window.Property(mode),history)</visible>
+            <control type="label">
+                <left>454</left><top>378</top><width>1300</width><height>40</height>
+                <font>font_caps</font><textcolor>text4</textcolor>
+                <label>$INFO[Window.Property(recent)]</label>
+            </control>
+            <control type="list" id="200">
+                <left>450</left><top>430</top><width>1374</width><height>630</height>
+                <orientation>vertical</orientation>
+                <onup>9001</onup><onleft>noop</onleft><onright>noop</onright>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <itemlayout width="1374" height="98">
+                    <control type="image">
+                        <left>0</left><top>0</top><width>1374</width><height>84</height>
+                        <texture border="18" colordiffuse="14FFFFFF">rr20.png</texture>
+                    </control>
+                    <control type="label">
+                        <left>32</left><top>0</top><width>900</width><height>84</height>
+                        <aligny>center</aligny><font>font12_bold</font><textcolor>text</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>900</left><top>0</top><width>442</width><height>84</height>
+                        <align>right</align><aligny>center</aligny><font>font10</font><textcolor>text4</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </itemlayout>
+                <focusedlayout width="1374" height="98">
+                    <control type="image">
+                        <left>0</left><top>0</top><width>1374</width><height>84</height>
+                        <texture border="18" colordiffuse="14FFFFFF">rr20.png</texture>
+                        <visible>!Control.HasFocus(200)</visible>
+                    </control>
+                    <control type="image">
+                        <left>0</left><top>0</top><width>1374</width><height>84</height>
+                        <texture border="18" colordiffuse="focus">rr20.png</texture>
+                        <visible>Control.HasFocus(200)</visible>
+                    </control>
+                    <control type="label">
+                        <left>32</left><top>0</top><width>900</width><height>84</height>
+                        <aligny>center</aligny><font>font12_bold</font><textcolor>$VAR[LucentSearchRowText]</textcolor>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>900</left><top>0</top><width>442</width><height>84</height>
+                        <align>right</align><aligny>center</aligny><font>font10</font><textcolor>$VAR[LucentSearchRowText2]</textcolor>
+                        <label>$INFO[ListItem.Label2]</label>
+                    </control>
+                </focusedlayout>
+            </control>
+            <control type="label">
+                <left>454</left><top>440</top><width>1300</width><height>40</height>
+                <font>font_body</font><textcolor>text3</textcolor>
+                <label>$INFO[Window.Property(empty)]</label>
+                <visible>Integer.IsEqual(Container(200).NumItems,0)</visible>
+            </control>
+        </control>
+
+        <!-- the results -->
+        <control type="grouplist" id="9100">
+            <left>420</left><top>370</top><width>1500</width><height>710</height>
+            <orientation>vertical</orientation><itemgap>0</itemgap>
+            <onup>9001</onup>
+            <scrolltime tween="cubic" easing="out">220</scrolltime>
+            <visible>String.IsEqual(Window.Property(mode),results)</visible>
+            <include content="LucentSearchRow"><param name="id">301</param><param name="key">movie</param></include>
+            <include content="LucentSearchRow"><param name="id">302</param><param name="key">tvshow</param></include>
+            <include content="LucentSearchRowStatic"><param name="id">303</param><param name="key">people</param></include>
+            <include content="LucentSearchRow"><param name="id">304</param><param name="key">libmovie</param></include>
+            <include content="LucentSearchRow"><param name="id">305</param><param name="key">libtvshow</param></include>
+        </control>
+        <control type="label">
+            <left>454</left><top>390</top><width>1300</width><height>40</height>
+            <font>font_body</font><textcolor>text3</textcolor>
+            <label>$INFO[Window.Property(nothing)]</label>
+            <visible>String.IsEqual(Window.Property(mode),results) + !String.IsEmpty(Window.Property(allempty))</visible>
+        </control>
+    </controls>
+</window>

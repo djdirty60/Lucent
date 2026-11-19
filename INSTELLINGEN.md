@@ -172,6 +172,20 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
 - **Afsluitmenu** – Knoppen van Kodi verbergen of eigen knoppen toevoegen (Instellingen, een add-on, Skin herladen…)
 - **Standaardmenu herstellen** – Tabs en rijen terugzetten zoals ze waren
 
+### Skin-instellingen › Zoeken
+
+**Zoeken**
+
+- **Standaard zoeken in** – De add-on waarmee het zoekscherm begint; OK op de add-on-knop daar gaat naar de volgende
+- **Zoek-tab opent** – Wat OK op de tab Zoeken van het menu opent: het zoekscherm van Lucent, of het zoekmenu van Lucent Video
+
+**Wat wordt er gezocht**
+
+- **Films** – Een rij met gevonden films in de add-on
+- **Series** – Een rij met gevonden series in de add-on
+- **Acteurs** – Een rij met acteurs en actrices; OK opent hun pagina (heeft een TMDb-sleutel nodig)
+- **Kodi-bibliotheek** – Ook een rij met wat je in de Kodi-bibliotheek hebt
+
 ### Skin-instellingen › Afspelen
 
 **Afspelen**
