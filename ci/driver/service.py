@@ -7555,6 +7555,7 @@ def saver_test():
     ss = xbmcaddon.Addon("screensaver.lucent")
     ss.setSettingInt("source", 1)
     ss.setSettingInt("seconds", 8)
+    ss.setSettingBool("cinema", True)
     ss.setSettingBool("bigclock", True)
     ss.setSettingInt("nightfrom", 0)
     rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
