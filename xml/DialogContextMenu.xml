@@ -61,7 +61,7 @@
                 <label>$LOCALIZE[31905]</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=tonight)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)]</visible>
             </control>
             <control type="button" id="902">
                 <width>560</width>
@@ -75,7 +75,7 @@
                 <label>$LOCALIZE[31906]</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=marathon)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + String.IsEqual(ListItem.DBTYPE,tvshow)</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + String.IsEqual(ListItem.DBTYPE,tvshow)</visible>
             </control>
             <control type="button" id="903">
                 <width>560</width>
@@ -89,7 +89,7 @@
                 <label>$LOCALIZE[31907]</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=seasonready)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + String.IsEqual(ListItem.DBTYPE,season) + !String.IsEmpty(Window(Home).Property(lucent.video.usenet))</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + String.IsEqual(ListItem.DBTYPE,season) + !String.IsEmpty(Window(Home).Property(lucent.video.usenet))</visible>
             </control>
             <!-- 2.1.50: the other options of the video add-on for its library titles, in the add-on's own order; texts from the
                  add-on (update 87+). Window(home).Property(lucent.skin.libctx.all) (startup.py) hides the add-on's own copies -->
@@ -105,7 +105,7 @@
                 <label>LV 32130</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=source)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)]</visible>
             </control>
             <control type="button" id="905">
                 <width>560</width>
@@ -119,7 +119,7 @@
                 <label>LV 32131</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=watched)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow) | String.IsEqual(ListItem.DBTYPE,episode)] + Integer.IsEqual(ListItem.PlayCount,0)</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow) | String.IsEqual(ListItem.DBTYPE,episode)] + Integer.IsEqual(ListItem.PlayCount,0)</visible>
             </control>
             <control type="button" id="906">
                 <width>560</width>
@@ -133,7 +133,7 @@
                 <label>LV 32132</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=watched)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow) | String.IsEqual(ListItem.DBTYPE,episode)] + Integer.IsGreater(ListItem.PlayCount,0)</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow) | String.IsEqual(ListItem.DBTYPE,episode)] + Integer.IsGreater(ListItem.PlayCount,0)</visible>
             </control>
             <control type="button" id="907">
                 <width>560</width>
@@ -147,7 +147,7 @@
                 <label>LV 32299</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=resume)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)] + ListItem.IsResumable</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,episode)] + ListItem.IsResumable</visible>
             </control>
             <control type="button" id="908">
                 <width>560</width>
@@ -161,7 +161,7 @@
                 <label>LV 32133</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=watchlist_add)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </control>
             <control type="button" id="909">
                 <width>560</width>
@@ -175,7 +175,7 @@
                 <label>LV 32134</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=watchlist_remove)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </control>
             <control type="button" id="910">
                 <width>560</width>
@@ -189,7 +189,7 @@
                 <label>LV 32135</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=trailer)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)] + !String.IsEmpty(ListItem.Trailer)</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)] + !String.IsEmpty(ListItem.Trailer)</visible>
             </control>
             <control type="button" id="911">
                 <width>560</width>
@@ -203,7 +203,7 @@
                 <label>LV 32136</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=cast)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </control>
             <control type="button" id="912">
                 <width>560</width>
@@ -217,7 +217,7 @@
                 <label>LV 32137</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=similar)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </control>
             <control type="button" id="913">
                 <width>560</width>
@@ -231,7 +231,7 @@
                 <label>LV 32179</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=removelib)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </control>
             <control type="button" id="914">
                 <width>560</width>
@@ -245,7 +245,7 @@
                 <label>LV 32186</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=skiplib)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,episode) | String.IsEqual(ListItem.DBTYPE,season)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,episode) | String.IsEqual(ListItem.DBTYPE,season)]</visible>
             </control>
             <control type="button" id="915">
                 <width>560</width>
@@ -259,7 +259,7 @@
                 <label>LV 32180</label>
                 <onclick>Dialog.Close(contextmenu)</onclick>
                 <onclick>RunPlugin(plugin://plugin.video.lucent/?action=library_ctx&amp;what=rate)</onclick>
-                <visible>[String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
+                <visible>String.IsEmpty(Window(home).Property(lucent.ctx.own)) + [String.Contains(ListItem.Path,plugin.video.fakefen/) | String.Contains(ListItem.FolderPath,plugin.video.fakefen/) | String.Contains(ListItem.FileNameAndPath,plugin.video.fakefen/)] + System.HasAddon(plugin.video.fakefen) + [String.IsEqual(ListItem.DBTYPE,movie) | String.IsEqual(ListItem.DBTYPE,tvshow)]</visible>
             </control>
         </control>
         <control type="scrollbar" id="60">
