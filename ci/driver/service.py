@@ -7313,6 +7313,41 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def refreshopt_test():
+    """3.0.0: Refresh moved from the info page's buttons to Options (options.py clicks the hidden control 6)."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Skin.SetString(lucent.logoask,no)")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("Action(Info)")
+    mon.waitForAbort(4)
+    out.append(f"info open={cond('Window.IsActive(movieinformation)')} title={lab('ListItem.Title')!r} btn6={cond('Control.IsVisible(6)')} options={cond('Control.IsVisible(24)')}")
+    shot("300-info-buttons")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/options.py)")
+    mon.waitForAbort(3)
+    n = int(lab("Container(3).NumItems") or 0)
+    out.append(f"options: n={n} last={lab(f'Container(3).ListItemAbsolute({max(n - 1, 0)}).Label')!r}")
+    shot("300-options")
+    xbmc.executebuiltin(f"SetFocus(3,{max(n - 1, 0)},absolute)")
+    mon.waitForAbort(1)
+    logf = xbmcvfs.translatePath("special://logpath/kodi.log")
+    size = os.path.getsize(logf)
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(5)
+    with open(logf, errors="replace") as fh:
+        fh.seek(size)
+        tail = [ln.strip()[24:140] for ln in fh if any(w in ln for w in ("Refresh", "refresh", "Scraper", "scraper", "VideoInfoScanner", "OnRefresh", "metadata"))][:6]
+    out.append(f"after: dialogs={lab('System.CurrentWindow')!r} progress={cond('Window.IsActive(progressdialog)')} yesno={cond('Window.IsActive(yesnodialog)')} select={cond('Window.IsActive(selectdialog)')} log={tail}")
+    shot("300-after-refresh")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(2)
+    log("refreshopt: " + " | ".join(out))
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+
+
 def epctx_test():
     """2.1.51: the menu key on an episode of the series page (list 5601) gives that episode's menu (ctx.py), not the
     season's; on the season tabs (56) and elsewhere Kodi's own menu stays. OK still opens."""
@@ -12914,6 +12949,7 @@ def main():
     safe(ready_test)
     safe(libctx_test)
     safe(epctx_test)
+    safe(refreshopt_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
