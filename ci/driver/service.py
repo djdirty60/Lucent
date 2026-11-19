@@ -7313,6 +7313,18 @@ def backpos_test():
     mon.waitForAbort(2)
 
 
+def wn300_test():
+    """3.0.0: What's new opens on 3.0.0."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/whatsnew.py)")
+    mon.waitForAbort(5)
+    log(f"wn300: window={lab('System.CurrentWindow')!r}")
+    shot("300-whatsnew")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(2)
+
+
 def refreshopt_test():
     """3.0.0: Refresh moved from the info page's buttons to Options (options.py clicks the hidden control 6)."""
     import subprocess
@@ -12967,6 +12979,7 @@ def main():
     safe(libctx_test)
     safe(epctx_test)
     safe(refreshopt_test)
+    safe(wn300_test)
     safe(epbadge_test)
     safe(epnest_test)
     safe(reviews_test)
