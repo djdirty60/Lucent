@@ -7617,6 +7617,7 @@ def runtime_test():
     mon.waitForAbort(3)
     out.append(f"after back: path={lab('Container.FolderPath')[:60]!r} n={lab('Container.NumItems')}")
     try:
+        import sys
         sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
         import backup as _bk
         try:
