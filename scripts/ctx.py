@@ -120,6 +120,9 @@ def episode_menu():
 
 
 def main():
+    if xbmc.getSkinDir() != "skin.lucent":         # 3.0.4 (#37): an old Lucent keymap under another skin
+        xbmc.executebuiltin("Action(ContextMenu)")
+        return
     if xbmc.getCondVisibility("Window.IsActive(videos)") and xbmc.getInfoLabel("System.CurrentControlID") == EPISODES:
         episode_menu()
     else:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Lucent 3.1.0: the search screen (Lucent_Search.xml), GitHub #34.
+"""Lucent 3.0.1: the search screen (Lucent_Search.xml), GitHub #34.
 
 Search in a video add-on of your choice (the button at the top goes to the next installed one) or in the Kodi
 library. What you search shows as rows: movies and shows from that add-on, actors (TMDb, OK opens their page) and
@@ -37,6 +37,8 @@ PROVIDERS = [
      "plugin://plugin.video.fen/?mode=build_tvshow_list&action=tmdb_tv_search&query={q}"),
     ("plugin.video.fenlight", "plugin://plugin.video.fenlight/?mode=build_movie_list&action=tmdb_movies_search&query={q}",
      "plugin://plugin.video.fenlight/?mode=build_tvshow_list&action=tmdb_tv_search&query={q}"),
+    ("plugin.video.redlight", "plugin://plugin.video.redlight/?mode=build_movie_list&action=tmdb_movies_search&key_id={q}",
+     "plugin://plugin.video.redlight/?mode=build_tvshow_list&action=tmdb_tv_search&key_id={q}"),    # 3.0.3 (#34)
     ("plugin.video.pov", "plugin://plugin.video.pov/?mode=build_movie_list&action=tmdb_movies_search&query={q}",
      "plugin://plugin.video.pov/?mode=build_tvshow_list&action=tmdb_tv_search&query={q}"),
     ("plugin.video.umbrella", "plugin://plugin.video.umbrella/?action=movieSearchterm&name={q}",

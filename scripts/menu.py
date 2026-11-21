@@ -150,7 +150,7 @@ def videos(path):
     return f"ActivateWindow(Videos,{path},return)"
 
 
-SEARCH = "RunScript(special://skin/scripts/search.py)"   # 3.1.0: the search screen of Lucent (#34)
+SEARCH = "RunScript(special://skin/scripts/search.py)"   # 3.0.1: the search screen of Lucent (#34)
 
 
 def xsp(content, rules=None, order="title"):
@@ -395,7 +395,7 @@ def lv_convert():
 
 
 def search_convert():
-    """3.1.0 (#34): the Search tab of the default menu opens the search screen of Lucent. Once; a tab you named or
+    """3.0.1 (#34): the Search tab of the default menu opens the search screen of Lucent. Once; a tab you named or
     pointed somewhere else yourself stays as it is. Skin settings > Search > Search tab opens can go back."""
     menu = Menu()
     old = ("VideoLibrary.Search", videos(LVA + "searchmenu"))

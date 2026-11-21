@@ -8,21 +8,27 @@ changes the full screen video; menus, the OSD and the pause screen keep their no
 send their OK button as the Enter key, so OK on a letter closed the keyboard. That part is gone; the file is rewritten.)
 Set Skin.String(nuvio.backstop) to "off" (or delete the file) to get the old behaviour back.
 Runs from the Home screen; it does nothing when the file is already right.
+3.0.4 (#37): these files live in Kodi's profile, so Kodi also reads them under another skin. There
+special://skin/ is that other skin and the scripts are missing: OK, the menu key and Back did nothing. The keymaps now
+point to Lucent's own folder (each script does Kodi's normal action under another skin), and remove_all() takes them
+away as soon as you switch to another skin (helper.py).
 """
 import xbmc
 import xbmcvfs
 
 DIR = "special://profile/keymaps/"
+SKIN = "skin.lucent"
+SCRIPTS = "special://home/addons/skin.lucent/scripts/"     # not special://skin/: that is the other skin after a switch
 PATH = DIR + "lucent-back-stop.xml"
 KEYMAP = """<keymap>
     <FullscreenVideo>
         <keyboard>
-            <backspace>RunScript(special://skin/scripts/fsback.py)</backspace>
-            <escape>RunScript(special://skin/scripts/fsback.py)</escape>
-            <browser_back>RunScript(special://skin/scripts/fsback.py)</browser_back>
+            <backspace>RunScript(special://home/addons/skin.lucent/scripts/fsback.py)</backspace>
+            <escape>RunScript(special://home/addons/skin.lucent/scripts/fsback.py)</escape>
+            <browser_back>RunScript(special://home/addons/skin.lucent/scripts/fsback.py)</browser_back>
         </keyboard>
         <remote>
-            <back>RunScript(special://skin/scripts/fsback.py)</back>
+            <back>RunScript(special://home/addons/skin.lucent/scripts/fsback.py)</back>
         </remote>
     </FullscreenVideo>
 </keymap>
@@ -45,14 +51,14 @@ OK_KEYMAP = """<keymap>
     <videos>   <!-- Kodi's keymap name for MyVideoNav.xml (the video lists); "MyVideoNav" itself is not recognised -->
         <!-- holding OK still opens the context menu: once a key is mapped here, Kodi ignores the global long press -->
         <keyboard>
-            <return>RunScript(special://skin/scripts/openitem.py)</return>
-            <return mod="longpress">RunScript(special://skin/scripts/ctx.py)</return>
-            <enter>RunScript(special://skin/scripts/openitem.py)</enter>
-            <enter mod="longpress">RunScript(special://skin/scripts/ctx.py)</enter>
+            <return>RunScript(special://home/addons/skin.lucent/scripts/openitem.py)</return>
+            <return mod="longpress">RunScript(special://home/addons/skin.lucent/scripts/ctx.py)</return>
+            <enter>RunScript(special://home/addons/skin.lucent/scripts/openitem.py)</enter>
+            <enter mod="longpress">RunScript(special://home/addons/skin.lucent/scripts/ctx.py)</enter>
         </keyboard>
         <remote>
-            <select>RunScript(special://skin/scripts/openitem.py)</select>
-            <select mod="longpress">RunScript(special://skin/scripts/ctx.py)</select>
+            <select>RunScript(special://home/addons/skin.lucent/scripts/openitem.py)</select>
+            <select mod="longpress">RunScript(special://home/addons/skin.lucent/scripts/ctx.py)</select>
         </remote>
     </videos>
 </keymap>
@@ -62,7 +68,7 @@ OK_KEYMAP = """<keymap>
 # 2.1.51: the menu key / holding OK in the video lists goes through ctx.py: on the episodes row of the series page
 # (view 56) Kodi would show the menu of the selected season; ctx.py shows the episode's own menu there, Kodi's elsewhere
 CTX_PATH = DIR + "lucent-ctx.xml"
-CTX = "RunScript(special://skin/scripts/ctx.py)"
+CTX = "RunScript(" + SCRIPTS + "ctx.py)"
 CTX_KEYMAP = """<keymap>
     <videos>
         <keyboard>
@@ -142,7 +148,22 @@ def sync(path, text, wanted):
     return False
 
 
+ALL = (PATH, OK_PATH, HOME_PATH, TOUCH_PATH, CTX_PATH)
+
+
+def remove_all():
+    """3.0.4 (#37): another skin is chosen - take Lucent's keymaps away, so that skin has Kodi's normal keys again."""
+    gone = [p for p in ALL if sync(p, "", False)]
+    if gone:
+        xbmc.executebuiltin("Action(reloadkeymaps)")
+        log(f"another skin ({xbmc.getSkinDir()}): {len(gone)} Lucent keymaps removed")
+    return bool(gone)
+
+
 def main():
+    if xbmc.getSkinDir() != SKIN:
+        remove_all()
+        return
     changed = sync(PATH, KEYMAP, xbmc.getInfoLabel("Skin.String(nuvio.backstop)") != "off")
     # OK opens the page first for films / episodes in the Kodi video lists (add-on folders): only when chosen in Skin settings
     ok_wanted = xbmc.getCondVisibility("Skin.HasSetting(nuvio.ok.movie.page) | Skin.HasSetting(nuvio.ok.episode.page)")
