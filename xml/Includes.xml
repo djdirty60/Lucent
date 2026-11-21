@@ -690,16 +690,16 @@
         <param name="id"/>
         <definition>
             <control type="image">
-                <left>0</left><top>0</top><width>180</width><height>270</height>
+                <left>0</left><top>0</top><width>164</width><height>246</height>
                 <texture border="14" colordiffuse="glass_strong">rr14.png</texture>
             </control>
             <control type="image">
-                <left>0</left><top>0</top><width>180</width><height>270</height>
+                <left>0</left><top>0</top><width>164</width><height>246</height>
                 <aspectratio scalediffuse="false">scale</aspectratio>
                 <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Icon]</texture>
             </control>
             <control type="image">
-                <left>0</left><top>0</top><width>180</width><height>270</height>
+                <left>0</left><top>0</top><width>164</width><height>246</height>
                 <aspectratio scalediffuse="false">scale</aspectratio>
                 <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Art(poster)]</texture>
             </control>
@@ -710,30 +710,30 @@
         <definition>
             <orientation>horizontal</orientation>
             <onup>noop</onup><ondown>noop</ondown>
-            <left>30</left><top>0</top><width>1470</width><height>386</height>
+            <left>30</left><top>0</top><width>1470</width><height>346</height>
             <scrolltime tween="cubic" easing="out">200</scrolltime>
-            <itemlayout width="204" height="386">
+            <itemlayout width="186" height="346">
                 <control type="group">
-                    <top>56</top>
+                    <top>50</top>
                     <include content="LucentSearchItem"/>
                     <control type="label">
-                        <left>0</left><top>282</top><width>180</width><height>34</height>
+                        <left>0</left><top>256</top><width>164</width><height>34</height>
                         <font>font10</font><textcolor>text3</textcolor>
                         <label>$INFO[ListItem.Label]</label>
                     </control>
                 </control>
             </itemlayout>
-            <focusedlayout width="204" height="386">
+            <focusedlayout width="186" height="346">
                 <control type="group">
-                    <top>56</top>
+                    <top>50</top>
                     <include content="LucentSearchItem"/>
                     <control type="image">
-                        <left>-3</left><top>-3</top><width>186</width><height>276</height>
+                        <left>-3</left><top>-3</top><width>170</width><height>252</height>
                         <texture border="14">rr14_edge.png</texture><colordiffuse>text</colordiffuse>
                         <visible>Control.HasFocus($PARAM[id])</visible>
                     </control>
                     <control type="label">
-                        <left>0</left><top>282</top><width>180</width><height>34</height>
+                        <left>0</left><top>256</top><width>164</width><height>34</height>
                         <font>font10</font><textcolor>text</textcolor>
                         <scroll>true</scroll>
                         <label>$INFO[ListItem.Label]</label>
@@ -747,7 +747,7 @@
         <param name="key"/>
         <definition>
             <control type="group">
-                <width>1500</width><height>390</height>
+                <width>1500</width><height>346</height>
                 <defaultcontrol>$PARAM[id]</defaultcontrol>
                 <visible>!String.IsEmpty(Window.Property(url.$PARAM[key])) + String.IsEmpty(Window.Property(empty.$PARAM[key]))</visible>
                 <control type="label">
@@ -779,7 +779,7 @@
         <param name="key"/>
         <definition>
             <control type="group">
-                <width>1500</width><height>390</height>
+                <width>1500</width><height>346</height>
                 <defaultcontrol>$PARAM[id]</defaultcontrol>
                 <visible>!String.IsEmpty(Window.Property(url.$PARAM[key])) + String.IsEmpty(Window.Property(empty.$PARAM[key]))</visible>
                 <control type="label">
