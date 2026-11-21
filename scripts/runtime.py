@@ -2,8 +2,8 @@
 """Lucent 3.0.5: the Runtime quick filter (GitHub #35).
 
 Choose a length (shorter than 90 minutes, 2 hours, 2.5 hours, 3 hours). In the Kodi library the list itself is filtered;
-in the list of a video add-on Lucent reads the list, keeps the films that fit and shows them in a list to pick from.
-That needs the add-on to give the runtime of its films.
+in the list of a video add-on (3.0.6) the list also shows only the films that fit: Lucent reads the list and shows the
+films that fit in its own list (plugin.py). That needs the add-on to give the runtime of its films.
 
     RunScript(special://skin/scripts/runtime.py)      the Runtime button in the side panel of a film list
 """
@@ -14,7 +14,6 @@ import xbmc
 import xbmcgui
 
 NL = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
-HOME = xbmcgui.Window(10000)
 LIMITS = (90, 120, 150, 180)
 T = {
     "heading": ("Runtime", "Speelduur"),
@@ -39,11 +38,6 @@ def length(minutes):
     return (f"{minutes / 60:.1f} uur".replace(".", ",") if NL else f"{minutes / 60:.1f} hours")
 
 
-def duration(seconds):
-    minutes = int(seconds or 0) // 60
-    return f"{minutes // 60} u {minutes % 60:02d}" if NL else f"{minutes // 60} h {minutes % 60:02d}"
-
-
 def log(text):
     xbmc.log(f"[skin.lucent] runtime: {text}", xbmc.LOGINFO)
 
@@ -56,47 +50,13 @@ def library(path, limit):
 
 
 def addon_list(path, limit):
-    xbmc.executebuiltin("ActivateWindow(busydialognocancel)")
-    try:
-        query = {"jsonrpc": "2.0", "id": 1, "method": "Files.GetDirectory",
-                 "params": {"directory": path, "media": "video",
-                            "properties": ["title", "runtime", "art", "year", "rating", "file", "uniqueid", "plot"]}}
-        files = (json.loads(xbmc.executeJSONRPC(json.dumps(query))).get("result") or {}).get("files") or []
-    finally:
-        xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
-    films = [f for f in files if f.get("filetype") != "directory" or f.get("type") == "movie"]
-    with_time = [f for f in films if int(f.get("runtime") or 0) > 0]
-    log(f"{len(files)} items, {len(with_time)} with a runtime, limit {limit} min")
-    if not with_time:
-        xbmcgui.Dialog().notification(tr("heading"), tr("unknown"), xbmcgui.NOTIFICATION_INFO, 5000)
-        return
-    fit = sorted((f for f in with_time if int(f["runtime"]) <= limit * 60), key=lambda f: int(f["runtime"]))
-    if not fit:
-        xbmcgui.Dialog().notification(tr("heading"), tr("none", length(limit)), xbmcgui.NOTIFICATION_INFO, 5000)
-        return
-    items = []
-    for f in fit:
-        li = xbmcgui.ListItem(f.get("title") or f.get("label") or "")
-        li.setLabel2("  ·  ".join(x for x in (duration(f["runtime"]), str(f.get("year") or "")) if x and x != "0"))
-        art = f.get("art") or {}
-        poster = art.get("poster") or art.get("thumb") or art.get("icon") or ""
-        li.setArt({"thumb": poster, "icon": poster, "poster": poster})
-        items.append(li)
-    pick = xbmcgui.Dialog().select(tr("found", len(fit), length(limit)), items, useDetails=True)
-    if pick < 0:
-        return
-    chosen = fit[pick]
-    target = chosen.get("file") or ""
-    tmdb = str((chosen.get("uniqueid") or {}).get("tmdb") or "")
-    if chosen.get("filetype") == "directory":
-        xbmc.executebuiltin(f'ActivateWindow(Videos,"{target}",return)')
-    elif tmdb.isdigit() and xbmc.getCondVisibility("Skin.HasSetting(nuvio.ok.movie.page)"):
-        HOME.setProperty("nuvio.open.tmdb", tmdb)
-        HOME.setProperty("nuvio.open.type", "movie")
-        HOME.clearProperty("nuvio.open.trakt")
-        xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
-    else:
-        xbmc.executebuiltin(f'PlayMedia("{target}")')
+    """3.0.6 (#35): the list itself shows only the films that fit (Lucent's own list of them, in the same view, with all
+    their information); Back gives the whole list again. Kodi cannot filter an add-on's list, so Lucent reads it."""
+    if path.startswith("plugin://skin.lucent/?list=runtime"):          # already filtered: filter the original again
+        path = dict(urllib.parse.parse_qsl(path.split("?", 1)[1])).get("path", path)
+    query = urllib.parse.urlencode({"list": "runtime", "path": path, "max": limit})
+    log(f"{path} -> {limit} min")
+    xbmc.executebuiltin(f"Container.Update(plugin://skin.lucent/?{query})")
 
 
 def main():

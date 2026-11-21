@@ -383,7 +383,7 @@ class Search(xbmcgui.WindowXMLDialog):
             if action.getId() == 4 and at + 1 < len(rows):
                 self.setFocusId(rows[at + 1])
             elif action.getId() == 3:
-                self.setFocusId(rows[at - 1] if at > 0 else 101)
+                self.setFocusId(rows[at - 1] if at > 0 else 102)    # 3.0.6 (#34): Up lands on New search
             return
         if action.getId() in (7, 100) and focus in (301, 302, 304, 305):
             # OK on a title: this screen closes and opens it (a folder in Videos, a film plays or opens its page);
