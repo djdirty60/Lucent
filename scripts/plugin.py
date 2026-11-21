@@ -159,9 +159,70 @@ def lib_continue_new():
     return rows
 
 
+RUNTIME_FIELDS = ["title", "year", "rating", "runtime", "plot", "art", "file", "uniqueid", "genre", "mpaa", "premiered",
+                  "director", "studio", "tagline", "playcount", "votes", "originaltitle", "country", "resume"]
+
+
+def runtime_list(path, limit):
+    """3.0.6 (#35): the films of a list (an add-on folder) that are not longer than limit minutes, as a list of their
+    own: shown in the same view with all their information. OK plays them through the add-on, as in its own list."""
+    try:
+        files = (rpc("Files.GetDirectory", directory=path, media="video", properties=RUNTIME_FIELDS) or {}).get("files") or []
+    except Exception as error:  # noqa: BLE001
+        log(f"runtime {path}: {error}")
+        files = []
+    fit = sorted((f for f in files if 0 < int(f.get("runtime") or 0) <= limit * 60), key=lambda f: int(f["runtime"]))
+    rows = []
+    for f in fit:
+        li = xbmcgui.ListItem(f.get("title") or f.get("label") or "", offscreen=True)
+        tag = li.getVideoInfoTag()
+        tag.setMediaType("movie")
+        tag.setTitle(f.get("title") or f.get("label") or "")
+        if f.get("originaltitle"):
+            tag.setOriginalTitle(f["originaltitle"])
+        if f.get("year"):
+            tag.setYear(int(f["year"]))
+        tag.setPlot(f.get("plot") or "")
+        if f.get("tagline"):
+            tag.setTagLine(f["tagline"])
+        tag.setDuration(int(f.get("runtime") or 0))
+        if f.get("rating"):
+            tag.setRating(float(f["rating"]))
+        tag.setGenres(f.get("genre") or [])
+        tag.setDirectors(f.get("director") or [])
+        tag.setStudios(f.get("studio") or [])
+        tag.setCountries(f.get("country") or [])
+        if f.get("mpaa"):
+            tag.setMpaa(f["mpaa"])
+        if f.get("premiered"):
+            tag.setPremiered(f["premiered"])
+        tag.setUniqueIDs({k: str(v) for k, v in (f.get("uniqueid") or {}).items() if v})
+        tag.setPlaycount(int(f.get("playcount") or 0))
+        li.setArt({k: v for k, v in (f.get("art") or {}).items() if v})
+        folder = f.get("filetype") == "directory"
+        if not folder:
+            li.setProperty("IsPlayable", "true")
+        rows.append((f.get("file") or "", li, folder))
+    log(f"runtime {limit} min: {len(rows)} of {len(files)} items")
+    if not rows:
+        nl = xbmc.getLanguage(xbmc.ISO_639_1) == "nl"
+        if not any(int(f.get("runtime") or 0) for f in files):
+            text = "Deze lijst geeft de speelduur van de films niet door" if nl else "This list does not give the runtime of its films"
+        else:
+            text = "Geen films die kort genoeg zijn in deze lijst" if nl else "No films short enough in this list"
+        xbmcgui.Dialog().notification("Lucent", text, xbmcgui.NOTIFICATION_INFO, 5000)
+    return rows
+
+
 def main():
     handle = int(sys.argv[1])
     params = dict(urllib.parse.parse_qsl(sys.argv[2].lstrip("?")))
+    if params.get("list") == "runtime":
+        rows = runtime_list(params.get("path", ""), int(params.get("max") or 120))
+        xbmcplugin.setContent(handle, "movies")
+        xbmcplugin.addDirectoryItems(handle, rows, len(rows))
+        xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
+        return
     rows = lib_continue_new() if params.get("list") == "lib_continue_new" else []
     xbmcplugin.setContent(handle, "episodes")
     xbmcplugin.addDirectoryItems(handle, rows, len(rows))

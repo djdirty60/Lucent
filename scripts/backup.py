@@ -84,7 +84,13 @@ def write_zip(folder, prefix):
                 archive.write(full, inner)
         target = folder.rstrip("/\\") + "/" + name
         if not xbmcvfs.copy(temp, target):
-            raise OSError(t("could not write to that folder", "kon niet naar die map schrijven"))
+            # 3.0.6 (#38): Kodi's own copy can fail on Android (Nvidia Shield) where a plain file copy still works
+            try:
+                import shutil
+                shutil.copyfile(temp, xbmcvfs.translatePath(target))
+            except OSError as error:
+                log(f"copy to {target} failed: {error}")
+                raise OSError(t("could not write to that folder", "kon niet naar die map schrijven")) from error
     finally:
         try:
             os.remove(temp)
@@ -152,8 +158,23 @@ def make_backup():
         target, count = write_zip(folder, "lucent-backup")
     except Exception as error:  # noqa: BLE001
         log(f"backup failed: {error}")
-        xbmcgui.Dialog().ok(t("Backup", "Back-up"), t(f"The backup failed: {error}", f"De back-up is mislukt: {error}"))
-        return
+        # 3.0.6 (#38): Android (Nvidia Shield, Fire TV) does not let apps write everywhere, for example the main folder
+        # of a USB stick. Kodi's own folder always works; from there the file can be copied with a file manager.
+        if not xbmcgui.Dialog().yesno(t("Backup", "Back-up"), t(
+                f"The backup failed: {error}.\n\nOn Android Kodi may not write to every folder (for example a USB stick). "
+                "Save the backup in Kodi's own folder instead?",
+                f"De back-up is mislukt: {error}.\n\nOp Android mag Kodi niet in elke map schrijven (bijvoorbeeld een "
+                "USB-stick). De back-up in de eigen map van Kodi bewaren?")):
+            return
+        folder = "special://home/lucent-backups/"
+        xbmcvfs.mkdirs(folder)
+        try:
+            target, count = write_zip(folder, "lucent-backup")
+        except Exception as error2:  # noqa: BLE001
+            log(f"backup in Kodi's folder failed too: {error2}")
+            xbmcgui.Dialog().ok(t("Backup", "Back-up"), t(f"The backup failed: {error2}", f"De back-up is mislukt: {error2}"))
+            return
+        target = xbmcvfs.translatePath(target)
     files = range(count)
     when = time.strftime("%d-%m-%Y %H:%M")
     xbmc.executebuiltin(f'Skin.SetString({LAST},"{when}")')

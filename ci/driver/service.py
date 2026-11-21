@@ -7592,7 +7592,7 @@ def saver_test():
 
 
 def runtime_test():
-    """3.0.5 (#35): the Runtime quick filter on a list of a video add-on (fake add-on films of 100 to 155 minutes)."""
+    """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
     out = []
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -7601,24 +7601,37 @@ def runtime_test():
         if mon.waitForAbort(0.5) or int(lab("Container.NumItems") or 0) > 0:
             break
     mon.waitForAbort(2)
-    out.append(f"list n={lab('Container.NumItems')} content={lab('Container.Content')} dur={lab('ListItem.Duration')!r}")
+    out.append(f"list n={lab('Container.NumItems')} content={lab('Container.Content')}")
     xbmc.executebuiltin("RunScript(special://skin/scripts/runtime.py)")
     mon.waitForAbort(2)
-    out.append(f"choices={lab('Container(3).NumItems')} first={lab('Container(3).ListItemAbsolute(0).Label')!r}")
-    shot("330-runtime-choices")
     xbmc.executebuiltin("SetFocus(3,1,absolute)")
     mon.waitForAbort(1)
     subprocess.run(["xdotool", "key", "Return"], timeout=5)
-    mon.waitForAbort(5)
-    n = int(lab("Container(3).NumItems") or 0)
-    out.append(f"found={n} heading={lab('Control.GetLabel(1)')!r} first={lab('Container(3).ListItemAbsolute(0).Label')!r} {lab('Container(3).ListItemAbsolute(0).Label2')!r} last={lab(f'Container(3).ListItemAbsolute({max(n - 1, 0)}).Label')!r}")
-    shot("331-runtime-found")
-    xbmc.executebuiltin("Dialog.Close(all,true)")
-    mon.waitForAbort(1)
+    for _ in range(20):
+        if mon.waitForAbort(0.5) or lab("Container.FolderPath").startswith("plugin://skin.lucent"):
+            break
+    mon.waitForAbort(3)
+    out.append(f"filtered: path={lab('Container.FolderPath')[:60]!r} n={lab('Container.NumItems')} content={lab('Container.Content')} first={lab('Container.ListItemAbsolute(0).Label')!r} dur={lab('Container.ListItemAbsolute(0).Duration')!r} plot={bool(lab('Container.ListItemAbsolute(0).Plot'))}")
+    shot("331-runtime-filtered")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    out.append(f"after back: path={lab('Container.FolderPath')[:60]!r} n={lab('Container.NumItems')}")
+    try:
+        sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts/"))
+        import backup as _bk
+        try:
+            _bk.write_zip("/proc/lucent-not-writable/", "ci-backup")
+            out.append("backup to read-only: no error?")
+        except OSError as error:
+            out.append(f"backup to read-only: OSError {error}")
+        xbmcvfs.mkdirs("special://home/lucent-backups/")
+        target, count = _bk.write_zip("special://home/lucent-backups/", "ci-backup")
+        out.append(f"backup to kodi folder: {target} files={count} exists={xbmcvfs.exists(target)}")
+    except Exception as error:  # noqa: BLE001
+        out.append(f"backup test error {error!r}")
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
     log("runtime: " + " | ".join(out))
-
 
 def epctx_test():
     """2.1.51: the menu key on an episode of the series page (list 5601) gives that episode's menu (ctx.py), not the
