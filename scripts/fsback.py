@@ -12,6 +12,9 @@ import xbmcgui
 
 
 def main():
+    if xbmc.getSkinDir() != "skin.lucent":         # 3.0.4 (#37): an old Lucent keymap under another skin
+        xbmc.executebuiltin("Action(Back)")
+        return
     home = xbmcgui.Window(10000)
     if home.getProperty("lucent.sport.cid") and xbmc.getCondVisibility("PVR.IsPlayingTV"):
         xbmc.executebuiltin("Action(FullScreen)")

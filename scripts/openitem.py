@@ -8,6 +8,9 @@ import xbmc
 
 
 def main():
+    if xbmc.getSkinDir() != "skin.lucent":         # 3.0.4 (#37): an old Lucent keymap under another skin
+        xbmc.executebuiltin("Action(Select)")
+        return
     dbtype = xbmc.getInfoLabel("ListItem.DBType")
     if xbmc.getInfoLabel("ListItem.Property(lucent_open)"):          # Lucent's own rows open their page themselves
         dbtype = ""

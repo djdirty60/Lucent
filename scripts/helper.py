@@ -436,6 +436,17 @@ def run():
             if HOME.getProperty(STOP) or updated():
                 log("skin updated - making way for the new helper")
                 break
+            # 3.0.4 (#37): another skin was chosen. The helper kept running there until Kodi restarted: it set Lucent's
+            # view numbers in that skin's lists (a season list in List instead of Poster) and moved its focus. Stop,
+            # and take Lucent's keymaps away so that skin has Kodi's normal OK, menu key and Back.
+            if xbmc.getSkinDir() != "skin.lucent":
+                try:
+                    import keymap
+                    keymap.remove_all()
+                except Exception as error:  # noqa: BLE001
+                    log(f"keymaps: {error}")
+                log(f"another skin ({xbmc.getSkinDir()}) - stopping")
+                break
             now = time.time()
             if cond("Player.HasVideo"):
                 if not HOME.getProperty("nuvio.trailer.active") and not HOME.getProperty("nuvio.trailer.playing"):
