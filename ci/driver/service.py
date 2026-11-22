@@ -7953,6 +7953,46 @@ def ctxpanel_test():
     log(f"ctxpanel: {out}")
 
 
+def subsosd_test():
+    """3.0.11 (Lucent Video rc1.20): Up on the subtitle button of the player menu shows Earlier / Later / Other subtitle."""
+    out = []
+    xbmc.executebuiltin("Skin.Reset(nuvio.autosubs)")
+    xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+    for _ in range(30):
+        mon.waitForAbort(1)
+        if xbmc.Player().isPlayingVideo():
+            break
+    mon.waitForAbort(3)
+    with open("/tmp/ci/test.srt", "w") as fh:
+        fh.write("1\n00:00:01,000 --> 00:01:59,000\nTest subtitle\n")
+    xbmc.Player().setSubtitles("/tmp/ci/test.srt")
+    xbmc.Player().showSubtitles(True)
+    mon.waitForAbort(2)
+    out.append(f"subs={cond('VideoPlayer.HasSubtitles')} on={cond('VideoPlayer.SubtitlesEnabled')}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(videoosd)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(2011)")
+    mon.waitForAbort(1)
+    out.append(f"focus={lab('System.CurrentControlID')}")
+    xbmc.executebuiltin("Action(Up)")
+    mon.waitForAbort(1.5)
+    out.append(f"up->{lab('System.CurrentControlID')} panel={cond('Control.IsVisible(2899)')}")
+    shot("380-subs-osd")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1)
+    shot("381-subs-osd-later")
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(1.5)
+    out.append(f"after later: focus={lab('System.CurrentControlID')} osd={cond('Window.IsActive(videoosd)')}")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(1)
+    out.append(f"down->{lab('System.CurrentControlID')} panel={cond('Control.IsVisible(2899)')}")
+    log("subsosd: " + " | ".join(out))
+    xbmc.executebuiltin("PlayerControl(Stop)")
+    mon.waitForAbort(3)
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13655,6 +13695,7 @@ def main():
     safe(tmdbkey_test)
     safe(tmdbextra_test)
     safe(ctxpanel_test)
+    safe(subsosd_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)
