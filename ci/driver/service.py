@@ -7839,9 +7839,10 @@ def tmdbextra_test():
                  "s_info": "String.IsEqual(ListItem.Episode,$INFO[Window(home).Property(lucent.best.e)])",
                  "s_path": "String.IsEqual(Window(home).Property(lucent.best.path),Container.FolderPath)",
                  "s_path2": "String.IsEqual(Container.FolderPath,Window(home).Property(lucent.best.path))",
-                 "exp": "$EXP[LucentBestEp]"}
+                 "i_season": "Integer.IsEqual(ListItem.Season,Window(home).Property(lucent.best.s))",
+                 "s_season": "String.IsEqual(ListItem.Season,Window(home).Property(lucent.best.s))"}
         out["forms"] = {k: cond(v) for k, v in forms.items()}
-        out["focus_ep"] = lab("ListItem.Episode")
+        out["focus_ep"] = [lab("ListItem.Episode"), lab("ListItem.Season"), lab("$VAR[LucentBestTag]")]
         shot("364-season-best-focus")
         key("Right")
         mon.waitForAbort(1.5)

@@ -8,7 +8,7 @@
     <expression name="LucentListImdbOwn">String.IsEmpty(ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbl.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</expression>
     <!-- issue #9: with every other score switched off, IMDb stays on the first row instead of alone on a row of its own -->
     <!-- 3.0.10: the best episode of the season in this list (scripts/bestep.py) -->
-    <expression name="LucentBestEp">String.IsEqual(Window(home).Property(lucent.best.path),Container.FolderPath) + String.IsEqual(ListItem.Season,Window(home).Property(lucent.best.s)) + String.IsEqual(ListItem.Episode,Window(home).Property(lucent.best.e))</expression>
+    <expression name="LucentBestEp">String.IsEqual(Container.FolderPath,Window(home).Property(lucent.best.path)) + Integer.IsEqual(ListItem.Season,Window(home).Property(lucent.best.s)) + Integer.IsEqual(ListItem.Episode,Window(home).Property(lucent.best.e))</expression>
     <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
         <value condition="Container.SortDirection(descending)">$LOCALIZE[31025]</value>
