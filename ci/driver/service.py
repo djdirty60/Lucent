@@ -7776,10 +7776,24 @@ def tmdbextra_test():
     shows = (rpc("VideoLibrary.GetTVShows", {}).get("result") or {}).get("tvshows") or []
     out["shows"] = len(shows)
     if shows:
-        sid = shows[0]["tvshowid"]
-        rpc("VideoLibrary.SetTVShowDetails", {"tvshowid": sid, "uniqueid": {"tmdb": "1600"}, "mpaa": ""})
+        best_show, most = shows[0]["tvshowid"], -1
+        for sh in shows:
+            rpc("VideoLibrary.SetTVShowDetails", {"tvshowid": sh["tvshowid"], "uniqueid": {"tmdb": "1600"}, "mpaa": ""})
+            eps = (rpc("VideoLibrary.GetEpisodes", {"tvshowid": sh["tvshowid"], "properties": ["season"]}).get("result") or {}).get("episodes") or []
+            per = {}
+            for e in eps:
+                per[e["season"]] = per.get(e["season"], 0) + 1
+            if per and max(per.values()) > most:
+                best_show, most = sh["tvshowid"], max(per.values())
+        sid = best_show
+        out["most_eps"] = most
         xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
         mon.waitForAbort(3)
+        for _ in range(4):
+            if lab("ListItem.DBType") == "tvshow":
+                break
+            key("Down")
+            mon.waitForAbort(1)
         xbmc.executebuiltin("Action(Info)")
         for _ in range(30):
             if HOME.getProperty("nuvio.info.next"):
@@ -7793,7 +7807,10 @@ def tmdbextra_test():
         eps = (rpc("VideoLibrary.GetEpisodes", {"tvshowid": sid, "properties": ["season", "episode"]}).get("result") or {}).get("episodes") or []
         out["eps"] = len(eps)
         scores = [7.1, 8.6, 6.9, 7.4, 7.8, 6.5, 8.1, 7.0]
-        season = eps[0]["season"] if eps else 1
+        per = {}
+        for e in eps:
+            per[e["season"]] = per.get(e["season"], 0) + 1
+        season = max(per, key=per.get) if per else 1
         for n, e in enumerate([e for e in eps if e["season"] == season]):
             rpc("VideoLibrary.SetEpisodeDetails", {"episodeid": e["episodeid"], "rating": scores[n % len(scores)]})
         xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/{season}/,return)")
@@ -7830,6 +7847,8 @@ def tmdbextra_test():
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://skin.lucent/?list=tmdb&path=movie/now_playing,return)")
     mon.waitForAbort(4)
     shot("366-cinema-list")
+    key("Down")
+    mon.waitForAbort(1)
     key("Return")
     for _ in range(16):
         if cond("Window.IsVisible(movieinformation)"):
