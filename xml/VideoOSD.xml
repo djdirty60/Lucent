@@ -163,18 +163,17 @@
             <top>812</top>
             <width>1920</width>
             <height>110</height>
-            <visible>ControlGroup(2900).HasFocus</visible>
-            <animation effect="fade" start="0" end="100" time="160">Visible</animation>
-            <animation effect="fade" start="100" end="0" time="120">Hidden</animation>
             <control type="image">
                 <left>0</left><top>0</top><width>1920</width><height>136</height>
                 <texture>white.png</texture>
                 <colordiffuse>D90B0F19</colordiffuse>
+                <visible>ControlGroup(2900).HasFocus</visible>
             </control>
             <control type="label">
                 <left>96</left><top>0</top><width>400</width><height>100</height>
                 <font>font12_bold</font><textcolor>text3</textcolor><aligny>center</aligny>
                 <label>$LOCALIZE[31936]</label>
+                <visible>ControlGroup(2900).HasFocus</visible>
             </control>
             <control type="grouplist" id="2900">
                 <left>420</left>
@@ -185,6 +184,8 @@
                 <itemgap>18</itemgap>
                 <ondown>100</ondown>
                 <onup>100</onup>
+                <!-- hidden until you go up to it; allowhiddenfocus lets the focus come here while it is still hidden -->
+                <visible allowhiddenfocus="true">ControlGroup(2900).HasFocus</visible>
             <control type="button" id="2901">
                 <width>auto</width>
                 <height>64</height>
