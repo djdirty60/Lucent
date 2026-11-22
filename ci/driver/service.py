@@ -7830,6 +7830,19 @@ def tmdbextra_test():
         out["best"] = [HOME.getProperty("lucent.best.s"), HOME.getProperty("lucent.best.e"), lab("Container.FolderPath"),
                        HOME.getProperty("lucent.best.path"), cond("Control.IsVisible(5601)"), lab("Container.Viewmode")]
         shot("363-season-best")
+        key("Down")
+        mon.waitForAbort(0.6)
+        key("Down")
+        mon.waitForAbort(1)
+        forms = {"s_ep": "String.IsEqual(ListItem.Episode,Window(home).Property(lucent.best.e))",
+                 "i_ep": "Integer.IsEqual(ListItem.Episode,Window(home).Property(lucent.best.e))",
+                 "s_info": "String.IsEqual(ListItem.Episode,$INFO[Window(home).Property(lucent.best.e)])",
+                 "s_path": "String.IsEqual(Window(home).Property(lucent.best.path),Container.FolderPath)",
+                 "s_path2": "String.IsEqual(Container.FolderPath,Window(home).Property(lucent.best.path))",
+                 "exp": "$EXP[LucentBestEp]"}
+        out["forms"] = {k: cond(v) for k, v in forms.items()}
+        out["focus_ep"] = lab("ListItem.Episode")
+        shot("364-season-best-focus")
         key("Right")
         mon.waitForAbort(1.5)
         shot("364-season-best-2")
