@@ -7629,6 +7629,42 @@ def saverscroll_test():
     log("saverscroll: " + " | ".join(out))
 
 
+def newlist_test():
+    """3.0.8: one pop-up with every new episode (like the picture Wilfried sent), in Dutch."""
+    import subprocess
+    import threading
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    import agenda_core
+    agenda_core._NL, agenda_core.LANG = True, "nl"
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    evs = [({"kind": "tv", "name": "Gold Rush", "season": 17, "episode": 8, "title": "Carrying Parker's Water", "date": "2026-11-21",
+             "time": "02:00", "poster": "/tmp/ci/art/poster3.jpg", "tmdb": 1, "key": "a", "show": "tv:1"}, None),
+           ({"kind": "tv", "name": "9-1-1", "season": 10, "episode": 6, "title": "Et Tu?", "date": "2026-11-20",
+             "time": "02:00", "poster": "/tmp/ci/art/poster5.jpg", "tmdb": 2, "key": "b", "show": "tv:2"}, None)]
+    res = {}
+    for name, items in (("two", evs), ("one", evs[:1]), ("four", evs * 2)):
+        th = threading.Thread(target=lambda i=items, n=name: res.__setitem__(n, agenda_core.announce_list(i)))
+        th.start()
+        mon.waitForAbort(2.5)
+        shot(f"340-newlist-{name}")
+        if name == "two":
+            subprocess.run(["xdotool", "key", "Right"], timeout=5)
+            mon.waitForAbort(1)
+            shot("341-newlist-serie")
+            subprocess.run(["xdotool", "key", "Left", "Down", "Down"], timeout=5)
+            mon.waitForAbort(1)
+            shot("342-newlist-buttons")
+            subprocess.run(["xdotool", "key", "Up", "Right", "Return"], timeout=5)
+        else:
+            subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+        th.join(10)
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    log(f"newlist: {res}")
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13326,6 +13362,7 @@ def main():
     safe(search_test)
     safe(saver_test)
     safe(saverscroll_test)
+    safe(newlist_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)

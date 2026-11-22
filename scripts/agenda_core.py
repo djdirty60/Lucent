@@ -57,6 +57,12 @@ T = {
     "aired_today_notime": ("Out today", "Vandaag verschenen"),
     "aired_on": ("Out since {0}", "Verschenen op {0}"),
     "later": ("Later", "Later"),
+    "n_new_eps": ("{0} new episodes", "{0} nieuwe afleveringen"),
+    "n_new": ("{0} new titles", "{0} nieuwe titels"),
+    "see_calendar": ("See all in Calendar", "Alles bekijken in Kalender"),
+    "series_btn": ("Series", "Serie"),
+    "aired_at": ("Aired on {0} at {1}", "Uitgezonden op {0} om {1}"),
+    "aired_day": ("Aired on {0}", "Uitgezonden op {0}"),
     "following": ("Notification on for {0}. You get a pop-up for a new episode / the digital release.",
                   "Melding aan voor {0}. Je krijgt een pop-up bij een nieuwe aflevering / digitale release."),
     "unfollowed": ("Notification off for {0}", "Melding uit voor {0}"),
@@ -784,6 +790,96 @@ def announce(ev, group=None):
                                                  autoclose=60000) else ""
 
 
+class AnnounceList(xbmcgui.WindowXMLDialog):
+    """3.0.8: one pop-up with every new episode / film that is out (xml/Lucent_NewEpisodes.xml). OK on a row: watch;
+    Right, then OK: the Series / Film button of that row. choice: ('watch', i), ('open', i), ('calendar', -1) or
+    ('', -1) for later."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
+        self.rows, self.props, self.choice, self.closed = kwargs["rows"], kwargs["props"], ("", -1), False
+
+    def onInit(self):
+        for key, value in self.props.items():
+            self.setProperty(f"ne.{key}", value)
+        self.clearProperty("ne.col")
+        lst = self.getControl(100)
+        lst.reset()
+        for row in self.rows:
+            li = xbmcgui.ListItem(row["title"], row["line"])
+            li.setArt({"icon": row["poster"], "thumb": row["poster"]})
+            li.setProperty("btn", row["btn"])
+            lst.addItem(li)
+        self.setFocusId(100)
+        import threading
+        threading.Thread(target=self._timeout, daemon=True).start()
+
+    def _timeout(self):
+        if not xbmc.Monitor().waitForAbort(60) and not self.closed:     # no answer within a minute: later
+            self.close()
+
+    def done(self, choice):
+        self.choice, self.closed = choice, True
+        self.close()
+
+    def onClick(self, control_id):
+        if control_id == 20:
+            self.done(("calendar", -1))
+        elif control_id == 21:
+            self.done(("", -1))
+
+    def onAction(self, action):
+        aid = action.getId()
+        if aid in (9, 10, 92, 216, 247, 257, 275, 61467, 61448):
+            self.done(("", -1))
+        elif aid in (7, 100) and self.getFocusId() == 100:  # clicks on a filled list do not reach onClick
+            pos = self.getControl(100).getSelectedPosition()
+            if pos >= 0:
+                self.done(("open" if self.getProperty("ne.col") == "1" else "watch", pos))
+
+
+def announce_row(ev, group=None):
+    """One row of the list pop-up: poster, title, 'S17 A8 · Title · Out since Sat 21 Nov', and its button."""
+    if group:
+        first = min(group, key=lambda e: e["episode"])
+        line = f"{tr('season_line', first['season'], len(group))} · {tr('season_out')}"
+    elif ev["kind"] == "movie":
+        line = f"{providers_line(ev.get('tmdb')) or tr('digital')} · {when_text(ev)}"
+    else:
+        code = f"{ep_code(ev)} · {ev['title']}" if ev["title"] else ep_code(ev)
+        day = parse_date(ev["date"])
+        when = when_text(ev) if day == today() else (tr("aired_at", day_short(day), ev["time"]) if ev["time"]
+                                                     else tr("aired_day", day_short(day)))
+        line = f"{code} · {when}"
+    return {"title": ev["name"], "line": line, "poster": ev.get("poster") or "",
+            "btn": tr("film") if ev["kind"] == "movie" else tr("series_btn")}
+
+
+def announce_list(items):
+    """items: [(ev, group or None)]. Returns (choice, index) like AnnounceList, or None when the window failed."""
+    rows = [announce_row(ev, group) for ev, group in items]
+    eps = sum(len(group) if group else 1 for ev, group in items if ev["kind"] == "tv")
+    movies = any(ev["kind"] == "movie" for ev, group in items)
+    if len(items) == 1 and not movies:
+        head = tr("new_season") if items[0][1] else tr("new_ep")
+    elif len(items) == 1:
+        head = tr("new_movie")
+    else:
+        head = tr("n_new", len(items)) if movies else tr("n_new_eps", eps)
+    props = {"head": head, "rows": str(min(len(rows), 4)), "calendar": tr("see_calendar"), "later": tr("later")}
+    try:
+        import xbmcaddon
+        path = xbmcaddon.Addon("skin.lucent").getAddonInfo("path")
+        window = AnnounceList("Lucent_NewEpisodes.xml", path, "Default", "1080i", rows=rows, props=props)
+        window.doModal()
+        choice = window.choice
+        del window
+        return choice
+    except Exception as error:  # noqa: BLE001
+        log(f"announce list window: {error}")
+        return None
+
+
 def watch(ev, group=None):
     """Play the episode (the first of a new season), the film, or open it when nothing can play an episode."""
     if ev["kind"] == "tv" and ev.get("tmdb") and info.lv_open_with():
@@ -850,29 +946,44 @@ def check_notifications():
             groups[key] = []
             order.append(key)
         groups[key].append(ev)
-    for key in order[:3]:
-        if busy_now():
-            break
+    items = []
+    for key in order[:8]:
         group = groups[key]
         season = group if len(group) >= 3 else None
         evs = group if season else group[:1]
-        ev = min(evs, key=lambda e: e.get("episode") or 0)
-        shown += 1
-        choice = announce(ev, season)
-        if choice:
-            for one in evs:
-                store["notified"][one["key"]] = "done"
-            write_json(FOLLOW_PATH, store)
-            if choice == "watch":
-                watch(ev, season)
-            else:
-                open_title(ev["name"], ev["kind"], ev["tmdb"])
-            break
+        items.append((min(evs, key=lambda e: e.get("episode") or 0), season, evs))
+    if not items or busy_now():
+        return 0
+
+    def snooze(evs):
         for one in evs:
             count = (store["snooze"].get(one["key"]) or [0, 0])[1] + 1
             if count >= 3:
                 store["notified"][one["key"]] = "done"
             else:
                 store["snooze"][one["key"]] = [time.time() + 6 * 3600, count]
-        write_json(FOLLOW_PATH, store)
+
+    # 3.0.8: everything that is out in one pop-up (a list), instead of a pop-up per episode
+    result = announce_list([(ev, season) for ev, season, evs in items])
+    if result is None:                                  # the list window failed: the old pop-up for the first one
+        ev, season, evs = items[0]
+        choice = announce(ev, season)
+        result = (choice, 0) if choice else ("", -1)
+    choice, index = result
+    shown = 1
+    for i, (ev, season, evs) in enumerate(items):
+        if choice == "calendar" or i == index:
+            for one in evs:
+                store["notified"][one["key"]] = "done"
+        else:
+            snooze(evs)
+    write_json(FOLLOW_PATH, store)
+    if choice in ("watch", "open") and 0 <= index < len(items):
+        ev, season, evs = items[index]
+        if choice == "watch":
+            watch(ev, season)
+        else:
+            open_title(ev["name"], ev["kind"], ev["tmdb"])
+    elif choice == "calendar":
+        xbmc.executebuiltin("RunScript(special://skin/scripts/agenda.py)")
     return shown
