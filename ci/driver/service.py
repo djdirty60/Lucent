@@ -7878,6 +7878,7 @@ def tmdbextra_test():
         mon.waitForAbort(0.5)
     out["cinema_open"] = [cond("Window.IsVisible(movieinformation)"), lab("ListItem.Title"), lab("System.CurrentWindow")]
     mon.waitForAbort(2)
+    out["out_button"] = [HOME.getProperty("nuvio.info.out"), lab("ListItem.Premiered"), lab("ListItem.Year"), cond("Control.IsVisible(23)")]
     shot("367-cinema-open")
     close_all()
     xbmc.executebuiltin("ActivateWindow(home)")
