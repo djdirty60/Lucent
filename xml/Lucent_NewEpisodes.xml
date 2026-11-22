@@ -110,22 +110,22 @@
                         <control type="image">
                             <left>0</left><top>0</top><width>1270</width><height>150</height>
                             <texture border="22">rr20_btnfocus.png</texture>
-                            <visible>!String.IsEqual(Window.Property(ne.col),1)</visible>
+                            <visible>!String.IsEqual(Window.Property(ne.col),1) + Control.HasFocus(100)</visible>
                         </control>
                         <control type="image">
                             <left>0</left><top>0</top><width>1270</width><height>150</height>
                             <texture border="20" colordiffuse="1AFFFFFF">rr20.png</texture>
-                            <visible>String.IsEqual(Window.Property(ne.col),1)</visible>
+                            <visible>String.IsEqual(Window.Property(ne.col),1) | !Control.HasFocus(100)</visible>
                         </control>
                         <control type="image">
                             <left>1290</left><top>31</top><width>210</width><height>88</height>
                             <texture border="22">rr20_btnfocus.png</texture>
-                            <visible>String.IsEqual(Window.Property(ne.col),1)</visible>
+                            <visible>String.IsEqual(Window.Property(ne.col),1) + Control.HasFocus(100)</visible>
                         </control>
                         <control type="image">
                             <left>1290</left><top>31</top><width>210</width><height>88</height>
                             <texture border="20" colordiffuse="14FFFFFF">rr20.png</texture>
-                            <visible>!String.IsEqual(Window.Property(ne.col),1)</visible>
+                            <visible>!String.IsEqual(Window.Property(ne.col),1) | !Control.HasFocus(100)</visible>
                         </control>
                         <control type="image">
                             <left>18</left><top>10</top><width>88</width><height>130</height>
