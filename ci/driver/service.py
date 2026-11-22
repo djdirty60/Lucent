@@ -7644,11 +7644,15 @@ def newlist_test():
            ({"kind": "tv", "name": "9-1-1", "season": 10, "episode": 6, "title": "Et Tu?", "date": "2026-11-20",
              "time": "02:00", "poster": "/tmp/ci/art/poster5.jpg", "tmdb": 2, "key": "b", "show": "tv:2"}, None)]
     res = {}
-    for name, items in (("two", evs), ("one", evs[:1]), ("four", evs * 2)):
+    for name, items in (("two", evs), ("one", evs[:1]), ("four", evs * 2), ("six", evs * 3)):
         th = threading.Thread(target=lambda i=items, n=name: res.__setitem__(n, agenda_core.announce_list(i)))
         th.start()
         mon.waitForAbort(2.5)
         shot(f"340-newlist-{name}")
+        if name == "six":
+            subprocess.run(["xdotool", "key", "Down", "Down", "Down", "Down", "Down"], timeout=5)
+            mon.waitForAbort(1)
+            shot("343-newlist-six-scrolled")
         if name == "two":
             subprocess.run(["xdotool", "key", "Right"], timeout=5)
             mon.waitForAbort(1)
@@ -7696,13 +7700,7 @@ def saverok_test():
         xbmc.executebuiltin("Dialog.Close(all,true)")
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(2)
-    # a keymap left behind (Kodi stopped during the screensaver): the first OK removes it and still selects
-    open(km, "w").write('<keymap><global><keyboard><return>RunScript(special://home/addons/screensaver.lucent/screensaver.py,ok)</return></keyboard></global></keymap>')
-    xbmc.executebuiltin("Action(reloadkeymaps)")
-    mon.waitForAbort(1)
-    subprocess.run(["xdotool", "key", "Return"], timeout=5)
-    mon.waitForAbort(3)
-    out.append(f"stale: keymap={os.path.exists(km)} window={lab('System.CurrentWindow')!r}")
+    out.append(f"muted={cond('Player.Muted')}")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
     rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})

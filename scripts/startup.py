@@ -171,12 +171,24 @@ def touch_screen():
     log(f"touch screen: {touch} ({why})")
 
 
+def saver_keymap():
+    """3.0.8: Lucent Screensaver 1.2.2 makes OK 'Mute' while it runs (to know OK woke it). Should Kodi have stopped
+    during the screensaver, that small keymap is still there: remove it, or OK would keep muting."""
+    import xbmcvfs
+    path = "special://profile/keymaps/lucent_saver_ok.xml"
+    if xbmcvfs.exists(path) and not xbmc.getCondVisibility("System.ScreenSaverActive"):
+        xbmcvfs.delete(path)
+        xbmc.executebuiltin("Action(reloadkeymaps)")
+        log("removed the screensaver's OK keymap")
+
+
 def run():
     # 2.1.49: the context menu (DialogContextMenu.xml) shows the video add-on's library options itself, at the top;
     # this tells the add-on to hide its own copies, which Kodi would put at the bottom
     xbmc.executebuiltin("SetProperty(lucent.skin.libctx,1,home)")
     xbmc.executebuiltin("SetProperty(lucent.skin.libctx.all,1,home)")   # 2.1.50: all its other library options too
     step("touch screen", touch_screen)
+    step("screensaver keymap", saver_keymap)
     if first_start():
         return
     step("season page", season_page)
