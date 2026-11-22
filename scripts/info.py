@@ -1763,6 +1763,26 @@ def next_episode(show):
     return None
 
 
+def film_is_out(item):
+    """True for a film whose release date (or year) is today or earlier: it needs no calendar notification."""
+    if item.dbtype != "movie":
+        return False
+    import datetime
+    today = datetime.date.today()
+    premiered = info("Premiered")
+    if premiered:
+        try:
+            return datetime.datetime.strptime(premiered, xbmc.getRegion("dateshort")).date() <= today
+        except ValueError:
+            pass
+        try:
+            return datetime.date.fromisoformat(premiered[:10]) <= today
+        except ValueError:
+            pass
+    year = info("Year")
+    return year.isdigit() and int(year) < today.year
+
+
 def load():
     # 2.1.20: the bell (follow in the calendar) is set here too, in a thread next to the rest - before this the info
     # page started a second Python script for it (agenda.py,state)
@@ -1784,6 +1804,7 @@ def load():
         xbmcgui.Dialog().notification(HEADING, tr("no_tmdb"), xbmcgui.NOTIFICATION_WARNING, 8000)
     HOME.setProperty("nuvio.info.key", item.key)
     HOME.clearProperty("nuvio.info.watched")
+    HOME.setProperty("nuvio.info.out", "1" if film_is_out(item) else "")   # 3.0.12: no calendar button for a film that is out
     try:
         import omdb                                 # IMDb, Rotten Tomatoes, Metacritic (your own OMDb key)
         omdb.load(item)

@@ -7,6 +7,7 @@
     <onload>ClearProperty(nuvio.info.mpaa,home)</onload>
     <onload>ClearProperty(nuvio.info.next,home)</onload>
     <onload>ClearProperty(nuvio.info.plot,home)</onload>
+    <onload>ClearProperty(nuvio.info.out,home)</onload>
     <onload>ClearProperty(nuvio.info.studio.1,home)</onload>
     <onload>ClearProperty(nuvio.info.watched,home)</onload>
     <onload>ClearProperty(nuvio.info.tab,home)</onload>
@@ -112,8 +113,8 @@
                         <height>72</height>
                         <label>$VAR[NuvioAgendaBell]</label>
                         <onclick>RunScript(special://skin/scripts/agenda.py,follow)</onclick>
-                        <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))] + ![String.IsEqual(ListItem.DBType,movie) + Integer.IsGreater(ListItem.DBID,0)]</visible>
-                        <!-- a film in the Kodi library is already there: no calendar notification needed -->
+                        <visible>[String.IsEqual(ListItem.DBType,movie) | String.IsEqual(ListItem.DBType,tvshow) | String.IsEqual(ListItem.DBType,season) | String.IsEqual(ListItem.DBType,episode)] + [[!String.IsEmpty(ListItem.Property(trakt_id)) | !String.IsEmpty(ListItem.UniqueID(tmdb)) | !String.IsEmpty(ListItem.UniqueID(imdb))] | !String.IsEmpty(ListItem.Property(trakt_show_id))] + ![String.IsEqual(ListItem.DBType,movie) + Integer.IsGreater(ListItem.DBID,0)] + ![String.IsEqual(ListItem.DBType,movie) + !String.IsEmpty(Window(home).Property(nuvio.info.out))]</visible>
+                        <!-- a film in the Kodi library is already there: no calendar notification needed; 3.0.12: neither a film that is out (scripts/info.py film_is_out) -->
                     </control>
                     <control type="button" id="14">
                         <width>auto</width>
