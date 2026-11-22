@@ -63,7 +63,7 @@ class H(BaseHTTPRequestHandler):
             tid = int(path.rstrip("/").split("/")[-1])
             tv = path.split("/")[2] == "tv"
             return self.send(json.dumps({"id": tid, ("name" if tv else "title"): f"Saver {'Show' if tv else 'Film'} {tid}",
-                                         "backdrop_path": f"/rb{tid}.png", "overview": "A man walks into a quiet town and finds out that the mine everyone lives on hides a secret. Made up for the screenshots.",
+                                         "backdrop_path": f"/rb{tid}.png", "overview": " ".join(f"Part {n}: a man walks into a quiet town and finds out that the mine everyone lives on hides a secret." for n in range(1, 11)) if os.path.exists("/tmp/ci/longplot") else "A man walks into a quiet town and finds out that the mine everyone lives on hides a secret. Made up for the screenshots.",
                                          "vote_average": 7.4, "runtime": 112, "release_date": "2020-05-01", "first_air_date": "2021-01-01",
                                          "genres": [{"name": "Western"}, {"name": "Drama"}], "images": {"logos": []}}).encode(), "application/json")
         if "/search/person" in path:                         # 3.1.0: the Actors row of the search screen

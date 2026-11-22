@@ -7614,6 +7614,7 @@ def saverscroll_test():
     ss.setSettingBool("resume", False)
     ss.setSettingBool("newep", False)
     ss.setSettingInt("nightfrom", 0)
+    open("/tmp/ci/longplot", "w").close()
     rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
     xbmc.executebuiltin("ActivateScreensaver")
     for n, wait in enumerate((4, 6, 8, 8)):
@@ -7624,6 +7625,7 @@ def saverscroll_test():
     mon.waitForAbort(2)
     xbmc.executebuiltin("Dialog.Close(all,true)")
     rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})
+    os.remove("/tmp/ci/longplot")
     log("saverscroll: " + " | ".join(out))
 
 
