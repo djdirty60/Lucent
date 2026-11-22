@@ -698,6 +698,9 @@ def toggle_watched():
 TMDB_KEYFILES = (
     "special://profile/addon_data/skin.lucent/tmdb_key.txt",
 )
+# 3.0.9: Lucent's own TMDB key (Wilfried's, public like the Trakt client id), used when you did not enter a key of
+# your own and the video add-on has none either; so search, the info page and the rows work right after installing
+LUCENT_TMDB_KEY = "81d47c322f4bbec199751d9f55e8dda1"
 
 
 def _read_key(path):
@@ -712,7 +715,7 @@ _KEY = {"value": "", "time": 0.0}
 
 
 def tmdb_key():
-    """Your own free TMDB key: the key you entered in Skin settings, else the video add-on's.
+    """Your own free TMDB key: the key you entered in Skin settings, else the video add-on's, else Lucent's own.
     Remembered for 10 minutes (the background helper asks for it hundreds of times)."""
     if _KEY["value"] and time.time() - _KEY["time"] < 600:
         return _KEY["value"]
@@ -732,6 +735,8 @@ def tmdb_key():
                 key = str(json.loads(_read_key("special://profile/addon_data/plugin.video.lucent/keys.json") or "{}").get("tmdb") or "").strip()
             except ValueError:
                 key = ""
+    if not key:
+        key = LUCENT_TMDB_KEY
     _KEY.update(value=key, time=time.time())
     return key
 

@@ -7707,6 +7707,23 @@ def saverok_test():
     log("saverok: " + " | ".join(out))
 
 
+def tmdbkey_test():
+    """3.0.9: Lucent's own TMDB key works at TMDB itself, and is used when no other key is set."""
+    import urllib.request
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    import info
+    out = []
+    try:
+        with urllib.request.urlopen("https://api.themoviedb.org/3/movie/550?language=nl-NL&api_key=" + info.LUCENT_TMDB_KEY, timeout=20) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        out.append(f"tmdb ok title={data.get('title')!r}")
+    except Exception as error:  # noqa: BLE001
+        out.append(f"tmdb failed: {type(error).__name__} {getattr(error, 'code', '')}")
+    info._KEY["time"] = 0.0
+    out.append(f"fallback used={info.tmdb_key() == info.LUCENT_TMDB_KEY}")
+    log("tmdbkey: " + " | ".join(out))
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13406,6 +13423,7 @@ def main():
     safe(saverscroll_test)
     safe(newlist_test)
     safe(saverok_test)
+    safe(tmdbkey_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)
