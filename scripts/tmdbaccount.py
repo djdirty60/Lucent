@@ -21,8 +21,10 @@ T = {
     "user": ("TMDb user name", "TMDb-gebruikersnaam"),
     "password": ("TMDb password (Lucent does not keep it)", "TMDb-wachtwoord (Lucent bewaart het niet)"),
     "busy": ("Logging in at TMDb…", "Inloggen bij TMDb…"),
-    "ok": ("Logged in at TMDb as {0}. Add your TMDb rows under Menu and widgets > Add row > TMDb lists.",
-           "Ingelogd bij TMDb als {0}. Zet je TMDb-rijen op Home via Menu en widgets > Rij toevoegen > TMDb-lijsten."),
+    "ok": ("Logged in at TMDb as {0}. Add your TMDb rows under Settings > Lucent > Customise menu and widgets > "
+           "+ Add a widget > TMDb lists.",
+           "Ingelogd bij TMDb als {0}. Zet je TMDb-rijen op Home via Instellingen > Lucent > Menu en widgets aanpassen > "
+           "+ Widget toevoegen > TMDb-lijsten."),
     "wrong": ("TMDb did not accept this user name and password.", "TMDb accepteert deze gebruikersnaam en dit wachtwoord niet."),
     "failed": ("Could not reach TMDb. Try again later.", "TMDb is niet bereikbaar. Probeer het later opnieuw."),
     "logout": ("You are logged in at TMDb as {0}. Log out?", "Je bent ingelogd bij TMDb als {0}. Uitloggen?"),

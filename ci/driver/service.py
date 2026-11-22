@@ -7908,6 +7908,44 @@ def tmdbextra_test():
     log(f"tmdbextra: {json.dumps(out)}")
 
 
+def ctxmenu_test():
+    """Wilfried 22 Nov: in the source list of the video add-on the context menu panel only covers the first two options."""
+    import threading
+    labels = ["Klaarzetten voor vanavond", "Bron kiezen", "Markeer als bekeken (Lucent)", "Hervatpunt wissen (Lucent)",
+              "Deze aflevering of dit seizoen uit de bibliotheek verwijderen", "Waarom staat deze hier", "Deze release nu controleren"]
+    out = {}
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    th = threading.Thread(target=lambda: out.__setitem__("home", xbmcgui.Dialog().contextmenu(labels)))
+    th.start()
+    mon.waitForAbort(2.5)
+    shot("370-ctx-home")
+    out["h999"] = [lab("Control.GetLabel(999)"), cond("Window.IsVisible(contextmenu)")]
+    key("Escape")
+    th.join(5)
+    mon.waitForAbort(1)
+    # from inside a script dialog (like the source list): the select dialog of Kodi as a stand-in window
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    import agenda_core
+    evs = [({"kind": "tv", "name": "9-1-1", "season": 10, "episode": 6, "title": "Et Tu?", "date": "2026-11-20",
+             "time": "02:00", "poster": "", "tmdb": 2, "key": "b", "show": "tv:2"}, None)] * 4
+    th2 = threading.Thread(target=lambda: agenda_core.announce_list(evs))
+    th2.start()
+    mon.waitForAbort(2.5)
+    th3 = threading.Thread(target=lambda: out.__setitem__("dialog", xbmcgui.Dialog().contextmenu(labels)))
+    th3.start()
+    mon.waitForAbort(2.5)
+    shot("371-ctx-over-dialog")
+    key("Escape")
+    th3.join(5)
+    mon.waitForAbort(1)
+    key("Escape")
+    th2.join(10)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    log(f"ctxmenu: {out}")
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13609,6 +13647,7 @@ def main():
     safe(saverok_test)
     safe(tmdbkey_test)
     safe(tmdbextra_test)
+    safe(ctxmenu_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)
