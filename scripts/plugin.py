@@ -214,9 +214,85 @@ def runtime_list(path, limit):
     return rows
 
 
+def tmdb_rows(results, kind=None):
+    """3.0.10: TMDB titles as list items. OK opens the title's own page (Lucent's info page), like the For you row."""
+    import info
+    rows = []
+    for r in results:
+        media = kind or r.get("media_type") or ("movie" if r.get("title") else "tv")
+        title = r.get("title") or r.get("name") or ""
+        date = r.get("release_date") or r.get("first_air_date") or ""
+        li = xbmcgui.ListItem(title, offscreen=True)
+        tag = li.getVideoInfoTag()
+        tag.setMediaType("movie" if media == "movie" else "tvshow")
+        tag.setTitle(title)
+        tag.setPlot(r.get("overview") or "")
+        if date[:4].isdigit():
+            tag.setYear(int(date[:4]))
+        if date:
+            tag.setPremiered(date)
+        if r.get("vote_average"):
+            tag.setRating(float(r["vote_average"]), int(r.get("vote_count") or 0), "tmdb", True)
+        tag.setUniqueIDs({"tmdb": str(r.get("id"))}, "tmdb")
+        art = {}
+        if r.get("poster_path"):
+            art["poster"] = art["thumb"] = f"{info.TMDB_IMG}w342{r['poster_path']}"
+        if r.get("backdrop_path"):
+            art["fanart"] = art["landscape"] = f"{info.TMDB_IMG}w1280{r['backdrop_path']}"
+        li.setArt(art)
+        li.setProperty("tmdb_id", str(r.get("id")))
+        url = f"plugin://skin.lucent/?open={'movie' if media == 'movie' else 'tv'}&tmdb={r.get('id')}"
+        rows.append((url, li, False))
+    return rows
+
+
+def tmdb_list(path):
+    """movie/now_playing, movie/upcoming: in your own country (region), the most popular first."""
+    import info
+    try:
+        results = []
+        for page in (1, 2):
+            data = info.tmdb(path, region=info._region(), page=page)
+            results += data.get("results") or []
+            if page >= (data.get("total_pages") or 1):
+                break
+    except Exception as error:  # noqa: BLE001
+        log(f"tmdb {path}: {error}")
+        return []
+    results.sort(key=lambda r: r.get("popularity") or 0, reverse=True)
+    return tmdb_rows(results, "movie" if path.startswith("movie/") else "tv")
+
+
+def tmdb_account_list(what):
+    import tmdbaccount
+    try:
+        results = tmdbaccount.account_list(what)
+    except Exception as error:  # noqa: BLE001
+        log(f"tmdb account {what}: {error}")
+        return []
+    return tmdb_rows(results, "movie" if what.endswith("movies") else "tv")
+
+
+def open_title(kind, tmdb_id):
+    home = xbmcgui.Window(10000)
+    home.setProperty("nuvio.open.tmdb", tmdb_id)
+    home.setProperty("nuvio.open.type", kind)
+    home.clearProperty("nuvio.open.trakt")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,open,path)")
+
+
 def main():
     handle = int(sys.argv[1])
     params = dict(urllib.parse.parse_qsl(sys.argv[2].lstrip("?")))
+    if params.get("open"):                              # 3.0.10: a TMDB row item: open its page
+        open_title(params["open"], params.get("tmdb", ""))
+        return
+    if params.get("list") in ("tmdb", "tmdbacct"):
+        rows = tmdb_list(params.get("path", "")) if params["list"] == "tmdb" else tmdb_account_list(params.get("what", ""))
+        xbmcplugin.setContent(handle, "movies" if "movie" in (params.get("path", "") + params.get("what", "")) else "tvshows")
+        xbmcplugin.addDirectoryItems(handle, rows, len(rows))
+        xbmcplugin.endOfDirectory(handle, succeeded=True, cacheToDisc=False)
+        return
     if params.get("list") == "runtime":
         rows = runtime_list(params.get("path", ""), int(params.get("max") or 120))
         xbmcplugin.setContent(handle, "movies")

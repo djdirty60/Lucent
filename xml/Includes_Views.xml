@@ -7,6 +7,8 @@
     <!-- 2.1.44 (#31): no IMDb score from the add-on, but Lucent fetched one (MDBList / OMDb) -->
     <expression name="LucentListImdbOwn">String.IsEmpty(ListItem.Rating(imdb)) + !String.IsEmpty(Window(home).Property(lucent.omdbl.imdb)) + !Skin.HasSetting(lucent.rate.hide.imdb)</expression>
     <!-- issue #9: with every other score switched off, IMDb stays on the first row instead of alone on a row of its own -->
+    <!-- 3.0.10: the best episode of the season in this list (scripts/bestep.py) -->
+    <expression name="LucentBestEp">String.IsEqual(Window(home).Property(lucent.best.path),Container.FolderPath) + String.IsEqual(ListItem.Season,Window(home).Property(lucent.best.s)) + String.IsEqual(ListItem.Episode,Window(home).Property(lucent.best.e))</expression>
     <expression name="LucentMFRow">[!String.IsEmpty(Window(home).Property(lucent.mf.for))] | [!Skin.HasSetting(lucent.mf.off) + Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes)] + [String.StartsWith(Container.FolderPath,videodb://) | String.StartsWith(Container.FolderPath,library://)]]</expression>
     <variable name="NuvioSortOrder">
         <value condition="Container.SortDirection(descending)">$LOCALIZE[31025]</value>
@@ -2997,7 +2999,7 @@
                         <font>font10</font>
                         <textcolor>text4</textcolor>
                         <selectedcolor>text4</selectedcolor>
-                        <label>$INFO[ListItem.Premiered]$VAR[ItemDuration,   ·   ,]$INFO[ListItem.Rating,   ·   ★ ,]</label>
+                        <label>$INFO[ListItem.Premiered]$VAR[ItemDuration,   ·   ,]$INFO[ListItem.Rating,   ·   ★ ,]$VAR[LucentBestTag]</label>
                     </control>
                     <control type="textbox">
                         <left>392</left>
@@ -3108,7 +3110,7 @@
                         <font>font10</font>
                         <textcolor>text3</textcolor>
                         <selectedcolor>text3</selectedcolor>
-                        <label>$INFO[ListItem.Premiered]$VAR[ItemDuration,   ·   ,]$INFO[ListItem.Rating,   ·   ★ ,]</label>
+                        <label>$INFO[ListItem.Premiered]$VAR[ItemDuration,   ·   ,]$INFO[ListItem.Rating,   ·   ★ ,]$VAR[LucentBestTag]</label>
                     </control>
                     <control type="textbox">
                         <left>392</left>
@@ -3522,6 +3524,15 @@
                                 <font>font10_bold</font><textcolor>white</textcolor><align>center</align><aligny>center</aligny>
                                 <label>E$INFO[ListItem.Episode]</label>
                             </control>
+                            <!-- 3.0.10: the score of the episode; gold with 'Best' for the best of the season -->
+                            <control type="group">
+                                <left>98</left><top>12</top>
+                                <visible>!String.IsEmpty(ListItem.Rating)</visible>
+                                <control type="image"><width>96</width><height>34</height><texture border="16" colordiffuse="dim">pill44.png</texture><visible>!$EXP[LucentBestEp]</visible></control>
+                                <control type="image"><width>176</width><height>34</height><texture border="16" colordiffuse="FFE5B33A">pill44.png</texture><visible>$EXP[LucentBestEp]</visible></control>
+                                <control type="label"><width>96</width><height>34</height><font>font10_bold</font><textcolor>white</textcolor><align>center</align><aligny>center</aligny><label>★ $INFO[ListItem.Rating]</label><visible>!$EXP[LucentBestEp]</visible></control>
+                                <control type="label"><width>176</width><height>34</height><font>font10_bold</font><textcolor>FF1A1A1A</textcolor><align>center</align><aligny>center</aligny><label>★ $INFO[ListItem.Rating]  ·  $LOCALIZE[31932]</label><visible>$EXP[LucentBestEp]</visible></control>
+                            </control>
                             <control type="image">
                                 <left>374</left><top>12</top><width>34</width><height>34</height>
                                 <texture colordiffuse="$VAR[LucentWatchedColour]">$VAR[LucentWatchedTick]</texture>
@@ -3737,6 +3748,15 @@
                                 <left>14</left><top>12</top><width>76</width><height>34</height>
                                 <font>font10_bold</font><textcolor>white</textcolor><align>center</align><aligny>center</aligny>
                                 <label>E$INFO[ListItem.Episode]</label>
+                            </control>
+                            <!-- 3.0.10: the score of the episode; gold with 'Best' for the best of the season -->
+                            <control type="group">
+                                <left>98</left><top>12</top>
+                                <visible>!String.IsEmpty(ListItem.Rating)</visible>
+                                <control type="image"><width>96</width><height>34</height><texture border="16" colordiffuse="dim">pill44.png</texture><visible>!$EXP[LucentBestEp]</visible></control>
+                                <control type="image"><width>176</width><height>34</height><texture border="16" colordiffuse="FFE5B33A">pill44.png</texture><visible>$EXP[LucentBestEp]</visible></control>
+                                <control type="label"><width>96</width><height>34</height><font>font10_bold</font><textcolor>white</textcolor><align>center</align><aligny>center</aligny><label>★ $INFO[ListItem.Rating]</label><visible>!$EXP[LucentBestEp]</visible></control>
+                                <control type="label"><width>176</width><height>34</height><font>font10_bold</font><textcolor>FF1A1A1A</textcolor><align>center</align><aligny>center</aligny><label>★ $INFO[ListItem.Rating]  ·  $LOCALIZE[31932]</label><visible>$EXP[LucentBestEp]</visible></control>
                             </control>
                             <control type="image">
                                 <left>374</left><top>12</top><width>34</width><height>34</height>

@@ -65,6 +65,8 @@ T = {
     "no_tmdb": ("No TMDB key yet. Enter your own free key in Skin settings > Integrations (or in your video add-on).",
                 "Nog geen TMDB-sleutel. Vul je eigen gratis sleutel in bij Skin-instellingen > Integraties (of in je video-add-on)."),
     "failed_tmdb": ("TMDB did not respond. Try again later.", "TMDB reageert niet. Probeer het later opnieuw."),
+    "next_ep": ("Next episode: {0} · {1}", "Volgende aflevering: {0} · {1}"),
+    "more_about": ("More about: {0}", "Meer over: {0}"),
 }
 
 
@@ -809,6 +811,117 @@ def load_collection(item):
     HOME.setProperty("nuvio.info.coll.count", str(len(parts)))
 
 
+# ----------------------------------------------------------------------------- 3.0.10: more from TMDB on the info page
+MAX_KEYWORDS = 12
+WEEKDAYS = {"nl": ["ma", "di", "wo", "do", "vr", "za", "zo"], "en": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+_NL_WORDS = {"de", "het", "een", "en", "van", "zijn", "wordt", "die", "met", "voor", "op", "niet", "naar", "haar", "hij"}
+_EN_WORDS = {"the", "a", "an", "and", "of", "is", "his", "her", "to", "with", "for", "on", "who", "when", "their"}
+
+
+def looks_english(text):
+    """True for a plot that is clearly English (more common English than Dutch words)."""
+    words = [w.strip(".,;:!?\"'()").lower() for w in (text or "").split()]
+    en = sum(w in _EN_WORDS for w in words)
+    nl = sum(w in _NL_WORDS for w in words)
+    return en >= 3 and en > nl * 2
+
+
+def short_day(value):
+    import datetime
+    try:
+        d = datetime.date.fromisoformat(value)
+    except Exception:  # noqa: BLE001
+        return value
+    lang = "nl" if _NL else "en"
+    return f"{WEEKDAYS[lang][d.weekday()]} {d.day} {MONTHS[lang][d.month - 1]}"
+
+
+def clear_extras():
+    for key in ("mpaa", "next", "plot", "kw.name", "kw.count"):
+        HOME.clearProperty(f"nuvio.info.{key}")
+    for n in range(1, MAX_KEYWORDS + 1):
+        for p in ("title", "year", "art", "id", "type"):
+            HOME.clearProperty(f"nuvio.info.kw.{n}.{p}")
+
+
+def load_extras(item):
+    """Age rating when the library has none (series too), the next episode of a series, the Dutch plot when the
+    library only has an English one, and a row 'More about: <keywords>' with titles that share its keywords."""
+    clear_extras()
+    if item.has_show_trakt or item.dbtype not in ("movie", "tvshow") or not item.tmdb.isdigit():
+        return
+    kind = "movie" if item.dbtype == "movie" else "tv"
+    extra = "keywords,release_dates" if kind == "movie" else "keywords,content_ratings"
+    try:
+        data = tmdb(f"{kind}/{item.tmdb}", append_to_response=extra)
+    except Exception as error:  # noqa: BLE001
+        log(f"extras: {error}")
+        return
+    if HOME.getProperty("nuvio.info.key") != item.key:
+        return
+    country = _region()
+    if not info("MPAA"):
+        rating = ""
+        if kind == "movie":
+            for block in (data.get("release_dates") or {}).get("results") or []:
+                certs = [r.get("certification") for r in block.get("release_dates") or [] if r.get("certification")]
+                if certs and (not rating or block.get("iso_3166_1") == country):
+                    rating = certs[0]
+        else:
+            for block in (data.get("content_ratings") or {}).get("results") or []:
+                if block.get("rating") and (not rating or block.get("iso_3166_1") == country):
+                    rating = block["rating"]
+        HOME.setProperty("nuvio.info.mpaa", rating)
+    nxt = data.get("next_episode_to_air") or {}
+    if kind == "tv" and nxt.get("air_date"):
+        code = f"S{nxt.get('season_number')} {'A' if _NL else 'E'}{nxt.get('episode_number')}"
+        HOME.setProperty("nuvio.info.next", tr("next_ep", code, short_day(nxt["air_date"])))
+    if _NL and data.get("overview") and looks_english(info("Plot")):
+        HOME.setProperty("nuvio.info.plot", data["overview"])
+    keywords = (data.get("keywords") or {}).get("keywords" if kind == "movie" else "results") or []
+    if not keywords:
+        return
+    picked = keywords[:3]
+    try:
+        found = tmdb(f"discover/{kind}", with_keywords="|".join(str(k["id"]) for k in picked),
+                     sort_by="popularity.desc", **{"vote_count.gte": 30}).get("results") or []
+    except Exception as error:  # noqa: BLE001
+        log(f"keywords: {error}")
+        return
+    if HOME.getProperty("nuvio.info.key") != item.key:
+        return
+    found = [r for r in found if str(r.get("id")) != item.tmdb and (r.get("backdrop_path") or r.get("poster_path"))]
+    if not found:
+        return
+    HOME.setProperty("nuvio.info.kw.name", tr("more_about", ", ".join(k.get("name", "") for k in picked)))
+    for n, r in enumerate(found[:MAX_KEYWORDS], start=1):
+        art = r.get("backdrop_path") or r.get("poster_path")
+        HOME.setProperty(f"nuvio.info.kw.{n}.title", r.get("title") or r.get("name") or "")
+        HOME.setProperty(f"nuvio.info.kw.{n}.year", (r.get("release_date") or r.get("first_air_date") or "")[:4])
+        HOME.setProperty(f"nuvio.info.kw.{n}.art", f"{TMDB_IMG}w780{art}")
+        HOME.setProperty(f"nuvio.info.kw.{n}.id", str(r.get("id", "")))
+        HOME.setProperty(f"nuvio.info.kw.{n}.type", kind)
+    HOME.setProperty("nuvio.info.kw.count", str(min(len(found), MAX_KEYWORDS)))
+
+
+def library_seen():
+    """{('movie'|'tv', tmdb id)} of the films and series you watched in the Kodi library (series: every episode)."""
+    seen = set()
+    try:
+        def rpc(method, params):
+            res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params})))
+            return res.get("result") or {}
+        for m in rpc("VideoLibrary.GetMovies", {"properties": ["uniqueid", "playcount"]}).get("movies") or []:
+            if (m.get("playcount") or 0) > 0 and (m.get("uniqueid") or {}).get("tmdb"):
+                seen.add(("movie", str(m["uniqueid"]["tmdb"])))
+        for t in rpc("VideoLibrary.GetTVShows", {"properties": ["uniqueid", "episode", "watchedepisodes"]}).get("tvshows") or []:
+            if t.get("episode") and t.get("watchedepisodes") == t.get("episode") and (t.get("uniqueid") or {}).get("tmdb"):
+                seen.add(("tv", str(t["uniqueid"]["tmdb"])))
+    except Exception as error:  # noqa: BLE001
+        log(f"library seen: {error}")
+    return seen
+
+
 MAX_REVIEWS = 20
 
 
@@ -1124,6 +1237,9 @@ def age(born, died=None):
         return None
 
 
+SEEN = {"set": set()}
+
+
 def set_works(works):
     """Fill the film cards of the person / studio page (the 40 most popular)."""
     works.sort(key=lambda e: e.get("popularity") or 0, reverse=True)
@@ -1139,6 +1255,8 @@ def set_works(works):
         HOME.setProperty(f"nuvio.person.film.{n}.date", date[:4])
         HOME.setProperty(f"nuvio.person.film.{n}.id", str(work.get("id", "")))
         HOME.setProperty(f"nuvio.person.film.{n}.type", "movie" if work.get("media_type") == "movie" else "tv")
+        kind = "movie" if work.get("media_type") == "movie" else "tv"
+        HOME.setProperty(f"nuvio.person.film.{n}.seen", "1" if (kind, str(work.get("id"))) in SEEN["set"] else "")
 
 
 def show_person(person_id):
@@ -1148,9 +1266,10 @@ def show_person(person_id):
     for key in ("name", "born", "place", "bio", "photo", "count", "studio"):
         HOME.clearProperty(f"nuvio.person.{key}")
     for n in range(1, 41):
-        for p in ("title", "sub", "poster", "path", "date", "id", "type"):
+        for p in ("title", "sub", "poster", "path", "date", "id", "type", "seen"):
             HOME.clearProperty(f"nuvio.person.film.{n}.{p}")
     HOME.setProperty("nuvio.open.overlay", json.dumps(["person", str(person_id)]))
+    SEEN["set"] = library_seen()                        # 3.0.10: a tick on what you already watched
     xbmc.executebuiltin("ActivateWindow(1180)")
     try:
         person = tmdb(f"person/{person_id}", append_to_response="combined_credits")
@@ -1663,6 +1782,10 @@ def load():
     except Exception as error:  # noqa: BLE001
         log(f"reviews: {error}")
     load_collection(item)
+    try:
+        load_extras(item)
+    except Exception as error:  # noqa: BLE001
+        log(f"extras: {error}")
     bell_job.join(10)
 
 

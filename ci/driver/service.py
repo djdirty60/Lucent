@@ -7724,6 +7724,149 @@ def tmdbkey_test():
     log("tmdbkey: " + " | ".join(out))
 
 
+def tmdbextra_test():
+    """3.0.10: what Lucent now does with TMDB: age rating, next episode, Dutch plot, More about, person ticks, best
+    episode, cinema rows and the TMDb account."""
+    import subprocess
+    import threading
+    sys.path.insert(0, xbmcvfs_translate("special://skin/scripts"))
+    out = {}
+    rpc = lambda m, p: json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": m, "params": p})))  # noqa: E731
+
+    def close_all():
+        for _ in range(3):
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            mon.waitForAbort(0.7)
+
+    # 1. a library film without age rating, watched, tmdb 901
+    movies = (rpc("VideoLibrary.GetMovies", {}).get("result") or {}).get("movies") or []
+    for m in movies:
+        rpc("VideoLibrary.SetMovieDetails", {"movieid": m["movieid"], "uniqueid": {"tmdb": "901"}, "mpaa": "", "playcount": 1})
+    close_all()
+    xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+    mon.waitForAbort(3)
+    for k in ("Down", "Right", "Down", "Right"):
+        if lab("ListItem.DBType") == "movie":
+            break
+        key(k)
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Info)")
+    for _ in range(30):
+        if HOME.getProperty("nuvio.info.kw.count"):
+            break
+        mon.waitForAbort(0.5)
+    for _ in range(3):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(okdialog)"):
+            xbmc.executebuiltin("Dialog.Close(okdialog,true)")
+    out["movie"] = {k: HOME.getProperty(f"nuvio.info.{k}") for k in ("mpaa", "next", "plot", "kw.count", "kw.name", "kw.1.title")}
+    shot("360-info-movie-top")
+    xbmc.executebuiltin("SetFocus(5210)")
+    mon.waitForAbort(2)
+    out["kw_focus"] = lab("System.CurrentControlID")
+    shot("361-info-movie-moreabout")
+    # the Dutch plot (the CI Kodi is English, so the check runs here with Dutch switched on)
+    import info
+    info._NL = True
+    out["looks_english"] = [info.looks_english("A man walks into a quiet town and finds out that the mine everyone lives on hides a secret."),
+                            info.looks_english("Een man loopt een stil dorp binnen en ontdekt dat de mijn een geheim verbergt.")]
+    info._NL = False
+    close_all()
+    # 2. a library series: age rating and next episode
+    shows = (rpc("VideoLibrary.GetTVShows", {}).get("result") or {}).get("tvshows") or []
+    out["shows"] = len(shows)
+    if shows:
+        sid = shows[0]["tvshowid"]
+        rpc("VideoLibrary.SetTVShowDetails", {"tvshowid": sid, "uniqueid": {"tmdb": "1600"}, "mpaa": ""})
+        xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("Action(Info)")
+        for _ in range(30):
+            if HOME.getProperty("nuvio.info.next"):
+                break
+            mon.waitForAbort(0.5)
+        mon.waitForAbort(2)
+        out["show"] = {k: HOME.getProperty(f"nuvio.info.{k}") for k in ("mpaa", "next", "kw.count")}
+        shot("362-info-show-top")
+        close_all()
+        # 6. best episode: give the episodes of the first season scores and open that season
+        eps = (rpc("VideoLibrary.GetEpisodes", {"tvshowid": sid, "properties": ["season", "episode"]}).get("result") or {}).get("episodes") or []
+        out["eps"] = len(eps)
+        scores = [7.1, 8.6, 6.9, 7.4, 7.8, 6.5, 8.1, 7.0]
+        season = eps[0]["season"] if eps else 1
+        for n, e in enumerate([e for e in eps if e["season"] == season]):
+            rpc("VideoLibrary.SetEpisodeDetails", {"episodeid": e["episodeid"], "rating": scores[n % len(scores)]})
+        xbmc.executebuiltin(f"ActivateWindow(Videos,videodb://tvshows/titles/{sid}/{season}/,return)")
+        for _ in range(16):
+            if HOME.getProperty("lucent.best.e"):
+                break
+            mon.waitForAbort(0.5)
+        mon.waitForAbort(1.5)
+        out["best"] = [HOME.getProperty("lucent.best.s"), HOME.getProperty("lucent.best.e"), lab("Container.FolderPath"),
+                       HOME.getProperty("lucent.best.path"), cond("Control.IsVisible(5601)"), lab("Container.Viewmode")]
+        shot("363-season-best")
+        key("Right")
+        mon.waitForAbort(1.5)
+        shot("364-season-best-2")
+        close_all()
+    # 1b. person page with a tick on what you watched
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/info.py,person,31)")
+    for _ in range(20):
+        if HOME.getProperty("nuvio.person.name"):
+            break
+        mon.waitForAbort(0.5)
+    mon.waitForAbort(2.5)
+    out["person"] = [HOME.getProperty("nuvio.person.name"), HOME.getProperty("nuvio.person.film.1.title"), HOME.getProperty("nuvio.person.film.1.seen"),
+                     HOME.getProperty("nuvio.person.film.2.seen")]
+    shot("365-person-seen")
+    close_all()
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    # 4. cinema rows: the list itself, and OK opens the title page
+    got = rpc("Files.GetDirectory", {"directory": "plugin://skin.lucent/?list=tmdb&path=movie/now_playing", "media": "video"})
+    out["cinema"] = len((got.get("result") or {}).get("files") or [])
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://skin.lucent/?list=tmdb&path=movie/now_playing,return)")
+    mon.waitForAbort(4)
+    shot("366-cinema-list")
+    key("Return")
+    for _ in range(16):
+        if cond("Window.IsVisible(movieinformation)"):
+            break
+        mon.waitForAbort(0.5)
+    out["cinema_open"] = [cond("Window.IsVisible(movieinformation)"), lab("ListItem.Title"), lab("System.CurrentWindow")]
+    mon.waitForAbort(2)
+    shot("367-cinema-open")
+    close_all()
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    # 8. TMDb account: wrong password first, then the right one
+    for user, pw in (("wilfried", "fout"), ("wilfried", "goed")):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/tmdbaccount.py)")
+        for text in (user, pw):
+            for _ in range(20):
+                if cond("Window.IsVisible(virtualkeyboard)"):
+                    break
+                mon.waitForAbort(0.5)
+            mon.waitForAbort(0.8)
+            subprocess.run(["xdotool", "type", "--delay", "60", text], timeout=10)
+            mon.waitForAbort(0.5)
+            subprocess.run(["xdotool", "key", "Return"], timeout=5)
+            mon.waitForAbort(1)
+        for _ in range(16):
+            if cond("Window.IsVisible(okdialog)"):
+                break
+            mon.waitForAbort(0.5)
+        out[f"login_{pw}"] = [lab("Control.GetLabel(9)") or lab("Window(okdialog).Property(text)"), lab("Skin.String(lucent.tmdb.user)")]
+        shot(f"368-tmdb-login-{pw}")
+        xbmc.executebuiltin("Dialog.Close(okdialog,true)")
+        mon.waitForAbort(1.5)
+    got = rpc("Files.GetDirectory", {"directory": "plugin://skin.lucent/?list=tmdbacct&what=watchlist/movies", "media": "video"})
+    out["watchlist"] = [f.get("label") for f in (got.get("result") or {}).get("files") or []][:3]
+    log(f"tmdbextra: {json.dumps(out)}")
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13424,6 +13567,7 @@ def main():
     safe(newlist_test)
     safe(saverok_test)
     safe(tmdbkey_test)
+    safe(tmdbextra_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)

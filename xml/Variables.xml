@@ -240,6 +240,15 @@
     <variable name="ItemRating">
         <value condition="!String.IsEmpty(ListItem.Rating)">★ $INFO[ListItem.Rating]</value>
     </variable>
+    <!-- 3.0.10: the Dutch plot from TMDB when the library only has an English one (scripts/info.py load_extras) -->
+    <variable name="LucentBestTag">
+        <value condition="$EXP[LucentBestEp]">  ·  $LOCALIZE[31932]</value>
+        <value></value>
+    </variable>
+    <variable name="LucentInfoPlot">
+        <value condition="!String.IsEmpty(Window(home).Property(nuvio.info.plot))">$INFO[Window(home).Property(nuvio.info.plot)]</value>
+        <value>$INFO[ListItem.Plot]</value>
+    </variable>
     <variable name="ItemDuration">
         <value condition="Integer.IsGreater(ListItem.Duration(mins),59)">$INFO[ListItem.Duration(h)]u $INFO[ListItem.Duration(mm)]m</value>
         <value condition="Integer.IsGreater(ListItem.Duration(mins),0)">$INFO[ListItem.Duration(mins)] min</value>
@@ -961,6 +970,23 @@
     <variable name="SSF1507_text4">
         <value condition="Control.HasFocus(1507)">on_focus</value>
         <value>text4</value>
+    </variable>
+    <variable name="SSF1526_text">
+        <value condition="Control.HasFocus(1526)">on_focus</value>
+        <value>text</value>
+    </variable>
+    <variable name="SSF1526_text3">
+        <value condition="Control.HasFocus(1526)">on_focus</value>
+        <value>text3</value>
+    </variable>
+    <variable name="SSF1526_text4">
+        <value condition="Control.HasFocus(1526)">on_focus</value>
+        <value>text4</value>
+    </variable>
+    <!-- 3.0.10: TMDb account (scripts/tmdbaccount.py) -->
+    <variable name="LucentTmdbSub">
+        <value condition="!String.IsEmpty(Skin.String(lucent.tmdb.user))">$LOCALIZE[31871] $INFO[Skin.String(lucent.tmdb.user)]</value>
+        <value>$LOCALIZE[31931]</value>
     </variable>
     <variable name="SSF1509_text">
         <value condition="Control.HasFocus(1509)">on_focus</value>

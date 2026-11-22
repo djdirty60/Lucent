@@ -120,6 +120,26 @@ class H(BaseHTTPRequestHandler):
             q = self.path.split("query=", 1)[-1].split("&")[0]
             hits = [{"id": 1, "name": "Netflix", "logo_path": "/nwide.png"}] if q == "Netflix" else []
             return self.send(json.dumps({"results": hits}).encode(), "application/json")
+        # 3.0.10: cinema rows, TMDb account, person page with credits
+        def films(n, base=5000):
+            return [{"id": base + i, "title": f"Bioscoopfilm {i}", "overview": "plot", "release_date": "2026-11-20",
+                     "vote_average": 7.0 + i / 10, "vote_count": 100, "popularity": 50 - i,
+                     "poster_path": f"/x{i}.png", "backdrop_path": f"/x{i}b.png"} for i in range(1, n + 1)]
+        if path.endswith("/movie/now_playing") or path.endswith("/movie/upcoming"):
+            return self.send(json.dumps({"results": films(12), "total_pages": 1}).encode(), "application/json")
+        if path.endswith("/authentication/token/new"):
+            return self.send(json.dumps({"success": True, "request_token": "tok123"}).encode(), "application/json")
+        if path.endswith("/3/account"):
+            return self.send(json.dumps({"id": 7, "username": "wilfried"}).encode(), "application/json")
+        if "/3/account/7/" in path:
+            return self.send(json.dumps({"results": films(6, 6000)}).encode(), "application/json")
+        if "/3/person/" in path and path.rstrip("/").split("/")[-1].isdigit():
+            credits = [{"id": 901, "media_type": "movie", "title": "Lib Film", "release_date": "2000-01-01", "popularity": 99,
+                        "poster_path": "/x1.png", "character": "Hero"}] + \
+                      [{"id": 7000 + i, "media_type": "movie", "title": f"Other Film {i}", "release_date": "2010-01-01",
+                        "popularity": 50 - i, "poster_path": f"/x{i}.png"} for i in range(2, 8)]
+            return self.send(json.dumps({"id": 31, "name": "Anna Actor", "birthday": "1980-05-01", "biography": "An actor.",
+                                         "combined_credits": {"cast": credits, "crew": []}}).encode(), "application/json")
         if "/discover/" in path:
             tv = "/tv" in path
             res = [{"id": 1000 + i, ("name" if tv else "title"): f"{'Serie' if tv else 'Film'} {i}", "overview": "plot",
@@ -131,9 +151,32 @@ class H(BaseHTTPRequestHandler):
                                                                   {"type": 4, "release_date": ("2027-01-01" if tid % 2 else "2026-10-15") + "T00:00:00.000Z"}]}]}
         if path.endswith("/release_dates"):
             return self.send(json.dumps(rel).encode(), "application/json")
-        return self.send(json.dumps({"images": {"logos": []}, "genres": [{"name": "Drama"}], "runtime": 100, "vote_count": 321,
-                                     "production_companies": [], "release_dates": rel,
-                                     "status": "Ended" if tid == 1499 else "Returning Series"}).encode(), "application/json")
+        main = {"images": {"logos": []}, "genres": [{"name": "Drama"}], "runtime": 100, "vote_count": 321,
+                "production_companies": [], "release_dates": rel,
+                "status": "Ended" if tid == 1499 else "Returning Series"}
+        if "keywords" in self.path:                          # 3.0.10: the extras of the info page
+            main["keywords"] = {("results" if "/tv/" in path else "keywords"): [{"id": 9, "name": "heist"}, {"id": 10, "name": "bank robbery"}]}
+            main["release_dates"] = {"results": [{"iso_3166_1": "NL", "release_dates": [{"type": 3, "certification": "16"}]}]}
+            main["content_ratings"] = {"results": [{"iso_3166_1": "NL", "rating": "12"}]}
+            main["next_episode_to_air"] = {"air_date": "2026-11-27", "season_number": 3, "episode_number": 5}
+            main["overview"] = "Een man loopt een stil dorp binnen en ontdekt dat de mijn waar iedereen van leeft een geheim verbergt."
+        return self.send(json.dumps(main).encode(), "application/json")
+
+    def do_POST(self):
+        path = self.path.split("?")[0]
+        body = json.loads(self.rfile.read(int(self.headers.get("Content-Length") or 0)) or b"{}")
+        if path.endswith("/validate_with_login"):
+            if body.get("username") == "wilfried" and body.get("password") == "goed":
+                return self.send(json.dumps({"success": True, "request_token": body.get("request_token")}).encode(), "application/json")
+            self.send_response(401)
+            self.end_headers()
+            return None
+        if path.endswith("/session/new"):
+            return self.send(json.dumps({"success": True, "session_id": "sess1"}).encode(), "application/json")
+        return self.send(b"{}", "application/json")
+
+    def do_DELETE(self):
+        return self.send(json.dumps({"success": True}).encode(), "application/json")
 
 
 HTTPServer(("127.0.0.1", 8765), H).serve_forever()
