@@ -7801,6 +7801,8 @@ def tmdbextra_test():
             mon.waitForAbort(0.5)
         mon.waitForAbort(2)
         out["show"] = {k: HOME.getProperty(f"nuvio.info.{k}") for k in ("mpaa", "next", "kw.count")}
+        out["show_item"] = [lab("ListItem.DBType"), lab("ListItem.UniqueID(tmdb)"), lab("ListItem.Label")]
+        out["show_details"] = (rpc("VideoLibrary.GetTVShowDetails", {"tvshowid": sid, "properties": ["uniqueid"]}).get("result") or {}).get("tvshowdetails")
         shot("362-info-show-top")
         close_all()
         # 6. best episode: give the episodes of the first season scores and open that season

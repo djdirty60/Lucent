@@ -849,6 +849,7 @@ def load_extras(item):
     library only has an English one, and a row 'More about: <keywords>' with titles that share its keywords."""
     clear_extras()
     if item.has_show_trakt or item.dbtype not in ("movie", "tvshow") or not item.tmdb.isdigit():
+        log(f"extras: skipped ({item.dbtype}, tmdb {item.tmdb or '-'})")
         return
     kind = "movie" if item.dbtype == "movie" else "tv"
     extra = "keywords,release_dates" if kind == "movie" else "keywords,content_ratings"
@@ -902,6 +903,7 @@ def load_extras(item):
         HOME.setProperty(f"nuvio.info.kw.{n}.id", str(r.get("id", "")))
         HOME.setProperty(f"nuvio.info.kw.{n}.type", kind)
     HOME.setProperty("nuvio.info.kw.count", str(min(len(found), MAX_KEYWORDS)))
+    log(f"extras: {kind} {item.tmdb}: {len(found)} titles for {len(picked)} keywords")
 
 
 def library_seen():

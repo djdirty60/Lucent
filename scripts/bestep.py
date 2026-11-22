@@ -32,8 +32,9 @@ def tick():
         clear()
         return
     path = xbmc.getInfoLabel("Container.FolderPath")
-    cid = "5601" if xbmc.getCondVisibility("Control.IsVisible(5601)") else ""
-    box = f"Container({cid})" if cid else "Container"
+    box = "Container"                       # the list of the view; on the season page its episode cards (5601)
+    if int(xbmc.getInfoLabel("Container(5601).NumItems") or 0) > 0 and xbmc.getCondVisibility("Control.IsVisible(5601)"):
+        box = "Container(5601)"
     count = int(xbmc.getInfoLabel(f"{box}.NumItems") or 0)
     if path == STATE["path"] and count == STATE["count"]:
         return
@@ -49,6 +50,7 @@ def tick():
             scores.append((score, xbmc.getInfoLabel(f"{box}.ListItemAbsolute({i}).Season"),
                            xbmc.getInfoLabel(f"{box}.ListItemAbsolute({i}).Episode")))
     if len(scores) < 3:                     # too few scores to call one the best
+        log(f"{len(scores)} scores in {count} items: no best")
         clear()
         return
     scores.sort(reverse=True)
