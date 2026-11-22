@@ -7591,6 +7591,40 @@ def saver_test():
     log("saver: " + " | ".join(out))
 
 
+def saverscroll_test():
+    """Screensaver 1.2.1: a long plot scrolls by itself (Wilfried: text longer than the box could not be read)."""
+    import subprocess
+    import xbmcaddon
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    rpc = lambda m, p: json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": m, "params": p})))  # noqa: E731
+    out.append(f"v={lab('System.AddonVersion(screensaver.lucent)')}")
+    movies = rpc("VideoLibrary.GetMovies", {"properties": ["title"]}).get("result", {}).get("movies") or []
+    long_plot = " ".join(f"Sentence {n}: a man walks into a quiet town and finds out that the mine everyone lives on hides a secret." for n in range(1, 13))
+    for m in movies:
+        rpc("VideoLibrary.SetMovieDetails", {"movieid": m["movieid"], "plot": long_plot, "art": {"fanart": "/tmp/ci/art/fanart1.jpg"}})
+    out.append(f"movies={len(movies)}")
+    ss = xbmcaddon.Addon("screensaver.lucent")
+    ss.setSettingInt("source", 1)
+    ss.setSettingInt("seconds", 40)
+    ss.setSettingBool("cinema", True)
+    ss.setSettingBool("bigclock", False)
+    ss.setSettingInt("nightfrom", 0)
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
+    xbmc.executebuiltin("ActivateScreensaver")
+    for n, wait in enumerate((4, 6, 8, 8)):
+        mon.waitForAbort(wait)
+        shot(f"330-scroll-{n}")
+    out.append(f"active={cond('System.ScreenSaverActive')}")
+    subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})
+    log("saverscroll: " + " | ".join(out))
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13287,6 +13321,7 @@ def main():
     safe(refreshopt_test)
     safe(search_test)
     safe(saver_test)
+    safe(saverscroll_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)
