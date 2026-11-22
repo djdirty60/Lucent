@@ -7789,11 +7789,12 @@ def tmdbextra_test():
         out["most_eps"] = most
         xbmc.executebuiltin("ActivateWindow(Videos,videodb://tvshows/titles/,return)")
         mon.waitForAbort(3)
-        for _ in range(4):
-            if lab("ListItem.DBType") == "tvshow":
+        target = (rpc("VideoLibrary.GetTVShowDetails", {"tvshowid": sid}).get("result") or {}).get("tvshowdetails", {}).get("label")
+        for _ in range(10):
+            if lab("ListItem.DBType") == "tvshow" and lab("ListItem.Label") == target:
                 break
             key("Down")
-            mon.waitForAbort(1)
+            mon.waitForAbort(0.8)
         xbmc.executebuiltin("Action(Info)")
         for _ in range(30):
             if HOME.getProperty("nuvio.info.next"):
@@ -7821,6 +7822,11 @@ def tmdbextra_test():
                 break
             mon.waitForAbort(0.5)
         mon.waitForAbort(1.5)
+        import bestep
+        bestep.STATE.update(path="", count=-1)
+        bestep.tick()
+        out["best_manual"] = [HOME.getProperty("lucent.best.e"), lab("Container.NumItems"), lab("Container.ListItemAbsolute(1).Rating"),
+                              lab("Container.ListItemAbsolute(2).Episode"), cond("Window.IsActive(videos) + Container.Content(episodes)")]
         out["best"] = [HOME.getProperty("lucent.best.s"), HOME.getProperty("lucent.best.e"), lab("Container.FolderPath"),
                        HOME.getProperty("lucent.best.path"), cond("Control.IsVisible(5601)"), lab("Container.Viewmode")]
         shot("363-season-best")
