@@ -848,6 +848,8 @@ def load_extras(item):
     """Age rating when the library has none (series too), the next episode of a series, the Dutch plot when the
     library only has an English one, and a row 'More about: <keywords>' with titles that share its keywords."""
     clear_extras()
+    if not item.tmdb.isdigit() and item.dbtype in ("movie", "tvshow") and info("DBID").isdigit():
+        item.tmdb = library_tmdb(item.dbtype, int(info("DBID")))   # Kodi does not always give the id of a library series
     if item.has_show_trakt or item.dbtype not in ("movie", "tvshow") or not item.tmdb.isdigit():
         log(f"extras: skipped ({item.dbtype}, tmdb {item.tmdb or '-'})")
         return
@@ -904,6 +906,18 @@ def load_extras(item):
         HOME.setProperty(f"nuvio.info.kw.{n}.type", kind)
     HOME.setProperty("nuvio.info.kw.count", str(min(len(found), MAX_KEYWORDS)))
     log(f"extras: {kind} {item.tmdb}: {len(found)} titles for {len(picked)} keywords")
+
+
+def library_tmdb(dbtype, dbid):
+    method, key, field = (("VideoLibrary.GetMovieDetails", "movieid", "moviedetails") if dbtype == "movie"
+                          else ("VideoLibrary.GetTVShowDetails", "tvshowid", "tvshowdetails"))
+    try:
+        res = json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": method,
+                                                         "params": {key: dbid, "properties": ["uniqueid"]}})))
+        return str(((res.get("result") or {}).get(field) or {}).get("uniqueid", {}).get("tmdb") or "")
+    except Exception as error:  # noqa: BLE001
+        log(f"library tmdb: {error}")
+        return ""
 
 
 def library_seen():
