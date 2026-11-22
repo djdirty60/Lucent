@@ -7665,6 +7665,50 @@ def newlist_test():
     log(f"newlist: {res}")
 
 
+def saverok_test():
+    """Screensaver 1.2.2: the question after waking comes only after OK, not after Back (Wilfried)."""
+    import subprocess
+    import xbmcaddon
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    rpc = lambda m, p: json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": m, "params": p})))  # noqa: E731
+    out.append(f"v={lab('System.AddonVersion(screensaver.lucent)')}")
+    ss = xbmcaddon.Addon("screensaver.lucent")
+    ss.setSettingInt("source", 1)
+    ss.setSettingInt("seconds", 20)
+    ss.setSettingBool("askopen", True)
+    ss.setSettingInt("nightfrom", 0)
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
+    km = xbmcvfs_translate("special://profile/keymaps/lucent_saver_ok.xml")
+    for key in ("Escape", "BackSpace", "Return"):
+        xbmc.executebuiltin("ActivateScreensaver")
+        mon.waitForAbort(6)
+        out.append(f"{key}: active={cond('System.ScreenSaverActive')} keymap={os.path.exists(km)}")
+        subprocess.run(["xdotool", "key", key], timeout=5)
+        mon.waitForAbort(3)
+        out.append(f"after: active={cond('System.ScreenSaverActive')} yesno={cond('Window.IsActive(yesnodialog)')} window={lab('System.CurrentWindow')!r} keymap={os.path.exists(km)}")
+        shot(f"350-saverok-{key}")
+        if cond("Window.IsActive(yesnodialog)"):
+            subprocess.run(["xdotool", "key", "Escape"], timeout=5)
+            mon.waitForAbort(1.5)
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+    # a keymap left behind (Kodi stopped during the screensaver): the first OK removes it and still selects
+    open(km, "w").write('<keymap><global><keyboard><return>RunScript(special://home/addons/screensaver.lucent/screensaver.py,ok)</return></keyboard></global></keymap>')
+    xbmc.executebuiltin("Action(reloadkeymaps)")
+    mon.waitForAbort(1)
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(3)
+    out.append(f"stale: keymap={os.path.exists(km)} window={lab('System.CurrentWindow')!r}")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})
+    log("saverok: " + " | ".join(out))
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13363,6 +13407,7 @@ def main():
     safe(saver_test)
     safe(saverscroll_test)
     safe(newlist_test)
+    safe(saverok_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)

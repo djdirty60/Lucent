@@ -500,10 +500,70 @@ def ask_open(item):
         open_target(target)
 
 
+# 1.2.2: the question after waking up comes only when OK woke the screensaver, not Back. Kodi throws away the key
+# that wakes a screensaver, except a key that starts a script. So while the screensaver runs, a small keymap of our
+# own makes OK start this script with "ok"; that leaves a mark the screensaver reads after it closed. The keymap is
+# removed right after; should Kodi stop during the screensaver, the first OK afterwards removes it and still works.
+KEYMAP = "special://profile/keymaps/lucent_saver_ok.xml"
+OK_RUN = "RunScript(special://home/addons/screensaver.lucent/screensaver.py,ok)"
+HOME = xbmcgui.Window(10000)
+
+
+def keymap_on():
+    keys = "".join(f"<{k}>{OK_RUN}</{k}>" for k in ("return", "enter"))
+    xml = f"<keymap><global><keyboard>{keys}</keyboard><remote><select>{OK_RUN}</select></remote></global></keymap>\n"
+    try:
+        xbmcvfs.mkdirs("special://profile/keymaps/")
+        fh = xbmcvfs.File(KEYMAP, "w")
+        fh.write(xml)
+        fh.close()
+        xbmc.executebuiltin("Action(reloadkeymaps)")
+        return True
+    except Exception as error:  # noqa: BLE001
+        log(f"keymap: {error}")
+        return False
+
+
+def keymap_off():
+    if xbmcvfs.exists(KEYMAP):
+        xbmcvfs.delete(KEYMAP)
+        xbmc.executebuiltin("Action(reloadkeymaps)")
+
+
+def ok_pressed():
+    """Started by OK while our keymap is on. During the screensaver: leave the mark. Otherwise the keymap was left
+    behind (Kodi stopped during the screensaver): remove it and do what OK normally does."""
+    if HOME.getProperty("lucent.saver.on"):
+        HOME.setProperty("lucent.saver.ok", "1")
+        return
+    keymap_off()
+    xbmc.executebuiltin("Action(Select)")
+
+
 if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "ok":
+        ok_pressed()
+        sys.exit()
+    ask = setting_bool("askopen", True)
+    keys = ask and keymap_on()
+    HOME.clearProperty("lucent.saver.ok")
+    HOME.setProperty("lucent.saver.on", "1")
     window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
     window.doModal()
     shown = window.current
     del window
-    if shown and setting_bool("askopen", True):
+    ok = False
+    if keys:
+        for _ in range(15):                               # the OK script starts a moment after the screensaver closed
+            if HOME.getProperty("lucent.saver.ok"):
+                ok = True
+                break
+            xbmc.Monitor().waitForAbort(0.1)
+    HOME.clearProperty("lucent.saver.on")
+    HOME.clearProperty("lucent.saver.ok")
+    if keys:
+        keymap_off()
+    log(f"woken up: ok={ok} keymap={keys}")
+    if shown and ask and (ok or not keys):
         ask_open(shown)
