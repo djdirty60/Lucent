@@ -7634,6 +7634,50 @@ def runtime_test():
     mon.waitForAbort(2)
     log("runtime: " + " | ".join(out))
 
+def skinpick_test():
+    """3.0.7 (Reddit): Settings > Lucent > Change skin lists the skins and switches."""
+    import subprocess
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(Settings)")
+    mon.waitForAbort(3)
+    for i in range(int(lab("Container(9000).NumItems") or 0)):
+        if lab(f"Container(9000).ListItemAbsolute({i}).Property(cat)") == "lucent":
+            xbmc.executebuiltin(f"Control.SetFocus(9000,{i},absolute)")
+    mon.waitForAbort(2)
+    shot("340-settings-lucent")
+    xbmc.executebuiltin("RunScript(special://skin/scripts/skinpick.py)")
+    mon.waitForAbort(3)
+    n = int(lab("Container(6).NumItems") or lab("Container(3).NumItems") or 0)
+    out.append(f"skins n={n} first={lab('Container(6).ListItemAbsolute(0).Label')!r} {lab('Container(6).ListItemAbsolute(0).Label2')!r} second={lab('Container(6).ListItemAbsolute(1).Label')!r}")
+    shot("341-skinpick")
+    xbmc.executebuiltin("SetFocus(6,1,absolute)")
+    mon.waitForAbort(1)
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(2)
+    out.append(f"confirm={cond('Window.IsActive(yesnodialog)')}")
+    shot("342-skinpick-confirm")
+    xbmc.executebuiltin("SetFocus(11)")
+    mon.waitForAbort(1)
+    subprocess.run(["xdotool", "key", "Return"], timeout=5)
+    mon.waitForAbort(8)
+    out.append(f"after: skin={xbmc.getSkinDir()} keep={cond('Window.IsActive(yesnodialog)')}")
+    shot("343-skinpick-after")
+    if cond("Window.IsActive(yesnodialog)"):
+        xbmc.executebuiltin("SetFocus(11)")
+        subprocess.run(["xdotool", "key", "Return"], timeout=5)
+        mon.waitForAbort(4)
+        out.append(f"after keep: skin={xbmc.getSkinDir()}")
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue", "params": {"setting": "lookandfeel.skin", "value": "skin.lucent"}}))
+    mon.waitForAbort(8)
+    if cond("Window.IsActive(yesnodialog)"):
+        xbmc.executebuiltin("SetFocus(11)")
+        subprocess.run(["xdotool", "key", "Return"], timeout=5)
+        mon.waitForAbort(5)
+    out.append(f"back: skin={xbmc.getSkinDir()}")
+    log("skinpick: " + " | ".join(out))
+
+
 def epctx_test():
     """2.1.51: the menu key on an episode of the series page (list 5601) gives that episode's menu (ctx.py), not the
     season's; on the season tabs (56) and elsewhere Kodi's own menu stays. OK still opens."""
@@ -13244,6 +13288,7 @@ def main():
     safe(search_test)
     safe(saver_test)
     safe(runtime_test)
+    safe(skinpick_test)
     safe(wn300_test)
     safe(epbadge_test)
     safe(epnest_test)
