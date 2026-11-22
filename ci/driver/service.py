@@ -7604,13 +7604,15 @@ def saverscroll_test():
     movies = rpc("VideoLibrary.GetMovies", {"properties": ["title"]}).get("result", {}).get("movies") or []
     long_plot = " ".join(f"Sentence {n}: a man walks into a quiet town and finds out that the mine everyone lives on hides a secret." for n in range(1, 13))
     for m in movies:
-        rpc("VideoLibrary.SetMovieDetails", {"movieid": m["movieid"], "plot": long_plot, "art": {"fanart": "/tmp/ci/art/fanart1.jpg"}})
+        rpc("VideoLibrary.SetMovieDetails", {"movieid": m["movieid"], "plot": long_plot, "resume": {"position": 0, "total": 0}, "art": {"fanart": "/tmp/ci/art/fanart1.jpg"}})
     out.append(f"movies={len(movies)}")
     ss = xbmcaddon.Addon("screensaver.lucent")
     ss.setSettingInt("source", 1)
     ss.setSettingInt("seconds", 40)
     ss.setSettingBool("cinema", True)
     ss.setSettingBool("bigclock", False)
+    ss.setSettingBool("resume", False)
+    ss.setSettingBool("newep", False)
     ss.setSettingInt("nightfrom", 0)
     rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
     xbmc.executebuiltin("ActivateScreensaver")
