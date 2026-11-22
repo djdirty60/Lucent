@@ -16,6 +16,7 @@ Every setting of the Lucent skin (version 2.1.36) with the path to it. Use your 
 _Look, menu, streaming services, kids mode and the setup assistant_
 
 - **Skin settings** – Theme, layout, info page, integrations and more
+- **Change skin** – Choose another installed skin, such as Estuary
 - **Customise menu and widgets** – Tabs of the side menu and the rows on Home
 - **Streaming services** *(sometimes)* – Which services the 'Streaming services' row shows, their order and their pictures
 - **Power menu** – Hide Kodi's own buttons, or add your own (Settings, an add-on, Reload skin…)

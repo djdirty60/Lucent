@@ -16,6 +16,7 @@ Alle instellingen van de Lucent-skin (versie 2.1.36) met het pad ernaartoe. Zoek
 _Uiterlijk, menu, streamingdiensten, kinderstand en de setup-assistent_
 
 - **Skin-instellingen** – Thema, indeling, infopagina, integraties en meer
+- **Andere skin kiezen** – Kies een andere geïnstalleerde skin, zoals Estuary
 - **Menu en widgets aanpassen** – Tabs van het zijmenu en de rijen op het startscherm
 - **Streamingdiensten** *(soms)* – Welke diensten de rij 'Streamingdiensten' toont, de volgorde en de afbeeldingen
 - **Afsluitmenu** – Knoppen van Kodi verbergen of eigen knoppen toevoegen (Instellingen, een add-on, Skin herladen…)
