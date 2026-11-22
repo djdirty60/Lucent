@@ -155,6 +155,84 @@
             </control>
         </control>
             <!-- 2.1.42 (#32): 12 lower, so on wide films (2.39:1) the buttons sit in the black bar, not over the picture -->
+        <!-- 3.0.11 (Lucent Video rc1.20): quick subtitle buttons. Up on the subtitle button shows them above the bar:
+             Earlier / Later (0.5 s) and Other subtitle. With the video add-on its own actions (they also handle the
+             subtitles it downloaded), else Kodi's own subtitle delay and next subtitle. -->
+        <control type="group" id="2899">
+            <left>0</left>
+            <top>812</top>
+            <width>1920</width>
+            <height>110</height>
+            <control type="image">
+                <left>0</left><top>0</top><width>1920</width><height>136</height>
+                <texture>white.png</texture>
+                <colordiffuse>FF0B0F19</colordiffuse>
+                <visible>ControlGroup(2900).HasFocus</visible>
+            </control>
+            <control type="label">
+                <left>96</left><top>0</top><width>400</width><height>100</height>
+                <font>font12_bold</font><textcolor>text3</textcolor><aligny>center</aligny>
+                <label>$LOCALIZE[31936]</label>
+                <visible>ControlGroup(2900).HasFocus</visible>
+            </control>
+            <control type="grouplist" id="2900">
+                <left>420</left>
+                <top>18</top>
+                <width>1400</width>
+                <height>64</height>
+                <orientation>horizontal</orientation>
+                <itemgap>18</itemgap>
+                <ondown>100</ondown>
+                <onup>100</onup>
+                <!-- hidden until you go up to it; allowhiddenfocus lets the focus come here while it is still hidden -->
+                <visible allowhiddenfocus="true">ControlGroup(2900).HasFocus</visible>
+            <control type="button" id="2901">
+                <width>auto</width>
+                <height>64</height>
+                <label>$LOCALIZE[31933]</label>
+                <font>font12_bold</font>
+                <textoffsetx>30</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>text</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="30" colordiffuse="focus">pill64.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="33FFFFFF">pill64.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subs_earlier)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">Action(SubtitleDelayMinus)</onclick>
+            </control>
+            <control type="button" id="2902">
+                <width>auto</width>
+                <height>64</height>
+                <label>$LOCALIZE[31934]</label>
+                <font>font12_bold</font>
+                <textoffsetx>30</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>text</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="30" colordiffuse="focus">pill64.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="33FFFFFF">pill64.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subs_later)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">Action(SubtitleDelayPlus)</onclick>
+            </control>
+            <control type="button" id="2903">
+                <width>auto</width>
+                <height>64</height>
+                <label>$LOCALIZE[31935]</label>
+                <font>font12_bold</font>
+                <textoffsetx>30</textoffsetx>
+                <align>center</align>
+                <aligny>center</aligny>
+                <textcolor>text</textcolor>
+                <focusedcolor>on_focus</focusedcolor>
+                <texturefocus border="30" colordiffuse="focus">pill64.png</texturefocus>
+                <texturenofocus border="30" colordiffuse="33FFFFFF">pill64.png</texturenofocus>
+                <onclick condition="System.AddonIsEnabled(plugin.video.lucent)">RunPlugin(plugin://plugin.video.lucent/?action=subs_other)</onclick>
+                <onclick condition="!System.AddonIsEnabled(plugin.video.lucent)">Action(NextSubtitle)</onclick>
+            </control>
+            </control>
+        </control>
             <control type="grouplist" id="100">
                 <left>96</left>
                 <top>948</top>
@@ -163,6 +241,7 @@
                 <orientation>horizontal</orientation>
                 <align>center</align>
                 <itemgap>22</itemgap>
+                <onup condition="[Control.HasFocus(2011) | Control.HasFocus(2021) | Control.HasFocus(2031) | Control.HasFocus(2041) | Control.HasFocus(2051) | Control.HasFocus(2061) | Control.HasFocus(2071) | Control.HasFocus(2081)] + [VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <onup>87</onup>
                 <visible>!Pvr.IsPlayingTV</visible>
                 <usecontrolcoords>false</usecontrolcoords>
@@ -243,6 +322,7 @@
                  empty means the standard order. The video add-on's own buttons stay after place 2. -->
             <!-- slot 1 -->
             <control type="button" id="2011">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -318,6 +398,7 @@
             </control>
             <!-- slot 2 -->
             <control type="button" id="2021">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -414,6 +495,7 @@
             </control>
             <!-- slot 3 -->
             <control type="button" id="2031">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -489,6 +571,7 @@
             </control>
             <!-- slot 4 -->
             <control type="button" id="2041">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -564,6 +647,7 @@
             </control>
             <!-- slot 5 -->
             <control type="button" id="2051">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -639,6 +723,7 @@
             </control>
             <!-- slot 6 -->
             <control type="button" id="2061">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -714,6 +799,7 @@
             </control>
             <!-- slot 7 -->
             <control type="button" id="2071">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
@@ -789,6 +875,7 @@
             </control>
             <!-- slot 8 -->
             <control type="button" id="2081">
+                <onup condition="[VideoPlayer.HasSubtitles | VideoPlayer.SubtitlesEnabled]">2900</onup>
                 <width>84</width>
                 <height>84</height>
                 <label></label>
