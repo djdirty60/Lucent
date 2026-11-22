@@ -24,7 +24,7 @@ ADDON = xbmcaddon.Addon()
 PATH = ADDON.getAddonInfo("path")
 TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
-KEY = "9f3ca569aa46b6fb13931ec96ab8ae7e"       # public TMDB key, when you did not enter your own
+KEY = "81d47c322f4bbec199751d9f55e8dda1"       # 1.2.3: Lucent's own TMDB key, when you did not enter your own
 LANG = "nl-NL" if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else "en-US"
 NL = LANG == "nl-NL"
 
