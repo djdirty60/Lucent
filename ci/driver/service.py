@@ -7908,7 +7908,7 @@ def tmdbextra_test():
     log(f"tmdbextra: {json.dumps(out)}")
 
 
-def ctxmenu_test():
+def ctxpanel_test():
     """Wilfried 22 Nov: in the source list of the video add-on the context menu panel only covers the first two options."""
     import threading
     labels = ["Klaarzetten voor vanavond", "Bron kiezen", "Markeer als bekeken (Lucent)", "Hervatpunt wissen (Lucent)",
@@ -7943,7 +7943,7 @@ def ctxmenu_test():
     key("Escape")
     th2.join(10)
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    log(f"ctxmenu: {out}")
+    log(f"ctxpanel: {out}")
 
 
 def runtime_test():
@@ -13647,7 +13647,7 @@ def main():
     safe(saverok_test)
     safe(tmdbkey_test)
     safe(tmdbextra_test)
-    safe(ctxmenu_test)
+    safe(ctxpanel_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)
