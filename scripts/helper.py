@@ -90,6 +90,7 @@ def run():
     import tint
     import omdb
     import seasoninfo
+    import bestep
     import views
     import mediaflags
     import updater
@@ -489,6 +490,7 @@ def run():
             try:
                 omdb.home_tick()                     # 2.1.3: the same scores for the title under the cursor on Home
                 seasoninfo.tick()                    # 2.1.3: episodes left in the season, premiere / finale
+                bestep.tick()                        # 3.0.10: the best episode of the season in the list
             except Exception as error:  # noqa: BLE001
                 log(f"home extra: {error}")
             try:

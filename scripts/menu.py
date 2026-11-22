@@ -202,6 +202,8 @@ WIDGETS_LV = [                                      # the video add-on (plugin.v
     (("Series · On the air", "Series · Nu op tv"), LV + "airing_tv", "poster"),
     (("Series · Coming soon", "Series · Binnenkort"), LV + "upcoming_tv", "poster"),
     (("Series · New", "Series · Nieuw"), LV + "new_tv", "poster"),
+    (("Series · Today on TV", "Series · Vandaag op tv"), LV + "today_tv", "poster"),     # 3.0.10 (Lucent Video rc1.19)
+    (("Popular actors", "Populaire acteurs"), "plugin://plugin.video.lucent/?action=people", "poster"),
     (("Continue watching", "Verder kijken"), LV + "continue", "land"),
     (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
     (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
@@ -424,9 +426,11 @@ def pick_lv():
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
     own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
     actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
-    newer = ("coming_watchlist", "watching")                   # rows only newer versions of the video add-on know
+    newer = ("coming_watchlist", "watching", "today_tv")       # rows only newer versions of the video add-on know
     rows = [r for r in WIDGETS_LV if not any(r[1].endswith("name=" + n) for n in newer) or
             any(r[1].endswith("name=" + n) and lv_knows(n) for n in newer)]
+    if not lv_knows("people"):                                 # 3.0.10: Popular actors (rc1.19 and newer)
+        rows = [r for r in rows if not r[1].endswith("action=people")]
     labels = [tr(k) for k, _p, _s in rows] + [own, actor, service]
     choice = select(tr(G("Your video add-on", "Je video-add-on")), labels)
     if choice < 0:
@@ -459,6 +463,17 @@ def pick_lv():
     return f"{pname} · {tr(G('Newest', 'Nieuwste'))}", LV + f"provider&provider={pid}&type=all", "poster"
 
 
+TL = "plugin://skin.lucent/?list="
+WIDGETS_TMDB = [                                    # 3.0.10: rows the skin makes itself from TMDB (scripts/plugin.py)
+    (("Films · In cinemas", "Films · In de bioscoop"), TL + "tmdb&path=movie/now_playing", "poster"),
+    (("Films · Coming to cinemas", "Films · Binnenkort in de bioscoop"), TL + "tmdb&path=movie/upcoming", "poster"),
+    (("TMDb · Watchlist · Films", "TMDb · Kijklijst · Films"), TL + "tmdbacct&what=watchlist/movies", "poster"),
+    (("TMDb · Watchlist · Series", "TMDb · Kijklijst · Series"), TL + "tmdbacct&what=watchlist/tv", "poster"),
+    (("TMDb · Rated · Films", "TMDb · Beoordeeld · Films"), TL + "tmdbacct&what=rated/movies", "poster"),
+    (("TMDb · Rated · Series", "TMDb · Beoordeeld · Series"), TL + "tmdbacct&what=rated/tv", "poster"),
+    (("TMDb · Favourites · Films", "TMDb · Favorieten · Films"), TL + "tmdbacct&what=favorite/movies", "poster"),
+    (("TMDb · Favourites · Series", "TMDb · Favorieten · Series"), TL + "tmdbacct&what=favorite/tv", "poster"),
+]
 WIDGETS_OTHER = [
     (("Favourites", "Favorieten"), "favourites://", "land"),
     (("Video add-ons", "Video-add-ons"), "addons://sources/video/", "poster"),
@@ -596,7 +611,7 @@ def plain_tabs():
 def lv_tabs():
     """The default menu with the video add-on: its rows on the tabs, its search and menus behind them."""
     lib_by_key = {k: (p, s) for k, p, s in WIDGETS_LIBRARY}
-    names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV}
+    names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV if "name=" in r[1]}
     names["new_tv"] = (("Series · New", "Series · Nieuw"), "poster")
 
     def row(name):
@@ -840,12 +855,11 @@ def pick_playlist():
 def pick_widget():
     sources = ["", "", tr("src_library"), tr("src_browse"), tr("src_type"),
                tr(G("Favourites and add-ons", "Favorieten en add-ons")), tr(G("A playlist…", "Een afspeellijst…")),
-               tr(G("Lucent fast lists (TMDb)", "Lucent snelle lijsten (TMDb)")), tr(G("One of your favourites…", "Een van je favorieten…"))]
+               tr(G("TMDb lists (cinema, your TMDb account)", "TMDb-lijsten (bioscoop, je TMDb-account)")), tr(G("One of your favourites…", "Een van je favorieten…"))]
     icons = ["icons/play.png", "icons/trakt.png", "icons/library.png", "icons/addons.png", "icons/list.png",
              "icons/favourites.png", "icons/list.png", "icons/star.png", "icons/favourites.png"]
     # an add-on folder first (what you know from other skins); 0 and 1 were Seren's rows and lists (gone in 2.0)
     order = [3, 2, 8, 5, 6, 7, 4]
-    order.remove(7)                                     # the fast TMDb lists of Lucent Library: the video add-on has them now
     if has_lv():                                        # the video add-on: its own rows first
         sources.append(tr(G("Your video add-on", "Je video-add-on")))
         icons.append("icons/play.png")
@@ -875,6 +889,12 @@ def pick_widget():
         if choice < 0:
             return None
         key, path, style = WIDGETS_OTHER[choice]
+        label = tr(key)
+    elif source == 7:
+        choice = select(sources[7], [tr(k) for k, _p, _s in WIDGETS_TMDB])
+        if choice < 0:
+            return None
+        key, path, style = WIDGETS_TMDB[choice]
         label = tr(key)
     elif source == 8:
         picked = pick_favourite()

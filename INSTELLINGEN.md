@@ -208,6 +208,7 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
   - **Diensten** – Bediening op afstand en delen
   - **TMDB API-sleutel** – Voor acteurs, collecties, studio's en de pagina's die je daarvandaan opent
   - **Scores (OMDb / MDBList)** – IMDb, Rotten Tomatoes, Metacritic en Letterboxd met je eigen gratis sleutel
+  - **TMDb-account** – Log in met je TMDb-account voor je kijklijst, beoordelingen en favorieten als rijen
 - **Ondertitels** – Ondertitels zoeken vanuit de speler
   - **Lucent Ondertitels: accounts en sleutels** – Accounts en sleutels (OpenSubtitles, SubDL), bronnen
   - **Ondertitels en intro overslaan** – In je video-add-on: ondertitels zoeken, gesproken taal, AI-vertaling en intro overslaan

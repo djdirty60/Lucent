@@ -208,6 +208,7 @@ _What's new, updates, self-test and system information_
   - **Services** – Remote control and sharing
   - **TMDB API key** – For cast, collections, studios and the pages opened from them
   - **Scores (OMDb / MDBList)** – IMDb, Rotten Tomatoes, Metacritic and Letterboxd with your own free key
+  - **TMDb account** – Log in with your TMDb account for your watchlist, ratings and favourites as rows
 - **Subtitles** – Search subtitles from the player
   - **Lucent Subtitles: accounts and keys** – Accounts and keys (OpenSubtitles, SubDL), sources
   - **Subtitles and skip intro** – In your video add-on: subtitle search, spoken language, AI translation and skip intro
