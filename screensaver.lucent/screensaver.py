@@ -24,7 +24,7 @@ ADDON = xbmcaddon.Addon()
 PATH = ADDON.getAddonInfo("path")
 TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
-KEY = "9f3ca569aa46b6fb13931ec96ab8ae7e"       # public TMDB key, when you did not enter your own
+KEY = "81d47c322f4bbec199751d9f55e8dda1"       # 1.2.3: Lucent's own TMDB key, when you did not enter your own
 LANG = "nl-NL" if xbmc.getLanguage(xbmc.ISO_639_1) == "nl" else "en-US"
 NL = LANG == "nl-NL"
 
@@ -500,16 +500,20 @@ def ask_open(item):
         open_target(target)
 
 
-# 1.2.2: the question after waking up comes only when OK woke the screensaver, not Back. Kodi throws away the key
-# that wakes a screensaver, except a few (mute, volume, power). So while the screensaver runs, a small keymap of our
-# own makes OK "Mute"; after waking up the mute state tells us it was OK, and it is switched back at once. The keymap
-# is removed right after (and by the Lucent skin at start-up, should Kodi stop during the screensaver).
+# 1.2.4: the question after waking up comes after every key except Back. Kodi throws away the key that wakes a
+# screensaver, except a few (mute, volume, power). So while the screensaver runs, a small keymap of our own makes the
+# Back keys "Mute"; after waking up a changed mute state means Back woke it (no question), and it is switched back at
+# once. Any other key, OK included, gives the question; should a device send Back in a way this keymap does not catch,
+# the question simply comes (as before 1.2.2). 1.2.2/1.2.3 did it the other way round (only OK), and OK did not reach
+# Kodi as Enter on every remote. The keymap is removed right after (and by the Lucent skin at start-up).
 KEYMAP = "special://profile/keymaps/lucent_saver_ok.xml"
 
 
 def keymap_on():
-    keys = "".join(f"<{k}>Mute</{k}>" for k in ("return", "enter"))
-    xml = f"<keymap><global><keyboard>{keys}</keyboard><remote><select>Mute</select></remote></global></keymap>\n"
+    kb = "".join(f"<{k}>Mute</{k}>" for k in ("escape", "backspace", "browser_back"))
+    remote = "".join(f"<{k}>Mute</{k}>" for k in ("back", "menu_back"))
+    xml = (f"<keymap><global><keyboard>{kb}</keyboard><remote>{remote}</remote>"
+           "<joystick profile=\"game.controller.default\"><b>Mute</b><back>Mute</back></joystick></global></keymap>\n")
     try:
         xbmcvfs.mkdirs("special://profile/keymaps/")
         fh = xbmcvfs.File(KEYMAP, "w")
@@ -536,16 +540,16 @@ if __name__ == "__main__":
     window.doModal()
     shown = window.current
     del window
-    ok = False
+    back = False
     if keys:
-        for _ in range(15):                               # OK is handled a moment after the screensaver closed
+        for _ in range(15):                               # the key is handled a moment after the screensaver closed
             if xbmc.getCondVisibility("Player.Muted") != muted:
-                ok = True
+                back = True
                 xbmc.executebuiltin("Mute")               # put the sound back as it was
                 xbmc.executebuiltin("Dialog.Close(volumebar,true)")
                 break
             xbmc.Monitor().waitForAbort(0.1)
         keymap_off()
-    log(f"woken up: ok={ok} keymap={keys}")
-    if shown and ask and (ok or not keys):
+    log(f"woken up: back={back} keymap={keys}")
+    if shown and ask and not back:
         ask_open(shown)
