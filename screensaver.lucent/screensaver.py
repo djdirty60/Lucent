@@ -500,10 +500,52 @@ def ask_open(item):
         open_target(target)
 
 
+# 1.2.2: the question after waking up comes only when OK woke the screensaver, not Back. Kodi throws away the key
+# that wakes a screensaver, except a few (mute, volume, power). So while the screensaver runs, a small keymap of our
+# own makes OK "Mute"; after waking up the mute state tells us it was OK, and it is switched back at once. The keymap
+# is removed right after (and by the Lucent skin at start-up, should Kodi stop during the screensaver).
+KEYMAP = "special://profile/keymaps/lucent_saver_ok.xml"
+
+
+def keymap_on():
+    keys = "".join(f"<{k}>Mute</{k}>" for k in ("return", "enter"))
+    xml = f"<keymap><global><keyboard>{keys}</keyboard><remote><select>Mute</select></remote></global></keymap>\n"
+    try:
+        xbmcvfs.mkdirs("special://profile/keymaps/")
+        fh = xbmcvfs.File(KEYMAP, "w")
+        fh.write(xml)
+        fh.close()
+        xbmc.executebuiltin("Action(reloadkeymaps)")
+        return True
+    except Exception as error:  # noqa: BLE001
+        log(f"keymap: {error}")
+        return False
+
+
+def keymap_off():
+    if xbmcvfs.exists(KEYMAP):
+        xbmcvfs.delete(KEYMAP)
+        xbmc.executebuiltin("Action(reloadkeymaps)")
+
+
 if __name__ == "__main__":
+    ask = setting_bool("askopen", True)
+    keys = ask and keymap_on()
+    muted = xbmc.getCondVisibility("Player.Muted")
     window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
     window.doModal()
     shown = window.current
     del window
-    if shown and setting_bool("askopen", True):
+    ok = False
+    if keys:
+        for _ in range(15):                               # OK is handled a moment after the screensaver closed
+            if xbmc.getCondVisibility("Player.Muted") != muted:
+                ok = True
+                xbmc.executebuiltin("Mute")               # put the sound back as it was
+                xbmc.executebuiltin("Dialog.Close(volumebar,true)")
+                break
+            xbmc.Monitor().waitForAbort(0.1)
+        keymap_off()
+    log(f"woken up: ok={ok} keymap={keys}")
+    if shown and ask and (ok or not keys):
         ask_open(shown)

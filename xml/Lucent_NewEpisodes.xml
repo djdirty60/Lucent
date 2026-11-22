@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Lucent 3.0.8: one pop-up with every new episode (and film) that is out, instead of one pop-up each
+     (scripts/agenda_core.py, class AnnounceList). OK on a row: watch; Right: the Series / Film button of that row
+     (window property ne.col); below: See all in Calendar and Later. Up to 4 rows show, the panel fits their number. -->
+<window type="dialog">
+    <defaultcontrol always="true">100</defaultcontrol>
+    <onload>ClearProperty(ne.col)</onload>
+    <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+    <animation effect="slide" start="0,40" end="0,0" time="260" tween="cubic" easing="out">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="160">WindowClose</animation>
+    <controls>
+        <control type="image">
+            <left>0</left><top>0</top><width>1920</width><height>1080</height>
+            <texture>white.png</texture><colordiffuse>8C05070C</colordiffuse>
+        </control>
+        <control type="group">
+            <left>160</left>
+            <top>71</top>
+            <animation effect="slide" start="0,0" end="0,249" time="0" condition="String.IsEqual(Window.Property(ne.rows),1)">Conditional</animation>
+            <animation effect="slide" start="0,0" end="0,166" time="0" condition="String.IsEqual(Window.Property(ne.rows),2)">Conditional</animation>
+            <animation effect="slide" start="0,0" end="0,83" time="0" condition="String.IsEqual(Window.Property(ne.rows),3)">Conditional</animation>
+            <control type="group">
+                <visible>String.IsEqual(Window.Property(ne.rows),1)</visible>
+                <control type="image">
+                    <left>-24</left><top>-14</top><width>1648</width><height>488</height>
+                    <texture border="44">rr20_glow.png</texture><colordiffuse>73000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>1600</width><height>440</height>
+                    <texture border="20">rr20.png</texture><colordiffuse>EB202228</colordiffuse>
+                </control>
+            </control>
+            <control type="group">
+                <visible>String.IsEqual(Window.Property(ne.rows),2)</visible>
+                <control type="image">
+                    <left>-24</left><top>-14</top><width>1648</width><height>654</height>
+                    <texture border="44">rr20_glow.png</texture><colordiffuse>73000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>1600</width><height>606</height>
+                    <texture border="20">rr20.png</texture><colordiffuse>EB202228</colordiffuse>
+                </control>
+            </control>
+            <control type="group">
+                <visible>String.IsEqual(Window.Property(ne.rows),3)</visible>
+                <control type="image">
+                    <left>-24</left><top>-14</top><width>1648</width><height>820</height>
+                    <texture border="44">rr20_glow.png</texture><colordiffuse>73000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>1600</width><height>772</height>
+                    <texture border="20">rr20.png</texture><colordiffuse>EB202228</colordiffuse>
+                </control>
+            </control>
+            <control type="group">
+                <visible>String.IsEqual(Window.Property(ne.rows),4)</visible>
+                <control type="image">
+                    <left>-24</left><top>-14</top><width>1648</width><height>986</height>
+                    <texture border="44">rr20_glow.png</texture><colordiffuse>73000000</colordiffuse>
+                </control>
+                <control type="image">
+                    <left>0</left><top>0</top><width>1600</width><height>938</height>
+                    <texture border="20">rr20.png</texture><colordiffuse>EB202228</colordiffuse>
+                </control>
+            </control>
+            <control type="label">
+                <left>60</left><top>40</top><width>1480</width><height>60</height>
+                <font>font_heading_small</font><textcolor>text</textcolor>
+                <label>$INFO[Window.Property(ne.head)]</label>
+            </control>
+            <control type="list" id="100">
+                <left>50</left><top>130</top><width>1500</width><height>664</height>
+                <orientation>vertical</orientation>
+                <scrolltime tween="cubic" easing="out">200</scrolltime>
+                <onright>SetProperty(ne.col,1)</onright>
+                <onleft>ClearProperty(ne.col)</onleft>
+                <ondown>ClearProperty(ne.col)</ondown>
+                <ondown>SetFocus(9001)</ondown>
+                <itemlayout height="166" width="1500">
+                        <control type="image">
+                            <left>0</left><top>0</top><width>1270</width><height>150</height>
+                            <texture border="20" colordiffuse="0AFFFFFF">rr20.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>1290</left><top>31</top><width>210</width><height>88</height>
+                            <texture border="20" colordiffuse="14FFFFFF">rr20.png</texture>
+                        </control>
+                        <control type="image">
+                            <left>18</left><top>10</top><width>88</width><height>130</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Icon]</texture>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>22</top><width>1110</width><height>56</height>
+                            <font>font37</font><textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>84</top><width>1110</width><height>44</height>
+                            <font>font14_bold</font><textcolor>text2</textcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                        <control type="label">
+                            <left>1290</left><top>31</top><width>210</width><height>88</height>
+                            <font>font14_bold</font><textcolor>text</textcolor><align>center</align><aligny>center</aligny>
+                            <label>$INFO[ListItem.Property(btn)]</label>
+                        </control>
+                </itemlayout>
+                <focusedlayout height="166" width="1500">
+                        <control type="image">
+                            <left>0</left><top>0</top><width>1270</width><height>150</height>
+                            <texture border="22">rr20_btnfocus.png</texture>
+                            <visible>!String.IsEqual(Window.Property(ne.col),1) + Control.HasFocus(100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>0</left><top>0</top><width>1270</width><height>150</height>
+                            <texture border="20" colordiffuse="1AFFFFFF">rr20.png</texture>
+                            <visible>String.IsEqual(Window.Property(ne.col),1) | !Control.HasFocus(100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>1290</left><top>31</top><width>210</width><height>88</height>
+                            <texture border="22">rr20_btnfocus.png</texture>
+                            <visible>String.IsEqual(Window.Property(ne.col),1) + Control.HasFocus(100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>1290</left><top>31</top><width>210</width><height>88</height>
+                            <texture border="20" colordiffuse="14FFFFFF">rr20.png</texture>
+                            <visible>!String.IsEqual(Window.Property(ne.col),1) | !Control.HasFocus(100)</visible>
+                        </control>
+                        <control type="image">
+                            <left>18</left><top>10</top><width>88</width><height>130</height>
+                            <aspectratio>scale</aspectratio>
+                            <texture diffuse="mask_poster.png" background="true">$INFO[ListItem.Icon]</texture>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>22</top><width>1110</width><height>56</height>
+                            <font>font37</font><textcolor>text</textcolor>
+                            <label>$INFO[ListItem.Label]</label>
+                        </control>
+                        <control type="label">
+                            <left>136</left><top>84</top><width>1110</width><height>44</height>
+                            <font>font14_bold</font><textcolor>text2</textcolor>
+                            <label>$INFO[ListItem.Label2]</label>
+                        </control>
+                        <control type="label">
+                            <left>1290</left><top>31</top><width>210</width><height>88</height>
+                            <font>font14_bold</font><textcolor>text</textcolor><align>center</align><aligny>center</aligny>
+                            <label>$INFO[ListItem.Property(btn)]</label>
+                        </control>
+                </focusedlayout>
+            </control>
+            <control type="grouplist" id="9001">
+                <left>50</left><top>808</top><width>1500</width><height>86</height>
+                <orientation>horizontal</orientation>
+                <itemgap>22</itemgap>
+                <onup>100</onup>
+                <animation effect="slide" start="0,0" end="0,-498" time="0" condition="String.IsEqual(Window.Property(ne.rows),1)">Conditional</animation>
+                <animation effect="slide" start="0,0" end="0,-332" time="0" condition="String.IsEqual(Window.Property(ne.rows),2)">Conditional</animation>
+                <animation effect="slide" start="0,0" end="0,-166" time="0" condition="String.IsEqual(Window.Property(ne.rows),3)">Conditional</animation>
+                    <control type="button" id="20">
+                        <width>auto</width><height>86</height>
+                        <font>font14_bold</font><textoffsetx>40</textoffsetx><align>center</align><aligny>center</aligny>
+                        <textcolor>text</textcolor><focusedcolor>text</focusedcolor>
+                        <texturefocus border="22">rr20_btnfocus.png</texturefocus>
+                        <texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus>
+                        <label>$INFO[Window.Property(ne.calendar)]</label>
+                    </control>
+                    <control type="button" id="21">
+                        <width>auto</width><height>86</height>
+                        <font>font14_bold</font><textoffsetx>40</textoffsetx><align>center</align><aligny>center</aligny>
+                        <textcolor>text</textcolor><focusedcolor>text</focusedcolor>
+                        <texturefocus border="22">rr20_btnfocus.png</texturefocus>
+                        <texturenofocus border="20" colordiffuse="14FFFFFF">rr20.png</texturenofocus>
+                        <label>$INFO[Window.Property(ne.later)]</label>
+                    </control>
+            </control>
+        </control>
+    </controls>
+</window>
