@@ -13696,6 +13696,7 @@ def main():
     safe(tmdbextra_test)
     safe(ctxpanel_test)
     safe(subsosd_test)
+    safe(svc_test)
     safe(runtime_test)
     safe(skinpick_test)
     safe(wn300_test)
