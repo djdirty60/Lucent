@@ -22,6 +22,7 @@ import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
 PATH = ADDON.getAddonInfo("path")
+HOME = xbmcgui.Window(10000)
 TMDB = "https://api.themoviedb.org/3/"
 IMG = "https://image.tmdb.org/t/p/"
 KEY = "81d47c322f4bbec199751d9f55e8dda1"       # 1.2.3: Lucent's own TMDB key, when you did not enter your own
@@ -327,7 +328,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
             self.callback = callback
 
         def onScreensaverDeactivated(self):  # noqa: N802 - Kodi callback name
-            self.callback()
+            self.callback(kodi=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -335,6 +336,8 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.monitor = None
         self.current = None                 # what is on screen: its "open" target, for the question after waking up
         self.started = 0.0
+        self.own = False                    # 1.2.6: Kodi's screensaver state is off and this window takes the keys itself
+        self.choice = ""                    # 'ok' (OK woke it), 'back' or 'other'; '' when Kodi woke it
 
     def onInit(self):  # noqa: N802
         self.monitor = self.ExitMonitor(self.exit)
@@ -347,10 +350,36 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.run()
 
     def onAction(self, action):  # noqa: N802
+        aid = action.getId()
+        if self.own:
+            if aid in (7, 100, 12):         # OK / Enter / click
+                self.choice = "ok"
+            elif aid in (9, 10, 92, 216, 247, 257, 275, 61448, 61467):
+                self.choice = "back"
+            elif aid in (106, 107):         # a mouse that moves a little is not a key
+                return
+            else:
+                self.choice = "other"
         self.exit()
 
-    def exit(self):
+    def release_kodi(self):
+        """1.2.6: Kodi throws away the key that wakes a screensaver, so it cannot tell OK from Back. As soon as this
+        window is on screen it switches Kodi's own screensaver state off (a JSON-RPC action does that without a key);
+        the picture stays and the next key comes to this window like to any other. Only when that worked."""
+        HOME.setProperty("lucent.saver.own", str(time.time()))
+        self.own = True
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.ExecuteAction", "params": {"action": "noop"}}))
+        xbmc.Monitor().waitForAbort(0.6)
+        if xbmc.getCondVisibility("System.ScreenSaverActive"):
+            self.own = False                # did not work: Kodi wakes it as before
+            HOME.clearProperty("lucent.saver.own")
+        log(f"own keys: {self.own}")
+
+    def exit(self, kodi=False):
+        if kodi and self.own:               # Kodi switching its screensaver off is what release_kodi asked for
+            return
         self.stop = True
+        HOME.clearProperty("lucent.saver.own")
         self.close()
 
     def show(self, slot, item):
@@ -366,6 +395,8 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
     def tick(self):
         """Every half second: the weather line, night mode (darker from the hour you chose, black after a while)."""
+        if self.own:
+            HOME.setProperty("lucent.saver.own", str(time.time()))   # still on screen (see __main__)
         if self.getProperty("bigclock"):
             self.setProperty("weather", weather_line())
         night_from = setting_int("nightfrom", 23)
@@ -376,6 +407,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.setProperty("black", "1" if night and black_after and time.time() - self.started > black_after * 60 else "")
 
     def run(self):
+        self.release_kodi()
         seconds = max(8, ADDON.getSettingInt("seconds") or 18)
         source = ADDON.getSettingInt("source")
         queue = build_queue(source)
@@ -428,7 +460,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         screensaver was on without one on screen: the first button press then did nothing ('Home stuck after the
         screensaver'). Stay (dark) until Kodi switches it off; then onScreensaverDeactivated closes the window."""
         monitor = xbmc.Monitor()
-        while not self.stop and not monitor.abortRequested() and xbmc.getCondVisibility("System.ScreenSaverActive"):
+        while not self.stop and not monitor.abortRequested() and (self.own or xbmc.getCondVisibility("System.ScreenSaverActive")):
             if monitor.waitForAbort(0.5):
                 break
             self.tick()
@@ -515,9 +547,18 @@ def keymap_off():
 
 if __name__ == "__main__":
     keymap_off()
-    window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
-    window.doModal()
-    shown = window.current
-    del window
-    if shown and setting_bool("askopen", True):
-        ask_open(shown)
+    beat = HOME.getProperty("lucent.saver.own")
+    if beat and time.time() - float(beat or 0) < 15:
+        # 1.2.6: the screensaver is already on screen in its own window; Kodi only started it again because its idle
+        # time ran out. Switch Kodi's state off again and leave the picture as it is.
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.ExecuteAction", "params": {"action": "noop"}}))
+    else:
+        window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
+        window.doModal()
+        shown, own, choice = window.current, window.own, window.choice
+        del window
+        log(f"woken up: own={own} choice={choice or 'kodi'}")
+        # OK asks whether to watch it; Back and other keys just close. Should the own-keys trick not have worked,
+        # Kodi woke it and the question comes after every key, as before.
+        if shown and setting_bool("askopen", True) and (choice == "ok" or not own):
+            ask_open(shown)
