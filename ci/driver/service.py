@@ -7864,8 +7864,9 @@ def tmdbextra_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(1.5)
     # 4. cinema rows: the list itself, and OK opens the title page
-    got = rpc("Files.GetDirectory", {"directory": "plugin://skin.lucent/?list=tmdb&path=movie/now_playing", "media": "video"})
+    got = rpc("Files.GetDirectory", {"directory": "plugin://skin.lucent/?list=tmdb&path=movie/now_playing", "media": "video", "properties": ["art"]})
     out["cinema"] = len((got.get("result") or {}).get("files") or [])
+    out["cinema_logo"] = [((f.get("art") or {}).get("clearlogo") or "")[-30:] for f in ((got.get("result") or {}).get("files") or [])[:3]]
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://skin.lucent/?list=tmdb&path=movie/now_playing,return)")
     mon.waitForAbort(4)
     shot("366-cinema-list")

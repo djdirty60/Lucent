@@ -125,6 +125,8 @@ class H(BaseHTTPRequestHandler):
             return [{"id": base + i, "title": f"Bioscoopfilm {i}", "overview": "plot", "release_date": "2026-11-20",
                      "vote_average": 7.0 + i / 10, "vote_count": 100, "popularity": 50 - i,
                      "poster_path": f"/x{i}.png", "backdrop_path": f"/x{i}b.png"} for i in range(1, n + 1)]
+        if path.endswith("/images") and "/5" in path:          # 3.0.13: title logos of the cinema rows
+            return self.send(json.dumps({"logos": [{"file_path": "/logo_n.png", "iso_639_1": "en"}]}).encode(), "application/json")
         if path.endswith("/movie/now_playing") or path.endswith("/movie/upcoming"):
             return self.send(json.dumps({"results": films(12), "total_pages": 1}).encode(), "application/json")
         if path.endswith("/authentication/token/new"):

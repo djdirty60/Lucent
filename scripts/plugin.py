@@ -214,9 +214,47 @@ def runtime_list(path, limit):
     return rows
 
 
+LOGO_CACHE = "special://profile/addon_data/skin.lucent/tmdb_logos.json"
+
+
+def add_logos(results, kind):
+    """3.0.13: the title logo (clearlogo) of every title, like the other rows have. Looked up in parallel and kept for
+    two weeks (TMDB images: Dutch, then English, then without text), so a row stays quick."""
+    import xbmcvfs
+    from concurrent.futures import ThreadPoolExecutor
+    import foryou
+    try:
+        with xbmcvfs.File(LOGO_CACHE) as fh:
+            cache = json.loads(fh.read() or "{}")
+    except Exception:  # noqa: BLE001
+        cache = {}
+    now = time.time()
+    keys = {r.get("id"): f"{kind or r.get('media_type') or 'movie'}:{r.get('id')}" for r in results if r.get("id")}
+    todo = [k for k in keys.values() if k not in cache or now - cache[k][1] > 14 * 86400]
+    if todo:
+        def one(key):
+            media, tmdb_id = key.split(":", 1)
+            return key, foryou.logo_of("movie" if media == "movie" else "tv", tmdb_id)
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            for key, url in pool.map(one, todo):
+                cache[key] = [url, now]
+        try:
+            xbmcvfs.mkdirs("special://profile/addon_data/skin.lucent/")
+            with xbmcvfs.File(LOGO_CACHE, "w") as fh:
+                fh.write(json.dumps({k: v for k, v in cache.items() if now - v[1] < 30 * 86400}))
+        except Exception as error:  # noqa: BLE001
+            log(f"logo cache: {error}")
+    return {tmdb_id: cache.get(key, ["", 0])[0] for tmdb_id, key in keys.items()}
+
+
 def tmdb_rows(results, kind=None):
     """3.0.10: TMDB titles as list items. OK opens the title's own page (Lucent's info page), like the For you row."""
     import info
+    try:
+        logos = add_logos(results, kind)
+    except Exception as error:  # noqa: BLE001 - a row without logos is still a row
+        log(f"logos: {error}")
+        logos = {}
     rows = []
     for r in results:
         media = kind or r.get("media_type") or ("movie" if r.get("title") else "tv")
@@ -239,6 +277,8 @@ def tmdb_rows(results, kind=None):
             art["poster"] = art["thumb"] = f"{info.TMDB_IMG}w342{r['poster_path']}"
         if r.get("backdrop_path"):
             art["fanart"] = art["landscape"] = f"{info.TMDB_IMG}w1280{r['backdrop_path']}"
+        if logos.get(r.get("id")):
+            art["clearlogo"] = logos[r.get("id")]
         li.setArt(art)
         li.setProperty("tmdb_id", str(r.get("id")))
         url = f"plugin://skin.lucent/?open={'movie' if media == 'movie' else 'tv'}&tmdb={r.get('id')}"
