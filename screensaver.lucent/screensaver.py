@@ -500,30 +500,11 @@ def ask_open(item):
         open_target(target)
 
 
-# 1.2.4: the question after waking up comes after every key except Back. Kodi throws away the key that wakes a
-# screensaver, except a few (mute, volume, power). So while the screensaver runs, a small keymap of our own makes the
-# Back keys "Mute"; after waking up a changed mute state means Back woke it (no question), and it is switched back at
-# once. Any other key, OK included, gives the question; should a device send Back in a way this keymap does not catch,
-# the question simply comes (as before 1.2.2). 1.2.2/1.2.3 did it the other way round (only OK), and OK did not reach
-# Kodi as Enter on every remote. The keymap is removed right after (and by the Lucent skin at start-up).
+# 1.2.5: no key trick any more. 1.2.2-1.2.4 mapped a key to "Mute" while the screensaver ran, to see which key woke
+# it (Kodi throws that key away, except mute, volume and power). On a Fire TV with HDMI-CEC the mute went to the
+# soundbar, and stayed there. So the question after waking up comes again after every key, as in 1.2.1; "Continue
+# watching" is focused, Back or Close takes it away. A keymap left behind by those versions is removed here.
 KEYMAP = "special://profile/keymaps/lucent_saver_ok.xml"
-
-
-def keymap_on():
-    kb = "".join(f"<{k}>Mute</{k}>" for k in ("escape", "backspace", "browser_back"))
-    remote = "".join(f"<{k}>Mute</{k}>" for k in ("back", "menu_back"))
-    xml = (f"<keymap><global><keyboard>{kb}</keyboard><remote>{remote}</remote>"
-           "<joystick profile=\"game.controller.default\"><b>Mute</b><back>Mute</back></joystick></global></keymap>\n")
-    try:
-        xbmcvfs.mkdirs("special://profile/keymaps/")
-        fh = xbmcvfs.File(KEYMAP, "w")
-        fh.write(xml)
-        fh.close()
-        xbmc.executebuiltin("Action(reloadkeymaps)")
-        return True
-    except Exception as error:  # noqa: BLE001
-        log(f"keymap: {error}")
-        return False
 
 
 def keymap_off():
@@ -533,23 +514,10 @@ def keymap_off():
 
 
 if __name__ == "__main__":
-    ask = setting_bool("askopen", True)
-    keys = ask and keymap_on()
-    muted = xbmc.getCondVisibility("Player.Muted")
+    keymap_off()
     window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
     window.doModal()
     shown = window.current
     del window
-    back = False
-    if keys:
-        for _ in range(15):                               # the key is handled a moment after the screensaver closed
-            if xbmc.getCondVisibility("Player.Muted") != muted:
-                back = True
-                xbmc.executebuiltin("Mute")               # put the sound back as it was
-                xbmc.executebuiltin("Dialog.Close(volumebar,true)")
-                break
-            xbmc.Monitor().waitForAbort(0.1)
-        keymap_off()
-    log(f"woken up: back={back} keymap={keys}")
-    if shown and ask and not back:
+    if shown and setting_bool("askopen", True):
         ask_open(shown)
