@@ -20,6 +20,12 @@ def main():
     if not xbmc.getCondVisibility("Player.HasMedia") or xbmc.getCondVisibility("Window.IsActive(busydialog)"):
         xbmc.log("[skin.lucent] fsback: no media playing, Back ignored", xbmc.LOGINFO)
         return
+    # 3.0.14 (#36): in the last seconds Kodi may already be closing the player while it still reports a video (in the
+    # log of #36: about 1.5 s between the end of the file and the player being closed). A Stop sent then can crash Kodi
+    # on Windows, so Back leaves it to Kodi there; it closes the player by itself a moment later.
+    if xbmc.getCondVisibility("Integer.IsGreaterOrEqual(Player.Progress,98)") and not xbmc.getCondVisibility("Pvr.IsPlayingTV"):
+        xbmc.log("[skin.lucent] fsback: the video is ending, Back ignored", xbmc.LOGINFO)
+        return
     home = xbmcgui.Window(10000)
     if home.getProperty("lucent.sport.cid") and xbmc.getCondVisibility("PVR.IsPlayingTV"):
         xbmc.executebuiltin("Action(FullScreen)")
