@@ -8007,8 +8007,8 @@ def endback_test():
                 break
         mon.waitForAbort(2)
         total = pl.getTotalTime()
-        pl.seekTime(total * where)
-        mon.waitForAbort(4)
+        pl.seekTime(total - 2.6 if label == "end" else total * where)
+        mon.waitForAbort(0.8 if label == "end" else 4)
         out.append(f"{label}: progress={lab('Player.Progress')}")
         xbmc.executebuiltin("RunScript(special://skin/scripts/fsback.py)")
         mon.waitForAbort(2.5)
