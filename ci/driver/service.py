@@ -7995,6 +7995,29 @@ def subsosd_test():
     mon.waitForAbort(3)
 
 
+def endback_test():
+    """3.0.14 (#36): Back in the last seconds of a video does nothing (Kodi closes the player itself); halfway it stops."""
+    out = []
+    pl = xbmc.Player()
+    for where, label in ((0.99, "end"), (0.5, "middle")):
+        xbmc.executebuiltin("PlayMedia(/tmp/ci/test.mkv)")
+        for _ in range(30):
+            mon.waitForAbort(1)
+            if pl.isPlayingVideo():
+                break
+        mon.waitForAbort(2)
+        total = pl.getTotalTime()
+        pl.seekTime(total * where)
+        mon.waitForAbort(4)
+        out.append(f"{label}: progress={lab('Player.Progress')}")
+        xbmc.executebuiltin("RunScript(special://skin/scripts/fsback.py)")
+        mon.waitForAbort(2.5)
+        out.append(f"{label}: after back playing={pl.isPlayingVideo()} window={lab('System.CurrentWindow')!r}")
+        xbmc.executebuiltin("PlayerControl(Stop)")
+        mon.waitForAbort(3)
+    log("endback: " + " | ".join(out))
+
+
 def runtime_test():
     """3.0.6 (#35): the Runtime quick filter filters the list of a video add-on itself (fake films of 100-155 min)."""
     import subprocess
@@ -13698,6 +13721,7 @@ def main():
     safe(tmdbextra_test)
     safe(ctxpanel_test)
     safe(subsosd_test)
+    safe(endback_test)
     safe(svc_test)
     safe(runtime_test)
     safe(skinpick_test)
