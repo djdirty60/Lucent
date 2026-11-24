@@ -632,6 +632,10 @@
         <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>
         <value>$INFO[ListItem.Icon]</value>
     </variable>
+    <!-- 3.0.15 (#40): the dark tile behind a picture only shows under a real poster/landscape or when there is no picture;
+         a folder or add-on with its own icon (often transparent) sits straight on the background -->
+    <expression name="LucentPosterTile">!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | [String.IsEmpty(ListItem.Art(thumb)) + [String.IsEmpty(ListItem.Icon) | String.StartsWith(ListItem.Icon,Default)]]</expression>
+    <expression name="LucentLandTile">!String.IsEmpty(ListItem.Art(landscape)) | !String.IsEmpty(ListItem.Art(tvshow.landscape)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(tvshow.fanart)) | !String.IsEmpty(ListItem.Property(Fanart_Image)) | !String.IsEmpty(ListItem.ChannelName) | [String.IsEmpty(ListItem.Art(thumb)) + [String.IsEmpty(ListItem.Icon) | String.StartsWith(ListItem.Icon,Default)]]</expression>
     <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off) + String.IsEqual(Window(home).Property(lucent.fy.tab),Container(9000).ListItem.Property(tab))</expression>
     <expression name="LucentSportRow">!String.IsEmpty(Window(home).Property(lucent.hs.show)) + !Skin.HasSetting(lucent.hs.off)</expression>
     <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
@@ -8891,6 +8895,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -8916,6 +8921,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -9106,6 +9112,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9113,6 +9130,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9452,6 +9470,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9505,6 +9524,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -9627,6 +9647,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9634,6 +9665,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9898,6 +9930,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9923,6 +9956,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -10112,6 +10146,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10119,6 +10164,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10458,6 +10504,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10511,6 +10558,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -10633,6 +10681,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10640,6 +10699,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10904,6 +10964,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10929,6 +10990,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -11118,6 +11180,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11125,6 +11198,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11464,6 +11538,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11517,6 +11592,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -11639,6 +11715,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11646,6 +11733,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11910,6 +11998,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11935,6 +12024,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -12124,6 +12214,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12131,6 +12232,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12470,6 +12572,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12523,6 +12626,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -12645,6 +12749,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12652,6 +12767,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12916,6 +13032,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12941,6 +13058,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -13130,6 +13248,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13137,6 +13266,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13476,6 +13606,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13529,6 +13660,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -13651,6 +13783,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13658,6 +13801,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13922,6 +14066,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13947,6 +14092,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -14136,6 +14282,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14143,6 +14300,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14483,6 +14641,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14536,6 +14695,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -14658,6 +14818,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14665,6 +14836,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14933,6 +15105,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14958,6 +15131,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -15147,6 +15321,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15154,6 +15339,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15493,6 +15679,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15546,6 +15733,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -15668,6 +15856,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15675,6 +15874,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15939,6 +16139,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15964,6 +16165,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -16153,6 +16355,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16160,6 +16373,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16499,6 +16713,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16552,6 +16767,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -16674,6 +16890,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16681,6 +16908,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16945,6 +17173,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16970,6 +17199,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -17159,6 +17389,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17166,6 +17407,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17505,6 +17747,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17558,6 +17801,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -17680,6 +17924,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17687,6 +17942,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17951,6 +18207,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17976,6 +18233,7 @@
                     <height>330</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -18165,6 +18423,17 @@
                     <height>378</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentPosterTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge, not the filled glow behind it -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>268</width>
+                    <height>378</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18172,6 +18441,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18511,6 +18781,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18564,6 +18835,7 @@
                     <height>225</height>
                     <texture border="14">rr14.png</texture>
                     <colordiffuse>26000000</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <!-- "Watched titles: dim" -->
                 <control type="image">
@@ -18686,6 +18958,17 @@
                     <height>273</height>
                     <texture border="38">rr14_glow.png</texture>
                     <colordiffuse>text</colordiffuse>
+                    <visible>$EXP[LucentLandTile]</visible>
+                </control>
+                <!-- 3.0.15 (#40): an own icon without a tile gets only the glowing edge -->
+                <control type="image">
+                    <left>-24</left>
+                    <top>-24</top>
+                    <width>448</width>
+                    <height>273</height>
+                    <texture border="38">rr14_glow_ring.png</texture>
+                    <colordiffuse>text</colordiffuse>
+                    <visible>!$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18693,6 +18976,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
