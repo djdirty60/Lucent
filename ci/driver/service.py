@@ -6052,6 +6052,32 @@ def towatch_test():
     log("towatch: " + json.dumps(out))
 
 
+def icontile_test():
+    """3.0.15 (#40): a folder with its own transparent icon has no dark tile behind it (poster and landscape row);
+    a normal poster row keeps its tile."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Tegels"), ("w1.label", "Mappen (poster)"), ("w1.path", "plugin://plugin.video.fakeseren/?list=icons"), ("w1.style", "poster"),
+                 ("w2.label", "Mappen (liggend)"), ("w2.path", "plugin://plugin.video.fakeseren/?list=icons&land=1"), ("w2.style", "land"),
+                 ("w3.label", "Films"), ("w3.path", "plugin://plugin.video.fakeseren/?list=fast"), ("w3.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("SetFocus(8101,0,absolute)")
+    mon.waitForAbort(4)
+    log(f"icontile: poster n={lab('Container(8101).NumItems')} thumb={lab('Container(8101).ListItem.Art(thumb)')[-12:]!r}")
+    shot("icontile-poster")
+    xbmc.executebuiltin("SetFocus(8202,0,absolute)")
+    mon.waitForAbort(4)
+    log(f"icontile: land n={lab('Container(8202).NumItems')} focus={lab('System.CurrentControlID')}")
+    shot("icontile-land")
+    xbmc.executebuiltin("SetFocus(8103,0,absolute)")
+    mon.waitForAbort(4)
+    log(f"icontile: films n={lab('Container(8103).NumItems')} focus={lab('System.CurrentControlID')}")
+    shot("icontile-films")
+
+
 def libnew_test():
     """2.1.17: the skin's own library row 'Episodes - new and continue' (plugin://skin.lucent/): first the new episodes
     (Two, aired 5 days ago), then the half-watched ones (Pilot); not Second (old) or One (seen). Also on Home."""
@@ -13683,6 +13709,7 @@ def main():
     safe(lvreload_test)
     safe(aboutback_test)
     safe(towatch_test)
+    safe(icontile_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)

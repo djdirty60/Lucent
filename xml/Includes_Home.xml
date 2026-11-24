@@ -632,6 +632,10 @@
         <value condition="!String.IsEmpty(ListItem.Art(clearlogo))">$INFO[ListItem.Art(clearlogo)]</value>
         <value>$INFO[ListItem.Icon]</value>
     </variable>
+    <!-- 3.0.15 (#40): the dark tile behind a picture only shows under a real poster/landscape or when there is no picture;
+         a folder or add-on with its own icon (often transparent) sits straight on the background -->
+    <expression name="LucentPosterTile">!String.IsEmpty(ListItem.Art(poster)) | !String.IsEmpty(ListItem.Art(tvshow.poster)) | [String.IsEmpty(ListItem.Art(thumb)) + [String.IsEmpty(ListItem.Icon) | String.StartsWith(ListItem.Icon,Default)]]</expression>
+    <expression name="LucentLandTile">!String.IsEmpty(ListItem.Art(landscape)) | !String.IsEmpty(ListItem.Art(tvshow.landscape)) | !String.IsEmpty(ListItem.Art(fanart)) | !String.IsEmpty(ListItem.Art(tvshow.fanart)) | !String.IsEmpty(ListItem.Property(Fanart_Image)) | !String.IsEmpty(ListItem.ChannelName) | [String.IsEmpty(ListItem.Art(thumb)) + [String.IsEmpty(ListItem.Icon) | String.StartsWith(ListItem.Icon,Default)]]</expression>
     <expression name="LucentForYouRow">Integer.IsGreater(Window(home).Property(lucent.fy.count),0) + !Skin.HasSetting(lucent.fy.off) + String.IsEqual(Window(home).Property(lucent.fy.tab),Container(9000).ListItem.Property(tab))</expression>
     <expression name="LucentSportRow">!String.IsEmpty(Window(home).Property(lucent.hs.show)) + !Skin.HasSetting(lucent.hs.off)</expression>
     <expression name="NuvioTrailerOn">!String.IsEmpty(Skin.String(nuvio.posterfocus)) + !String.IsEmpty(Window(home).Property(nuvio.trailer.playing)) + Player.HasVideo</expression>
@@ -8891,6 +8895,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9113,6 +9118,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9452,6 +9458,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9634,6 +9641,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -9898,6 +9906,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10119,6 +10128,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10458,6 +10468,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10640,6 +10651,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -10904,6 +10916,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11125,6 +11138,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11464,6 +11478,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11646,6 +11661,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -11910,6 +11926,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12131,6 +12148,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12470,6 +12488,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12652,6 +12671,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -12916,6 +12936,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13137,6 +13158,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13476,6 +13498,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13658,6 +13681,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -13922,6 +13946,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14143,6 +14168,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14483,6 +14509,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14665,6 +14692,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -14933,6 +14961,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15154,6 +15183,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15493,6 +15523,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15675,6 +15706,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -15939,6 +15971,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16160,6 +16193,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16499,6 +16533,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16681,6 +16716,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -16945,6 +16981,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17166,6 +17203,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17505,6 +17543,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17687,6 +17726,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -17951,6 +17991,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18172,6 +18213,7 @@
                     <width>220</width>
                     <height>330</height>
                     <texture diffuse="mask_poster.png">default_poster.png</texture>
+                    <visible>$EXP[LucentPosterTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18511,6 +18553,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>
@@ -18693,6 +18736,7 @@
                     <width>400</width>
                     <height>225</height>
                     <texture diffuse="mask_landscape.png">default_landscape.png</texture>
+                    <visible>$EXP[LucentLandTile]</visible>
                 </control>
                 <control type="image">
                     <left>0</left>

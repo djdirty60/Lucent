@@ -125,6 +125,11 @@ else:
              "Golf", "Nectar", "Fig", "Juliet", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "Xray"]
     for i in range(n):
         title = NAMES[i] if kind in ("names", "labels") else f"{kind} {i + 1}"
+        if kind == "icons":             # 3.0.15 (#40): folders with only their own transparent icon, like drives of a source
+            li = xbmcgui.ListItem(f"Drive {i + 1}", offscreen=True)
+            li.setArt({"thumb": ART + "drive.png", "icon": ART + "drive.png"})
+            items.append((f"plugin://plugin.video.fakeseren/?list=fast&from={i}", li, True))
+            continue
         if kind == "labels":            # an add-on folder that only gives names (no title, year ...), like many add-ons do
             li = xbmcgui.ListItem(title, offscreen=True)
             li.setArt({"poster": icon, "thumb": icon})
