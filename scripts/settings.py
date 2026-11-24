@@ -111,7 +111,9 @@ OSD_BUTTONS = [("prev", ("Previous episode", "Vorige aflevering")), ("rewind", (
                ("subtitles", ("Subtitles", "Ondertitels")), ("subsearch", ("Search subtitles", "Ondertitels zoeken")),
                ("audio", ("Audio", "Audio")), ("video", ("Video settings", "Video-instellingen")),
                ("bookmarks", ("Bookmarks", "Bladwijzers")), ("stats", ("Player info", "Spelerinfo")),
-               ("sleep", ("Sleep timer", "Slaaptimer")), ("info", ("Info", "Info"))]
+               ("sleep", ("Sleep timer", "Slaaptimer")), ("info", ("Info", "Info")),
+               # 3.0.16 (#41): the two buttons of the video add-on (only shown when it is installed and knows them)
+               ("replay", ("What did they say?", "Wat zeiden ze?")), ("intromark", ("Mark intro", "Intro aanmelden"))]
 POSTERFOCUS = [("", ("Off", "Uit")), ("window", ("Trailer window with soft edge", "Trailervenster met zachte rand")),
                ("hero", ("Hero media", "Hero-media")), ("expand", ("Expanded card", "Uitgevouwen kaart"))]
 TRAILER_DELAY = [("1", ("After 1 second", "Na 1 seconde")), ("", ("After 2 seconds", "Na 2 seconden")),
