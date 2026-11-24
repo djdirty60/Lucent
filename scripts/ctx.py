@@ -123,6 +123,13 @@ def main():
     if xbmc.getSkinDir() != "skin.lucent":         # 3.0.4 (#37): an old Lucent keymap under another skin
         xbmc.executebuiltin("Action(ContextMenu)")
         return
+    # 3.0.17: a Python dialog on top (the video add-on's source list, ...) gets the menu key itself; the <videos>
+    # keymap section brought it here and Kodi's menu then opened for the film in the list under it
+    dialog = xbmcgui.getCurrentWindowDialogId()
+    if dialog >= 13000:
+        xbmc.log(f"[skin.lucent] ctx: menu key to dialog {dialog}", xbmc.LOGINFO)
+        xbmc.executebuiltin(f"Action(ContextMenu,{dialog})")
+        return
     if xbmc.getCondVisibility("Window.IsActive(videos)") and xbmc.getInfoLabel("System.CurrentControlID") == EPISODES:
         episode_menu()
     else:
