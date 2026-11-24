@@ -545,14 +545,27 @@ def keymap_off():
         xbmc.executebuiltin("Action(reloadkeymaps)")
 
 
+def noop():
+    xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.ExecuteAction", "params": {"action": "noop"}}))
+
+
 if __name__ == "__main__":
+    import sys
     keymap_off()
     beat = HOME.getProperty("lucent.saver.own")
+    shows = len(sys.argv) > 1 and sys.argv[1] == "show"
     if beat and time.time() - float(beat or 0) < 15:
         # 1.2.6: the screensaver is already on screen in its own window; Kodi only started it again because its idle
         # time ran out. Switch Kodi's state off again and leave the picture as it is.
-        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.ExecuteAction", "params": {"action": "noop"}}))
+        noop()
+    elif not shows:
+        # 1.2.7: Kodi stops the screensaver's own script as soon as its screensaver state goes off - and 1.2.6 switches
+        # that off on purpose (release_kodi), so the slides stood still on the second title. The pictures now run in a
+        # script of their own, which Kodi does not stop; this one, started by Kodi as the screensaver, only starts it.
+        HOME.setProperty("lucent.saver.own", str(time.time()))          # a second start by Kodi is not a new show
+        xbmc.executebuiltin("RunScript(special://home/addons/screensaver.lucent/screensaver.py,show)")
     else:
+        HOME.clearProperty("lucent.saver.own")
         window = Screensaver("screensaver-lucent.xml", PATH, "default", "")
         window.doModal()
         shown, own, choice = window.current, window.own, window.choice
