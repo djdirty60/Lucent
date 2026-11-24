@@ -7773,6 +7773,38 @@ def saverok_test():
     log("saverok: " + " | ".join(out))
 
 
+def saverslide_test():
+    """Screensaver 1.2.6: does it still move on to the next title (Wilfried: it stays on one)? Kodi's own idle time
+    set to 1 minute, so Kodi starts the screensaver a second time while ours is on screen."""
+    import xbmcaddon
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    rpc = lambda m, p: json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": m, "params": p})))  # noqa: E731
+    ss = xbmcaddon.Addon("screensaver.lucent")
+    ss.setSettingInt("source", 1)
+    ss.setSettingInt("seconds", 8)
+    ss.setSettingInt("nightfrom", 0)
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": "screensaver.lucent"})
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.time", "value": 1})
+    xbmc.executebuiltin("ActivateScreensaver")
+    seen = []
+    for n in range(30):
+        mon.waitForAbort(5)
+        win = xbmcgui.Window(xbmcgui.getCurrentWindowDialogId())
+        slot = win.getProperty("slot")
+        title = win.getProperty(f"{slot}.title") if slot else ""
+        seen.append(f"{n * 5 + 5}s:{slot}:{title[:18]}:ss={int(cond('System.ScreenSaverActive'))}:own={bool(HOME.getProperty('lucent.saver.own'))}")
+        if n in (1, 10, 25):
+            shot(f"saverslide-{n}")
+    log("saverslide: " + " | ".join(seen))
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(3)
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})
+    rpc("Settings.SetSettingValue", {"setting": "screensaver.time", "value": 3})
+
+
 def tmdbkey_test():
     """3.0.9: Lucent's own TMDB key works at TMDB itself, and is used when no other key is set."""
     import urllib.request
@@ -13752,6 +13784,7 @@ def main():
     safe(icontile_test)
     safe(osdbtn2_test)
     safe(toastq_test)
+    safe(saverslide_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)
