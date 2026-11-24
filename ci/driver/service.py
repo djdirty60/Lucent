@@ -6068,6 +6068,11 @@ def icontile_test():
     mon.waitForAbort(4)
     log(f"icontile: poster n={lab('Container(8101).NumItems')} thumb={lab('Container(8101).ListItem.Art(thumb)')[-12:]!r}")
     shot("icontile-poster")
+    log(f"icontile: tile={cond('Container(8101).ListItem.Art(poster)')} exp={cond('$EXP[LucentPosterTile]')}")
+    for _ in range(20):
+        if int(lab("Container(8202).NumItems") or 0) > 0:
+            break
+        mon.waitForAbort(1)
     xbmc.executebuiltin("SetFocus(8202,0,absolute)")
     mon.waitForAbort(4)
     log(f"icontile: land n={lab('Container(8202).NumItems')} focus={lab('System.CurrentControlID')}")
