@@ -30,7 +30,9 @@
                 <height>44</height>
                 <font>font13_bold</font>
             </control>
-            <control type="fadelabel" id="402">
+            <!-- 3.0.17 (#39): a label, not a fadelabel - Kodi holds every queued notification until a fadelabel has
+                 scrolled to the end, so quick audio switches (long press) piled up and the box lagged for seconds -->
+            <control type="label" id="402">
                 <left>124</left>
                 <top>66</top>
                 <width>520</width>
@@ -38,8 +40,6 @@
                 <font>font12</font>
                 <textcolor>text3</textcolor>
                 <scroll>true</scroll>
-                <scrollout>false</scrollout>
-                <pauseatend>2000</pauseatend>
             </control>
         </control>
     </controls>

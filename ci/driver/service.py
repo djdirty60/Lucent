@@ -6777,6 +6777,23 @@ def epbadge_test():
     log("epbadge: " + json.dumps(out))
 
 
+def toastq_test():
+    """3.0.17 (#39): ten quick notifications with a long text (like a long press on the audio key). With a fadelabel Kodi
+    holds each one until the text has scrolled; measure how long the box stays up after the last one."""
+    import time as _t
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    long = "English - DTS-HD MA 7.1 - Commentary by the director and the cast, audio track number"
+    for i in range(10):
+        xbmc.executebuiltin(f'Notification(Audio stream,{long} {i + 1},3000)')
+        mon.waitForAbort(0.4)
+    t0 = _t.time()
+    shot("39-toast-queue")
+    while cond("Window.IsVisible(notification)") and _t.time() - t0 < 60:
+        mon.waitForAbort(0.2)
+    log(f"toastq: box closed {(_t.time() - t0):.1f}s after the last notification")
+
+
 def osdbtn2_test():
     """3.0.16 (#41): the button list of the player bar also has What did they say? and Mark intro (last two)."""
     xbmc.executebuiltin("Dialog.Close(all,true)")
@@ -13734,6 +13751,7 @@ def main():
     safe(towatch_test)
     safe(icontile_test)
     safe(osdbtn2_test)
+    safe(toastq_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)
