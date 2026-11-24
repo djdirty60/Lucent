@@ -20,7 +20,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
-ADDON = xbmcaddon.Addon()
+ADDON = xbmcaddon.Addon("screensaver.lucent")   # 1.2.7: also when started as a plain script (RunScript ...,show)
 PATH = ADDON.getAddonInfo("path")
 HOME = xbmcgui.Window(10000)
 TMDB = "https://api.themoviedb.org/3/"
