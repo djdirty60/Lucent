@@ -554,7 +554,7 @@ if __name__ == "__main__":
     keymap_off()
     beat = HOME.getProperty("lucent.saver.own")
     shows = len(sys.argv) > 1 and sys.argv[1] == "show"
-    if beat and time.time() - float(beat or 0) < 15:
+    if not shows and beat and time.time() - float(beat or 0) < 15:
         # 1.2.6: the screensaver is already on screen in its own window; Kodi only started it again because its idle
         # time ran out. Switch Kodi's state off again and leave the picture as it is.
         noop()

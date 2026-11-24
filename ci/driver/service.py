@@ -7791,9 +7791,12 @@ def saverslide_test():
     seen = []
     for n in range(30):
         mon.waitForAbort(5)
-        win = xbmcgui.Window(xbmcgui.getCurrentWindowDialogId())
-        slot = win.getProperty("slot")
-        title = win.getProperty(f"{slot}.title") if slot else ""
+        try:
+            win = xbmcgui.Window(xbmcgui.getCurrentWindowDialogId())
+            slot = win.getProperty("slot")
+            title = win.getProperty(f"{slot}.title") if slot else ""
+        except RuntimeError:
+            slot, title = "-", f"no dialog {xbmcgui.getCurrentWindowDialogId()}"
         seen.append(f"{n * 5 + 5}s:{slot}:{title[:18]}:ss={int(cond('System.ScreenSaverActive'))}:own={bool(HOME.getProperty('lucent.saver.own'))}")
         if n in (1, 10, 25):
             shot(f"saverslide-{n}")
@@ -7803,6 +7806,41 @@ def saverslide_test():
     xbmc.executebuiltin("Dialog.Close(all,true)")
     rpc("Settings.SetSettingValue", {"setting": "screensaver.mode", "value": ""})
     rpc("Settings.SetSettingValue", {"setting": "screensaver.time", "value": 3})
+
+
+def ctxdialog_test():
+    """3.0.17: the menu key over a Python dialog on the Videos window (like the video add-on's source list) goes to that
+    dialog, not to Kodi's menu of the film under it."""
+    import threading
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=fast,return)")
+    mon.waitForAbort(4)
+    HOME.clearProperty("ci.ctxdialog")
+
+    class Probe(xbmcgui.WindowXMLDialog):
+        def onAction(self, action):  # noqa: N802
+            HOME.setProperty("ci.ctxdialog", f"{HOME.getProperty('ci.ctxdialog')} {action.getId()}")
+            if action.getId() in (9, 10, 92):
+                self.close()
+
+    box = {}
+
+    def run():
+        box["w"] = Probe("DialogSelect.xml", xbmcaddon.Addon("skin.lucent").getAddonInfo("path"), "default", "1080i")
+        box["w"].doModal()
+    import xbmcaddon
+    threading.Thread(target=run, daemon=True).start()
+    mon.waitForAbort(3)
+    dlg = xbmcgui.getCurrentWindowDialogId()
+    xbmc.executebuiltin("RunScript(special://skin/scripts/ctx.py)")
+    mon.waitForAbort(3)
+    log(f"ctxdialog: dialog={dlg} actions={HOME.getProperty('ci.ctxdialog')!r} contextmenu={cond('Window.IsVisible(contextmenu)')}")
+    shot("ctxdialog")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    if box.get("w"):
+        box["w"].close()
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(home)")
 
 
 def tmdbkey_test():
@@ -13785,6 +13823,7 @@ def main():
     safe(osdbtn2_test)
     safe(toastq_test)
     safe(saverslide_test)
+    safe(ctxdialog_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)
