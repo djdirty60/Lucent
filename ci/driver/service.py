@@ -6777,6 +6777,24 @@ def epbadge_test():
     log("epbadge: " + json.dumps(out))
 
 
+def osdbtn2_test():
+    """3.0.16 (#41): the button list of the player bar also has What did they say? and Mark intro (last two)."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("RunScript(special://skin/scripts/settings.py,osdbuttons)")
+    for _ in range(20):
+        mon.waitForAbort(1)
+        if cond("Window.IsVisible(selectdialog)"):
+            break
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(Up)")
+    mon.waitForAbort(1)
+    log(f"osdbtn2: focused={lab('Container(3).ListItem.Label')!r} n={lab('Container(3).NumItems')}")
+    shot("41-osd-buttons-dialog")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+
+
 def osdbtn_test():
     """2.1.33 (#26): choose the buttons of the player bar. The multiselect dialog, then the bar with Forward, Bookmarks
     and Sleep timer hidden (and how Left/Right walk over the gap), then everything back on."""
@@ -13715,6 +13733,7 @@ def main():
     safe(aboutback_test)
     safe(towatch_test)
     safe(icontile_test)
+    safe(osdbtn2_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)
