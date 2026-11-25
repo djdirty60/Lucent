@@ -7897,6 +7897,9 @@ def iconstyle_test():
                  ("w2.label", "Mappen (iconen)"), ("w2.path", "plugin://plugin.video.fakeseren/?list=icons&land=1"), ("w2.style", "icon"),
                  ("w3.label", "Video-add-ons (iconen)"), ("w3.path", "addons://sources/video/"), ("w3.style", "icon")):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    for n in range(1, 6):
+        xbmc.executebuiltin(f"SetProperty(lucent.rowok.{n},1,home)")
+        xbmc.executebuiltin(f"SetProperty(lucent.load.{n},1,home)")
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
     xbmc.executebuiltin("SetFocus(8101,0,absolute)")
