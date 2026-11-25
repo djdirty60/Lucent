@@ -7887,6 +7887,69 @@ def studiolog_test():
     log("studiolog: " + " | ".join(out))
 
 
+def iconstyle_test():
+    """3.0.21 (#40): the new row style Icons on Home (square tile with the icon, name below), and OK on the Add-ons tab
+    starts the add-on instead of opening its info."""
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Iconen"), ("w1.label", "Video-add-ons"), ("w1.path", "addons://sources/video/"), ("w1.style", "icon"),
+                 ("w2.label", "Mappen"), ("w2.path", "plugin://plugin.video.fakeseren/?list=icons"), ("w2.style", "icon"),
+                 ("w3.label", "Films"), ("w3.path", "plugin://plugin.video.fakeseren/?list=fast"), ("w3.style", "poster")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    for _ in range(20):
+        if int(lab("Container(8201).NumItems") or 0) > 0:
+            break
+        mon.waitForAbort(1)
+    xbmc.executebuiltin("SetFocus(8201,0,absolute)")
+    mon.waitForAbort(4)
+    log(f"iconstyle: row1 n={lab('Container(8201).NumItems')} label={lab('Container(8201).ListItem.Label')!r} id={lab('Container(8201).ListItem.Property(Addon.ID)')!r} "
+        f"icon={cond('$EXP[NuvioW1Icon]')} land={cond('$EXP[NuvioW1Land]')} focus={lab('System.CurrentControlID')}")
+    shot("iconstyle-1")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(4)
+    log(f"iconstyle: row2 n={lab('Container(8202).NumItems')} focus={lab('System.CurrentControlID')}")
+    shot("iconstyle-2")
+    xbmc.executebuiltin("Action(Down)")
+    mon.waitForAbort(4)
+    shot("iconstyle-3")
+    xbmc.executebuiltin("SetFocus(8201,0,absolute)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("Action(Select)")
+    mon.waitForAbort(6)
+    log(f"iconstyle: ok row -> window={lab('System.CurrentWindow')!r} dialog={lab('System.CurrentWindowDialogId') if False else xbmcgui.getCurrentWindowDialogId()} path={lab('Container.FolderPath')!r}")
+    shot("iconstyle-ok-row")
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.5)
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(3)
+    found = -1
+    for i in range(12):
+        xbmc.executebuiltin(f"SetFocus(9000,{i},absolute)")
+        mon.waitForAbort(1.2)
+        if cond("$EXP[LucentPAdd]"):
+            found = i
+            break
+    log(f"iconstyle: add-on tab index={found}")
+    if found >= 0:
+        mon.waitForAbort(3)
+        xbmc.executebuiltin("SetFocus(9340,0,absolute)")
+        mon.waitForAbort(2)
+        log(f"iconstyle: addon tab item={lab('Container(9340).ListItem.Label')!r} id={lab('Container(9340).ListItem.Property(Addon.ID)')!r}")
+        shot("iconstyle-addontab")
+        xbmc.executebuiltin("Action(Select)")
+        mon.waitForAbort(6)
+        log(f"iconstyle: ok addon tab -> window={lab('System.CurrentWindow')!r} dialog={xbmcgui.getCurrentWindowDialogId()} path={lab('Container.FolderPath')!r}")
+        shot("iconstyle-ok-addontab")
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.5)
+    xbmc.executebuiltin("ActivateWindow(home)")
+
+
 def ssorder_test():
     """3.0.20: the new order of Skin settings. Every category on screen, and Down walks every row of a panel and
     comes back round (no dead ends)."""
@@ -13907,6 +13970,7 @@ def main():
     safe(ctxdialog_test)
     safe(studiolog_test)
     safe(ssorder_test)
+    safe(iconstyle_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)
