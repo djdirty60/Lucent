@@ -7968,28 +7968,17 @@ def wrap43_test():
     shot("wrap43-power")
     xbmc.executebuiltin("Dialog.Close(all,true)")
     mon.waitForAbort(1)
-    # 3. context menu on a Home row
+    # 3. slider in the list view
     xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=fast,return)")
-    mon.waitForAbort(5)
+    for _ in range(15):
+        mon.waitForAbort(1)
+        if int(lab("Container.NumItems") or 0) > 0:
+            break
     xbmc.executebuiltin("Container.SetViewMode(50)")
     mon.waitForAbort(2)
     xbmc.executebuiltin("SetFocus(50,0,absolute)")
     mon.waitForAbort(1)
-    xbmc.executebuiltin("Action(ContextMenu)")
-    mon.waitForAbort(2)
-    seq = [lab("System.CurrentControlID")]
-    for _ in range(3):
-        xbmc.executebuiltin("Action(Up)")
-        mon.waitForAbort(0.5)
-        seq.append(lab("System.CurrentControlID"))
-    out.append(f"context dialog={xbmcgui.getCurrentWindowDialogId()} up " + ",".join(seq))
-    shot("wrap43-context")
-    xbmc.executebuiltin("Action(Back)")
-    mon.waitForAbort(1.5)
-    # 4. slider in the list view
-    xbmc.executebuiltin("SetFocus(50,0,absolute)")
-    mon.waitForAbort(1)
-    out.append(f"view={lab('Container.Viewmode')!r} n={lab('Container.NumItems')} vis60={cond('Control.IsVisible(60)')}")
+    out.append(f"window={lab('System.CurrentWindow')!r} view={lab('Container.Viewmode')!r} n={lab('Container.NumItems')} vis50={cond('Control.IsVisible(50)')} vis60={cond('Control.IsVisible(60)')}")
     xbmc.executebuiltin("Action(Right)")
     mon.waitForAbort(1)
     shot("wrap43-slider")
@@ -8003,6 +7992,20 @@ def wrap43_test():
     mon.waitForAbort(1)
     seq.append("left->" + lab("System.CurrentControlID") + ":" + lab("Container(50).CurrentItem"))
     out.append("slider " + ",".join(seq))
+    # 4. context menu on that list
+    xbmc.executebuiltin("SetFocus(50,0,absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(ContextMenu)")
+    mon.waitForAbort(3)
+    seq = [lab("System.CurrentControlID")]
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Up)")
+        mon.waitForAbort(0.5)
+        seq.append(lab("System.CurrentControlID"))
+    out.append(f"context dialog={xbmcgui.getCurrentWindowDialogId()} up " + ",".join(seq))
+    shot("wrap43-context")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
     log("wrap43: " + " || ".join(out))
     xbmc.executebuiltin("Dialog.Close(all,true)")
     xbmc.executebuiltin("ActivateWindow(home)")
