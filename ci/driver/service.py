@@ -7843,6 +7843,50 @@ def ctxdialog_test():
     xbmc.executebuiltin("ActivateWindow(home)")
 
 
+def studiolog_test():
+    """3.0.19 (#42): studio logos on the info page in white (default) and coloured (Skin settings)."""
+    rpc = lambda m, p: json.loads(xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": m, "params": p})))  # noqa: E731
+    out = [f"white={cond('System.HasAddon(resource.images.studios.white)')} coloured={cond('System.HasAddon(resource.images.studios.coloured)')}"]
+    movies = (rpc("VideoLibrary.GetMovies", {}).get("result") or {}).get("movies") or []
+    for m in movies:
+        rpc("VideoLibrary.SetMovieDetails", {"movieid": m["movieid"], "studio": ["Warner Bros. Pictures"]})
+    for mode in ("white", "coloured"):
+        xbmc.executebuiltin("Skin.SetBool(lucent.studio.coloured)" if mode == "coloured" else "Skin.Reset(lucent.studio.coloured)")
+        for _ in range(3):
+            xbmc.executebuiltin("Dialog.Close(all,true)")
+            mon.waitForAbort(0.7)
+        xbmc.executebuiltin("ActivateWindow(Videos,videodb://movies/titles/,return)")
+        mon.waitForAbort(3)
+        for k in ("Down", "Right", "Down", "Right"):
+            if lab("ListItem.DBType") == "movie":
+                break
+            key(k)
+            mon.waitForAbort(1)
+        xbmc.executebuiltin("Action(Info)")
+        mon.waitForAbort(6)
+        xbmc.executebuiltin("SetFocus(5300)")
+        mon.waitForAbort(3)
+        out.append(f"{mode}: studio={lab('Container(5300).ListItem.Label')!r} icon={lab('Container(5300).ListItem.Icon')[-45:]!r} focus={lab('System.CurrentControlID')}")
+        shot(f"studio-{mode}")
+    xbmc.executebuiltin("Skin.Reset(lucent.studio.coloured)")
+    for _ in range(3):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        mon.waitForAbort(0.7)
+    # the new row in Skin settings > Layout > Details page
+    xbmc.executebuiltin("Skin.SetBool(lucent.ss.open.2203)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(4)
+    xbmc.executebuiltin("SetFocus(1216)")
+    mon.waitForAbort(2)
+    out.append(f"settings focus={lab('System.CurrentControlID')} visible={cond('Control.IsVisible(21216)')}")
+    shot("studio-setting")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    log("studiolog: " + " | ".join(out))
+
+
 def tmdbkey_test():
     """3.0.9: Lucent's own TMDB key works at TMDB itself, and is used when no other key is set."""
     import urllib.request
@@ -13824,6 +13868,7 @@ def main():
     safe(toastq_test)
     safe(saverslide_test)
     safe(ctxdialog_test)
+    safe(studiolog_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)

@@ -2494,7 +2494,7 @@
                             <width>240</width>
                             <height>80</height>
                             <aspectratio>keep</aspectratio>
-                            <texture colordiffuse="text">$INFO[ListItem.Label,resource://resource.images.studios.white/,.png]</texture>
+                            <texture colordiffuse="$VAR[LucentStudioTint]">$VAR[LucentStudioPack]$INFO[ListItem.Label].png</texture>
                             <visible>System.HasAddon(resource.images.studios.white) + String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="label">
@@ -2563,7 +2563,7 @@
                             <width>240</width>
                             <height>80</height>
                             <aspectratio>keep</aspectratio>
-                            <texture colordiffuse="on_focus">$INFO[ListItem.Label,resource://resource.images.studios.white/,.png]</texture>
+                            <texture colordiffuse="$VAR[LucentStudioTintFocus]">$VAR[LucentStudioPack]$INFO[ListItem.Label].png</texture>
                             <visible>System.HasAddon(resource.images.studios.white) + String.IsEmpty(ListItem.Thumb)</visible>
                         </control>
                         <control type="label">
@@ -2595,7 +2595,7 @@
                     <content>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.1)]</label>
-                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.1)].png</icon>
+                            <icon>$VAR[LucentStudioPack]$INFO[Window(home).Property(nuvio.info.studio.1)].png</icon>
                             <thumb>$INFO[Window(home).Property(nuvio.info.studio.1.logo)]</thumb>
                             <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.1)]",home)</onclick>
                             <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
@@ -2603,7 +2603,7 @@
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.2)]</label>
-                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.2)].png</icon>
+                            <icon>$VAR[LucentStudioPack]$INFO[Window(home).Property(nuvio.info.studio.2)].png</icon>
                             <thumb>$INFO[Window(home).Property(nuvio.info.studio.2.logo)]</thumb>
                             <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.2)]",home)</onclick>
                             <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
@@ -2611,7 +2611,7 @@
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.3)]</label>
-                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.3)].png</icon>
+                            <icon>$VAR[LucentStudioPack]$INFO[Window(home).Property(nuvio.info.studio.3)].png</icon>
                             <thumb>$INFO[Window(home).Property(nuvio.info.studio.3.logo)]</thumb>
                             <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.3)]",home)</onclick>
                             <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
@@ -2619,7 +2619,7 @@
                         </item>
                         <item>
                             <label>$INFO[Window(home).Property(nuvio.info.studio.4)]</label>
-                            <icon>resource://resource.images.studios.white/$INFO[Window(home).Property(nuvio.info.studio.4)].png</icon>
+                            <icon>$VAR[LucentStudioPack]$INFO[Window(home).Property(nuvio.info.studio.4)].png</icon>
                             <thumb>$INFO[Window(home).Property(nuvio.info.studio.4.logo)]</thumb>
                             <onclick>SetProperty(nuvio.open.studio,"$INFO[Window(home).Property(nuvio.info.studio.4)]",home)</onclick>
                             <onclick>RunScript(special://skin/scripts/info.py,studio)</onclick>
