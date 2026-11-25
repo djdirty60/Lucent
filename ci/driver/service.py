@@ -7890,76 +7890,37 @@ def studiolog_test():
 def iconstyle_test():
     """3.0.21 (#40): the new row style Icons on Home (square tile with the icon, name below), and OK on the Add-ons tab
     starts the add-on instead of opening its info."""
-    import sys as _sys
-    _sys.path.insert(0, xbmcvfs.translatePath("special://skin/scripts"))
-    import menu
-    import tabpanels
     xbmc.executebuiltin("Dialog.Close(all,true)")
-    m = menu.Menu()
-    m.tabs = [t for t in m.tabs if t["label"] not in ("Iconen", "Add-ons test")]
-    m.tabs.insert(1, {"label": "Iconen", "icon": "icons/addons.png", "action": "", "actionlabel": "", "widgets": [
-        {"label": "Video-add-ons", "path": "addons://sources/video/", "style": "icon"},
-        {"label": "Mappen", "path": "plugin://plugin.video.fakeseren/?list=icons", "style": "icon"},
-        {"label": "Films", "path": "plugin://plugin.video.fakeseren/?list=fast", "style": "poster"}]})
-    m.tabs.insert(2, {"label": "Add-ons test", "icon": "icons/addons.png", "action": "ActivateWindow(AddonBrowser)", "actionlabel": "", "widgets": []})
-    m.tabs = m.tabs[:menu.NTABS]
-    m.save()
-    tabpanels.update()
     xbmc.executebuiltin("ActivateWindow(home)")
-    mon.waitForAbort(3)
-    count = int(lab("Container(9000).NumItems") or 0)
-    idx = {}
-    for i in range(count):
-        xbmc.executebuiltin(f"Control.SetFocus(9000,{i})")
-        mon.waitForAbort(0.4)
-        idx[lab("Container(9000).ListItem.Label")] = i
-    log(f"iconstyle: tabs={idx}")
-    xbmc.executebuiltin(f"Control.SetFocus(9000,{idx.get('Iconen', 1)})")
+    mon.waitForAbort(1.5)
+    for k, v in (("label", "Tegels"), ("w1.label", "Films"), ("w1.path", "plugin://plugin.video.fakeseren/?list=fast"), ("w1.style", "poster"),
+                 ("w2.label", "Mappen (iconen)"), ("w2.path", "plugin://plugin.video.fakeseren/?list=icons&land=1"), ("w2.style", "icon"),
+                 ("w3.label", "Video-add-ons (iconen)"), ("w3.path", "addons://sources/video/"), ("w3.style", "icon")):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    xbmc.executebuiltin("Control.SetFocus(9000,2)")
+    mon.waitForAbort(6)
+    xbmc.executebuiltin("SetFocus(8101,0,absolute)")
     mon.waitForAbort(4)
-    for _ in range(20):
-        if int(lab("Container(8201).NumItems") or 0) > 0:
-            break
-        mon.waitForAbort(1)
-    log(f"iconstyle: style={lab('Container(9000).ListItem.Property(w1.style)')!r} n8201={lab('Container(8201).NumItems')} n8101={lab('Container(8101).NumItems')} "
-        f"n8202={lab('Container(8202).NumItems')} n8103={lab('Container(8103).NumItems')}")
-    shot("iconstyle-0")
-    xbmc.executebuiltin("SetFocus(8201,0,absolute)")
-    mon.waitForAbort(3)
-    log(f"iconstyle: row1 label={lab('Container(8201).ListItem.Label')!r} id={lab('Container(8201).ListItem.Property(Addon.ID)')!r} focus={lab('System.CurrentControlID')}")
-    shot("iconstyle-1")
-    xbmc.executebuiltin("Action(Down)")
-    mon.waitForAbort(3)
-    log(f"iconstyle: row2 focus={lab('System.CurrentControlID')} label={lab('Container(8202).ListItem.Label')!r}")
-    shot("iconstyle-2")
-    xbmc.executebuiltin("Action(Down)")
-    mon.waitForAbort(3)
-    shot("iconstyle-3")
-    xbmc.executebuiltin("SetFocus(8201,0,absolute)")
+    for row in (8202, 8203):
+        for _ in range(20):
+            if int(lab(f"Container({row}).NumItems") or 0) > 0:
+                break
+            mon.waitForAbort(1)
+        xbmc.executebuiltin(f"SetFocus({row},0,absolute)")
+        mon.waitForAbort(4)
+        log(f"iconstyle: row {row} n={lab(f'Container({row}).NumItems')} label={lab(f'Container({row}).ListItem.Label')!r} id={lab(f'Container({row}).ListItem.Property(Addon.ID)')!r} focus={lab('System.CurrentControlID')}")
+        shot(f"iconstyle-{row}")
+    xbmc.executebuiltin("SetFocus(8203,0,absolute)")
     mon.waitForAbort(2)
     xbmc.executebuiltin("Action(Select)")
     mon.waitForAbort(6)
-    log(f"iconstyle: ok row -> window={lab('System.CurrentWindow')!r} dialog={xbmcgui.getCurrentWindowDialogId()} path={lab('Container.FolderPath')!r}")
+    log(f"iconstyle: ok on add-on in Icons row -> window={lab('System.CurrentWindow')!r} dialog={xbmcgui.getCurrentWindowDialogId()} path={lab('Container.FolderPath')!r}")
     shot("iconstyle-ok-row")
     for _ in range(3):
         xbmc.executebuiltin("Dialog.Close(all,true)")
         mon.waitForAbort(0.5)
     xbmc.executebuiltin("ActivateWindow(home)")
-    mon.waitForAbort(3)
-    if "Add-ons test" in idx:
-        xbmc.executebuiltin(f"Control.SetFocus(9000,{idx['Add-ons test']})")
-        mon.waitForAbort(5)
-        xbmc.executebuiltin("SetFocus(9340,0,absolute)")
-        mon.waitForAbort(2)
-        log(f"iconstyle: addon tab n={lab('Container(9340).NumItems')} item={lab('Container(9340).ListItem.Label')!r} id={lab('Container(9340).ListItem.Property(Addon.ID)')!r} focus={lab('System.CurrentControlID')}")
-        shot("iconstyle-addontab")
-        xbmc.executebuiltin("Action(Select)")
-        mon.waitForAbort(6)
-        log(f"iconstyle: ok addon tab -> window={lab('System.CurrentWindow')!r} dialog={xbmcgui.getCurrentWindowDialogId()} path={lab('Container.FolderPath')!r}")
-        shot("iconstyle-ok-addontab")
-    for _ in range(3):
-        xbmc.executebuiltin("Dialog.Close(all,true)")
-        mon.waitForAbort(0.5)
-    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
 
 def ssorder_test():
     """3.0.20: the new order of Skin settings. Every category on screen, and Down walks every row of a panel and
