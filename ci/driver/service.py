@@ -7925,6 +7925,89 @@ def iconstyle_test():
     xbmc.executebuiltin("ActivateWindow(home)")
     mon.waitForAbort(2)
 
+def wrap43_test():
+    """3.0.21 (#43): menus go round (select dialog, context menu, power menu) and Right on a list view reaches the
+    slider, which scrolls a page at a time."""
+    import threading
+    out = []
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(2)
+    # 1. a select dialog like Menu and widgets
+    threading.Thread(target=lambda: xbmcgui.Dialog().select("Test", [f"Item {i}" for i in range(1, 7)]), daemon=True).start()
+    mon.waitForAbort(2.5)
+    seq = [lab("System.CurrentControlID") + ":" + lab("Container(3).CurrentItem")]
+    for _ in range(7):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.5)
+        seq.append(lab("System.CurrentControlID") + ":" + lab("Container(3).CurrentItem"))
+    shot("wrap43-select")
+    out.append("select down " + ",".join(seq))
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    # 1b. select with several choices: Down still reaches OK
+    threading.Thread(target=lambda: xbmcgui.Dialog().multiselect("Test", [f"Item {i}" for i in range(1, 4)]), daemon=True).start()
+    mon.waitForAbort(2.5)
+    seq = []
+    for _ in range(5):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.5)
+        seq.append(lab("System.CurrentControlID") + ":" + lab("Container(3).CurrentItem") + lab("Container(6).CurrentItem"))
+    out.append("multi down " + ",".join(seq))
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    # 2. power menu
+    xbmc.executebuiltin("ActivateWindow(shutdownmenu)")
+    mon.waitForAbort(2)
+    seq = [lab("System.CurrentControlID")]
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Up)")
+        mon.waitForAbort(0.5)
+        seq.append(lab("System.CurrentControlID"))
+    out.append("power up " + ",".join(seq))
+    shot("wrap43-power")
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    mon.waitForAbort(1)
+    # 3. context menu on a Home row
+    xbmc.executebuiltin("ActivateWindow(Videos,plugin://plugin.video.fakeseren/?list=fast,return)")
+    mon.waitForAbort(5)
+    xbmc.executebuiltin("Container.SetViewMode(50)")
+    mon.waitForAbort(2)
+    xbmc.executebuiltin("SetFocus(50,0,absolute)")
+    mon.waitForAbort(1)
+    xbmc.executebuiltin("Action(ContextMenu)")
+    mon.waitForAbort(2)
+    seq = [lab("System.CurrentControlID")]
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Up)")
+        mon.waitForAbort(0.5)
+        seq.append(lab("System.CurrentControlID"))
+    out.append(f"context dialog={xbmcgui.getCurrentWindowDialogId()} up " + ",".join(seq))
+    shot("wrap43-context")
+    xbmc.executebuiltin("Action(Back)")
+    mon.waitForAbort(1.5)
+    # 4. slider in the list view
+    xbmc.executebuiltin("SetFocus(50,0,absolute)")
+    mon.waitForAbort(1)
+    out.append(f"view={lab('Container.Viewmode')!r} n={lab('Container.NumItems')} vis60={cond('Control.IsVisible(60)')}")
+    xbmc.executebuiltin("Action(Right)")
+    mon.waitForAbort(1)
+    shot("wrap43-slider")
+    seq = [lab("System.CurrentControlID") + ":" + lab("Container(50).CurrentItem")]
+    for _ in range(3):
+        xbmc.executebuiltin("Action(Down)")
+        mon.waitForAbort(0.7)
+        seq.append(lab("System.CurrentControlID") + ":" + lab("Container(50).CurrentItem") + "/" + lab("Container.CurrentPage"))
+    shot("wrap43-slider-down")
+    xbmc.executebuiltin("Action(Left)")
+    mon.waitForAbort(1)
+    seq.append("left->" + lab("System.CurrentControlID") + ":" + lab("Container(50).CurrentItem"))
+    out.append("slider " + ",".join(seq))
+    log("wrap43: " + " || ".join(out))
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+
+
 def ssorder_test():
     """3.0.20: the new order of Skin settings. Every category on screen, and Down walks every row of a panel and
     comes back round (no dead ends)."""
@@ -13946,6 +14029,7 @@ def main():
     safe(studiolog_test)
     safe(ssorder_test)
     safe(iconstyle_test)
+    safe(wrap43_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)

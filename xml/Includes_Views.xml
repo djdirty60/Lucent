@@ -577,6 +577,9 @@
             <top>200</top>
             <width>6</width>
             <height>800</height>
+            <!-- 3.0.21 (#43): Right on the list goes to the slider; Up/Down there scroll a page at a time -->
+            <animation effect="zoom" start="100,100" end="300,100" center="auto" time="150" tween="cubic" easing="out">Focus</animation>
+            <animation effect="zoom" start="300,100" end="100,100" center="auto" time="150" tween="cubic" easing="out">Unfocus</animation>
             <onleft>SetFocus(50)</onleft>
             <onleft>SetFocus(52)</onleft>
             <onleft>SetFocus(55)</onleft>
@@ -1190,6 +1193,7 @@
                 <orientation>vertical</orientation>
                 <ondown>50</ondown>
                 <onup>50</onup>
+                <onright>60</onright>
                 <onleft>9050</onleft>
                 <pagecontrol>60</pagecontrol>
                 <visible>!Container.Content(seasons) | Skin.HasSetting(lucent.seasontabs.off)</visible>
@@ -2385,6 +2389,7 @@
                 <preloaditems>2</preloaditems>
                 <ondown>52</ondown>
                 <onup>52</onup>
+                <onright>60</onright>
                 <onleft>9050</onleft>
                 <pagecontrol>60</pagecontrol>
                 <viewtype label="$LOCALIZE[31033]">icon</viewtype>
@@ -2958,6 +2963,7 @@
                 <orientation>vertical</orientation>
                 <ondown>55</ondown>
                 <onup>55</onup>
+                <onright>60</onright>
                 <onleft>9050</onleft>
                 <pagecontrol>60</pagecontrol>
                 <viewtype label="$LOCALIZE[31020]">list</viewtype>

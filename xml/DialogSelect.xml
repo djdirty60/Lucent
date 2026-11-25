@@ -65,7 +65,9 @@
                 <onright condition="Control.IsVisible(60)">60</onright>
                 <onright>noop</onright>
                 <onleft>noop</onleft>
-                <ondown>9000</ondown>
+                <!-- 3.0.21 (#43): the list goes round both ways; with an OK button (choose several) Down still reaches the buttons -->
+                <ondown condition="Control.IsVisible(5)">9000</ondown>
+                <ondown>3</ondown>
                 <onup>3</onup>
                 <itemlayout height="84" width="900">
                     <control type="image">
@@ -142,7 +144,9 @@
                 <onright condition="Control.IsVisible(60)">60</onright>
                 <onright>noop</onright>
                 <onleft>noop</onleft>
-                <ondown>9000</ondown>
+                <!-- 3.0.21 (#43): the list goes round both ways; with an OK button (choose several) Down still reaches the buttons -->
+                <ondown condition="Control.IsVisible(5)">9000</ondown>
+                <ondown>6</ondown>
                 <onup>6</onup>
                 <itemlayout height="112" width="900">
                     <control type="image">
@@ -274,6 +278,8 @@
                 <itemgap>14</itemgap>
                 <onup condition="Control.IsVisible(6)">6</onup>
                 <onup>3</onup>
+                <ondown condition="Control.IsVisible(6)">SetFocus(6,0,absolute)</ondown>
+                <ondown>SetFocus(3,0,absolute)</ondown>
             <control type="button" id="5">
                 <width>auto</width>
                 <height>64</height>
