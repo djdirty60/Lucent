@@ -7899,6 +7899,8 @@ def iconstyle_test():
         xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
     mon.waitForAbort(6)
+    xbmc.executebuiltin("SetProperty(lucent.load.2,1,home)")
+    xbmc.executebuiltin("SetProperty(lucent.load.3,1,home)")
     for _ in range(20):
         if int(lab("Container(8201).NumItems") or 0) > 0:
             break
@@ -7906,7 +7908,9 @@ def iconstyle_test():
     xbmc.executebuiltin("SetFocus(8201,0,absolute)")
     mon.waitForAbort(4)
     log(f"iconstyle: row1 n={lab('Container(8201).NumItems')} label={lab('Container(8201).ListItem.Label')!r} id={lab('Container(8201).ListItem.Property(Addon.ID)')!r} "
-        f"icon={cond('$EXP[NuvioW1Icon]')} land={cond('$EXP[NuvioW1Land]')} focus={lab('System.CurrentControlID')}")
+        f"style={lab('Container(9000).ListItem.Property(w1.style)')!r} path={lab('Container(9000).ListItem.Property(w1.path)')!r} "
+        f"vis8201={cond('Control.IsVisible(8201)')} vis8101={cond('Control.IsVisible(8101)')} upd={cond('Container(8201).IsUpdating')} n8101={lab('Container(8101).NumItems')} "
+        f"fp8201={lab('Container(8201).FolderPath')!r} focus={lab('System.CurrentControlID')}")
     shot("iconstyle-1")
     xbmc.executebuiltin("Action(Down)")
     mon.waitForAbort(4)
@@ -7930,7 +7934,7 @@ def iconstyle_test():
     for i in range(12):
         xbmc.executebuiltin(f"SetFocus(9000,{i},absolute)")
         mon.waitForAbort(1.2)
-        if cond("$EXP[LucentPAdd]"):
+        if "AddonBrowser" in lab("Container(9000).ListItem.Property(act)"):
             found = i
             break
     log(f"iconstyle: add-on tab index={found}")
