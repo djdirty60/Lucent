@@ -7910,7 +7910,9 @@ def iconstyle_test():
     log(f"iconstyle: row1 n={lab('Container(8201).NumItems')} label={lab('Container(8201).ListItem.Label')!r} id={lab('Container(8201).ListItem.Property(Addon.ID)')!r} "
         f"style={lab('Container(9000).ListItem.Property(w1.style)')!r} path={lab('Container(9000).ListItem.Property(w1.path)')!r} "
         f"vis8201={cond('Control.IsVisible(8201)')} vis8101={cond('Control.IsVisible(8101)')} upd={cond('Container(8201).IsUpdating')} n8101={lab('Container(8101).NumItems')} "
-        f"fp8201={lab('Container(8201).FolderPath')!r} focus={lab('System.CurrentControlID')}")
+        f"fp8201={lab('Container(8201).FolderPath')!r} focus={lab('System.CurrentControlID')} "
+        f"raw={cond('String.IsEqual(Container(9000).ListItem.Property(w1.style),icon)')} rawland={cond('String.IsEqual(Container(9000).ListItem.Property(w1.style),land)')} "
+        f"sel9000={lab('Container(9000).ListItem.Label')!r} pathP={lab('Container(8101).FolderPath')!r}")
     shot("iconstyle-1")
     xbmc.executebuiltin("Action(Down)")
     mon.waitForAbort(4)
