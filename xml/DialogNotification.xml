@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
     <depth>DepthMax</depth>
-    <animation effect="fade" start="0" end="100" time="250">WindowOpen</animation>
-    <animation effect="slide" start="120,0" end="0,0" time="350" tween="cubic" easing="out">WindowOpen</animation>
-    <animation effect="fade" start="100" end="0" time="250">WindowClose</animation>
-    <animation effect="slide" start="0,0" end="120,0" time="250" tween="cubic" easing="in">WindowClose</animation>
+    <!-- 3.0.18 (#39): only a short fade, no slide: Kodi does not count the open animation as display time, so quick
+         audio switches (long press) piled up behind it -->
+    <animation effect="fade" start="0" end="100" time="150">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="150">WindowClose</animation>
     <controls>
         <control type="group">
             <left>1200</left>
@@ -30,16 +30,15 @@
                 <height>44</height>
                 <font>font13_bold</font>
             </control>
-            <control type="fadelabel" id="402">
+            <!-- 3.0.18 (#39): a plain label, as in Nimbus - Kodi holds every queued notification until a fadelabel has
+                 scrolled to its end, so the audio box lagged behind and went on after playback had stopped -->
+            <control type="label" id="402">
                 <left>124</left>
                 <top>66</top>
                 <width>520</width>
                 <height>40</height>
                 <font>font12</font>
                 <textcolor>text3</textcolor>
-                <scroll>true</scroll>
-                <scrollout>false</scrollout>
-                <pauseatend>2000</pauseatend>
             </control>
         </control>
     </controls>
