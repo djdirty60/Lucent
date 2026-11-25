@@ -63,6 +63,7 @@ T = {
     "same_changed": ("Also changed on {0} other tab(s) with the same widget", "Ook aangepast op {0} andere tab(s) met dezelfde widget"),
     "poster": ("Posters", "Posters"),
     "land": ("Landscape", "Liggend"),
+    "icon": ("Icons", "Iconen"),
     "remove_widget": ("Remove this widget", "Deze widget verwijderen"),
     "src_trakt": ("Trakt lists (liked or your own)", "Trakt-lijsten (leuk gevonden of eigen)"),
     "src_library": ("Kodi library", "Kodi-bibliotheek"),
@@ -914,8 +915,8 @@ def pick_widget():
     else:
         return None
     label = keyboard(tr("rename"), label) or label
-    styles = ["poster", "land"]
-    choice = select(tr("style"), [tr("poster"), tr("land")])
+    styles = ["poster", "land", "icon"]
+    choice = select(tr("style"), [tr(s) for s in styles])
     if choice >= 0:
         style = styles[choice]
     return {"label": label, "path": path, "style": style}
@@ -973,7 +974,7 @@ def edit_widgets(menu, tab):
             wd["timg"] = ""                         # the title picture belonged to the old widget
             shared = False                          # a new widget: the others with the old address stay as they are
         elif act == "style":
-            wd["style"] = "land" if wd["style"] == "poster" else "poster"
+            wd["style"] = {"poster": "land", "land": "icon"}.get(wd["style"], "poster")
         elif act == "sort":
             pick = select(tr("sort"), [name for _key, name in SORTS()])
             if pick < 0:
@@ -1297,8 +1298,9 @@ def add_here():
         xbmcgui.Dialog().ok(HEADING, tr("max_widgets", NWIDGETS))
         return
     name = keyboard(tr("rename"), label or path) or label or path
-    style = select(tr("style"), [tr("poster"), tr("land")])
-    tab["widgets"].append({"label": name, "path": path, "style": "land" if style == 1 else "poster"})
+    styles = ["poster", "land", "icon"]
+    style = select(tr("style"), [tr(s) for s in styles])
+    tab["widgets"].append({"label": name, "path": path, "style": styles[style] if style > 0 else "poster"})
     menu.save()
     notify(tr(G("Widget added to {0}", "Widget toegevoegd aan {0}"), tab["label"]))
 
