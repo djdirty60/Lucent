@@ -115,13 +115,16 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
 - **Kleurthema** – Accentkleur van de focus, knoppen en gloed
 - **AMOLED-modus** – Puur zwarte vlakken, zuiniger op OLED-schermen
 - **Schaal van de interface** – Alles iets groter of kleiner maken
-- **Lettertype en taal** – Taal, regio en toetsenbord van Kodi
 - **Klok tonen** – Klok rechtsboven in elk scherm
 - **Kleur van de poster** – De achtergrond gloeit mee in de kleur van de poster waar je op staat
+- **Leesbare tekst op lichte plaatjes** – Een donkere rand om de teksten en een donkerdere overloop erachter
+- **Randgloed** – Gloed rond de kaart met focus
+
+**Bij het opstarten**
+
 - **Intro bij het opstarten** – De ster en de maan van Lucent als Kodi start (ongeveer 6 seconden)
 - **Geluid bij de intro** – Een warme klank bij de intro als Kodi start
 - **Seizoensthema's** – Halloween, Sinterklaas, Kerst met sneeuw, Oud en nieuw en Koningsdag op het startscherm
-- **Leesbare tekst op lichte plaatjes** – Een donkere rand om de teksten en een donkerdere overloop erachter
 
 **Screensaver**
 
@@ -129,7 +132,14 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
 - **Wachttijd** – Hoe lang voordat het scherm dimt
 - **Dimsterkte** – Hoe donker het scherm wordt
 
-### Skin-instellingen › Indeling
+### Skin-instellingen › Home en menu
+
+**Menu, rijen en diensten**
+
+- **Menu en widgets aanpassen** – Tabs van het zijmenu en de rijen op het startscherm
+- **Streamingdiensten** – Welke diensten de rij 'Streamingdiensten' toont, de volgorde en de afbeeldingen
+- **Afsluitmenu** – Knoppen van Kodi verbergen of eigen knoppen toevoegen (Instellingen, een add-on, Skin herladen…)
+- **Standaardmenu herstellen** – Tabs en rijen terugzetten zoals ze waren
 - **Startscherm** – Rijen, posters en wat je op het startscherm ziet
   - **Posterlabels tonen** – Titel onder elke poster
   - **Grote posters op het startscherm** – Aan: posters 15% groter, zonder namen. Uit: de oude, kleinere posters, waarbij de volgende rij net zichtbaar is
@@ -145,17 +155,9 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
   - **Trailer bij focus** – Een trailer spelen als een poster even focus houdt
   - **Trailer starten na** – Hoe lang wachten voordat de trailer start
   - **Instellingen van de YouTube-add-on** – Kwaliteit en login van de YouTube-add-on
-- **Kaarten** – Uiterlijk van de kaarten
-  - **Randgloed** – Gloed rond de kaart met focus
-- **Detailpagina** – Beoordelingen, knoppen en wat OK doet
-  - **Beoordelingen tonen** – Scores van IMDb, TMDB en Trakt op de infopagina
-  - **Beoordelingslogo's** – Eigen logo-afbeeldingen in plaats van de namen
-  - **OK op een film opent de pagina** – Uit: de stream begint meteen
-  - **OK op een aflevering opent de pagina** – Uit: de stream begint meteen
-  - **Series: seizoenen als tabs** – Een serie openen toont de seizoenen als tabs boven de afleveringen
-  - **Trailerknop tonen** – Trailerknop op de infopagina
-  - **Studiologo's installeren** – Logopakket voor de studio's op de infopagina
-  - **Gekleurde studiologo's** – Studiologo's op de infopagina in hun eigen kleuren in plaats van wit
+
+### Skin-instellingen › Lijsten en infopagina
+
 - **Lijsten en posters** – Mediavlaggen, percentage bekeken, weergaven en de balk boven lijsten
   - **Mediavlaggen in de lijsten** – 4K, HDR, codec, geluid en talen van de titel waar je op staat
   - **Percentage bekeken op posters** – Een klein label zoals 45% boven het voortgangsbalkje van wat je aan het kijken bent
@@ -164,22 +166,20 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
   - **Naam en aantal boven lijsten** – Naam en aantal boven een lijst, bijv. 'Red Light · 1647 items · Datum'
   - **Tekstje Omhoog in weergaven met één rij** – Toont 'Omhoog: Weergave · Sorteren · Filter' naast de klok; Omhoog blijft werken als het uit staat
   - **Schuifbalk alleen bij snel scrollen** – De schuifbalk onder de rij verschijnt alleen als je een knop ingedrukt houdt; Omlaag gaat er nog steeds naartoe
-
-### Skin-instellingen › Menu en widgets
-
-**Menu, rijen en diensten**
-
-- **Menu en widgets aanpassen** – Tabs van het zijmenu en de rijen op het startscherm
-- **Streamingdiensten** – Welke diensten de rij 'Streamingdiensten' toont, de volgorde en de afbeeldingen
-- **Afsluitmenu** – Knoppen van Kodi verbergen of eigen knoppen toevoegen (Instellingen, een add-on, Skin herladen…)
-- **Standaardmenu herstellen** – Tabs en rijen terugzetten zoals ze waren
+- **Detailpagina** – Beoordelingen, knoppen en wat OK doet
+  - **Beoordelingen tonen** – Scores van IMDb, TMDB en Trakt op de infopagina
+  - **Beoordelingslogo's** – Eigen logo-afbeeldingen in plaats van de namen
+  - **Series: seizoenen als tabs** – Een serie openen toont de seizoenen als tabs boven de afleveringen
+  - **Trailerknop tonen** – Trailerknop op de infopagina
+  - **Studiologo's installeren** – Logopakket voor de studio's op de infopagina
+  - **Gekleurde studiologo's** – Studiologo's op de infopagina in hun eigen kleuren in plaats van wit
 
 ### Skin-instellingen › Zoeken
 
 **Zoeken**
 
 - **Standaard zoeken in** – De add-on waarmee het zoekscherm begint; OK op de add-on-knop daar gaat naar de volgende
-- **Zoek-tab opent** – Wat OK op de tab Zoeken van het menu opent: het zoekscherm van Lucent, of het zoekmenu van Lucent Video
+- **Zoek-tab opent** – Wat OK op de tab Zoeken van het menu opent
 
 **Wat wordt er gezocht**
 
@@ -194,7 +194,8 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
 
 - **Kodi-spelerinstellingen** – Video, geluid en beeldfrequentie van de Kodi-speler
 - **Spelerinstellingen van de video-add-on** – Bronkeuze, automatisch afspelen, volgende aflevering en de afspeel-bewaker
-- **Ondertitels en audiotaal** – Voorkeurstaal voor audio en ondertitels
+- **OK op een film opent de pagina** – Uit: de stream begint meteen
+- **OK op een aflevering opent de pagina** – Uit: de stream begint meteen
 
 **Pauzescherm**
 
@@ -202,23 +203,21 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
 - **Beeld- en geluidsinfo** – Resolutie, HDR en audiobadges op het pauzescherm
 - **Eigen logo's voor beeld en geluid** – Je eigen badge-afbeeldingen gebruiken
 
-### Skin-instellingen › Integraties
-- **Video-add-ons en TMDB** – Video-add-ons, diensten en TMDB
-- **Instellingen van de video-add-on** – Trakt, accounts en bronnen
-  - **Add-ons** – Add-ons installeren en beheren
-  - **Diensten** – Bediening op afstand en delen
-  - **TMDB API-sleutel** – Voor acteurs, collecties, studio's en de pagina's die je daarvandaan opent
-  - **Scores (OMDb / MDBList)** – IMDb, Rotten Tomatoes, Metacritic en Letterboxd met je eigen gratis sleutel
-  - **TMDb-account** – Log in met je TMDb-account voor je kijklijst, beoordelingen en favorieten als rijen
-- **Ondertitels** – Ondertitels zoeken vanuit de speler
-  - **Lucent Ondertitels: accounts en sleutels** – Accounts en sleutels (OpenSubtitles, SubDL), bronnen
-  - **Ondertitels en intro overslaan** – In je video-add-on: ondertitels zoeken, gesproken taal, AI-vertaling en intro overslaan
+**Ondertitels**
 
-### Skin-instellingen › Volgen
+- **Ondertitels en audiotaal** – Voorkeurstaal voor audio en ondertitels
+- **Lucent Ondertitels: accounts en sleutels** – Accounts en sleutels (OpenSubtitles, SubDL), bronnen
+- **Ondertitels en intro overslaan** – In je video-add-on: ondertitels zoeken, gesproken taal, AI-vertaling en intro overslaan
 
-**Volgen**
+### Skin-instellingen › Accounts
 
 - **Trakt-login**
+- **TMDB API-sleutel** – Voor acteurs, collecties, studio's en de pagina's die je daarvandaan opent
+- **TMDb-account** – Log in met je TMDb-account voor je kijklijst, beoordelingen en favorieten als rijen
+- **Scores (OMDb / MDBList)** – IMDb, Rotten Tomatoes, Metacritic en Letterboxd met je eigen gratis sleutel
+- **Instellingen van de video-add-on** – Trakt, accounts en bronnen
+
+### Skin-instellingen › Kalender
 
 **Kalender**
 
@@ -227,15 +226,22 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
 - **Kalender openen** – Week-, lijst- en maandoverzicht
 
 ### Skin-instellingen › Profielen
+
 - **Profielen** – Foto, eigen kleurthema en 'Wie kijkt er?' bij het opstarten (zet Inlogscherm aan)
 
-### Skin-instellingen › Geavanceerd
+### Skin-instellingen › Systeem
 
 **Beeld**
 
 - **Beeld kalibreren** – Zwarte randen of te groot beeld oplossen
 - **Beeldscherminstellingen** – Resolutie en beeldfrequentie
 - **Lichte modus (kastjes met 2 GB)** – Hoogstens 6 rijen per tab, kleine afbeeldingen, geen sneeuw en geen posterkleur. De skin laadt één keer opnieuw
+
+**Kodi**
+
+- **Lettertype en taal** – Taal, regio en toetsenbord van Kodi
+- **Add-ons** – Add-ons installeren en beheren
+- **Diensten** – Bediening op afstand en delen
 
 **Geavanceerd**
 

@@ -115,13 +115,16 @@ _What's new, updates, self-test and system information_
 - **Colour theme** – Accent colour of the focus, buttons and glow
 - **AMOLED mode** – Pure black surfaces, saves power on OLED screens
 - **Interface scale** – Make everything a bit larger or smaller
-- **Font and language** – Language, region and keyboard of Kodi
 - **Show clock** – Clock at the top right of every screen
 - **Colour from the poster** – The background glows in the colour of the poster you are on
+- **Readable text on light pictures** – A dark edge around the texts and a darker fade behind them
+- **Edge glow** – Glow around the card that has the focus
+
+**At start**
+
 - **Intro at start** – The star and the moon of Lucent when Kodi starts (about 6 seconds)
 - **Sound with the intro** – A warm sound with the intro when Kodi starts
 - **Seasons** – Halloween, Sinterklaas, Christmas with snow, New Year and King's Day on Home
-- **Readable text on light pictures** – A dark edge around the texts and a darker fade behind them
 
 **Screensaver**
 
@@ -129,7 +132,14 @@ _What's new, updates, self-test and system information_
 - **Idle timeout** – How long before the screen dims
 - **Dim strength** – How dark the screen gets
 
-### Skin settings › Layout
+### Skin settings › Home and menu
+
+**Menu, rows and services**
+
+- **Customise menu and widgets** – Tabs of the side menu and the rows on Home
+- **Streaming services** – Which services the 'Streaming services' row shows, their order and their pictures
+- **Power menu** – Hide Kodi's own buttons, or add your own (Settings, an add-on, Reload skin…)
+- **Restore the default menu** – Put the tabs and rows back the way they were
 - **Home** – Rows, posters and what you see on Home
   - **Show poster labels** – Title under every poster
   - **Big posters on Home** – On: posters 15% bigger, without names. Off: the old, smaller posters, with the next row peeking in
@@ -145,17 +155,9 @@ _What's new, updates, self-test and system information_
   - **Trailer on focus** – Play a trailer when a poster keeps the focus
   - **Start trailer after** – How long to wait before the trailer starts
   - **YouTube add-on settings** – Quality and login of the YouTube add-on
-- **Cards** – Look of the cards
-  - **Edge glow** – Glow around the card that has the focus
-- **Details page** – Ratings, buttons and what OK does
-  - **Show ratings** – IMDb, TMDB and Trakt scores on the info page
-  - **Rating logos** – Your own logo images instead of the names
-  - **OK on a film opens its page** – Off: the stream starts at once
-  - **OK on an episode opens its page** – Off: the stream starts at once
-  - **Series: seasons as tabs** – Opening a series shows the seasons as tabs above the episodes
-  - **Show trailer button** – Trailer button on the info page
-  - **Install studio logos** – Logo pack for the studios on the info page
-  - **Coloured studio logos** – Studio logos on the info page in their own colours instead of white
+
+### Skin settings › Lists and info page
+
 - **Lists and posters** – Media flags, percentage watched, views and the bar above lists
   - **Media flags in the lists** – 4K, HDR, codec, sound and languages of the title under the cursor
   - **Percentage watched on posters** – A small label like 45% above the progress bar of what you are watching
@@ -164,22 +166,20 @@ _What's new, updates, self-test and system information_
   - **Name and count above lists** – Name and count above a list, e.g. 'Red Light · 1647 items · Date'
   - **Up hint in one-row views** – Shows 'Up: View · Sort · Filter' next to the clock; Up keeps working when it is off
   - **Slider only when scrolling fast** – The slider under a one-row view only shows while you hold a key down; Down still goes to it
-
-### Skin settings › Menu and widgets
-
-**Menu, rows and services**
-
-- **Customise menu and widgets** – Tabs of the side menu and the rows on Home
-- **Streaming services** – Which services the 'Streaming services' row shows, their order and their pictures
-- **Power menu** – Hide Kodi's own buttons, or add your own (Settings, an add-on, Reload skin…)
-- **Restore the default menu** – Put the tabs and rows back the way they were
+- **Details page** – Ratings, buttons and what OK does
+  - **Show ratings** – IMDb, TMDB and Trakt scores on the info page
+  - **Rating logos** – Your own logo images instead of the names
+  - **Series: seasons as tabs** – Opening a series shows the seasons as tabs above the episodes
+  - **Show trailer button** – Trailer button on the info page
+  - **Install studio logos** – Logo pack for the studios on the info page
+  - **Coloured studio logos** – Studio logos on the info page in their own colours instead of white
 
 ### Skin settings › Search
 
 **Search**
 
 - **Search in by default** – The add-on the search screen starts with; OK on the add-on button there goes to the next one
-- **Search tab opens** – What OK on the Search tab of the menu opens: the Lucent search screen, or the search menu of Lucent Video
+- **Search tab opens** – What OK on the Search tab of the menu opens
 
 **What is searched**
 
@@ -194,7 +194,8 @@ _What's new, updates, self-test and system information_
 
 - **Kodi player settings** – Video, sound and refresh rate of Kodi's player
 - **Player settings of the video add-on** – Source select, autoplay, Up Next and the playback watchdog
-- **Subtitles and audio language** – Preferred language for audio and subtitles
+- **OK on a film opens its page** – Off: the stream starts at once
+- **OK on an episode opens its page** – Off: the stream starts at once
 
 **Pause screen**
 
@@ -202,23 +203,21 @@ _What's new, updates, self-test and system information_
 - **Picture and sound info** – Resolution, HDR and audio badges on the pause screen
 - **Your own picture and sound logos** – Use your own badge images
 
-### Skin settings › Integrations
-- **Video add-ons and TMDB** – Video add-ons, services and TMDB
-- **Video add-on settings** – Trakt, accounts and sources
-  - **Add-ons** – Install and manage add-ons
-  - **Services** – Remote control and sharing
-  - **TMDB API key** – For cast, collections, studios and the pages opened from them
-  - **Scores (OMDb / MDBList)** – IMDb, Rotten Tomatoes, Metacritic and Letterboxd with your own free key
-  - **TMDb account** – Log in with your TMDb account for your watchlist, ratings and favourites as rows
-- **Subtitles** – Search subtitles from the player
-  - **Lucent Subtitles: accounts and keys** – Accounts and keys (OpenSubtitles, SubDL), sources
-  - **Subtitles and skip intro** – In your video add-on: subtitle search, spoken language, AI translation and skip intro
+**Subtitles**
 
-### Skin settings › Tracking
+- **Subtitles and audio language** – Preferred language for audio and subtitles
+- **Lucent Subtitles: accounts and keys** – Accounts and keys (OpenSubtitles, SubDL), sources
+- **Subtitles and skip intro** – In your video add-on: subtitle search, spoken language, AI translation and skip intro
 
-**Tracking**
+### Skin settings › Accounts
 
 - **Trakt login**
+- **TMDB API key** – For cast, collections, studios and the pages opened from them
+- **TMDb account** – Log in with your TMDb account for your watchlist, ratings and favourites as rows
+- **Scores (OMDb / MDBList)** – IMDb, Rotten Tomatoes, Metacritic and Letterboxd with your own free key
+- **Video add-on settings** – Trakt, accounts and sources
+
+### Skin settings › Calendar
 
 **Calendar**
 
@@ -227,15 +226,22 @@ _What's new, updates, self-test and system information_
 - **Open the calendar** – Week, list and month view
 
 ### Skin settings › Profiles
+
 - **Profiles** – Photo, own colour theme and Who is watching? at start (switch on Login screen)
 
-### Skin settings › Advanced
+### Skin settings › System
 
 **Screen**
 
 - **Calibrate the picture** – Fix black edges or a picture that is too large
 - **Display settings** – Resolution and refresh rate
 - **Light mode (2 GB boxes)** – At most 6 rows per tab, small artwork, no snow and no poster colour. The skin reloads once
+
+**Kodi**
+
+- **Font and language** – Language, region and keyboard of Kodi
+- **Add-ons** – Install and manage add-ons
+- **Services** – Remote control and sharing
 
 **Advanced**
 

@@ -268,8 +268,8 @@ def pick_lv_person():
         except Exception:  # noqa: BLE001
             key = ""
     if not key:
-        xbmcgui.Dialog().ok(HEADING, tr(G("Lucent needs a TMDb key for this (Skin settings > Integrations).",
-                                          "Lucent heeft hiervoor een TMDb-sleutel nodig (Skin-instellingen > Integraties).")))
+        xbmcgui.Dialog().ok(HEADING, tr(G("Lucent needs a TMDb key for this (Skin settings > Accounts).",
+                                          "Lucent heeft hiervoor een TMDb-sleutel nodig (Skin-instellingen > Accounts).")))
         return None
     busy(True)
     try:

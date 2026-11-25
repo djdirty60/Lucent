@@ -112,7 +112,7 @@ Everything on one page. At the top: logo, buttons, director, scores, plot, genre
 - **Trailer** plays the trailer and brings you back to the page afterwards.
 - **Options** (titles in the Kodi library): edit title, sort title, art, remove from library, refresh.
 
-Cast, collections and studios need a free **TMDB API key**: Lucent uses the one of your video add-on, or enter your own in **Skin settings → Integrations → TMDB API key** (free at [themoviedb.org](https://www.themoviedb.org/settings/api)).
+Cast, collections and studios need a free **TMDB API key**: Lucent uses the one of your video add-on, or enter your own in **Skin settings → Accounts → TMDB API key** (free at [themoviedb.org](https://www.themoviedb.org/settings/api)).
 
 ### Calendar
 A **Calendar** tab (Week, List and Month) for the series and films of your Trakt collection. Switch the bell on for a title (in the calendar or on its info page) and a pop-up tells you when a new episode is out (*Watch now / Later*) or when a film is released digitally. Uses Lucent's own Trakt login (*Skin settings → Follow → Trakt login*).
@@ -275,7 +275,7 @@ A tab without widgets shows the widgets of the start tab.
 
 ### Skin settings
 
-**Settings → Lucent → Skin settings** has categories on the left and options on the right: **Appearance** (colour themes, AMOLED black, scale, font, clock, screensaver), **Layout** (menu and widgets, what OK does, poster labels, watched titles, the details page) and **Content & discovery, Playback, Integrations, Tracking, Profiles, Advanced, About** (shortcuts to the matching settings of your video add-on and of Kodi; Integrations also has your TMDB key and the update pop-up).
+**Settings → Lucent → Skin settings** has categories on the left and options on the right: **Appearance** (colour theme, AMOLED black, scale, clock, intro, screensaver), **Home and menu** (menu and widgets, streaming services, Home rows and posters, trailers on focus), **Lists and info page** (media flags, views, the details page), **Search**, **Playback** (what OK does, pause screen, subtitles), **Accounts** (Trakt, TMDB key and account, scores), **Calendar**, **Profiles** and **System** (screen, Kodi, maintenance). The full list is in [SETTINGS.md](SETTINGS.md).
 
 **Rating logos:** *Skin settings → Rating logos → Fetch* copies the logos of the `logos` folder of this page to your box; the lists and the info page then show IMDb, TMDB, Trakt, Rotten Tomatoes (fresh or rotten), the RT audience (full or spilt popcorn), Metacritic and Letterboxd with their logo instead of a coloured dot and name. You can also put your own `imdb.png`, `tmdb.png`, `trakt.png`, `rt.png`, `rt_rotten.png`, `rta.png`, `rta_spilt.png`, `mc.png`, `mcu.png` and `lb.png` in `userdata/addon_data/skin.lucent/logos/`. The logos are trademarks of their owners; Lucent is not affiliated with or endorsed by them.
 

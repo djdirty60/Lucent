@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Lucent 3.0.10: your TMDb account (as an alternative to Trakt).
 
-    RunScript(special://skin/scripts/tmdbaccount.py)       Skin settings > Integrations > TMDb account
+    RunScript(special://skin/scripts/tmdbaccount.py)       Skin settings > Accounts > TMDb account
 
 Log in with your TMDb user name and password (TMDb's own login for apps: a request token that your login approves,
 then a session). Lucent keeps only the session, never the password. With it, Home can show your TMDb watchlist,
