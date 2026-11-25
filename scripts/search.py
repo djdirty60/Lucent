@@ -65,7 +65,7 @@ T = {
     "libshows": ("Shows in your Kodi library", "Series in je Kodi-bibliotheek"),
     "busy": ("Searching…", "Bezig met zoeken…"),
     "none": ("Nothing found", "Niets gevonden"),
-    "no_key": ("Needs a TMDb key (Skin settings > Integrations)", "Heeft een TMDb-sleutel nodig (Skin-instellingen > Integraties)"),
+    "no_key": ("Needs a TMDb key (Skin settings > Accounts)", "Heeft een TMDb-sleutel nodig (Skin-instellingen > Accounts)"),
     "none_for": ("Nothing found for \u201c{0}\u201d", "Niets gevonden voor \u201c{0}\u201d"),
     "nothing": ("Nothing to search: switch on Movies, Shows or Actors in Skin settings > Search.",
                 "Niets om te zoeken: zet Films, Series of Acteurs aan in Skin-instellingen > Zoeken."),

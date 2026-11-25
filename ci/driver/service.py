@@ -7887,6 +7887,43 @@ def studiolog_test():
     log("studiolog: " + " | ".join(out))
 
 
+def ssorder_test():
+    """3.0.20: the new order of Skin settings. Every category on screen, and Down walks every row of a panel and
+    comes back round (no dead ends)."""
+    import subprocess
+    xbmc.executebuiltin("Dialog.Close(all,true)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    mon.waitForAbort(1)
+    for f in ("2201", "2203", "2206"):
+        xbmc.executebuiltin(f"Skin.SetBool(lucent.ss.open.{f})")
+    xbmc.executebuiltin("ActivateWindow(SkinSettings)")
+    mon.waitForAbort(4)
+    out = []
+    for n in range(9):
+        xbmc.executebuiltin(f"SetFocus(9000,{n},absolute)")
+        mon.waitForAbort(1.5)
+        name = lab("Container(9000).ListItem.Label")
+        shot(f"ss-{n}-top")
+        xbmc.executebuiltin("Action(Right)")
+        mon.waitForAbort(1)
+        seen = [lab("System.CurrentControlID")]
+        for _ in range(40):
+            xbmc.executebuiltin("Action(Down)")
+            mon.waitForAbort(0.35)
+            seen.append(lab("System.CurrentControlID"))
+            if seen[-1] == seen[0] and len(seen) > 2:
+                break
+            if len(seen) == 7:
+                shot(f"ss-{n}-down")
+        out.append(f"{name}: " + ",".join(seen))
+        xbmc.executebuiltin("SetFocus(9000)")
+        mon.waitForAbort(0.8)
+    for f in ("2201", "2203", "2206"):
+        xbmc.executebuiltin(f"Skin.Reset(lucent.ss.open.{f})")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    log("ssorder: " + " || ".join(out))
+
+
 def tmdbkey_test():
     """3.0.9: Lucent's own TMDB key works at TMDB itself, and is used when no other key is set."""
     import urllib.request
@@ -13869,6 +13906,7 @@ def main():
     safe(saverslide_test)
     safe(ctxdialog_test)
     safe(studiolog_test)
+    safe(ssorder_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)

@@ -202,6 +202,8 @@ WIDGETS_LV = [                                      # the video add-on (plugin.v
     (("Series · On the air", "Series · Nu op tv"), LV + "airing_tv", "poster"),
     (("Series · Coming soon", "Series · Binnenkort"), LV + "upcoming_tv", "poster"),
     (("Series · New", "Series · Nieuw"), LV + "new_tv", "poster"),
+    (("Series · Today on TV", "Series · Vandaag op tv"), LV + "today_tv", "poster"),     # 3.0.10 (Lucent Video rc1.19)
+    (("Popular actors", "Populaire acteurs"), "plugin://plugin.video.lucent/?action=people", "poster"),
     (("Continue watching", "Verder kijken"), LV + "continue", "land"),
     (("Continue watching · Films", "Verder kijken · Films"), LV + "continue_movie", "land"),
     (("Continue watching · Episodes", "Verder kijken · Afleveringen"), LV + "continue_episode", "land"),
@@ -266,8 +268,8 @@ def pick_lv_person():
         except Exception:  # noqa: BLE001
             key = ""
     if not key:
-        xbmcgui.Dialog().ok(HEADING, tr(G("Lucent needs a TMDb key for this (Skin settings > Integrations).",
-                                          "Lucent heeft hiervoor een TMDb-sleutel nodig (Skin-instellingen > Integraties).")))
+        xbmcgui.Dialog().ok(HEADING, tr(G("Lucent needs a TMDb key for this (Skin settings > Accounts).",
+                                          "Lucent heeft hiervoor een TMDb-sleutel nodig (Skin-instellingen > Accounts).")))
         return None
     busy(True)
     try:
@@ -424,9 +426,11 @@ def pick_lv():
     service = tr(G("A streaming service (newest first)…", "Een streamingdienst (nieuwste eerst)…"))
     own = tr(G("One of your lists (Trakt, MDBList, Floppy)…", "Een van je lijsten (Trakt, MDBList, Floppy)…"))
     actor = tr(G("An actor or actress…", "Een acteur of actrice…"))
-    newer = ("coming_watchlist", "watching")                   # rows only newer versions of the video add-on know
+    newer = ("coming_watchlist", "watching", "today_tv")       # rows only newer versions of the video add-on know
     rows = [r for r in WIDGETS_LV if not any(r[1].endswith("name=" + n) for n in newer) or
             any(r[1].endswith("name=" + n) and lv_knows(n) for n in newer)]
+    if not lv_knows("people"):                                 # 3.0.10: Popular actors (rc1.19 and newer)
+        rows = [r for r in rows if not r[1].endswith("action=people")]
     labels = [tr(k) for k, _p, _s in rows] + [own, actor, service]
     choice = select(tr(G("Your video add-on", "Je video-add-on")), labels)
     if choice < 0:
@@ -607,7 +611,7 @@ def plain_tabs():
 def lv_tabs():
     """The default menu with the video add-on: its rows on the tabs, its search and menus behind them."""
     lib_by_key = {k: (p, s) for k, p, s in WIDGETS_LIBRARY}
-    names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV}
+    names = {r[1].split("name=", 1)[1]: (r[0], r[2]) for r in WIDGETS_LV if "name=" in r[1]}
     names["new_tv"] = (("Series · New", "Series · Nieuw"), "poster")
 
     def row(name):

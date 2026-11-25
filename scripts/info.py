@@ -62,8 +62,8 @@ T = {
     "born": ("Born: {0}", "Geboren: {0}"),
     "died": ("Died: {0}", "Overleden: {0}"),
     "years": ("{0} years", "{0} jaar"),
-    "no_tmdb": ("No TMDB key yet. Enter your own free key in Skin settings > Integrations (or in your video add-on).",
-                "Nog geen TMDB-sleutel. Vul je eigen gratis sleutel in bij Skin-instellingen > Integraties (of in je video-add-on)."),
+    "no_tmdb": ("No TMDB key yet. Enter your own free key in Skin settings > Accounts (or in your video add-on).",
+                "Nog geen TMDB-sleutel. Vul je eigen gratis sleutel in bij Skin-instellingen > Accounts (of in je video-add-on)."),
     "failed_tmdb": ("TMDB did not respond. Try again later.", "TMDB reageert niet. Probeer het later opnieuw."),
     "next_ep": ("Next episode: {0} · {1}", "Volgende aflevering: {0} · {1}"),
     "more_about": ("More about: {0}", "Meer over: {0}"),
@@ -744,7 +744,7 @@ def tmdb_key():
 
 
 def set_tmdb_key():
-    """Skin settings > Integrations: type your own TMDB key (empty = remove it)."""
+    """Skin settings > Accounts: type your own TMDB key (empty = remove it)."""
     text = ("TMDB API-sleutel (gratis op themoviedb.org > Instellingen > API)" if _NL
             else "TMDB API key (free at themoviedb.org > Settings > API)")
     key = xbmcgui.Dialog().input(text, defaultt=_read_key(TMDB_KEYFILES[0]))
