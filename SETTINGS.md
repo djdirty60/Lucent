@@ -155,6 +155,7 @@ _What's new, updates, self-test and system information_
   - **Series: seasons as tabs** – Opening a series shows the seasons as tabs above the episodes
   - **Show trailer button** – Trailer button on the info page
   - **Install studio logos** – Logo pack for the studios on the info page
+  - **Coloured studio logos** – Studio logos on the info page in their own colours instead of white
 - **Lists and posters** – Media flags, percentage watched, views and the bar above lists
   - **Media flags in the lists** – 4K, HDR, codec, sound and languages of the title under the cursor
   - **Percentage watched on posters** – A small label like 45% above the progress bar of what you are watching

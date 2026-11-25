@@ -155,6 +155,7 @@ _Wat is er nieuw, updates, zelftest en systeeminformatie_
   - **Series: seizoenen als tabs** – Een serie openen toont de seizoenen als tabs boven de afleveringen
   - **Trailerknop tonen** – Trailerknop op de infopagina
   - **Studiologo's installeren** – Logopakket voor de studio's op de infopagina
+  - **Gekleurde studiologo's** – Studiologo's op de infopagina in hun eigen kleuren in plaats van wit
 - **Lijsten en posters** – Mediavlaggen, percentage bekeken, weergaven en de balk boven lijsten
   - **Mediavlaggen in de lijsten** – 4K, HDR, codec, geluid en talen van de titel waar je op staat
   - **Percentage bekeken op posters** – Een klein label zoals 45% boven het voortgangsbalkje van wat je aan het kijken bent

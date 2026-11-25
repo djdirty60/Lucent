@@ -683,6 +683,31 @@
         <value condition="Control.HasFocus(1211)">on_focus</value>
         <value>text4</value>
     </variable>
+    <variable name="SSF1216_text">
+        <value condition="Control.HasFocus(1216)">on_focus</value>
+        <value>text</value>
+    </variable>
+    <variable name="SSF1216_text3">
+        <value condition="Control.HasFocus(1216)">on_focus</value>
+        <value>text3</value>
+    </variable>
+    <variable name="SSF1216_text4">
+        <value condition="Control.HasFocus(1216)">on_focus</value>
+        <value>text4</value>
+    </variable>
+    <!-- 3.0.19 (#42): which of Kodi's studio logo packs the info page uses (white, or coloured when chosen and installed) -->
+    <variable name="LucentStudioPack">
+        <value condition="Skin.HasSetting(lucent.studio.coloured) + System.HasAddon(resource.images.studios.coloured)">resource://resource.images.studios.coloured/</value>
+        <value>resource://resource.images.studios.white/</value>
+    </variable>
+    <variable name="LucentStudioTint">
+        <value condition="Skin.HasSetting(lucent.studio.coloured) + System.HasAddon(resource.images.studios.coloured)">FFFFFFFF</value>
+        <value>text</value>
+    </variable>
+    <variable name="LucentStudioTintFocus">
+        <value condition="Skin.HasSetting(lucent.studio.coloured) + System.HasAddon(resource.images.studios.coloured)">FFFFFFFF</value>
+        <value>on_focus</value>
+    </variable>
     <variable name="SSF1212_text">
         <value condition="Control.HasFocus(1212)">on_focus</value>
         <value>text</value>

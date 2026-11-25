@@ -1130,6 +1130,13 @@ def load_providers(item):
 
 
 STUDIO_PACK = "resource://resource.images.studios.white/"
+
+
+def studio_pack():
+    """3.0.19 (#42): the coloured pack when chosen and installed (same as $VAR[LucentStudioPack] in the skin)."""
+    if xbmc.getCondVisibility("Skin.HasSetting(lucent.studio.coloured) + System.HasAddon(resource.images.studios.coloured)"):
+        return "resource://resource.images.studios.coloured/"
+    return STUDIO_PACK
 STUDIO_CACHE = "special://profile/addon_data/skin.lucent/studio_logos.json"
 
 
@@ -1177,7 +1184,7 @@ def load_studios():
     before = len(cache)
     for n, name in enumerate(studios, 1):
         try:
-            if xbmcvfs.exists(f"{STUDIO_PACK}{name}.png"):
+            if xbmcvfs.exists(f"{studio_pack()}{name}.png"):
                 continue
         except Exception:  # noqa: BLE001
             pass
