@@ -7897,8 +7897,19 @@ def iconstyle_test():
                  ("w2.label", "Mappen"), ("w2.path", "plugin://plugin.video.fakeseren/?list=icons"), ("w2.style", "icon"),
                  ("w3.label", "Films"), ("w3.path", "plugin://plugin.video.fakeseren/?list=fast"), ("w3.style", "poster")):
         xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.{k},{v})")
+    for st in ("land",):
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.w1.style,{st})")
+        xbmc.executebuiltin(f"Skin.SetString(nuvio.tab3.w2.style,{st})")
+        xbmc.executebuiltin("Control.SetFocus(9000,2)")
+        mon.waitForAbort(10)
+        log(f"iconstyle: as {st}: n8201={lab('Container(8201).NumItems')} n8202={lab('Container(8202).NumItems')} n8101={lab('Container(8101).NumItems')} fp={lab('Container(8201).FolderPath')!r}")
+        shot("iconstyle-asland")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.w1.style,icon)")
+    xbmc.executebuiltin("Skin.SetString(nuvio.tab3.w2.style,icon)")
+    xbmc.executebuiltin("Control.SetFocus(9000,1)")
+    mon.waitForAbort(3)
     xbmc.executebuiltin("Control.SetFocus(9000,2)")
-    mon.waitForAbort(6)
+    mon.waitForAbort(10)
     xbmc.executebuiltin("SetProperty(lucent.load.2,1,home)")
     xbmc.executebuiltin("SetProperty(lucent.load.3,1,home)")
     for _ in range(20):
