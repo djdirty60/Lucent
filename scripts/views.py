@@ -12,6 +12,12 @@ import xbmc
 OFF = "Skin.HasSetting(lucent.view.remember.off)"
 WINDOWS = {"videos": (56, 51, 52, 57, 55, 53, 50, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 86, 87), "music": (50, 54, 52, 81, 82, 83, 84, 85)}
 STATE = {"key": "", "path": "", "since": 0.0, "view": 0, "applied": 0, "until": 0.0, "restore": None}
+# 3.0.21 (#44): the media window hides its list until the remembered view is on screen (MediaViews in
+# Includes_Views.xml), so a new folder no longer shows the default view for a moment first. 'done' says for which
+# folder the view is right; 'guard' says the fast loop below is running (without it the skin never hides anything).
+HOME_ID = 10000
+DONE = "lucent.view.done"
+GUARD = "lucent.view.guard"
 # issue #9: the title you were on in a folder (Films, Series ...), so going back into it starts there again
 POSITIONS = {}
 
@@ -55,7 +61,11 @@ def tick():
         if saved.isdigit() and int(saved) != view and int(saved) in WINDOWS[window]:
             xbmc.executebuiltin(f"Container.SetViewMode({saved})")
             STATE.update(applied=int(saved), until=now + 2.0)
+        else:
+            done(path)
         return
+    if STATE["applied"] and (view == STATE["applied"] or now - STATE["since"] > 1.0):
+        done(path)                                            # the chosen view is on screen (or we stop waiting)
     if STATE["restore"] and now - STATE["since"] > 0.4:
         restore(view)
     elif view and now - STATE["since"] > 1.0:
@@ -68,6 +78,31 @@ def tick():
         if now - STATE["since"] > 0.8:                        # the user picked another view: remember it for this kind
             xbmc.executebuiltin(f"Skin.SetString({key},{view})")
             xbmc.log(f"[skin.lucent] views: {key} = {view}", xbmc.LOGINFO)
+
+
+def done(path):
+    import xbmcgui
+    xbmcgui.Window(HOME_ID).setProperty(DONE, path)
+
+
+def fast_loop(monitor, stop):
+    """Run tick() quickly while a media window is open, so the remembered view is set before the folder is shown."""
+    import xbmcgui
+    home = xbmcgui.Window(HOME_ID)
+    home.setProperty(GUARD, "1")
+    try:
+        while not stop.is_set() and not monitor.abortRequested():
+            busy = any(cond(f"Window.IsActive({w})") for w in WINDOWS)
+            if busy:
+                try:
+                    tick()
+                except Exception as error:  # noqa: BLE001
+                    xbmc.log(f"[skin.lucent] views: {error}", xbmc.LOGINFO)
+            if monitor.waitForAbort(0.05 if busy else 0.5):
+                break
+    finally:
+        home.clearProperty(GUARD)
+        home.clearProperty(DONE)
 
 
 def remember(path):

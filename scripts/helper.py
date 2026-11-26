@@ -203,6 +203,7 @@ def run():
     HOME.clearProperty(STOP)
     threading.Thread(target=beat, daemon=True).start()
     threading.Thread(target=worker, daemon=True).start()
+    threading.Thread(target=views.fast_loop, args=(monitor, stop), daemon=True).start()   # 3.0.21 (#44)
     try:
         import watchdog                              # 2.1.35 (#22): writes to the log when Kodi stops reacting
         watchdog.Watchdog(stop).start()
@@ -493,10 +494,7 @@ def run():
                 bestep.tick()                        # 3.0.10: the best episode of the season in the list
             except Exception as error:  # noqa: BLE001
                 log(f"home extra: {error}")
-            try:
-                views.tick()                         # the view you chose, for every folder of that kind (issue #5)
-            except Exception as error:  # noqa: BLE001
-                log(f"views: {error}")
+            # views.tick() (the view you chose, for every folder of that kind, issue #5) runs in its own quick thread
             try:
                 mediaflags.tick()                    # flags of the title under the cursor in the lists (issue #9)
             except Exception as error:  # noqa: BLE001

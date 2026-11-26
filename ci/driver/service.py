@@ -8011,6 +8011,48 @@ def wrap43_test():
     xbmc.executebuiltin("ActivateWindow(home)")
 
 
+def viewflash_test():
+    """3.0.21 (#44): a new folder no longer shows the default view for a moment before the remembered view."""
+    import time as _t
+    out = []
+    HOME.setProperty("ci.a", "plugin://x/?a=1")
+    HOME.setProperty("ci.b", "plugin://x/?a=1")
+    same = cond("String.IsEqual(Window(home).Property(ci.a),Window(home).Property(ci.b))")
+    HOME.setProperty("ci.b", "plugin://x/?a=2")
+    diff = cond("String.IsEqual(Window(home).Property(ci.a),Window(home).Property(ci.b))")
+    out.append(f"isequal-info same={same} diff={diff}")
+    if not HOME.getProperty("lucent.helper"):
+        xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
+        mon.waitForAbort(31)
+    out.append(f"guard={HOME.getProperty('lucent.view.guard')!r}")
+    xbmc.executebuiltin("Skin.SetString(lucent.view.videos.movies,52)")
+    hide = ("!Skin.HasSetting(lucent.view.remember.off) + !String.IsEmpty(Window(home).Property(lucent.view.guard)) + "
+            "!String.IsEqual(Window(home).Property(lucent.view.done),Container.FolderPath) + !System.IdleTime(1)")
+    for n, path in enumerate(("plugin://plugin.video.fakeseren/?list=fast", "plugin://plugin.video.fakeseren/?list=fast&from=3")):
+        xbmc.executebuiltin("Dialog.Close(all,true)")
+        xbmc.executebuiltin("ActivateWindow(home)")
+        mon.waitForAbort(2)
+        xbmc.executebuiltin("Action(Down)")      # a key press, as when you open a folder with the remote
+        xbmc.executebuiltin(f"ActivateWindow(Videos,{path},return)")
+        start = _t.time()
+        seen = []
+        bad = 0
+        while _t.time() - start < 2.5:
+            if cond("Window.IsActive(videos)") and int(lab("Container.NumItems") or 0) > 0:
+                v50, v52, h = cond("Control.IsVisible(50)"), cond("Control.IsVisible(52)"), cond(hide)
+                state = f"{'L' if v50 else ''}{'P' if v52 else ''}{'-hidden' if h else ''}"
+                if not seen or seen[-1][1] != state:
+                    seen.append((round(_t.time() - start, 2), state))
+                if v50 and not h:
+                    bad += 1
+            mon.waitForAbort(0.02)
+        out.append(f"open{n}: shown-as-list-unhidden={bad} timeline={seen} done={HOME.getProperty('lucent.view.done')[-30:]!r}")
+        shot(f"viewflash-{n}")
+    xbmc.executebuiltin("Skin.Reset(lucent.view.videos.movies)")
+    xbmc.executebuiltin("ActivateWindow(home)")
+    log("viewflash: " + " || ".join(out))
+
+
 def ssorder_test():
     """3.0.20: the new order of Skin settings. Every category on screen, and Down walks every row of a panel and
     comes back round (no dead ends)."""
@@ -14033,6 +14075,7 @@ def main():
     safe(ssorder_test)
     safe(iconstyle_test)
     safe(wrap43_test)
+    safe(viewflash_test)
     safe(libnew_test)
     safe(ssback_test)
     safe(favtab_test)

@@ -4447,6 +4447,11 @@
     </include>
 
     <include name="MediaViews">
+        <!-- 3.0.21 (#44): with "Remember view per kind" on, the list stays see-through until the remembered view is on
+             screen (scripts/views.py marks the folder done), so a new folder no longer shows the default view first.
+             At most one second after the last key press; only while the helper's quick view loop runs. -->
+        <control type="group">
+        <animation effect="fade" start="100" end="0" time="0" condition="!Skin.HasSetting(lucent.view.remember.off) + !String.IsEmpty(Window(home).Property(lucent.view.guard)) + !String.IsEqual(Window(home).Property(lucent.view.done),Container.FolderPath) + !System.IdleTime(1)">Conditional</animation>
         <include>View_56</include>
         <include>View_57</include>
         <include>View_51</include>
@@ -4455,6 +4460,7 @@
         <include>View_53</include>
         <include>View_50</include>
         <include>MediaViews2</include>
+        </control>
     </include>
     <!-- View 54: covers (albums, artists): square covers with the title and the artist under them -->
     <include name="View_54">
