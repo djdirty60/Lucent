@@ -8017,9 +8017,10 @@ def viewflash_test():
     out = []
     HOME.setProperty("ci.a", "plugin://x/?a=1")
     HOME.setProperty("ci.b", "plugin://x/?a=1")
+    HOME.setProperty("ci.c", "plugin://x/?a=2")
+    mon.waitForAbort(0.5)
     same = cond("String.IsEqual(Window(home).Property(ci.a),Window(home).Property(ci.b))")
-    HOME.setProperty("ci.b", "plugin://x/?a=2")
-    diff = cond("String.IsEqual(Window(home).Property(ci.a),Window(home).Property(ci.b))")
+    diff = cond("String.IsEqual(Window(home).Property(ci.a),Window(home).Property(ci.c))")
     out.append(f"isequal-info same={same} diff={diff}")
     if not HOME.getProperty("lucent.helper"):
         xbmc.executebuiltin("RunScript(special://skin/scripts/startup.py)")
@@ -8032,7 +8033,9 @@ def viewflash_test():
         xbmc.executebuiltin("Dialog.Close(all,true)")
         xbmc.executebuiltin("ActivateWindow(home)")
         mon.waitForAbort(2)
-        xbmc.executebuiltin("Action(Down)")      # a key press, as when you open a folder with the remote
+        xbmc.executeJSONRPC(json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Input.Down"}))   # a key press, like the remote
+        mon.waitForAbort(0.3)
+        out.append(f"idle1-after-key={cond('System.IdleTime(1)')}")
         xbmc.executebuiltin(f"ActivateWindow(Videos,{path},return)")
         start = _t.time()
         seen = []
