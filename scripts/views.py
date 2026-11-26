@@ -54,11 +54,14 @@ def tick():
     view = visible_view(WINDOWS[window])
     now = time.time()
     if path != STATE["path"] or key != STATE["key"]:
+        if not int(label("Container.NumItems") or 0):
+            return                                            # #44: not filled yet, so its kind is not known yet
         # a new folder: bring the view chosen for this kind, once
         STATE.update(path=path, key=key, since=now, view=view, applied=0, until=0.0,
                      restore=POSITIONS.get(path) if opened else None)
         saved = label(f"Skin.String({key})")
         if saved.isdigit() and int(saved) != view and int(saved) in WINDOWS[window]:
+            done("")                                          # #44: keep the list hidden until the view is on
             xbmc.executebuiltin(f"Container.SetViewMode({saved})")
             STATE.update(applied=int(saved), until=now + 2.0)
         else:
